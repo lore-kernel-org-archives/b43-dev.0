@@ -1,36 +1,39 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Tue, 30 Mar 2010 21:29:23 +0200
+From: Pavel Roskin <proski@gnu.org>
+Date: Tue, 30 Mar 2010 15:41:19 -0400
 Subject: Broadcom card totally not visible for system (lspci)
-In-Reply-To: <1269975753.4938.8.camel@mj>
+In-Reply-To: <b170af451003301206p593cbe3ew582823c75dc06f11@mail.gmail.com>
 References: <b170af451003300956r7fbd7812jdb40d125aeaf1b32@mail.gmail.com>
 	<4BB2328D.9010503@lwfinger.net>
 	<b170af451003301031yd06f559j85fd30417af32113@mail.gmail.com>
-	<4BB23953.9010104@lwfinger.net>  <1269975753.4938.8.camel@mj>
-Message-ID: <1269977363.3927.26.camel@jlt3.sipsolutions.net>
+	<4BB23953.9010104@lwfinger.net> <1269975753.4938.8.camel@mj>
+	<b170af451003301206p593cbe3ew582823c75dc06f11@mail.gmail.com>
+Message-ID: <1269978079.4938.21.camel@mj>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Roskin <proski@gnu.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: =?iso-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Tue, 2010-03-30 at 15:02 -0400, Pavel Roskin wrote:
-> On Tue, 2010-03-30 at 12:48 -0500, Larry Finger wrote:
-> > On 03/30/2010 12:31 PM, Rafa? Mi?ecki wrote:
-> > > 
-> > > Is this possible it's disabled in BIOS by default and needs execution
-> > > of some ACPI command or sth to make it work?
-> > > 
-> > > Yeah, trying to find some other reason than faulty WiFi... It's weird
-> > > it was working fine "before a moment" on Windows.
-> > 
-> > Winblows can fiddle with the "Wake-on-LAN" setting in the BIOS, but AFAIK, the
-> > BCM4306 does not have this capability. If the BIOS has that setting, it should
-> > be turned off.
+On Tue, 2010-03-30 at 21:06 +0200, Rafa? Mi?ecki wrote:
+
+> You mean dmesg, don't you?
+
+Yes.
+
+>  I've attached it, but it was stopped by b43
+> ML. You can see dmesg on marc archive for linux-wireless:
+> http://marc.info/?l=linux-wireless&m=126996817625998&w=2
 > 
-> Perhaps it's a crazy idea, but what if the Ethernet device and the WiFi
-> device are connected to the same SSB bus, an thus sharing the PCI ID?
+> Unfortunately I don't have dmesg from some more-debugging kernel.
 
-Should be fine, actually, since b43 binds the 802.11 ssb core.
+Indeed, there is no list of SSB devices.  The current kernels will
+output that list even if CONFIG_SSB_DEBUG is disabled, but older kernels
+required CONFIG_SSB_DEBUG for that.
 
-johannes
+Installing compat-wireless should help.  Also, ask the user to run
+"modprobe b43".  It might just work.
+
+-- 
+Regards,
+Pavel Roskin
