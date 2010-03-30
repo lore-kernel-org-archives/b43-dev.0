@@ -1,29 +1,38 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 30 Mar 2010 13:06:53 -0500
-Subject: [RFC][PATCH][WIP] b43: N-PHY: set band width
-In-Reply-To: <1269971657-4663-1-git-send-email-zajec5@gmail.com>
-References: <1269971657-4663-1-git-send-email-zajec5@gmail.com>
-Message-ID: <4BB23DBD.8080904@lwfinger.net>
+From: Pavel Roskin <proski@gnu.org>
+Date: Tue, 30 Mar 2010 15:02:33 -0400
+Subject: Broadcom card totally not visible for system (lspci)
+In-Reply-To: <4BB23953.9010104@lwfinger.net>
+References: <b170af451003300956r7fbd7812jdb40d125aeaf1b32@mail.gmail.com>
+	<4BB2328D.9010503@lwfinger.net>
+	<b170af451003301031yd06f559j85fd30417af32113@mail.gmail.com>
+	<4BB23953.9010104@lwfinger.net>
+Message-ID: <1269975753.4938.8.camel@mj>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: =?iso-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On 03/30/2010 12:54 PM, Rafa? Mi?ecki wrote:
-> ---
-> I've problem with deciding how to keep some data needed by band width setting
-> code. Generally these band width-related routines are considered "common", to
-> be used by more than just N-PHY. So probably the most /correct/ way should be
-> to add some variables like maccontrol, wake_override, clk and other to struct
-> b43_phy which is shared between all PHYs. However we would not use these vars
-> in anything except N-PHY, so we would just waste users memory.
+On Tue, 2010-03-30 at 12:48 -0500, Larry Finger wrote:
+> On 03/30/2010 12:31 PM, Rafa? Mi?ecki wrote:
+> > 
+> > Is this possible it's disabled in BIOS by default and needs execution
+> > of some ACPI command or sth to make it work?
+> > 
+> > Yeah, trying to find some other reason than faulty WiFi... It's weird
+> > it was working fine "before a moment" on Windows.
 > 
-> Could you help me decide correct way to handle this?
+> Winblows can fiddle with the "Wake-on-LAN" setting in the BIOS, but AFAIK, the
+> BCM4306 does not have this capability. If the BIOS has that setting, it should
+> be turned off.
 
-I have not done the RE yet, but the SSLPN PHY is multi-band and will likely need
-all the band width parameters needed by the N PHY. I would vote for putting them
-in a "common" struct.
+Perhaps it's a crazy idea, but what if the Ethernet device and the WiFi
+device are connected to the same SSB bus, an thus sharing the PCI ID?
 
-Larry
+Is there the full kernel log?  In particular, the lines containing "ssb"
+would be interesting.
+
+-- 
+Regards,
+Pavel Roskin
