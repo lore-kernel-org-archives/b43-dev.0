@@ -1,63 +1,54 @@
-From: Gene Heskett <gene.heskett@verizon.net>
-Date: Mon, 29 Mar 2010 08:39:27 -0400
-Subject: [PATCH V2] ssb: Implement virtual SPROM on disk
-In-Reply-To: <20100329094416.125cf970@vaiolo.stefanobrivio.net>
-References: <4ba6aa45.z5Wso1NMth9eMeFG%Larry.Finger@lwfinger.net>
-	<4BB013C2.2080400@lwfinger.net>
-	<20100329094416.125cf970@vaiolo.stefanobrivio.net>
-Message-ID: <201003290839.27366.gene.heskett@verizon.net>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 30 Mar 2010 12:19:09 -0500
+Subject: Broadcom card totally not visible for system (lspci)
+In-Reply-To: <b170af451003300956r7fbd7812jdb40d125aeaf1b32@mail.gmail.com>
+References: <b170af451003300956r7fbd7812jdb40d125aeaf1b32@mail.gmail.com>
+Message-ID: <4BB2328D.9010503@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Monday 29 March 2010, Stefano Brivio wrote:
->On Sun, 28 Mar 2010 21:43:14 -0500
->
->Larry Finger <Larry.Finger@lwfinger.net> wrote:
->> On 03/28/2010 09:21 PM, Gene Heskett wrote:
->> > How many servers are emitting this b43 list these days?  I have
->> > recently had to add 2 more to the kmail filters here in order to
->> > route this lists mail properly.  I hope a subscription to one is
->> > sufficient for all.
->>
->> The list is being switched to infradead. Perhaps berlios is still
->> active. That should not last too long.
->
->Actually, I already disabled sending from berlios (I'll be shutting
->it down completely as soon as things have settled), so this shouldn't
->happen.
->
->It looks like lists messages on infradead get sent from at least two
->different servers, anyway. In order not to be affected by this, I
->suggest filtering on the List-Id header instead. The matching value is
->"b43-dev.lists.infradead.org".
->
-No, its "b43-dev at lists.infradead.org"
->--
->Greetings
->Stefano
+On 03/30/2010 11:56 AM, Rafa? Mi?ecki wrote:
+> I've some polish user that has Medion (???) notebook with "BCM4306KFB
+> HS00328 P20 702910 M2" (citation from spec).
+> 
+> This card worked fine in Windows and few days ago user decided to
+> install openSUSE 11.2 (2.6.31.12). AFAIK he removed Windows and has
+> openSUSE now only.
+> 
+> The problem is that system does not detect his WiFi card at all. lspci shows:
+> 00:00.0 Host bridge: ATI Technologies Inc AGP Bridge [IGP 320M] (rev 13)
+> 00:01.0 PCI bridge: ATI Technologies Inc PCI Bridge [IGP 320M] (rev 01)
+> 00:07.0 ISA bridge: ALi Corporation M1533/M1535/M1543 PCI to ISA
+> Bridge [Aladdin IV/V/V+]
+> 00:08.0 Multimedia audio controller: ALi Corporation M5451 PCI AC-Link
+> Controller Audio Device (rev 02)
+> 00:09.0 Modem: ALi Corporation M5457 AC'97 Modem Controller
+> 00:0a.0 CardBus bridge: Texas Instruments PCI4410 PC card Cardbus
+> Controller (rev 02)
+> 00:0a.1 FireWire (IEEE 1394): Texas Instruments PCI4410 FireWire
+> Controller (rev 02)
+> 00:0d.0 USB Controller: NEC Corporation USB (rev 43)
+> 00:0d.1 USB Controller: NEC Corporation USB (rev 43)
+> 00:0d.2 USB Controller: NEC Corporation USB 2.0 (rev 04)
+> 00:0e.0 Ethernet controller: Broadcom Corporation BCM4401 100Base-T (rev 01)
+> 00:10.0 IDE interface: ALi Corporation M5229 IDE (rev c4)
+> 00:11.0 Bridge: ALi Corporation M7101 Power Management Controller [PMU]
+> 01:05.0 VGA compatible controller: ATI Technologies Inc Radeon Mobility U1
+> 
+> Do you have any ideas what may this be?
 
-There is no such header on the incoming messages, or kmail is stripping it. 
-It cannot be found in a view all headers setting.  So if I hit reply, it 
-goes back to the OP (if it will go at all), and a 'reply all' gets me a list 
-I have to clean up in order to just leave the server as the recipient.  It 
-starts out as a CC:
+There are only two reasons for lspci not to list the device:
 
-This isn't a very satisfactory method, highly prone to errors and its the 
-only list of about 40 I have to do that to.  If I leave the OP addresses in, 
-the messages are either stuck in the outbox, or bounce if the OP isn't 
-Larry.  I presume many are using fake addresses to control spam or some 
-such.
+(1) It is disabled in the BIOS.
 
+(2) It is defective or not plugged in.
 
--- 
-Cheers, Gene
-"There are four boxes to be used in defense of liberty:
- soap, ballot, jury, and ammo. Please use in that order."
--Ed Howdershelt (Author)
+No. 1 is checked in the BIOS setup when booting. If nothing found there, and
+re-seating the board does not help, then it is time for a new card.
 
-Lie, n.:
-	A very poor substitute for the truth, but the only one
-	discovered to date.
+If some device is not seen in lspci or lsusb, then it does not exist for the
+operating system.
