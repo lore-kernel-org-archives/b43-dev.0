@@ -1,29 +1,32 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 30 Mar 2010 18:21:08 -0500
-Subject: pci-id 14e4:4320 reporting rev 02; works only with b43legacy
-In-Reply-To: <10872c491003291113y1efa3f0eiac91b30f92d896f1@mail.gmail.com>
-References: <10872c491003291113y1efa3f0eiac91b30f92d896f1@mail.gmail.com>
-Message-ID: <4BB28764.4040806@lwfinger.net>
+Date: Wed, 31 Mar 2010 10:14:10 -0500
+Subject: Changes in specs
+Message-ID: <4BB366C2.8010605@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Michael Buesch <mb@bu3sch.de>, John Linville <linville@tuxdriver.com>
+Cc: wireless <linux-wireless@vger.kernel.org>, b43-dev@lists.infradead.org
 
-On 03/29/2010 01:13 PM, Sean Nowlan wrote:
-> I built OpenWrt for the Linksys wrt54g v1.0 router, which reports to
-> have a bcm4306 rev 02 device even though its pci-id is 14e4:4320.  This
-> contradicts
-> http://wireless.kernel.org/en/users/Drivers/b43#Known_PCI_devices ,
-> which says this device should be at rev 03.  Not surprisingly, b43legacy
-> works but b43 does not.
+John Linville ran an MMIO dump on his Netbook while loading the wl
+driver. From the output, it was clear that his device does indeed have
+an SPROM, but it is in a different location than previous devices we
+have encountered. With this information, it was not difficult to find
+the test for this situation in the Broadcom code. The revised specs for
+this condition are in the first paragraph of
+http://bcm-v4.sipsolutions.net/SPROM. In a nutshell, the SPROM is at
+offset 0x1000 for chipcommon revisions < 31, and@0x0800 for revisions
+>= 31.
 
-I added the line that says that 14e4:4320 that is a BCM4306/2 uses b43legacy.
-ALL BCM4306/2 units use b43legacy, no matter what PCI IDs they report.
+I have also discovered what was wrong with the specs that described what
+devices do not have an SPROM. The previous version only covers those
+devices that are on a PCMCIA bus. The new version of those specs are at
+http://bcm-v4.sipsolutions.net/802.11/IsSpromAvailable. As might be
+expected, the chipcommon revision is again important for PCI devices.
 
-The b43-pci-bridge modules  uses the revision level of the 802.11 core inside
-the device to decide if b43 or b43legacy is needed. That info cannot be
-determined from anything interrogated with normal utilities. Yours is 0x04,
-which means b43legacy. A value of 0x05 would use b43.
+My workaround for missing SPROM data remains viable, and I plan to
+resubmit it as soon as the revised detection routine is ready. Does that
+sound reasonable, or should I wait until such a device is found?
 
 Larry
