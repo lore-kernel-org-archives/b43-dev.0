@@ -1,36 +1,92 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 31 Mar 2010 19:11:28 +0300
-Subject: Changes in specs
-In-Reply-To: <4BB366C2.8010605@lwfinger.net>
-References: <4BB366C2.8010605@lwfinger.net>
-Message-ID: <q2mb170af451003310911z830c4009o1aeb123b830cdd80@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 31 Mar 2010 21:59:21 +0200
+Subject: [RFT][PATCH] ssb: Look for SPROM at different offset on higher rev CC
+Message-ID: <1270065561-4333-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Michael Buesch <mb@bu3sch.de>, John Linville <linville@tuxdriver.com>, wireless <linux-wireless@vger.kernel.org>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2010/3/31 Larry Finger <Larry.Finger@lwfinger.net>:
-> John Linville ran an MMIO dump on his Netbook while loading the wl
-> driver. From the output, it was clear that his device does indeed have
-> an SPROM, but it is in a different location than previous devices we
-> have encountered. With this information, it was not difficult to find
-> the test for this situation in the Broadcom code. The revised specs for
-> this condition are in the first paragraph of
-> http://bcm-v4.sipsolutions.net/SPROM. In a nutshell, the SPROM is at
-> offset 0x1000 for chipcommon revisions < 31, and@0x0800 for revisions
->>= 31.
->
-> I have also discovered what was wrong with the specs that described what
-> devices do not have an SPROM. The previous version only covers those
-> devices that are on a PCMCIA bus. The new version of those specs are at
-> http://bcm-v4.sipsolutions.net/802.11/IsSpromAvailable. As might be
-> expected, the chipcommon revision is again important for PCI devices.
+Our offset handling becomes even a little more hackish now. For some reason I
+do not understand all offsets as inrelative. It assumes base offset is 0x1000
+but it will work for now as we make offsets relative anyway by removing base
+0x1000. Should be cleaner however.
 
-I've is_sprom_available updated.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/pci.c            |    9 ++++++---
+ include/linux/ssb/ssb.h      |    1 +
+ include/linux/ssb/ssb_regs.h |    3 ++-
+ 3 files changed, 9 insertions(+), 4 deletions(-)
 
-Will hack on SPROM today.
-
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index a4b2b99..5bb1278 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -167,7 +167,7 @@ err_pci:
+ }
+ 
+ /* Get the word-offset for a SSB_SPROM_XXX define. */
+-#define SPOFF(offset)	(((offset) - SSB_SPROM_BASE) / sizeof(u16))
++#define SPOFF(offset)	(((offset) - SSB_SPROM_BASE1) / sizeof(u16))
+ /* Helper to extract some _offset, which is one of the SSB_SPROM_XXX defines. */
+ #define SPEX16(_outvar, _offset, _mask, _shift)	\
+ 	out->_outvar = ((in[SPOFF(_offset)] & (_mask)) >> (_shift))
+@@ -253,7 +253,7 @@ static int sprom_do_read(struct ssb_bus *bus, u16 *sprom)
+ 	int i;
+ 
+ 	for (i = 0; i < bus->sprom_size; i++)
+-		sprom[i] = ioread16(bus->mmio + SSB_SPROM_BASE + (i * 2));
++		sprom[i] = ioread16(bus->mmio + bus->sprom_offset + (i * 2));
+ 
+ 	return 0;
+ }
+@@ -284,7 +284,7 @@ static int sprom_do_write(struct ssb_bus *bus, const u16 *sprom)
+ 			ssb_printk("75%%");
+ 		else if (i % 2)
+ 			ssb_printk(".");
+-		writew(sprom[i], bus->mmio + SSB_SPROM_BASE + (i * 2));
++		writew(sprom[i], bus->mmio + bus->sprom_offset + (i * 2));
+ 		mmiowb();
+ 		msleep(20);
+ 	}
+@@ -625,6 +625,9 @@ static int ssb_pci_sprom_get(struct ssb_bus *bus,
+ 		return -ENODEV;
+ 	}
+ 
++	bus->sprom_offset = (bus->chipco.dev->id.revision < 31) ?
++		SSB_SPROM_BASE1 : SSB_SPROM_BASE31;
++
+ 	buf = kcalloc(SSB_SPROMSIZE_WORDS_R123, sizeof(u16), GFP_KERNEL);
+ 	if (!buf)
+ 		goto out;
+diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+index 3b4da23..a2608bf 100644
+--- a/include/linux/ssb/ssb.h
++++ b/include/linux/ssb/ssb.h
+@@ -305,6 +305,7 @@ struct ssb_bus {
+ 	/* ID information about the Chip. */
+ 	u16 chip_id;
+ 	u16 chip_rev;
++	u16 sprom_offset;
+ 	u16 sprom_size;		/* number of words in sprom */
+ 	u8 chip_package;
+ 
+diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
+index 9ae9082..b8be23c 100644
+--- a/include/linux/ssb/ssb_regs.h
++++ b/include/linux/ssb/ssb_regs.h
+@@ -170,7 +170,8 @@
+ #define SSB_SPROMSIZE_WORDS_R4		220
+ #define SSB_SPROMSIZE_BYTES_R123	(SSB_SPROMSIZE_WORDS_R123 * sizeof(u16))
+ #define SSB_SPROMSIZE_BYTES_R4		(SSB_SPROMSIZE_WORDS_R4 * sizeof(u16))
+-#define SSB_SPROM_BASE			0x1000
++#define SSB_SPROM_BASE1			0x1000
++#define SSB_SPROM_BASE31		0x0800
+ #define SSB_SPROM_REVISION		0x107E
+ #define  SSB_SPROM_REVISION_REV		0x00FF	/* SPROM Revision number */
+ #define  SSB_SPROM_REVISION_CRC		0xFF00	/* SPROM CRC8 value */
 -- 
-Rafa?
+1.6.4.2
