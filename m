@@ -1,33 +1,32 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 1 Apr 2010 19:11:45 +0200
-Subject: [RFT][PATCH] ssb: Look for SPROM at different offset on higher 
-	rev CC
-In-Reply-To: <201004011736.50440.mb@bu3sch.de>
-References: <1270065561-4333-1-git-send-email-zajec5@gmail.com>
-	<201004011736.50440.mb@bu3sch.de>
-Message-ID: <l2tb170af451004011011nb230421cmfb5bcb3ac516eb7c@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu,  1 Apr 2010 23:11:10 +0200
+Subject: [PATCH] b43: N-PHY: fix copy&paste typo
+Message-ID: <1270156270-7550-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Buesch <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, Myhailo Danylenko <isbear@ukrpost.net>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2010/4/1 Michael Buesch <mb@bu3sch.de>:
-> On Wednesday 31 March 2010 21:59:21 Rafa? Mi?ecki wrote:
->> Our offset handling becomes even a little more hackish now. For some reason I
->> do not understand all offsets as inrelative. It assumes base offset is 0x1000
->> but it will work for now as we make offsets relative anyway by removing base
->> 0x1000. Should be cleaner however.
->>
->
-> What about fixing it correctly instead adding a hack?
+Reported-by: Myhailo Danylenko <isbear@ukrpost.net>
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-See next 2 patches :)
-
-I believe it does not add any hackish code, just exposes weirdness of
-current code to bigger degree. Anyway as I said, I fixed this in next
-patch I sent already yesterday.
-
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 6fd140a..2ae2445 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -2790,7 +2790,7 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 			}
+ 			b43_ntab_write_bulk(dev, B43_NTAB16(15, 88), 4,
+ 						buffer);
+-			b43_ntab_write_bulk(dev, B43_NTAB16(15, 101), 2,
++			b43_ntab_read_bulk(dev, B43_NTAB16(15, 101), 2,
+ 						buffer);
+ 			b43_ntab_write_bulk(dev, B43_NTAB16(15, 85), 2,
+ 						buffer);
 -- 
-Rafa?
+1.6.4.2
