@@ -1,44 +1,42 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 02 Apr 2010 20:05:21 -0500
-Subject: Please help - what is causing these errors and how do I fix them
-In-Reply-To: <alpine.LFD.2.00.1004021943230.1957@localhost>
-References: <alpine.LFD.2.00.1004021713550.1920@localhost>
-	<4BB66F04.1010700@lwfinger.net>
-	<alpine.LFD.2.00.1004021943230.1957@localhost>
-Message-ID: <4BB69451.5040409@lwfinger.net>
+From: Myhailo Danylenko <isbear@ukrpost.net>
+Date: Sat, 3 Apr 2010 12:57:49 +0300
+Subject: [14e4:4315] Fatal DMA errors on Dell Vostro 1310 (Celeron M540)
+In-Reply-To: <4BB63193.5050804@lwfinger.net>
+References: <20100402171105.GA10965@tsubasa>
+ <4BB63193.5050804@lwfinger.net>
+Message-ID: <20100403095749.GA21454@tsubasa>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 04/02/2010 07:57 PM, Jim Haynes wrote:
-> On Fri, 2 Apr 2010, Larry Finger wrote:
-> 
->>
->> Use the Broadcom wl driver or configure b43 for PIO. Did you do any
->> searching on this problem?
->>
-> 
-> 
-> Thanks.  I did searching a few months ago, and had everything working at
-> that time, but I guess I need to do a fresh search.  I'm not sure what
-> it means to do either of the two things you suggest.  There is a b43
-> module that came with the kernel I am running - are you saying I need
-> to get the source and recompile it with something different done?
-> Should that have been done by the Fedora people when they made the
-> kernel?  Or is there a way to tell whether it is or is not compiled
-> with PIO?
-> 
-> I wish things would Just Work sometimes.
+Fri, Apr 02, 2010 at 01:04:03PM -0500 ????? Larry Finger ???? ????????:
+> Any difficulties with wl are not our problem. Complain to Broadcom.
 
-We do to. Unfortunately, some boxes with Intel CPU and Phoenix BIOS get
-this kind of error. We do not know why and have put a lot of effort into
-the search since this problem was first reported.
+Yep, I know :)
 
-If you can find a late enough Fedora kernel, it will automatically
-switch to PIO when the DMA error happens. Otherwise, you might get that
-functionality with compat-wireless packages. I'm an openSUSE user and do
-not know the inner details of the Fedora system.
+> Is that with DMA? If so, the margin of error is better on your machine
+> than on most that have this problem, but you don't have an Atom.
 
-Larry
+Yeah, but there's a great improvement between 2.6.32 and 2.6.33 - good
+work!
+
+If some testing will be needed - I'll hang around for next three weeks
+(maybe afterwards too) (though, in my case it's rather hard to determine
+if it works fine or still fails).
+
+Thanks!
+
+-- 
+??????? ?????????
+-------------------------------
+jabber:	<isbear@unixzone.org.ua>
+icq:    590697790
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 198 bytes
+Desc: Digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100403/2e0121b8/attachment.sig>
