@@ -1,30 +1,27 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 04 Apr 2010 09:54:28 -0500
-Subject: BCM4303 and kill switch again
-In-Reply-To: <20100404113430.GO63699@keybit.net>
-References: <20100404113430.GO63699@keybit.net>
-Message-ID: <4BB8A824.1030601@lwfinger.net>
+Date: Sun, 04 Apr 2010 12:15:40 -0500
+Subject: [14e4:4315] Fatal DMA errors on Dell Vostro 1310 (Celeron M540)
+In-Reply-To: <201004041024.15319.mb@bu3sch.de>
+References: <20100402171105.GA10965@tsubasa> <201004032000.51561.mb@bu3sch.de>
+	<4BB81CAD.10602@lwfinger.net> <201004041024.15319.mb@bu3sch.de>
+Message-ID: <4BB8C93C.1050807@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 04/04/2010 06:34 AM, strk wrote:
-> Hi all,
-> dunno if you remember the problem I've reported long 
-> time ago about mini BCM4303 on my Asus L5800C laptop
-> breaking after an upgrade. Thread starts here [1].
+On 04/04/2010 03:24 AM, Michael Buesch wrote:
+> On Sunday 04 April 2010 06:59:25 Larry Finger wrote:
+>>  If (chip id is 0x4311 AND chip revision is 2) OR chip id is 0x4312
+>>    Maskset SSB_IMCFGLO with mask ~(SSB_IMCFGLO_SERTO |
+>>      SSB_IMCFGLO_REQTO) and set with 3
 > 
-> Well, this mail is just to let you know that the ndsiwrapper
-> based driver works, so we can exclude hardware failures.
-> 
-> I'd be much happier using the free software driver of course
-> so if you can suggest something else to debug, I might do that.
-> 
-> Just a note: in order for the ndsiwrapper to function
-> I had to load it manually after removing the b44,b43legacy 
-> and finally ssb drivers. Loading the ssb driver *after*
-> ndiswrapper is ok, but doing before results in freezes.
+> Note that we do the IMCFGLO timeout fixups in b43. So I think the fixup
+> should be implemented there.
 
-That is not unexpected.
+As the change only affecxts b43, your suggestion is good.
+
+Any idea what IM and TM stand for in the backplane register names?
+
+Larry
