@@ -1,24 +1,23 @@
-From: richardvoigt at gmail.com <richardvoigt@gmail.com>
-Date: Sun, 4 Apr 2010 02:03:38 -0500
+From: Michael Buesch <mb@bu3sch.de>
+Date: Sun, 4 Apr 2010 09:24:14 +0100
 Subject: [14e4:4315] Fatal DMA errors on Dell Vostro 1310 (Celeron M540)
 In-Reply-To: <4BB81CAD.10602@lwfinger.net>
-References: <20100402171105.GA10965@tsubasa>
-	<r2u69e28c911004030915x38f49291g64dc120a4998045d@mail.gmail.com>
-	<y2u69e28c911004030915scb998ccbvb21885215a524740@mail.gmail.com>
-	<201004032000.51561.mb@bu3sch.de> <4BB81CAD.10602@lwfinger.net>
-Message-ID: <q2x2e59e6971004040003zf6d02683yee00dfe0969da517@mail.gmail.com>
+References: <20100402171105.GA10965@tsubasa> <201004032000.51561.mb@bu3sch.de>
+	<4BB81CAD.10602@lwfinger.net>
+Message-ID: <201004041024.15319.mb@bu3sch.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-> Again with the PCI-E core selected, if the PCI-E core revision is >= 6,
-> set bit 0x8000 in MMIO register 0x280A.
->
-> When running wl on my machine, these changes show up as the contents of
-> 0x0800 going from 0x2801 to 0x3801 and 0x280A going from 0x6FDE to
-> 0xEBDE. On John's Netbook, both values are already at the correct values.
+On Sunday 04 April 2010 06:59:25 Larry Finger wrote:
+>  If (chip id is 0x4311 AND chip revision is 2) OR chip id is 0x4312
+>    Maskset SSB_IMCFGLO with mask ~(SSB_IMCFGLO_SERTO |
+>      SSB_IMCFGLO_REQTO) and set with 3
 
-In your example, bit 0x8000 at 0x280A is set, but bit 0x0400 is also
-unset.  Don't know if that's important.
+Note that we do the IMCFGLO timeout fixups in b43. So I think the fixup
+should be implemented there.
+
+-- 
+Greetings, Michael.
