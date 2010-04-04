@@ -1,23 +1,32 @@
-From: Michael Buesch <mb@bu3sch.de>
-Date: Sun, 4 Apr 2010 09:24:14 +0100
-Subject: [14e4:4315] Fatal DMA errors on Dell Vostro 1310 (Celeron M540)
-In-Reply-To: <4BB81CAD.10602@lwfinger.net>
-References: <20100402171105.GA10965@tsubasa> <201004032000.51561.mb@bu3sch.de>
-	<4BB81CAD.10602@lwfinger.net>
-Message-ID: <201004041024.15319.mb@bu3sch.de>
+From: strk <strk@keybit.net>
+Date: Sun, 4 Apr 2010 13:34:30 +0200
+Subject: BCM4303 and kill switch again
+Message-ID: <20100404113430.GO63699@keybit.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Sunday 04 April 2010 06:59:25 Larry Finger wrote:
->  If (chip id is 0x4311 AND chip revision is 2) OR chip id is 0x4312
->    Maskset SSB_IMCFGLO with mask ~(SSB_IMCFGLO_SERTO |
->      SSB_IMCFGLO_REQTO) and set with 3
+Hi all,
+dunno if you remember the problem I've reported long 
+time ago about mini BCM4303 on my Asus L5800C laptop
+breaking after an upgrade. Thread starts here [1].
 
-Note that we do the IMCFGLO timeout fixups in b43. So I think the fixup
-should be implemented there.
+Well, this mail is just to let you know that the ndsiwrapper
+based driver works, so we can exclude hardware failures.
 
--- 
-Greetings, Michael.
+I'd be much happier using the free software driver of course
+so if you can suggest something else to debug, I might do that.
+
+Just a note: in order for the ndsiwrapper to function
+I had to load it manually after removing the b44,b43legacy 
+and finally ssb drivers. Loading the ssb driver *after*
+ndiswrapper is ok, but doing before results in freezes.
+
+[1] https://lists.berlios.de/pipermail/bcm43xx-dev/2010-February/006930.html
+
+--strk; 
+
+  ()   Free GIS & Flash consultant/developer
+  /\   http://strk.keybit.net/services.html
