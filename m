@@ -1,66 +1,52 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 13 Apr 2010 10:16:05 -0500
-Subject: Asus 520gu
-In-Reply-To: <20100413102829.cdba37a7.celejar@gmail.com>
-References: <20100412233313.542e9b8d.celejar@gmail.com>	<k2gad2a7a4a1004122224yf34e4a7ao2876188c89fca683@mail.gmail.com>
-	<20100413102829.cdba37a7.celejar@gmail.com>
-Message-ID: <4BC48AB5.1000403@lwfinger.net>
+From: Rodd Clarkson <rodd@clarkson.id.au>
+Date: Fri, 16 Apr 2010 15:15:00 +1000
+Subject: BCM43224 802.11a/b/g/
+Message-ID: <1271394900.2705.10.camel@localhost.localdomain>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 04/13/2010 09:28 AM, Celejar wrote:
-> On Tue, 13 Apr 2010 15:24:14 +1000
-> Chris Martin <chris@martin.cc> wrote:
-> 
->> On Tue, Apr 13, 2010 at 1:33 PM, Celejar <celejar@gmail.com> wrote:
->>
->>> Hi,
->>>
->>> The recent OpenWrt release, along with the recent b43 work on the LP
->>> PHY, inspired me to dig up my Asus 520gu and see what it could do.
->>
->>
->>
->>> OpenWrt has the radio disabled out of the box.  When I enable it, the
->>> system seems to hang.  I say seems, since I don't have serial access -
->>> all I know is that my telnet connection dies / freezes, and I can't log
->>> in again.  All I can do is reflash.
->>>
->>> Celejar
->>> -- <http://foffl.sourceforge.net>
->>>
->>
->>
->> I too have been looking the latest Openwrt release and the b43 driver
->> and I too was hoping that support for the broadcom 5354 was included
->> I have a console on my router so I can see what is going on
->>
->> When the wireless is enabled the b43 driver "appears" to eat all memory and
->> I get OOM (Out Of Memory) errors
->> This has been reported on the Openwrt Trac site
->> https://dev.openwrt.org/ticket/7117
->> https://dev.openwrt.org/ticket/6907
->>
->> I have yet to confirm if it is the b43 driver, mac80211, or other component
->> When I test on other broadcom chipssets that are not "5354" I have no real
->> issues
->> So the most likely culprit is the LP-PHY in the b43 driver, but this is yet
->> to be confirmed.
->>
->> I have tested with a 2.6.33.2 kernel and the latest wireless compat
->>
->> I have also only tested in AP mode.  I have not tried AH or STA ..  yet
-> 
-> Thanks much.  I reported my experience, for whatever worth it has, to
-> #6907, and I'll be following that bug.
+Hi All,
 
-When we did the original RE for the LP PHY's, the Broadcom driver
-(4.150.x.x) did not fully support the 5354. The driver being used for
-the N PHY is 5.10.x.x; however, I have not taken the time to observe all
-the changes in the LP PHY code. Now that there are some devices that
-fail, I will review the code and update the specs.
+New to this list, but noticed that my card (a BCM43224) wasn't listed on
+the http://wireless.kernel.org/en/users/Drivers/b43 page (even though
+I'm sure it's going to be listed as supported)
 
-Larry
+Just thought this chip should be included under
+http://wireless.kernel.org/en/users/Drivers/b43#Known_PCI_devices
+
+PCI-ID: 14e4:4353
+State: not supported (I assume this is the case)
+Chip: BCM43224 (Or is it just BCM4322?)
+Modes: a/b/g/n
+PHY version: N
+Driver: presume this will be b43
+
+
+Rodd
+
+
+Here's the details:
+
+$ uname -a
+Linux moose.localdomain 2.6.33.2-41.fc13.x86_64 #1 SMP Mon Apr 12
+14:09:42 UTC 2010 x86_64 x86_64 x86_64 GNU/Linux
+
+$ sudo lspci -vvn|grep 43 -A7
+[sudo] password for rodd: 
+04:00.0 0280: 14e4:4353 (rev 01)
+	Subsystem: 1028:000e
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
+Stepping- SERR+ FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort-
+<MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 64 bytes
+	Interrupt: pin A routed to IRQ 17
+	Region 0: Memory@f0500000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: [40] Power Management version 3
+
+
+I'm not sure if dmesg is needed for this and it's quite a bit of text.
+Ask if you want it.
