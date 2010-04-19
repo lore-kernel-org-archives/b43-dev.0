@@ -1,26 +1,30 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 19 Apr 2010 18:45:42 +0200
-Subject: Request for releasing b43-fwcutter
-In-Reply-To: <201004191753.44213.mb@bu3sch.de>
-References: <k2kb170af451004190754udb8e9960h8a3cfe703566e76f@mail.gmail.com>
-	<201004191753.44213.mb@bu3sch.de>
-Message-ID: <m2ub170af451004190945yd3e31832z9a203eee2f811646@mail.gmail.com>
+From: Peter Stuge <peter@stuge.se>
+Date: Mon, 19 Apr 2010 18:54:54 +0200
+Subject: System freezes with 2.6.33
+In-Reply-To: <20100418071932.GB15229@happy.exit>
+References: <20100418071932.GB15229@happy.exit>
+Message-ID: <20100419165454.17544.qmail@stuge.se>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Buesch <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-W dniu 19 kwietnia 2010 17:53 u?ytkownik Michael Buesch <mb@bu3sch.de> napisa?:
-> On Monday 19 April 2010 16:54:23 Rafa? Mi?ecki wrote:
->> Could you consider releasing new version of b43-fwcutter, as we
->> already have LP-PHY support in kernel, please? AFAIK ppl need to use
->> git version currently to extract firmware.
->
-> Good idea. I released b43-fwcutter-013.
+yhager at yhager.com wrote:
+> After upgrading my system to 2.6.33
+> (http://www.archlinux.org/packages/core/i686/kernel26/) I am
+> experiencing complete system lockups.
+..
+> The hardware is HP-2133 (mini note).
 
-Thanks, http://wireless.kernel.org/en/users/Drivers/b43 updated.
+I can't help but think that this may also be related to how PCIe pins
+are multiplexed on this chipset.
 
--- 
-Rafa?
+Does that kernel happen to have a kernel graphics driver enabled?
+Try disabling it in that case, and see what happens.
+
+Difficult issue this. I think you will need to bisect to find a
+commit. I hope that commit will be directly related to the problem.
+
+
+//Peter
