@@ -1,52 +1,54 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 23 Apr 2010 13:17:21 -0500
-Subject: [PATCH] ssb: Make bus registration failure not be silent
-Message-ID: <4bd1e431.vQNH3R5aTXsSl1FV%Larry.Finger@lwfinger.net>
+From: =?KOI8-R?B?59LJx8/Sycog5tXexcTWyQ==?= <grygoriy.fuchedzhy@gmail.com>
+Date: Sat, 24 Apr 2010 01:05:01 +0300
+Subject: [14e4:4315] Dell Studio 1735, rfkill problem
+Message-ID: <q2xb7f967271004231505m3e7de9a5j8f6a005f72541764@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-In kernel Bugzilla #15825, a case where routine ssb_bus_pcibus_register()
-fails silently is reported. The cause for the failure is still being
-investigated; however, the diagnosis would be easier if the failure
-had been reported.
+Hi, I have 14e4:4315 on my Dell Studio 1735, I'm running gentoo with
+2.6.33.2
+kernel and b43-firmware-4.150.10.5. Driver works great but I have problem
+with
+rfkill.
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
+I had enabled rfkill in my kernel
+> $ grep RFKILL /usr/src/linux/.config
+> CONFIG_RFKILL=y
+> CONFIG_RFKILL_LEDS=y
+> CONFIG_RFKILL_INPUT=y
+> # CONFIG_TOSHIBA_BT_RFKILL is not set
 
-John,
+My laptop has 2-positional hardware switch for wifi, when I toggle it off. I
+get
+following in dmesg:
+> b43-phy0: Radio hardware status changed to DISABLED
+> wlan0: deauthenticating from 00:23:69:2f:3f:01 by local choice (reason=3)
+> b43-phy0: Radio turned on by software
+> b43-phy0: The hardware RF-kill button still turns the radio physically
+off. Press the button to turn it on.
 
-This patch has low priority - 2.6.35. Whatever fixes are needed after the
-source of the problem is discovered will likely be 2.6.34 and stable material.
+Also wifi led turns off.
 
-Larry
----
+Then I turn it back on and get:
+> b43-phy0: Radio hardware status changed to ENABLED
 
-Michael,
+But wifi remains non-functional until I reboot. Wifi led is turned off until
+I
+reboot also.
 
-Please be aware that the failure in the SSB registration leads to a system
-freeze when ssb is unloaded. I did a quick check but could not locate a
-routine that fails to tear down all structures on an error return, but that
-search will be easier once we know which routine is failing. The OP for the
-Bugzilla entry has been given a test patch to further identify the problem.
+If turn switch on/off several times I get:
+> b43-phy0: Radio hardware status changed to DISABLED
+> b43-phy0: Radio hardware status changed to ENABLED
+> b43-phy0: Radio hardware status changed to DISABLED
+> b43-phy0: Radio hardware status changed to ENABLED
 
-Larry
----
+But wifi still is not working.
 
-Index: wireless-testing/drivers/ssb/main.c
-===================================================================
---- wireless-testing.orig/drivers/ssb/main.c
-+++ wireless-testing/drivers/ssb/main.c
-@@ -834,6 +834,9 @@ int ssb_bus_pcibus_register(struct ssb_b
- 	if (!err) {
- 		ssb_printk(KERN_INFO PFX "Sonics Silicon Backplane found on "
- 			   "PCI device %s\n", dev_name(&host_pci->dev));
-+	} else {
-+		ssb_printk(KERN_ERR PFX "Failed to register PCI version"
-+			   " of SSB with error %d\n", err);
- 	}
- 
- 	return err;
+--
+Grygoriy Fuchedzhy
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100424/df4c5975/attachment.htm>
