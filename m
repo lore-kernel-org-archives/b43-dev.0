@@ -1,47 +1,52 @@
-From: yhager at yhager.com <yhager@yhager.com>
-Date: Thu, 22 Apr 2010 11:59:52 -0700
-Subject: System freezes with 2.6.33
-In-Reply-To: <4BD0858D.7080903@lwfinger.net>
-References: <20100418071932.GB15229@happy.exit> <4BCB3071.8030500@lwfinger.net>
-	<20100420143358.GA1990@happy.exit>
-	<20100420155140.14443.qmail@stuge.se>
-	<20100420180704.74972858@Mobile-Workstation.localdomain>
-	<20100420162751.25907.qmail@stuge.se>
-	<4BCDDF5C.2040901@lwfinger.net> <20100422161231.GA1941@happy.exit>
-	<4BD0858D.7080903@lwfinger.net>
-Message-ID: <20100422185951.GA14078@happy.sfsu.edu>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 23 Apr 2010 13:17:21 -0500
+Subject: [PATCH] ssb: Make bus registration failure not be silent
+Message-ID: <4bd1e431.vQNH3R5aTXsSl1FV%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On 12:21 Thu 22 Apr     , Larry Finger wrote:
-> On 04/22/2010 11:12 AM, yhager at yhager.com wrote:
-> > I have tested the same kernel, with CONFIG_B43_FORCE_PIO=y. The
-> > results are mostly the same. Full system freeze. Turning the radio off
-> > avoids the freeze. Turning the radio on would not immediately freeze -
-> > only when I tried to connect to a wireless network it did. 
-> > I also enabled CONFIG_B43_DEBUG, but no messages on the console that
-> > would testify a problem.
-> 
-> Is it possible for you to test with another mac80211-based wireless
-> device? I cannot think of any possibility for the system to lock up when
-> b43 is using PIO.
+In kernel Bugzilla #15825, a case where routine ssb_bus_pcibus_register()
+fails silently is reported. The cause for the failure is still being
+investigated; however, the diagnosis would be easier if the failure
+had been reported.
 
-No, sorry, I don't have another device.
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
 
-> 
-> When the freeze occurs, how long do you leave it? There are some CPU
-> lockups that take as many as 2 minutes to be recognized by the kernel.
-> 
+John,
 
-I haven't waited that long. I will test again when I have the chance.
+This patch has low priority - 2.6.35. Whatever fixes are needed after the
+source of the problem is discovered will likely be 2.6.34 and stable material.
 
-> In Archlinux, how difficult is it to incorporate source from an external
-> tree and build the kernel?
-> 
+Larry
+---
 
-Not difficult at all.
+Michael,
 
---y
+Please be aware that the failure in the SSB registration leads to a system
+freeze when ssb is unloaded. I did a quick check but could not locate a
+routine that fails to tear down all structures on an error return, but that
+search will be easier once we know which routine is failing. The OP for the
+Bugzilla entry has been given a test patch to further identify the problem.
+
+Larry
+---
+
+Index: wireless-testing/drivers/ssb/main.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/main.c
++++ wireless-testing/drivers/ssb/main.c
+@@ -834,6 +834,9 @@ int ssb_bus_pcibus_register(struct ssb_b
+ 	if (!err) {
+ 		ssb_printk(KERN_INFO PFX "Sonics Silicon Backplane found on "
+ 			   "PCI device %s\n", dev_name(&host_pci->dev));
++	} else {
++		ssb_printk(KERN_ERR PFX "Failed to register PCI version"
++			   " of SSB with error %d\n", err);
+ 	}
+ 
+ 	return err;
