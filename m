@@ -1,35 +1,71 @@
-From: Chris Vine <chris@cvine.freeserve.co.uk>
-Date: Sat, 24 Apr 2010 17:22:36 +0100
-Subject: [14e4:4315] Dell Studio 1735, rfkill problem
-In-Reply-To: <4BD2FAB6.4060805@lwfinger.net>
-References: <q2xb7f967271004231505m3e7de9a5j8f6a005f72541764@mail.gmail.com>
-	<20100424110940.2b908933@laptop.homenet>
-	<20100424112652.28e5735a@laptop.homenet>
-	<x2qb7f967271004240435ga6d41d04n2463282649f7200@mail.gmail.com>
-	<4BD2FAB6.4060805@lwfinger.net>
-Message-ID: <20100424172236.345a2a61@laptop.homenet>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 25 Apr 2010 17:30:28 -0500
+Subject: [RFC/RFT] ssb: Avoid system hang when SPROM read fails
+Message-ID: <4bd4c284.WBohOsmgdwRzw5JC%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Sat, 24 Apr 2010 09:05:42 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> On 04/24/2010 06:35 AM, Grygoriy Fuchedzhy wrote:
-> > 2010/4/24 Chris Vine <chris@cvine.freeserve.co.uk>:
-> >> On Sat, 24 Apr 2010 11:09:40 +0100
-> > 
-> > It wasn't built at all. I tried to build acer-wmi and dell-wmi.
-> > acer-wmi doesn't load automatically, if I load
-> > it manually it fails to load throwing error that I do not have
-> > neccesary hardware. dell-wmi loads
-> > automatically but it doesn't affect my problem.
-> 
-> No Acer hardware - no acer-wmi.
+In kernel Bugzilla #15825, the OP reports a case of intermittent reading
+of the SPROM. If such reads fail, the box hangs. Thanks to careful testing
+by bugzillakernelorg at lez.ath.cx has shown that the first read of the
+SPROM returns 0xFFFF with the hang happening on the next read.
 
-Not the case, I am afraid.  Wistron devices will also cause acer-wmi to
-be loaded, and does so on my netbook from kernel >= 2.6.33 (but not
-before).
+The source of the read failure is still under investigation; however,
+this patch does avoid the system hang.
 
-Chris
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
+
+John,
+
+Does this patch avoid the system hang on your box?
+
+Larry
+---
+
+===================================================================
+--- wireless-testing.orig/drivers/ssb/pci.c
++++ wireless-testing/drivers/ssb/pci.c
+@@ -253,6 +253,11 @@ static int sprom_do_read(struct ssb_bus
+ {
+ 	int i;
+ 
++	/* Check if SPROM can be read */
++	if (ioread16(bus->mmio + SSB_SPROM_BASE) == 0xFFFF) {
++		ssb_printk(KERN_ERR PFX "Unable to read SPROM\n");
++		return -ENODEV;
++	}
+ 	for (i = 0; i < bus->sprom_size; i++)
+ 		sprom[i] = ioread16(bus->mmio + SSB_SPROM_BASE + (i * 2));
+ 
+@@ -625,17 +630,23 @@ static int ssb_pci_sprom_get(struct ssb_
+ 	if (!buf)
+ 		goto out;
+ 	bus->sprom_size = SSB_SPROMSIZE_WORDS_R123;
+-	sprom_do_read(bus, buf);
++	err = sprom_do_read(bus, buf);
++	if (err)
++		goto out_free;
+ 	err = sprom_check_crc(buf, bus->sprom_size);
+ 	if (err) {
+ 		/* try for a 440 byte SPROM - revision 4 and higher */
+ 		kfree(buf);
+ 		buf = kcalloc(SSB_SPROMSIZE_WORDS_R4, sizeof(u16),
+ 			      GFP_KERNEL);
+-		if (!buf)
++		if (!buf) {
++			err = -ENOMEM;
+ 			goto out;
++		}
+ 		bus->sprom_size = SSB_SPROMSIZE_WORDS_R4;
+-		sprom_do_read(bus, buf);
++		err = sprom_do_read(bus, buf);
++		if (err)
++			goto out_free;
+ 		err = sprom_check_crc(buf, bus->sprom_size);
+ 		if (err) {
+ 			/* All CRC attempts failed.
