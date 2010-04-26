@@ -1,48 +1,25 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Mon, 26 Apr 2010 14:32:33 -0400
-Subject: [RFC/RFT] ssb: Avoid system hang when SPROM read fails
-In-Reply-To: <4BD5D5B1.6020906@lwfinger.net>
-References: <4bd4c284.WBohOsmgdwRzw5JC%Larry.Finger@lwfinger.net>
-	<20100426171505.GC2387@tuxdriver.com>
-	<4BD5D5B1.6020906@lwfinger.net>
-Message-ID: <20100426183233.GF2387@tuxdriver.com>
+From: Grygoriy Fuchedzhy <grygoriy.fuchedzhy@gmail.com>
+Date: Tue, 27 Apr 2010 00:03:34 +0300
+Subject: [14e4:4315] Dell Studio 1735, rfkill problem
+In-Reply-To: <4BD2FAB6.4060805@lwfinger.net>
+References: <q2xb7f967271004231505m3e7de9a5j8f6a005f72541764@mail.gmail.com>
+	<20100424110940.2b908933@laptop.homenet>
+	<20100424112652.28e5735a@laptop.homenet>
+	<x2qb7f967271004240435ga6d41d04n2463282649f7200@mail.gmail.com>
+	<4BD2FAB6.4060805@lwfinger.net>
+Message-ID: <m2mb7f967271004261403u1d6999b6m5e2156968bcc0cc0@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On Mon, Apr 26, 2010 at 01:04:33PM -0500, Larry Finger wrote:
-> On 04/26/2010 12:15 PM, John W. Linville wrote:
-> > 
-> > Well, the "good" news is that I hit the "Unable to read SPROM" case.
-> > The bad news is that the box still hangs after the -ENODEV.  I have
-> > not yet tracked-down the exact location of the current hang.
-> > 
-> > John
-> > 
-> > P.S.  Sorry about the 'radio silence' -- I've been distracted with
-> > some other things.  Also, the box in question originally belonged
-> > to someone else who had configured it in a way that was less than
-> > friendly to kernel development.  I finally reinstalled it...
-> 
-> That box is certainly resistant!
-> 
-> I certainly understand your distractions. That has to be a major
-> understatement.
-> 
-> As the patch makes some improvement in both your system and the one in
-> Bug #15825, I'll push it as a real patch.
-> 
-> Would your box be available to me as a loaner? I have considered buying
-> a netbook for debugging purposes, but I cannot quite justify the cost.
-> In addition, Murphy's law would make whatever one I bought work without
-> any problems.
+On Sat, Apr 24, 2010 at 5:05 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> As far as I can tell, dell-wmi does not support your hardware. Perhaps
+> you should take that up with the author of that module. He likely has
+> not yet seen a box like yours.
 
-I think that can be arranged...
+But anyway, rfkill utility should work, shouldn't it?
 
-John
 -- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+Grygoriy Fuchedzhy
