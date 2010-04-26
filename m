@@ -1,40 +1,61 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 26 Apr 2010 11:40:25 -0500
-Subject: Changes to b43/ssb specs
-Message-ID: <4BD5C1F9.4000701@lwfinger.net>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Mon, 26 Apr 2010 13:15:05 -0400
+Subject: [RFC/RFT] ssb: Avoid system hang when SPROM read fails
+In-Reply-To: <4bd4c284.WBohOsmgdwRzw5JC%Larry.Finger@lwfinger.net>
+References: <4bd4c284.WBohOsmgdwRzw5JC%Larry.Finger@lwfinger.net>
+Message-ID: <20100426171505.GC2387@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?R8OhYm9yIFN0ZWZhbmlr?= <netrolller.3d@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Michael Buesch <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, wireless <linux-wireless@vger.kernel.org>, John Linville <linville@tuxdriver.com>
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-In Kernel Bugzilla #15825, a netbook with an LP PHY device had symptoms
-similar to John's box. The main difference is that the freezes on ssb
-load were intermittent. From the instances that it works, we learned
-that this box does have a SPROM at the normal location (0x1000). With
-the help of the OP, we also learned that when it failed, it read the
-first word of the SPROM as 0xFFFF, and then froze upon trying the
-second. This behavior is the basis for my submission of "[RFC/RFT] ssb:
-Avoid system hang when SPROM read fails". On the box at Bug #15825, that
-patch eliminates the hangs. Of course, when the load fails with the
-appropriate log entries, the wireless doesn't work.
+On Sun, Apr 25, 2010 at 05:30:28PM -0500, Larry Finger wrote:
+> In kernel Bugzilla #15825, the OP reports a case of intermittent reading
+> of the SPROM. If such reads fail, the box hangs. Thanks to careful testing
+> by bugzillakernelorg at lez.ath.cx has shown that the first read of the
+> SPROM returns 0xFFFF with the hang happening on the next read.
+> 
+> The source of the read failure is still under investigation; however,
+> this patch does avoid the system hang.
+> 
+> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+> ---
+> 
+> John,
+> 
+> Does this patch avoid the system hang on your box?
+> 
+> Larry
+> ---
+> 
+> ===================================================================
+> --- wireless-testing.orig/drivers/ssb/pci.c
+> +++ wireless-testing/drivers/ssb/pci.c
+> @@ -253,6 +253,11 @@ static int sprom_do_read(struct ssb_bus
+>  {
+>  	int i;
+>  
+> +	/* Check if SPROM can be read */
+> +	if (ioread16(bus->mmio + SSB_SPROM_BASE) == 0xFFFF) {
+> +		ssb_printk(KERN_ERR PFX "Unable to read SPROM\n");
+> +		return -ENODEV;
+> +	}
+>  	for (i = 0; i < bus->sprom_size; i++)
+>  		sprom[i] = ioread16(bus->mmio + SSB_SPROM_BASE + (i * 2));
+>  
 
-In auditing the path that is involved in ssb registration, I noted a
-variable named fast_pwrup_delay in struct ssb_chipcommon that gets
-written to MMIO offset 0x6A8. When I looked for some variable like this
-in the Broadcom driver, I found that it should be set to 7000 for the
-BCM4312 LP-PHY device, but a test print showed it to be 0 with b43/ssb.
+Well, the "good" news is that I hit the "Unable to read SPROM" case.
+The bad news is that the box still hangs after the -ENODEV.  I have
+not yet tracked-down the exact location of the current hang.
 
-Resolving the discrepancy led to modifications in the specs at
-http://bcm-v4.sipsolutions.net/802.11/Init. In particular, line 11 was
-added. There are now two new pages at
-http://bcm-v4.sipsolutions.net/802.11/ClkctlFastPwrupDelay, and
-http://bcm-v4.sipsolutions.net/802.11/PmuFastPwrupDelay.
+John
 
-I hand coded the driver to write 7000, rather than zero, to the MMIO
-offset 0x6A8. For my device, which already works, it made no difference.
-I have sent such a trial patch to the OP at Bug #15825, but have not
-gotten feedback.
-
-Larry
+P.S.  Sorry about the 'radio silence' -- I've been distracted with
+some other things.  Also, the box in question originally belonged
+to someone else who had configured it in a way that was less than
+friendly to kernel development.  I finally reinstalled it...
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
