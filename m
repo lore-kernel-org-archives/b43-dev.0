@@ -1,61 +1,41 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Mon, 26 Apr 2010 13:15:05 -0400
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Mon, 26 Apr 2010 13:04:33 -0500
 Subject: [RFC/RFT] ssb: Avoid system hang when SPROM read fails
-In-Reply-To: <4bd4c284.WBohOsmgdwRzw5JC%Larry.Finger@lwfinger.net>
+In-Reply-To: <20100426171505.GC2387@tuxdriver.com>
 References: <4bd4c284.WBohOsmgdwRzw5JC%Larry.Finger@lwfinger.net>
-Message-ID: <20100426171505.GC2387@tuxdriver.com>
+	<20100426171505.GC2387@tuxdriver.com>
+Message-ID: <4BD5D5B1.6020906@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
+To: "John W. Linville" <linville@tuxdriver.com>
 Cc: Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Sun, Apr 25, 2010 at 05:30:28PM -0500, Larry Finger wrote:
-> In kernel Bugzilla #15825, the OP reports a case of intermittent reading
-> of the SPROM. If such reads fail, the box hangs. Thanks to careful testing
-> by bugzillakernelorg at lez.ath.cx has shown that the first read of the
-> SPROM returns 0xFFFF with the hang happening on the next read.
+On 04/26/2010 12:15 PM, John W. Linville wrote:
 > 
-> The source of the read failure is still under investigation; however,
-> this patch does avoid the system hang.
+> Well, the "good" news is that I hit the "Unable to read SPROM" case.
+> The bad news is that the box still hangs after the -ENODEV.  I have
+> not yet tracked-down the exact location of the current hang.
 > 
-> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-> ---
+> John
 > 
-> John,
-> 
-> Does this patch avoid the system hang on your box?
-> 
-> Larry
-> ---
-> 
-> ===================================================================
-> --- wireless-testing.orig/drivers/ssb/pci.c
-> +++ wireless-testing/drivers/ssb/pci.c
-> @@ -253,6 +253,11 @@ static int sprom_do_read(struct ssb_bus
->  {
->  	int i;
->  
-> +	/* Check if SPROM can be read */
-> +	if (ioread16(bus->mmio + SSB_SPROM_BASE) == 0xFFFF) {
-> +		ssb_printk(KERN_ERR PFX "Unable to read SPROM\n");
-> +		return -ENODEV;
-> +	}
->  	for (i = 0; i < bus->sprom_size; i++)
->  		sprom[i] = ioread16(bus->mmio + SSB_SPROM_BASE + (i * 2));
->  
+> P.S.  Sorry about the 'radio silence' -- I've been distracted with
+> some other things.  Also, the box in question originally belonged
+> to someone else who had configured it in a way that was less than
+> friendly to kernel development.  I finally reinstalled it...
 
-Well, the "good" news is that I hit the "Unable to read SPROM" case.
-The bad news is that the box still hangs after the -ENODEV.  I have
-not yet tracked-down the exact location of the current hang.
+That box is certainly resistant!
 
-John
+I certainly understand your distractions. That has to be a major
+understatement.
 
-P.S.  Sorry about the 'radio silence' -- I've been distracted with
-some other things.  Also, the box in question originally belonged
-to someone else who had configured it in a way that was less than
-friendly to kernel development.  I finally reinstalled it...
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+As the patch makes some improvement in both your system and the one in
+Bug #15825, I'll push it as a real patch.
+
+Would your box be available to me as a loaner? I have considered buying
+a netbook for debugging purposes, but I cannot quite justify the cost.
+In addition, Murphy's law would make whatever one I bought work without
+any problems.
+
+Larry
