@@ -1,71 +1,40 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 25 Apr 2010 17:30:28 -0500
-Subject: [RFC/RFT] ssb: Avoid system hang when SPROM read fails
-Message-ID: <4bd4c284.WBohOsmgdwRzw5JC%Larry.Finger@lwfinger.net>
+Date: Mon, 26 Apr 2010 11:40:25 -0500
+Subject: Changes to b43/ssb specs
+Message-ID: <4BD5C1F9.4000701@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: =?UTF-8?B?R8OhYm9yIFN0ZWZhbmlr?= <netrolller.3d@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, wireless <linux-wireless@vger.kernel.org>, John Linville <linville@tuxdriver.com>
 
-In kernel Bugzilla #15825, the OP reports a case of intermittent reading
-of the SPROM. If such reads fail, the box hangs. Thanks to careful testing
-by bugzillakernelorg at lez.ath.cx has shown that the first read of the
-SPROM returns 0xFFFF with the hang happening on the next read.
+In Kernel Bugzilla #15825, a netbook with an LP PHY device had symptoms
+similar to John's box. The main difference is that the freezes on ssb
+load were intermittent. From the instances that it works, we learned
+that this box does have a SPROM at the normal location (0x1000). With
+the help of the OP, we also learned that when it failed, it read the
+first word of the SPROM as 0xFFFF, and then froze upon trying the
+second. This behavior is the basis for my submission of "[RFC/RFT] ssb:
+Avoid system hang when SPROM read fails". On the box at Bug #15825, that
+patch eliminates the hangs. Of course, when the load fails with the
+appropriate log entries, the wireless doesn't work.
 
-The source of the read failure is still under investigation; however,
-this patch does avoid the system hang.
+In auditing the path that is involved in ssb registration, I noted a
+variable named fast_pwrup_delay in struct ssb_chipcommon that gets
+written to MMIO offset 0x6A8. When I looked for some variable like this
+in the Broadcom driver, I found that it should be set to 7000 for the
+BCM4312 LP-PHY device, but a test print showed it to be 0 with b43/ssb.
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
+Resolving the discrepancy led to modifications in the specs at
+http://bcm-v4.sipsolutions.net/802.11/Init. In particular, line 11 was
+added. There are now two new pages at
+http://bcm-v4.sipsolutions.net/802.11/ClkctlFastPwrupDelay, and
+http://bcm-v4.sipsolutions.net/802.11/PmuFastPwrupDelay.
 
-John,
-
-Does this patch avoid the system hang on your box?
+I hand coded the driver to write 7000, rather than zero, to the MMIO
+offset 0x6A8. For my device, which already works, it made no difference.
+I have sent such a trial patch to the OP at Bug #15825, but have not
+gotten feedback.
 
 Larry
----
-
-===================================================================
---- wireless-testing.orig/drivers/ssb/pci.c
-+++ wireless-testing/drivers/ssb/pci.c
-@@ -253,6 +253,11 @@ static int sprom_do_read(struct ssb_bus
- {
- 	int i;
- 
-+	/* Check if SPROM can be read */
-+	if (ioread16(bus->mmio + SSB_SPROM_BASE) == 0xFFFF) {
-+		ssb_printk(KERN_ERR PFX "Unable to read SPROM\n");
-+		return -ENODEV;
-+	}
- 	for (i = 0; i < bus->sprom_size; i++)
- 		sprom[i] = ioread16(bus->mmio + SSB_SPROM_BASE + (i * 2));
- 
-@@ -625,17 +630,23 @@ static int ssb_pci_sprom_get(struct ssb_
- 	if (!buf)
- 		goto out;
- 	bus->sprom_size = SSB_SPROMSIZE_WORDS_R123;
--	sprom_do_read(bus, buf);
-+	err = sprom_do_read(bus, buf);
-+	if (err)
-+		goto out_free;
- 	err = sprom_check_crc(buf, bus->sprom_size);
- 	if (err) {
- 		/* try for a 440 byte SPROM - revision 4 and higher */
- 		kfree(buf);
- 		buf = kcalloc(SSB_SPROMSIZE_WORDS_R4, sizeof(u16),
- 			      GFP_KERNEL);
--		if (!buf)
-+		if (!buf) {
-+			err = -ENOMEM;
- 			goto out;
-+		}
- 		bus->sprom_size = SSB_SPROMSIZE_WORDS_R4;
--		sprom_do_read(bus, buf);
-+		err = sprom_do_read(bus, buf);
-+		if (err)
-+			goto out_free;
- 		err = sprom_check_crc(buf, bus->sprom_size);
- 		if (err) {
- 			/* All CRC attempts failed.
