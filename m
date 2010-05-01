@@ -1,21 +1,103 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Wed, 28 Apr 2010 02:04:40 +0200
-Subject: DMA error bug
-In-Reply-To: <o2rff479ab61004271617z5b5ccd31sa9612ff7b66c7e36@mail.gmail.com>
-References: <o2rff479ab61004271617z5b5ccd31sa9612ff7b66c7e36@mail.gmail.com>
-Message-ID: <w2t69e28c911004271704y4057e66aredad4a3d4377cc8e@mail.gmail.com>
+From: =?ISO-8859-2?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
+Date: Sat, 01 May 2010 18:29:06 +0200
+Subject: [PATCH] ssb: Implement fast powerup delay calculation
+Message-ID: <4BDC56D2.5060605@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Michael Buesch <mb@bu3sch.de>, Larry Finger <larry.finger@lwfinger.net>
 
-On Wed, Apr 28, 2010 at 1:17 AM, Baybal Ni <nikulinpi@gmail.com> wrote:
-> does anybody get a solution? Does anybody ever track that bug?
->
+Implement fast powerup delay calculation, as described
+in the recently updated specs. The 4325 part is coming soon.
 
-If you mean the LP-PHY fatal DMA error, yes, we are working on it;
-recent kernels work around it by auto-switching to PIO if it occurs.
+Signed-off-by: G?bor Stefanik<netrolller.3d@gmail.com>
+---
 
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+To people experiencing DMA errors: please test this patch, it touches
+the PMU code, one of the suspected problem areas.
+
+I'm submitting this patch using Thunderbird 3; so I cannot be held liable
+if it gets damaged in transit. Blame Mozilla. :-)
+
+Index: wireless-testing/drivers/ssb/driver_chipcommon.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/driver_chipcommon.c
++++ wireless-testing/drivers/ssb/driver_chipcommon.c
+@@ -209,7 +209,24 @@ static void chipco_powercontrol_init(str
+  	}
+  }
+
+-static void calc_fast_powerup_delay(struct ssb_chipcommon *cc)
++static u16 pmu_fast_powerup_delay(struct ssb_chipcommon *cc)
++{
++	struct ssb_bus *bus = cc->dev->bus;
++
++	switch (bus->chip_id) {
++	case 0x4312:
++	case 0x4322:
++	case 0x4328:
++		return 7000;
++	case 0x4325:
++		/* TODO: */
++	default:
++		break;
++	}
++	return 15000;
++}
++
++static u16 calc_fast_powerup_delay(struct ssb_chipcommon *cc)
+  {
+  	struct ssb_bus *bus = cc->dev->bus;
+  	int minfreq;
+@@ -217,26 +234,33 @@ static void calc_fast_powerup_delay(stru
+  	u32 pll_on_delay;
+
+  	if (bus->bustype != SSB_BUSTYPE_PCI)
+-		return;
++		return 0;
++	if (cc->capabilities&  SSB_CHIPCO_CAP_PMU)
++		return pmu_fast_powerup_delay(cc);
+  	if (!(cc->capabilities&  SSB_CHIPCO_CAP_PCTL))
+-		return;
++		return 0;
+
+  	minfreq = chipco_pctl_clockfreqlimit(cc, 0);
+  	pll_on_delay = chipco_read32(cc, SSB_CHIPCO_PLLONDELAY);
+  	tmp = (((pll_on_delay + 2) * 1000000) + (minfreq - 1)) / minfreq;
+  	SSB_WARN_ON(tmp&  ~0xFFFF);
+
+-	cc->fast_pwrup_delay = tmp;
++	return tmp;
+  }
+
+  void ssb_chipcommon_init(struct ssb_chipcommon *cc)
+  {
++	u16 delay;
++
+  	if (!cc->dev)
+  		return; /* We don't have a ChipCommon */
+  	ssb_pmu_init(cc);
+  	chipco_powercontrol_init(cc);
+  	ssb_chipco_set_clockmode(cc, SSB_CLKMODE_FAST);
+-	calc_fast_powerup_delay(cc);
++	delay = calc_fast_powerup_delay(cc);
++	ssb_printk(KERN_INFO PFX "fast_pwrup_delay is %d\n", delay);
++	cc->fast_pwrup_delay = delay;
++	ssb_write16(cc->dev, SSB_MMIO_POWERUP_DELAY, delay);
+  }
+
+  void ssb_chipco_suspend(struct ssb_chipcommon *cc)
+Index: wireless-testing/include/linux/ssb/ssb_regs.h
+===================================================================
+--- wireless-testing.orig/include/linux/ssb/ssb_regs.h
++++ wireless-testing/include/linux/ssb/ssb_regs.h
+@@ -26,6 +26,7 @@
+  #define	SSB_EUART		(SSB_EXTIF_BASE + 0x00800000)
+  #define	SSB_LED			(SSB_EXTIF_BASE + 0x00900000)
+
++#define SSB_MMIO_POWERUP_DELAY	0x06A8
+
+  /* Enumeration space constants */
+  #define SSB_CORE_SIZE		0x1000	/* Size of a core MMIO area */
