@@ -1,41 +1,76 @@
-From: Mark Huijgen <mark.sf.net@huijgen.tk>
-Date: Thu, 06 May 2010 10:45:34 +0200
+From: Michael Buesch <mb@bu3sch.de>
+Date: Thu, 6 May 2010 11:53:01 +0200
 Subject: [RFC/RFT] ssb: resolve alternate SPROM offset for 14e4:4315
 In-Reply-To: <4be24cdd.Yg6pH2Z4OwSotB+K%Larry.Finger@lwfinger.net>
 References: <4be24cdd.Yg6pH2Z4OwSotB+K%Larry.Finger@lwfinger.net>
-Message-ID: <4BE281AE.7070901@huijgen.tk>
+	(sfid-20100506_050021_218879_9785B27F)
+Message-ID: <201005061153.01488.mb@bu3sch.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: John W Linville <linville@tuxdriver.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On 05/06/2010 07:00 AM, Larry Finger wrote:
+On Thursday 06 May 2010 07:00:13 Larry Finger wrote:
 > This patch and the patch by Gabor entitled "[PATCH] ssb: Implement
 > fast powerup delay calculation" are enough to allow the netbook from
 > John to work with ssb/b43. As this patch tampers with the SPROM offset for
 > 14e4:4315 devices, it should be tested by anyone with an LP PHY that works
 > to ensure that it is not killed.
->   
+> 
+> The essential elements of this patch will also be tested as part of kernel Bug
+> #15825.
+> 
+> Larry
+>  
+> Index: wireless-testing/drivers/ssb/pci.c
+> ===================================================================
+> --- wireless-testing.orig/drivers/ssb/pci.c
+> +++ wireless-testing/drivers/ssb/pci.c
+> @@ -631,8 +631,17 @@ static int ssb_pci_sprom_get(struct ssb_
+>  		return -ENODEV;
+>  	}
+>  
+> -	bus->sprom_offset = (bus->chipco.dev->id.revision < 31) ?
+> -		SSB_SPROM_BASE1 : SSB_SPROM_BASE31;
+> +	/* get SPROM offset: SSB_SPROM_BASE1 except for chipcommon rev >= 31
+> +	 * or chip ID is 0x4312 and bit 0x2 is set in chipcommon status
+> +	 */
+> +	if (bus->chipco.dev->id.revision >= 31)
+> +		bus->sprom_offset = SSB_SPROM_BASE31;
+> +	else if (bus->chip_id == 0x4312 && (bus->chipco.status & 0x02))
+> +		bus->sprom_offset = SSB_SPROM_BASE31;
+> +	else
+> +		bus->sprom_offset = SSB_SPROM_BASE1;
+> +
+> +	ssb_dprintk(KERN_INFO PFX "SPROM offset is 0x%x\n", bus->sprom_offset);
+>  
+>  	buf = kcalloc(SSB_SPROMSIZE_WORDS_R123, sizeof(u16), GFP_KERNEL);
+>  	if (!buf)
+> Index: wireless-testing/drivers/ssb/scan.c
+> ===================================================================
+> --- wireless-testing.orig/drivers/ssb/scan.c
+> +++ wireless-testing/drivers/ssb/scan.c
+> @@ -306,6 +306,11 @@ int ssb_bus_scan(struct ssb_bus *bus,
+>  		}
+>  		tmp = scan_read32(bus, 0, SSB_CHIPCO_CAP);
+>  		bus->chipco.capabilities = tmp;
+> +		if (bus->chip_rev >= 11)
 
-LP PHY device 14e4:4315 in my HP530 notebook still works after applying
-the patch.
+This still is wrong. the chip_rev is not the chipcommon core revision.
+We already went through this and we decided to read the chipstat later.
+Read it in chipcommon init. The bus scan is _way_ too early to read this.
 
-Messages from ssb after applying the patch:
+> +			bus->chipco.status = scan_read32(bus, 0,
+> +					     SSB_CHIPCO_CHIPSTAT);
+> +		else
+> +			bus->chipco.status = 0;
+>  	} else {
+>  		if (bus->bustype == SSB_BUSTYPE_PCI) {
+>  			bus->chip_id = pcidev_to_chipid(bus->host_pci);
+> 
+> 
 
-[  342.152271] b43-pci-bridge 0000:10:00.0: PCI INT A -> GSI 17 (level,
-low) -> IRQ 17
-[  342.152286] b43-pci-bridge 0000:10:00.0: setting latency timer to 64
-[  342.172079] ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x16, vendor
-0x4243)
-[  342.172090] ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x0F,
-vendor 0x4243)
-[  342.172100] ssb: Core 2 found: PCMCIA (cc 0x80D, rev 0x0A, vendor 0x4243)
-[  342.172110] ssb: Core 3 found: PCI-E (cc 0x820, rev 0x09, vendor 0x4243)
-[  342.192028] ssb: Found rev 1 PMU (capabilities 0x02A62F01)
-[  342.192034] ssb: SPROM offset is 0x1000
-[  342.208620] ssb: SPROM revision 8 detected.
-[  342.228069] ssb: Sonics Silicon Backplane found on PCI device
-0000:10:00.0
-
-Mark
+-- 
+Greetings, Michael.
