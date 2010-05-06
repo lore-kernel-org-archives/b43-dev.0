@@ -1,84 +1,62 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Wed, 5 May 2010 20:58:47 +0200
-Subject: First results with netbook from John
-In-Reply-To: <4BE1B2DF.8070506@lwfinger.net>
-References: <4BE1B2DF.8070506@lwfinger.net>
-Message-ID: <AANLkTilJFWACm4GYM0QwWywdVzLc1I-0C64lPMoQbHPX@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 06 May 2010 00:00:13 -0500
+Subject: [RFC/RFT] ssb: resolve alternate SPROM offset for 14e4:4315
+Message-ID: <4be24cdd.Yg6pH2Z4OwSotB+K%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Michael Buesch <mb@bu3sch.de>, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, John Linville <linville@tuxdriver.com>, wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-One thing to try: swap the cards between the laptop and the netbook,
-to check if the differences depend on the card or the system.
+This patch and the patch by Gabor entitled "[PATCH] ssb: Implement
+fast powerup delay calculation" are enough to allow the netbook from
+John to work with ssb/b43. As this patch tampers with the SPROM offset for
+14e4:4315 devices, it should be tested by anyone with an LP PHY that works
+to ensure that it is not killed.
 
-On Wed, May 5, 2010 at 8:03 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> I received the netbook from John last Saturday. It took a while to get
-> it integrated into my network as this is my first Fedora system, but I
-> now have some results to report.
->
-> I loaded wl logging both MMIO and PCI configuration register reads and
-> writes. The two types are now interleaved. The latter are logged with
-> trace_printk() calls. Note: There is a bug in current kernel code that
-> keeps these calls from being logged. Thanks to Stephen Rostedt for
-> sorting out this problem.
->
-> Both systems have the same core sequence and the same revisions. The
-> cores in order are ChipCommon rev 0x16, IEEE 802.11 rev 0x0F, PCMCIA rev
-> 0x0A, and PCI-E rev 0x09.
->
-> I now know for certain that the netbook has an SPROM at offset 0x800.
-> Trying to read at offset 0x1000, which is the SPROM location in the
-> laptop, locks the machine, thus we need to determine the SPROM location
-> without reading 0x1000.
->
-> Fortunately, the wl driver reads and writes PCI configuration space from
-> the Linux shim code, not from the binary blob, thus these operations can
-> be traced.
->
-> The _only_ differences between the laptop and netbook operations between
-> startup and the reading of the SPROM are as follows:
->
-> Register ? ? ? ? ? Laptop ? ? ? ? ? Netbook ? ? Explanation
->
-> PCI 0x0C ? ? ? ? ? ? 0x10 ? ? ? ? ? ?0x08 ? ? ? Cache Line Size
-> PCI 0x04 ? ? ? 0x00100106 ? ? 0x001000006 ? ? ? Command Features [1]
-> Core 0 0x2C ? ? ? ? ?0x10 ? ? ? ? ? ?0x12 ? ? ? Chip Status Reg [2]
-> Core 3 0x800 ? ? ? 0x2801 ? ? ? ? ?0x3801 ? ? ? On laptop 0x3801 written
-> Core 3 0x280a ? ? ?0x6dbe ? ? ? ? ?0xedbe ? ? ? On laptop 0xedbe written
->
-> The code then switches to Core 1 (802.11) and begins reading SPROM. On
-> the laptop, it reads from 0x1000 and does a try at the smaller size
-> SPROM, then switches to the larger size, just as ssb does. On the
-> netbook, it immediately reads the larger size at offset 0x800.
->
-> I have not yet looked closely at the differences between wl and ssb, but
-> I did note one difference. In wl, bits 0xFF00 are cleared in PCI
-> register 0x40. The only thing I could find is this code fragment from
-> ipw2100 and ipw2200:
->
-> ? /* We disable the RETRY_TIMEOUT register (0x41) to keep
-> ? ?* PCI Tx retries from interfering with C3 CPU state */
-> ? pci_read_config_dword(pdev, 0x40, &val);
-> ? if ((val & 0x0000ff00) != 0)
-> ? ? ? pci_write_config_dword(pdev, 0x40, val & 0xffff00ff);
->
-> Larry
->
-> [1] The Wikipedia article on PCI configuration space says that this is a
-> bitmask of features that can be enabled/disabled. I have no explanation
-> of the details.
->
-> [2] This extra bit looks most promising of all the differences. It is
-> the bit involved in the is_sprom_available() routine for the 4315 device
-> in the Broadcom driver that has been reverse engineered; however, the
-> definition must have changed as that code would say there is no SPROM,
-> which is clearly untrue.
->
+The essential elements of this patch will also be tested as part of kernel Bug
+#15825.
 
-
-
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Larry
+ 
+Index: wireless-testing/drivers/ssb/pci.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/pci.c
++++ wireless-testing/drivers/ssb/pci.c
+@@ -631,8 +631,17 @@ static int ssb_pci_sprom_get(struct ssb_
+ 		return -ENODEV;
+ 	}
+ 
+-	bus->sprom_offset = (bus->chipco.dev->id.revision < 31) ?
+-		SSB_SPROM_BASE1 : SSB_SPROM_BASE31;
++	/* get SPROM offset: SSB_SPROM_BASE1 except for chipcommon rev >= 31
++	 * or chip ID is 0x4312 and bit 0x2 is set in chipcommon status
++	 */
++	if (bus->chipco.dev->id.revision >= 31)
++		bus->sprom_offset = SSB_SPROM_BASE31;
++	else if (bus->chip_id == 0x4312 && (bus->chipco.status & 0x02))
++		bus->sprom_offset = SSB_SPROM_BASE31;
++	else
++		bus->sprom_offset = SSB_SPROM_BASE1;
++
++	ssb_dprintk(KERN_INFO PFX "SPROM offset is 0x%x\n", bus->sprom_offset);
+ 
+ 	buf = kcalloc(SSB_SPROMSIZE_WORDS_R123, sizeof(u16), GFP_KERNEL);
+ 	if (!buf)
+Index: wireless-testing/drivers/ssb/scan.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/scan.c
++++ wireless-testing/drivers/ssb/scan.c
+@@ -306,6 +306,11 @@ int ssb_bus_scan(struct ssb_bus *bus,
+ 		}
+ 		tmp = scan_read32(bus, 0, SSB_CHIPCO_CAP);
+ 		bus->chipco.capabilities = tmp;
++		if (bus->chip_rev >= 11)
++			bus->chipco.status = scan_read32(bus, 0,
++					     SSB_CHIPCO_CHIPSTAT);
++		else
++			bus->chipco.status = 0;
+ 	} else {
+ 		if (bus->bustype == SSB_BUSTYPE_PCI) {
+ 			bus->chip_id = pcidev_to_chipid(bus->host_pci);
