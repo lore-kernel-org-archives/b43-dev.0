@@ -1,60 +1,82 @@
-From: Oncaphillis <oncaphillis@snafu.de>
-Date: Sun, 09 May 2010 00:32:40 +0200
-Subject: State of the SPROM-less driver
-In-Reply-To: <4BE4386B.5010302@lwfinger.net>
-References: <4BE3C677.2060307@snafu.de> <4BE4386B.5010302@lwfinger.net>
-Message-ID: <4BE5E688.8090107@snafu.de>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 09 May 2010 22:01:58 -0500
+Subject: [PATCH] ssb: Handle alternate SSPROM location
+Message-ID: <4be77726.2Sqkr0ilm/WZUNRg%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On 05/07/2010 05:57 PM, Larry Finger wrote:
-> On 05/07/2010 02:51 AM, Oncaphillis wrote:
->> Hallo,
->>
->> Have the patches for the "SPROM-less" bcm43 devices made their way into
->> wireless-2.6.git ? And if so -- how do I set it up with the ssb-vsprom
->> program ?
-> 
-> No, those patches have not been incorporated as we are not convinced
-> that there are any devices without SPROM in the field. With the possible
-> exception of your system, all such boxes have been shown to have an
-> SPROM. It is just at a different location.
-> 
-> Could you please try the two attached patches? Does your system work
-> with them? They are meant to apply to the wireless-testing tree.
-> 
-> Larry
+In kernel Bugzilla #15825 (2 users), in a wireless mailing list thread
+(http://lists.infradead.org/pipermail/b43-dev/2010-May/000124.html), and on a
+netbook owned by John Linville
+(http://marc.info/?l=linux-wireless&m=127230751408818&w=4), there are reports
+of ssb failing to detect an SPROM at the normal location. After studying the
+MMIO trace dump for the Broadcom wl driver, it was determined that the affected
+boxes had a relocated SPROM.
 
- That looks very promising. The module inserts fine. It gives
-me a valid MAC and I get a rsync file transfer to a NFS mount with
-something around 2MB/s. What seems a little bit strange is the fact
-that iwconfig toggles between  1Mb/s and 36Mb/s when reporting the
-link speed.
+This patch fixes all systems that have reported this problem.
 
-For a module with debug options dmesg tells me:
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Stable <stable@kernel.org>
+---
 
-b43-pci-bridge 0000:01:00.0: PCI INT A -> GSI 16 (level, low) -> IRQ 16
-b43-pci-bridge 0000:01:00.0: setting latency timer to 64
-b43-phy0: Broadcom 4312 WLAN found (core revision 15)
-b43-phy0 debug: Found PHY: Analog 6, Type 5, Revision 1
-b43-phy0 debug: Found Radio: Manuf 0x17F, Version 0x2062, Revision 2
-Registered led device: b43-phy0::tx
-Registered led device: b43-phy0::rx
-Registered led device: b43-phy0::radio
-b43 ssb0:0: firmware: requesting b43/ucode15.fw
-b43 ssb0:0: firmware: requesting b43/lp0initvals15.fw
-b43 ssb0:0: firmware: requesting b43/lp0bsinitvals15.fw
-b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
-b43-phy0 debug: b2062: Using crystal tab entry 19200 kHz.
-b43-phy0 debug: Chip initialized
-b43-phy0 debug: 64-bit DMA initialized
-b43-phy0 debug: QoS enabled
-b43-phy0 debug: Wireless interface started
-b43-phy0 debug: Adding Interface type 2
-b43-phy0 debug: Using hardware based encryption for keyidx: 0, mac:
-00:25:9c:d0:04:fb
+John,
 
-nice work -- thank you
+This patch and the one by Gabor entitled "[PATCH] ssb: Implement
+fast powerup delay calculation" are needed to fix these systems. As there is the
+possibility that this patch will break some 14e4:4315 devices, it should stew in
+testing for a while. I am confident enough in it to add the Cc for stable.
+
+Larry
+---
+ 
+Index: wireless-testing/drivers/ssb/pci.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/pci.c
++++ wireless-testing/drivers/ssb/pci.c
+@@ -631,8 +631,17 @@ static int ssb_pci_sprom_get(struct ssb_
+ 		return -ENODEV;
+ 	}
+ 
+-	bus->sprom_offset = (bus->chipco.dev->id.revision < 31) ?
+-		SSB_SPROM_BASE1 : SSB_SPROM_BASE31;
++	/* get SPROM offset: SSB_SPROM_BASE1 except for chipcommon rev >= 31
++	 * or chip ID is 0x4312 and chipcommon status & 3 == 2
++	 */
++	if (bus->chipco.dev->id.revision >= 31)
++		bus->sprom_offset = SSB_SPROM_BASE31;
++	else if (bus->chip_id == 0x4312 && (bus->chipco.status & 0x03) == 2)
++		bus->sprom_offset = SSB_SPROM_BASE31;
++	else
++		bus->sprom_offset = SSB_SPROM_BASE1;
++
++	ssb_dprintk(KERN_INFO PFX "SPROM offset is 0x%x\n", bus->sprom_offset);
+ 
+ 	buf = kcalloc(SSB_SPROMSIZE_WORDS_R123, sizeof(u16), GFP_KERNEL);
+ 	if (!buf)
+Index: wireless-testing/drivers/ssb/driver_chipcommon.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/driver_chipcommon.c
++++ wireless-testing/drivers/ssb/driver_chipcommon.c
+@@ -252,15 +252,17 @@ void ssb_chipcommon_init(struct ssb_chip
+ {
+ 	u16 delay;
+ 
++	cc->status = 0;
+ 	if (!cc->dev)
+ 		return; /* We don't have a ChipCommon */
+ 	if (cc->dev->id.revision >= 11)
+ 		cc->status = chipco_read32(cc, SSB_CHIPCO_CHIPSTAT);
++	ssb_dprintk(KERN_INFO PFX "chipcommon status is 0x%x\n", cc->status);
+ 	ssb_pmu_init(cc);
+ 	chipco_powercontrol_init(cc);
+ 	ssb_chipco_set_clockmode(cc, SSB_CLKMODE_FAST);
+ 	delay = calc_fast_powerup_delay(cc);
+-	ssb_printk(KERN_INFO PFX "fast_pwrup_delay is %d\n", delay);
++	ssb_dprintk(KERN_INFO PFX "fast_pwrup_delay is %d\n", delay);
+ 	cc->fast_pwrup_delay = delay;
+ 	ssb_write16(cc->dev, SSB_MMIO_POWERUP_DELAY, delay);
+ }
