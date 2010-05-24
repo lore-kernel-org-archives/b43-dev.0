@@ -1,41 +1,35 @@
-From: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <mb@bu3sch.de>
-Date: Mon, 24 May 2010 18:41:26 +0200
-Subject: PCIe setup routines
-In-Reply-To: <4BFAA997.4050107@lwfinger.net>
-	(sfid-20100524_163025_371025_09010168)
-References: <4BBB6721.3030201@lwfinger.net>
-	<AANLkTilILf0T6hFs9EOwdOGyTTd5RJEMvE4rjz3uP3Yh@mail.gmail.com>
-	<4BFAA997.4050107@lwfinger.net>
-	(sfid-20100524_163025_371025_09010168)
-Message-ID: <4BFAAC36.6020303@bu3sch.de>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Mon, 24 May 2010 21:50:22 +0200
+Subject: [PATCH 0/2] ssb: updates matching specs, fix for hangs?
+Message-ID: <1274730624-22922-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 05/24/2010 06:30 PM, Larry Finger wrote:
-> On 05/24/2010 11:23 AM, Rafa? Mi?ecki wrote:
->> 2010/4/6 Larry Finger<Larry.Finger@lwfinger.net>:
->>> There are routines in
->>> http://bcm-v4.sipsolutions.net/PCI-E#PCIe_Attach_.28int_state.29 that I
->>> don't think have been implemented.
->>>
->>> I still have a question about getting an MMIO address from sprom[x].
->>> That is how the 0x280A address is picked in the code I sent earlier;
->>> however, I don't see any of the other addresses in those routines being
->>> used on my card. I still need to find where that array is filled in
->>> Broadcom's code.
->>
->> Could someone point me to part of core related to PCI(e) operations?
->
-> Most of the stuff is in drivers/ssb/driver_pcicore.c.
+John, I don't really know w-t policy, so please decide where we should apply
+these patches. I'll try to provide some description.
 
-Everything related to the PCI-core is in that file.
+We got reports of some devices hanging with ssb module, it was around SPROM
+reading. AFAIK two patches are needed to fix this issue. One was already
+posted by Larry: "ssb: Handle alternate SSPROM location" (however I can not
+find it in w-t). Second one is attached patch for fast powerup delay.
 
-> If not there,
-> check in drivers/ssb/pci.c
+Not sure about PMU init patch, I think it is needed to get devices working
+but not sure if it affects (fixes) handing issue.
 
-No, everything in drivers/ssb/pci.c is host-related. This is the code 
-that ties the SSB bus to the host PCI bus, _if_ it is a PCI card.
-The file does not contain any PCI-core related code.
+Fix of hanging sounds important and thankfully patches are quite trivial. On
+the other hand we are at the end of merge window already. So please, help with
+taking a decision about this.
+
+CC-ing b43, hope it's OK.
+
+Rafa? Mi?ecki (2):
+  ssb: update PMU init to match specs
+  ssb: fast powerup delay calculation for PMU capable devices
+
+ drivers/ssb/driver_chipcommon.c     |   24 ++++++++++++++++++++++++
+ drivers/ssb/driver_chipcommon_pmu.c |   17 +++++++----------
+ 2 files changed, 31 insertions(+), 10 deletions(-)
