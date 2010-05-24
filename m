@@ -1,9 +1,10 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 24 May 2010 21:50:23 +0200
-Subject: [PATCH 1/2] ssb: update PMU init to match specs
+Date: Mon, 24 May 2010 21:50:24 +0200
+Subject: [PATCH 2/2] ssb: fast powerup delay calculation for PMU capable
+	devices
 In-Reply-To: <1274730624-22922-1-git-send-email-zajec5@gmail.com>
 References: <1274730624-22922-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1274730624-22922-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1274730624-22922-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,46 +13,52 @@ To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Acked-by: G?bor Stefanik <netrolller.3d@gmail.com>
 ---
- drivers/ssb/driver_chipcommon_pmu.c |   17 +++++++----------
- 1 files changed, 7 insertions(+), 10 deletions(-)
+ drivers/ssb/driver_chipcommon.c |   24 ++++++++++++++++++++++++
+ 1 files changed, 24 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
-index 3d55124..5732bb2 100644
---- a/drivers/ssb/driver_chipcommon_pmu.c
-+++ b/drivers/ssb/driver_chipcommon_pmu.c
-@@ -502,9 +502,9 @@ static void ssb_pmu_resources_init(struct ssb_chipcommon *cc)
- 		chipco_write32(cc, SSB_CHIPCO_PMU_MAXRES_MSK, max_msk);
+diff --git a/drivers/ssb/driver_chipcommon.c b/drivers/ssb/driver_chipcommon.c
+index 59ae76b..bda8514 100644
+--- a/drivers/ssb/driver_chipcommon.c
++++ b/drivers/ssb/driver_chipcommon.c
+@@ -209,6 +209,24 @@ static void chipco_powercontrol_init(struct ssb_chipcommon *cc)
+ 	}
  }
  
-+/* http://bcm-v4.sipsolutions.net/802.11/SSB/PmuInit */
- void ssb_pmu_init(struct ssb_chipcommon *cc)
++/* http://bcm-v4.sipsolutions.net/802.11/PmuFastPwrupDelay */
++static u16 pmu_fast_powerup_delay(struct ssb_chipcommon *cc)
++{
++	struct ssb_bus *bus = cc->dev->bus;
++
++	switch (bus->chip_id) {
++	case 0x4312:
++	case 0x4322:
++	case 0x4328:
++		return 7000;
++	case 0x4325:
++		/* TODO: */
++	default:
++		return 15000;
++	}
++}
++
++/* http://bcm-v4.sipsolutions.net/802.11/ClkctlFastPwrupDelay */
+ static void calc_fast_powerup_delay(struct ssb_chipcommon *cc)
  {
--	struct ssb_bus *bus = cc->dev->bus;
- 	u32 pmucap;
+ 	struct ssb_bus *bus = cc->dev->bus;
+@@ -218,6 +236,12 @@ static void calc_fast_powerup_delay(struct ssb_chipcommon *cc)
  
- 	if (!(cc->capabilities & SSB_CHIPCO_CAP_PMU))
-@@ -516,15 +516,12 @@ void ssb_pmu_init(struct ssb_chipcommon *cc)
- 	ssb_dprintk(KERN_DEBUG PFX "Found rev %u PMU (capabilities 0x%08X)\n",
- 		    cc->pmu.rev, pmucap);
+ 	if (bus->bustype != SSB_BUSTYPE_PCI)
+ 		return;
++
++	if (cc->capabilities & SSB_CHIPCO_CAP_PMU) {
++		cc->fast_pwrup_delay = pmu_fast_powerup_delay(cc);
++		return;
++	}
++
+ 	if (!(cc->capabilities & SSB_CHIPCO_CAP_PCTL))
+ 		return;
  
--	if (cc->pmu.rev >= 1) {
--		if ((bus->chip_id == 0x4325) && (bus->chip_rev < 2)) {
--			chipco_mask32(cc, SSB_CHIPCO_PMU_CTL,
--				      ~SSB_CHIPCO_PMU_CTL_NOILPONW);
--		} else {
--			chipco_set32(cc, SSB_CHIPCO_PMU_CTL,
--				     SSB_CHIPCO_PMU_CTL_NOILPONW);
--		}
--	}
-+	if (cc->pmu.rev == 1)
-+		chipco_mask32(cc, SSB_CHIPCO_PMU_CTL,
-+			      ~SSB_CHIPCO_PMU_CTL_NOILPONW);
-+	else
-+		chipco_set32(cc, SSB_CHIPCO_PMU_CTL,
-+			     SSB_CHIPCO_PMU_CTL_NOILPONW);
- 	ssb_pmu_pll_init(cc);
- 	ssb_pmu_resources_init(cc);
- }
 -- 
 1.6.4.2
