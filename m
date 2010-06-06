@@ -1,43 +1,39 @@
-From: Martino Salvetti <the9ull@silix.org>
-Date: Tue, 1 Jun 2010 10:39:44 +0200
-Subject: Problem with b43
-In-Reply-To: <4C046DA6.3020308@polymtl.ca>
-References: <AANLkTilLczfhdWgMfxN2eL5dVmml4KL4ndq0BMtgFfDG@mail.gmail.com> 
-	<4C046DA6.3020308@polymtl.ca>
-Message-ID: <AANLkTinKC4wz1tcKcATNOPTrDcuVFyfV83RYYwQfjC9k@mail.gmail.com>
+From: Felipe J <felipe.mail.lists@googlemail.com>
+Date: Sun, 6 Jun 2010 10:02:01 +0200
+Subject: BCM4318 Airforce one
+Message-ID: <AANLkTinxLHKZlBbYCWWsIhYM4B6mhibU7n0_gaX9rhEB@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Also me... I sent a message about this problem but it was blocked.
+Hi ,
 
-I have this problem olny with multi-AP networks, in dmesg I can see that it
-continue to changes the AP until they ends to responds. (At my home, with a
-digicom ADSL router, the wifi works)
+I had my wireless card working nicely since the first installation (i just
+remember that i had to do some stuff, which i cant remember now but once i
+did i got it working). I have more then 8 months and never had problems.
+Yesterday i installed the following, to try to get some other application
+working:
+*
+sudo apt-get install linux-headers-`uname -r`  linux-source kernel-package
+libncurses5-dev fakeroot wget bzip2*
 
-Martino
+I realized after that my wireless card stopped working, after this command.
 
-2010/6/1 William Bourque <william.bourque@polymtl.ca>
+Then i tried to rollback with the command:
 
->
-> Just saying, I have a similar problem... I tried to post twice about it
-> on the list since 2 weeks but the mails keep getting moderated (and
-> never unmoderated) because of "suspicious content".
->
-> - William
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
+*sudo apt-get remove linux-headers-`uname -r`  linux-source kernel-package
+libncurses5-dev fakeroot wget bzip2*
 
+Still no sucess. My card is still not working. I tried to reinstall
+b43-fwcutter, and still no sucess....
 
+Does anyone have a suggestion?
 
--- 
-Remember: with great power comes great current squared times resistance.
+Thanks,
+
+Felipe
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100601/b24d8588/attachment.htm>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100606/64ccef38/attachment.htm>
