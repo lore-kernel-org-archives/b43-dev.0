@@ -1,220 +1,118 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Mon, 7 Jun 2010 22:11:14 +0200
+From: Chris Martin <chris@martin.cc>
+Date: Tue, 8 Jun 2010 09:38:18 +1000
 Subject: BCM5354
-In-Reply-To: <4C0D4E98.3040903@sephix.com>
+In-Reply-To: <AANLkTimhZWtVucKu4_Mhrd8WdHk2ngR37pEans71gZBa@mail.gmail.com>
 References: <4C0D3B89.7060600@sephix.com> <4C0D3EF6.3040908@lwfinger.net> 
 	<4C0D40C2.7050409@sephix.com> <4C0D4BB3.7070607@lwfinger.net> 
 	<4C0D4E98.3040903@sephix.com>
-Message-ID: <AANLkTimhZWtVucKu4_Mhrd8WdHk2ngR37pEans71gZBa@mail.gmail.com>
+	<AANLkTimhZWtVucKu4_Mhrd8WdHk2ngR37pEans71gZBa@mail.gmail.com>
+Message-ID: <AANLkTimdhwo-KhM3c1mJmyZih4CKPNRKQmVLGNgY8DOg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-The specs are located at http://bcm-v4.sipsolutions.de/ - there is no
-TODO list; if you find something in the specs that is not in the
-driver, or a function in the driver that contains "TODO" as a comment,
-then you have came across something unimplemented. Notably, HW
-calibration is only partially implemented.
+I to am working on project using openWrt and  the  BCM5354, and we too are
+using the 2.4 kernel.
+However I have been testing the 2.6 with wireless compat (b43)
 
-On Mon, Jun 7, 2010 at 9:55 PM, Robert Hazbun <robert@sephix.com> wrote:
-> Where can I find the "spec" and the "todo-list" for what may / may not
-> be implemented.
->
-> --RH
->
-> On 6/7/2010 12:42 PM, Larry Finger wrote:
->> On 06/07/2010 01:56 PM, Robert Hazbun wrote:
->>
->>> Interesting. So, this give me hope that I've done something wrong. When
->>> I try to enable AP mode using iwconfig, I simply get an error.
->>>
->>> Larry, the company I work for is willing to fund b43 work on the BCM5354
->>> and have it released to the public. Do you know who has done the initial
->>> work on the 5354, and who would be the right person to contact?
->>>
->> As Michael Buesch says, there may be parts of the 5354 spec that have
->> not yet been implemented in b43. I am the person that did most of the LP
->> PHY reverse engineering. The person that did the coding from the
->> resulting "specs" was Gabor Stefanik, who reads this list. I will review
->> the 5354-specific code in the latest driver to see if changes are needed.
->>
->> I suspect that the problem is with iwconfig, which uses the WEXT
->> interface that is only partially implemented. ?I wrote the following for
->> the openSUSE Wireless Forum. It will not wok directly with openWRT, but
->> it should give you the idea.
->>
->> =================================================
->>
->> This article might be entitled "How to convert an $800 laptop into a $40
->> wireless router", which indicates why doing this might not be desirable.
->> There are, however, at least two cases where this might make sense: (1)
->> You want to provide or test some feature that is not supplied by your
->> AP. One example is 802.11a (5 GHz) channels. (2) your need for an AP is
->> temporary such as network sharing of a 3G broadband modem.
->>
->> To accomplish the task, several pieces of software will be needed
->> including hostapd, a DHCP server for the AP's clients, and an iptables
->> rules for Network Address Translation (NAT). The requirements for these
->> are discussed in turn.
->>
->> I. Hostapd
->>
->> Hostapd runs in user space and interacts with the device driver to
->> handle most of the things that an AP does, such as transmitting of
->> beacons, authentication, etc. The version included with the "hostapd"
->> package of openSUSE 11.1 (0.5.10) works with a limited number of devices
->> and drivers. For modern drivers that use mac80211, a newer version is
->> needed, which can be downloaded from hostapd: IEEE 802.11 AP, IEEE
->> 802.1X/WPA/WPA2/EAP/RADIUS Authenticator. Building this will require
->> that the make, libnl, libnl-devel, openssl-devel and gcc packages are
->> installed. I recommend installing the package from the repository and
->> then doing a download, make and install of the later version. If your
->> kernel is older than 2.6.28 (check uname -r), then you will need the
->> compat-wireless code that is downloaded from Download - Linux Wireless.
->> For this option, you will also need to install the kernel source, and
->> prepare it for use.
->> To prepare the source, issue the following commands:
->> Code:
->>
->> cd /usr/src/linux
->> sudo cp /proc/config.gz .
->> sudo gunzip config.gz
->> sudo cp config .config
->> sudo make prepare
->>
->> Configuration of hostapd is accomplished with a configuration file named
->> hostapd.conf. There are a number of options in that file, but a working
->> AP with WPA2 encryption can be setup with the following:
->>
->> Code:
->>
->> interface=wlan0
->> driver=nl80211
->> hw_mode=g
->> channel=1
->> ssid=test
->> wpa=2
->> wpa_key_mgmt=WPA-PSK
->> wpa_pairwise=CCMP
->> wpa_passphrase=123456789
->>
->> II. Dhcpd
->>
->> The standard dhcpd package in openSUSE 11.1 works just fine. To use it,
->> you need to modify its configuration file dhcpd.conf. Again, there are a
->> number of options available, but you can get a working DHCP server with
->> the following:
->>
->> Code:
->>
->> option domain-name-servers 192.168.1.1;
->> default-lease-time 600;
->> max-lease-time 7200;
->> ddns-update-style none; ddns-updates off;
->> subnet 192.168.0.0 netmask 255.255.255.0 {
->> ? ? ? ? range 192.168.0.200 192.168.0.229;
->> ? ? ? ? option subnet-mask 255.255.255.0;
->> ? ? ? ? option broadcast-address 192.168.0.255;
->> ? ? ? ? option routers 192.168.0.1;
->> }
->>
->> The above configuration assumes that the AP will be connected to the
->> outside world with an IP address of 192.168.1.X and that the AP's
->> clients will have addresses 192.168.0.X. If other addresses are used,
->> adjust the above info accordingly.
->>
->> III. Iptables Network Address Translation rules
->>
->> For this example, the NAT rules will be only those necessary to get the
->> AP operational. Although iptables is used to write firewalls, the only
->> protection in this code is to allow only established connections. The
->> rules are shown in the script below.
->>
->> IV. A script to start and stop the Access Point
->>
->> The following code will start and stop the AP. To make any changes
->> easier, the locations of the various utilities, the interface names, and
->> the IP address to be used are defined by symbols at the start of the
->> script. I also use configuration files that are stored in root's home
->> directory, not in /etc as would normally be done. This script must be
->> executable and be run as root.
->>
->> Code:
->>
->> #!/bin/sh
->> # Script to start/stop a hostapd-based access point
->> #
->> # Symbols for needed programs
->>
->> IPTABLES=/usr/sbin/iptables
->> IFCONFIG=/sbin/ifconfig
->> DHCPD=/usr/sbin/dhcpd
->> HOSTAPD=/usr/local/bin/hostapd
->>
->> # Symbols for internal and external interfaces
->>
->> NET_INT=wlan0
->> NET_EXT=eth0
->>
->> # IP address for the AP
->>
->> INT_ADDR=192.168.0.1
->>
->> case "$1" in
->> start)
->> ? ? ? ? echo "Starting AP mode for $NET_INT at address $INT_ADDR"
->> ? ? ? ? # Disable packet forwarding
->> ? ? ? ? echo 0 > /proc/sys/net/ipv4/ip_forward
->> ? ? ? ? # Stop any existing hostapd and dhcpd daemons
->> ? ? ? ? killproc hostapd
->> ? ? ? ? killproc dhcpd
->> ? ? ? ? #Set up forwarding
->> ? ? ? ? $IPTABLES -t nat -A POSTROUTING -o $NET_EXT -j MASQUERADE
->> ? ? ? ? $IPTABLES -A FORWARD -i $NET_EXT -o $NET_INT -m state \
->> ? ? ? ? ? ? ? --state RELATED,ESTABLISHED -j ACCEPT
->> ? ? ? ? $IPTABLES -A FORWARD -i $NET_INT -o $NET_EXT -j ACCEPT
->> ? ? ? ? # Enable packet forwarding
->> ? ? ? ? echo 1 > /proc/sys/net/ipv4/ip_forward
->> ? ? ? ? # Get the internal interface in the right state
->> ? ? ? ? $IFCONFIG $NET_INT down
->> ? ? ? ? $IFCONFIG $NET_INT up
->> ? ? ? ? $IFCONFIG $NET_INT $INT_ADDR
->> ? ? ? ? # dhcpd needs to have a leases file available - create it if needed
->> ? ? ? ? if [ ! -f /var/lib/dhcp/db/dhcpd.leases ]; then
->> ? ? ? ? ? ? ? ? touch /var/lib/dhcp/db/dhcpd.leases
->> ? ? ? ? fi
->> ? ? ? ? # Bring up the DHCP server
->> ? ? ? ? $DHCPD -cf /root/dhcpd.conf $NET_INT
->> ? ? ? ? # Bring up hostapd
->> ? ? ? ? $HOSTAPD -B /root/hostapd.conf
->> ? ? ? ? ;;
->> stop)
->> ? ? ? ? echo "Stopping AP mode on $NET_INT"
->> ? ? ? ? # Stop hostapd and dhcpd daemons
->> ? ? ? ? killproc hostapd
->> ? ? ? ? killproc dhcpd
->> ? ? ? ? ;;
->> *)
->> ? ? ? ? echo "Usage: $0 {start|stop}"
->> ? ? ? ? exit 1
->> ? ? ? ? ;;
->> esac
->>
->> =================================================
->>
->> Larry
->>
->
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
+I was about to log an trac issues with openWrt today, but I saw this post so
+I thought that would add my bit here as well.
+
+I can confirm that It works flawlessly in client mode.  However It fails in
+AP mode.
+
+There are 2 types of errors that I encounter.  NOTE: these problems do not
+appear in STA mode.  I have been using STA mode for over a month - all day.
+  I am currently working on another issue, but once I have that solved I was
+going to start on this.  But in the mean time I DO have the resources and
+the time to test anything that anyone may suggest.  and if I find a solution
+I will obviously be posting it back here.
+
+In AP mode the time it takes for the following errors to occur varies -
+sometimes it will run for 1/2 day OK.  others it fails almost immediately -
+but mostly it is unusable
+
+--------------ERROR 1----------------
+
+b43-phy0 ERROR: DMA RX buffer too small (len: 64653, buffer: 2352,
+nr-dropped: 28)
+b43-phy0 ERROR: MAC suspend failed
+b43-phy0 ERROR: MAC suspend failed
+
+--------------ERROR 2----------------
+
+root at OpenWrt:/# skb_over_panic: text:80c9a5f0 len:2382 put:2382
+head:81fdb000 data:81fdb040 tail:0x81fdb98e end:0x81fdb980 dev:<NULL>
+Kernel bug detected[#1]:
+Cpu 0
+$ 0   : 00000000 1000b800 0000007c 00000001
+$ 4   : 80277480 00001e19 ffffffff 00001e19
+$ 8   : 00004000 00000000 00000001 ffffffff
+$12   : 0000000f 80239688 ffffffff 00000007
+$16   : 01fdb040 81fdb040 00000930 80cca460
+$20   : 81fd8c00 0000003a a1fca3a0 80ca1198
+$24   : 00000002 8015d17c
+$28   : 80cea000 80cebdb0 0000003c 80199ff4
+Hi    : 00000000
+Lo    : 00000077
+epc   : 80199ff4 0x80199ff4
+    Not tainted
+ra    : 80199ff4 0x80199ff4
+Status: 1000b803    KERNEL EXL IE
+Cause : 00800024
+PrId  : 00029029 (Broadcom BCM3302)
+Modules linked in: nf_nat_tftp nf_conntrack_tftp nf_nat_irc nf_conntrack_irc
+nf_nat_ftp nf_conntrack_ftp xt_HL xt_hl xt_MARK ipt_ECN xt_CLASSIFY xt_time
+xt_tcpmss xt_statistic xt_mark xt_length ipt_ecn xt_DSCP xt_dscp xt_IMQ imq
+xt_string xt_layer7 ipt_MASQUERADE iptable_nat nf_nat xt_CONNMARK xt_recent
+xt_helper xt_conntrack xt_connmark xt_connbytes xt_NOTRACK iptable_raw
+xt_state nf_conntrack_ipv4 nf_defrag_ipv4 nf_conntrack pppoe pppox
+ipt_REJECT xt_TCPMSS ipt_LOG xt_comment xt_multiport xt_mac xt_limit
+iptable_mangle iptable_filter ip_tables xt_tcpudp x_tables ppp_async
+ppp_generic slhc b43 mac80211 ts_fsm ts_bm ts_kmp crc_ccitt cfg80211
+compat_firmware_class compat arc4 aes_generic deflate ecb cbc switch_robo
+switch_core diag
+Process irq/5-b43 (pid: 845, threadinfo=80cea000, task=81f0a188,
+tls=00000000)
+Stack : 00000000 80c9a5f0 0000094e 0000094e 81fdb000 81fdb040 81fdb98e
+81fdb980
+        80253704 81fd8c00 0000003a 80c9a5f0 81fcb9cc 00ff0000 000000d0
+00010000
+        81de4400 81de4400 81fea2b8 00ff0000 80ca1198 00010000 00010000
+81de4400
+        00008000 00010000 81fd8ba4 00010000 802b1880 00000000 80279324
+80c872b8
+        818906c4 81f0a188 81fd8b80 81f0a188 81f0a318 81fd8ba4 00010000
+802b1880
+        ...
+Call Trace:[<80c9a5f0>] 0x80c9a5f0
+[<80c9a5f0>] 0x80c9a5f0
+[<80c872b8>] 0x80c872b8
+[<8001ce58>] 0x8001ce58
+[<80186fdc>] 0x80186fdc
+[<80c87410>] 0x80c87410
+[<80056b3c>] 0x80056b3c
+[<8000afcc>] 0x8000afcc
+[<800569c0>] 0x800569c0
+[<800569c0>] 0x800569c0
+[<8003d250>] 0x8003d250
+[<81f9c08c>] 0x81f9c08c
+[<8000f884>] 0x8000f884
+[<8003d1d4>] 0x8003d1d4
+[<8000f874>] 0x8000f874
 
 
+Code: afab001c  0c0028fd  afa20020 <0200000d> 080667fe  00000000  8fbf002c
+ 01201021  03e00008
+Disabling lock debugging due to kernel taint
+exiting task "irq/5-b43" (845) is an active IRQ thread (irq 5)
 
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+----------------------------------------------------------
+Chris Martin
+m: 0419812371
+----------------------------------------------------------
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100608/b183c3ca/attachment.html>
