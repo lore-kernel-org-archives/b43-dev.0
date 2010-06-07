@@ -1,41 +1,25 @@
-From: Felipe JK <felipe.mail.lists@googlemail.com>
-Date: Mon, 07 Jun 2010 12:21:55 +0200
-Subject: BCM4318 Airforce one
-In-Reply-To: <4C0BAE1E.5080604@lwfinger.net>
-References: <AANLkTikCSHpV9v7Ht_GcRRnvlAov7MyOPw828Y9fLfuZ@mail.gmail.com>
-	<4C0BAE1E.5080604@lwfinger.net>
-Message-ID: <4C0CC843.5000503@googlemail.com>
+From: Robert Hazbun <robert@sephix.com>
+Date: Mon, 07 Jun 2010 11:33:45 -0700
+Subject: BCM5354
+Message-ID: <4C0D3B89.7060600@sephix.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Thanks for your reply! Right after sending the email, I manage to solve 
-it, by uninstalling the driver and reinstalling again...
+Hello all,
 
-Felipe
+I currently work for a company that is using OpenWRT, with linux 2.4, on
+a BCM5354. We really want to move to OpenWRT with linux 2.6 using the
+b43 driver on this chip. Initial test results show that b43 seems to
+work in client / Adhoc mode, but not in AP mode. Unfortunately, I have
+been unable to ascertain the status of the b43 driver with respect to
+this chip.
 
-Em 06/06/2010 04:18 PM, Larry Finger escreveu:
-> On 06/06/2010 03:08 AM, Felipe J wrote:
->    
->> Hi,
->>
->> I forgot to mention on my last email that after removing that packages,
->> network manager now finds a strange inexistent wireless network called (
->> ??).
->>      
-> Please post the entire dmesg output on pastebin and post a link.
->
-> Installing new packages on whatever distro uses apt-get should cause no
-> problems with b43, but you may have messed up some component that is
-> needed for networking. That strange network name may be a clue.
->
-> Larry
->
->
->    
+Can anyone confirm whether it's fully functional under this platform? If
+not, what's left to be done ?
 
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100607/bc5d34fa/attachment.html>
+Thanks,
+
+Robert Hazbun
