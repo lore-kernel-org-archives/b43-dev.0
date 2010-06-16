@@ -1,14 +1,24 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Wed, 16 Jun 2010 16:59:42 +0200
+From: neubauten84 <neubauten84@yahoo.it>
+Date: Wed, 16 Jun 2010 13:05:17 -0700 (PDT)
 Subject: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
-In-Reply-To: <935712.84422.qm@web27901.mail.ukl.yahoo.com>
-References: <935712.84422.qm@web27901.mail.ukl.yahoo.com>
-Message-ID: <AANLkTinW0dSKL-6FUX1p-Otm9ywgPO3HAoebrF_-JwOd@mail.gmail.com>
+In-Reply-To: <AANLkTinW0dSKL-6FUX1p-Otm9ywgPO3HAoebrF_-JwOd@mail.gmail.com>
+Message-ID: <909205.25725.qm@web27901.mail.ukl.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
+
+This is the error:[ 2058.872642] b43-phy0 ERROR: Fatal DMA error: 0x00000000, 0x00000800, 0x00000000, 0x00000000, 0x00000000, 0x00000000[ 2058.872671] b43-phy0 ERROR: This device does not support DMA on your system. Please use PIO instead.[ 2058.872688] b43-phy0: Controller RESET (DMA error) ...[ 2059.100343] b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)[ 2064.629197] b43-phy0: Controller restarted
+The machine is a HP Compaq Mini 700EL.Tks!
+
+--- Mer 16/6/10, G?bor Stefanik <netrolller.3d@gmail.com> ha scritto:
+
+Da: G?bor Stefanik <netrolller.3d@gmail.com>
+Oggetto: Re: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+A: "neubauten84" <neubauten84@yahoo.it>
+Cc: b43-dev at lists.infradead.org
+Data: Mercoled? 16 giugno 2010, 16:59
 
 Well, what problems are you having? Do you get DMA errors? Please post
 dmesg output of the failure.
@@ -39,3 +49,10 @@ On Wed, Jun 16, 2010 at 12:36 PM, neubauten84 <neubauten84@yahoo.it> wrote:
 
 --
 Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100616/6a225c40/attachment.html>
