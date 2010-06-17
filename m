@@ -1,15 +1,28 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Thu, 17 Jun 2010 21:43:18 +0200
+From: neubauten84 <neubauten84@yahoo.it>
+Date: Thu, 17 Jun 2010 20:20:12 +0000 (GMT)
 Subject: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
-In-Reply-To: <565371.702.qm@web27907.mail.ukl.yahoo.com>
-References: <AANLkTikD5RRgXZp1VsDqZ2ujLdVgN30bpl2_AL80ebOi@mail.gmail.com> 
-	<565371.702.qm@web27907.mail.ukl.yahoo.com>
-Message-ID: <AANLkTilXkTaDu7F4WrkKosNqyGis3Sqk8dUJVs1RnUml@mail.gmail.com>
+In-Reply-To: <AANLkTilXkTaDu7F4WrkKosNqyGis3Sqk8dUJVs1RnUml@mail.gmail.com>
+Message-ID: <973385.2026.qm@web27908.mail.ukl.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
+
+Ok..I report again the dma error:
+b43-phy0 ERROR: Fatal DMA error: 0x00000000, 0x00000800, 0x00000000, 0x00000000, 0x00000000, 0x00000000
+b43-phy0 ERROR: This device does not support DMA on your system. Please use PIO instead.
+b43-phy0: Controller RESET (DMA error) ...
+b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
+b43-phy0: Controller restarted
+The expression "It doesn't work" was referred to your suggest to remove b43.conf file..the kernel doesn't auto choose the right mode..
+--- Gio 17/6/10, G?bor Stefanik <netrolller.3d@gmail.com> ha scritto:
+
+Da: G?bor Stefanik <netrolller.3d@gmail.com>
+Oggetto: Re: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+A: "neubauten84" <neubauten84@yahoo.it>
+Cc: b43-dev at lists.infradead.org
+Data: Gioved? 17 giugno 2010, 21:43
 
 "It doesn't work" is not a proper error description - please post logs
 of what's actually happening (i.e. dmesg).
@@ -127,3 +140,10 @@ of what's actually happening (i.e. dmesg).
 
 --
 Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100617/f1264c60/attachment-0001.html>
