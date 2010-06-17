@@ -1,15 +1,23 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Thu, 17 Jun 2010 14:39:25 +0200
+From: neubauten84 <neubauten84@yahoo.it>
+Date: Thu, 17 Jun 2010 13:46:19 +0000 (GMT)
 Subject: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
-In-Reply-To: <28176.8708.qm@web27907.mail.ukl.yahoo.com>
-References: <AANLkTilk9hbGBYZtUX_4xfv7qykPeoW_aiOMX0aWjQCc@mail.gmail.com> 
-	<28176.8708.qm@web27907.mail.ukl.yahoo.com>
-Message-ID: <AANLkTikD5RRgXZp1VsDqZ2ujLdVgN30bpl2_AL80ebOi@mail.gmail.com>
+In-Reply-To: <AANLkTikD5RRgXZp1VsDqZ2ujLdVgN30bpl2_AL80ebOi@mail.gmail.com>
+Message-ID: <565371.702.qm@web27907.mail.ukl.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
+
+It doesn't work..it doesn't recognize the right mode!!I have to manually force pio.Have I to recompile the kernel or using b43.conf file is enough?Tks!
+
+--- Gio 17/6/10, G?bor Stefanik <netrolller.3d@gmail.com> ha scritto:
+
+Da: G?bor Stefanik <netrolller.3d@gmail.com>
+Oggetto: Re: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+A: "neubauten84" <neubauten84@yahoo.it>
+Cc: b43-dev at lists.infradead.org
+Data: Gioved? 17 giugno 2010, 14:39
 
 2010/6/17 neubauten84 <neubauten84@yahoo.it>
 >
@@ -104,3 +112,10 @@ right mode to use for your card.
 
 --
 Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100617/9556237b/attachment.html>
