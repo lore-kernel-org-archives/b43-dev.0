@@ -1,15 +1,23 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Wed, 16 Jun 2010 22:45:47 +0200
+From: neubauten84 <neubauten84@yahoo.it>
+Date: Thu, 17 Jun 2010 07:52:33 +0000 (GMT)
 Subject: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
-In-Reply-To: <909205.25725.qm@web27901.mail.ukl.yahoo.com>
-References: <AANLkTinW0dSKL-6FUX1p-Otm9ywgPO3HAoebrF_-JwOd@mail.gmail.com> 
-	<909205.25725.qm@web27901.mail.ukl.yahoo.com>
-Message-ID: <AANLkTilk9hbGBYZtUX_4xfv7qykPeoW_aiOMX0aWjQCc@mail.gmail.com>
+In-Reply-To: <AANLkTilk9hbGBYZtUX_4xfv7qykPeoW_aiOMX0aWjQCc@mail.gmail.com>
+Message-ID: <28176.8708.qm@web27907.mail.ukl.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
+
+That was with 2.6.35-3-generic on Ubuntu Maverick. I tried to upgrade to developing version because of the kernel...I created a b43.conf file to force PIO and this is dmesg:[ ? ?1.936893] b43-pci-bridge 0000:01:00.0: PCI INT A -> GSI 16 (level, low) -> IRQ 16[ ? ?1.936925] b43-pci-bridge 0000:01:00.0: setting latency timer to 64[ ? 17.433087] b43-phy0: Broadcom 4312 WLAN found (core revision 15)[ ? 17.826326] Registered led device: b43-phy0::tx[ ? 17.826382] Registered led device: b43-phy0::rx[ ? 17.826436] Registered led device: b43-phy0::radio[ ? 19.868920] b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)[ ?107.780028] b43-phy1: Broadcom 4312 WLAN found (core revision 15)[ ?107.860102] Registered led device: b43-phy1::tx[ ?107.860732] Registered led device: b43-phy1::rx[ ?107.864373] Registered led device: b43-phy1::radio[ ?108.100332] b43-phy1: Loading firmware version 478.104 (2008-07-01 00:50:23)
+The net fell down as always and as always it didn't reconnect anymore..but no more DMA messages..I had to restart module..as always..Tks!
+--- Mer 16/6/10, G?bor Stefanik <netrolller.3d@gmail.com> ha scritto:
+
+Da: G?bor Stefanik <netrolller.3d@gmail.com>
+Oggetto: Re: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+A: "neubauten84" <neubauten84@yahoo.it>
+Cc: b43-dev at lists.infradead.org
+Data: Mercoled? 16 giugno 2010, 22:45
 
 AFAIK 2.6.35 should auto-switch to PIO if this happens. Could you post
 a log with 2.6.35-rc?
@@ -68,3 +76,10 @@ a log with 2.6.35-rc?
 
 --
 Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100617/425729bc/attachment.html>
