@@ -1,15 +1,23 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Thu, 17 Jun 2010 22:31:24 +0200
+From: neubauten84 <neubauten84@yahoo.it>
+Date: Fri, 18 Jun 2010 07:31:53 +0000 (GMT)
 Subject: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
-In-Reply-To: <973385.2026.qm@web27908.mail.ukl.yahoo.com>
-References: <AANLkTilXkTaDu7F4WrkKosNqyGis3Sqk8dUJVs1RnUml@mail.gmail.com> 
-	<973385.2026.qm@web27908.mail.ukl.yahoo.com>
-Message-ID: <AANLkTikxsbCOqR4b-33BbZuBkqs4nNuObE7yvdgJQZIR@mail.gmail.com>
+In-Reply-To: <AANLkTikxsbCOqR4b-33BbZuBkqs4nNuObE7yvdgJQZIR@mail.gmail.com>
+Message-ID: <231215.4169.qm@web27903.mail.ukl.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
+
+Linux neubauten84-laptop 2.6.35-4-generic #5-Ubuntu SMP Wed Jun 16 18:53:19 UTC 2010 i686 GNU/LinuxIs there a newer ubuntu kernel?
+
+--- Gio 17/6/10, G?bor Stefanik <netrolller.3d@gmail.com> ha scritto:
+
+Da: G?bor Stefanik <netrolller.3d@gmail.com>
+Oggetto: Re: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+A: "neubauten84" <neubauten84@yahoo.it>
+Cc: b43-dev at lists.infradead.org
+Data: Gioved? 17 giugno 2010, 22:31
 
 2010/6/17 neubauten84 <neubauten84@yahoo.it>
 >
@@ -27,3 +35,10 @@ Check the output of "uname -r".
 
 --
 Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100618/888a1e4e/attachment.html>
