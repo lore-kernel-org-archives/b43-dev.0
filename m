@@ -1,59 +1,48 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 19 Jun 2010 11:33:39 +0200
-Subject: Problems with b43 wirelesss
-In-Reply-To: <AANLkTimIkTaIrdXHulE6YVnB3ZwWrMBCNnCK1SKdyctL@mail.gmail.com>
-References: <AANLkTimIkTaIrdXHulE6YVnB3ZwWrMBCNnCK1SKdyctL@mail.gmail.com>
-Message-ID: <AANLkTimvdtruvFaugHTYcSNhL5pBZXPYtzEF3qolO_qW@mail.gmail.com>
+From: neubauten84 <neubauten84@yahoo.it>
+Date: Sat, 19 Jun 2010 10:11:22 +0000 (GMT)
+Subject: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+Message-ID: <206328.56059.qm@web27906.mail.ukl.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2010/6/18 Magnus Therning <magnus@therning.org>:
-> I've just bought a new laptop, and it has a broadcom wireless device.
-> I was, foolishly it seems, hoping that all serious problems with
-> broadcom devices had been dealt with already and that there wouldn't
-> be any problems to get acceptable connectivity nowadays. ?Alas that
-> isn't the case, despite the excellent job the devs on this mailing
-> list are doing.
->
-> The behaviour I see is that I manage to associate with the wireless
-> router, but soon after I start using the connection it dies and all
-> attempts to re-connect fails. ?I've seen a few similar reports from
-> b43 users but without any really good work-around (some say that
-> switching down to 802.11b works (and that would be acceptable) but I
-> don't see any way of doing that).
->
-> So, the current situation is that this laptop without wireless working
-> is nearly useless, so I'll do anything in my power to get this
-> working. ?My experience in writing drivers is nearly non-existant, and
-> my knowledge of wireless devices is zero, so I'm not sure I'd be very
-> good at actually figuring out what changes to the code are necessary.
-> However, I'll be happy to help out with testing any and all patches
-> that are sent my way. ?Just let me know how I can help!
->
-> Here's some info about the system I have:
->
-> # uname -a
-> Linux ohann 2.6.33-ARCH #1 SMP PREEMPT Thu May 13 11:32:37 CEST 2010
-> x86_64 Intel(R) Core(TM) i5 CPU M 430 @ 2.27GHz GenuineIntel GNU/Linux
-> # lspci -vnn | grep 14e4
-> 03:00.0 Network controller [0280]: Broadcom Corporation BCM4312
-> 802.11b/g [14e4:4315] (rev 01)
->
-> I'm currently running the b43 driver out of compat-wireless
-> (2010-06-17 downloaded from
-> http://wireless.kernel.org/download/compat-wireless-2.6/, I understand
-> this is the latest daily snapshot of the bleeding edge version).
->
-> I've attached the output of 'lspci -vvn|grep 43 -A7' and 'dmesg'
->
-> Please let me know what else I can do to help out with getting this fixed.
+Ok..sorry for html mails..
+I recompiled kernel from vanilla adding PIO mode forcing and nothing changes because I still have to use b43.conf with qos=0 option. If I don't bcm4312 doesn't connect.
+I attached new dmesg with or without b43.conf file.
 
-You can Google for b43 & DMA errors. Simply try "pio" option for b43
-module. Or switch to newer kernel, which will pick up pio for you
-after first DMA error.
+The problem is not related to dma, I think, because even with pio forcing the connection (specially when is under pressure, when download traffic is high) at a time falls down and I have to reload b43.
 
--- 
-Rafa?
+--- Ven 18/6/10, G?bor Stefanik <netrolller.3d@gmail.com> ha scritto:
+
+Da: G?bor Stefanik <netrolller.3d@gmail.com>
+Oggetto: Re: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+A: "neubauten84" <neubauten84@yahoo.it>
+Cc: b43-dev at lists.infradead.org
+Data: Venerd? 18 giugno 2010, 17:41
+
+2010/6/18 neubauten84 <neubauten84@yahoo.it>
+>
+> Linux neubauten84-laptop 2.6.35-4-generic #5-Ubuntu SMP Wed Jun 16 18:53:19 UTC 2010 i686 GNU/Linux
+> Is there a newer ubuntu kernel?
+>
+
+No. However. for debugging kernel issues, it is not a good idea to run
+distro kernels - try an official kernel.org release.
+
+Also, please stop posting HTML emails to the list.
+
+--
+Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+
+
+      
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: dmesg-with-b43.conf-file.txt
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100619/6485532e/attachment.txt>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: dmesg-without-b43.conf-file.txt
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100619/6485532e/attachment-0001.txt>
