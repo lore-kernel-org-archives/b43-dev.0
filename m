@@ -1,17 +1,18 @@
 From: =?ISO-8859-1?Q?Michael_B=FCsch?= <mb@bu3sch.de>
-Date: Sat, 19 Jun 2010 15:58:03 +0200
+Date: Sat, 19 Jun 2010 16:01:07 +0200
 Subject: [PATCH] b43: Clarify logged message after fatal DMA error and
 	switch to PIO mode
 In-Reply-To: <4c1cc624.Whz955JR9XYzqjst%Larry.Finger@lwfinger.net>
-	(sfid-20100619_092826_081651_5DC597B3)
+	(sfid-20100619_152832_048688_17D51150)
 References: <4c1cc624.Whz955JR9XYzqjst%Larry.Finger@lwfinger.net>
-	(sfid-20100619_092826_081651_5DC597B3)
-Message-ID: <4C1CCCEB.5040600@bu3sch.de>
+	(sfid-20100619_152832_048688_17D51150)
+Message-ID: <4C1CCDA3.40502@bu3sch.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: John W Linville <linville@tuxdriver.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
 On 06/19/2010 03:29 PM, Larry Finger wrote:
 > The message following fatal DMA errors fails to indicate properly that the
@@ -33,11 +34,6 @@ On 06/19/2010 03:29 PM, Larry Finger wrote:
 >   			/* Fall back to PIO transfers if we get fatal DMA errors! */
 >   			dev->use_pio = 1;
 >   			b43_controller_restart(dev, "DMA error");
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
 >
 
 Ack.
