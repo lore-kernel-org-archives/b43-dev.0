@@ -1,54 +1,46 @@
 From: Magnus Therning <magnus@therning.org>
-Date: Sun, 20 Jun 2010 17:57:43 +0100
+Date: Sun, 20 Jun 2010 18:02:07 +0100
 Subject: Problems with b43 wirelesss
-In-Reply-To: <4C1CC5A0.7080600@lwfinger.net>
+In-Reply-To: <4C1D67F0.5030509@polymtl.ca>
 References: <AANLkTimIkTaIrdXHulE6YVnB3ZwWrMBCNnCK1SKdyctL@mail.gmail.com>
 	<AANLkTimvdtruvFaugHTYcSNhL5pBZXPYtzEF3qolO_qW@mail.gmail.com>
 	<AANLkTimxOgQySTag7u4DlZugbveWr7csDSAERkewAYhp@mail.gmail.com>
-	<4C1CC5A0.7080600@lwfinger.net>
-Message-ID: <AANLkTilKr0mPrTQ5T9zBf7waqFUYnW2zl-HbqzPj9whn@mail.gmail.com>
+	<4C1D67F0.5030509@polymtl.ca>
+Message-ID: <AANLkTimlXqCEWvn4bljiAKsNZkFtTPFgnOT5Gi-zFmDm@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, b43-dev@lists.infradead.org, wireless <linux-wireless@vger.kernel.org>
+To: b43-dev@lists.infradead.org
 
-On Sat, Jun 19, 2010 at 14:26, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-[...]
-> No, it is a fatal DMA error and your device did switch to PIO mode. The
-> dmesg output does not make that clear. I'm sending a patch to change the
-> logged message.
-
-No, we are communicating past each other
-
-You mean, it's fatal since it doesn't work with DMA.
-I mean, it's not fatal because it realises it doesn't work with DMA
-and restarts itself using PIO.
-
-In any case, DMA *is not* the issue here AFAICS.
-
->> It looks like the following is more relevant to my problem:
->>
->> No probe response from AP 00:22:3f:c3:99:a8 after 500ms, disconnecting.
->> cfg80211: Calling CRDA to update world regulatory domain
->> wlan0: authenticate with 00:22:3f:c3:99:a8 (try 1)
->> wlan0: authenticated
->> wlan0: associate with 00:22:3f:c3:99:a8 (try 1)
->> wlan0: RX AssocResp from 00:22:3f:c3:99:a8 (capab=0x431 status=0 aid=1)
->> wlan0: associated
->> wlan0: deauthenticated from 00:22:3f:c3:99:a8 (Reason: 15)
->>
->> Especially since that sequence of messages is repeated over an over.
->>
->> My next test will be to turn off all security on the wireless, just to
->> rule out WPA completley.
+On Sun, Jun 20, 2010 at 01:59, William Bourque
+<william.bourque@polymtl.ca> wrote:
 >
-> I looked for an explanation of Reason 15 deauthentications. Perhaps
-> someone on the wireless ML will know the answer.
+> I experiment te exact same behavior.
+> For some reason, it seems my card is unable to associate with some
+> (about 1/3) of access point I try. Wpa_supplicant would then give me
+> with the same error message as Magnus posted.
 
-I'd be most interested in finding out what it means and the possible
-cause for it.
+Interesting that you only see it with some APs.  I've only tried it
+with the one I have so I thought it'd be more catastrophic than it is
+then.  Not that it helps me when my router falls in that third though
+:-(
+
+> I don't know if it has something to do with b43, I get the same kind of
+> behavior while using broadcom proprietary driver. When I use wl,
+> however, nothing will show in the logs, the device will associate to the
+> AP but no communication will be possible.
+
+It works perfectly well for me with the broadcom proprietary driver.
+Except of course that it pains my heart to have to use it.
+
+> Google seems to tell me there is several other people that have this
+> behavior on non-broadcom cards... it's just like something is fishy on
+> wpa authentification but for all card.
+
+Yes, I found a few posts on the interweb on this too.  So maybe it's a
+problem in wpa_supplicant, or just somewhere in the stack of kernel
+modules that is shared between several wireless drivers.
 
 /M
 
