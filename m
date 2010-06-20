@@ -1,83 +1,97 @@
-From: William Bourque <william.bourque@polymtl.ca>
-Date: Sat, 19 Jun 2010 20:59:28 -0400
-Subject: Problems with b43 wirelesss
-In-Reply-To: <AANLkTimxOgQySTag7u4DlZugbveWr7csDSAERkewAYhp@mail.gmail.com>
-References: <AANLkTimIkTaIrdXHulE6YVnB3ZwWrMBCNnCK1SKdyctL@mail.gmail.com>	<AANLkTimvdtruvFaugHTYcSNhL5pBZXPYtzEF3qolO_qW@mail.gmail.com>
-	<AANLkTimxOgQySTag7u4DlZugbveWr7csDSAERkewAYhp@mail.gmail.com>
-Message-ID: <4C1D67F0.5030509@polymtl.ca>
+From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
+Date: Sun, 20 Jun 2010 06:48:43 +0200
+Subject: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+In-Reply-To: <4C1D4887.5080500@verizon.net>
+References: <206328.56059.qm@web27906.mail.ukl.yahoo.com>
+	<AANLkTinPItb-gl2adWe4VKL1G1FH-nBFSml8K9Kd2-bC@mail.gmail.com> 
+	<4C1D4887.5080500@verizon.net>
+Message-ID: <AANLkTilZrCGeqUazyOlUwGws0m0Gq-QLmAWhta6D4Odm@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
+On Sun, Jun 20, 2010 at 12:45 AM, Clyde McPherson <ccmcphe@verizon.net> wrote:
+> Gabor:
+> I hopt you are talking in general terms when you say don't force PIO mode.
+> My platform is the ARM processor, and all my customers use the 4318E CF
+> (PCMCIA) card as their choice, since we don't have a PCI bus. My
+> distributions all have force PIO mode on. I hope that is okay?
+>
+> -Tex
 
-I experiment te exact same behavior.
-For some reason, it seems my card is unable to associate with some
-(about 1/3) of access point I try. Wpa_supplicant would then give me
-with the same error message as Magnus posted.
+I was referring to the practice of forcing PIO to fix DMA errors on
+BCM4312. However, PCMCIA will always use PIO, regardless of the force
+setting, so it is meaningless to set Force PIO for PCMCIA (apart from
+perhaps codesize reduction by omitting dma.c).
 
-I don't know if it has something to do with b43, I get the same kind of
-behavior while using broadcom proprietary driver. When I use wl,
-however, nothing will show in the logs, the device will associate to the
-AP but no communication will be possible.
+>
+> ,
+>>
+>> 2010/6/19 neubauten84<neubauten84@yahoo.it>:
+>>
+>>>
+>>> Ok..sorry for html mails..
+>>> I recompiled kernel from vanilla adding PIO mode forcing and nothing
+>>> changes because I still have to use b43.conf with qos=0 option. If I don't
+>>> bcm4312 doesn't connect.
+>>>
+>>
+>> Do NOT enable PIO mode forcing! The only thing that does is ALWAYS use
+>> PIO - even when DMA is usable. In 2.6.35, you should see the driver
+>> loading in DMA mode, failing, and falling back to PIO. So, it is
+>> important NOT to disable DMA.
+>>
+>> Also, needing qos=0 is another problem, as QoS is supported in b43 AFAIK.
+>>
+>>
+>>>
+>>> I attached new dmesg with or without b43.conf file.
+>>>
+>>> The problem is not related to dma, I think, because even with pio forcing
+>>> the connection (specially when is under pressure, when download traffic is
+>>> high) at a time falls down and I have to reload b43.
+>>>
+>>> --- Ven 18/6/10, G?bor Stefanik<netrolller.3d@gmail.com> ?ha scritto:
+>>>
+>>> Da: G?bor Stefanik<netrolller.3d@gmail.com>
+>>> Oggetto: Re: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+>>> A: "neubauten84"<neubauten84@yahoo.it>
+>>> Cc: b43-dev at lists.infradead.org
+>>> Data: Venerd? 18 giugno 2010, 17:41
+>>>
+>>> 2010/6/18 neubauten84<neubauten84@yahoo.it>
+>>>
+>>>>
+>>>> Linux neubauten84-laptop 2.6.35-4-generic #5-Ubuntu SMP Wed Jun 16
+>>>> 18:53:19 UTC 2010 i686 GNU/Linux
+>>>> Is there a newer ubuntu kernel?
+>>>>
+>>>>
+>>>
+>>> No. However. for debugging kernel issues, it is not a good idea to run
+>>> distro kernels - try an official kernel.org release.
+>>>
+>>> Also, please stop posting HTML emails to the list.
+>>>
+>>> --
+>>> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+>>>
+>>>
+>>>
+>>>
+>>
+>>
+>>
+>
+> _______________________________________________
+> b43-dev mailing list
+> b43-dev at lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/b43-dev
+>
 
-Google seems to tell me there is several other people that have this
-behavior on non-broadcom cards... it's just like something is fishy on
-wpa authentification but for all card.
-
-I could provide some logfiles if needed, but I'm not sure it would be
-relevant.
-
-- William
 
 
-
-
-Magnus Therning wrote:
-> 2010/6/19 Rafa? Mi?ecki <zajec5@gmail.com>:
->> You can Google for b43 & DMA errors. Simply try "pio" option for b43
->> module. Or switch to newer kernel, which will pick up pio for you
->> after first DMA error.
-> 
-> Given the following messages in dmesg, I thought this was already happening:
-> 
-> b43-phy0 ERROR: Fatal DMA error: 0x00000800, 0x00000000, 0x00000000,
-> 0x00000000, 0x00000000, 0x00000000
-> b43-phy0 ERROR: This device does not support DMA on your system.
-> Please use PIO instead.
-> b43-phy0: Controller RESET (DMA error) ...
-> b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
-> b43-phy0: Controller restarted
-> 
-> I'm running the 2.6.33 (latest stable is 2.6.34), but I am using the
-> latest daily (2010-06-17) from compat-wireless[1], so unless I'm
-> missing something there isn't much to be gained from switching to the
-> latest kernel.  In any case I will try it to see if that improves the
-> situation.
-> 
-> My naive reading of the messages tells me that this *isn't* a DMA
-> error... I also don't really understand how I could ever get an
-> initial connection, which I do, if that were the problem I'm having.
-> 
-> It looks like the following is more relevant to my problem:
-> 
-> No probe response from AP 00:22:3f:c3:99:a8 after 500ms, disconnecting.
-> cfg80211: Calling CRDA to update world regulatory domain
-> wlan0: authenticate with 00:22:3f:c3:99:a8 (try 1)
-> wlan0: authenticated
-> wlan0: associate with 00:22:3f:c3:99:a8 (try 1)
-> wlan0: RX AssocResp from 00:22:3f:c3:99:a8 (capab=0x431 status=0 aid=1)
-> wlan0: associated
-> wlan0: deauthenticated from 00:22:3f:c3:99:a8 (Reason: 15)
-> 
-> Especially since that sequence of messages is repeated over an over.
-> 
-> My next test will be to turn off all security on the wireless, just to
-> rule out WPA completley.
-> 
-> Cheers,
-> M
-> 
-> [1]: http://wireless.kernel.org/download/compat-wireless-2.6/compat-wireless-2010-06-17.tar.bz2
-> 
+-- 
+Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
