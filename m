@@ -1,49 +1,36 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 20 Jun 2010 20:28:32 +0200
-Subject: [PATCH 0/2] ssb: updates matching specs, fix for hangs?
-In-Reply-To: <20100620162014.GB2386@tuxdriver.com>
-References: <1274730624-22922-1-git-send-email-zajec5@gmail.com>
-	<AANLkTilXBLwE85KLEAM2aRqdeQoO4uK2D-B_dr5Jr2pR@mail.gmail.com>
-	<4C1E0C5E.7070407@hauke-m.de>
-	<AANLkTilYIRMalJXji9OCerjSdZJpj45JNa8XngKB9eyC@mail.gmail.com>
-	<20100620162014.GB2386@tuxdriver.com>
-Message-ID: <AANLkTinh0GjYiGm30QCjAUcQEDsHHhN6Niq5FYBsrOhw@mail.gmail.com>
+From: Magnus Therning <magnus@therning.org>
+Date: Sun, 20 Jun 2010 19:31:42 +0100
+Subject: Problems with b43 wirelesss
+In-Reply-To: <AANLkTil8UURVEahP4W7u2sdRI6tZaFvfJrmL8yMYsOtL@mail.gmail.com>
+References: <AANLkTimIkTaIrdXHulE6YVnB3ZwWrMBCNnCK1SKdyctL@mail.gmail.com>
+	<AANLkTimvdtruvFaugHTYcSNhL5pBZXPYtzEF3qolO_qW@mail.gmail.com>
+	<AANLkTimxOgQySTag7u4DlZugbveWr7csDSAERkewAYhp@mail.gmail.com>
+	<4C1D67F0.5030509@polymtl.ca>
+	<AANLkTimlXqCEWvn4bljiAKsNZkFtTPFgnOT5Gi-zFmDm@mail.gmail.com>
+	<AANLkTil8UURVEahP4W7u2sdRI6tZaFvfJrmL8yMYsOtL@mail.gmail.com>
+Message-ID: <AANLkTikSK3zNyWPRhHPZeFrfO3iQW97w9CCoUqolLf-z@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-W dniu 20 czerwca 2010 18:20 u?ytkownik John W. Linville
-<linville@tuxdriver.com> napisa?:
-> On Sun, Jun 20, 2010 at 02:56:09PM +0200, Rafa? Mi?ecki wrote:
->> W dniu 20 czerwca 2010 14:41 u?ytkownik Hauke Mehrtens
->> <hauke@hauke-m.de> napisa?:
->> > Am 20.06.2010 14:34, schrieb Rafa? Mi?ecki:
->> >> W dniu 24 maja 2010 21:50 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
->> >>> John, I don't really know w-t policy, so please decide where we should apply
->> >>> these patches. I'll try to provide some description.
->> >>
->> >> John, I think you missed that two patches. It was already some time
->> >> ago, but AFAIR there wasn't any reason against commiting them, am I
->> >> wrong here?
->> >>
->> > Hi Rafa?,
->> >
->> > They are aleardy in the wireless-next-2.6 tree and in linux-next:
->> >
->> > http://git.kernel.org/?p=linux/kernel/git/linville/wireless-next-2.6.git;a=commitdiff;h=fd515941cfaf949b55086a36943afe085d7268e6
->> >
->> > http://git.kernel.org/?p=linux/kernel/git/linville/wireless-next-2.6.git;a=commitdiff;h=c35deb4e70d52ed564c58569fe059dd7ca5f4eec
->>
->> Whoops, OK, thanks for pointing. I just checked Linus's git and
->> wireless-testing.
+2010/6/20 G?bor Stefanik <netrolller.3d@gmail.com>:
+> On Sun, Jun 20, 2010 at 7:02 PM, Magnus Therning <magnus@therning.org> wrote:
+[...]
+>> It works perfectly well for me with the broadcom proprietary driver.
+>> Except of course that it pains my heart to have to use it.
 >
-> Must not have checked the latter too closely, since the exact same
-> commits are there as well... :-)
+> Can you provide comparative mmiotraces?
 
-Oh, that's right! Sorry for noise :)
+I'm sure I could, if I only knew how :-)
+
+Point me to some information about how it's done and I'll try to get it done
+today.
+
+/M
 
 -- 
-Rafa?
+Magnus Therning                        (OpenPGP: 0xAB4DFBA4)
+magnus?therning?org          Jabber: magnus?therning?org
+http://therning.org/magnus         identi.ca|twitter: magthe
