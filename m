@@ -1,81 +1,38 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 22 Jun 2010 10:09:00 -0500
-Subject: Problem with b43
-In-Reply-To: <AANLkTili3ExOipmXzdd9JMMMhiyc8KUZoND-3KaznevA@mail.gmail.com>
-References: <AANLkTilLczfhdWgMfxN2eL5dVmml4KL4ndq0BMtgFfDG@mail.gmail.com>
-	<4C046DA6.3020308@polymtl.ca>	<AANLkTinKC4wz1tcKcATNOPTrDcuVFyfV83RYYwQfjC9k@mail.gmail.com>
-	<AANLkTimCtaUkpeFF0NIEzuSSWVIcMmbVMaSAVlBGhphD@mail.gmail.com>
-	<AANLkTik_mkRNmY9FHIG91lq0oTzb2j3frfy0eqfCYNFT@mail.gmail.com>
-	<AANLkTimpDoxIjIBVOPug5uLADaV5oX6RX8se9VC1x6Pd@mail.gmail.com>
-	<AANLkTili3ExOipmXzdd9JMMMhiyc8KUZoND-3KaznevA@mail.gmail.com>
-Message-ID: <4C20D20C.6000606@lwfinger.net>
+Date: Tue, 22 Jun 2010 10:36:36 -0500
+Subject: Recent results with BCM4312 on Netbook
+Message-ID: <4C20D884.3010501@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>, John Linville <linville@tuxdriver.com>
 
-On 06/21/2010 06:22 PM, G?bor Stefanik wrote:
-> 2010/6/22 Fabrizio Regalli <fabreg@gmail.com>:
->> Ok, I put "options b43 pio=0 qos=0" in /etc/modprobe.d/b43.conf
->> And now the message is changed:
->>
->>
->> ...
->> [  745.708045] b43-phy1: Loading firmware version 410.2160 (2007-05-26
->> 15:32:10)
->> [  745.724051] b43-phy1 debug: Chip initialized
->> [  745.724189] b43-phy1 debug: 32-bit DMA initialized
->> [  745.724198] b43-phy1 debug: QoS disabled
->> [  745.744374] b43-phy1 debug: Wireless interface started
->> [  745.768105] b43-phy1 debug: Adding Interface type 2
->> [  745.796352] ADDRCONF(NETDEV_UP): wlan0: link is not ready
->> [  748.160267] wlan0: authenticate with 00:18:4d:2e:85:4a (try 1)
->> [  748.161313] wlan0: authenticated
->> [  748.161425] wlan0: associate with 00:18:4d:2e:85:4a (try 1)
->> [  748.162831] wlan0: RX AssocResp from 00:18:4d:2e:85:4a (capab=0x431
->> status=0 aid=1)
->> [  748.162835] wlan0: associated
->> [  748.163348] ADDRCONF(NETDEV_CHANGE): wlan0: link becomes ready
->> [  748.168313] wlan0: deauthenticating from 00:18:4d:2e:85:4a by local
->> choice (reason=3)
->> [  748.168466] cfg80211: Calling CRDA to update world regulatory domain
->> [  749.496214] wlan0: authenticate with 00:18:4d:2e:85:4a (try 1)
->> [  749.497126] wlan0: authenticated
->> [  749.497240] wlan0: associate with 00:18:4d:2e:85:4a (try 1)
->> [  749.498655] wlan0: RX AssocResp from 00:18:4d:2e:85:4a (capab=0x431
->> status=0 aid=1)
->> [  749.498659] wlan0: associated
->> [  749.504316] wlan0: deauthenticating from 00:18:4d:2e:85:4a by local
->> choice (reason=3)
->> [  749.504523] cfg80211: Calling CRDA to update world regulatory domain
->>
->>
->> But unfortunately does not work.
->>
->> I can obtain just the ip address:
->>
->> # ifconfig wlan0 |grep inet
->>           inet addr:192.168.0.100
->>
->> but iwconfig show me there isn't any access point associeted:
->>
->> wlan0     IEEE 802.11bg  ESSID:off/any
->>           Mode:Managed  Frequency:2.472 GHz  Access Point: Not-Associated
->>           Tx-Power=20 dBm
->>           Retry  long limit:7   RTS thr:off   Fragment thr:off
->>           Encryption key:off
->>           Power Management:off
->>
->>
-> 
-> Did you shut down NetworkManager?
-> 
-> Also, why are you disabling QoS? Unless you are using OpenFWWF, QoS
-> shouldn't need to be disabled.
+Michael,
 
-I will describe some recent findings in a separate email; however, to use
-the BCM4312 in PIO mode, you do need to disable QoS AND hardware
-encryption. Add "nohwcrypt=1" to b43.conf and leave the "qos=0" in.
+I have some good news. The Netbook that came from John is suddenly
+developing DMA errors for the BCM4312, even though it does not have a
+Phoenix BIOS. I have no idea why it did not fail this way earlier, but at
+least I have a machine to debug that failure.
+
+My first discovery is that if PIO mode is to be used, it is not sufficient
+to load the module with the "pio=1" option, but that both "qos=0" and
+"nohwcrypt=1" options must also be used, at least for WPA/WPA2 networks.
+No other combination works. In addition, the automatic failover to PIO
+mode does not work unless those two options were used when the module was
+loaded. Thus both of the following work:
+
+modprobe b43 pio=1 qos=0 nohwcrypt=1
+modprobe b43 qos=0 hwcrypt=1
+
+The second example gets a fatal DMA error and resets the controller before
+the network comes up. I tried setting the latter two options before the
+controller reset call in the failover, but that did not work.
+
+If you have suggestions on changes in the switch from DMA to PIO mode,
+please send them to me. In the meantime, I will be looking at differences
+in the MMIO traces between wl and b43 to try to fix the DMA problem at the
+source of the trouble.
 
 Larry
