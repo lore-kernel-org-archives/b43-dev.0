@@ -1,38 +1,35 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 22 Jun 2010 10:36:36 -0500
+From: =?ISO-8859-1?Q?Michael_B=FCsch?= <mb@bu3sch.de>
+Date: Tue, 22 Jun 2010 18:31:29 +0200
 Subject: Recent results with BCM4312 on Netbook
-Message-ID: <4C20D884.3010501@lwfinger.net>
+In-Reply-To: <4C20D884.3010501@lwfinger.net>
+	(sfid-20100622_173557_635889_3487F3F3)
+References: <4C20D884.3010501@lwfinger.net>
+	(sfid-20100622_173557_635889_3487F3F3)
+Message-ID: <4C20E561.4090203@bu3sch.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Buesch <mb@bu3sch.de>
+To: Larry Finger <Larry.Finger@lwfinger.net>
 Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>, John Linville <linville@tuxdriver.com>
 
-Michael,
+On 06/22/2010 05:36 PM, Larry Finger wrote:
+> My first discovery is that if PIO mode is to be used, it is not sufficient
+> to load the module with the "pio=1" option, but that both "qos=0" and
+> "nohwcrypt=1" options must also be used, at least for WPA/WPA2 networks.
 
-I have some good news. The Netbook that came from John is suddenly
-developing DMA errors for the BCM4312, even though it does not have a
-Phoenix BIOS. I have no idea why it did not fail this way earlier, but at
-least I have a machine to debug that failure.
+That is known. I posted it once or twice. It is b43 making bad
+assumptions about mac80211 behavior. And mac80211 behavior changed...
+b43 does modify the number of queues in the data structure after it
+registered things to mac80211. That used to work properly in the past.
+But it breaks now. The init does have to be re-ordered and implementation
+of async firmware loading is required to fix that.
 
-My first discovery is that if PIO mode is to be used, it is not sufficient
-to load the module with the "pio=1" option, but that both "qos=0" and
-"nohwcrypt=1" options must also be used, at least for WPA/WPA2 networks.
-No other combination works. In addition, the automatic failover to PIO
-mode does not work unless those two options were used when the module was
-loaded. Thus both of the following work:
+> No other combination works. In addition, the automatic failover to PIO
+> mode does not work unless those two options were used when the module was
+> loaded. Thus both of the following work:
 
-modprobe b43 pio=1 qos=0 nohwcrypt=1
-modprobe b43 qos=0 hwcrypt=1
+It only works by accident anyway. But I already said that several times.
 
-The second example gets a fatal DMA error and resets the controller before
-the network comes up. I tried setting the latter two options before the
-controller reset call in the failover, but that did not work.
-
-If you have suggestions on changes in the switch from DMA to PIO mode,
-please send them to me. In the meantime, I will be looking at differences
-in the MMIO traces between wl and b43 to try to fix the DMA problem at the
-source of the trouble.
-
-Larry
+-- 
+Greetings Michael.
