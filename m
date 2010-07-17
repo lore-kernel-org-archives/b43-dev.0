@@ -1,44 +1,17 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 17 Jul 2010 14:14:33 -0500
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 17 Jul 2010 21:15:33 +0200
 Subject: My test for bcm4213
 In-Reply-To: <AANLkTinodxB2RDKnHoHlzSDvC2xbL-J78z0O8TX59JDb@mail.gmail.com>
 References: <AANLkTinHyR4ho_Ti6xB1dggpOBX1uJ_hZn7WXX_mgWlc@mail.gmail.com>
 	<AANLkTinodxB2RDKnHoHlzSDvC2xbL-J78z0O8TX59JDb@mail.gmail.com>
-Message-ID: <4C420119.4090109@lwfinger.net>
+Message-ID: <AANLkTilGPP3KJirrrV6KAeJwVq_x80erKSxVUHNc_vFa@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 07/14/2010 08:15 AM, Kevyn-Alexandre Par? wrote:
-> Hi,
->
-> Here my test for bcm4213
->
-> vostro at vostro:~$ lspci -n | grep 14e4
-> 06:00.0 0280: 14e4:4315 (rev 01)
->
-> vostro at vostro:~$ uname -a
-> Linux vostro 2.6.35-rc3-wl+ #1 SMP Sat Jul 3 20:37:05 EDT 2010 x86_64 GNU/Linux
->
-> On top ubuntu 10.04
->
-> After booting error happen and I fallow instruction, see DMESG-WIRELESS
-
-Please post the error messages in-line. It is a real pain to have to create a 
-file to see the errors. If you cannot do that, then name the attached file 
-xxxx.txt. That way I can see it inline.
-
-> didn't work with sudo apt-get install b43-fwcutter // it was downloading
-> on 12 that was failling... didn't investigate more..
->
-> wget http://bu3sch.de/b43/fwcutter/b43-fwcutter-013.tar.bz2
-> tar xjvf b43-fwcutter-013.tar.bz2
-> cd b43-fwcutter-013/
-> make
-> cd ..
->
+2010/7/14 Kevyn-Alexandre Par? <kevyn.alexandre.pare@gmail.com>:
 > export FIRMWARE_INSTALL_DIR="/lib/firmware"
 > wget http://downloads.openwrt.org/sources/broadcom-wl-4.178.10.4.tar.bz2
 > tar xjf broadcom-wl-4.178.10.4.tar.bz2
@@ -46,22 +19,10 @@ xxxx.txt. That way I can see it inline.
 > sudo ../b43-fwcutter-013/b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" wl_apsta.o
 >
 > see DMESG file attach for log.
->
-> next step try it with last 2.6.35-rc4 or later...
 
-It will not help. For all the others reading this list, the error message is the 
-old, familiar
+What about
+ls /lib/firmware
+?
 
-b43-phy0 ERROR: Fatal DMA error: 0x00000800, 0x00000000, 0x00000000, 0x00000000, 
-0x00000000, 0x00000000
-b43-phy0 ERROR: This device does not support DMA on your system. It will now be 
-switched to PIO.
-b43-phy0: Controller RESET (DMA error) ...
-
-If you had done any searching at all, you would have seen this error discussed 
-many, many times. We do not yet have a fix. If you load b43 with the options 
-"pio=1 qos=0 nohwcrypt=1" b43 will then work. No I do not know how to input 
-those options on your system.
-
-
-Larry
+-- 
+Rafa?
