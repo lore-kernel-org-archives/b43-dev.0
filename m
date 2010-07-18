@@ -1,28 +1,29 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 17 Jul 2010 21:15:33 +0200
+Date: Sun, 18 Jul 2010 02:22:05 +0200
 Subject: My test for bcm4213
-In-Reply-To: <AANLkTinodxB2RDKnHoHlzSDvC2xbL-J78z0O8TX59JDb@mail.gmail.com>
+In-Reply-To: <4C420119.4090109@lwfinger.net>
 References: <AANLkTinHyR4ho_Ti6xB1dggpOBX1uJ_hZn7WXX_mgWlc@mail.gmail.com>
 	<AANLkTinodxB2RDKnHoHlzSDvC2xbL-J78z0O8TX59JDb@mail.gmail.com>
-Message-ID: <AANLkTilGPP3KJirrrV6KAeJwVq_x80erKSxVUHNc_vFa@mail.gmail.com>
+	<4C420119.4090109@lwfinger.net>
+Message-ID: <AANLkTikU1rZAW7gHPJr6IlENedM0HqwaiBh-zFPiPNSJ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2010/7/14 Kevyn-Alexandre Par? <kevyn.alexandre.pare@gmail.com>:
-> export FIRMWARE_INSTALL_DIR="/lib/firmware"
-> wget http://downloads.openwrt.org/sources/broadcom-wl-4.178.10.4.tar.bz2
-> tar xjf broadcom-wl-4.178.10.4.tar.bz2
-> cd broadcom-wl-4.178.10.4/
-> sudo ../b43-fwcutter-013/b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" wl_apsta.o
+2010/7/17 Larry Finger <Larry.Finger@lwfinger.net>:
+> On 07/14/2010 08:15 AM, Kevyn-Alexandre Par? wrote:
+> It will not help. For all the others reading this list, the error message is
+> the old, familiar
 >
-> see DMESG file attach for log.
+> b43-phy0 ERROR: Fatal DMA error: 0x00000800, 0x00000000, 0x00000000,
+> 0x00000000, 0x00000000, 0x00000000
+> b43-phy0 ERROR: This device does not support DMA on your system. It will now
+> be switched to PIO.
+> b43-phy0: Controller RESET (DMA error) ...
 
-What about
-ls /lib/firmware
-?
+Ah, yeah, I've just checked the first dmesg.
 
 -- 
 Rafa?
