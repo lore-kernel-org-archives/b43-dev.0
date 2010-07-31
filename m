@@ -1,34 +1,60 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 29 Jul 2010 11:10:38 -0500
-Subject: Urgente- Help in Broadcom bcm4353 - device 14e4:4353 linux driver
-	monitor mode.
-In-Reply-To: <AANLkTinWsn185=v35oVAQzuhEXoAVdnhjPhh6sOXbAAa@mail.gmail.com>
-References: <AANLkTinWsn185=v35oVAQzuhEXoAVdnhjPhh6sOXbAAa@mail.gmail.com>
-Message-ID: <4C51A7FE.5040105@lwfinger.net>
+From: Cheng Renquan <crquan@gmail.com>
+Date: Sat, 31 Jul 2010 13:56:53 +0800
+Subject: b43 help,
+Message-ID: <AANLkTimkV_LjgacMA6tR7Eaj=QpmXYJ2KwWYsuQFY-MV@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 07/29/2010 06:36 AM, Arthur Moreira wrote:
-> Hi guys
-> I need a help for to find a especific or modified wl driver for the
-> device 14e4:4353 Broadcom wireless for work in monitor or promiscuo
-> mode.
-> i read a site  and see your work about this.
-> 
-> 
-> if somebody can help me, tks
-> 
-> my card work normally with the compiled hybrid driver wl of the broadcom site
-> this site: broadcom linux sta, 32 bits hybrid
+Today I was using this computer with boradcom4312 with b43 (for
+14e4:4312) driver, in an environment there were 30~40 wifi hotspot,
+some encrypted some not, all other win/mac can connect one unencrypted
+wifi while my ubuntu 10.04 with this b43 driver cannot, all I know to
+try is "modprobe -r b43" and "modprobe b43"; iwconfig/iwlist output
+also seems good,
 
-The Broadcom STA driver is closed source. No one other than Broadcom can help
-you, and they are not likely to do so.
+I post the pci data and dmesg log, in the hope of someone could
+analyze and see how to improve, thanks;
 
-The open-source b43 driver does handle promiscuous mode, but it does not yet
-work for 802.11n devices. We are working on that code, but have no timetable for
-completion.
+# lspci -D -nn -vv -d 14e4:
+0000:02:00.0 Network controller [0280]: Broadcom Corporation BCM4312
+802.11b/g [14e4:4315] (rev 01)
+	Subsystem: Hewlett-Packard Company Device [103c:1508]
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
+Stepping- SERR- FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Interrupt: pin A routed to IRQ 18
+	Region 0: Memory@d8500000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: [40] Power Management version 3
+		Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA PME(D0-,D1-,D2-,D3hot-,D3cold-)
+		Status: D0 PME-Enable- DSel=0 DScale=2 PME-
+	Capabilities: [58] Vendor Specific Information <?>
+	Capabilities: [e8] Message Signalled Interrupts: Mask- 64bit+ Queue=0/0 Enable-
+		Address: 0000000000000000  Data: 0000
+	Capabilities: [d0] Express (v1) Endpoint, MSI 00
+		DevCap:	MaxPayload 128 bytes, PhantFunc 0, Latency L0s <4us, L1 unlimited
+			ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset-
+		DevCtl:	Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
+			RlxdOrd- ExtTag- PhantFunc- AuxPwr- NoSnoop-
+			MaxPayload 128 bytes, MaxReadReq 128 bytes
+		DevSta:	CorrErr+ UncorrErr- FatalErr- UnsuppReq+ AuxPwr- TransPend-
+		LnkCap:	Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1, Latency L0
+<4us, L1 <64us
+			ClockPM+ Suprise- LLActRep- BwNot-
+		LnkCtl:	ASPM L0s L1 Enabled; RCB 64 bytes Disabled- Retrain- CommClk+
+			ExtSynch- ClockPM+ AutWidDis- BWInt- AutBWInt-
+		LnkSta:	Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+ DLActive-
+BWMgmt- ABWMgmt-
+	Capabilities: [100] Advanced Error Reporting <?>
+	Capabilities: [13c] Virtual Channel <?>
+	Capabilities: [160] Device Serial Number ff-ff-00-ff-ff-00-00-00
+	Capabilities: [16c] Power Budgeting <?>
+	Kernel driver in use: b43-pci-bridge
+	Kernel modules: ssb
 
-Larry
+--
+Cheng Renquan, Singapore
