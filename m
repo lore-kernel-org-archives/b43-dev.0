@@ -1,62 +1,39 @@
 From: Cheng Renquan <crquan@gmail.com>
-Date: Wed, 4 Aug 2010 10:51:17 +0800
+Date: Wed, 4 Aug 2010 11:02:21 +0800
 Subject: b43 help,
-In-Reply-To: <AANLkTi=cbYrUsNJCdQG+UZ9DZNCo0d-BJ9zqsTW3iv89@mail.gmail.com>
+In-Reply-To: <AANLkTimYyzUE3_G+SrOyib=cBUj9GyrHT+eTAy2AUvXu@mail.gmail.com>
 References: <AANLkTimkV_LjgacMA6tR7Eaj=QpmXYJ2KwWYsuQFY-MV@mail.gmail.com> 
-	<AANLkTi=cbYrUsNJCdQG+UZ9DZNCo0d-BJ9zqsTW3iv89@mail.gmail.com>
-Message-ID: <AANLkTimYyzUE3_G+SrOyib=cBUj9GyrHT+eTAy2AUvXu@mail.gmail.com>
+	<AANLkTi=cbYrUsNJCdQG+UZ9DZNCo0d-BJ9zqsTW3iv89@mail.gmail.com> 
+	<AANLkTimYyzUE3_G+SrOyib=cBUj9GyrHT+eTAy2AUvXu@mail.gmail.com>
+Message-ID: <AANLkTi=jXTDadn_iDPxobV2=ks-tsGB2x8Gge3_8pS_V@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2010/7/31 G?bor Stefanik <netrolller.3d@gmail.com>:
-> This is a true BCM4312 (14E4:4315), not a 4311ABG (14E4:4312, commonly
-> called a "4312"), according to your lspci output. That means, you are
-> probably experiencing the DMA issue.
->
-> Try loading b43 with "modprobe b43 nohwcrypt=1 qos=0 pio=1". If this
-> doesn't fix it, then chances are, you are hitting a mac80211 bug.
->
-> --
-> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+the other linux netbook with atheros wifi card can connect the hidden
+network, after connected it looks like:
 
-In fact, I'm not often to go to that environment, so it's hard to reproduce;
+# iwconfig ath0
+Warning: Driver for device ath0 has been compiled with version 22
+of Wireless Extension, while this program supports up to version 20.
+Some things may be broken...
 
-Before that, I want to solve another problem inside my own campus,
-with this b43 device,
+ath0      IEEE 802.11g  ESSID:"WLAN-Staff"  Nickname:""
+          Mode:Managed  Frequency:2.462 GHz  Access Point: 00:13:19:8C:83:50
+          Bit Rate:54 Mb/s   Tx-Power:31 dBm   Sensitivity=1/3
+          Retry:off   RTS thr:off   Fragment thr:off
+          Encryption key:XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XX [4]
+Security mode:restricted
+          Power Management:off
+          Link Quality=94/94  Signal level=-1 dBm  Noise level=-95 dBm
+          Rx invalid nwid:2717842  Rx invalid crypt:0  Rx invalid frag:0
+          Tx excessive retries:0  Invalid misc:0   Missed beacon:0
 
-in my campus, there are "SMUGIP" for guest network, it's a simple WiFi
-spot without any encryption,
-almost everyone wifi devices can connect it, but my linux with b43
-cannot; it always scan and disconnect;
+it has good link quality with "94/94", I've tried the same wpa
+configuration on the linux with b43, it is always scanning, with no
+results, and scanning; someone know how to make it work with this
+hidden and auth-required wifi?
 
-and there is a hidden wifi network named "WLAN-Staff", it uses
-IEEE80211X encryption with PEAP,
-and MSCHAPv2 authentication, should be logged in with username and password;
-
-my another linux netbook with atheros wifi card can connect both,
-especially, to connect that hidden and authentication required
-network, I use this script:
-# iwconfig ath0 essid "WLAN-Staff"
-# wpa_supplicant -Dwext -iath0 -c /etc/wpa_supplicant.conf
-
-with "/etc/wpa_supplicant.conf" content:
-network={
-  ssid="WLAN-Staff"
-  key_mgmt="IEEE80211X"
-  eap=PEAP
-  phase2="autheap=MSCHAPv2"
-  identity="username"
-  password="password"
-}
-
-till now, my linux with this b43 driver actually can only connect to a
-simple WEP encryption spot at home,
-with some minor problems, I would rather to talk it later.
-
-Someone know how to make this b43 to connect wifi at my campus? any
-ideas I'd like to have a try,
-
-thanks,
+Thanks a lot,
