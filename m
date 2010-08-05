@@ -1,51 +1,26 @@
-From: Cheng Renquan <crquan@gmail.com>
-Date: Thu, 5 Aug 2010 11:23:31 +0800
-Subject: b43 help,
-In-Reply-To: <AANLkTim1WEyom6vh07_EMqvXgTayJW2NGqqBoeXzCyqH@mail.gmail.com>
-References: <AANLkTimkV_LjgacMA6tR7Eaj=QpmXYJ2KwWYsuQFY-MV@mail.gmail.com> 
-	<AANLkTi=cbYrUsNJCdQG+UZ9DZNCo0d-BJ9zqsTW3iv89@mail.gmail.com> 
-	<AANLkTimYyzUE3_G+SrOyib=cBUj9GyrHT+eTAy2AUvXu@mail.gmail.com> 
-	<AANLkTi=jXTDadn_iDPxobV2=ks-tsGB2x8Gge3_8pS_V@mail.gmail.com> 
-	<AANLkTim1WEyom6vh07_EMqvXgTayJW2NGqqBoeXzCyqH@mail.gmail.com>
-Message-ID: <AANLkTikpUDgB6wUcJ9-p=rFerR8=fEi5OxJqubVLwyeS@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 05 Aug 2010 16:06:06 -0500
+Subject: Interesting development regarding b43 DMA ERROR
+Message-ID: <4C5B27BE.8010708@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-On Thu, Aug 5, 2010 at 12:08 AM, William Bourque
-<william.bourque@polymtl.ca> wrote:
->
-> Did you try the command Gabor gave you? ( "modprobe b43 nohwcrypt=1 qos=0
-> pio=1" )
->
-> Assuming your kernel is recent enought, this should fix your problem.
+Yesterday, I had to go back to kernel 2.6.34 for a test of code to avoid ssb
+load freezeups on my HP Mini 110 Netbook, which has the SPROM at offset 0x0800,
+not 0x1000. As I had been using b43 for this BCM4312 (14e4:4315) card in DMA
+mode without any problems, I was quite surprised to see the dreaded DMA errors.
+I had attributed the lack of errors with wireless testing to be due to the AMI,
+not Phoenix, BIOS in this machine. When I switched to mainline ('git describe'
+reports it as v2.6.35-3370-gcdd854b), again it works.
 
-Got it! with these parameters it really works! the kernel is ubuntu
-10.04 default 2.6.32-23-generic-pae,
+AFAIK, none of any fixes that were put into wt to try to solve this problem had
+any affect, yet the device now works here.
 
-Then these parameters mean the haredware crypto functions cannot be utilized,
-all encrypt/decrypt calculations are using the main CPU, right?
+Is anyone else that had/has the DMA problem running 2.6.35 + updates from the
+linux-2.6.git tree? If so, does your BCM4312 now work with b43, or is my box
+special?
 
-Then our remaining job is still to figure out how to make it work with
-enabling these
-parameters; without released documents from Broadcom, we can only do
-reverse engineering?
-from where to start? although maybe not an easy task, but I'd like a try;
-
-2010/8/5 G?bor Stefanik <netrolller.3d@gmail.com>:
-> I see you are using Madwifi for the atheros card. Please test with
-> ath5k in the same kernel that is experiencing problems in b43 - this
-> will reveal whether the problem is in b43 or mac80211.
-
-Sorry, that linux netbook with atheros is using linux 2.6.21.7, really
-old kernel
-I cannot update software on it because its storage is very limited, I
-cannot even
-install a compiler on it;
-(in fact, it's EeePC 701, the very first model, with Intel Celeron 900 MB,
-and only 4 GB SSD storage,)
-
---
-Cheng Renquan (???), from Singapore
+Larry
