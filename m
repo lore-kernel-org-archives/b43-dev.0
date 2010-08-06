@@ -1,36 +1,26 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 6 Aug 2010 18:31:11 +0200
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 06 Aug 2010 12:37:36 -0500
 Subject: Interesting development regarding b43 DMA ERROR
-In-Reply-To: <4C5B27BE.8010708@lwfinger.net>
+In-Reply-To: <AANLkTi=-Jc9XjD-gqwtUyUnM768wvv3GzzwhJNtkwYKK@mail.gmail.com>
 References: <4C5B27BE.8010708@lwfinger.net>
-Message-ID: <AANLkTi=-Jc9XjD-gqwtUyUnM768wvv3GzzwhJNtkwYKK@mail.gmail.com>
+	<AANLkTi=-Jc9XjD-gqwtUyUnM768wvv3GzzwhJNtkwYKK@mail.gmail.com>
+Message-ID: <4C5C4860.2030507@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-2010/8/5 Larry Finger <Larry.Finger@lwfinger.net>:
-> Yesterday, I had to go back to kernel 2.6.34 for a test of code to avoid ssb
-> load freezeups on my HP Mini 110 Netbook, which has the SPROM at offset 0x0800,
-> not 0x1000. As I had been using b43 for this BCM4312 (14e4:4315) card in DMA
-> mode without any problems, I was quite surprised to see the dreaded DMA errors.
-> I had attributed the lack of errors with wireless testing to be due to the AMI,
-> not Phoenix, BIOS in this machine. When I switched to mainline ('git describe'
-> reports it as v2.6.35-3370-gcdd854b), again it works.
->
-> AFAIK, none of any fixes that were put into wt to try to solve this problem had
-> any affect, yet the device now works here.
->
-> Is anyone else that had/has the DMA problem running 2.6.35 + updates from the
-> linux-2.6.git tree? If so, does your BCM4312 now work with b43, or is my box
-> special?
+On 08/06/2010 11:31 AM, Rafa? Mi?ecki wrote:
+> 
+> Interesting. It means some patch that gone mainline fixed it and it
+> was submitted using other tree than w-t, right?
+> 
+> Would you care to bisect this?
 
-Interesting. It means some patch that gone mainline fixed it and it
-was submitted using other tree than w-t, right?
+It won't be fun as this is a 1.6 GHz Atom and a kernel build is quite slow. In
+addition, this one has the relocated SPROM that requires patching to be able to
+boot. In the interests of the community, I will do it.
 
-Would you care to bisect this?
-
--- 
-Rafa?
+Larry
