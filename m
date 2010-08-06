@@ -1,71 +1,45 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Fri, 6 Aug 2010 23:17:15 +0200
-Subject: 14e4:4315 help install
-In-Reply-To: <AANLkTi=sOrwZqX4D+i4TWH_YNKoL6z56Ei8xVBNJWub2@mail.gmail.com>
-References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com> 
-	<AANLkTin_ck8wFgWj5pyptYKTmMO-uu80dibbS_3NRAav@mail.gmail.com> 
-	<AANLkTikB0k_6+rPb37M75wbNqE0TV9d_zu6DVbN5Tyjj@mail.gmail.com> 
-	<AANLkTi=sOrwZqX4D+i4TWH_YNKoL6z56Ei8xVBNJWub2@mail.gmail.com>
-Message-ID: <AANLkTikrn2qXPbzV=PXfsiBW5XmbpqQhhg8wrLhwgN93@mail.gmail.com>
+From: =?ISO-8859-1?Q?Michael_B=FCsch?= <mb@bu3sch.de>
+Date: Sat, 07 Aug 2010 00:53:06 +0200
+Subject: ssb: 2.6.34.1 -> 2.6.34.2 regression
+Message-ID: <4C5C9252.7040007@bu3sch.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: stable@kernel.org, Christoph Fritz <chf.fritz@googlemail.com>, Larry Finger <Larry.Finger@lwfinger.net>
+Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-BTW, remember to reply to all!
+Hi,
 
-2010/8/6 G?bor Stefanik <netrolller.3d@gmail.com>:
-> Oops... yes, bt4 has a 2.6.31 kernel. Compile and install
-> compat-wireless to get 4312 support.
->
-> 2010/8/6 mic cat <micacatt@gmail.com>:
->> Tank for help but in bt4 my card no reconize
->> i am test modprob b43 but no...
->>
->>
->>
->> 2010/8/6, G?bor Stefanik <netrolller.3d@gmail.com>:
->>> On Fri, Aug 6, 2010 at 9:52 PM, mic cat <micacatt@gmail.com> wrote:
->>>> Hi all
->>>> Please i want help for install firmwear B43:
->>>>
->>>> -Bcm 4315 14e4:4315 rev 01
->>>
->>> 14e4:4315 is BCM4312.
->>>
->>>> or
->>>> -BCM 4322 14E4:432B REV01
->>>>
->>>>
->>>>
->>>> I want try in backtrack4. But i no say install B43.
->>>
->>> BackTrack 4 already includes firmware for b43 ot-of-the-box.
->>>
->>>>
->>>> Help me please. thank you
->>>> _______________________________________________
->>>> b43-dev mailing list
->>>> b43-dev at lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/b43-dev
->>>>
->>>>
->>>
->>>
->>>
->>> --
->>> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>>
->>
->
->
->
-> --
-> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->
+The SPROM changes applied to SSB in 2.6.34.2 completely broke SPROM
+extraction. This leads to broken wireless for my BCM4306 card.
+All other BCM43xx and BCM44xx most likely are affected, too.
+Symptoms should be wrong MAC addresses and broken transmission (for 43xx).
+
+The patch changed the SPEX() macro and removed the offset subtraction,
+but did not remove the actual 0x1000 offset from the SPROM defines.
+This results in random memory poking rather than proper SPROM data
+extraction.
+
+I applied the following to my kernel to get it working again. However
+this is not a proper fix. I suggest that the -stable SSB patch
+is dropped and mainline patches being applied. They seem to
+be correct (However I did not test mainline, yet).
 
 
+Index: linux-2.6.34/drivers/ssb/pci.c
+===================================================================
+--- linux-2.6.34.orig/drivers/ssb/pci.c	2010-08-05 23:26:07.000000000 +0200
++++ linux-2.6.34/drivers/ssb/pci.c	2010-08-07 00:17:26.000000000 +0200
+@@ -169,7 +169,7 @@ err_pci:
+  }
 
+  /* Get the word-offset for a SSB_SPROM_XXX define. */
+-#define SPOFF(offset)	((offset) / sizeof(u16))
++#define SPOFF(offset)	(((offset) - SSB_SPROM_BASE1) / sizeof(u16))
+  /* Helper to extract some _offset, which is one of the SSB_SPROM_XXX 
+defines. */
+  #define SPEX16(_outvar, _offset, _mask, _shift)	\
+  	out->_outvar = ((in[SPOFF(_offset)] & (_mask)) >> (_shift))
 -- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Greetings Michael.
