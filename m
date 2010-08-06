@@ -1,43 +1,26 @@
-From: William Bourque <william.bourque@polymtl.ca>
-Date: Fri, 06 Aug 2010 14:43:34 -0400
-Subject: Interesting development regarding b43 DMA ERROR
-In-Reply-To: <4C5C4860.2030507@lwfinger.net>
-References: <4C5B27BE.8010708@lwfinger.net>	<AANLkTi=-Jc9XjD-gqwtUyUnM768wvv3GzzwhJNtkwYKK@mail.gmail.com>
-	<4C5C4860.2030507@lwfinger.net>
-Message-ID: <4C5C57D6.4090405@polymtl.ca>
+From: mic cat <micacatt@gmail.com>
+Date: Fri, 6 Aug 2010 21:52:07 +0200
+Subject: 14e4:4315 help install
+Message-ID: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
+Hi all
+Please i want help for install firmwear B43:
 
-I can try to build on mine...
-I'm just not sure which kernel you want me to use... are you talking 
-about wireless-testing or the regular kernel.org devtree? The "+ 
-updates" part confuse me as well.
+-Bcm 4315 14e4:4315 rev 01
+or
 
-Sorry if it's a dumb question :)
-
-- William
+-BCM 4322 14E4:432B REV01
 
 
-On 06/08/10 01:37 PM, Larry Finger wrote:
-> On 08/06/2010 11:31 AM, Rafa? Mi?ecki wrote:
->>
->> Interesting. It means some patch that gone mainline fixed it and it
->> was submitted using other tree than w-t, right?
->>
->> Would you care to bisect this?
->
-> It won't be fun as this is a 1.6 GHz Atom and a kernel build is quite slow. In
-> addition, this one has the relocated SPROM that requires patching to be able to
-> boot. In the interests of the community, I will do it.
->
-> Larry
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
+
+I want try in backtrack4. But i no say install B43.
+
+Help me please. thank you
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100806/f17398b6/attachment.html>
