@@ -1,98 +1,34 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Sat, 7 Aug 2010 15:29:04 +0200
-Subject: 14e4:4315 help install
-In-Reply-To: <AANLkTi=ep953r4qxt7NWTwVbuA=aqH5iaL4vhPhWNVG6@mail.gmail.com>
-References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com> 
-	<AANLkTin_ck8wFgWj5pyptYKTmMO-uu80dibbS_3NRAav@mail.gmail.com> 
-	<AANLkTikB0k_6+rPb37M75wbNqE0TV9d_zu6DVbN5Tyjj@mail.gmail.com> 
-	<AANLkTi=sOrwZqX4D+i4TWH_YNKoL6z56Ei8xVBNJWub2@mail.gmail.com> 
-	<AANLkTikrn2qXPbzV=PXfsiBW5XmbpqQhhg8wrLhwgN93@mail.gmail.com> 
-	<AANLkTi=ep953r4qxt7NWTwVbuA=aqH5iaL4vhPhWNVG6@mail.gmail.com>
-Message-ID: <AANLkTinWgUuzFZfp+UgioxG6r0KrhjPyJXxxVmmOn+Do@mail.gmail.com>
+From: Kalle Valo <kvalo@adurom.com>
+Date: Sun, 08 Aug 2010 08:08:46 +0300
+Subject: Interesting development regarding b43 DMA ERROR
+In-Reply-To: <4C5C4860.2030507@lwfinger.net> (Larry Finger's message of "Fri\,
+	06 Aug 2010 12\:37\:36 -0500")
+References: <4C5B27BE.8010708@lwfinger.net>
+	<AANLkTi=-Jc9XjD-gqwtUyUnM768wvv3GzzwhJNtkwYKK@mail.gmail.com>
+	<4C5C4860.2030507@lwfinger.net>
+Message-ID: <878w4hd735.fsf@purkki.adurom.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-The firmware is already installed in bt4 - only the driver needs to be updated.
-After doing "make install", do a "make unload", and a "modprobe b43"
-to load the updated b43 module.
+Larry Finger <Larry.Finger@lwfinger.net> writes:
 
-And please, use the Reply-to-all button when replying to a mailing list.
+> On 08/06/2010 11:31 AM, Rafa? Mi?ecki wrote:
+>> 
+>> Interesting. It means some patch that gone mainline fixed it and it
+>> was submitted using other tree than w-t, right?
+>> 
+>> Would you care to bisect this?
+>
+> It won't be fun as this is a 1.6 GHz Atom and a kernel build is quite slow.
 
-2010/8/7 mic cat <micacatt@gmail.com>:
-> Thank you for your help.
->
-> I am download and install compat-wireless (make-makeinstall)
-> But no firmwear install.
->
-> My card no listed.
->
->
->
->
-> 2010/8/6, G?bor Stefanik <netrolller.3d@gmail.com>:
->> BTW, remember to reply to all!
->>
->> 2010/8/6 G?bor Stefanik <netrolller.3d@gmail.com>:
->>> Oops... yes, bt4 has a 2.6.31 kernel. Compile and install
->>> compat-wireless to get 4312 support.
->>>
->>> 2010/8/6 mic cat <micacatt@gmail.com>:
->>>> Tank for help but in bt4 my card no reconize
->>>> i am test modprob b43 but no...
->>>>
->>>>
->>>>
->>>> 2010/8/6, G?bor Stefanik <netrolller.3d@gmail.com>:
->>>>> On Fri, Aug 6, 2010 at 9:52 PM, mic cat <micacatt@gmail.com> wrote:
->>>>>> Hi all
->>>>>> Please i want help for install firmwear B43:
->>>>>>
->>>>>> -Bcm 4315 14e4:4315 rev 01
->>>>>
->>>>> 14e4:4315 is BCM4312.
->>>>>
->>>>>> or
->>>>>> -BCM 4322 14E4:432B REV01
->>>>>>
->>>>>>
->>>>>>
->>>>>> I want try in backtrack4. But i no say install B43.
->>>>>
->>>>> BackTrack 4 already includes firmware for b43 ot-of-the-box.
->>>>>
->>>>>>
->>>>>> Help me please. thank you
->>>>>> _______________________________________________
->>>>>> b43-dev mailing list
->>>>>> b43-dev at lists.infradead.org
->>>>>> http://lists.infradead.org/mailman/listinfo/b43-dev
->>>>>>
->>>>>>
->>>>>
->>>>>
->>>>>
->>>>> --
->>>>> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>>>>
->>>>
->>>
->>>
->>>
->>> --
->>> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>>
->>
->>
->>
->> --
->> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>
->
-
-
+You can always build the kernel in another machine and just copy the
+zImage and modules back to your netbook (or even create a monolithic
+kernel without any modules). Also there are tools like distcc and
+ccache which would help.
 
 -- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Kalle Valo
