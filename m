@@ -1,7 +1,7 @@
-From: mic cat <micacatt@gmail.com>
-Date: Sun, 8 Aug 2010 12:59:45 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 8 Aug 2010 13:15:54 +0200
 Subject: 14e4:4315 help install
-In-Reply-To: <AANLkTi=vDaSMgc=xORaH92iwva4qKattGvMQqpR5XJxB@mail.gmail.com>
+In-Reply-To: <AANLkTimggEXJP=xod_6L3VvqCZgwKySwKsY3E3SPt-xx@mail.gmail.com>
 References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com>
 	<AANLkTin_ck8wFgWj5pyptYKTmMO-uu80dibbS_3NRAav@mail.gmail.com>
 	<AANLkTikB0k_6+rPb37M75wbNqE0TV9d_zu6DVbN5Tyjj@mail.gmail.com>
@@ -14,47 +14,38 @@ References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com>
 	<AANLkTimiX1_dO-10M3=QTQZo9e9PRbSL-97xe2y6ctJt@mail.gmail.com>
 	<AANLkTincTOFVTkk53nX1hdrjP2R21Jk_JG8Rmda8RX2p@mail.gmail.com>
 	<AANLkTi=vDaSMgc=xORaH92iwva4qKattGvMQqpR5XJxB@mail.gmail.com>
-Message-ID: <AANLkTimggEXJP=xod_6L3VvqCZgwKySwKsY3E3SPt-xx@mail.gmail.com>
+	<AANLkTimggEXJP=xod_6L3VvqCZgwKySwKsY3E3SPt-xx@mail.gmail.com>
+Message-ID: <AANLkTikKuAtNbA8qBqZ=fHH0D_wAeLpu8xh3c6F04w+y@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Thank for reply fast.
+W dniu 8 sierpnia 2010 12:59 u?ytkownik mic cat <micacatt@gmail.com> napisa?:
+> For Dma what is "PIO" (This device does not support DMA on your
+> system. Please use PIO instead)
 
-For Dma what is "PIO" (This device does not support DMA on your
-system. Please use PIO instead)
+You can use b43's parameter pio. For example like this:
+# rmmod b43
+# modprobe b43 pio=1
 
-For kernel i am try for upgrade "2.6.35"
+Or booting with "b43.pio=1" (you can white this in GRUB).
+
+This will increase CPU usage, but should avoid DMA problems. However,
+as I mentioned, this this is not needed with 2.6.35 anymore.
 
 
-So iwlist scan : wlan0 (myBcm) No Scann Result.
+> For kernel i am try for upgrade "2.6.35"
 
-I have other card (Rt73) and work in managed
+Thanks! Please share results! We're very interested in information if
+using 2.6.35 helps with DMA errors.
 
 
-Thank
+> So iwlist scan : wlan0 (myBcm) No Scann Result.
 
-2010/8/8, Rafa? Mi?ecki <zajec5@gmail.com>:
-> W dniu 8 sierpnia 2010 12:44 u?ytkownik mic cat <micacatt@gmail.com>
-> napisa?:
->> Sorry for my longest....
->>
->> My card stop in monitoring mode after 1 min.
->> dmesg "http://pastebin.com/y1F9PYAF"
->
-> This is known DMA error, we suspect it may be fixed in 2.6.35. Is this
-> possible for you to update kernel to 2.6.35 version?
->
->
->> and i have other problem.
->> My card no scann in "wicd network-manager" for managed mode
->
-> Don't know much about "wicd". What about just "iwlist scan" executed in
-> console?
->
->
-> --
-> Rafa?
->
+No idea about this issue :|
+
+
+-- 
+Rafa?
