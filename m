@@ -1,7 +1,7 @@
-From: mic cat <micacatt@gmail.com>
-Date: Sun, 8 Aug 2010 11:49:06 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 8 Aug 2010 12:02:44 +0200
 Subject: 14e4:4315 help install
-In-Reply-To: <AANLkTinWgUuzFZfp+UgioxG6r0KrhjPyJXxxVmmOn+Do@mail.gmail.com>
+In-Reply-To: <AANLkTin0+yt+vr6+YgwVqG5CV1ZCnsDYTUJRTYrL2PH-@mail.gmail.com>
 References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com>
 	<AANLkTin_ck8wFgWj5pyptYKTmMO-uu80dibbS_3NRAav@mail.gmail.com>
 	<AANLkTikB0k_6+rPb37M75wbNqE0TV9d_zu6DVbN5Tyjj@mail.gmail.com>
@@ -9,112 +9,35 @@ References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com>
 	<AANLkTikrn2qXPbzV=PXfsiBW5XmbpqQhhg8wrLhwgN93@mail.gmail.com>
 	<AANLkTi=ep953r4qxt7NWTwVbuA=aqH5iaL4vhPhWNVG6@mail.gmail.com>
 	<AANLkTinWgUuzFZfp+UgioxG6r0KrhjPyJXxxVmmOn+Do@mail.gmail.com>
-Message-ID: <AANLkTin0+yt+vr6+YgwVqG5CV1ZCnsDYTUJRTYrL2PH-@mail.gmail.com>
+	<AANLkTin0+yt+vr6+YgwVqG5CV1ZCnsDYTUJRTYrL2PH-@mail.gmail.com>
+Message-ID: <AANLkTikYZAMW4eT5mnMpPemW=M79TYf11qratTdB1oZ3@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-HI.
-
-For my problem (14e4:4315),I'm download new "BT4" "R1" (2.6.34)
-
-And My Card "Work". (inteface:wlan0     chipset:broadcom     driver:B43-{phy0}
-I am testing injection is "work". Very good card, but stop "work" sometimes.
-
-
-P.S
-I have card  Pci :14e4:234b (appleAirport) is very good card  with
-good reception.
-but i no say for linux. Or are the work if you like it for driver or firmwear.?
-
-
-Thank
-
-
-
-2010/8/7, G?bor Stefanik <netrolller.3d@gmail.com>:
-> The firmware is already installed in bt4 - only the driver needs to be
-> updated.
-> After doing "make install", do a "make unload", and a "modprobe b43"
-> to load the updated b43 module.
+2010/8/8 mic cat <micacatt@gmail.com>:
+> For my problem (14e4:4315),I'm download new "BT4" "R1" (2.6.34)
 >
-> And please, use the Reply-to-all button when replying to a mailing list.
->
-> 2010/8/7 mic cat <micacatt@gmail.com>:
->> Thank you for your help.
->>
->> I am download and install compat-wireless (make-makeinstall)
->> But no firmwear install.
->>
->> My card no listed.
->>
->>
->>
->>
->> 2010/8/6, G?bor Stefanik <netrolller.3d@gmail.com>:
->>> BTW, remember to reply to all!
->>>
->>> 2010/8/6 G?bor Stefanik <netrolller.3d@gmail.com>:
->>>> Oops... yes, bt4 has a 2.6.31 kernel. Compile and install
->>>> compat-wireless to get 4312 support.
->>>>
->>>> 2010/8/6 mic cat <micacatt@gmail.com>:
->>>>> Tank for help but in bt4 my card no reconize
->>>>> i am test modprob b43 but no...
->>>>>
->>>>>
->>>>>
->>>>> 2010/8/6, G?bor Stefanik <netrolller.3d@gmail.com>:
->>>>>> On Fri, Aug 6, 2010 at 9:52 PM, mic cat <micacatt@gmail.com> wrote:
->>>>>>> Hi all
->>>>>>> Please i want help for install firmwear B43:
->>>>>>>
->>>>>>> -Bcm 4315 14e4:4315 rev 01
->>>>>>
->>>>>> 14e4:4315 is BCM4312.
->>>>>>
->>>>>>> or
->>>>>>> -BCM 4322 14E4:432B REV01
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> I want try in backtrack4. But i no say install B43.
->>>>>>
->>>>>> BackTrack 4 already includes firmware for b43 ot-of-the-box.
->>>>>>
->>>>>>>
->>>>>>> Help me please. thank you
->>>>>>> _______________________________________________
->>>>>>> b43-dev mailing list
->>>>>>> b43-dev at lists.infradead.org
->>>>>>> http://lists.infradead.org/mailman/listinfo/b43-dev
->>>>>>>
->>>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> --
->>>>>> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>>>>>
->>>>>
->>>>
->>>>
->>>>
->>>> --
->>>> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>>>
->>>
->>>
->>>
->>> --
->>> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>>
->>
->
->
->
-> --
-> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->
+> And My Card "Work". (inteface:wlan0 ? ? chipset:broadcom ? ? driver:B43-{phy0}
+> I am testing injection is "work". Very good card, but stop "work" sometimes.
+
+Does it stop working only for injection? Or does it also happen in
+normal (managed) mode?
+
+What do you see in "dmesg" after card stops working?
+
+
+> P.S
+> I have card ?Pci :14e4:234b (appleAirport) is very good card ?with
+> good reception.
+> but i no say for linux. Or are the work if you like it for driver or firmwear.?
+
+I guess you mean 14e4:432b, right? It's not supported N-PHY card.
+Larry made great work writing specs but we lack developers to create
+driver.
+
+
+-- 
+Rafa?
