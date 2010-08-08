@@ -1,7 +1,7 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 8 Aug 2010 12:50:32 +0200
+From: mic cat <micacatt@gmail.com>
+Date: Sun, 8 Aug 2010 12:59:45 +0200
 Subject: 14e4:4315 help install
-In-Reply-To: <AANLkTincTOFVTkk53nX1hdrjP2R21Jk_JG8Rmda8RX2p@mail.gmail.com>
+In-Reply-To: <AANLkTi=vDaSMgc=xORaH92iwva4qKattGvMQqpR5XJxB@mail.gmail.com>
 References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com>
 	<AANLkTin_ck8wFgWj5pyptYKTmMO-uu80dibbS_3NRAav@mail.gmail.com>
 	<AANLkTikB0k_6+rPb37M75wbNqE0TV9d_zu6DVbN5Tyjj@mail.gmail.com>
@@ -13,28 +13,48 @@ References: <AANLkTinnsu-OdVcwMSj3YoynZj6_7umCo=a82Z48mDZw@mail.gmail.com>
 	<AANLkTikYZAMW4eT5mnMpPemW=M79TYf11qratTdB1oZ3@mail.gmail.com>
 	<AANLkTimiX1_dO-10M3=QTQZo9e9PRbSL-97xe2y6ctJt@mail.gmail.com>
 	<AANLkTincTOFVTkk53nX1hdrjP2R21Jk_JG8Rmda8RX2p@mail.gmail.com>
-Message-ID: <AANLkTi=vDaSMgc=xORaH92iwva4qKattGvMQqpR5XJxB@mail.gmail.com>
+	<AANLkTi=vDaSMgc=xORaH92iwva4qKattGvMQqpR5XJxB@mail.gmail.com>
+Message-ID: <AANLkTimggEXJP=xod_6L3VvqCZgwKySwKsY3E3SPt-xx@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 8 sierpnia 2010 12:44 u?ytkownik mic cat <micacatt@gmail.com> napisa?:
-> Sorry for my longest....
+Thank for reply fast.
+
+For Dma what is "PIO" (This device does not support DMA on your
+system. Please use PIO instead)
+
+For kernel i am try for upgrade "2.6.35"
+
+
+So iwlist scan : wlan0 (myBcm) No Scann Result.
+
+I have other card (Rt73) and work in managed
+
+
+Thank
+
+2010/8/8, Rafa? Mi?ecki <zajec5@gmail.com>:
+> W dniu 8 sierpnia 2010 12:44 u?ytkownik mic cat <micacatt@gmail.com>
+> napisa?:
+>> Sorry for my longest....
+>>
+>> My card stop in monitoring mode after 1 min.
+>> dmesg "http://pastebin.com/y1F9PYAF"
 >
-> My card stop in monitoring mode after 1 min.
-> dmesg "http://pastebin.com/y1F9PYAF"
-
-This is known DMA error, we suspect it may be fixed in 2.6.35. Is this
-possible for you to update kernel to 2.6.35 version?
-
-
-> and i have other problem.
-> My card no scann in "wicd network-manager" for managed mode
-
-Don't know much about "wicd". What about just "iwlist scan" executed in console?
-
-
--- 
-Rafa?
+> This is known DMA error, we suspect it may be fixed in 2.6.35. Is this
+> possible for you to update kernel to 2.6.35 version?
+>
+>
+>> and i have other problem.
+>> My card no scann in "wicd network-manager" for managed mode
+>
+> Don't know much about "wicd". What about just "iwlist scan" executed in
+> console?
+>
+>
+> --
+> Rafa?
+>
