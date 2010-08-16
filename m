@@ -1,46 +1,32 @@
-From: Chris Vine <chris@cvine.freeserve.co.uk>
-Date: Mon, 16 Aug 2010 20:41:54 +0100
-Subject: [RFT] BCM4312 users with DMA errors, please test!
-In-Reply-To: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
-References: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
-Message-ID: <20100816204154.5100b604@boulder.homenet>
+From: =?UTF-8?q?G=C3=A1bor=20Stefanik?= <netrolller.3d@gmail.com>
+Date: Mon, 16 Aug 2010 22:39:14 +0200
+Subject: [PATCH 1/4] b43: N-PHY: Implement Host Flags write during device init
+Message-ID: <1281991157-1557-1-git-send-email-netrolller.3d@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?R8OhYm9y?= Stefanik <netrolller.3d@gmail.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
+To: John Linville <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Larry Finger <larry.finger@lwfinger.net>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, =?UTF-8?q?G=C3=A1bor=20Stefanik?= <netrolller.3d@gmail.com>
 
-On Mon, 16 Aug 2010 19:59:36 +0200
-G?bor Stefanik <netrolller.3d@gmail.com> wrote:
-> Hello Everyone!
-> 
-> If you are experiencing DMA errors on a BCM4312, please test the
-> attached patch. It implements the PCI-E SERDES workaround, which the
-> hybrid driver is applying during early init to LP-PHY cards, and which
-> is a good candidate for the cause of the DMA error.
-> Note that this is not a final patch & it may cause collateral damage
-> for non-4312 cards; if it helps the 4312 problem, I will submit a
-> cleaned-up version.
+Signed-off-by: G?bor Stefanik <netrolller.3d@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-This applies to 2.6.35.2, but does not compile:
-
-drivers/ssb/driver_pcicore.c: In function 'ssb_pcie_mdio_set_block':
-drivers/ssb/driver_pcicore.c:457: error: 'i' undeclared (first use in
-this function) drivers/ssb/driver_pcicore.c:457: error: (Each
-undeclared identifier is reported only once
-drivers/ssb/driver_pcicore.c:457: error: for each function it appears
-in.) drivers/ssb/driver_pcicore.c: In function 'ssb_pcie_mdio_read':
-drivers/ssb/driver_pcicore.c:503: error: expected ';' before
-'pcicore_write32'
-
-With the obvious fixes (providing a variable 'i' of int type as the
-count variable and terminating the line which had no terminating
-semi-colon), it compiled OK and the first time I booted up, booted up
-OK but didn't fix the DMA error.  Subsequent attempts to boot up gave me
-a slew of errors on boot up so I am not sure what is going on there.
-
-You might want to check that the obvious fixes to the patch are
-complete.
-
-Chris
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 5a72570..cb815cc 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -1098,7 +1098,8 @@ static void b43_nphy_workarounds(struct b43_wldev *dev)
+ 
+ 		if (dev->phy.rev < 2) {
+ 			if (b43_phy_read(dev, B43_NPHY_RXCTL) & 0x2)
+-				; /*TODO: b43_mhf(dev, 2, 0x0010, 0x0010, 3);*/
++				b43_hf_write(dev, b43_hf_read(dev) |
++						B43_HF_MLADVW);
+ 		} else if (dev->phy.rev == 2) {
+ 			b43_phy_write(dev, B43_NPHY_CRSCHECK2, 0);
+ 			b43_phy_write(dev, B43_NPHY_CRSCHECK3, 0);
+-- 
+1.6.4.2
