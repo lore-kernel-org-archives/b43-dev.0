@@ -1,32 +1,70 @@
-From: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <mb@bu3sch.de>
-Date: Mon, 16 Aug 2010 22:47:32 +0200
-Subject: [PATCH 4/4] b43: N-PHY: Implement RX core state setting for rev.2
-	and earlier PHYs
-In-Reply-To: <1281991157-1557-4-git-send-email-netrolller.3d@gmail.com>
-	(sfid-20100816_223927_806858_FFFFFFFFDFC5176A)
-References: <1281991157-1557-1-git-send-email-netrolller.3d@gmail.com>
-	<1281991157-1557-2-git-send-email-netrolller.3d@gmail.com>
-	<1281991157-1557-3-git-send-email-netrolller.3d@gmail.com>
-	<1281991157-1557-4-git-send-email-netrolller.3d@gmail.com>
-	(sfid-20100816_223927_806858_FFFFFFFFDFC5176A)
-Message-ID: <4C69A3E4.1080807@bu3sch.de>
+From: Chris Vine <chris@cvine.freeserve.co.uk>
+Date: Mon, 16 Aug 2010 23:35:44 +0100
+Subject: [RFT] BCM4312 users with DMA errors, please test!
+In-Reply-To: <20100816204154.5100b604@boulder.homenet>
+References: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
+	<20100816204154.5100b604@boulder.homenet>
+Message-ID: <20100816233544.40f0e1d4@boulder.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?R8OhYm9yIFN0ZWZhbmlr?= <netrolller.3d@gmail.com>
-Cc: John Linville <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Larry Finger <larry.finger@lwfinger.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: =?UTF-8?B?R8OhYm9y?= Stefanik <netrolller.3d@gmail.com>
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-On 08/16/2010 10:39 PM, G?bor Stefanik wrote:
-> +static void b43_nphy_set_rx_core_state(struct b43_wldev *dev, u8 mask)
-> +{
-> +	struct b43_phy *phy =&dev->phy;
-> +	struct b43_phy_n *nphy = phy->n;
-> +	u16 buf[16];
+On Mon, 16 Aug 2010 20:41:54 +0100
+Chris Vine <chris@cvine.freeserve.co.uk> wrote:
 
-> +	if (maskbits&  0x3 != 0x3) {
+> On Mon, 16 Aug 2010 19:59:36 +0200
+> G?bor Stefanik <netrolller.3d@gmail.com> wrote:
+> > Hello Everyone!
+> > 
+> > If you are experiencing DMA errors on a BCM4312, please test the
+> > attached patch. It implements the PCI-E SERDES workaround, which the
+> > hybrid driver is applying during early init to LP-PHY cards, and
+> > which is a good candidate for the cause of the DMA error.
+> > Note that this is not a final patch & it may cause collateral damage
+> > for non-4312 cards; if it helps the 4312 problem, I will submit a
+> > cleaned-up version.
+> 
+> This applies to 2.6.35.2, but does not compile:
+> 
+> drivers/ssb/driver_pcicore.c: In function 'ssb_pcie_mdio_set_block':
+> drivers/ssb/driver_pcicore.c:457: error: 'i' undeclared (first use in
+> this function) drivers/ssb/driver_pcicore.c:457: error: (Each
+> undeclared identifier is reported only once
+> drivers/ssb/driver_pcicore.c:457: error: for each function it appears
+> in.) drivers/ssb/driver_pcicore.c: In function 'ssb_pcie_mdio_read':
+> drivers/ssb/driver_pcicore.c:503: error: expected ';' before
+> 'pcicore_write32'
+> 
+> With the obvious fixes (providing a variable 'i' of int type as the
+> count variable and terminating the line which had no terminating
+> semi-colon), it compiled OK and the first time I booted up, booted up
+> OK but didn't fix the DMA error.  Subsequent attempts to boot up gave
+> me a slew of errors on boot up so I am not sure what is going on
+> there.
+> 
+> You might want to check that the obvious fixes to the patch are
+> complete.
 
-Does this even compile? I don't see maskbits being defined.
+I have more or less tracked down what is happening.
 
--- 
-Greetings Michael.
+The first thing to report is that this does not fix the DMA error.
+
+The second thing is that with the patch applied, and with _all_
+wireless/ssb modules blacklisted (ssb, b43, wl), if the wl module is
+present the kernel bizarrely still tries to load it on boot up and
+shortly thereafter hangs with a number of errors reported, which differ
+on different boots (there is no particular pattern to them). That in
+turn causes some file system corruption which affects further boots
+even if the wl module is removed.  The corruption is not that serious
+and appears only to affect the kernel image and/or the wl module.
+Reinstalling both solved the problem, so far.  ef2fsck -f only reported
+that the time stamps were wrong, but inodes and directory structures
+were reported as OK.
+
+But caveat testor so far as the corruption is concerned.  I might have
+been lucky.
+
+Chris
