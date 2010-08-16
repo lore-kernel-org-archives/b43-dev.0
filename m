@@ -1,33 +1,46 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Mon, 16 Aug 2010 21:32:26 +0200
+From: Chris Vine <chris@cvine.freeserve.co.uk>
+Date: Mon, 16 Aug 2010 20:41:54 +0100
 Subject: [RFT] BCM4312 users with DMA errors, please test!
-In-Reply-To: <4C6991D9.7070902@lwfinger.net>
+In-Reply-To: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
 References: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
-	<4C698C19.5010902@lwfinger.net>
-	<AANLkTi=eFz5fabN74xbndCvD-XBS-KA9EBiOKAZvcbRb@mail.gmail.com>
-	<4C6991D9.7070902@lwfinger.net>
-Message-ID: <AANLkTikBHTX_8SWBwUQBOpL2DOxriPKLX+eQmPPO+a1Y@mail.gmail.com>
+Message-ID: <20100816204154.5100b604@boulder.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
+To: =?UTF-8?B?R8OhYm9y?= Stefanik <netrolller.3d@gmail.com>
 Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
 
-2010/8/16 Larry Finger <Larry.Finger@lwfinger.net>:
-> On 08/16/2010 02:16 PM, G?bor Stefanik wrote:
->>
->> Oops... yes, two nasty typos. I have no idea why it compiled for me...
->> Schr?dinbug?
->>
->> With that said, here is the corrected version.
->
-> Hmmm, a new application of the "Uncertainty Principle".
->
-> The patch did not break my 14e4:4315 device, which already worked.
->
-> Larry
->
+On Mon, 16 Aug 2010 19:59:36 +0200
+G?bor Stefanik <netrolller.3d@gmail.com> wrote:
+> Hello Everyone!
+> 
+> If you are experiencing DMA errors on a BCM4312, please test the
+> attached patch. It implements the PCI-E SERDES workaround, which the
+> hybrid driver is applying during early init to LP-PHY cards, and which
+> is a good candidate for the cause of the DMA error.
+> Note that this is not a final patch & it may cause collateral damage
+> for non-4312 cards; if it helps the 4312 problem, I will submit a
+> cleaned-up version.
 
-That's expected, given that the hybrid driver also does this. :-) The
-question is whether it fixes the DMA error.
+This applies to 2.6.35.2, but does not compile:
+
+drivers/ssb/driver_pcicore.c: In function 'ssb_pcie_mdio_set_block':
+drivers/ssb/driver_pcicore.c:457: error: 'i' undeclared (first use in
+this function) drivers/ssb/driver_pcicore.c:457: error: (Each
+undeclared identifier is reported only once
+drivers/ssb/driver_pcicore.c:457: error: for each function it appears
+in.) drivers/ssb/driver_pcicore.c: In function 'ssb_pcie_mdio_read':
+drivers/ssb/driver_pcicore.c:503: error: expected ';' before
+'pcicore_write32'
+
+With the obvious fixes (providing a variable 'i' of int type as the
+count variable and terminating the line which had no terminating
+semi-colon), it compiled OK and the first time I booted up, booted up
+OK but didn't fix the DMA error.  Subsequent attempts to boot up gave me
+a slew of errors on boot up so I am not sure what is going on there.
+
+You might want to check that the obvious fixes to the patch are
+complete.
+
+Chris
