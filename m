@@ -1,42 +1,53 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Tue, 17 Aug 2010 08:37:51 +0200
-Subject: [PATCH 4/4] b43: N-PHY: Implement RX core state setting for rev.2
-	and earlier PHYs
-In-Reply-To: <4C69A3E4.1080807@bu3sch.de>
-References: <1281991157-1557-1-git-send-email-netrolller.3d@gmail.com>
-	<1281991157-1557-2-git-send-email-netrolller.3d@gmail.com>
-	<1281991157-1557-3-git-send-email-netrolller.3d@gmail.com>
-	<1281991157-1557-4-git-send-email-netrolller.3d@gmail.com>
-	<4C69A3E4.1080807@bu3sch.de>
-Message-ID: <AANLkTik-q-UsU8AyvoQ+ci2RFUk9=4kfiPZLmb7pg4jG@mail.gmail.com>
+From: Chris Vine <chris@cvine.freeserve.co.uk>
+Date: Tue, 17 Aug 2010 13:23:37 +0100
+Subject: [RFT] BCM4312 users with DMA errors, please test!
+In-Reply-To: <4C69DF79.2020900@lwfinger.net>
+References: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
+	<20100816204154.5100b604@boulder.homenet>
+	<20100816233544.40f0e1d4@boulder.homenet>
+	<4C69CF85.2020809@lwfinger.net>
+	<20100817010923.589d8063@boulder.homenet>
+	<20100817011455.4919cfbb@boulder.homenet>
+	<4C69DF79.2020900@lwfinger.net>
+Message-ID: <20100817132337.01392797@boulder.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?ISO-8859-1?Q?Michael_B=FCsch?= <mb@bu3sch.de>
-Cc: John Linville <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Larry Finger <larry.finger@lwfinger.net>, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-On Mon, Aug 16, 2010 at 10:47 PM, Michael B?sch <mb@bu3sch.de> wrote:
-> On 08/16/2010 10:39 PM, G?bor Stefanik wrote:
->>
->> +static void b43_nphy_set_rx_core_state(struct b43_wldev *dev, u8 mask)
->> +{
->> + ? ? ? struct b43_phy *phy =&dev->phy;
->> + ? ? ? struct b43_phy_n *nphy = phy->n;
->> + ? ? ? u16 buf[16];
->
->> + ? ? ? if (maskbits& ?0x3 != 0x3) {
->
-> Does this even compile? I don't see maskbits being defined.
+On Mon, 16 Aug 2010 20:01:45 -0500
+Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> My wl came from hybrid-portsrc-x86_32-v5.60.48.36.tar.gz. My kernel is
+> 2.6.36-rc1 from mainline.
+> 
+> Very strange that a patch to ssb, which is a module that cannot even
+> load due to being blacklisted, can cause this kind of problem. Are
+> you warm or cold rebooting?
 
-Typo, should be just "mask" (without "bits").
+I am using the same version of wl.
 
->
-> --
-> Greetings Michael.
->
+On booting up my netbook this morning, I found that I get a wholesome
+set of bugs reported by dmesg, even without wl available to the
+kernel and with the ssb patch reverted. I think the ssb patch is an
+innocent bystander which just happened first to reveal a bug in the
+2.6.35.2 kernel.  A lot seems to depend on the starting state of the
+hardware - a cold boot in a stock 2.6.35.2 kernel will trigger it
+(what I got this morning). A warm boot on a 2.6.35.2 kernel with the ssb
+patch will also trigger it (what I got yesterday).
 
+The fact that something tries to load a blacklisted wl module would
+seem to show there is something fairly fundamentally amiss, possibly
+with the ACPI code. In any event, the conclusion I have reached is that
+the 2.6.35.2 kernel is hopelessly broken on my netbook hardware. I do
+not now think there is any file system corruption: it just gave that
+appearance because of the saving of the state of the machine between
+warm boots.
 
+Reverting to 2.6.35.1 solves this.  Probably 2.6.36-rc1 would be OK as
+well.  I might later today try the ssb patch on the 2.6.35.1 kernel,
+but it doesn't look as if it solves the DMA errors.  However,
+yesterday's tests clearly aren't conclusive about anything.
 
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Chris
