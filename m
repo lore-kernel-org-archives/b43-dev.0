@@ -1,5 +1,5 @@
 From: Chris Vine <chris@cvine.freeserve.co.uk>
-Date: Tue, 17 Aug 2010 01:10:44 +0100
+Date: Tue, 17 Aug 2010 01:14:55 +0100
 Subject: [RFT] BCM4312 users with DMA errors, please test!
 In-Reply-To: <20100817010923.589d8063@boulder.homenet>
 References: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
@@ -7,13 +7,13 @@ References: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
 	<20100816233544.40f0e1d4@boulder.homenet>
 	<4C69CF85.2020809@lwfinger.net>
 	<20100817010923.589d8063@boulder.homenet>
-Message-ID: <20100817011044.3a5f20cf@boulder.homenet>
+Message-ID: <20100817011455.4919cfbb@boulder.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: =?UTF-8?B?R8OhYm9y?= Stefanik <netrolller.3d@gmail.com>, linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
 On Tue, 17 Aug 2010 01:09:23 +0100
 Chris Vine <chris@cvine.freeserve.co.uk> wrote:
@@ -33,8 +33,9 @@ Chris Vine <chris@cvine.freeserve.co.uk> wrote:
 > I do not doubt that you do not experience this effect.  However, you
 > don't experience the DMA bug either.
 
-I probably also ought to say that this is with a stock 2.6.35.2
-kernel.  You may be using wireless testing, although I doubt that makes
-a difference.
+Out of interest, which version of the wl module do you have installed,
+as I wonder if that makes a difference?   (As I said in my e-mail on
+this, this problem only occurs if the wl module is available to the
+kernel.)
 
 Chris
