@@ -1,41 +1,68 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Tue, 17 Aug 2010 22:38:54 +0200
-Subject: [RFT] BCM4312 users with DMA errors, please test!
-In-Reply-To: <20100817212825.6f5ecb66@boulder.homenet>
-References: <AANLkTimMhW7OX3DT7A3EDNaOnr577KmTv5w9C_mz19TG@mail.gmail.com>
-	<20100816204154.5100b604@boulder.homenet>
-	<20100816233544.40f0e1d4@boulder.homenet>
-	<4C69CF85.2020809@lwfinger.net>
-	<20100817010923.589d8063@boulder.homenet>
-	<20100817011455.4919cfbb@boulder.homenet>
-	<4C69DF79.2020900@lwfinger.net>
-	<20100817132337.01392797@boulder.homenet>
-	<20100817212825.6f5ecb66@boulder.homenet>
-Message-ID: <AANLkTikFi5Nid47WUFYgMGBBq8SY87VizPHiSzv7ZLct@mail.gmail.com>
+From: Cyrille <cyrille@cbiot.fr>
+Date: Sat, 21 Aug 2010 19:31:50 +0200
+Subject: Problem with BCM4312 802.11b/g [14e4:4315]
+Message-ID: <20100821193150.fbd36368.cyrille@cbiot.fr>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Vine <chris@cvine.freeserve.co.uk>
-Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>, Larry Finger <Larry.Finger@lwfinger.net>
+To: b43-dev@lists.infradead.org
 
-On Tue, Aug 17, 2010 at 10:28 PM, Chris Vine
-<chris@cvine.freeserve.co.uk> wrote:
-> On Tue, 17 Aug 2010 13:23:37 +0100
-> Chris Vine <chris@cvine.freeserve.co.uk> wrote:
->> Reverting to 2.6.35.1 solves this. ?Probably 2.6.36-rc1 would be OK as
->> well. ?I might later today try the ssb patch on the 2.6.35.1 kernel,
->> but it doesn't look as if it solves the DMA errors. ?However,
->> yesterday's tests clearly aren't conclusive about anything.
->
-> I have applied the patch to 2.6.35.1, and it does not appear to have
-> any effect on the DMA errors.
->
-> Chris
->
->
->
+Hi I'm a BLAG user with BCM4312 802.11b/g [14e4:4315] (rev 01). But don't seem work.
 
-Thanks! That's what I was ultimately interested in. So, we now know
-it's not the SERDES workaround. (Or maybe it needs to be performed at
-a different time.)
+
+I tested to compile myself the driver like explain here
+http://wireless.kernel.org/en/users/Drivers/b43#device_firmware_installation
+with the source file : broadcom-wl-4.150.10.5.tar.bz2 and too this source file
+broadcom-wl-4.178.10.4.tar.bz2 but always the same error notification. 
+
+
+- - -  - dmesg | tail
+ b43 ssb0:0: firmware: requesting b43-open/lp0initvals15.fw
+ b43 ssb0:0: firmware: requesting b43-open/lp0bsinitvals15.fw
+ b43-phy0 ERROR: Rejected non-Free firmware
+- - - 
+
+The dir is b43-open --> specific to BLAG.
+
+
+lspci -vnn
+0b:00.0 0280: 14e4:4315 (rev 01)
+	Subsystem: 1028:000b
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR+ FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 64 bytes
+	Interrupt: pin A routed to IRQ 17
+	Region 0: Memory@fe7fc000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: <access denied>
+	Kernel driver in use: wl            ---> I write with another driver
+	Kernel modules: wl, ssb           ---> *****
+
+
+uname : 2.6.32.11-libre.99.fc12.x86_64
+
+
+
+Finally, I have installed broadcom-wl from rpmfusion nonfree. It works great but it's non free :-( 
+
+
+So I report the situation to you if ever you want the debug it!
+ 
+More info here  : http://forums.blagblagblag.org/viewtopic.php?p=27627
+
+Thanx a lot ! Cheers !
+
+Cyrille
+
+
+
+
+----
+[ cyrille at cbiot.fr | http://cbiot.fr ]
+
+"Ils ne me comprennent point,
+je ne suis pas la bouche qui convient ??ces oreilles"
+ - - - Ainsi parlait Zarathoustra - - -
+ - - - - - - - - - - -  NIETZSCHE - - -
+
+Blag'em up! http://zenblagger.org
