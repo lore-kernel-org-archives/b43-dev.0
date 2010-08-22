@@ -1,23 +1,26 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Mon, 23 Aug 2010 01:30:19 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 23 Aug 2010 01:35:14 +0200
 Subject: [PATCH 1/2] b43: N-PHY: band width setting with dumb clock
 	control call
 In-Reply-To: <AANLkTi=TMhmTF+ztooAu=E1e1zdw-cBnaSZCKj=Utik0@mail.gmail.com>
 References: <1282506589-8220-1-git-send-email-zajec5@gmail.com>
 	<AANLkTi=TMhmTF+ztooAu=E1e1zdw-cBnaSZCKj=Utik0@mail.gmail.com>
-Message-ID: <AANLkTikMxL41zrR+KDF1Od_SKpbQhsQWHWiAAAULYx+F@mail.gmail.com>
+Message-ID: <AANLkTimcwFn3Xxs9SmH5PC4Co0EetOpbxBggQz8SEyoY@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julian Calaby <julian.calaby@gmail.com>
-Cc: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, Larry Finger <Larry.Finger@lwfinger.net>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>
 
-On Mon, Aug 23, 2010 at 1:20 AM, Julian Calaby <julian.calaby@gmail.com> wrote:
+2010/8/23 Julian Calaby <julian.calaby@gmail.com>:
 > Rafal,
 >
 > Couple of minor style issues, if you're re-submitting.
->
+
+Thanks for reviewing! :)
+
+
 > 2010/8/23 Rafa? Mi?ecki <zajec5@gmail.com>:
 >> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 >> ---
@@ -42,7 +45,12 @@ On Mon, Aug 23, 2010 at 1:20 AM, Julian Calaby <julian.calaby@gmail.com> wrote:
 >> + ? ? ? ; /* TODO */
 >
 > You don't need the semicolon here, as I understand it.
->
+
+Yeah, could be skipped without causing warning. However it was
+replaced anyway with 2/2. And this code doesn't come from the patch
+you comment in this thread ;)
+
+
 >> +}
 >> +
 >> +/* http://bcm-v4.sipsolutions.net/802.11/PHY/BmacBwSet */
@@ -52,35 +60,8 @@ On Mon, Aug 23, 2010 at 1:20 AM, Julian Calaby <julian.calaby@gmail.com> wrote:
 >
 > Double semicolon - and is it necessary to assign a local variable here?
 
-I agree - don't blindly follow the specs; accessing struct members it
-not expensive.
-
->
->> + ? ? ? if (!fast)
->> + ? ? ? ? ? ? ? b43_clock_control(dev, 0);
->> + ? ? ? dev->phy.b_width = b_width;
->> + ? ? ? b43_read32(dev, B43_MMIO_MACCTL); /* flush writes */
->> + ? ? ? /* TODO: Call PHY BMAC Reset */
->> + ? ? ? dev->phy.ops->init(dev);
-
-I believe you need to do the whole PHY init, including the common
-part; not just the PHY type-specific init. Larry, is this true?
-
->> + ? ? ? if (fast)
->> + ? ? ? ? ? ? ? b43_clock_control(dev, 2);
->> +}
->
-> Thanks,
->
-> --
->
-> Julian Calaby
->
-> Email: julian.calaby at gmail.com
-> .Plan: http://sites.google.com/site/juliancalaby/
->
-
-
+Bingo for double semicolon. We need to keep copy of "forcefastclk" as
+this can be changed in sub calls.
 
 -- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Rafa?
