@@ -1,8 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 22 Aug 2010 21:49:48 +0200
-Subject: [PATCH 1/2] b43: N-PHY: band width setting with dumb clock control
-	call
-Message-ID: <1282506589-8220-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 22 Aug 2010 21:49:49 +0200
+Subject: [PATCH 2/2] b43: N-PHY: add sub calls of band width setting
+In-Reply-To: <1282506589-8220-1-git-send-email-zajec5@gmail.com>
+References: <1282506589-8220-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1282506589-8220-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,100 +13,206 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?G=C3=A1bor=20Stefanik?= <netrolller.3
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_common.c |   20 ++++++++++++++++++++
- drivers/net/wireless/b43/phy_common.h |   11 +++++++++++
- drivers/net/wireless/b43/phy_n.c      |    4 ++--
- drivers/net/wireless/b43/phy_n.h      |    1 -
- 4 files changed, 33 insertions(+), 3 deletions(-)
+ drivers/net/wireless/b43/b43.h        |    1 +
+ drivers/net/wireless/b43/phy_common.c |  150 ++++++++++++++++++++++++++++++++-
+ drivers/net/wireless/b43/phy_common.h |    7 ++
+ 3 files changed, 157 insertions(+), 1 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 8674a99..73376ff 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -57,6 +57,7 @@
+ #define B43_MMIO_TSF_CFP_REP		0x188
+ #define B43_MMIO_TSF_CFP_START		0x18C
+ #define B43_MMIO_TSF_CFP_MAXDUR		0x190
++#define B43_MMIO_CLKCTL			0x1E0	/* clock control status */
+ 
+ /* 32-bit DMA */
+ #define B43_MMIO_DMA32_BASE0		0x200
 diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index 8f7d7ef..b06e3f0 100644
+index b06e3f0..10b9e6f 100644
 --- a/drivers/net/wireless/b43/phy_common.c
 +++ b/drivers/net/wireless/b43/phy_common.c
-@@ -466,3 +466,23 @@ struct b43_c32 b43_cordic(int theta)
- 
+@@ -467,10 +467,158 @@ struct b43_c32 b43_cordic(int theta)
  	return ret;
  }
-+
-+/* http://bcm-v4.sipsolutions.net/802.11/PHY/ClkCtlClk */
-+static void b43_clock_control(struct b43_wldev *dev, u32 mode)
+ 
++/* http://bcm-v4.sipsolutions.net/802.11/NcClkCtlCc */
++static bool b43_no_check_clock_control_chip_common(struct b43_wldev *dev,
++								u32 mode)
 +{
-+	; /* TODO */
++	/* TODO: this is temporary hack */
++	return (mode == 0);
 +}
 +
-+/* http://bcm-v4.sipsolutions.net/802.11/PHY/BmacBwSet */
-+void b43_bmac_set_b_width(struct b43_wldev *dev, u8 b_width)
++/* http://bcm-v4.sipsolutions.net/802.11/ClkCtlCc */
++static bool b43_clock_control_chip_common(struct b43_wldev *dev, u32 mode)
 +{
-+	bool fast = dev->phy.forcefastclk;;
-+	if (!fast)
-+		b43_clock_control(dev, 0);
-+	dev->phy.b_width = b_width;
-+	b43_read32(dev, B43_MMIO_MACCTL); /* flush writes */
-+	/* TODO: Call PHY BMAC Reset */
-+	dev->phy.ops->init(dev);
-+	if (fast)
-+		b43_clock_control(dev, 2);
++	struct ssb_bus *bus = dev->dev->bus;
++	u16 chip_id = bus->chip_id;
++	u16 chip_rev = bus->chip_rev;
++	/* TODO: specs distinguish PCI and PCIe */
++	bool pci = (bus->bustype == SSB_BUSTYPE_PCI);
++
++	if (dev->dev->id.revision < 6)
++		return false;
++	if (pci && ((chip_id == 0x4311 && chip_rev < 2) ||
++		    (pci && chip_id == 0x4321) ||
++		    (pci && chip_id == 0x4716)))
++		return (mode == 0);
++	return b43_no_check_clock_control_chip_common(dev, mode);
 +}
++
++/* http://bcm-v4.sipsolutions.net/802.11/PHY/BmacWaitForWake */
++static void b43_phy_bmac_wait_for_wake(struct b43_wldev *dev)
++{
++	u8 core_rev = dev->dev->bus->pcicore.dev->id.revision;
++	u16 tmp, i;
++
++	if (core_rev == 4) {
++		udelay(5);
++		return;
++	}
++
++	if (dev->phy.type == B43_PHYTYPE_G && core_rev == 5)
++		udelay(2000);
++	else
++		udelay(40);
++
++	for (i = 0; i < 1500; i++) {
++		tmp = b43_shm_read16(dev, B43_SHM_SHARED,
++					B43_SHM_SH_UCODESTAT);
++		if (tmp == B43_SHM_SH_UCODESTAT_SLEEP) {
++			i = 0;
++			break;
++		}
++		udelay(10);
++	}
++	if (i)
++		b43err(dev->wl, "ucode wake up timeout\n");
++}
++
++/* http://bcm-v4.sipsolutions.net/802.11/PHY/MctrlWrite */
++static void b43_phy_mac_control_write(struct b43_wldev *dev)
++{
++	u32 tmp = dev->phy.maccontrol;
++	if (dev->phy.wake_override)
++		tmp |= B43_MACCTL_AWAKE;
++	if (dev->phy.mute_override)
++		tmp &= ~B43_MACCTL_AP;
++	tmp |= B43_MACCTL_INFRA;
++	b43_write32(dev, B43_MMIO_MACCTL, tmp);
++}
++
++/* http://bcm-v4.sipsolutions.net/802.11/PHY/UcodeWakeOverrideSet */
++static void b43_ucode_wake_override_set(struct b43_wldev *dev, u32 override)
++{
++	dev->phy.wake_override |= override;
++	if (dev->phy.wake_override || dev->phy.maccontrol & B43_MACCTL_AWAKE)
++		return;
++	b43_phy_mac_control_write(dev);
++	b43_phy_bmac_wait_for_wake(dev);
++}
++
++/* http://bcm-v4.sipsolutions.net/802.11/PHY/UcodeWakeOverrideClear */
++static void b43_ucode_wake_override_clear(struct b43_wldev *dev, u32 override)
++{
++	dev->phy.wake_override &= ~override;
++	if (dev->phy.wake_override != (dev->phy.maccontrol & B43_MACCTL_AWAKE))
++		return;
++	b43_phy_mac_control_write(dev);
++}
++
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/ClkCtlClk */
+ static void b43_clock_control(struct b43_wldev *dev, u32 mode)
+ {
+-	; /* TODO */
++	struct b43_phy *phy = &dev->phy;
++	struct ssb_bus *bus = dev->dev->bus;
++	u8 core_rev = bus->pcicore.dev->id.revision;
++	u16 i;
++	u32 clkctl;
++	bool wakeup;
++
++	if (bus->chipco.capabilities & SSB_CHIPCO_CAP_PMU) { /* PMU Present */
++		B43_WARN_ON(core_rev < 20);
++		if (phy->clk) {
++			bool tmp = (bus->chipco.pmu.rev == 0 &&
++				(b43_read32(dev, B43_MMIO_CLKCTL) & 0x12));
++
++			if (mode == 0) {
++				clkctl = b43_read32(dev, B43_MMIO_CLKCTL);
++				clkctl |= 0x2;
++				b43_write32(dev, B43_MMIO_CLKCTL, clkctl);
++				udelay(33);
++			}
++
++			if (mode == 0 || tmp) {
++				for (i = 0; i < 1500; i++) {
++					clkctl = b43_read32(dev, B43_MMIO_CLKCTL);
++					if ((clkctl & 0x20000) == 0) {
++						i = 0;
++						break;
++					}
++					udelay(10);
++				}
++				if (i)
++					b43err(dev->wl, "clock timeout\n");
++			}
++
++			if (mode != 0 && tmp) {
++				clkctl = b43_read32(dev, B43_MMIO_CLKCTL);
++				clkctl &= ~0x2;
++				b43_write32(dev, B43_MMIO_CLKCTL, clkctl);
++			}
++		}
++		phy->forcefastclk = (mode == 0);
++	} else {
++		B43_WARN_ON(core_rev >= 20);
++
++		wakeup = (core_rev < 9);
++		if (phy->up && wakeup)
++			b43_ucode_wake_override_set(dev, 1);
++
++		phy->forcefastclk = b43_clock_control_chip_common(dev, mode);
++		if (core_rev < 11) {
++			if (phy->forcefastclk)
++				; /* TODO: b43_mhf(dev, 0, 0x400, 0x400, 3); */
++			else
++				; /* TODO: b43_mhf(dev, 0, 0x400, 0, 3); */
++		}
++
++		if (phy->forcefastclk)
++			phy->wake_override |= 0x10;
++		else
++			phy->wake_override &= ~0x10;
++
++		if (phy->up && wakeup)
++			b43_ucode_wake_override_clear(dev, 1);
++	}
+ }
+ 
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/BmacBwSet */
 diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
-index bd480b4..9886db0 100644
+index 9886db0..fa20548 100644
 --- a/drivers/net/wireless/b43/phy_common.h
 +++ b/drivers/net/wireless/b43/phy_common.h
-@@ -218,6 +218,9 @@ struct b43_phy {
- 	bool supports_2ghz;
- 	bool supports_5ghz;
- 
-+	/* Band width */
-+	u8 b_width;
-+
- 	/* HT info */
- 	bool is_40mhz;
- 
-@@ -256,6 +259,9 @@ struct b43_phy {
- 	/* PHY TX errors counter. */
+@@ -260,8 +260,15 @@ struct b43_phy {
  	atomic_t txerr_cnt;
  
-+	/* Clock */
-+	bool forcefastclk;
+ 	/* Clock */
++	u32 clk;
+ 	bool forcefastclk;
+ 
++	bool up;
++	u32 maccontrol;
++
++	u32 wake_override;
++	u32 mute_override;
 +
  #ifdef CONFIG_B43_DEBUG
  	/* PHY registers locked (w.r.t. firmware) */
  	bool phy_locked;
-@@ -429,4 +435,9 @@ void b43_phyop_switch_analog_generic(struct b43_wldev *dev, bool on);
- 
- struct b43_c32 b43_cordic(int theta);
- 
-+/**
-+ * b43_bmac_set_b_width - Set band width
-+ */
-+void b43_bmac_set_b_width(struct b43_wldev *dev, u8 b_width);
-+
- #endif /* LINUX_B43_PHY_COMMON_H_ */
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 2466c0a..ac217da 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -3410,8 +3410,8 @@ static int b43_nphy_set_chanspec(struct b43_wldev *dev,
- 
- 	nphy->radio_chanspec = chanspec;
- 
--	if (chanspec.b_width != nphy->b_width)
--		; /* TODO: BMAC BW Set (chanspec.b_width) */
-+	if (chanspec.b_width != dev->phy.b_width)
-+		b43_bmac_set_b_width(dev, chanspec.b_width);
- 
- 	/* TODO: use defines */
- 	if (chanspec.b_width == 3) {
-diff --git a/drivers/net/wireless/b43/phy_n.h b/drivers/net/wireless/b43/phy_n.h
-index 8b6d570..e7acae2 100644
---- a/drivers/net/wireless/b43/phy_n.h
-+++ b/drivers/net/wireless/b43/phy_n.h
-@@ -984,7 +984,6 @@ struct b43_phy_n {
- 	u16 papd_epsilon_offset[2];
- 	s32 preamble_override;
- 	u32 bb_mult_save;
--	u8 b_width;
- 	struct b43_chanspec radio_chanspec;
- 
- 	bool gain_boost;
 -- 
 1.7.1
