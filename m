@@ -1,45 +1,30 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Tue, 24 Aug 2010 01:56:06 +0200
-Subject: [PATCH 1/2] b43: N-PHY: band width setting with dumb clock
-	control call
-In-Reply-To: <4C730173.7080703@lwfinger.net>
-References: <1282506589-8220-1-git-send-email-zajec5@gmail.com>
-	<AANLkTi=TMhmTF+ztooAu=E1e1zdw-cBnaSZCKj=Utik0@mail.gmail.com>
-	<AANLkTikMxL41zrR+KDF1Od_SKpbQhsQWHWiAAAULYx+F@mail.gmail.com>
-	<AANLkTim6d0C_Lx=zExfHy-hfeVdY=aXZCfi6c825TGt7@mail.gmail.com>
-	<4C730173.7080703@lwfinger.net>
-Message-ID: <AANLkTik8cMdxG-0azPOsoBEMdf1JkZ_Gemh_bNDSF3sS@mail.gmail.com>
+From: =?ISO-8859-2?Q?Michael_B=FCsch?= <mb@bu3sch.de>
+Date: Wed, 25 Aug 2010 21:07:32 +0200
+Subject: [PATCH 2/2] b43: N-PHY: add sub calls of band width setting
+In-Reply-To: <AANLkTi=ELhn1sFmpYn5a1-GcWqVBAeRGC6Kc7OBDLmZw@mail.gmail.com>
+	(sfid-20100822_160429_404901_8D578590)
+References: <1282506589-8220-1-git-send-email-zajec5@gmail.com>	<1282506589-8220-2-git-send-email-zajec5@gmail.com>	<AANLkTi=dXNY+Hf8--Yp4VjQBOMwDCFuQqNSi_OAsq=2X@mail.gmail.com>	<AANLkTimeKMR8MfoNKyr6i-JxA8bdqwMKriUbBOagw-z5@mail.gmail.com>
+	<AANLkTi=ELhn1sFmpYn5a1-GcWqVBAeRGC6Kc7OBDLmZw@mail.gmail.com>
+	(sfid-20100822_160429_404901_8D578590)
+Message-ID: <4C7569F4.7020605@bu3sch.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, Julian Calaby <julian.calaby@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: =?ISO-8859-2?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+Cc: wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-On Tue, Aug 24, 2010 at 1:17 AM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> On 08/23/2010 05:53 PM, Rafa? Mi?ecki wrote:
->>> I believe you need to do the whole PHY init, including the common
->>> part; not just the PHY type-specific init. Larry, is this true?
->>
->> Do you mean b43_phy_init? Larry: I guess indeed some tip would be nice :)
->
-> As it shows in http://bcm-v4.sipsolutions.net/802.11/PHY/Init, you need to do
-> the Common steps. #15 in that list is the specific routines for the PHY type in
-> the device.
->
-> The code in b43_phy_init() seems not to have all of these steps in it, but I'm
-> not sure where they are implemented.
+On 08/22/2010 10:04 PM, G?bor Stefanik wrote:
+>>>> +#define B43_MMIO_CLKCTL                        0x1E0   /* clock control status */
 
-This spec page seems to have lots of Broadcrap in it... it especially
-needs de-chanspec-tamination; how the driver handles band and
-bandwidth selection is irrelevant to a HW specification. (Also, many
-referenced chanspec-related functions are missing.)
+Is it possible that all this stuff is completely bogus?
+All this clock control stuff you are trying to implement really
+looks like the standard SSB clock control which is already
+implemented in SSB. The clock control and status register
+of the chipcommon is 0x1E0.
 
->
-> Larry
->
-
-
+That "phy reset" stuff also mostly looks like you are reinventing the wheel
+for code that is already present.
 
 -- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Greetings Michael.
