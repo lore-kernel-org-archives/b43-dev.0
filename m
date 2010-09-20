@@ -1,47 +1,44 @@
-From: Luis R. Rodriguez <mcgrof@gmail.com>
-Date: Mon, 20 Sep 2010 14:33:36 -0700
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Mon, 20 Sep 2010 22:42:41 +0100
 Subject: [PATCH] b43/b43legacy - Credit Broadcom with enabling the
 	development of the drivers
-In-Reply-To: <4C97D0B2.9080704@wetwork.net>
+In-Reply-To: <AANLkTinoe86gtsMJMJ-jitj3yHo35FBdyiqbPKuUAe_R@mail.gmail.com>
 References: <1284921651.24835.11.camel@i7.infradead.org>
 	<AANLkTinoe86gtsMJMJ-jitj3yHo35FBdyiqbPKuUAe_R@mail.gmail.com>
-	<AANLkTi=sbh-y73+VuEWQz8ni47zaeBXCBRQGUH=0j_Zr@mail.gmail.com>
-	<4C97AFCE.3040806@wetwork.net>
-	<AANLkTinEY2XeoA1WN8GRTdAcSebe+LUb-N9u7-zz_bpe@mail.gmail.com>
-	<4C97D0B2.9080704@wetwork.net>
-Message-ID: <AANLkTim-69if8MdUtDnE+sDU0hCMUed6WGaPURCAy5W4@mail.gmail.com>
+Message-ID: <1285018961.17079.10.camel@macbook.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-Please avoid HTML e-mails.
+On Mon, 2010-09-20 at 18:36 +0200, G?bor Stefanik wrote:
+> Only one problem: the license agreement of these drivers explicitly
+> forbids any reverse-engineering for any purpose. 
 
-On Mon, Sep 20, 2010 at 2:22 PM, Ehud Gavron <gavron@wetwork.net> wrote:
->
-> It is not up to us to "...deal with regulatory considerations..."
+Which is kind of irrelevant, since the law already prohibits you from
+violating the regulatory framework. Making it *also* a potential
+copyright violation (except where it's deemed unenforceable) really
+doesn't make a blind bit of difference, surely?
 
-No, you see, that's wrong because no one else was, we started getting
-upstream support from companies only once we found decent solutions
-for regulatory. So as much as you want to bark that we don't need to
-deal with them I can already prove to you that you were wrong. If you
-don't you simply don't get support, if you do, then you accelerate the
-pace of adoption for Linux. One way or another the changes have to
-happen, how you manage to get the changes done will highly affect how
-soon you'll get support.
+> One can debate a lot about whether these are enforceable - however, in
+> the US, a similar case (though that one was about resale, rather than
+> reverse-engineering) was recently decided in the plaintiff's favor.
 
-> The "best we can do" is code, and that's what coders do.? The lawyers can do what lawyers do.*
+I don't believe the reverse engineering was done in the US, was it?
 
-And what do you want to code? Piece of shit reverse engineered quality
-code? I guarantee you if you get proper vendor support the quality of
-the drivers improves considerably.
+> And I believe Broadcom would indeed sue if they thought they were
+> risking their FCC approval by not doing so. 
 
-> and we're ahead of others because we're not wasting our time on legal crap.
+I don't see how it really affects their FCC approval. The fact that they
+do the regulatory enforcement in software is what enables you to
+trivially bypass it. 
 
-No, we are ahead because we envision the path to enhancing radio
-capabilities and dynamic communication. The regulatory solutions in
-place in Linux help with regulatory considerations but as a side
-effect it also paves the way for next generation radio technologies.
+You are breaking the law by hacking the driver to violate the rules. You
+knew that anyway -- it really shouldn't make any difference if they
+*also* tell you it's illegal to hack the driver. And it doesn't change
+the fact that they have made it possible.
 
-  Luis
+-- 
+dwmw2
