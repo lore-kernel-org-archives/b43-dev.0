@@ -1,44 +1,85 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Mon, 20 Sep 2010 22:42:41 +0100
+From: Ehud Gavron <gavron@wetwork.net>
+Date: Mon, 20 Sep 2010 14:51:43 -0700
 Subject: [PATCH] b43/b43legacy - Credit Broadcom with enabling the
 	development of the drivers
-In-Reply-To: <AANLkTinoe86gtsMJMJ-jitj3yHo35FBdyiqbPKuUAe_R@mail.gmail.com>
+In-Reply-To: <AANLkTim-69if8MdUtDnE+sDU0hCMUed6WGaPURCAy5W4@mail.gmail.com>
 References: <1284921651.24835.11.camel@i7.infradead.org>
 	<AANLkTinoe86gtsMJMJ-jitj3yHo35FBdyiqbPKuUAe_R@mail.gmail.com>
-Message-ID: <1285018961.17079.10.camel@macbook.infradead.org>
+	<AANLkTi=sbh-y73+VuEWQz8ni47zaeBXCBRQGUH=0j_Zr@mail.gmail.com>
+	<4C97AFCE.3040806@wetwork.net>
+	<AANLkTinEY2XeoA1WN8GRTdAcSebe+LUb-N9u7-zz_bpe@mail.gmail.com>
+	<4C97D0B2.9080704@wetwork.net>
+	<AANLkTim-69if8MdUtDnE+sDU0hCMUed6WGaPURCAy5W4@mail.gmail.com>
+Message-ID: <4C97D76F.1040601@wetwork.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On Mon, 2010-09-20 at 18:36 +0200, G?bor Stefanik wrote:
-> Only one problem: the license agreement of these drivers explicitly
-> forbids any reverse-engineering for any purpose. 
+On 09/20/2010 02:33 PM, Luis R. Rodriguez wrote:
+> Please avoid HTML e-mails.
+>    
 
-Which is kind of irrelevant, since the law already prohibits you from
-violating the regulatory framework. Making it *also* a potential
-copyright violation (except where it's deemed unenforceable) really
-doesn't make a blind bit of difference, surely?
+Luis, when I read your first post I thought "Ignore this guy" but then I 
+gave you the benefit of the doubt.
 
-> One can debate a lot about whether these are enforceable - however, in
-> the US, a similar case (though that one was about resale, rather than
-> reverse-engineering) was recently decided in the plaintiff's favor.
+Yeah absolutely no HTML.  Please avoid giving me commands when you're 
+not my CO.
 
-I don't believe the reverse engineering was done in the US, was it?
+> On Mon, Sep 20, 2010 at 2:22 PM, Ehud Gavron<gavron@wetwork.net>  wrote:
+>    
+>> It is not up to us to "...deal with regulatory considerations..."
+>>      
+> No, you see, that's wrong because no one else was,
+That isn't a sentence, and makes no sense if I try to figure out what 
+you intended.
+>   we started getting upstream support from companies
 
-> And I believe Broadcom would indeed sue if they thought they were
-> risking their FCC approval by not doing so. 
+"We" got no such thing.
 
-I don't see how it really affects their FCC approval. The fact that they
-do the regulatory enforcement in software is what enables you to
-trivially bypass it. 
+> only once we found decent solutions for regulatory.
 
-You are breaking the law by hacking the driver to violate the rules. You
-knew that anyway -- it really shouldn't make any difference if they
-*also* tell you it's illegal to hack the driver. And it doesn't change
-the fact that they have made it possible.
+I think there's a noun missing from there, baby.
+
+> So as much as you want to bark
+Woof woof, baby.
+>   that we don't need to deal with them I can already prove to you that you were wrong.
+I "were" wrong?  Cool.   So now I'm not.  Cool.  Thanks.
+
+> If you don't you simply don't get support, if you do, then you accelerate the
+> pace of adoption for Linux. One way or another the changes have to
+> happen, how you manage to get the changes done will highly affect how
+> soon you'll get support.
+>    
+
+Yeah.  Like my older brothers used to say: It's time for you to go to bed.
+
+E
+>    
+>> The "best we can do" is code, and that's what coders do.  The lawyers can do what lawyers do.*
+>>      
+> And what do you want to code? Piece of shit reverse engineered quality
+> code? I guarantee you if you get proper vendor support the quality of
+> the drivers improves considerably.
+>
+>    
+>> and we're ahead of others because we're not wasting our time on legal crap.
+>>      
+> No, we are ahead because we envision the path to enhancing radio
+> capabilities and dynamic communication. The regulatory solutions in
+> place in Linux help with regulatory considerations but as a side
+> effect it also paves the way for next generation radio technologies.
+>
+>    Luis
+>    
 
 -- 
-dwmw2
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/pkcs7-signature
+Size: 5507 bytes
+Desc: S/MIME Cryptographic Signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100920/b9a7ebf7/attachment.p7s>
