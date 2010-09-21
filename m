@@ -1,33 +1,48 @@
-From: Peter Stuge <peter@stuge.se>
-Date: Tue, 21 Sep 2010 06:44:47 +0200
-Subject: [PATCH] b43/b43legacy - Credit Broadcom with enabling the
-	development of the drivers
-In-Reply-To: <AANLkTincBvTWQ=7_xHsdmg8E1q7DKstwkOLERm_SRKY0@mail.gmail.com>
-References: <1284921651.24835.11.camel@i7.infradead.org>
-	<AANLkTinoe86gtsMJMJ-jitj3yHo35FBdyiqbPKuUAe_R@mail.gmail.com>
-	<AANLkTi=sbh-y73+VuEWQz8ni47zaeBXCBRQGUH=0j_Zr@mail.gmail.com>
-	<4C97AFCE.3040806@wetwork.net>
-	<AANLkTinEY2XeoA1WN8GRTdAcSebe+LUb-N9u7-zz_bpe@mail.gmail.com>
-	<4C97D0B2.9080704@wetwork.net>
-	<AANLkTim-69if8MdUtDnE+sDU0hCMUed6WGaPURCAy5W4@mail.gmail.com>
-	<4C97D76F.1040601@wetwork.net>
-	<20100921040122.17974.qmail@stuge.se>
-	<AANLkTincBvTWQ=7_xHsdmg8E1q7DKstwkOLERm_SRKY0@mail.gmail.com>
-Message-ID: <20100921044447.31830.qmail@stuge.se>
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Tue, 21 Sep 2010 14:47:01 +0200
+Subject: [PATCH, RFC] linux-firmware: Add assembler/disassembler toolchain
+	for broadcom wireless firmware
+Message-ID: <1285073221.32401.24.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, linux-kernel@vger.kernel.org
 
-Baybal Ni wrote:
-> criminal liability comes if you try to impair operations of
-> emergency services and military communication systems.
+This adds a Broadcom wireless firmware assembler/disassembler toolchain
+to the linux-firmware git tree.
 
-I guess this is a big deal for the 5GHz radios which can share
-spectrum with radar systems.
+Supported firmware architectures include r5 (chipsets supported by b43)
+and r15 (brcm80211). Support for r5 is complete. r15 support misses support for
+decoding of some minor instructions. This is work in progress.
+Older chipsets (b43legacy) are not supported.
 
-It's a good point that regulations differ a lot around the world.
+The instruction set is Broadcom-proprietary. However, no information
+about mnemonics was provided by Broadcom. So a new set of mnemonics was invented.
+
+The toolchain passes a complete regression test (disassemble -> reassemble -> binary compare)
+on both r5 and r15 firmware.
+More information on the instruction set can be found here:
+http://bcm-v4.sipsolutions.net/802.11/Microcode
+(Lacks some information on new r15 features)
+
+The toolchain is licensed under the GNU/GPL version 2.
+
+Signed-off-by: Michael Buesch <mb@bu3sch.de>
+
+---
+
+A compressed patch is attached. Uncompressed patch can be obtained from here:
+http://bu3sch.de/patches/misc/brcm-asm-001.patch
 
 
-//Peter
+-- 
+Greetings Michael.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: brcm-asm-001.patch.bz2
+Type: application/x-bzip
+Size: 39859 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20100921/e9d4bce3/attachment-0001.bin>
