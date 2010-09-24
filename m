@@ -1,87 +1,88 @@
-From: Luis R. Rodriguez <mcgrof@gmail.com>
-Date: Wed, 22 Sep 2010 10:26:08 -0700
-Subject: [PATCH] b43/b43legacy - Credit Broadcom with enabling the
-	development of the drivers
-In-Reply-To: <1285154078.4498.78.camel@i7.infradead.org>
-References: <1284921651.24835.11.camel@i7.infradead.org>
-	<AANLkTinoe86gtsMJMJ-jitj3yHo35FBdyiqbPKuUAe_R@mail.gmail.com>
-	<AANLkTi=sbh-y73+VuEWQz8ni47zaeBXCBRQGUH=0j_Zr@mail.gmail.com>
-	<4C97AFCE.3040806@wetwork.net>
-	<AANLkTinEY2XeoA1WN8GRTdAcSebe+LUb-N9u7-zz_bpe@mail.gmail.com>
-	<4C97D0B2.9080704@wetwork.net>
-	<AANLkTim-69if8MdUtDnE+sDU0hCMUed6WGaPURCAy5W4@mail.gmail.com>
-	<4C97D76F.1040601@wetwork.net> <20100921040122.17974.qmail@stuge.se>
-	<AANLkTincBvTWQ=7_xHsdmg8E1q7DKstwkOLERm_SRKY0@mail.gmail.com>
-	<AANLkTikMZQ6G0=hLAdehinM1LNo7NzVVEE4xbK6fU0yP@mail.gmail.com>
-	<1285131914.14456.17.camel@maggie>
-	<1285154078.4498.78.camel@i7.infradead.org>
-Message-ID: <AANLkTikTtdYT8mPC8zU6YbsZtpwo7jGdYcR37jHay2Rc@mail.gmail.com>
+From: Cyrille <cyrille@cbiot.fr>
+Date: Fri, 24 Sep 2010 18:55:51 +0200
+Subject: problem with b43
+Message-ID: <20100924185551.e3c3b41c.cyrille@cbiot.fr>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Wed, Sep 22, 2010 at 4:14 AM, David Woodhouse <dwmw2@infradead.org> wrote:
-> On Wed, 2010-09-22 at 07:05 +0200, Michael B?sch wrote:
->>
->> + ?Broadcom enabled the development of this driver, by providing all required
->> + ?hardware information in the form of binary software drivers.
->>
->> Let me rephrase the comment a little bit. I will not change the
->> meaning :)
->>
->> + ?Certain lawyers are wrong, and this driver proves it.
->> + ?http://tinyurl.com/ybl83uw
->>
->> That's basically all it says. No more, no less.
->
-> Fairly close :)
->
-> But it's a little more than that. It's more like:
->
-> ?+ I know you're scared that the world will end if you 'enable' this
-> ?+ driver in any way... but *look* -- you've actually been 'enabling'
-> ?+ if from the very beginning, and you haven't been eaten by a grue
-> ?+ yet. So please get over your stupid paranoia, and work with us
-> ?+ sensibly for once. Which would include:
-> ?+ ?- letting us have permission to distribute the firmware.
-> ?+ ?- giving us the odd hint about how to fix/improve the driver.
-> ?+ ?- merging your new driver with the existing one, if appropriate.
-> ?+ ?- etc.
->
-> It does us no harm to make it explicitly clear that the driver
-> development was 'enabled' by what Broadcom published. And if it has
-> *any* chance of showing the paranoid factions in Broadcom that their
-> fears are baseless, it has the potential to be helpful.
+Hi
+I've got a problem with a broadcom 4312 [12e4:4315].
+The environment :
+===========================
+uname -a
+2.6.35.5-libre.29.fc14.x86_64 
 
-There even some more technical arguments which can help clear the fuzz
-from paranoia. There are two options:
+lspci -vnn
+0b:00.0 Network controller [0280]: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
+	Subsystem: Dell Wireless 1395 WLAN Mini-Card [1028:000b]
+	Flags: bus master, fast devsel, latency 0, IRQ 17
+	Memory at fe7fc000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: [40] Power Management version 3
+	Capabilities: [58] Vendor Specific Information: Len=78 <?>
+	Capabilities: [e8] MSI: Enable- Count=1/1 Maskable- 64bit+
+	Capabilities: [d0] Express Endpoint, MSI 00
+	Capabilities: [100] Advanced Error Reporting
+	Capabilities: [13c] Virtual Channel
+	Capabilities: [160] Device Serial Number 7f-78-4e-ff-ff-6d-00-23
+	Capabilities: [16c] Power Budgeting <?>
+	Kernel driver in use: b43-pci-bridge
+	Kernel modules: ssb
+===============================
 
-  1) Do nothing
+Installation method ( http://wireless.kernel.org/en/users/Drivers/b43#fw-b43-lp ) :
+You are using the b43 driver from linux-2.6.25 or newer
+export FIRMWARE_INSTALL_DIR="/lib/firmware"
+wget http://mirror2.openwrt.org/sources/broadcom-wl-4.150.10.5.tar.bz2
+tar xjf broadcom-wl-4.150.10.5.tar.bz2
+cd broadcom-wl-4.150.10.5/driver
+sudo ../../b43-fwcutter-013/b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" wl_apsta_mimo.o
 
-      This was already done and when this is done this actually turns
-out putting
-      a vendor in the worst situation since it creates huge
-independent motivation
-      by the community to reverse engineer drivers. This yields both
-lower quality
-      drivers and likely regulatory-broken drivers.
 
-  2) Work upstream
+Seems work : ls /lib/firmware/b43-open/
+a0g0bsinitvals5.fw   a0g1bsinitvals9.fw   b0g0bsinitvals9.fw  lp0bsinitvals15.fw  n0initvals11.fw  ucode5.fw
+a0g0bsinitvals9.fw   a0g1initvals13.fw    b0g0initvals13.fw   lp0initvals13.fw    pcm5.fw          ucode9.fw
+a0g0initvals5.fw     a0g1initvals5.fw     b0g0initvals5.fw    lp0initvals14.fw    ucode11.fw
+a0g0initvals9.fw     a0g1initvals9.fw     b0g0initvals9.fw    lp0initvals15.fw    ucode13.fw
+a0g1bsinitvals13.fw  b0g0bsinitvals13.fw  lp0bsinitvals13.fw  n0absinitvals11.fw  ucode14.fw
+a0g1bsinitvals5.fw   b0g0bsinitvals5.fw   lp0bsinitvals14.fw  n0bsinitvals11.fw   ucode15.fw
 
-      You proactively accept that although security through obscurity
-      can hold back a few people, with enough motivation its pointless, and
-      you can actually end up in better place by working with proper
-technical solutions
-      to the regulatory problem by engaging with developers
 
-Working upstream also preps you to start considering future changes we
-can use in legislation to help innovate, enhance and enable wireless
-communications further, which is really the purpose behind regulatory
-agencies. The trouble behind these problems is the technical solutions
-are not clear -- but I believe we are leading this with the work we've
-put into the Linux kernel, and technically, this can also be reused on
-other Operating Systems, and I'm encouraging that.
+But : 
+dmesg
+b43-phy3 ERROR: You must go to http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the correct firmware for this driver version. Please carefully read all instructions on this website.
+b43-phy4: Broadcom 4312 WLAN found (core revision 15)
+b43-phy4 debug: Found PHY: Analog 6, Type 5, Revision 1
+b43-phy4 debug: Found Radio: Manuf 0x17F, Version 0x2062, Revision 2
+phy4: Selected rate control algorithm 'minstrel'
+Registered led device: b43-phy4::tx
+Registered led device: b43-phy4::rx
+Registered led device: b43-phy4::radio
+Broadcom 43xx driver loaded [ Features: PMLS, Firmware-ID: FW13 ]
+ssb0:0: Missing Free firmware
+b43-phy4 ERROR: Rejected non-Free firmware
+ssb0:0: Missing Free firmware
+b43-phy4 ERROR: Rejected non-Free firmware
 
-  Luis
+
+So don't work.
+Grrrrrrrrrrrrrrrrrrrr
+I thought nevertheless that with this kernel that was going to work.
+No idea, I thing is due of the model [12e4:4315]. Is there anyone who can say to me if it possible to install and configure this card with a free-kernel.
+
+Thanx !
+
+Cyrille
+
+
+
+----
+[ cyrille at cbiot.fr | http://cbiot.fr ]
+
+"Et le combat cessa faute de combattants." 
+--- Le Cid (1636), IV, 3, Rodrigue - - - - 
+
+BLAG : http://blagblagblag.org
+Blag'em up! http://zenblagger.org
