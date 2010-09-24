@@ -1,25 +1,23 @@
-From: =?ISO-8859-1?Q?Nicolas_de_Peslo=FCan?= <nicolas.2p.debian@free.fr>
-Date: Fri, 24 Sep 2010 21:28:41 +0200
-Subject: problem with b43
-In-Reply-To: <20100924183917.15968.qmail@stuge.se>
-References: <20100924185551.e3c3b41c.cyrille@cbiot.fr>	<AANLkTi=7C5W0r1h8YTqaRCM_NJ3SPJ66n=uxKkLe6bcg@mail.gmail.com>	<20100924191547.59c58e7b.cyrille@cbiot.fr>	<AANLkTin4bW8oRuugCqVbADnz22huoM0d4-HFo23FMXZ3@mail.gmail.com>	<20100924193233.653b644d.cyrille@cbiot.fr>	<AANLkTinRo0y2_3Mp7w2OCiSDO6MH2KANiHMNF7VPj7vh@mail.gmail.com>	<20100924203206.d4ec9859.cyrille@cbiot.fr>
-	<20100924183917.15968.qmail@stuge.se>
-Message-ID: <4C9CFBE9.6010205@free.fr>
+From: ikorot at earthlink.net <ikorot@earthlink.net>
+Date: Fri, 24 Sep 2010 13:44:13 -0700 (GMT-07:00)
+Subject: Is this card supported?
+Message-ID: <5201281.1285361054043.JavaMail.root@elwamui-royal.atl.sa.earthlink.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Le 24/09/2010 20:39, Peter Stuge a ?crit :
->> It is very complicated for French to understand all these subtleties!
->
-> Maybe you can find a technical group in your area which can explain
-> it in your language.
+Hi, ALL,
+This is an information about the hardware:
 
-Even if it might sounds incredible, some other French guys read every mail in this mailing list and 
-contribute from time to time. :-)
+IgorsGentooWork OE # uname -a
+Linux IgorsGentooWork 2.6.32-gentoo-r7 #4 Mon Jul 5 13:42:27 PDT 2010 i686 Intel(R) Celeron(R) M processor 1.50GHz GenuineIntel GNU/Linux
 
-So I translated to French and enhanced Peter's explanation for Cyrille, in a private mail.
+IgorsGentooWork OE # lspci -vnn | grep 14e4
+02:00.0 Ethernet controller [0200]: Broadcom Corporation BCM4401-B0 100Base-TX [14e4:170c] (rev 02)
+02:03.0 Network controller [0280]: Broadcom Corporation BCM4318 [AirForce One 54g] 802.11g Wireless LAN Controller [14e4:4318] (rev 02)
 
-	Nicolas.
+Is this device supported?
+
+Thank you.
