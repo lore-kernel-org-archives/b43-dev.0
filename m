@@ -1,41 +1,16 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Fri, 24 Sep 2010 19:06:17 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 24 Sep 2010 19:10:30 +0200
 Subject: problem with b43
 In-Reply-To: <20100924185551.e3c3b41c.cyrille@cbiot.fr>
 References: <20100924185551.e3c3b41c.cyrille@cbiot.fr>
-Message-ID: <AANLkTik5QPw6K_CFQW-5qH3PhyDAguqe51AcNaDMOUqt@mail.gmail.com>
+Message-ID: <AANLkTi=7C5W0r1h8YTqaRCM_NJ3SPJ66n=uxKkLe6bcg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyrille <cyrille@cbiot.fr>
-Cc: b43-dev@lists.infradead.org, John Linville <linville@tuxdriver.com>, linux-wireless <linux-wireless@vger.kernel.org>
+To: b43-dev@lists.infradead.org
 
-On Fri, Sep 24, 2010 at 6:55 PM, Cyrille <cyrille@cbiot.fr> wrote:
-> Hi
-> I've got a problem with a broadcom 4312 [12e4:4315].
-> The environment :
-> ===========================
-> uname -a
-> 2.6.35.5-libre.29.fc14.x86_64
->
-> lspci -vnn
-> 0b:00.0 Network controller [0280]: Broadcom Corporation BCM4312 802.11b/g [14e4:4315] (rev 01)
-> ? ? ? ?Subsystem: Dell Wireless 1395 WLAN Mini-Card [1028:000b]
-> ? ? ? ?Flags: bus master, fast devsel, latency 0, IRQ 17
-> ? ? ? ?Memory at fe7fc000 (64-bit, non-prefetchable) [size=16K]
-> ? ? ? ?Capabilities: [40] Power Management version 3
-> ? ? ? ?Capabilities: [58] Vendor Specific Information: Len=78 <?>
-> ? ? ? ?Capabilities: [e8] MSI: Enable- Count=1/1 Maskable- 64bit+
-> ? ? ? ?Capabilities: [d0] Express Endpoint, MSI 00
-> ? ? ? ?Capabilities: [100] Advanced Error Reporting
-> ? ? ? ?Capabilities: [13c] Virtual Channel
-> ? ? ? ?Capabilities: [160] Device Serial Number 7f-78-4e-ff-ff-6d-00-23
-> ? ? ? ?Capabilities: [16c] Power Budgeting <?>
-> ? ? ? ?Kernel driver in use: b43-pci-bridge
-> ? ? ? ?Kernel modules: ssb
-> ===============================
->
+2010/9/24 Cyrille <cyrille@cbiot.fr>:
 > Installation method ( http://wireless.kernel.org/en/users/Drivers/b43#fw-b43-lp ) :
 > You are using the b43 driver from linux-2.6.25 or newer
 > export FIRMWARE_INSTALL_DIR="/lib/firmware"
@@ -44,11 +19,10 @@ On Fri, Sep 24, 2010 at 6:55 PM, Cyrille <cyrille@cbiot.fr> wrote:
 > cd broadcom-wl-4.150.10.5/driver
 > sudo ../../b43-fwcutter-013/b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" wl_apsta_mimo.o
 
-You are using the firmware for G-PHYs. Yo should use v4.174 (also
-known as v4.178) for LP-PHY.
+This should lead to system having firmware in /lib/firmware/b43/. Make
+sure you have "some" files in this directory.
 
->
->
+
 > Seems work : ls /lib/firmware/b43-open/
 > a0g0bsinitvals5.fw ? a0g1bsinitvals9.fw ? b0g0bsinitvals9.fw ?lp0bsinitvals15.fw ?n0initvals11.fw ?ucode5.fw
 > a0g0bsinitvals9.fw ? a0g1initvals13.fw ? ?b0g0initvals13.fw ? lp0initvals13.fw ? ?pcm5.fw ? ? ? ? ?ucode9.fw
@@ -57,10 +31,11 @@ known as v4.178) for LP-PHY.
 > a0g1bsinitvals13.fw ?b0g0bsinitvals13.fw ?lp0bsinitvals13.fw ?n0absinitvals11.fw ?ucode14.fw
 > a0g1bsinitvals5.fw ? b0g0bsinitvals5.fw ? lp0bsinitvals14.fw ?n0bsinitvals11.fw ? ucode15.fw
 
-Extract to /lib/firmware/b43. /lib/firmware/b43-open is only for OpenFWWF.
+b43-open is for open firmware, which does not support LP-PHY. You've
+to use original, closed source, ugly-licensed firmware (placed in
+/lib/firmware/b43/).
 
->
->
+
 > But :
 > dmesg
 > b43-phy3 ERROR: You must go to http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the correct firmware for this driver version. Please carefully read all instructions on this website.
@@ -77,42 +52,10 @@ Extract to /lib/firmware/b43. /lib/firmware/b43-open is only for OpenFWWF.
 > ssb0:0: Missing Free firmware
 > b43-phy4 ERROR: Rejected non-Free firmware
 
-Compile compat-wireless to bypass the "free-only" patch in Fedora.
-
-(John, are you still maintaining the Fedora kernel's wireless part? If
-so, please kill this "freedom enforcement"!)
-
->
->
-> So don't work.
-> Grrrrrrrrrrrrrrrrrrrr
-> I thought nevertheless that with this kernel that was going to work.
-> No idea, I thing is due of the model [12e4:4315]. Is there anyone who can say to me if it possible to install and configure this card with a free-kernel.
->
-> Thanx !
->
-> Cyrille
->
->
->
-> ----
-> [ cyrille at cbiot.fr | http://cbiot.fr ]
->
-> "Et le combat cessa faute de combattants."
-> --- Le Cid (1636), IV, 3, Rodrigue - - - -
->
-> BLAG : http://blagblagblag.org
-> Blag'em up! http://zenblagger.org
->
->
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
-
+Your distro doesn't allow non-free firmware. As I said, LP-PHY won't
+work with open firmware. Refer to your's distro FAQ/forums/MLs to
+learn how you can enable non-free firmware usage.
 
 
 -- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Rafa?
