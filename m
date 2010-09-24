@@ -1,26 +1,22 @@
 From: Cyrille <cyrille@cbiot.fr>
-Date: Fri, 24 Sep 2010 19:32:33 +0200
+Date: Fri, 24 Sep 2010 19:39:02 +0200
 Subject: problem with b43
-In-Reply-To: <AANLkTin4bW8oRuugCqVbADnz22huoM0d4-HFo23FMXZ3@mail.gmail.com>
+In-Reply-To: <20100924172132.GC8077@tuxdriver.com>
 References: <20100924185551.e3c3b41c.cyrille@cbiot.fr>
-	<AANLkTi=7C5W0r1h8YTqaRCM_NJ3SPJ66n=uxKkLe6bcg@mail.gmail.com>
-	<20100924191547.59c58e7b.cyrille@cbiot.fr>
-	<AANLkTin4bW8oRuugCqVbADnz22huoM0d4-HFo23FMXZ3@mail.gmail.com>
-Message-ID: <20100924193233.653b644d.cyrille@cbiot.fr>
+	<AANLkTik5QPw6K_CFQW-5qH3PhyDAguqe51AcNaDMOUqt@mail.gmail.com>
+	<20100924172132.GC8077@tuxdriver.com>
+Message-ID: <20100924193902.07c3db7c.cyrille@cbiot.fr>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>, b43-dev@lists.infradead.org, linux-wireless <linux-wireless@vger.kernel.org>
 
-
-> Your's NETGEAR seems to be RTL818x chip based USB dongle. Are you sure
-> it uses open source firmware? Yeah, it's firmware is probably embedded
-> in device's internal memory... but it is still there. I'm afraid you
-> won't be able to get it's sources.
-This neatgears --> works out of the box with simply a free kernel. Severals Blaggers use it (trisqueland gnewsense too )
-Thx !
-
+> 'm guessing it is from "Free-dora"
+> by way of BLAG, and I have no control over it -- sorry.
+Yes I'm using a BLAG 119K with a free-dora kernel.
+Cyrille
 
 ----
 [ cyrille at cbiot.fr | http://cbiot.fr ]
