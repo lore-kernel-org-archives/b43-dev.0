@@ -1,37 +1,45 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 24 Sep 2010 19:28:51 +0200
+From: John W. Linville <linville@tuxdriver.com>
+Date: Fri, 24 Sep 2010 13:21:32 -0400
 Subject: problem with b43
-In-Reply-To: <20100924191547.59c58e7b.cyrille@cbiot.fr>
+In-Reply-To: <AANLkTik5QPw6K_CFQW-5qH3PhyDAguqe51AcNaDMOUqt@mail.gmail.com>
 References: <20100924185551.e3c3b41c.cyrille@cbiot.fr>
-	<AANLkTi=7C5W0r1h8YTqaRCM_NJ3SPJ66n=uxKkLe6bcg@mail.gmail.com>
-	<20100924191547.59c58e7b.cyrille@cbiot.fr>
-Message-ID: <AANLkTin4bW8oRuugCqVbADnz22huoM0d4-HFo23FMXZ3@mail.gmail.com>
+	<AANLkTik5QPw6K_CFQW-5qH3PhyDAguqe51AcNaDMOUqt@mail.gmail.com>
+Message-ID: <20100924172132.GC8077@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?iso-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>
+Cc: Cyrille <cyrille@cbiot.fr>, b43-dev@lists.infradead.org, linux-wireless <linux-wireless@vger.kernel.org>
 
-W dniu 24 wrze?nia 2010 19:15 u?ytkownik Cyrille <cyrille@cbiot.fr> napisa?:
->> Your distro doesn't allow non-free firmware. As I said, LP-PHY won't
->> work with open firmware. Refer to your's distro FAQ/forums/MLs to
->> learn how you can enable non-free firmware usage.
->
-> OK That is clear....
-> If to run this card I must use closed code, I don't want to use it and I don't looking for configure this card ! I'll wait an open solution
-> So I keep my netgear WG111v3 to wireless.
-> Thx to all.
+On Fri, Sep 24, 2010 at 07:06:17PM +0200, G?bor Stefanik wrote:
+> On Fri, Sep 24, 2010 at 6:55 PM, Cyrille <cyrille@cbiot.fr> wrote:
+> > Hi
+> > I've got a problem with a broadcom 4312 [12e4:4315].
+> > The environment :
+> > ===========================
+> > uname -a
+> > 2.6.35.5-libre.29.fc14.x86_64
 
-OpenFWWF (http://www.ing.unibs.it/openfwwf/) doesn't seem to be too
-active, don't expect too much in near future. You can help of course.
+> > Broadcom 43xx driver loaded [ Features: PMLS, Firmware-ID: FW13 ]
+> > ssb0:0: Missing Free firmware
+> > b43-phy4 ERROR: Rejected non-Free firmware
+> > ssb0:0: Missing Free firmware
+> > b43-phy4 ERROR: Rejected non-Free firmware
+> 
+> Compile compat-wireless to bypass the "free-only" patch in Fedora.
+> 
+> (John, are you still maintaining the Fedora kernel's wireless part? If
+> so, please kill this "freedom enforcement"!)
 
-Your's NETGEAR seems to be RTL818x chip based USB dongle. Are you sure
-it uses open source firmware? Yeah, it's firmware is probably embedded
-in device's internal memory... but it is still there. I'm afraid you
-won't be able to get it's sources.
+This isn't a Fedora kernel.  I'm guessing it is from "Free-dora"
+by way of BLAG, and I have no control over it -- sorry.
 
-P.S.
-Please, use "Reply to all" button, to include ML as well in your's response.
+Cyrille, did you try b43-openfwwf?  If that doesn't work, then you
+will need to use extracted proprietary firmware with some other kernel
+(e.g. stock Fedora) or you will have to live without b43.
 
+John
 -- 
-Rafa?
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
