@@ -1,197 +1,44 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Tue, 28 Sep 2010 10:26:14 +0200
-Subject: Is this card supported?
-In-Reply-To: <9176592.1285635900301.JavaMail.root@elwamui-royal.atl.sa.earthlink.net>
-References: <9176592.1285635900301.JavaMail.root@elwamui-royal.atl.sa.earthlink.net>
-Message-ID: <AANLkTi=TzGREAWg4w42+dRq=agn0uS9ayX46P-5CpYAW@mail.gmail.com>
+From: Luis R. Rodriguez <mcgrof@gmail.com>
+Date: Tue, 28 Sep 2010 09:42:37 -0700
+Subject: How to set multicast rate ?
+In-Reply-To: <001201cb5ed6$7bcaed60$7360c820$@gmx.net>
+References: <001201cb5ed6$7bcaed60$7360c820$@gmx.net>
+Message-ID: <AANLkTikXhrXS5Dg07HiQE7ofHaDqtWrEXMOB4NGdrETH@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2010/9/28  <ikorot@earthlink.net>:
+On Mon, Sep 27, 2010 at 11:29 PM, h2o-post <h2o-post@gmx.net> wrote:
+> Hi all,
 >
 >
 >
-> -----Original Message-----
->>From: G?bor Stefanik <netrolller.3d@gmail.com>
->>Sent: Sep 27, 2010 5:29 PM
->>To: ikorot at earthlink.net
->>Cc: b43-dev at lists.infradead.org
->>Subject: Re: Is this card supported?
->>
->>On Mon, Sep 27, 2010 at 5:55 AM, ?<ikorot@earthlink.net> wrote:
->>> Hi,
->>>
->>>
->>> -----Original Message-----
->>>>From: G?bor Stefanik <netrolller.3d@gmail.com>
->>>>Sent: Sep 25, 2010 6:23 PM
->>>>To: ikorot at earthlink.net
->>>>Cc: Rafa? Mi?ecki <zajec5@gmail.com>, b43-dev at lists.infradead.org
->>>>Subject: Re: Is this card supported?
->>>>
->>>>2010/9/25 ?<ikorot@earthlink.net>:
->>>>> Rafal,
->>>>>
->>>>>
->>>>> -----Original Message-----
->>>>>>From: Rafa? Mi?ecki <zajec5@gmail.com>
->>>>>>Sent: Sep 24, 2010 2:27 PM
->>>>>>To: ikorot at earthlink.net
->>>>>>Cc: b43-dev at lists.infradead.org
->>>>>>Subject: Re: Is this card supported?
->>>>>>
->>>>>>2010/9/24 ?<ikorot@earthlink.net>:
->>>>>>> Hi, ALL,
->>>>>>> This is an information about the hardware:
->>>>>>>
->>>>>>> IgorsGentooWork OE # uname -a
->>>>>>> Linux IgorsGentooWork 2.6.32-gentoo-r7 #4 Mon Jul 5 13:42:27 PDT 2010 i686 Intel(R) Celeron(R) M processor 1.50GHz GenuineIntel GNU/Linux
->>>>>>>
->>>>>>> IgorsGentooWork OE # lspci -vnn | grep 14e4
->>>>>>> 02:00.0 Ethernet controller [0200]: Broadcom Corporation BCM4401-B0 100Base-TX [14e4:170c] (rev 02)
->>>>>>> 02:03.0 Network controller [0280]: Broadcom Corporation BCM4318 [AirForce One 54g] 802.11g Wireless LAN Controller [14e4:4318] (rev 02)
->>>>>>>
->>>>>>> Is this device supported?
->>>>>>
->>>>>>http://wireless.kernel.org/en/users/Drivers/b43
->>>>>
->>>>> Can you then explain this:
->>>>>
->>>>> IgorsGentooWork OE # ifconfig wlan0 up
->>>>> IgorsGentooWork OE # iwconfig wlan0 essid "GoogleWiFi"
->>>>> Cannot read /proc/net/wireless
->>>>
->>>>Let me guess: procfs is not mounted.
->>>
->>> You guessed wrong: procfs is mounted:
->>>
->>> /dev/hda3 on / type ext3 (rw,noatime)
->>> proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
->>> sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime)
->>> udev on /dev type tmpfs (rw,nosuid,relatime,size=10240k,mode=755)
->>> devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620)
->>> shm on /dev/shm type tmpfs (rw,noexec,nosuid,nodev)
->>> usbfs on /proc/bus/usb type usbfs (rw,noexec,nosuid,devmode=0664,devgid=85)
->>> binfmt_misc on /proc/sys/fs/binfmt_misc type binfmt_misc (rw,noexec,nosuid,nodev)
->>>
->>> Any other ideas?
->>>
->>
->>What do you get if you do "cat /proc/net/wireless"?
+> In our Freifunk mesh network we run several broadcom devices in adhoc
+> modewith olsr routing.
 >
-> IgorsGentooWork wxWidgets-2.8.9 # cat /proc/net/wireless
-> cat: /proc/net/wireless: No such file or directory
+> To move to b43 we did some testing with current OpenWrt trunk and b43.
+>
+> One crutial observation we made: We were not able to find the knob to change
+> the multicast rate in b43.
+>
+> Since this is an essential tuning parameter in our current mesh and
+> essential for proper olsr routing.
+>
+> To be more precise, olsr probing traffic is send out as mulicast traffic,
+> therefore we use a multicast rate
+>
+> e.g. of 6MBit/sec ? so in densed mesh you got only routes with the multicast
+> rate as lower limit.
+>
+> Is there any secret I missed to change the multicast rate in b43 ?
+>
+> If this is not implemented so far, what would be a sketch to help here
+> implementing ?
 
-Looks like wext is disabled in your kernel config. Enable it, or try
-using "iw" to connect instead of "iwconfig" (iw uses nl80211 instead
-of wext).
+Read the documentation for rate_control_send_low() :
 
->
->
->>
->>> Thank you.
->>>
->>>>
->>>>> Error for wireless request "Set ESSID" (8B1A) :
->>>>> ? ?SET failed on device wlan0 ; Invalid argument.
->>>>> IgorsGentooWork OE # man iwconfig
->>>>> IgorsGentooWork OE # iwconfig wlan0 scan
->>>>> iwconfig: unknown command "scan"
->>>>> IgorsGentooWork OE # ifconfig wlan0 scan
->>>>> scan: Unknown host
->>>>> ifconfig: `--help' gives usage information
+http://tinyurl.com/rate-controlhttp://tinyurl.com/rate-control-send-low-send-low
 
-The scan command is "iw dev wlan0 scan" (using nl80211) or "iwlist
-wlan0 scan" (using wext).
-
->>>>> IgorsGentooWork OE # man ifconfig
->>>>> IgorsGentooWork OE # ifconfig -a
->>>>> eth0 ? ? ?Link encap:Ethernet ?HWaddr 00:14:22:aa:cc:69
->>>>> ? ? ? ? ?inet addr:192.168.2.141 ?Bcast:192.168.2.255 ?Mask:255.255.255.0
->>>>> ? ? ? ? ?inet6 addr: fe80::214:22ff:feaa:cc69/64 Scope:Link
->>>>> ? ? ? ? ?UP BROADCAST RUNNING MULTICAST ?MTU:1500 ?Metric:1
->>>>> ? ? ? ? ?RX packets:2403559 errors:0 dropped:0 overruns:0 frame:0
->>>>> ? ? ? ? ?TX packets:2084228 errors:0 dropped:0 overruns:0 carrier:0
->>>>> ? ? ? ? ?collisions:0 txqueuelen:1000
->>>>> ? ? ? ? ?RX bytes:2352559614 (2.1 GiB) ?TX bytes:766927573 (731.3 MiB)
->>>>> ? ? ? ? ?Interrupt:9
->>>>>
->>>>> lo ? ? ? ?Link encap:Local Loopback
->>>>> ? ? ? ? ?inet addr:127.0.0.1 ?Mask:255.0.0.0
->>>>> ? ? ? ? ?inet6 addr: ::1/128 Scope:Host
->>>>> ? ? ? ? ?UP LOOPBACK RUNNING ?MTU:16436 ?Metric:1
->>>>> ? ? ? ? ?RX packets:28 errors:0 dropped:0 overruns:0 frame:0
->>>>> ? ? ? ? ?TX packets:28 errors:0 dropped:0 overruns:0 carrier:0
->>>>> ? ? ? ? ?collisions:0 txqueuelen:0
->>>>> ? ? ? ? ?RX bytes:2592 (2.5 KiB) ?TX bytes:2592 (2.5 KiB)
->>>>>
->>>>> sit0 ? ? ?Link encap:IPv6-in-IPv4
->>>>> ? ? ? ? ?NOARP ?MTU:1480 ?Metric:1
->>>>> ? ? ? ? ?RX packets:0 errors:0 dropped:0 overruns:0 frame:0
->>>>> ? ? ? ? ?TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
->>>>> ? ? ? ? ?collisions:0 txqueuelen:0
->>>>> ? ? ? ? ?RX bytes:0 (0.0 B) ?TX bytes:0 (0.0 B)
->>>>>
->>>>> wlan0 ? ? Link encap:Ethernet ?HWaddr 00:16:ce:1d:9f:32
->>>>> ? ? ? ? ?UP BROADCAST MULTICAST ?MTU:1500 ?Metric:1
->>>>> ? ? ? ? ?RX packets:0 errors:0 dropped:0 overruns:0 frame:0
->>>>> ? ? ? ? ?TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
->>>>> ? ? ? ? ?collisions:0 txqueuelen:1000
->>>>> ? ? ? ? ?RX bytes:0 (0.0 B) ?TX bytes:0 (0.0 B)
->>>>>
->>>>> dmesg says:
->>>>>
->>>>> IgorsGentooWork OE # dmesg | tail
->>>>> [4995866.378984] b43 ssb0:0: firmware: requesting b43/b0g0bsinitvals5.fw
->>>>> [4995866.379706] PM: Adding info for No Bus:ssb0:0
->>>>> [4995866.407533] PM: Removing info for No Bus:ssb0:0
->>>>> [4995866.534044] b43-phy0: Loading firmware version 410.2160 (2007-05-26 15:32:10)
->>>>> [4995866.566088] b43-phy0 debug: Chip initialized
->>>>> [4995866.566283] b43-phy0 debug: 32-bit DMA initialized
->>>>> [4995866.566357] b43-phy0 debug: QoS enabled
->>>>> [4995866.577067] b43-phy0 debug: Wireless interface started
->>>>> [4995866.577076] b43-phy0 debug: Adding Interface type 2
->>>>> [4995866.577633] ADDRCONF(NETDEV_UP): wlan0: link is not ready
->>>>>
->>>>> Thank you.
->>>>>
->>>>> P.S.: Just so that nobody will be bothered I will add the ML to
->>>>> whitelist.. ;-)
->>>>>
->>>>>>
->>>>>>--
->>>>>>Rafa?
->>>>>
->>>>>
->>>>> _______________________________________________
->>>>> b43-dev mailing list
->>>>> b43-dev at lists.infradead.org
->>>>> http://lists.infradead.org/mailman/listinfo/b43-dev
->>>>>
->>>>
->>>>
->>>>
->>>>--
->>>>Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->>>
->>>
->>> _______________________________________________
->>> b43-dev mailing list
->>> b43-dev at lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/b43-dev
->>>
->>
->>
->>
->>--
->>Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
->
->
-
-
-
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+  Luis
