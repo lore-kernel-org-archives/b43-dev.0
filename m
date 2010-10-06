@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed,  6 Oct 2010 07:50:06 +0200
-Subject: [PATCH 1/3] b43: N-PHY: simplify channel switching
+Date: Wed,  6 Oct 2010 07:50:07 +0200
+Subject: [PATCH 2/3] b43: define B43_SHM_SH_CHAN_40MHZ
 In-Reply-To: <1286344208-32479-1-git-send-email-zajec5@gmail.com>
 References: <1286344208-32479-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1286344208-32479-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1286344208-32479-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,81 +13,40 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c |   27 +++++++++++----------------
- 1 files changed, 11 insertions(+), 16 deletions(-)
+ drivers/net/wireless/b43/b43.h        |    3 ++-
+ drivers/net/wireless/b43/phy_common.c |    6 ++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index ac217da..47c58cd 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -73,7 +73,8 @@ static void b43_nphy_rf_control_override(struct b43_wldev *dev, u16 field,
- 						u16 value, u8 core, bool off);
- static void b43_nphy_rf_control_intc_override(struct b43_wldev *dev, u8 field,
- 						u16 value, u8 core);
--static int nphy_channel_switch(struct b43_wldev *dev, unsigned int channel);
-+static int b43_nphy_op_switch_channel(struct b43_wldev *dev,
-+				      unsigned int new_channel);
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 73376ff..29302ea 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -187,7 +187,8 @@ enum {
+ #define B43_SHM_SH_PHYTXNOI		0x006E	/* PHY noise directly after TX (lower 8bit only) */
+ #define B43_SHM_SH_RFRXSP1		0x0072	/* RF RX SP Register 1 */
+ #define B43_SHM_SH_CHAN			0x00A0	/* Current channel (low 8bit only) */
+-#define  B43_SHM_SH_CHAN_5GHZ		0x0100	/* Bit set, if 5Ghz channel */
++#define  B43_SHM_SH_CHAN_5GHZ		0x0100	/* Bit set, if 5 Ghz channel */
++#define  B43_SHM_SH_CHAN_40MHZ		0x0200	/* Bit set, if 40 Mhz channel width */
+ #define B43_SHM_SH_BCMCFIFOID		0x0108	/* Last posted cookie to the bcast/mcast FIFO */
+ /* TSSI information */
+ #define B43_SHM_SH_TSSI_CCK		0x0058	/* TSSI for last 4 CCK frames (32bit) */
+diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
+index 10b9e6f..44f0064 100644
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -294,8 +294,10 @@ int b43_switch_channel(struct b43_wldev *dev, unsigned int new_channel)
+ 	 */
+ 	channelcookie = new_channel;
+ 	if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ)
+-		channelcookie |= 0x100;
+-	//FIXME set 40Mhz flag if required
++		channelcookie |= B43_SHM_SH_CHAN_5GHZ;
++	/* FIXME: set 40Mhz flag if required */
++	if (0)
++		channelcookie |= B43_SHM_SH_CHAN_40MHZ;
+ 	savedcookie = b43_shm_read16(dev, B43_SHM_SHARED, B43_SHM_SH_CHAN);
+ 	b43_shm_write16(dev, B43_SHM_SHARED, B43_SHM_SH_CHAN, channelcookie);
  
- static inline bool b43_empty_chanspec(struct b43_chanspec *chanspec)
- {
-@@ -223,7 +224,7 @@ static void b43_radio_init2055_post(struct b43_wldev *dev)
- 	if (i)
- 		b43err(dev->wl, "radio post init timeout\n");
- 	b43_radio_mask(dev, B2055_CAL_LPOCTL, 0xFF7F);
--	nphy_channel_switch(dev, dev->phy.channel);
-+	b43_nphy_op_switch_channel(dev, dev->phy.channel);
- 	b43_radio_write(dev, B2055_C1_RX_BB_LPF, 0x9);
- 	b43_radio_write(dev, B2055_C2_RX_BB_LPF, 0x9);
- 	b43_radio_write(dev, B2055_C1_RX_BB_MIDACHP, 0x83);
-@@ -3438,18 +3439,6 @@ static int b43_nphy_set_chanspec(struct b43_wldev *dev,
- 	return 0;
- }
- 
--/* Tune the hardware to a new channel */
--static int nphy_channel_switch(struct b43_wldev *dev, unsigned int channel)
--{
--	struct b43_phy_n *nphy = dev->phy.n;
--
--	struct b43_chanspec chanspec;
--	chanspec = nphy->radio_chanspec;
--	chanspec.channel = channel;
--
--	return b43_nphy_set_chanspec(dev, chanspec);
--}
--
- static int b43_nphy_op_allocate(struct b43_wldev *dev)
- {
- 	struct b43_phy_n *nphy;
-@@ -3570,7 +3559,7 @@ static void b43_nphy_op_software_rfkill(struct b43_wldev *dev,
- 	} else {
- 		if (dev->phy.rev >= 3) {
- 			b43_radio_init2056(dev);
--			b43_nphy_set_chanspec(dev, nphy->radio_chanspec);
-+			b43_nphy_op_switch_channel(dev, dev->phy.channel);
- 		} else {
- 			b43_radio_init2055(dev);
- 		}
-@@ -3586,6 +3575,9 @@ static void b43_nphy_op_switch_analog(struct b43_wldev *dev, bool on)
- static int b43_nphy_op_switch_channel(struct b43_wldev *dev,
- 				      unsigned int new_channel)
- {
-+	struct b43_phy_n *nphy = dev->phy.n;
-+	struct b43_chanspec chanspec;
-+
- 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
- 		if ((new_channel < 1) || (new_channel > 14))
- 			return -EINVAL;
-@@ -3594,7 +3586,10 @@ static int b43_nphy_op_switch_channel(struct b43_wldev *dev,
- 			return -EINVAL;
- 	}
- 
--	return nphy_channel_switch(dev, new_channel);
-+	chanspec = nphy->radio_chanspec;
-+	chanspec.channel = new_channel;
-+
-+	return b43_nphy_set_chanspec(dev, chanspec);
- }
- 
- static unsigned int b43_nphy_op_get_default_chan(struct b43_wldev *dev)
 -- 
 1.7.1
