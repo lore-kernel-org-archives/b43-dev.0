@@ -1,45 +1,51 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 10 Oct 2010 16:47:49 +0200
-Subject: Release of Maranello firmware source code for Broadcom cards
-In-Reply-To: <1DBB75B1-733F-4DFC-A541-2C2C986586A6@ing.unibs.it>
-References: <2518B44B-D014-4ABA-AE31-BD75691488AB@ing.unibs.it>
-	<1DBB75B1-733F-4DFC-A541-2C2C986586A6@ing.unibs.it>
-Message-ID: <AANLkTika70YCWU8eG5QHO+Bdf5XakEOg_b+UJdgCG4A0@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 10 Oct 2010 08:39:04 -0700
+Subject: Issues with 14e4:4315 on "lenovo ideapad s9" - works only after wl
+In-Reply-To: <20101010072158.GV1593@home.pavel.comp>
+References: <20101009115320.GR1593@home.pavel.comp>
+	<20101009183637.GT1593@home.pavel.comp>
+	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
+	<20101009213220.GU1593@home.pavel.comp>
+	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
+	<20101010072158.GV1593@home.pavel.comp>
+Message-ID: <AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: francesco.gringoli@ing.unibs.it
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev@lists.infradead.org, Bo Han <bohan@cs.umd.edu>
+To: b43-dev@lists.infradead.org
 
-2010/10/10  <francesco.gringoli@ing.unibs.it>:
-> Hello there,
->
-> we released the source code of the Maranello firmware and all the
-> necessary kernel patches. It was tested on Broadcom 4318/4306 pci
-> cards on PC architecture. Find all the necessary files browsing from
->
-> http://www.ing.unibs.it/openfwwf
->
-> or go directly here
->
-> http://www.cs.umd.edu/projects/maranello
->
->
-> Maranello is an enhancement of the 802.11 DCF standard: it implements
-> a Partial Packet Recovery technique to retransmit only the corrupt
-> parts of failed packets. This reduces the airtime and contributes to
-> enhance the throughput. It was written starting from OpenFWWF5.2 by
-> adding a number of new features.
+2010/10/10 Paul Fertser <fercerpav@gmail.com>
 
-Hey, thanks for info!
+> On Sat, Oct 09, 2010 at 11:37:37PM +0200, G?bor Stefanik wrote:
+> > 2010/10/9 Paul Fertser <fercerpav@gmail.com>:
+> > > Indeed there's a fatal dma error there in the non-working case (and
+> switching
+> > > to PIO doesn't help). But it doesn't happen after wl. Both dmesgs
+> attached.
+> > >
+> >
+> > The PhoenixBIOS DMA problem is known not to appear if wl has been
+> > loaded beforehand. Be patient, we are working on this. (But good to
+> > know the S9 also reproduces it - it's probably less expensive than the
+> > S10 for the team to buy.)
+>
+> Even simply loading wl (without bringing the interface up etc) helps.
+> Attached is a parsed mmiotrace of that (hail to nouveau). Alas simply
+> replaying it (even with a 5ms delay inbetween writes) doesn't improve
+> anything.
+>
+> And yes, i know remote debugging is usually a pain but i think i can not
+> only provide ssh access but also some means to physically power-cycle the
+> device (though it'd take some time to find necessary parts).
 
-Did you just add recovery feature to OpenFWWF 5.2 or did you improve
-basic OpenFWWF as well?
 
-My 4318 with OpenFWWF 5.2 stops transmitting after few MB. Can
-Maranello contain any fix for this? I'll able to test this later next
-week.
+Before devoting too much effort to debugging, please try a recent
+compat-wireless version. There were some changes in b43 that are implemented
+there that might not be in your kernel. On my HP Mini 110 netbook, those
+fixes got rid of the DMA errors. Will they allow your S9 to cold boot b43?
 
--- 
-Rafa?
+Larry
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101010/cadc11a1/attachment.html>
