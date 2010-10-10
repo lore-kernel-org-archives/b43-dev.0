@@ -1,50 +1,35 @@
-From: Paul Fertser <fercerpav@gmail.com>
-Date: Sun, 10 Oct 2010 21:03:11 +0400
-Subject: Issues with 14e4:4315 on "lenovo ideapad s9" - works only after wl
-In-Reply-To: <AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
-References: <20101009115320.GR1593@home.pavel.comp>
-	<20101009183637.GT1593@home.pavel.comp>
-	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
-	<20101009213220.GU1593@home.pavel.comp>
-	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
-	<20101010072158.GV1593@home.pavel.comp>
-	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
-Message-ID: <20101010170311.GW1593@home.pavel.comp>
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Sun, 10 Oct 2010 19:11:12 +0200
+Subject: Release of Maranello firmware source code for Broadcom cards
+In-Reply-To: <335F2ADF-6921-4B5B-86C9-8DD348546B83@ing.unibs.it>
+	(sfid-20101010_184934_490334_27D68101)
+References: <2518B44B-D014-4ABA-AE31-BD75691488AB@ing.unibs.it>
+	<1DBB75B1-733F-4DFC-A541-2C2C986586A6@ing.unibs.it>
+	(sfid-20101010_123116_260431_6CAA2A46)
+	<1286714096.16309.10.camel@maggie>
+	<335F2ADF-6921-4B5B-86C9-8DD348546B83@ing.unibs.it>
+	(sfid-20101010_184934_490334_27D68101)
+Message-ID: <1286730672.16309.12.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: francesco.gringoli@ing.unibs.it
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev@lists.infradead.org, Bo Han <bohan@cs.umd.edu>
 
-On Sun, Oct 10, 2010 at 08:39:04AM -0700, Larry Finger wrote:
-> 2010/10/10 Paul Fertser <[1]fercerpav@gmail.com>
->   On Sat, Oct 09, 2010 at 11:37:37PM +0200, Gabor Stefanik wrote:
->   > The PhoenixBIOS DMA problem is known not to appear if wl has been
->   > loaded beforehand. Be patient, we are working on this. (But good to
->   > know the S9 also reproduces it - it's probably less expensive than the
->   > S10 for the team to buy.)
-> 
->   And yes, i know remote debugging is usually a pain but i think i can not
->   only provide ssh access but also some means to physically power-cycle the
->   device (though it'd take some time to find necessary parts).
-> ?
-> Before devoting too much effort to debugging, please try a recent
-> compat-wireless version. There were some changes in b43 that are implemented
-> there that might not be in your kernel.
+On Sun, 2010-10-10 at 18:49 +0200, francesco.gringoli at ing.unibs.it
+wrote:
 
-I hoped Compat-wireless backport release: compat-wireless-2010-10-01-10-gb9b0a4f
-is recent enough.
+> yes, the firmware works in AP mode, it is the basic AP mode implemented
+> by OpenFWWF. And yes, both AP and STA implement partial packet recovery.
+> We tested both directions and in our testbed (and most importantly with
+> the hardware we have... unfortunately not all 4318/06 are equal :-( )
+> it was stable and we never experienced crashes.
 
-As for the remote debugging, it seems to me that having an ssh access
-coupled with a computer-controlled outlet would be almost identical to
-local, right?
-
-> On my HP Mini 110 netbook, those fixes got rid of the DMA errors. Will
-> they allow your S9 to cold boot b43?
-
-I wonder if those DMA errors are just a sign of some other problem because
-the driver automatically switches to PIO but it doesn't help.
+So it is possible to disable the Maranello feature in that firmware
+(via SHM parameter or possibly also compiletime switch) to run it in
+standard mode?
+I think that would get the firmware base a lot more testing coverage.
 
 -- 
-Be free, use free (http://www.gnu.org/philosophy/free-sw.html) software!
-mailto:fercerpav at gmail.com
+Greetings Michael.
