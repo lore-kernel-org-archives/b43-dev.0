@@ -1,48 +1,53 @@
-From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
-Date: Sun, 10 Oct 2010 18:49:25 +0200
-Subject: Release of Maranello firmware source code for Broadcom cards
-In-Reply-To: <1286714096.16309.10.camel@maggie>
-References: <2518B44B-D014-4ABA-AE31-BD75691488AB@ing.unibs.it>
-	<1DBB75B1-733F-4DFC-A541-2C2C986586A6@ing.unibs.it>
-	(sfid-20101010_123116_260431_6CAA2A46)
-	<1286714096.16309.10.camel@maggie>
-Message-ID: <335F2ADF-6921-4B5B-86C9-8DD348546B83@ing.unibs.it>
+From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
+Date: Sun, 10 Oct 2010 18:50:55 +0200
+Subject: Issues with 14e4:4315 on "lenovo ideapad s9" - works only after wl
+In-Reply-To: <20101010072158.GV1593@home.pavel.comp>
+References: <20101009115320.GR1593@home.pavel.comp>
+	<20101009183637.GT1593@home.pavel.comp>
+	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
+	<20101009213220.GU1593@home.pavel.comp>
+	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
+	<20101010072158.GV1593@home.pavel.comp>
+Message-ID: <AANLkTim63Nh2zABjrRSHy5Dn_rcXG++TaUqLv7EytbcC@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?iso-8859-1?Q?Michael_B=FCsch?= <mb@bu3sch.de>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev@lists.infradead.org, Bo Han <bohan@cs.umd.edu>
+To: b43-dev@lists.infradead.org
 
-On Oct 10, 2010, at 2:34 PM, Michael B?sch wrote:
+2010/10/10 Paul Fertser <fercerpav@gmail.com>:
+> On Sat, Oct 09, 2010 at 11:37:37PM +0200, G?bor Stefanik wrote:
+>> 2010/10/9 Paul Fertser <fercerpav@gmail.com>:
+>> > Indeed there's a fatal dma error there in the non-working case (and switching
+>> > to PIO doesn't help). But it doesn't happen after wl. Both dmesgs attached.
+>> >
+>>
+>> The PhoenixBIOS DMA problem is known not to appear if wl has been
+>> loaded beforehand. Be patient, we are working on this. (But good to
+>> know the S9 also reproduces it - it's probably less expensive than the
+>> S10 for the team to buy.)
+>
+> Even simply loading wl (without bringing the interface up etc) helps.
+> Attached is a parsed mmiotrace of that (hail to nouveau). Alas simply
+> replaying it (even with a 5ms delay inbetween writes) doesn't improve
+> anything.
 
-> On Sun, 2010-10-10 at 12:19 +0200, francesco.gringoli at ing.unibs.it
-> wrote: 
->> Maranello is an enhancement of the 802.11 DCF standard: it implements
->> a Partial Packet Recovery technique to retransmit only the corrupt
->> parts of failed packets. This reduces the airtime and contributes to
->> enhance the throughput. It was written starting from OpenFWWF5.2 by
->> adding a number of new features.
-> 
-> Hey, that looks really cool. :)
-> So does this firmware work in AP and STA mode? I guess so, because it
-> seems you need support for the nonstandard enhancement on both STA
-> and AP.
-Hello Michael,
+That definitely won't help - if you just brainlessly replay an
+mmiotrace, the writes will end up on the wrong SSB cores. You also
+need to replay PCI config space writes. AFAIK there has been a patch
+earlier on the list to show PCI config space accesses in mmiotrace.
 
-yes, the firmware works in AP mode, it is the basic AP mode implemented by OpenFWWF. And yes, both AP and STA implement partial packet recovery. We tested both directions and in our testbed (and most importantly with the hardware we have... unfortunately not all 4318/06 are equal :-( ) it was stable and we never experienced crashes.
-
-The most interesting point are the capabilities of this really simple boards: we were really surprised of how many things they can do (and I believe guys at Broadcom never imagined).
-
-Kind regards,
--Francesco Gringoli
-
-> 
-> -- 
-> Greetings Michael.
-> 
+>
+> And yes, i know remote debugging is usually a pain but i think i can not
+> only provide ssh access but also some means to physically power-cycle the
+> device (though it'd take some time to find necessary parts).
+>
+> --
+> Be free, use free (http://www.gnu.org/philosophy/free-sw.html) software!
+> mailto:fercerpav at gmail.com
+>
 
 
 
-
-Informativa sulla privacy: http://help.ing.unibs.it/privacy.php
+-- 
+Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
