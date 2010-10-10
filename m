@@ -1,52 +1,50 @@
-From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
-Date: Sun, 10 Oct 2010 18:53:19 +0200
-Subject: Release of Maranello firmware source code for Broadcom cards
-In-Reply-To: <AANLkTika70YCWU8eG5QHO+Bdf5XakEOg_b+UJdgCG4A0@mail.gmail.com>
-References: <2518B44B-D014-4ABA-AE31-BD75691488AB@ing.unibs.it>
-	<1DBB75B1-733F-4DFC-A541-2C2C986586A6@ing.unibs.it>
-	<AANLkTika70YCWU8eG5QHO+Bdf5XakEOg_b+UJdgCG4A0@mail.gmail.com>
-Message-ID: <E338C554-ADF5-490D-825D-E04D295664F0@ing.unibs.it>
+From: Paul Fertser <fercerpav@gmail.com>
+Date: Sun, 10 Oct 2010 21:03:11 +0400
+Subject: Issues with 14e4:4315 on "lenovo ideapad s9" - works only after wl
+In-Reply-To: <AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
+References: <20101009115320.GR1593@home.pavel.comp>
+	<20101009183637.GT1593@home.pavel.comp>
+	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
+	<20101009213220.GU1593@home.pavel.comp>
+	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
+	<20101010072158.GV1593@home.pavel.comp>
+	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
+Message-ID: <20101010170311.GW1593@home.pavel.comp>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev@lists.infradead.org, Bo Han <bohan@cs.umd.edu>
+To: b43-dev@lists.infradead.org
 
-On Oct 10, 2010, at 4:47 PM, Rafa? Mi?ecki wrote:
-
-> 2010/10/10  <francesco.gringoli@ing.unibs.it>:
->> Hello there,
->> 
->> we released the source code of the Maranello firmware and all the
->> necessary kernel patches. It was tested on Broadcom 4318/4306 pci
->> cards on PC architecture. Find all the necessary files browsing from
->> 
->> http://www.ing.unibs.it/openfwwf
->> 
->> or go directly here
->> 
->> http://www.cs.umd.edu/projects/maranello
->> 
->> 
->> Maranello is an enhancement of the 802.11 DCF standard: it implements
->> a Partial Packet Recovery technique to retransmit only the corrupt
->> parts of failed packets. This reduces the airtime and contributes to
->> enhance the throughput. It was written starting from OpenFWWF5.2 by
->> adding a number of new features.
+On Sun, Oct 10, 2010 at 08:39:04AM -0700, Larry Finger wrote:
+> 2010/10/10 Paul Fertser <[1]fercerpav@gmail.com>
+>   On Sat, Oct 09, 2010 at 11:37:37PM +0200, Gabor Stefanik wrote:
+>   > The PhoenixBIOS DMA problem is known not to appear if wl has been
+>   > loaded beforehand. Be patient, we are working on this. (But good to
+>   > know the S9 also reproduces it - it's probably less expensive than the
+>   > S10 for the team to buy.)
 > 
-> Hey, thanks for info!
-> 
-> Did you just add recovery feature to OpenFWWF 5.2 or did you improve
-> basic OpenFWWF as well?
-> 
-> My 4318 with OpenFWWF 5.2 stops transmitting after few MB. Can
-> Maranello contain any fix for this? I'll able to test this later next
-> week.
-No, I don't think so. OpenFWWF5.2 does not handle correctly fifo overflow conditions. We have a testing firmware that handles them (and that works perfectly on WRT54GL): I hope we can release it soon.
+>   And yes, i know remote debugging is usually a pain but i think i can not
+>   only provide ssh access but also some means to physically power-cycle the
+>   device (though it'd take some time to find necessary parts).
+> ?
+> Before devoting too much effort to debugging, please try a recent
+> compat-wireless version. There were some changes in b43 that are implemented
+> there that might not be in your kernel.
 
-Kind regards,
--Francesco Gringoli
+I hoped Compat-wireless backport release: compat-wireless-2010-10-01-10-gb9b0a4f
+is recent enough.
 
+As for the remote debugging, it seems to me that having an ssh access
+coupled with a computer-controlled outlet would be almost identical to
+local, right?
 
-Informativa sulla privacy: http://help.ing.unibs.it/privacy.php
+> On my HP Mini 110 netbook, those fixes got rid of the DMA errors. Will
+> they allow your S9 to cold boot b43?
+
+I wonder if those DMA errors are just a sign of some other problem because
+the driver automatically switches to PIO but it doesn't help.
+
+-- 
+Be free, use free (http://www.gnu.org/philosophy/free-sw.html) software!
+mailto:fercerpav at gmail.com
