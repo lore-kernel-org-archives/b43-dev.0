@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 11 Oct 2010 03:11:03 +0200
-Subject: [PATCH 3/3] b43: N-PHY: fix logic in band switching
-In-Reply-To: <1286759463-32221-1-git-send-email-zajec5@gmail.com>
-References: <1286759463-32221-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1286759463-32221-4-git-send-email-zajec5@gmail.com>
+Date: Mon, 11 Oct 2010 03:19:22 +0200
+Subject: [PATCH] b43: N-PHY: prepare for rev3+ channel tables
+Message-ID: <1286759962-374-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,35 +11,99 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c |    9 +++++----
- 1 files changed, 5 insertions(+), 4 deletions(-)
+After not getting help with channel numbering on linux-wireless@ plus some
+talks on IRC where few ppl claimed channel numbers are messy I decided to
+check for freq. Maybe I'll switch rev2 tables to freq as well (later).
+
+This patch makes two lines over 80 chars wide. I found it nicer to read them
+when comparing to line breaking. However if this is any problem, just let me
+know.
+---
+ drivers/net/wireless/b43/phy_n.c       |    3 ++-
+ drivers/net/wireless/b43/tables_nphy.c |   24 +++++++++++++++++++++---
+ drivers/net/wireless/b43/tables_nphy.h |    4 +++-
+ 3 files changed, 26 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 88a4411..21cfd42 100644
+index 21cfd42..814127e 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -3337,17 +3337,18 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
- 	struct b43_phy *phy = &dev->phy;
- 	struct b43_phy_n *nphy = dev->phy.n;
+@@ -3399,7 +3399,8 @@ static int b43_nphy_set_channel(struct b43_wldev *dev,
+ 	u8 tmp;
  
--	u16 tmp;
-+	u16 old_band_5ghz;
- 	u32 tmp32;
+ 	if (dev->phy.rev >= 3) {
+-		/* TODO */
++		tabent_r3 = b43_nphy_get_chantabent_rev3(dev,
++							channel->center_freq);
+ 		tabent_r3 = NULL;
+ 		if (!tabent_r3)
+ 			return -ESRCH;
+diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
+index d96e870..e74b8eb 100644
+--- a/drivers/net/wireless/b43/tables_nphy.c
++++ b/drivers/net/wireless/b43/tables_nphy.c
+@@ -325,7 +325,7 @@ void b2055_upload_inittab(struct b43_wldev *dev,
+ 	.phy_regs.phy_bw5	= r4,	\
+ 	.phy_regs.phy_bw6	= r5
  
--	tmp = b43_phy_read(dev, B43_NPHY_BANDCTL) & B43_NPHY_BANDCTL_5GHZ;
--	if (new_channel->band == IEEE80211_BAND_5GHZ && tmp == 0) {
-+	old_band_5ghz =
-+		b43_phy_read(dev, B43_NPHY_BANDCTL) & B43_NPHY_BANDCTL_5GHZ;
-+	if (new_channel->band == IEEE80211_BAND_5GHZ && !old_band_5ghz) {
- 		tmp32 = b43_read32(dev, B43_MMIO_PSM_PHY_HDR);
- 		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32 | 4);
- 		b43_phy_set(dev, B43_PHY_B_BBCFG, 0xC000);
- 		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32);
- 		b43_phy_set(dev, B43_NPHY_BANDCTL, B43_NPHY_BANDCTL_5GHZ);
--	} else if (new_channel->band == IEEE80211_BAND_5GHZ) {
-+	} else if (new_channel->band == IEEE80211_BAND_2GHZ && old_band_5ghz) {
- 		b43_phy_mask(dev, B43_NPHY_BANDCTL, ~B43_NPHY_BANDCTL_5GHZ);
- 		tmp32 = b43_read32(dev, B43_MMIO_PSM_PHY_HDR);
- 		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32 | 4);
+-static const struct b43_nphy_channeltab_entry_rev2 b43_nphy_channeltab[] = {
++static const struct b43_nphy_channeltab_entry_rev2 b43_nphy_channeltab_rev2[] = {
+   {	.channel		= 184,
+ 	.freq			= 4920, /* MHz */
+ 	.unk2			= 3280,
+@@ -1326,8 +1326,8 @@ b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel)
+ 	const struct b43_nphy_channeltab_entry_rev2 *e;
+ 	unsigned int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(b43_nphy_channeltab); i++) {
+-		e = &(b43_nphy_channeltab[i]);
++	for (i = 0; i < ARRAY_SIZE(b43_nphy_channeltab_rev2); i++) {
++		e = &(b43_nphy_channeltab_rev2[i]);
+ 		if (e->channel == channel)
+ 			return e;
+ 	}
+@@ -1335,6 +1335,24 @@ b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel)
+ 	return NULL;
+ }
+ 
++static const struct b43_nphy_channeltab_entry_rev3 b43_nphy_channeltab_rev3[] = {
++};
++
++const struct b43_nphy_channeltab_entry_rev3 *
++b43_nphy_get_chantabent_rev3(struct b43_wldev *dev, u16 freq)
++{
++	const struct b43_nphy_channeltab_entry_rev3 *e;
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(b43_nphy_channeltab_rev3); i++) {
++		e = &(b43_nphy_channeltab_rev3[i]);
++		if (e->freq == freq)
++			return e;
++	}
++
++	return NULL;
++}
++
+ 
+ static const u8 b43_ntab_adjustpower0[] = {
+ 	0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
+diff --git a/drivers/net/wireless/b43/tables_nphy.h b/drivers/net/wireless/b43/tables_nphy.h
+index 8fc1da9..3eedb86 100644
+--- a/drivers/net/wireless/b43/tables_nphy.h
++++ b/drivers/net/wireless/b43/tables_nphy.h
+@@ -90,10 +90,12 @@ void b2055_upload_inittab(struct b43_wldev *dev,
+ 			  bool ghz5, bool ignore_uploadflag);
+ 
+ 
+-/* Get the NPHY Channel Switch Table entry for a channel number.
++/* Get the NPHY Channel Switch Table entry for a channel.
+  * Returns NULL on failure to find an entry. */
+ const struct b43_nphy_channeltab_entry_rev2 *
+ b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel);
++const struct b43_nphy_channeltab_entry_rev3 *
++b43_nphy_get_chantabent_rev3(struct b43_wldev *dev, u16 freq);
+ 
+ 
+ /* The N-PHY tables. */
 -- 
 1.7.1
