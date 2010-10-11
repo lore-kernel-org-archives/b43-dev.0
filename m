@@ -1,109 +1,37 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 11 Oct 2010 03:19:22 +0200
-Subject: [PATCH] b43: N-PHY: prepare for rev3+ channel tables
-Message-ID: <1286759962-374-1-git-send-email-zajec5@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 10 Oct 2010 18:50:06 -0700
+Subject: Issues with 14e4:4315 on "lenovo ideapad s9" - works only after wl
+In-Reply-To: <20101010170311.GW1593@home.pavel.comp>
+References: <20101009115320.GR1593@home.pavel.comp>
+	<20101009183637.GT1593@home.pavel.comp>
+	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
+	<20101009213220.GU1593@home.pavel.comp>
+	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
+	<20101010072158.GV1593@home.pavel.comp>
+	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
+	<20101010170311.GW1593@home.pavel.comp>
+Message-ID: <AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-After not getting help with channel numbering on linux-wireless@ plus some
-talks on IRC where few ppl claimed channel numbers are messy I decided to
-check for freq. Maybe I'll switch rev2 tables to freq as well (later).
+On Sun, Oct 10, 2010 at 10:03 AM, Paul Fertser <fercerpav@gmail.com> wrote:
 
-This patch makes two lines over 80 chars wide. I found it nicer to read them
-when comparing to line breaking. However if this is any problem, just let me
-know.
----
- drivers/net/wireless/b43/phy_n.c       |    3 ++-
- drivers/net/wireless/b43/tables_nphy.c |   24 +++++++++++++++++++++---
- drivers/net/wireless/b43/tables_nphy.h |    4 +++-
- 3 files changed, 26 insertions(+), 5 deletions(-)
+> On Sun, Oct 10, 2010 at 08:39:04AM -0700, Larry Finger wrote:
+>
+> > On my HP Mini 110 netbook, those fixes got rid of the DMA errors. Will
+> > they allow your S9 to cold boot b43?
+>
+> I wonder if those DMA errors are just a sign of some other problem because
+> the driver automatically switches to PIO but it doesn't help.
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 21cfd42..814127e 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -3399,7 +3399,8 @@ static int b43_nphy_set_channel(struct b43_wldev *dev,
- 	u8 tmp;
- 
- 	if (dev->phy.rev >= 3) {
--		/* TODO */
-+		tabent_r3 = b43_nphy_get_chantabent_rev3(dev,
-+							channel->center_freq);
- 		tabent_r3 = NULL;
- 		if (!tabent_r3)
- 			return -ESRCH;
-diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
-index d96e870..e74b8eb 100644
---- a/drivers/net/wireless/b43/tables_nphy.c
-+++ b/drivers/net/wireless/b43/tables_nphy.c
-@@ -325,7 +325,7 @@ void b2055_upload_inittab(struct b43_wldev *dev,
- 	.phy_regs.phy_bw5	= r4,	\
- 	.phy_regs.phy_bw6	= r5
- 
--static const struct b43_nphy_channeltab_entry_rev2 b43_nphy_channeltab[] = {
-+static const struct b43_nphy_channeltab_entry_rev2 b43_nphy_channeltab_rev2[] = {
-   {	.channel		= 184,
- 	.freq			= 4920, /* MHz */
- 	.unk2			= 3280,
-@@ -1326,8 +1326,8 @@ b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel)
- 	const struct b43_nphy_channeltab_entry_rev2 *e;
- 	unsigned int i;
- 
--	for (i = 0; i < ARRAY_SIZE(b43_nphy_channeltab); i++) {
--		e = &(b43_nphy_channeltab[i]);
-+	for (i = 0; i < ARRAY_SIZE(b43_nphy_channeltab_rev2); i++) {
-+		e = &(b43_nphy_channeltab_rev2[i]);
- 		if (e->channel == channel)
- 			return e;
- 	}
-@@ -1335,6 +1335,24 @@ b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel)
- 	return NULL;
- }
- 
-+static const struct b43_nphy_channeltab_entry_rev3 b43_nphy_channeltab_rev3[] = {
-+};
-+
-+const struct b43_nphy_channeltab_entry_rev3 *
-+b43_nphy_get_chantabent_rev3(struct b43_wldev *dev, u16 freq)
-+{
-+	const struct b43_nphy_channeltab_entry_rev3 *e;
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(b43_nphy_channeltab_rev3); i++) {
-+		e = &(b43_nphy_channeltab_rev3[i]);
-+		if (e->freq == freq)
-+			return e;
-+	}
-+
-+	return NULL;
-+}
-+
- 
- static const u8 b43_ntab_adjustpower0[] = {
- 	0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
-diff --git a/drivers/net/wireless/b43/tables_nphy.h b/drivers/net/wireless/b43/tables_nphy.h
-index 8fc1da9..3eedb86 100644
---- a/drivers/net/wireless/b43/tables_nphy.h
-+++ b/drivers/net/wireless/b43/tables_nphy.h
-@@ -90,10 +90,12 @@ void b2055_upload_inittab(struct b43_wldev *dev,
- 			  bool ghz5, bool ignore_uploadflag);
- 
- 
--/* Get the NPHY Channel Switch Table entry for a channel number.
-+/* Get the NPHY Channel Switch Table entry for a channel.
-  * Returns NULL on failure to find an entry. */
- const struct b43_nphy_channeltab_entry_rev2 *
- b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel);
-+const struct b43_nphy_channeltab_entry_rev3 *
-+b43_nphy_get_chantabent_rev3(struct b43_wldev *dev, u16 freq);
- 
- 
- /* The N-PHY tables. */
--- 
-1.7.1
+
+On most machines, the automatic switch to PIO does not work. You probably
+need to load the driver with PIO=1.
+
+Larry
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101010/e8b592d5/attachment-0001.html>
