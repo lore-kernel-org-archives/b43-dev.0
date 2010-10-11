@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 11 Oct 2010 03:11:02 +0200
-Subject: [PATCH 2/3] b43: N-PHY: store info about current channel's type
+Date: Mon, 11 Oct 2010 03:11:03 +0200
+Subject: [PATCH 3/3] b43: N-PHY: fix logic in band switching
 In-Reply-To: <1286759463-32221-1-git-send-email-zajec5@gmail.com>
 References: <1286759463-32221-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1286759463-32221-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1286759463-32221-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,77 +13,35 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_common.h |    4 +++-
- drivers/net/wireless/b43/phy_n.c      |   14 ++++++++++----
- drivers/net/wireless/b43/phy_n.h      |    1 -
- 3 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/net/wireless/b43/phy_n.c |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
-index bd480b4..6dcd033 100644
---- a/drivers/net/wireless/b43/phy_common.h
-+++ b/drivers/net/wireless/b43/phy_common.h
-@@ -2,6 +2,7 @@
- #define LINUX_B43_PHY_COMMON_H_
- 
- #include <linux/types.h>
-+#include <linux/nl80211.h>
- 
- struct b43_wldev;
- 
-@@ -250,8 +251,9 @@ struct b43_phy {
- 	 * check is needed. */
- 	unsigned long next_txpwr_check_time;
- 
--	/* current channel */
-+	/* Current channel */
- 	unsigned int channel;
-+	enum nl80211_channel_type channel_type;
- 
- 	/* PHY TX errors counter. */
- 	atomic_t txerr_cnt;
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index c596b46..88a4411 100644
+index 88a4411..21cfd42 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -74,6 +74,13 @@ static void b43_nphy_rf_control_override(struct b43_wldev *dev, u16 field,
- static void b43_nphy_rf_control_intc_override(struct b43_wldev *dev, u8 field,
- 						u16 value, u8 core);
+@@ -3337,17 +3337,18 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
+ 	struct b43_phy *phy = &dev->phy;
+ 	struct b43_phy_n *nphy = dev->phy.n;
  
-+static inline bool b43_channel_type_is_40mhz(
-+					enum nl80211_channel_type channel_type)
-+{
-+	return (channel_type == NL80211_CHAN_HT40MINUS ||
-+		channel_type == NL80211_CHAN_HT40PLUS);
-+}
-+
- static inline bool b43_empty_chanspec(struct b43_chanspec *chanspec)
- {
- 	return !chanspec->channel && !chanspec->sideband &&
-@@ -3404,10 +3411,9 @@ static int b43_nphy_set_channel(struct b43_wldev *dev,
+-	u16 tmp;
++	u16 old_band_5ghz;
+ 	u32 tmp32;
  
- 	nphy->radio_chanspec.channel = channel->hw_value;
- 
--	/*
--	if (chanspec.b_width != nphy->b_width)
--		; TODO: BMAC BW Set (chanspec.b_width)
--	*/
-+	if (b43_channel_type_is_40mhz(phy->channel_type) !=
-+		b43_channel_type_is_40mhz(channel_type))
-+		; /* TODO: BMAC BW Set (channel_type) */
- 
- 	if (channel_type == NL80211_CHAN_HT40PLUS)
- 		b43_phy_set(dev, B43_NPHY_RXCTL,
-diff --git a/drivers/net/wireless/b43/phy_n.h b/drivers/net/wireless/b43/phy_n.h
-index 8b6d570..e7acae2 100644
---- a/drivers/net/wireless/b43/phy_n.h
-+++ b/drivers/net/wireless/b43/phy_n.h
-@@ -984,7 +984,6 @@ struct b43_phy_n {
- 	u16 papd_epsilon_offset[2];
- 	s32 preamble_override;
- 	u32 bb_mult_save;
--	u8 b_width;
- 	struct b43_chanspec radio_chanspec;
- 
- 	bool gain_boost;
+-	tmp = b43_phy_read(dev, B43_NPHY_BANDCTL) & B43_NPHY_BANDCTL_5GHZ;
+-	if (new_channel->band == IEEE80211_BAND_5GHZ && tmp == 0) {
++	old_band_5ghz =
++		b43_phy_read(dev, B43_NPHY_BANDCTL) & B43_NPHY_BANDCTL_5GHZ;
++	if (new_channel->band == IEEE80211_BAND_5GHZ && !old_band_5ghz) {
+ 		tmp32 = b43_read32(dev, B43_MMIO_PSM_PHY_HDR);
+ 		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32 | 4);
+ 		b43_phy_set(dev, B43_PHY_B_BBCFG, 0xC000);
+ 		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32);
+ 		b43_phy_set(dev, B43_NPHY_BANDCTL, B43_NPHY_BANDCTL_5GHZ);
+-	} else if (new_channel->band == IEEE80211_BAND_5GHZ) {
++	} else if (new_channel->band == IEEE80211_BAND_2GHZ && old_band_5ghz) {
+ 		b43_phy_mask(dev, B43_NPHY_BANDCTL, ~B43_NPHY_BANDCTL_5GHZ);
+ 		tmp32 = b43_read32(dev, B43_MMIO_PSM_PHY_HDR);
+ 		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32 | 4);
 -- 
 1.7.1
