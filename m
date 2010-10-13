@@ -1,49 +1,50 @@
 From: Paul Fertser <fercerpav@gmail.com>
-Date: Wed, 13 Oct 2010 03:05:44 +0400
-Subject: Issues with 14e4:4315 on "lenovo ideapad s9" - works only after wl
-In-Reply-To: <20101012221229.GE1593@home.pavel.comp>
+Date: Wed, 13 Oct 2010 10:58:45 +0400
+Subject: PIO mode (was: Re: Issues with 14e4:4315 on "lenovo ideapad s9" -
+	works only after wl)
+In-Reply-To: <AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
 References: <20101009115320.GR1593@home.pavel.comp>
 	<20101009183637.GT1593@home.pavel.comp>
 	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
 	<20101009213220.GU1593@home.pavel.comp>
 	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
 	<20101010072158.GV1593@home.pavel.comp>
-	<AANLkTim63Nh2zABjrRSHy5Dn_rcXG++TaUqLv7EytbcC@mail.gmail.com>
-	<20101012221229.GE1593@home.pavel.comp>
-Message-ID: <20101012230543.GF1593@home.pavel.comp>
+	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
+	<20101010170311.GW1593@home.pavel.comp>
+	<AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
+Message-ID: <20101013065845.GG1593@home.pavel.comp>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Wed, Oct 13, 2010 at 02:12:29AM +0400, Paul Fertser wrote:
-> On Sun, Oct 10, 2010 at 06:50:55PM +0200, G?bor Stefanik wrote:
-> > 2010/10/10 Paul Fertser <fercerpav@gmail.com>:
-> > > Even simply loading wl (without bringing the interface up etc) helps.
-> > > Attached is a parsed mmiotrace of that (hail to nouveau). Alas simply
-> > > replaying it (even with a 5ms delay inbetween writes) doesn't improve
-> > > anything.
-> > 
-> > That definitely won't help - if you just brainlessly replay an
-> > mmiotrace, the writes will end up on the wrong SSB cores. You also
-> > need to replay PCI config space writes. AFAIK there has been a patch
-> > earlier on the list to show PCI config space accesses in mmiotrace.
+On Sun, Oct 10, 2010 at 06:50:06PM -0700, Larry Finger wrote:
+> On Sun, Oct 10, 2010 at 10:03 AM, Paul Fertser <[1]fercerpav@gmail.com> wrote:
+>   On Sun, Oct 10, 2010 at 08:39:04AM -0700, Larry Finger wrote:
+>   > On my HP Mini 110 netbook, those fixes got rid of the DMA errors. Will
+>   > they allow your S9 to cold boot b43?
 > 
-> Before i was using the bleeding edge compat-wireless and now i compiled
-> wireless-testing 4b8f8abb4f. With compat-wireless b43 reliably didn't work at
-> all after cold booting, producing Fatal DMA error immediately with no used
-> slots. With w-t (even unmodified!) b43 does work after cold boot :-O Once i've
-> seen it produce Fatal DMA error again while transferring a file over scp (can't
-> reproduce anymore, dmesg attached)
+>   I wonder if those DMA errors are just a sign of some other problem because
+>   the driver automatically switches to PIO but it doesn't help.
+> ?
+> On most machines, the automatic switch to PIO does not work. You probably need
+> to load the driver with PIO=1.
 
-In fact, i can reliably reproduce Fatal DMA error on b43 cold boot with w-t
-by ssh'ing zeroes to a host (connected via ethernet to AP) in about 3
-minutes. And this doesn't seem to happen if i modprobe and rmmod wl beforehand
-(without even bringing the interface up).
-
-Any other tests i can do for you? :)
+The PIO mode doesn't work for me at all. The logs after automatic switching
+are identical to those of coldbooting b43 with pio=1. Same with loading it
+after wl. The dmesg is attached (that's with plain wpa_supplicant, no NM
+interfering). Reloading b43 without pio=1 makes it work (to clarify:
+coldboot -> b43 pio=1 -> b43 -- works; coldboot -> b43 -> Fatal error ->
+rmmod b43 -> modprobe b43 fails immediately).
 
 -- 
 Be free, use free (http://www.gnu.org/philosophy/free-sw.html) software!
 mailto:fercerpav at gmail.com
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: b43-pio-dysfunct.dmesg.txt.gz
+Type: application/x-gunzip
+Size: 14583 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101013/319c1871/attachment-0001.bin>
