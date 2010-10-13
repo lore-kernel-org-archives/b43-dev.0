@@ -1,50 +1,120 @@
-From: Paul Fertser <fercerpav@gmail.com>
-Date: Wed, 13 Oct 2010 10:58:45 +0400
-Subject: PIO mode (was: Re: Issues with 14e4:4315 on "lenovo ideapad s9" -
-	works only after wl)
-In-Reply-To: <AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
-References: <20101009115320.GR1593@home.pavel.comp>
-	<20101009183637.GT1593@home.pavel.comp>
-	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
-	<20101009213220.GU1593@home.pavel.comp>
-	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
-	<20101010072158.GV1593@home.pavel.comp>
-	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
-	<20101010170311.GW1593@home.pavel.comp>
-	<AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
-Message-ID: <20101013065845.GG1593@home.pavel.comp>
+From: Ariel Pedraza <pedrazaa@yahoo.com>
+Date: Wed, 13 Oct 2010 09:47:14 -0700 (PDT)
+Subject: BCM4321 - These devices have unsupported N-PHYs. We are working
+	on it.
+In-Reply-To: <AANLkTiknCxs5RrC3x3vUh2or3t1sSHnNyq6Tp6AzAzZL@mail.gmail.com>
+Message-ID: <722018.5874.qm@web111412.mail.gq1.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Sun, Oct 10, 2010 at 06:50:06PM -0700, Larry Finger wrote:
-> On Sun, Oct 10, 2010 at 10:03 AM, Paul Fertser <[1]fercerpav@gmail.com> wrote:
->   On Sun, Oct 10, 2010 at 08:39:04AM -0700, Larry Finger wrote:
->   > On my HP Mini 110 netbook, those fixes got rid of the DMA errors. Will
->   > they allow your S9 to cold boot b43?
+where can I get the firmware for brcm80211?
+Is there a FOSSI firmware or is the one provided by Broadcom the only one?
+
+I installed from the  compat-wireless-2.6.tar.bz2 but ask for the firmware...
+
+--- El vie, 10/1/10, G?bor Stefanik <netrolller.3d@gmail.com> escribi?:
+
+> De: G?bor Stefanik <netrolller.3d@gmail.com>
+> Asunto: Re: BCM4321 - These devices have unsupported N-PHYs. We are working on it.
+> A: "Ariel Pedraza" <pedrazaa@yahoo.com>, "b43-dev" <b43-dev@lists.infradead.org>
+> Fecha: viernes, 1 de octubre de 2010, 04:48 pm
+> P.S. Remember to use Reply to All
+> when replying to a list.
 > 
->   I wonder if those DMA errors are just a sign of some other problem because
->   the driver automatically switches to PIO but it doesn't help.
-> ?
-> On most machines, the automatic switch to PIO does not work. You probably need
-> to load the driver with PIO=1.
+> 2010/10/1 G?bor Stefanik <netrolller.3d@gmail.com>:
+> > 2010/10/1 Ariel Pedraza <pedrazaa@yahoo.com>:
+> >> Do I have to bind to the b43 instead the wl? using
+> this procedure "Manual driver binding and unbinding" (http://lwn.net/Articles/143397/)...
+> >
+> > You actually need to bind it to ssb, the back-end
+> module for b43.
+> > also, blacklist wl while testing. (However, I would
+> say it's easier to
+> > add the PCI ID of your card to ssb directly rather
+> than using the
+> > bind/unbind files.)
+> >
+> >>
+> >> --- El vie, 10/1/10, G?bor Stefanik <netrolller.3d@gmail.com>
+> escribi?:
+> >>
+> >>> De: G?bor Stefanik <netrolller.3d@gmail.com>
+> >>> Asunto: Re: BCM4321 - These devices have
+> unsupported N-PHYs. We are working on it.
+> >>> A: "Ariel Pedraza" <pedrazaa@yahoo.com>
+> >>> Cc: b43-dev at lists.infradead.org
+> >>> Fecha: viernes, 1 de octubre de 2010, 05:53
+> am
+> >>> On Thu, Sep 30, 2010 at 7:42 PM,
+> >>> Ariel Pedraza <pedrazaa@yahoo.com>
+> >>> wrote:
+> >>> > Hi, how far are you to support this chip
+> BCM4321?
+> >>>
+> >>> I've asked this question earlier; all code for
+> BCM4321
+> >>> seems to be in
+> >>> place (though not for BCM4322), but it is
+> still disabled as
+> >>> BROKEN.
+> >>>
+> >>> >
+> >>> > Is this a new chip BCM4727 not listed on
+> your page (http://linuxwireless.org/en/users/Drivers/b43)?
+> >>> >
+> >>> > dmesg | grep eth1
+> >>> > eth1: Broadcom BCM4727 802.11 Hybrid
+> Wireless
+> >>> Controller 5.60.48.36
+> >>>
+> >>> This is BCM4313, supported in brcm80211.
+> wl_hybrid
+> >>> incorrectly uses
+> >>> the PCI device ID (0x4727) rather than the SSB
+> chip ID
+> >>> (decimal(?)
+> >>> 4313) to identify the card.
+> >>>
+> >>> >
+> >>> >
+> >>> >
+> >>> >
+> >>> >
+> >>> >
+> _______________________________________________
+> >>> > b43-dev mailing list
+> >>> > b43-dev at lists.infradead.org
+> >>> > http://lists.infradead.org/mailman/listinfo/b43-dev
+> >>> >
+> >>>
+> >>>
+> >>>
+> >>> --
+> >>> Vista: [V]iruses, [I]ntruders, [S]pyware,
+> [T]rojans and
+> >>> [A]dware. :-)
+> >>>
+> >>
+> >>
+> >>
+> >>
+> >
+> >
+> >
+> > --
+> > Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans
+> and [A]dware. :-)
+> >
+> 
+> 
+> 
+> -- 
+> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and
+> [A]dware. :-)
+> 
 
-The PIO mode doesn't work for me at all. The logs after automatic switching
-are identical to those of coldbooting b43 with pio=1. Same with loading it
-after wl. The dmesg is attached (that's with plain wpa_supplicant, no NM
-interfering). Reloading b43 without pio=1 makes it work (to clarify:
-coldboot -> b43 pio=1 -> b43 -- works; coldboot -> b43 -> Fatal error ->
-rmmod b43 -> modprobe b43 fails immediately).
 
--- 
-Be free, use free (http://www.gnu.org/philosophy/free-sw.html) software!
-mailto:fercerpav at gmail.com
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: b43-pio-dysfunct.dmesg.txt.gz
-Type: application/x-gunzip
-Size: 14583 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101013/319c1871/attachment-0001.bin>
+      
