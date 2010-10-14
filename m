@@ -1,38 +1,208 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Thu, 14 Oct 2010 19:24:17 +0200
-Subject: Licensing wlc_phy_radio.h and brcm80211 (was: [PATCH 3/3] b43:
-	N-PHY: add 2055 radio regs)
-In-Reply-To: <20101014171739.GA28522@suse.de>
-	(sfid-20101014_191829_132773_43868632)
-References: <AANLkTinQMRGkOvi4e4JMsHGV_BF_4Rf5oHCtZgQjwQ1g@mail.gmail.com>
-	<20101014165111.GA22130@suse.de>
-	<AANLkTin9PxzROyCQxiT5-ca4CUQK+kppS7gAibbbZ2=v@mail.gmail.com>
-	<20101014171739.GA28522@suse.de> (sfid-20101014_191829_132773_43868632)
-Message-ID: <1287077057.20394.19.camel@maggie>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 14 Oct 2010 19:33:34 +0200
+Subject: [PATCH 1/4 resend] b43: N-PHY: replace N-specific radio_chanspec with
+	common code
+Message-ID: <1287077617-11319-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@suse.de>
-Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Henry Ptasinski <henryp@broadcom.com>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Thu, 2010-10-14 at 10:17 -0700, Greg KH wrote: 
-> > Finishing N-PHY support in b43 does not need much work plus:
-> > 1) We support SSB devices
-> > 2) We support older (LP/G-phy) devices
-> > 3) We share infrastructure (easier to maintain)
-> > 4) We probably could support modes like AP
-> 
-> If that would be a simpler task than trying to clean up the brcm80211
-> driver, that seems quite reasonable.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+John: this patch was included in 3-patches-set that was not commited yet. Third
+patch from that set was canceled, but this one is OK.
+---
+ drivers/net/wireless/b43/phy_common.h |    1 +
+ drivers/net/wireless/b43/phy_n.c      |   55 ++++++++++++++-------------------
+ drivers/net/wireless/b43/phy_n.h      |    7 +---
+ 3 files changed, 26 insertions(+), 37 deletions(-)
 
-That's really an unrelated topic. b43 and brcm80211 support different
-kinds of devices whereas both devices may share certain sub-devices.
-Like the radio device (b2056) in this case.
-
-So it's not just a matter of "cleaning up" brcm80211. That doesn't give
-us support for old SSB based N-PHY devices, because brcm80211 does not
-support them at all.
-
+diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
+index 6dcd033..0e61942 100644
+--- a/drivers/net/wireless/b43/phy_common.h
++++ b/drivers/net/wireless/b43/phy_common.h
+@@ -253,6 +253,7 @@ struct b43_phy {
+ 
+ 	/* Current channel */
+ 	unsigned int channel;
++	u16 channel_freq;
+ 	enum nl80211_channel_type channel_type;
+ 
+ 	/* PHY TX errors counter. */
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 814127e..13d7e3b 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -81,21 +81,6 @@ static inline bool b43_channel_type_is_40mhz(
+ 		channel_type == NL80211_CHAN_HT40PLUS);
+ }
+ 
+-static inline bool b43_empty_chanspec(struct b43_chanspec *chanspec)
+-{
+-	return !chanspec->channel && !chanspec->sideband &&
+-		!chanspec->b_width && !chanspec->b_freq;
+-}
+-
+-static inline bool b43_eq_chanspecs(struct b43_chanspec *chanspec1,
+-					struct b43_chanspec *chanspec2)
+-{
+-	return (chanspec1->channel == chanspec2->channel &&
+-		chanspec1->sideband == chanspec2->sideband &&
+-		chanspec1->b_width == chanspec2->b_width &&
+-		chanspec1->b_freq == chanspec2->b_freq);
+-}
+-
+ void b43_nphy_set_rxantenna(struct b43_wldev *dev, int antenna)
+ {//TODO
+ }
+@@ -788,7 +773,7 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
+ {
+ 	struct b43_phy_n *nphy = dev->phy.n;
+ 
+-	u8 channel = nphy->radio_chanspec.channel;
++	u8 channel = dev->phy.channel;
+ 	int tone[2] = { 57, 58 };
+ 	u32 noise[2] = { 0x3FF, 0x3FF };
+ 
+@@ -862,9 +847,9 @@ static void b43_nphy_adjust_lna_gain_table(struct b43_wldev *dev)
+ 			gain[0] = 6;
+ 			gain[1] = 6;
+ 		} else {
+-			tmp = 40370 - 315 * nphy->radio_chanspec.channel;
++			tmp = 40370 - 315 * dev->phy.channel;
+ 			gain[0] = ((tmp >> 13) + ((tmp >> 12) & 1));
+-			tmp = 23242 - 224 * nphy->radio_chanspec.channel;
++			tmp = 23242 - 224 * dev->phy.channel;
+ 			gain[1] = ((tmp >> 13) + ((tmp >> 12) & 1));
+ 		}
+ 	} else {
+@@ -2090,12 +2075,12 @@ static void b43_nphy_restore_rssi_cal(struct b43_wldev *dev)
+ 	u16 *rssical_phy_regs = NULL;
+ 
+ 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
+-		if (b43_empty_chanspec(&nphy->rssical_chanspec_2G))
++		if (!nphy->rssical_chanspec_2G.center_freq)
+ 			return;
+ 		rssical_radio_regs = nphy->rssical_cache.rssical_radio_regs_2G;
+ 		rssical_phy_regs = nphy->rssical_cache.rssical_phy_regs_2G;
+ 	} else {
+-		if (b43_empty_chanspec(&nphy->rssical_chanspec_5G))
++		if (!nphy->rssical_chanspec_5G.center_freq)
+ 			return;
+ 		rssical_radio_regs = nphy->rssical_cache.rssical_radio_regs_5G;
+ 		rssical_phy_regs = nphy->rssical_cache.rssical_phy_regs_5G;
+@@ -2551,7 +2536,8 @@ static void b43_nphy_save_cal(struct b43_wldev *dev)
+ 		txcal_radio_regs[2] = b43_radio_read(dev, 0x8D);
+ 		txcal_radio_regs[3] = b43_radio_read(dev, 0xBC);
+ 	}
+-	*iqcal_chanspec = nphy->radio_chanspec;
++	iqcal_chanspec->center_freq = dev->phy.channel_freq;
++	iqcal_chanspec->channel_type = dev->phy.channel_type;
+ 	b43_ntab_write_bulk(dev, B43_NTAB16(15, 80), 8, table);
+ 
+ 	if (nphy->hang_avoid)
+@@ -2572,12 +2558,12 @@ static void b43_nphy_restore_cal(struct b43_wldev *dev)
+ 	struct b43_phy_n_iq_comp *rxcal_coeffs = NULL;
+ 
+ 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
+-		if (b43_empty_chanspec(&nphy->iqcal_chanspec_2G))
++		if (!nphy->iqcal_chanspec_2G.center_freq)
+ 			return;
+ 		table = nphy->cal_cache.txcal_coeffs_2G;
+ 		loft = &nphy->cal_cache.txcal_coeffs_2G[5];
+ 	} else {
+-		if (b43_empty_chanspec(&nphy->iqcal_chanspec_5G))
++		if (!nphy->iqcal_chanspec_5G.center_freq)
+ 			return;
+ 		table = nphy->cal_cache.txcal_coeffs_5G;
+ 		loft = &nphy->cal_cache.txcal_coeffs_5G[5];
+@@ -2822,7 +2808,10 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 			b43_ntab_read_bulk(dev, B43_NTAB16(15, 96), length,
+ 						nphy->txiqlocal_bestc);
+ 			nphy->txiqlocal_coeffsvalid = true;
+-			nphy->txiqlocal_chanspec = nphy->radio_chanspec;
++			nphy->txiqlocal_chanspec.center_freq =
++							dev->phy.channel_freq;
++			nphy->txiqlocal_chanspec.channel_type =
++							dev->phy.channel_type;
+ 		} else {
+ 			length = 11;
+ 			if (dev->phy.rev < 3)
+@@ -2858,7 +2847,8 @@ static void b43_nphy_reapply_tx_cal_coeffs(struct b43_wldev *dev)
+ 	bool equal = true;
+ 
+ 	if (!nphy->txiqlocal_coeffsvalid ||
+-	    b43_eq_chanspecs(&nphy->txiqlocal_chanspec, &nphy->radio_chanspec))
++	    nphy->txiqlocal_chanspec.center_freq != dev->phy.channel_freq ||
++	    nphy->txiqlocal_chanspec.channel_type != dev->phy.channel_type)
+ 		return;
+ 
+ 	b43_ntab_read_bulk(dev, B43_NTAB16(15, 80), 7, buffer);
+@@ -3264,11 +3254,9 @@ int b43_phy_initn(struct b43_wldev *dev)
+ 	do_rssi_cal = false;
+ 	if (phy->rev >= 3) {
+ 		if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+-			do_rssi_cal =
+-				b43_empty_chanspec(&nphy->rssical_chanspec_2G);
++			do_rssi_cal = !nphy->rssical_chanspec_2G.center_freq;
+ 		else
+-			do_rssi_cal =
+-				b43_empty_chanspec(&nphy->rssical_chanspec_5G);
++			do_rssi_cal = !nphy->rssical_chanspec_5G.center_freq;
+ 
+ 		if (do_rssi_cal)
+ 			b43_nphy_rssi_cal(dev);
+@@ -3280,9 +3268,9 @@ int b43_phy_initn(struct b43_wldev *dev)
+ 
+ 	if (!((nphy->measure_hold & 0x6) != 0)) {
+ 		if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+-			do_cal = b43_empty_chanspec(&nphy->iqcal_chanspec_2G);
++			do_cal = !nphy->iqcal_chanspec_2G.center_freq;
+ 		else
+-			do_cal = b43_empty_chanspec(&nphy->iqcal_chanspec_5G);
++			do_cal = !nphy->iqcal_chanspec_5G.center_freq;
+ 
+ 		if (nphy->mute)
+ 			do_cal = false;
+@@ -3411,7 +3399,10 @@ static int b43_nphy_set_channel(struct b43_wldev *dev,
+ 			return -ESRCH;
+ 	}
+ 
+-	nphy->radio_chanspec.channel = channel->hw_value;
++	/* Channel is set later in common code, but we need to set it on our
++	   own to let this function's subcalls work properly. */
++	phy->channel = channel->hw_value;
++	phy->channel_freq = channel->center_freq;
+ 
+ 	if (b43_channel_type_is_40mhz(phy->channel_type) !=
+ 		b43_channel_type_is_40mhz(channel_type))
+diff --git a/drivers/net/wireless/b43/phy_n.h b/drivers/net/wireless/b43/phy_n.h
+index e7acae2..f915c83 100644
+--- a/drivers/net/wireless/b43/phy_n.h
++++ b/drivers/net/wireless/b43/phy_n.h
+@@ -927,10 +927,8 @@
+ struct b43_wldev;
+ 
+ struct b43_chanspec {
+-	u8 channel;
+-	u8 sideband;
+-	u8 b_width;
+-	u8 b_freq;
++	u16 center_freq;
++	enum nl80211_channel_type channel_type;
+ };
+ 
+ struct b43_phy_n_iq_comp {
+@@ -984,7 +982,6 @@ struct b43_phy_n {
+ 	u16 papd_epsilon_offset[2];
+ 	s32 preamble_override;
+ 	u32 bb_mult_save;
+-	struct b43_chanspec radio_chanspec;
+ 
+ 	bool gain_boost;
+ 	bool elna_gain_config;
 -- 
-Greetings Michael.
+1.7.1
