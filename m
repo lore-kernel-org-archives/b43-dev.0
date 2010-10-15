@@ -1,40 +1,84 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 15 Oct 2010 11:55:42 +0200
-Subject: brcm80211 in b43
-In-Reply-To: <4CB80B57.5090904@anymore.nl>
-References: <840064.48426.qm@web111406.mail.gq1.yahoo.com>
-	<AANLkTikX2BXn8mhSUJ9aMSVTWpWxWGfmxEWm7gdcoKTu@mail.gmail.com>
-	<4CB80B57.5090904@anymore.nl>
-Message-ID: <AANLkTikPTP6Bv0N2SS_kTNvnGbJZbKWJQ4QfeTBesqAN@mail.gmail.com>
+Date: Fri, 15 Oct 2010 12:58:17 +0200
+Subject: [PATCH 1/3] b43: N-PHY: define channel table struct for rev3+
+	devices
+In-Reply-To: <AANLkTimnzeRa53g0i2ZkB4Qy_x_P3h4Z+ZwC2HdJPxFC@mail.gmail.com>
+References: <1287090064-14607-1-git-send-email-zajec5@gmail.com>
+	<AANLkTimnzeRa53g0i2ZkB4Qy_x_P3h4Z+ZwC2HdJPxFC@mail.gmail.com>
+Message-ID: <AANLkTinnOm5rg8FKxFct1zKHZZi7k9nxEKtBYkLFktSS@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-2010/10/15 Arjan Schrijver <arjan@anymore.nl>:
-> ?On 10/14/10 22:27, G?bor Stefanik wrote:
+W dniu 15 pa?dziernika 2010 00:39 u?ytkownik G?bor Stefanik
+<netrolller.3d@gmail.com> napisa?:
+> 2010/10/14 Rafa? Mi?ecki <zajec5@gmail.com>:
+>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+>> ---
+>> ?drivers/net/wireless/b43/radio_2056.c | ? 51 +++++++++++++++++++++++++++++++++
+>> ?drivers/net/wireless/b43/radio_2056.h | ? 40 ++++++++++++++++++++++++--
+>> ?2 files changed, 88 insertions(+), 3 deletions(-)
 >>
->> On Thu, Oct 14, 2010 at 9:51 PM, Ariel Pedraza<pedrazaa@yahoo.com> ?wrote:
->>>
->>> In the future the b43 driver will support the same devices that the
->>> brcm80211 driver does? just one universal driver pure FOSS...
+>> diff --git a/drivers/net/wireless/b43/radio_2056.c b/drivers/net/wireless/b43/radio_2056.c
+>> index d856319..f710c01 100644
+>> --- a/drivers/net/wireless/b43/radio_2056.c
+>> +++ b/drivers/net/wireless/b43/radio_2056.c
+>> @@ -24,9 +24,60 @@
+>> ?#include "radio_2056.h"
+>> ?#include "phy_common.h"
 >>
->> No.
->>
->> B43 only supports SSB-based devices; while brcm80211 is for SSB-less
->> ones. (Brcmfmac is yet another driver - for fullmac Broadcoms with the
->> exception of BCM4320, which is handled by rndis_wlan.)
->>
+>> +#define RADIOREGS3(r00, r01, r02, r03, r04, r05, r06, r07, r08, r09, \
+>> + ? ? ? ? ? ? ? ? ?r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, \
+>> + ? ? ? ? ? ? ? ? ?r20, r21, r22, r23, r24, r25, r26, r27, r28, r29, \
+>> + ? ? ? ? ? ? ? ? ?r30, r31, r32, r33, r34, r35, r36) \
+>> + ? ? ? .radio_syn_pll_vcocal1 ? ? ? ? ?= r00, ?\
+>> + ? ? ? .radio_syn_pll_vcocal2 ? ? ? ? ?= r01, ?\
+>> + ? ? ? .radio_syn_pll_refdiv ? ? ? ? ? = r02, ?\
+>> + ? ? ? .radio_syn_pll_mmd2 ? ? ? ? ? ? = r03, ?\
+>> + ? ? ? .radio_syn_pll_mmd1 ? ? ? ? ? ? = r04, ?\
+>> + ? ? ? .radio_syn_pll_loopfilter1 ? ? ?= r05, ?\
+>> + ? ? ? .radio_syn_pll_loopfilter2 ? ? ?= r06, ?\
+>> + ? ? ? .radio_syn_pll_loopfilter3 ? ? ?= r07, ?\
+>> + ? ? ? .radio_syn_pll_loopfilter4 ? ? ?= r08, ?\
+>> + ? ? ? .radio_syn_pll_loopfilter5 ? ? ?= r09, ?\
+>> + ? ? ? .radio_syn_reserved_addr27 ? ? ?= r10, ?\
+>> + ? ? ? .radio_syn_reserved_addr28 ? ? ?= r11, ?\
+>> + ? ? ? .radio_syn_reserved_addr29 ? ? ?= r12, ?\
+>> + ? ? ? .radio_syn_logen_vcobuf1 ? ? ? ?= r13, ?\
+>> + ? ? ? .radio_syn_logen_mixer2 ? ? ? ? = r14, ?\
+>> + ? ? ? .radio_syn_logen_buf3 ? ? ? ? ? = r15, ?\
+>> + ? ? ? .radio_syn_logen_buf4 ? ? ? ? ? = r16, ?\
+>> + ? ? ? .radio_rx0_lnaa_tune ? ? ? ? ? ?= r17, ?\
+>> + ? ? ? .radio_rx0_lnag_tune ? ? ? ? ? ?= r18, ?\
+>> + ? ? ? .radio_tx0_intpaa_boost_tune ? ?= r19, ?\
+>> + ? ? ? .radio_tx0_intpag_boost_tune ? ?= r20, ?\
+>> + ? ? ? .radio_tx0_pada_boost_tune ? ? ?= r21, ?\
+>> + ? ? ? .radio_tx0_padg_boost_tune ? ? ?= r22, ?\
+>> + ? ? ? .radio_tx0_pgaa_boost_tune ? ? ?= r23, ?\
+>> + ? ? ? .radio_tx0_pgag_boost_tune ? ? ?= r24, ?\
+>> + ? ? ? .radio_tx0_mixa_boost_tune ? ? ?= r25, ?\
+>> + ? ? ? .radio_tx0_mixg_boost_tune ? ? ?= r26, ?\
+>> + ? ? ? .radio_rx1_lnaa_tune ? ? ? ? ? ?= r27, ?\
+>> + ? ? ? .radio_rx1_lnag_tune ? ? ? ? ? ?= r28, ?\
+>> + ? ? ? .radio_tx1_intpaa_boost_tune ? ?= r29, ?\
+>> + ? ? ? .radio_tx1_intpag_boost_tune ? ?= r30, ?\
+>> + ? ? ? .radio_tx1_pada_boost_tune ? ? ?= r31, ?\
+>> + ? ? ? .radio_tx1_padg_boost_tune ? ? ?= r32, ?\
+>> + ? ? ? .radio_tx1_pgaa_boost_tune ? ? ?= r33, ?\
+>> + ? ? ? .radio_tx1_pgag_boost_tune ? ? ?= r34, ?\
+>> + ? ? ? .radio_tx1_mixa_boost_tune ? ? ?= r35, ?\
+>> + ? ? ? .radio_tx1_mixg_boost_tune ? ? ?= r36
 >
-> Which driver would I need for the device below?
-> 0c:00.0 Network controller: Broadcom Corporation BCM4322 802.11a/b/g/n
-> Wireless LAN Controller (rev 01)
->
-> Is this a SSB-based device, or a SSB-less device?
+> You might want to use parentheses around parameter names: e.g.:
+> .radio_tx1_mixa_boost_tune = (r35), \
 
-It's SSB-based. You will want b43 when it gets stable N-PHY support or
-brcm80211 when it gets SSB devices support.
+We use this macro only for defining radio tables, only in this file.
+Plus we don't use any math or sth as you can see in next patch (3/3).
+That way it will not hit random developer using this macro in other
+place of code.
 
 -- 
 Rafa?
