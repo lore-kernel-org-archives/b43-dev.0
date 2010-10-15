@@ -1,20 +1,20 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 15 Oct 2010 13:01:36 +0200
+Date: Fri, 15 Oct 2010 13:02:11 +0200
 Subject: [PATCH 2/3] b43: N-PHY: define registers names for 2056 radio
-In-Reply-To: <AANLkTi=YPcjudD5u0oLOmCj_PQqSKWCdPab45uLCiD76@mail.gmail.com>
+In-Reply-To: <AANLkTimesczkO4iSrjPjAGMf+xs04bKGALumAFq7GzTQ@mail.gmail.com>
 References: <1287090064-14607-1-git-send-email-zajec5@gmail.com>
 	<1287090064-14607-2-git-send-email-zajec5@gmail.com>
-	<AANLkTi=YPcjudD5u0oLOmCj_PQqSKWCdPab45uLCiD76@mail.gmail.com>
-Message-ID: <AANLkTinaeO-6M9DbvW2ZHJHyrBhRK+Gdu+4++0jFLqQA@mail.gmail.com>
+	<AANLkTimesczkO4iSrjPjAGMf+xs04bKGALumAFq7GzTQ@mail.gmail.com>
+Message-ID: <AANLkTik0FZQOyePhY1KDAVFiD5YQ9bF4M5A5p8SGUYAy@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@gmail.com>
+To: =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>
 Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, Henry Ptasinski <henryp@broadcom.com>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>
 
-W dniu 14 pa?dziernika 2010 23:23 u?ytkownik Luis R. Rodriguez
-<mcgrof@gmail.com> napisa?:
+W dniu 15 pa?dziernika 2010 01:58 u?ytkownik G?bor Stefanik
+<netrolller.3d@gmail.com> napisa?:
 > 2010/10/14 Rafa? Mi?ecki <zajec5@gmail.com>:
 >> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 >> Cc: Henry Ptasinski <henryp@broadcom.com>
@@ -35,12 +35,20 @@ W dniu 14 pa?dziernika 2010 23:23 u?ytkownik Luis R. Rodriguez
 >> + ?Some parts of the code in this file are derived from the brcm80211
 >> + ?driver ?Copyright (c) 2010 Broadcom Corporation
 >> +
+>> ? This program is free software; you can redistribute it and/or modify
+>> ? it under the terms of the GNU General Public License as published by
+>> ? the Free Software Foundation; either version 2 of the License, or
+>> @@ -28,6 +31,525 @@
+>>
+>> ?#include "tables_nphy.h"
+>>
+>> +#define RADIO_2056_SYN ? ? ? ? ? ? ? ? ? ? ? ? (0x0 << 12)
+>> +#define RADIO_2056_TX0 ? ? ? ? ? ? ? ? ? ? ? ? (0x2 << 12)
+>> +#define RADIO_2056_TX1 ? ? ? ? ? ? ? ? ? ? ? ? (0x3 << 12)
 >
-> You forgot to include their full license here.
+> Please use B2056_ as the prefix. See LP-PHY.
 
-As discussed in another topic, I didn't add any copyrightable data
-here. "Just numbers". I added info about source of defines as some
-kind of over-kindness ;)
+What does it mean? This "B" prefix?
 
 -- 
 Rafa?
