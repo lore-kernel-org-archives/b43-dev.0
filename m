@@ -1,67 +1,37 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 15 Oct 2010 16:29:42 +0200
-Subject: [PATCH 2/3] b43: N-PHY: define registers names for 2056 radio
-In-Reply-To: <AANLkTi=okr9poWxa1V-zDQj5f64fqFRuQWBgpzvRmVsw@mail.gmail.com>
-References: <1287090064-14607-1-git-send-email-zajec5@gmail.com>
-	<1287090064-14607-2-git-send-email-zajec5@gmail.com>
-	<AANLkTimesczkO4iSrjPjAGMf+xs04bKGALumAFq7GzTQ@mail.gmail.com>
-	<AANLkTik0FZQOyePhY1KDAVFiD5YQ9bF4M5A5p8SGUYAy@mail.gmail.com>
-	<AANLkTi=okr9poWxa1V-zDQj5f64fqFRuQWBgpzvRmVsw@mail.gmail.com>
-Message-ID: <AANLkTimfLZXBj6J1gUFD3FTXQ0R8OVRms09JvyB6Y1NY@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 15 Oct 2010 09:53:09 -0500
+Subject: [PATCH 1/3] b43: N-PHY: define channel table struct for rev3+
+	devices
+In-Reply-To: <AANLkTimvMCRVLzNjM+vsVEyHHAV0fLF4ABeV_20CdOCa@mail.gmail.com>
+References: <1287090064-14607-1-git-send-email-zajec5@gmail.com>	<AANLkTimnzeRa53g0i2ZkB4Qy_x_P3h4Z+ZwC2HdJPxFC@mail.gmail.com>	<AANLkTinnOm5rg8FKxFct1zKHZZi7k9nxEKtBYkLFktSS@mail.gmail.com>	<AANLkTim==y20jOa6SpvZogZ+0inFGvmpnN-nTKFZp2Xz@mail.gmail.com>
+	<AANLkTimvMCRVLzNjM+vsVEyHHAV0fLF4ABeV_20CdOCa@mail.gmail.com>
+Message-ID: <4CB86AD5.90205@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, Henry Ptasinski <henryp@broadcom.com>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: =?UTF-8?B?R8OhYm9yIFN0ZWZhbmlr?= <netrolller.3d@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-W dniu 15 pa?dziernika 2010 16:15 u?ytkownik G?bor Stefanik
-<netrolller.3d@gmail.com> napisa?:
-> 2010/10/15 Rafa? Mi?ecki <zajec5@gmail.com>:
->> W dniu 15 pa?dziernika 2010 01:58 u?ytkownik G?bor Stefanik
->> <netrolller.3d@gmail.com> napisa?:
->>> 2010/10/14 Rafa? Mi?ecki <zajec5@gmail.com>:
->>>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->>>> Cc: Henry Ptasinski <henryp@broadcom.com>
->>>> Cc: Brett Rudley <brudley@broadcom.com>
->>>> Cc: Nohee Ko <noheek@broadcom.com>
->>>> ---
->>>> ?drivers/net/wireless/b43/radio_2056.h | ?522 +++++++++++++++++++++++++++++++++
->>>> ?1 files changed, 522 insertions(+), 0 deletions(-)
->>>>
->>>> diff --git a/drivers/net/wireless/b43/radio_2056.h b/drivers/net/wireless/b43/radio_2056.h
->>>> index 60341d7..462c9fd 100644
->>>> --- a/drivers/net/wireless/b43/radio_2056.h
->>>> +++ b/drivers/net/wireless/b43/radio_2056.h
->>>> @@ -4,6 +4,9 @@
->>>>
->>>> ? Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
->>>>
->>>> + ?Some parts of the code in this file are derived from the brcm80211
->>>> + ?driver ?Copyright (c) 2010 Broadcom Corporation
->>>> +
->>>> ? This program is free software; you can redistribute it and/or modify
->>>> ? it under the terms of the GNU General Public License as published by
->>>> ? the Free Software Foundation; either version 2 of the License, or
->>>> @@ -28,6 +31,525 @@
->>>>
->>>> ?#include "tables_nphy.h"
->>>>
->>>> +#define RADIO_2056_SYN ? ? ? ? ? ? ? ? ? ? ? ? (0x0 << 12)
->>>> +#define RADIO_2056_TX0 ? ? ? ? ? ? ? ? ? ? ? ? (0x2 << 12)
->>>> +#define RADIO_2056_TX1 ? ? ? ? ? ? ? ? ? ? ? ? (0x3 << 12)
->>>
->>> Please use B2056_ as the prefix. See LP-PHY.
->>
->> What does it mean? This "B" prefix?
->
-> AFAIK it is a contraction for BCM. (The actual radio is called
-> BCM2056.) However, LP-PHY already uses B2062_ and B2063_ as its radio
-> register prefixes, so it is a good idea to follow the convention here,
-> too.
+On 10/15/2010 09:27 AM, Rafa? Mi?ecki wrote:
+> 
+> There is "Chapter 12: Macros, Enums and RTL" in:
+> http://www.kernel.org/doc/Documentation/CodingStyle
+> 
+> Some quotes:
+> 1) "Macros with multiple statements should be enclosed in a do - while block:"
+> 2) "macros defining constants using expressions must enclose the
+> expression in parentheses"
+> 
+> Second one may sound like sth close, but it's just about expressions like:
+> #define CONSTEXP (CONSTANT | 3)
+> 
+> So there doesn't seem to be any "rule" in CodingStyle wanting us to
+> add parentheses when you suggested.
 
-Thanks for explaining and generally keeping eye on my patches :) I'll
-send modified version.
+I think that scripts/checkpatch would report any definitions that need parentheses.
 
--- 
-Rafa?
+As you have probably figured out, I'm back home. If you have spec questions ;),
+I'm ready.
+
+Larry
