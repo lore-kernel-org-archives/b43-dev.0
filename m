@@ -1,36 +1,41 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 18 Oct 2010 14:57:48 -0500
-Subject: PIO mode
-In-Reply-To: <20101018041103.GK1593@home.pavel.comp>
-References: <20101009183637.GT1593@home.pavel.comp>
-	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
-	<20101009213220.GU1593@home.pavel.comp>
-	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
-	<20101010072158.GV1593@home.pavel.comp>
-	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
-	<20101010170311.GW1593@home.pavel.comp>
-	<AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
-	<20101013065845.GG1593@home.pavel.comp>
-	<4CBB7A46.6040507@lwfinger.net>
-	<20101018041103.GK1593@home.pavel.comp>
-Message-ID: <4CBCA6BC.6080605@lwfinger.net>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Mon, 18 Oct 2010 16:34:06 -0400
+Subject: [PATCH 2/3 V2] b43: N-PHY: define registers names for 2056 radio
+In-Reply-To: <1287322732-13306-3-git-send-email-zajec5@gmail.com>
+References: <1287322732-13306-3-git-send-email-zajec5@gmail.com>
+Message-ID: <20101018203405.GB2443@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Henry Ptasinski <henryp@broadcom.com>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>
 
-On 10/17/2010 11:11 PM, Paul Fertser wrote:
+On Sun, Oct 17, 2010 at 03:38:51PM +0200, Rafa? Mi?ecki wrote:
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> Cc: Henry Ptasinski <henryp@broadcom.com>
+> Cc: Brett Rudley <brudley@broadcom.com>
+> Cc: Nohee Ko <noheek@broadcom.com>
+> ---
+> V2: changed defines prefix from RADIO_ to B as correctly suggested by Stefanik.
 > 
-> This works the same as coldbooting b43 without this parameter, i.e. on
-> wireless-testing it loads and works but i'm able to induce the fatal dma
-> error by producing constant upstream traffic. It switches to PIO mode and
-> is able to scan but fails to associate. Reloading the module produces the
-> dma error immediately, and pio still doesn't work (see dmesg in my other
-> message).
+> John: in case you got lost the correct order of patches is following:
+> 
+> [PATCH 1/4 resend] b43: N-PHY: replace N-specific radio_chanspec with common code
+> [PATCH 2/4 resend] b43: N-PHY: fix typo: read table when caching IQ LO calibration (do not write)
+> [PATCH 3/4] b43: N-PHY: put radio-specific code in separated file
+> [PATCH 4/4] b43: N-PHY: put 2056-radio's specific code in separated file
+> 
+> [PATCH 1/3] b43: N-PHY: define channel table struct for rev3+ devices
+> [PATCH 2/3 V2] b43: N-PHY: define registers names for 2056 radio
+> [PATCH 3/3] b43: N-PHY: add 2056 radio channels tables
+> 
+> PATCH 1/3 got some discussion but we decided it's OK.
 
-If I read this correctly, the latest wireless-testing version of b43 works from
-a coldboot, but it fails when doing heavy transmitting. How do you generate this
-upstream traffic? I'm hoping to duplicate your results on my netbook.
+Thanks for the update.  In the future, please also try to post
+replacement patches as a reply to the patch they are replacing.
 
-Larry
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
