@@ -1,40 +1,36 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Mon, 18 Oct 2010 18:23:19 +0200
-Subject: brcm80211 driver inject
-In-Reply-To: <114953.68277.qm@web111408.mail.gq1.yahoo.com>
-References: <114953.68277.qm@web111408.mail.gq1.yahoo.com>
-Message-ID: <AANLkTinqnPS7E9mCnuQO5MG4Sts02qnZiw=d1c=U7cDQ@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Mon, 18 Oct 2010 14:57:48 -0500
+Subject: PIO mode
+In-Reply-To: <20101018041103.GK1593@home.pavel.comp>
+References: <20101009183637.GT1593@home.pavel.comp>
+	<AANLkTi=c8LfxugA0oN-kPQevd3ZpD=2644af1qZKOjDO@mail.gmail.com>
+	<20101009213220.GU1593@home.pavel.comp>
+	<AANLkTikGjYxH-kzHXhZhfz2=e5P1hj20sNr8Fy5aydf_@mail.gmail.com>
+	<20101010072158.GV1593@home.pavel.comp>
+	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
+	<20101010170311.GW1593@home.pavel.comp>
+	<AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
+	<20101013065845.GG1593@home.pavel.comp>
+	<4CBB7A46.6040507@lwfinger.net>
+	<20101018041103.GK1593@home.pavel.comp>
+Message-ID: <4CBCA6BC.6080605@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, Oct 18, 2010 at 3:48 PM, Ariel Pedraza <pedrazaa@yahoo.com> wrote:
-> Hi, did you know if there is a solution for this error?:
->
-> "mon0 is on channel -1, but the AP uses channel 1"
->
-> on programs like aireplay-ng, I'm using the brcm80211 driver.
->
-> Thanks
+On 10/17/2010 11:11 PM, Paul Fertser wrote:
+> 
+> This works the same as coldbooting b43 without this parameter, i.e. on
+> wireless-testing it loads and works but i'm able to induce the fatal dma
+> error by producing constant upstream traffic. It switches to PIO mode and
+> is able to scan but fails to associate. Reloading the module produces the
+> dma error immediately, and pio still doesn't work (see dmesg in my other
+> message).
 
-Known bug in mac80211.
-http://patches.aircrack-ng.org/channel-negative-one-maxim.patch fixes
-it, but is unsuitable for inclusion, and some kernel developers
-actually consider this a feature, and refuse to fix it.
+If I read this correctly, the latest wireless-testing version of b43 works from
+a coldboot, but it fails when doing heavy transmitting. How do you generate this
+upstream traffic? I'm hoping to duplicate your results on my netbook.
 
->
->
->
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
-
-
-
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Larry
