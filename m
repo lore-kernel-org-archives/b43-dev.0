@@ -1,41 +1,53 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 19 Oct 2010 12:02:37 -0500
-Subject: PIO mode
-In-Reply-To: <20101019162258.GO1593@home.pavel.comp>
-References: <20101010072158.GV1593@home.pavel.comp>
-	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
-	<20101010170311.GW1593@home.pavel.comp>
-	<AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
-	<20101013065845.GG1593@home.pavel.comp>
-	<4CBB7A46.6040507@lwfinger.net>
-	<20101018041103.GK1593@home.pavel.comp>
-	<4CBCA6BC.6080605@lwfinger.net>
-	<20101019004331.GN1593@home.pavel.comp>
-	<4CBDC183.9020101@lwfinger.net>
-	<20101019162258.GO1593@home.pavel.comp>
-Message-ID: <4CBDCF2D.60900@lwfinger.net>
+Date: Tue, 19 Oct 2010 12:55:55 -0500
+Subject: [PATCH] ssb: Clear RETRY_TIMEOUT in PCI Configuration
+Message-ID: <4cbddbab.aeEgjpVFDD9GDTuy%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Paul,
+MMIO log traces obtained using the Broadcom wl hybrid driver show that
+the RETRY_TIMEOUT register (0x41) in PCI configuration space is cleared
+if non-zero. Similar code found in other drivers such as ipw2100 show
+this operation is needed to keep PCI Tx retries from interfering with
+C3 CPU state. There are no known cases where omission of this code has
+caused a problem, but this patch is offered just in case such a situation
+occurs.
 
-On 10/19/2010 11:22 AM, Paul Fertser wrote:
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
 
-I do have all the logs you posted.
+John,
 
-> MARK 680.950958 Read dword 0xCE035801 from 0x40, devfn: 0
-> MARK 680.950966 Wrote dword 0xCE030001 to 0x40, devfn: 0
-> 
-> And indeed there's code (in the free part of the wl driver) responsible for
-> that. Adding that to ssb right after pci_set_master doesn't help though :|
-
-Byte 0x41 of the configuration space is the RETRY_TIMEOUT register. Clearing it
-is supposed to keep PCI Tx retries from interfering with C3 CPU state. Similar
-code appears in ath9k, ipw2100 and ipw2200 drivers. I think we have tried that
-patch in the past, but perhaps the code should be added just in case it might
-affect some CPU/device combinations.
+No particular urgency for this patch.
 
 Larry
+---
+
+Index: wireless-testing/drivers/ssb/driver_pcicore.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/driver_pcicore.c
++++ wireless-testing/drivers/ssb/driver_pcicore.c
+@@ -271,6 +271,7 @@ int ssb_pcicore_plat_dev_init(struct pci
+ static void ssb_pcicore_fixup_pcibridge(struct pci_dev *dev)
+ {
+ 	u8 lat;
++	u32 val;
+ 
+ 	if (dev->bus->ops != &ssb_pcicore_pciops) {
+ 		/* This is not a device on the PCI-core bridge. */
+@@ -288,6 +289,12 @@ static void ssb_pcicore_fixup_pcibridge(
+ 		return;
+ 	}
+ 
++	/* Disable the RETRY_TIMEOUT register (0x41) to keep
++	 * PCI Tx retries from interfering with C3 CPU state */
++	pci_read_config_dword(pci_dev, 0x40, &val);
++	if ((val & 0x0000ff00) != 0)
++		pci_write_config_dword(pci_dev, 0x40, val & 0xffff00ff);
++
+ 	/* Enable PCI bridge BAR1 prefetch and burst */
+ 	pci_write_config_dword(dev, SSB_BAR1_CONTROL, 3);
+ 
