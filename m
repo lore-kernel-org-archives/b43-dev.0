@@ -1,52 +1,36 @@
-From: Paul Fertser <fercerpav@gmail.com>
-Date: Wed, 20 Oct 2010 23:37:07 +0400
-Subject: MMIO trace for "warm" boot of b43 on IdeaPad S9 (was: Re: PIO mode)
-In-Reply-To: <4CBF359A.6030700@lwfinger.net>
-References: <20101013065845.GG1593@home.pavel.comp>
-	<4CBB7A46.6040507@lwfinger.net>
-	<20101018041103.GK1593@home.pavel.comp>
-	<4CBCA6BC.6080605@lwfinger.net>
-	<20101019004331.GN1593@home.pavel.comp>
-	<4CBDC183.9020101@lwfinger.net>
-	<20101019162258.GO1593@home.pavel.comp>
-	<4CBF28C0.9000404@lwfinger.net>
-	<20101020175427.GQ1593@home.pavel.comp>
-	<4CBF359A.6030700@lwfinger.net>
-Message-ID: <20101020193707.GT1593@home.pavel.comp>
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Wed, 20 Oct 2010 22:52:21 +0200
+Subject: [PATCH] ssb: Clear RETRY_TIMEOUT in PCI Configuration for
+	normal devices
+In-Reply-To: <4cbf03d5.sBoVK5FZiEsbJ8xu%Larry.Finger@lwfinger.net>
+	(sfid-20101020_165935_779270_769119B3)
+References: <4cbf03d5.sBoVK5FZiEsbJ8xu%Larry.Finger@lwfinger.net>
+	(sfid-20101020_165935_779270_769119B3)
+Message-ID: <1287607941.2023.1.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: John W Linville <linville@tuxdriver.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Wed, Oct 20, 2010 at 01:31:54PM -0500, Larry Finger wrote:
-> Could you please provide the "warm" equivalent of
-> b43-cold-boot.trace-head.txt.gz? Do a cold boot followed by an load/unload of
-> wl, start the trace, and load b43. I would like to see what in the registers is
-> different.
+On Wed, 2010-10-20 at 09:59 -0500, Larry Finger wrote: 
+> The previous patch of this type fixed the case where a PCI device is behind
+> an SSB->PCI bridge as found on an embedded device. This one treats the normal
+> case of a "normal" Broadcom wireless PCI core on an SSB interconnect.
 
-Attached. (stop network manager, modprobe wl, rmmod wl, start network-manager,
-start tracing, modprobe b43, wait for association).
+Note that the other patch is not needed anymore, if this is applied.
 
-Full log is at [1].
+Also note that this patch will also have an effect on b44 hardware.
+Do we want that?
 
-Big thanks again for working on this.
+> MMIO log traces obtained using the Broadcom wl hybrid driver show that
+> the RETRY_TIMEOUT register (0x41) in PCI configuration space is cleared
+> if non-zero. Similar code found in other drivers such as ipw2100 show
+> this operation is needed to keep PCI Tx retries from interfering with
+> C3 CPU state. There are no known cases where omission of this code has
+> caused a problem, but this patch is offered just in case such a situation
+> occurs.
 
-[1] https://paulfertser.is-a-geek.org/files/b43-ideapad/
 -- 
-Be free, use free (http://www.gnu.org/philosophy/free-sw.html) software!
-mailto:fercerpav at gmail.com
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: b43-warm-boot.trace-head.txt.gz
-Type: application/x-gunzip
-Size: 13549 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101020/69eb6a89/attachment-0002.bin>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: b43-warm-boot.dmesg.txt.gz
-Type: application/x-gunzip
-Size: 14252 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101020/69eb6a89/attachment-0003.bin>
+Greetings Michael.
