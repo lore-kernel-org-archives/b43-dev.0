@@ -1,59 +1,44 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 20 Oct 2010 09:59:33 -0500
-Subject: [PATCH] ssb: Clear RETRY_TIMEOUT in PCI Configuration for normal
-	devices
-Message-ID: <4cbf03d5.sBoVK5FZiEsbJ8xu%Larry.Finger@lwfinger.net>
+Date: Wed, 20 Oct 2010 12:37:04 -0500
+Subject: PIO mode
+In-Reply-To: <20101019162258.GO1593@home.pavel.comp>
+References: <20101010072158.GV1593@home.pavel.comp>
+	<AANLkTinYvvk0mYTgKu2gJziLSEoZnMm491wUbZ4BO_Sf@mail.gmail.com>
+	<20101010170311.GW1593@home.pavel.comp>
+	<AANLkTinQiguGK3YaVb=bqt9n3gCZ-=pgLoc40vRqrN=Q@mail.gmail.com>
+	<20101013065845.GG1593@home.pavel.comp>
+	<4CBB7A46.6040507@lwfinger.net>
+	<20101018041103.GK1593@home.pavel.comp>
+	<4CBCA6BC.6080605@lwfinger.net>
+	<20101019004331.GN1593@home.pavel.comp>
+	<4CBDC183.9020101@lwfinger.net>
+	<20101019162258.GO1593@home.pavel.comp>
+Message-ID: <4CBF28C0.9000404@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-The previous patch of this type fixed the case where a PCI device is behind
-an SSB->PCI bridge as found on an embedded device. This one treats the normal
-case of a "normal" Broadcom wireless PCI core on an SSB interconnect.
+On 10/19/2010 11:22 AM, Paul Fertser wrote:
+> 
+> BTW, while reading the mmiotrace logs (i hope you got all my logs as well
+> ;)) i found something that is not present in ssb/b43:
+> 
+> MARK 680.950958 Read dword 0xCE035801 from 0x40, devfn: 0
+> MARK 680.950966 Wrote dword 0xCE030001 to 0x40, devfn: 0
+> 
+> And indeed there's code (in the free part of the wl driver) responsible for
+> that. Adding that to ssb right after pci_set_master doesn't help though :|
 
-MMIO log traces obtained using the Broadcom wl hybrid driver show that
-the RETRY_TIMEOUT register (0x41) in PCI configuration space is cleared
-if non-zero. Similar code found in other drivers such as ipw2100 show
-this operation is needed to keep PCI Tx retries from interfering with
-C3 CPU state. There are no known cases where omission of this code has
-caused a problem, but this patch is offered just in case such a situation
-occurs.
+As you probably noticed, I have submitted a patch to clear 0x41 in the PCI
+configuration space.
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
-
-John,
-
-No particular urgency for this patch.
+More to report on the "ssh user at ipaddress bash -c 'cat > /dev/null' < /dev/zero"
+test. If I issue it on the netbook using the IP address of a computer connected
+to the AP with a wire, it does not fail. So far, the test has been running for
+nearly 24 hours. When I log into the wired machine and issue the command using
+the netbook's address, then it fails after 20-22 minutes when it gets the "No
+probe response" message that I reported earlier.
 
 Larry
----
-
-Index: wireless-testing/drivers/ssb/pcihost_wrapper.c
-===================================================================
---- wireless-testing.orig/drivers/ssb/pcihost_wrapper.c
-+++ wireless-testing/drivers/ssb/pcihost_wrapper.c
-@@ -59,6 +59,7 @@ static int ssb_pcihost_probe(struct pci_
- 	struct ssb_bus *ssb;
- 	int err = -ENOMEM;
- 	const char *name;
-+	u32 val;
- 
- 	ssb = kzalloc(sizeof(*ssb), GFP_KERNEL);
- 	if (!ssb)
-@@ -74,6 +75,12 @@ static int ssb_pcihost_probe(struct pci_
- 		goto err_pci_disable;
- 	pci_set_master(dev);
- 
-+	/* Disable the RETRY_TIMEOUT register (0x41) to keep
-+	 * PCI Tx retries from interfering with C3 CPU state */
-+	pci_read_config_dword(dev, 0x40, &val);
-+	if ((val & 0x0000ff00) != 0)
-+		pci_write_config_dword(dev, 0x40, val & 0xffff00ff);
-+
- 	err = ssb_bus_pcibus_register(ssb, dev);
- 	if (err)
- 		goto err_pci_release_regions;
