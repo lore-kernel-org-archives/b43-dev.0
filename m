@@ -1,47 +1,41 @@
-From: Luis R. Rodriguez <mcgrof@gmail.com>
-Date: Wed, 20 Oct 2010 15:13:30 -0700
-Subject: Request for free-distributable Broadcom's (G|LP)-PHY firmware
-In-Reply-To: <AANLkTinfwhjvfJU6C97SPJ8YKRqyJaCoQnAcC_uKLZa=@mail.gmail.com>
-References: <AANLkTik45KLdLf5UpjPtXTNgy4Df_BupyQ3SzRr6gZgC@mail.gmail.com>
-	<AANLkTin_JcEyT21dTS=Ew868HJvZQ2FVZBGXjCZn=8O_@mail.gmail.com>
-	<4CBF640C.4080405@broadcom.com>
-	<AANLkTinfwhjvfJU6C97SPJ8YKRqyJaCoQnAcC_uKLZa=@mail.gmail.com>
-Message-ID: <AANLkTi=_bOJ0VcmRCKU2pGvz7mW+WPymLWAUwrU9p8J9@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Wed, 20 Oct 2010 17:19:26 -0500
+Subject: MMIO trace for "warm" boot of b43 on IdeaPad S9 (was: Re: PIO
+	mode)
+In-Reply-To: <20101020193707.GT1593@home.pavel.comp>
+References: <20101013065845.GG1593@home.pavel.comp>
+	<4CBB7A46.6040507@lwfinger.net>
+	<20101018041103.GK1593@home.pavel.comp>
+	<4CBCA6BC.6080605@lwfinger.net>
+	<20101019004331.GN1593@home.pavel.comp>
+	<4CBDC183.9020101@lwfinger.net>
+	<20101019162258.GO1593@home.pavel.comp>
+	<4CBF28C0.9000404@lwfinger.net>
+	<20101020175427.GQ1593@home.pavel.comp>
+	<4CBF359A.6030700@lwfinger.net>
+	<20101020193707.GT1593@home.pavel.comp>
+Message-ID: <4CBF6AEE.8050208@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Henry Ptasinski <henryp@broadcom.com>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-2010/10/20 Rafa? Mi?ecki <zajec5@gmail.com>:
-> W dniu 20 pa?dziernika 2010 23:50 u?ytkownik Henry Ptasinski
-> <henryp@broadcom.com> napisa?:
->> Sorry for the delay in responding. ?We are exploring what is possible but
->> for the moment the answer is no. At present our focus is on providing the
->> best open source solution we can for 4313, 43224, 43225, 4329 and future
->> chips sets.
->
-> Thanks for answer.
->
-> Please, can you make totally sure person responsible for this gets it
-> totally right? I believe it's very important.
->
-> The easiest step for you, which we still would appreciate is really
-> trivial one. It's *not* about writing any code, *not* about releasing
-> anything new. It's just about releasing in under friendly license.
-> This firmware is already available, we have access to it, we use it.
-> The problem is that distributions can not ship it.
->
-> If you let me use simplification: all we need as first nice step is
-> Broadcom to say: "You can use it".
+On 10/20/2010 02:37 PM, Paul Fertser wrote:
 
-I should note not providing a redistributable firmware is actually
-creating more motivation to keep working on open reversed engineered
-firmware which may make take the devices out of compliance. Ultimately
-this firmware is what is going to be used by users of the Linux kernel
-if Broadcom does not provide any alternatives, as there is no option.
+> Attached. (stop network manager, modprobe wl, rmmod wl, start network-manager,
+> start tracing, modprobe b43, wait for association).
 
-Please pass this message along :)
+The first thing that showed up was a difference in the Command register of the
+PCI configuration space at offset 0x04. The first read of this location for the
+cold boot returned 0x02, but the warm reboot returned 0x06. As that bit 4 means
+set bus mastering capability, it looks suspicious. The call to pci_bus_master()
+should take care of this, but let us check. Please apply the attached patch and
+do a cold boot to b43 so that we get the contents of the location when the DMA
+error occurs.
 
- Luis
+Larry
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: b43_diagnose_DMA
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101020/6268a7a7/attachment.ksh>
