@@ -1,9 +1,10 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 22 Oct 2010 17:43:47 +0200
-Subject: [PATCH 3/5] b43: define known SPROM boardflags2 bits
+Date: Fri, 22 Oct 2010 17:43:48 +0200
+Subject: [PATCH 4/5] b43: N-PHY: determine usage of radio regulatory
+	workaround correctly
 In-Reply-To: <1287762229-16516-2-git-send-email-zajec5@gmail.com>
 References: <1287762229-16516-2-git-send-email-zajec5@gmail.com>
-Message-ID: <1287762229-16516-4-git-send-email-zajec5@gmail.com>
+Message-ID: <1287762229-16516-5-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,32 +14,22 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/b43.h |   13 +++++++++++++
- 1 files changed, 13 insertions(+), 0 deletions(-)
+ drivers/net/wireless/b43/phy_n.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index 72821c4..9aad2ca 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -153,6 +153,19 @@
- #define B43_BFH_FEM_BT			0x0040	/* has FEM and switch to share antenna
- 						 * with bluetooth */
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index e0f2d12..c22dbfb 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -191,7 +191,8 @@ static void b43_radio_init2055_post(struct b43_wldev *dev)
+ 				binfo->type != 0x46D ||
+ 				binfo->rev < 0x41);
+ 	else
+-		workaround = ((sprom->boardflags_hi & B43_BFH_NOPA) == 0);
++		workaround =
++			!(sprom->boardflags2_lo & B43_BFL2_RXBB_INT_REG_DIS);
  
-+/* SPROM boardflags2_lo values */
-+#define B43_BFL2_RXBB_INT_REG_DIS	0x0001	/* external RX BB regulator present */
-+#define B43_BFL2_APLL_WAR		0x0002	/* alternative A-band PLL settings implemented */
-+#define B43_BFL2_TXPWRCTRL_EN 		0x0004	/* permits enabling TX Power Control */
-+#define B43_BFL2_2X4_DIV		0x0008	/* 2x4 diversity switch */
-+#define B43_BFL2_5G_PWRGAIN		0x0010	/* supports 5G band power gain */
-+#define B43_BFL2_PCIEWAR_OVR		0x0020	/* overrides ASPM and Clkreq settings */
-+#define B43_BFL2_CAESERS_BRD		0x0040	/* is Caesers board (unused) */
-+#define B43_BFL2_BTC3WIRE		0x0080	/* used 3-wire bluetooth coexist */
-+#define B43_BFL2_SKWRKFEM_BRD		0x0100	/* 4321mcm93 uses Skyworks FEM */
-+#define B43_BFL2_SPUR_WAR		0x0200	/* has a workaround for clock-harmonic spurs */
-+#define B43_BFL2_GPLL_WAR		0x0400	/* altenative G-band PLL settings implemented */
-+
- /* GPIO register offset, in both ChipCommon and PCI core. */
- #define B43_GPIO_CONTROL		0x6c
- 
+ 	b43_radio_mask(dev, B2055_MASTER1, 0xFFF3);
+ 	if (workaround) {
 -- 
 1.7.1
