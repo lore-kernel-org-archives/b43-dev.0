@@ -1,79 +1,118 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Thu, 21 Oct 2010 22:55:06 +0200
-Subject: Transfer zeroes via ssh test (was: Re: PIO mode)
-In-Reply-To: <4CC04DE2.6020901@lwfinger.net>
-	(sfid-20101021_162745_757075_FFFFFFFFCB80601D)
-References: <20101013065845.GG1593@home.pavel.comp>
-	<4CBB7A46.6040507@lwfinger.net>	<20101018041103.GK1593@home.pavel.comp>
-	<4CBCA6BC.6080605@lwfinger.net>	<20101019004331.GN1593@home.pavel.comp>
-	<4CBDC183.9020101@lwfinger.net>	<20101019162258.GO1593@home.pavel.comp>
-	<4CBF28C0.9000404@lwfinger.net>	<20101020175427.GQ1593@home.pavel.comp>
-	<4CBF359A.6030700@lwfinger.net> <20101021085337.GV1593@home.pavel.comp>
-	<4CC04DE2.6020901@lwfinger.net>
-	(sfid-20101021_162745_757075_FFFFFFFFCB80601D)
-Message-ID: <1287694506.20367.6.camel@maggie>
+From: Daniel Klaffenbach <danielklaffenbach@gmail.com>
+Date: Fri, 22 Oct 2010 11:15:26 +0200
+Subject: BCM4318KFBG not recognized by b43
+In-Reply-To: <AANLkTi=FoL44CquvC68BU65HPXf4dtET0uq3cLO5Bgf1@mail.gmail.com>
+References: <AANLkTinoQH52c33L2UMo3=03Oq2qGqNDcnQ3iiffZ334@mail.gmail.com>
+	<AANLkTik_pkUw4B0yVXDpoXAOSeb-HqSb3VWbGLsNW_kA@mail.gmail.com>
+	<AANLkTi=FoL44CquvC68BU65HPXf4dtET0uq3cLO5Bgf1@mail.gmail.com>
+Message-ID: <AANLkTinq8diNDc_0TA7jUDrAeNHWLLOVbVQuW5hpfJ3y@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Thu, 2010-10-21 at 09:27 -0500, Larry Finger wrote: 
-> On 10/21/2010 03:53 AM, Paul Fertser wrote:
-> > On Wed, Oct 20, 2010 at 01:31:54PM -0500, Larry Finger wrote:
-> >> On 10/20/2010 12:54 PM, Paul Fertser wrote:
-> >>> It looks like we're seeing two different issues.
-> >>
-> >> I agree.
-> > 
-> > With this test (transfer via ssh to cold-booted b43) i also get some
-> > interesting results:
-> > 
-> > [ 2140.029809] b43-phy0 debug: Using hardware based encryption for keyidx: 0, mac: 00:02:84:7d:3c:02
-> > [ 2148.864071] wlan0: no IPv6 routers present
-> > [ 2797.922932] CE: hpet increased min_delta_ns to 11250 nsec
-> > [ 3744.258158] ACPI: EC: GPE storm detected, transactions will use polling mode
-> > [ 4417.907722] b43-phy0 debug: TX-status contains invalid cookie: 0x1349
-> > [ 4417.909318] b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 76
-> > [ 4417.910899] b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 78
-> > [ 4417.912325] b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 80
-> > ...
-> > [ 4418.146891] b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 70
-> > [ 4418.148529] b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 72
-> > [ 4565.170928] wlan0: disassociated from 00:02:84:7d:3c:02 (Reason: 1)
-> > 
-> > Then repeated associations and deassociations until i unload the driver.
-> > Reloading brings functionality back.
-> > 
-> > I need to do more tests to say if i consistently see the same time interval
-> > (between starting and failing) in this test.
-> 
-> When I had failures during stress testing of the firmware from OpenFWWF, Michael
-> helped diagnose the problem and added the diagnostics indicating the "out of
-> order" TX status. Over the past months, I have seen them on occasion with
-> proprietary firmware, but I have never been able to reproduce these failures. As
-> you note, the driver cannot recover.
-> 
-> It is looking more likely that the bug that causes them is in b43, not in the
-> firmware, and that the open-source firmware just triggers the bug more
-> "efficiently".
-> 
-> Michael: Any more thoughts on this issue?
+I got a little bit further by adding the vendor id to
+b43_pci_bridge.c. Note that it now detects the card correctly (4318).
 
-Hm, I hardly remember anything from the debugging.
+root at OpenWrt:/# modprobe b43
+Segmentation fault
 
-However, one should check whether the firmware does send those
-out-of-order reports actively (because it receives some invalid external
-condition from the hardware or something like that), or if those reports
-are sent by the hardware without firmware help.
-The first case (which is the likely one, IMO), would probably make a
-firmware-side workaround possible.
+b43-phy0: Broadcom 4318 WLAN found (core revision 9)
+Data bus error, epc == 8013e42c, ra == 80784704
+Oops[#1]:
+Cpu 0
+$ 0   : 00000000 1000bc00 200002ff 00000000
+$ 4   : c0000f9c 00000004 0c040083 00000000
+$ 8   : 00000010 00000080 00000004 8026e000
+$12   : 80273920 00000002 00000001 00000002
+$16   : 80e7ad00 802e7000 00000000 807a013c
+$20   : 8027a6f4 00000000 00407ed4 00000000
+$24   : 3b9aca00 80014630
+$28   : 802a0000 802a1d48 80e7ad00 80784704
+Hi    : 00000018
+Lo    : 52101200
+epc   : 8013e42c 0x8013e42c
+    Not tainted
+ra    : 80784704 0x80784704
+Status: 1000bc03    KERNEL EXL IE
+Cause : 0080001c
+PrId  : 00024000 (Broadcom BCM4710)
+Modules linked in: b43(+) usb_storage ohci_hcd ip6t_REJECT ip6t_LOG
+ip6t_rt ip6t_hbh ip6t_mh ip6t_ipv6header ip6t_frag ip6t_eui64 ip6t_ah
+ip6table_raw ip6_queue ip6table_mangle ip6table_filter ip6_tables
+nf_conntrack_ipv6 nf_nat_tftp nf_conntrack_tftp nf_nat_irc
+nf_conntrack_irc nf_nat_ftp nf_conntrack_ftp xt_iprange xt_string
+ipt_MASQUERADE iptable_nat nf_nat xt_NOTRACK iptable_raw xt_state
+nf_conntrack_ipv4 nf_defrag_ipv4 nf_conntrack sd_mod ipt_REJECT
+xt_TCPMSS ipt_LOG xt_comment xt_multiport xt_mac xt_limit
+iptable_mangle iptable_filter ip_tables xt_tcpudp x_tables sit ext2
+tunnel4 ext3 jbd nls_utf8 mac80211 usbcore ts_fsm ts_bm ts_kmp
+switch_core scsi_mod nls_base mbcache crc16 cfg80211 compat arc4
+aes_generic deflate ecb cbc ipv6 diag [last unloaded: switch_core]
+Process insmod (pid: 1115, threadinfo=802a0000, task=80dc5a38, tls=00000000)
+Stack : 00000662 800dfefc 00004318 00000009 80a27f84 80a27f2c 00000000 80e7ad00
+        80851000 80851400 80e7ad88 802e72f8 00000001 806f4380 807a0120 80851058
+        807a013c 807a013c 8027a6f4 00000000 00407ed4 00000002 7fb5beb8 80186954
+        80851058 806f4380 fffffffe 802542cc ffffffed ffffffed 80855180 80167598
+        8027a6f4 80122cf8 80340010 00000004 808551b4 80855180 807a013c 8016774c
+        ...
+Call Trace:[<800dfefc>] 0x800dfefc
+[<80186954>] 0x80186954
+[<80167598>] 0x80167598
+[<80122cf8>] 0x80122cf8
+[<8016774c>] 0x8016774c
+[<80122d40>] 0x80122d40
+[<801676e0>] 0x801676e0
+[<80166c90>] 0x80166c90
+[<80122dd0>] 0x80122dd0
+[<80166458>] 0x80166458
+[<80083d38>] 0x80083d38
+[<80632000>] 0x80632000
+[<80167adc>] 0x80167adc
+[<80055054>] 0x80055054
+[<80632000>] 0x80632000
+[<80632020>] 0x80632020
+[<8000c4e0>] 0x8000c4e0
+[<8004271c>] 0x8004271c
+[<80055730>] 0x80055730
+[<8008e040>] 0x8008e040
+[<80003630>] 0x80003630
 
-I'm not sure how to test this properly. Maybe some array in SHM that
-dumps cookies along with a monotonically increasing number on every
-active tx-status-send attempt. This way one could possibly check whether
-the out-of-order report was sent by the firmware, or due to hardware
-burp.
 
--- 
-Greetings Michael.
+Code: 00431025  03e00008  3042ffff <8c820000> 03e00008  00000000
+8c820000  00022e00  00022602
+Disabling lock debugging due to kernel taint
+
+
+I have attached the patch to add the vendor pci id. I am probably
+still missing something, though.
+
+
+Regards,
+Daniel
+
+diff --git a/drivers/ssb/b43_pci_bridge.c b/drivers/ssb/b43_pci_bridge.c
+index ef9c6a0..744d3f6 100644
+--- a/drivers/ssb/b43_pci_bridge.c
++++ b/drivers/ssb/b43_pci_bridge.c
+@@ -24,6 +24,7 @@ static const struct pci_device_id b43_pci_bridge_tbl[] = {
+        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4312) },
+        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4315) },
+        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4318) },
++       { PCI_DEVICE(PCI_VENDOR_ID_BCM_GVC,  0x4318) },
+        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4319) },
+        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4320) },
+        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4321) },
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index 570fdde..d3c1cea 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2041,6 +2041,7 @@
+ #define PCI_DEVICE_ID_AFAVLAB_P030     0x2182
+ #define PCI_SUBDEVICE_ID_AFAVLAB_P061          0x2150
+
++#define PCI_VENDOR_ID_BCM_GVC          0x14a4
+ #define PCI_VENDOR_ID_BROADCOM         0x14e4
+ #define PCI_DEVICE_ID_TIGON3_5752      0x1600
+ #define PCI_DEVICE_ID_TIGON3_5752M     0x1601
