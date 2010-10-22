@@ -1,118 +1,45 @@
-From: Daniel Klaffenbach <danielklaffenbach@gmail.com>
-Date: Fri, 22 Oct 2010 11:15:26 +0200
-Subject: BCM4318KFBG not recognized by b43
-In-Reply-To: <AANLkTi=FoL44CquvC68BU65HPXf4dtET0uq3cLO5Bgf1@mail.gmail.com>
-References: <AANLkTinoQH52c33L2UMo3=03Oq2qGqNDcnQ3iiffZ334@mail.gmail.com>
-	<AANLkTik_pkUw4B0yVXDpoXAOSeb-HqSb3VWbGLsNW_kA@mail.gmail.com>
-	<AANLkTi=FoL44CquvC68BU65HPXf4dtET0uq3cLO5Bgf1@mail.gmail.com>
-Message-ID: <AANLkTinq8diNDc_0TA7jUDrAeNHWLLOVbVQuW5hpfJ3y@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 22 Oct 2010 13:23:45 +0200
+Subject: b43/SSB: SPROM revision problem
+Message-ID: <AANLkTin5xkWBGqkNiZR3Uiys52g4t9UpRaX1LrjxrG99@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>, Michael Buesch <mb@bu3sch.de>
 
-I got a little bit further by adding the vendor id to
-b43_pci_bridge.c. Note that it now detects the card correctly (4318).
+I've problem with initializing N radio (2055) on my Broadcom card.
 
-root at OpenWrt:/# modprobe b43
-Segmentation fault
+In case of my card simple workaround [1] for radio initialization is
+needed. If I do not use workaround radio simply does not start. I
+dumped MMIO operations of "wl" and it uses workaround for my card as
+well.
 
-b43-phy0: Broadcom 4318 WLAN found (core revision 9)
-Data bus error, epc == 8013e42c, ra == 80784704
-Oops[#1]:
-Cpu 0
-$ 0   : 00000000 1000bc00 200002ff 00000000
-$ 4   : c0000f9c 00000004 0c040083 00000000
-$ 8   : 00000010 00000080 00000004 8026e000
-$12   : 80273920 00000002 00000001 00000002
-$16   : 80e7ad00 802e7000 00000000 807a013c
-$20   : 8027a6f4 00000000 00407ed4 00000000
-$24   : 3b9aca00 80014630
-$28   : 802a0000 802a1d48 80e7ad00 80784704
-Hi    : 00000018
-Lo    : 52101200
-epc   : 8013e42c 0x8013e42c
-    Not tainted
-ra    : 80784704 0x80784704
-Status: 1000bc03    KERNEL EXL IE
-Cause : 0080001c
-PrId  : 00024000 (Broadcom BCM4710)
-Modules linked in: b43(+) usb_storage ohci_hcd ip6t_REJECT ip6t_LOG
-ip6t_rt ip6t_hbh ip6t_mh ip6t_ipv6header ip6t_frag ip6t_eui64 ip6t_ah
-ip6table_raw ip6_queue ip6table_mangle ip6table_filter ip6_tables
-nf_conntrack_ipv6 nf_nat_tftp nf_conntrack_tftp nf_nat_irc
-nf_conntrack_irc nf_nat_ftp nf_conntrack_ftp xt_iprange xt_string
-ipt_MASQUERADE iptable_nat nf_nat xt_NOTRACK iptable_raw xt_state
-nf_conntrack_ipv4 nf_defrag_ipv4 nf_conntrack sd_mod ipt_REJECT
-xt_TCPMSS ipt_LOG xt_comment xt_multiport xt_mac xt_limit
-iptable_mangle iptable_filter ip_tables xt_tcpudp x_tables sit ext2
-tunnel4 ext3 jbd nls_utf8 mac80211 usbcore ts_fsm ts_bm ts_kmp
-switch_core scsi_mod nls_base mbcache crc16 cfg80211 compat arc4
-aes_generic deflate ecb cbc ipv6 diag [last unloaded: switch_core]
-Process insmod (pid: 1115, threadinfo=802a0000, task=80dc5a38, tls=00000000)
-Stack : 00000662 800dfefc 00004318 00000009 80a27f84 80a27f2c 00000000 80e7ad00
-        80851000 80851400 80e7ad88 802e72f8 00000001 806f4380 807a0120 80851058
-        807a013c 807a013c 8027a6f4 00000000 00407ed4 00000002 7fb5beb8 80186954
-        80851058 806f4380 fffffffe 802542cc ffffffed ffffffed 80855180 80167598
-        8027a6f4 80122cf8 80340010 00000004 808551b4 80855180 807a013c 8016774c
-        ...
-Call Trace:[<800dfefc>] 0x800dfefc
-[<80186954>] 0x80186954
-[<80167598>] 0x80167598
-[<80122cf8>] 0x80122cf8
-[<8016774c>] 0x8016774c
-[<80122d40>] 0x80122d40
-[<801676e0>] 0x801676e0
-[<80166c90>] 0x80166c90
-[<80122dd0>] 0x80122dd0
-[<80166458>] 0x80166458
-[<80083d38>] 0x80083d38
-[<80632000>] 0x80632000
-[<80167adc>] 0x80167adc
-[<80055054>] 0x80055054
-[<80632000>] 0x80632000
-[<80632020>] 0x80632020
-[<8000c4e0>] 0x8000c4e0
-[<8004271c>] 0x8004271c
-[<80055730>] 0x80055730
-[<8008e040>] 0x8008e040
-[<80003630>] 0x80003630
+The problem is that workaround condition is SPROM-based. It looks like this:
+if (sprom->revision < 4)
+	workaround = (some_specific_card);
+else
+	workaround = ((sprom->boardflags_hi & B43_BFH_NOPA) == 0);
+
+So now goes the tricky part. My SSB has following SPROM:
+[ 6208.080097] ssb: SPROM offset is 0x1000
+[ 6208.089815] ssb: SPROM revision 5 detected.
+
+However in drivers/ssb/pci.c there are some translations, including
+one for my card. My SPROM revision gets translated to 4. The result
+is:
+sprom->revision: 4
+sprom->boardflags_hi: 0x1
+
+With that revision and boardflags workaround is not used and my radio
+does not init. There are two possibilities:
+1) Specs are wrong
+2) We do SPROM translation incorrectly
+
+Any hints about that?
 
 
-Code: 00431025  03e00008  3042ffff <8c820000> 03e00008  00000000
-8c820000  00022e00  00022602
-Disabling lock debugging due to kernel taint
+[1] http://bcm-v4.sipsolutions.net/802.11/Radio/2055/Init#Post_Init
 
-
-I have attached the patch to add the vendor pci id. I am probably
-still missing something, though.
-
-
-Regards,
-Daniel
-
-diff --git a/drivers/ssb/b43_pci_bridge.c b/drivers/ssb/b43_pci_bridge.c
-index ef9c6a0..744d3f6 100644
---- a/drivers/ssb/b43_pci_bridge.c
-+++ b/drivers/ssb/b43_pci_bridge.c
-@@ -24,6 +24,7 @@ static const struct pci_device_id b43_pci_bridge_tbl[] = {
-        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4312) },
-        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4315) },
-        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4318) },
-+       { PCI_DEVICE(PCI_VENDOR_ID_BCM_GVC,  0x4318) },
-        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4319) },
-        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4320) },
-        { PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4321) },
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 570fdde..d3c1cea 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2041,6 +2041,7 @@
- #define PCI_DEVICE_ID_AFAVLAB_P030     0x2182
- #define PCI_SUBDEVICE_ID_AFAVLAB_P061          0x2150
-
-+#define PCI_VENDOR_ID_BCM_GVC          0x14a4
- #define PCI_VENDOR_ID_BROADCOM         0x14e4
- #define PCI_DEVICE_ID_TIGON3_5752      0x1600
- #define PCI_DEVICE_ID_TIGON3_5752M     0x1601
+-- 
+Rafa?
