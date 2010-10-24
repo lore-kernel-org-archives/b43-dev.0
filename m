@@ -1,38 +1,53 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 22 Oct 2010 17:31:31 -0500
-Subject: [PATCH] b43: rfkill: use status register based on core revision
-	not (PHY's)
-In-Reply-To: <AANLkTika4wVhH=rGc=qgZozgbe9j-+-zzPkb1KGWLHJC@mail.gmail.com>
-References: <1287779045-20257-1-git-send-email-zajec5@gmail.com>	<4CC2043D.2040909@lwfinger.net>
-	<AANLkTika4wVhH=rGc=qgZozgbe9j-+-zzPkb1KGWLHJC@mail.gmail.com>
-Message-ID: <4CC210C3.7010602@lwfinger.net>
+From: Dennis Nezic <dennisn@dennisn.dyndns.org>
+Date: Sun, 24 Oct 2010 19:18:35 -0400
+Subject: BCM4318 trouble connecting to ad-hoc network
+Message-ID: <20101024191835.7a8fb4e5.dennisn@dennisn.dyndns.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On 10/22/2010 04:57 PM, Rafa? Mi?ecki wrote:
-> W dniu 22 pa?dziernika 2010 23:38 u?ytkownik Larry Finger
-> <Larry.Finger@lwfinger.net> napisa?:
->> On 10/22/2010 03:24 PM, Rafa? Mi?ecki wrote:
->>
->> As that register is present only when the core revision >= 3, this change should
->> not cause a regression. Perhaps this was an error in the RE from the start and
->> testing the phy.rev has always been wrong.
-> 
-> Do not blame RE team ;) It was described correctly since "ever", you
-> can check it in history of:
-> http://bcm-specs.sipsolutions.net/MMIO
-> 
-> I actually suspect this may be source of self-switching-on-off-radio
-> issue described in:
-> "b43legacy-phy3: Radio hardware status changed to XXX" thread.
-> 
-> I already mailed reporter to ask if he still has access to problematic card.
+Sometimes, most of the time, when I try to reload/restart my wifi
+interface, I get a "No active IBSS STAs" message in my syslog, and my
+subsequent dhcpcd call fails "waiting for carrier". However, it does
+seem to sortof still work -- if I manually run dhcpcd a few seconds
+later, it works.
 
-I have two cards that use b43legacy, but their physical format (PCI and Cardbus)
-do not include an RFKILL switch, thus I have never tested this code with b43legacy.
+iw event -t:
+1287961348.312835: wlan0 (phy #0): IBSS ... joined
+1287961348.599939: wlan0: unknown event 19
+1287961350.033722: wlan0: unknown event 1
 
-Larry
+syslog:
+/etc/init.d/net.wlan0[11116]: WARNING: net.wlan0 has started, but is
+   inactive
+kernel: b43-phy0: Loading firmware version 410.2160 (2007-05-26
+kernel: wlan0: Selected IBSS BSSID ... based on configured SSID
+wpa_cli: interface wlan0 CONNECTED
+dhcpcd: version 5.1.3 starting
+kernel: wlan0: No active IBSS STAs - trying to scan for other IBSS
+  networks with same SSID (merge)
+dhcpcd: wlan0: waiting for carrier
+
+
+However, on other rare times, when a "Trigger new scan" occurs, it all
+works smoothly.
+
+iw event -t:
+1287961295.764797: wlan0 (phy #0): IBSS ... joined
+1287961295.865132: wlan0: unknown event 19
+
+syslog:
+/etc/init.d/net.wlan0[10708]: WARNING: net.wlan0 has started, but is
+   inactive
+kernel: b43-phy0: Loading firmware version 410.2160
+kernel: wlan0: Trigger new scan to find an IBSS to join
+kernel: wlan0: Selected IBSS BSSID ... based on configured SSID
+wpa_cli: interface wlan0 CONNECTED
+dhcpcd: version 5.1.3 starting
+dhcpcd: wlan0: rebinding lease of 10.0.1.4
+dhcpcd: wlan0: acknowledged 10.0.1.4 from 10.0.1.1
+
+
+Thoughts? What triggers the trigger?
