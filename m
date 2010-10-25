@@ -1,53 +1,46 @@
-From: Dennis Nezic <dennisn@dennisn.dyndns.org>
-Date: Sun, 24 Oct 2010 19:18:35 -0400
-Subject: BCM4318 trouble connecting to ad-hoc network
-Message-ID: <20101024191835.7a8fb4e5.dennisn@dennisn.dyndns.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Mon, 25 Oct 2010 07:39:30 -0500
+Subject: [PATCH] b43: rfkill: use status register based on core revision
+	not (PHY's)
+In-Reply-To: <1287779045-20257-1-git-send-email-zajec5@gmail.com>
+References: <1287779045-20257-1-git-send-email-zajec5@gmail.com>
+Message-ID: <4CC57A82.7030300@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-Sometimes, most of the time, when I try to reload/restart my wifi
-interface, I get a "No active IBSS STAs" message in my syslog, and my
-subsequent dhcpcd call fails "waiting for carrier". However, it does
-seem to sortof still work -- if I manually run dhcpcd a few seconds
-later, it works.
+On 10/22/2010 03:24 PM, Rafa? Mi?ecki wrote:
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> This makes my N-PHY radio at least running (no scanning results so far). The
+> same register is used by wl on this device.
+> ---
+>  drivers/net/wireless/b43/rfkill.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/b43/rfkill.c b/drivers/net/wireless/b43/rfkill.c
+> index 78016ae..d2734c9 100644
+> --- a/drivers/net/wireless/b43/rfkill.c
+> +++ b/drivers/net/wireless/b43/rfkill.c
+> @@ -28,7 +28,7 @@
+>  /* Returns TRUE, if the radio is enabled in hardware. */
+>  bool b43_is_hw_radio_enabled(struct b43_wldev *dev)
+>  {
+> -	if (dev->phy.rev >= 3 || dev->phy.type == B43_PHYTYPE_LP) {
+> +	if (dev->dev->id.revision >= 3) {
+>  		if (!(b43_read32(dev, B43_MMIO_RADIO_HWENABLED_HI)
+>  		      & B43_MMIO_RADIO_HWENABLED_HI_MASK))
+>  			return 1;
 
-iw event -t:
-1287961348.312835: wlan0 (phy #0): IBSS ... joined
-1287961348.599939: wlan0: unknown event 19
-1287961350.033722: wlan0: unknown event 1
+Over the weekend, I was able to test this patch using all my b43 hardware. There
+were no problems.
 
-syslog:
-/etc/init.d/net.wlan0[11116]: WARNING: net.wlan0 has started, but is
-   inactive
-kernel: b43-phy0: Loading firmware version 410.2160 (2007-05-26
-kernel: wlan0: Selected IBSS BSSID ... based on configured SSID
-wpa_cli: interface wlan0 CONNECTED
-dhcpcd: version 5.1.3 starting
-kernel: wlan0: No active IBSS STAs - trying to scan for other IBSS
-  networks with same SSID (merge)
-dhcpcd: wlan0: waiting for carrier
+Despite having no problems, I still NACK the patch for the reason that b43 only
+applies to devices with id.revision >= 5, thus the revised "if" will always be
+true. The patch should be rewritten as only b43legacy needs to test the 802.11
+core revision.
 
-
-However, on other rare times, when a "Trigger new scan" occurs, it all
-works smoothly.
-
-iw event -t:
-1287961295.764797: wlan0 (phy #0): IBSS ... joined
-1287961295.865132: wlan0: unknown event 19
-
-syslog:
-/etc/init.d/net.wlan0[10708]: WARNING: net.wlan0 has started, but is
-   inactive
-kernel: b43-phy0: Loading firmware version 410.2160
-kernel: wlan0: Trigger new scan to find an IBSS to join
-kernel: wlan0: Selected IBSS BSSID ... based on configured SSID
-wpa_cli: interface wlan0 CONNECTED
-dhcpcd: version 5.1.3 starting
-dhcpcd: wlan0: rebinding lease of 10.0.1.4
-dhcpcd: wlan0: acknowledged 10.0.1.4 from 10.0.1.1
-
-
-Thoughts? What triggers the trigger?
+Larry
