@@ -1,50 +1,20 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Mon, 25 Oct 2010 21:45:37 +0200
-Subject: [PATCH] b43: remove extraneous code in free_ringmemory
-In-Reply-To: <1288016649-4334-1-git-send-email-linville@tuxdriver.com>
-	(sfid-20101025_103012_756543_A179E9D6)
-References: <1288016649-4334-1-git-send-email-linville@tuxdriver.com>
-	(sfid-20101025_103012_756543_A179E9D6)
-Message-ID: <1288035937.24194.0.camel@maggie>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 26 Oct 2010 13:12:12 -0500
+Subject: Interesting observation
+Message-ID: <4CC719FC.7030901@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Mon, 2010-10-25 at 10:24 -0400, John W. Linville wrote: 
-> This code seems to have been cut-n-pasted from alloc_ringmemory?
+Hi,
 
-No. It's leftover from the old SSB DMA mem allocator, which needed
-the GFP flags.
+This morning I took my car into the dealership for service and took my laptop to
+help pass the time while waiting. Their free wifi hotspot connected to the
+Internat with no problems except for http://bcm-v4.sipsolutions.net/. Their
+Internet filters blocked access as they thought it was a "game".
 
-> Anyway, it is useless.
+Now we learn what we are doing with the reverse engineering!
 
-ACK.
-
-> Signed-off-by: John W. Linville <linville@tuxdriver.com>
-> ---
->  drivers/net/wireless/b43/dma.c |    5 -----
->  1 files changed, 0 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-> index 10d0aaf..3d5566e 100644
-> --- a/drivers/net/wireless/b43/dma.c
-> +++ b/drivers/net/wireless/b43/dma.c
-> @@ -415,11 +415,6 @@ static int alloc_ringmemory(struct b43_dmaring *ring)
->  
->  static void free_ringmemory(struct b43_dmaring *ring)
->  {
-> -	gfp_t flags = GFP_KERNEL;
-> -
-> -	if (ring->type == B43_DMA_64BIT)
-> -		flags |= GFP_DMA;
-> -
->  	dma_free_coherent(ring->dev->dev->dma_dev, B43_DMA_RINGMEMSIZE,
->  			  ring->descbase, ring->dmabase);
->  }
-
-
--- 
-Greetings Michael.
+Larry
