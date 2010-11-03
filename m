@@ -1,42 +1,38 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 03 Nov 2010 11:53:03 -0500
-Subject: pci id 14e4:4727 (bcm4313) status?
-In-Reply-To: <4CD18DB4.60405@lakedaemon.net>
-References: <4CD18DB4.60405@lakedaemon.net>
-Message-ID: <4CD1936F.4030100@lwfinger.net>
+From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed,  3 Nov 2010 21:36:12 +0100
+Subject: [PATCH] b43legacy: rfkill: use status register based on core revision
+	(not PHY's)
+Message-ID: <1288816572-12743-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 11/03/2010 11:28 AM, Jason wrote:
-> All,
-> 
-> I have a pci-express card that shows itself as pci_id 14e4:4727. 
-> According to [1], it says partial support since 2.6.33
-> (b43/wl/brcm80211).  I was hoping that meant b43 since it has much
-> better mac80211 integration than brcm80211.  I didn't think brcm80211
-> was in 2.6.33.
-> However, compat-wireless (built from tarball) doesn't see it.  grep the
-> source code doesn't pull up '4727' in b43... I tried to update my
-> wireless-testing-2.6 tree, but it looks like it's still having trouble,
-> latest is 229aebb... from Oct 24th.
-> 
-> So, what will it take to get it up and running?  I've contributed some
-> patches to staging, but they're mainly janitorial/checkpatch stuff for
-> brcm80211.  Are there some beginner tasks for b43 (ie dig through
-> brcm80211 and port over) that might help out?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+With this patch we follow specs. I hope this will fix bug where radio was
+magically auto-turning on/off. Unfortunately I didn't get answer from reporter
+of that issue.
 
-That device is not supported by b43. As it now stands, b43 requires a device
-with the SSB interconnect, which the BCM4313 does not have. If you did fix b43
-to operate without the SSB, then you would still have no support for N PHY. That
-one is being worked on so that N PHYs with SSB can be supported.
+John: I suggest taking it for 2.6.38
+---
+ drivers/net/wireless/b43legacy/rfkill.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-My interpretation of the "partially supported" statement is that bleeding-edge
-compat wireless has been backported that far.
-
-My latest pull of wireless-testing has 2.6.37-rc1 from November 1. It includes
-brcm80211.
-
-Larry
+diff --git a/drivers/net/wireless/b43legacy/rfkill.c b/drivers/net/wireless/b43legacy/rfkill.c
+index d579df7..b90f223 100644
+--- a/drivers/net/wireless/b43legacy/rfkill.c
++++ b/drivers/net/wireless/b43legacy/rfkill.c
+@@ -29,7 +29,7 @@
+ /* Returns TRUE, if the radio is enabled in hardware. */
+ bool b43legacy_is_hw_radio_enabled(struct b43legacy_wldev *dev)
+ {
+-	if (dev->phy.rev >= 3) {
++	if (dev->dev->id.revision >= 3) {
+ 		if (!(b43legacy_read32(dev, B43legacy_MMIO_RADIO_HWENABLED_HI)
+ 		      & B43legacy_MMIO_RADIO_HWENABLED_HI_MASK))
+ 			return 1;
+-- 
+1.6.0.4
