@@ -1,45 +1,60 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 03 Nov 2010 16:59:47 -0500
-Subject: [PATCH] ssb: workarounds: be verbose about hacking SPROM revision,
-	don't duplicate code
-In-Reply-To: <1288821218.7368.118.camel@maggie>
-References: <1288818386-25073-1-git-send-email-zajec5@gmail.com>	
-	(sfid-20101103_220727_407923_69716152)
-	<1288820625.7368.117.camel@maggie>	 <4CD1D99D.5070501@lwfinger.net>
-	(sfid-20101103_225215_757770_7A4F5678)
-	<1288821218.7368.118.camel@maggie>
-Message-ID: <4CD1DB53.8000502@lwfinger.net>
+From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed,  3 Nov 2010 23:28:45 +0100
+Subject: [PATCH] ssb: return -ENOMEM on alloc fail (instead of CRC check's
+	result)
+Message-ID: <1288823326-9686-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <mb@bu3sch.de>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?utf-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 11/03/2010 04:53 PM, Michael B?sch wrote:
-> On Wed, 2010-11-03 at 16:52 -0500, Larry Finger wrote: 
->> On 11/03/2010 04:43 PM, Michael B?sch wrote:
->>> On Wed, 2010-11-03 at 22:06 +0100, Rafa? Mi?ecki wrote: 
->>>> +	default:
->>>> +		ssb_printk(KERN_WARNING PFX "Unsupported SPROM"
->>>> +			   "  revision %d detected. Will extract"
->>>> +			   " v1\n", out->revision);
->>>> +		out->revision = 1;
->>>> +		sprom_extract_r123(out, in);
->>>
->>> I think we should change this to throw a hard error if the sprom is
->>> unknown. Extracting r123 is unlikely to do any good these days.
->>> This workaround was only useful back in the days where 95% of the
->>> cards out there were r123. But today that's not the case.
->>>
->>>> 	}
->>>>  
->>>>  	if (out->boardflags_lo == 0xFFFF)
->>
->> In any case, the out->revision = 1 statement should be before the ssb_printk() call.
-> 
-> I don't think so.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+John: it's for 2.6.38.
+---
+ drivers/ssb/pci.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
-You are right. I misread the code.
-
-Larry
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index 3226832..b5343ac 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -619,7 +619,7 @@ static int ssb_pci_sprom_get(struct ssb_bus *bus,
+ 			     struct ssb_sprom *sprom)
+ {
+ 	const struct ssb_sprom *fallback;
+-	int err = -ENOMEM;
++	int err;
+ 	u16 *buf;
+ 
+ 	if (!ssb_is_sprom_available(bus)) {
+@@ -646,7 +646,7 @@ static int ssb_pci_sprom_get(struct ssb_bus *bus,
+ 
+ 	buf = kcalloc(SSB_SPROMSIZE_WORDS_R123, sizeof(u16), GFP_KERNEL);
+ 	if (!buf)
+-		goto out;
++		return -ENOMEM;
+ 	bus->sprom_size = SSB_SPROMSIZE_WORDS_R123;
+ 	sprom_do_read(bus, buf);
+ 	err = sprom_check_crc(buf, bus->sprom_size);
+@@ -656,7 +656,7 @@ static int ssb_pci_sprom_get(struct ssb_bus *bus,
+ 		buf = kcalloc(SSB_SPROMSIZE_WORDS_R4, sizeof(u16),
+ 			      GFP_KERNEL);
+ 		if (!buf)
+-			goto out;
++			return -ENOMEM;
+ 		bus->sprom_size = SSB_SPROMSIZE_WORDS_R4;
+ 		sprom_do_read(bus, buf);
+ 		err = sprom_check_crc(buf, bus->sprom_size);
+@@ -678,7 +678,6 @@ static int ssb_pci_sprom_get(struct ssb_bus *bus,
+ 
+ out_free:
+ 	kfree(buf);
+-out:
+ 	return err;
+ }
+ 
+-- 
+1.6.0.4
