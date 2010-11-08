@@ -1,26 +1,33 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 08 Nov 2010 11:17:46 -0600
-Subject: bug in wireless driver
-In-Reply-To: <20101108165941.320080@gmx.net>
-References: <20101107183639.316560@gmx.net> <4CD701D9.9000405@lwfinger.net>
-	<20101108165941.320080@gmx.net>
-Message-ID: <4CD830BA.60300@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 8 Nov 2010 20:42:01 +0100
+Subject: Request for bisecting DMA partial fix
+Message-ID: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 11/08/2010 10:59 AM, Werner Nagel wrote:
-> Hallo Larry,
-> thank you for the Message,
-> 
-> I have now installed the recommand 
-> 
-> linux-backports-modules-wireless-lucid-generic
-> 
-> after the start, the connection is working about 1 minute, then the connection is down and the system cannot get a new connection. After the restart the network-manager the connection is working again, but after a 1 minute the connection is down again. 
+HI,
 
-What does dmesg say about the problem?
+We are quite sure that some patch than gone into mainline between
+2.6.34 and 2.6.35 partially fixed DMA errors. It was not b43-specific
+fix and it probably wasn't commited via wireless-testing.
 
-Larry
+The problem is this fix was only partial, under high transfer this is
+still noticeable. I think the shortest way to understand this and fix
+it totally is to find commit that partially fixed DMA errors.
+
+So we need someone with:
+1) Machine that throws DMA errors on 2.6.34 and works noticeably
+better with 2.6.35
+2) Time to bisect commit
+3) Basic kernel building skills (however I believe we can help in case
+of problems)
+
+I believe bisecting has to be done on Linus's tree, between mentioned kernels.
+
+So is there anyone around who could handle this task?
+
+-- 
+Rafa?
