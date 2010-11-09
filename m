@@ -1,54 +1,30 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Mon, 8 Nov 2010 22:49:40 +0100
-Subject: Request for bisecting DMA partial fix
-In-Reply-To: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
-References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
-Message-ID: <AANLkTikTuzwHDfT4K5MP3sTBkVSJQpR+EOu07V6kgu7W@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 09 Nov 2010 06:50:07 -0600
+Subject: bug in wireless driver
+In-Reply-To: <20101109091326.310930@gmx.net>
+References: <20101109091326.310930@gmx.net>
+Message-ID: <4CD9437F.1080005@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2010/11/8 Rafa? Mi?ecki <zajec5@gmail.com>:
-> HI,
->
-> We are quite sure that some patch than gone into mainline between
-> 2.6.34 and 2.6.35 partially fixed DMA errors. It was not b43-specific
-> fix and it probably wasn't commited via wireless-testing.
->
-> The problem is this fix was only partial, under high transfer this is
-> still noticeable. I think the shortest way to understand this and fix
-> it totally is to find commit that partially fixed DMA errors.
->
-> So we need someone with:
-> 1) Machine that throws DMA errors on 2.6.34 and works noticeably
-> better with 2.6.35
-> 2) Time to bisect commit
-> 3) Basic kernel building skills (however I believe we can help in case
-> of problems)
->
-> I believe bisecting has to be done on Linus's tree, between mentioned kernels.
->
-> So is there anyone around who could handle this task?
+On 11/09/2010 03:13 AM, Werner Nagel wrote:
+> Hallo Larry,
+> 
+> there is an attached file with the dmesg output.
 
-Well, my functional programming teacher at the university is
-experiencing this bug (& resorted to using wl in the meantime -
-machine is a Lenovo S10e), but I don't know how well he understands
-the Linux kernel (given that it's not written in Haskell). But I'll
-write back if I find out anything. In the meantime, keep on searching.
+When you reply to a mail message, please use the "Reply to All" option. I had
+also sent your message to the b43 mailing list.
 
->
-> --
-> Rafa?
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
+Your dmesg output does not indicate any kind of error, just that the connection
+to the AP is lost and there is no probe response for 500 ms. There are known
+deficiencies in the driver for the 14e4:4315 devices as some of the features
+from the reverse-engineering work are not yet implemented. That said, my card
+does not have the problem that you see. If possible, changing the channel on the
+AP might help as interference may be the problem. Some users report that the
+Broadcom wl driver works better for them. That is not the case on my system, but
+it might be on yours.
 
-
-
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Larry
