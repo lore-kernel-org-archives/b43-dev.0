@@ -1,54 +1,54 @@
 From: John W. Linville <linville@tuxdriver.com>
-Date: Tue, 16 Nov 2010 15:40:25 -0500
-Subject: [PATCH] ssb: Clear RETRY_TIMEOUT in PCI Configuration
-In-Reply-To: <1289425953.17777.5.camel@maggie>
-References: <4cbddbab.aeEgjpVFDD9GDTuy%Larry.Finger@lwfinger.net>
-	<1287522271.24543.4.camel@maggie>
-	<AANLkTikcKHAKQ9x1C5pyQiY5aOf4jGFcC_-af67YDg9S@mail.gmail.com>
-	<1289344415.11453.1.camel@maggie>
-	<20101110173725.GA2714@tuxdriver.com>
-	<1289425953.17777.5.camel@maggie>
-Message-ID: <20101116204024.GD10774@tuxdriver.com>
+Date: Tue, 16 Nov 2010 16:23:21 -0500
+Subject: [PATCH] ssb: fail registration for unknown SPROM revision
+In-Reply-To: <1288823326-9686-2-git-send-email-zajec5@gmail.com>
+References: <1288823326-9686-1-git-send-email-zajec5@gmail.com>
+	<1288823326-9686-2-git-send-email-zajec5@gmail.com>
+Message-ID: <20101116212321.GF10774@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Michael =?iso-8859-1?Q?B=FCsch?= <mb@bu3sch.de>, b43-dev@lists.infradead.org
 
-On Wed, Nov 10, 2010 at 10:52:33PM +0100, Michael B?sch wrote:
-> On Wed, 2010-11-10 at 12:37 -0500, John W. Linville wrote: 
+On Wed, Nov 03, 2010 at 11:28:46PM +0100, Rafa? Mi?ecki wrote:
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> As noticed my Michael we have this left from old times of limited amount of
+> revisions. It's not reliable to treat unknown as rev1.
+> 
+> Michael: would you like to add Reported-by?
+> 
+> John: it's for 2.6.38.
+> ---
+>  drivers/ssb/pci.c |    8 +++-----
+>  1 files changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+> index b5343ac..41a7337 100644
+> --- a/drivers/ssb/pci.c
+> +++ b/drivers/ssb/pci.c
+> @@ -600,11 +600,9 @@ static int sprom_extract(struct ssb_bus *bus, struct ssb_sprom *out,
+>  		sprom_extract_r8(out, in);
+>  		break;
+>  	default:
+> -		ssb_printk(KERN_WARNING PFX "Unsupported SPROM"
+> -			   "  revision %d detected. Will extract"
+> -			   " v1\n", out->revision);
+> -		out->revision = 1;
+> -		sprom_extract_r123(out, in);
+> +		ssb_printk(KERN_ERR PFX "Unsupported SPROM revision %d"
+> +			   " detected\n", out->revision);
+> +		return -EINVAL;
+>  	}
+>  
+>  	if (out->boardflags_lo == 0xFFFF)
 
-> > Does the other patch handle this case (i.e. devices behind SSB->PCI
-> > bridge)?  If so, can you explain how?
-> 
-> Yes. For embedded it goes:
-> 
-> native-ssb -> pci-core -> pci-bridge module -> wireless ssb
-> 
-> For PCI it goes:
-> 
-> native pci bus -> pci-bridge module -> wireless ssb
-> 
-> So you see that the pci bridge module is the bus glue for all SSB
-> based PCI devices. So we do not need the workaround in the pci-core
-> driver code. Just in the pci-bridge code (which is 
-> drivers/ssb/pcihost_wrapper.c)
-> 
-> > It looks to me like the code
-> > in ssb_pcihost_register is only called for PCI-attached b43 (or b44)
-> > devices.
-> 
-> Yeah. But devices connected to the ssb-pci-core _are_ PCI attached
-> devices.
-> 
-> > Or are you saying the RETRY_TIMEOUT change is inappropriate for a
-> > device behind an SSB->PCI bridge?
-> 
-> No. But we already handle that, because the glue code
-> (pcihost_wrapper.c) is used for both types.
+I think this is going to make my b43 PCI-E card not work...I'll try
+it and get back to you...
 
-Thanks for the explanation!
-
+John
 -- 
 John W. Linville		Someday the world will need a hero, and you
 linville at tuxdriver.com			might be all we have.  Be ready.
