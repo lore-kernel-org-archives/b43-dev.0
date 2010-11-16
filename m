@@ -1,86 +1,54 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 11 Nov 2010 12:02:55 -0600
-Subject: [PATCH] b43legacy: Fix compile on ARM architecture
-In-Reply-To: <4CDC2C80.6030807@arndnet.de>
-References: <4cdc2b80.RuMMb1PuVmklU3JJ%Larry.Finger@lwfinger.net>
-	<4CDC2C80.6030807@arndnet.de>
-Message-ID: <4CDC2FCF.9020902@lwfinger.net>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Tue, 16 Nov 2010 15:40:25 -0500
+Subject: [PATCH] ssb: Clear RETRY_TIMEOUT in PCI Configuration
+In-Reply-To: <1289425953.17777.5.camel@maggie>
+References: <4cbddbab.aeEgjpVFDD9GDTuy%Larry.Finger@lwfinger.net>
+	<1287522271.24543.4.camel@maggie>
+	<AANLkTikcKHAKQ9x1C5pyQiY5aOf4jGFcC_-af67YDg9S@mail.gmail.com>
+	<1289344415.11453.1.camel@maggie>
+	<20101110173725.GA2714@tuxdriver.com>
+	<1289425953.17777.5.camel@maggie>
+Message-ID: <20101116204024.GD10774@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Hannemann <arnd@arndnet.de>
-Cc: John W Linville <linville@tuxdriver.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On 11/11/2010 11:48 AM, Arnd Hannemann wrote:
-> Am 11.11.2010 18:44, schrieb Larry Finger:
->> From: Arnd Hannemann <arnd@arndnet.de>
->>
->> When b43legacy is compiled on the arm platform, the following errors are seen:
->>
->>   CC [M]  drivers/net/wireless/b43legacy/xmit.o
->> In file included from include/net/dst.h:11,
->> from drivers/net/wireless/b43legacy/xmit.c:31:
->> include/net/dst_ops.h:28: error: expected ':', ',', ';', '}' or '__attribute__'
->>    before '____cacheline_aligned_in_smp'
->> include/net/dst_ops.h: In function 'dst_entries_get_fast':
->> include/net/dst_ops.h:33: error: 'struct dst_ops' has no member named
->>    'pcpuc_entries'
->> include/net/dst_ops.h: In function 'dst_entries_get_slow':
->> include/net/dst_ops.h:41: error: 'struct dst_ops' has no member named
->>    'pcpuc_entries'
->> include/net/dst_ops.h: In function 'dst_entries_add':
->> include/net/dst_ops.h:49: error: 'struct dst_ops' has no member named
->>    'pcpuc_entries'
->> include/net/dst_ops.h: In function 'dst_entries_init':
->> include/net/dst_ops.h:55: error: 'struct dst_ops' has no member named
->>    'pcpuc_entries'
->> include/net/dst_ops.h: In function 'dst_entries_destroy':
->> include/net/dst_ops.h:60: error: 'struct dst_ops' has no member named
->>    'pcpuc_entries'
->> make[4]: *** [drivers/net/wireless/b43legacy/xmit.o] Error 1
->> make[3]: *** [drivers/net/wireless/b43legacy] Error 2
->> make[2]: *** [drivers/net/wireless] Error 2
->> make[1]: *** [drivers/net] Error 2
->> make: *** [drivers] Error 2
->>
->> The cause is a missing include of <linux/cache.h>, which is present for
->> i386 and x86_64 architectures, but not for arm.
->>
->> Signed-off-by: Arnd Hannemann <arnd@arndnet.de>
->> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
->> Cc: Stable <stable@kernel.org>
->> ---
->>
->> John,
->>
->> Once I get the ability to cross-compile ARM architecture, I will check to
->> see if the equivalent patch is needed for b43.
-> 
-> b43 compiles fine for me for the same target.
-> 
-> Thanks,
-> Arnd
-> 
->>
->> Larry
->> ---
->>
->> Index: linux-2.6/include/net/dst_ops.h
->> ===================================================================
->> --- linux-2.6.orig/include/net/dst_ops.h
->> +++ linux-2.6/include/net/dst_ops.h
->> @@ -2,6 +2,7 @@
->>  #define _NET_DST_OPS_H
->>  #include <linux/types.h>
->>  #include <linux/percpu_counter.h>
->> +#include <linux/cache.h>
->>  
->>  struct dst_entry;
->>  struct kmem_cachep;
+On Wed, Nov 10, 2010 at 10:52:33PM +0100, Michael B?sch wrote:
+> On Wed, 2010-11-10 at 12:37 -0500, John W. Linville wrote: 
 
-After I sent this, it occurs to me that the extra include might be in
-b43legacy/xmit.c, not in include/dst_ops.h. Any thoughts and or suggestions? If
-that is the case, then b43 would likely break too.
+> > Does the other patch handle this case (i.e. devices behind SSB->PCI
+> > bridge)?  If so, can you explain how?
+> 
+> Yes. For embedded it goes:
+> 
+> native-ssb -> pci-core -> pci-bridge module -> wireless ssb
+> 
+> For PCI it goes:
+> 
+> native pci bus -> pci-bridge module -> wireless ssb
+> 
+> So you see that the pci bridge module is the bus glue for all SSB
+> based PCI devices. So we do not need the workaround in the pci-core
+> driver code. Just in the pci-bridge code (which is 
+> drivers/ssb/pcihost_wrapper.c)
+> 
+> > It looks to me like the code
+> > in ssb_pcihost_register is only called for PCI-attached b43 (or b44)
+> > devices.
+> 
+> Yeah. But devices connected to the ssb-pci-core _are_ PCI attached
+> devices.
+> 
+> > Or are you saying the RETRY_TIMEOUT change is inappropriate for a
+> > device behind an SSB->PCI bridge?
+> 
+> No. But we already handle that, because the glue code
+> (pcihost_wrapper.c) is used for both types.
 
-Larry
+Thanks for the explanation!
+
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
