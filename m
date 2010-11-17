@@ -1,37 +1,43 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Wed, 17 Nov 2010 18:12:56 +0100
-Subject: [PATCH] ssb: fail registration for unknown SPROM revision
-In-Reply-To: <20101116212321.GF10774@tuxdriver.com>
-	(sfid-20101116_162951_428051_09CF3C97)
-References: <1288823326-9686-1-git-send-email-zajec5@gmail.com>
-	<1288823326-9686-2-git-send-email-zajec5@gmail.com>
-	<20101116212321.GF10774@tuxdriver.com>
-	(sfid-20101116_162951_428051_09CF3C97)
-Message-ID: <1290013976.2513.14.camel@maggie>
+From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 17 Nov 2010 19:52:13 +0100
+Subject: [PATCH] ssb: drop BCM4328 hack for SPROM revision
+Message-ID: <1290019933-9924-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Michael Gerdau <mgd@qata.de>
+Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Tue, 2010-11-16 at 16:23 -0500, John W. Linville wrote: 
-> > -		ssb_printk(KERN_WARNING PFX "Unsupported SPROM"
-> > -			   "  revision %d detected. Will extract"
-> > -			   " v1\n", out->revision);
-> > -		out->revision = 1;
-> > -		sprom_extract_r123(out, in);
-> > +		ssb_printk(KERN_ERR PFX "Unsupported SPROM revision %d"
-> > +			   " detected\n", out->revision);
-> > +		return -EINVAL;
-> >  	}
-> >  
-> >  	if (out->boardflags_lo == 0xFFFF)
-> 
-> I think this is going to make my b43 PCI-E card not work...I'll try
-> it and get back to you...
+This hacks leads to incorrect SPROM parsing for me and reading for example MAC
+as: 00:00:00:54:00:00. Michael G. who introduced this confirmed it is not
+needed anymore.
 
-Hm, what version does it report?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+Michael: I guess I could add your Tested-by. Is that right?
 
+John: it's 2.6.38 ofc. It should apply cleanly no matter if you applied my
+previous patch for guessing unknown SPROM revision. There is not dependence
+between that 2 patches.
+---
+ drivers/ssb/pci.c |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index b5343ac..f529663 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -580,10 +580,6 @@ static int sprom_extract(struct ssb_bus *bus, struct ssb_sprom *out,
+ 		 * Always extract r1. */
+ 		out->revision = 1;
+ 		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n", out->revision);
+-	} else if (bus->chip_id == 0x4321) {
+-		/* the BCM4328 has a chipid == 0x4321 and a rev 4 SPROM */
+-		out->revision = 4;
+-		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n", out->revision);
+ 	}
+ 
+ 	switch (out->revision) {
 -- 
-Greetings Michael.
+1.6.0.4
