@@ -1,43 +1,85 @@
 From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 17 Nov 2010 19:52:13 +0100
-Subject: [PATCH] ssb: drop BCM4328 hack for SPROM revision
-Message-ID: <1290019933-9924-1-git-send-email-zajec5@gmail.com>
+Date: Wed, 17 Nov 2010 20:56:48 +0100
+Subject: [RFC][PATCH] b43: rfkill: use HI enabled bit for all devices
+Message-ID: <1290023808-26672-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Michael Gerdau <mgd@qata.de>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-This hacks leads to incorrect SPROM parsing for me and reading for example MAC
-as: 00:00:00:54:00:00. Michael G. who introduced this confirmed it is not
-needed anymore.
+Devices which use LO enabled bit are covered by b43legacy
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-Michael: I guess I could add your Tested-by. Is that right?
-
-John: it's 2.6.38 ofc. It should apply cleanly no matter if you applied my
-previous patch for guessing unknown SPROM revision. There is not dependence
-between that 2 patches.
+Is this alright to use inline for this? Is my WARN_ON OK?
 ---
- drivers/ssb/pci.c |    4 ----
- 1 files changed, 0 insertions(+), 4 deletions(-)
+ drivers/net/wireless/b43/main.c   |    2 ++
+ drivers/net/wireless/b43/rfkill.c |   21 +++------------------
+ drivers/net/wireless/b43/rfkill.h |    4 ++--
+ 3 files changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
-index b5343ac..f529663 100644
---- a/drivers/ssb/pci.c
-+++ b/drivers/ssb/pci.c
-@@ -580,10 +580,6 @@ static int sprom_extract(struct ssb_bus *bus, struct ssb_sprom *out,
- 		 * Always extract r1. */
- 		out->revision = 1;
- 		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n", out->revision);
--	} else if (bus->chip_id == 0x4321) {
--		/* the BCM4328 has a chipid == 0x4321 and a rev 4 SPROM */
--		out->revision = 4;
--		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n", out->revision);
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index fa48803..9b71bb1 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4527,6 +4527,8 @@ static int b43_op_start(struct ieee80211_hw *hw)
+ 		}
  	}
  
- 	switch (out->revision) {
++	/* we don't expect older devices which need other RFKILL check */
++	B43_WARN_ON(dev->dev->id.revision < 3);
+ 	/* XXX: only do if device doesn't support rfkill irq */
+ 	wiphy_rfkill_start_polling(hw->wiphy);
+ 
+diff --git a/drivers/net/wireless/b43/rfkill.c b/drivers/net/wireless/b43/rfkill.c
+index 78016ae..012ed2f 100644
+--- a/drivers/net/wireless/b43/rfkill.c
++++ b/drivers/net/wireless/b43/rfkill.c
+@@ -26,25 +26,10 @@
+ 
+ 
+ /* Returns TRUE, if the radio is enabled in hardware. */
+-bool b43_is_hw_radio_enabled(struct b43_wldev *dev)
++inline bool b43_is_hw_radio_enabled(struct b43_wldev *dev)
+ {
+-	if (dev->phy.rev >= 3 || dev->phy.type == B43_PHYTYPE_LP) {
+-		if (!(b43_read32(dev, B43_MMIO_RADIO_HWENABLED_HI)
+-		      & B43_MMIO_RADIO_HWENABLED_HI_MASK))
+-			return 1;
+-	} else {
+-		/* To prevent CPU fault on PPC, do not read a register
+-		 * unless the interface is started; however, on resume
+-		 * for hibernation, this routine is entered early. When
+-		 * that happens, unconditionally return TRUE.
+-		 */
+-		if (b43_status(dev) < B43_STAT_STARTED)
+-			return 1;
+-		if (b43_read16(dev, B43_MMIO_RADIO_HWENABLED_LO)
+-		    & B43_MMIO_RADIO_HWENABLED_LO_MASK)
+-			return 1;
+-	}
+-	return 0;
++	return !(b43_read32(dev, B43_MMIO_RADIO_HWENABLED_HI)
++		& B43_MMIO_RADIO_HWENABLED_HI_MASK);
+ }
+ 
+ /* The poll callback for the hardware button. */
+diff --git a/drivers/net/wireless/b43/rfkill.h b/drivers/net/wireless/b43/rfkill.h
+index f046c3c..7aa8a5a 100644
+--- a/drivers/net/wireless/b43/rfkill.h
++++ b/drivers/net/wireless/b43/rfkill.h
+@@ -4,8 +4,8 @@
+ struct ieee80211_hw;
+ struct b43_wldev;
+ 
+-void b43_rfkill_poll(struct ieee80211_hw *hw);
++inline bool b43_is_hw_radio_enabled(struct b43_wldev *dev);
+ 
+-bool b43_is_hw_radio_enabled(struct b43_wldev *dev);
++void b43_rfkill_poll(struct ieee80211_hw *hw);
+ 
+ #endif /* B43_RFKILL_H_ */
 -- 
 1.6.0.4
