@@ -1,58 +1,37 @@
-From: Michael Gerdau <mgd@qata.de>
-Date: Thu, 18 Nov 2010 01:12:06 +0100
-Subject: [PATCH] ssb: drop BCM4328 hack for SPROM revision
-In-Reply-To: <1290019933-9924-1-git-send-email-zajec5@gmail.com>
-References: <1290019933-9924-1-git-send-email-zajec5@gmail.com>
-Message-ID: <201011180112.18813.mgd@qata.de>
+From: Daniel Klaffenbach <danielklaffenbach@gmail.com>
+Date: Wed, 17 Nov 2010 23:48:37 +0100
+Subject: BCM4318KFBG not recognized by b43
+In-Reply-To: <AANLkTikYJ0Yd1_8AjZ2T-6jSGCi5WqYy2yRdpt1Vfz1d@mail.gmail.com>
+References: <AANLkTinoQH52c33L2UMo3=03Oq2qGqNDcnQ3iiffZ334@mail.gmail.com>
+	<4CC1F137.9050409@lwfinger.net>
+	<AANLkTikYJ0Yd1_8AjZ2T-6jSGCi5WqYy2yRdpt1Vfz1d@mail.gmail.com>
+Message-ID: <201011172348.43346.danielklaffenbach@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-> This hacks leads to incorrect SPROM parsing for me and reading for
-> example MAC as: 00:00:00:54:00:00. Michael G. who introduced this
-> confirmed it is not needed anymore.
-> 
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> ---
-> Michael: I guess I could add your Tested-by. Is that right?
+On Wednesday 17 November 2010 22:39:31 Rafa? Mi?ecki wrote:
+> Daniel: anything new on this? Could you put that card in some "normal"
+> machine where it's relatively easy to install deubgging symbols?
+I'm afraid no. My wireless router is the only machine in my environment with a 
+mini-PCI slot.
 
-That ist right. I suppose the correct entry would be
-Tested-by: Michael Gerdau <mgd@qata.de>
+I could however compile the kernel for my OpenWRT box with debugging symbols 
+(KERNEL_DEBUG_INFO in OpenWRT config), if this helps.
 
-> John: it's 2.6.38 ofc. It should apply cleanly no matter if you applied
-> my previous patch for guessing unknown SPROM revision. There is not
-> dependence between that 2 patches.
-> ---
->  drivers/ssb/pci.c |    4 ----
->  1 files changed, 0 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
-> index b5343ac..f529663 100644
-> --- a/drivers/ssb/pci.c
-> +++ b/drivers/ssb/pci.c
-> @@ -580,10 +580,6 @@ static int sprom_extract(struct ssb_bus *bus, struct
-> ssb_sprom *out, * Always extract r1. */
->  		out->revision = 1;
->  		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n",
-> out->revision); -	} else if (bus->chip_id == 0x4321) {
-> -		/* the BCM4328 has a chipid == 0x4321 and a rev 4 SPROM */
-> -		out->revision = 4;
-> -		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n",
-> out->revision); }
-> 
->  	switch (out->revision) {
+Could the PCI vendor id alone be the reason for this problem? As I mentioned 
+earlier I've added the ID to b43_pci_bridge.c, but I am not sure whether this 
+is sufficient or not.
 
 
--- 
- Michael Gerdau       email: mgd at qata.de
- GPG-keys available on request or at public keyserver
+Regards,
+Daniel
 -------------- next part --------------
 A non-text attachment was scrubbed...
 Name: not available
 Type: application/pgp-signature
 Size: 198 bytes
 Desc: This is a digitally signed message part.
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101118/465405ee/attachment.sig>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101117/707eee94/attachment.sig>
