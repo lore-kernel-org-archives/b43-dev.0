@@ -1,94 +1,58 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 17 Nov 2010 22:39:31 +0100
-Subject: BCM4318KFBG not recognized by b43
-In-Reply-To: <4CC1F137.9050409@lwfinger.net>
-References: <AANLkTinoQH52c33L2UMo3=03Oq2qGqNDcnQ3iiffZ334@mail.gmail.com>
-	<AANLkTik_pkUw4B0yVXDpoXAOSeb-HqSb3VWbGLsNW_kA@mail.gmail.com>
-	<AANLkTi=FoL44CquvC68BU65HPXf4dtET0uq3cLO5Bgf1@mail.gmail.com>
-	<AANLkTinq8diNDc_0TA7jUDrAeNHWLLOVbVQuW5hpfJ3y@mail.gmail.com>
-	<4CC1F137.9050409@lwfinger.net>
-Message-ID: <AANLkTikYJ0Yd1_8AjZ2T-6jSGCi5WqYy2yRdpt1Vfz1d@mail.gmail.com>
+From: Michael Gerdau <mgd@qata.de>
+Date: Thu, 18 Nov 2010 01:12:06 +0100
+Subject: [PATCH] ssb: drop BCM4328 hack for SPROM revision
+In-Reply-To: <1290019933-9924-1-git-send-email-zajec5@gmail.com>
+References: <1290019933-9924-1-git-send-email-zajec5@gmail.com>
+Message-ID: <201011180112.18813.mgd@qata.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-2010/10/22 Larry Finger <Larry.Finger@lwfinger.net>:
-> On 10/22/2010 04:15 AM, Daniel Klaffenbach wrote:
->> I got a little bit further by adding the vendor id to
->> b43_pci_bridge.c. Note that it now detects the card correctly (4318).
->>
->> root at OpenWrt:/# modprobe b43
->> Segmentation fault
->>
->> b43-phy0: Broadcom 4318 WLAN found (core revision 9)
->> Data bus error, epc == 8013e42c, ra == 80784704
->> Oops[#1]:
->> Cpu 0
->> $ 0 ? : 00000000 1000bc00 200002ff 00000000
->> $ 4 ? : c0000f9c 00000004 0c040083 00000000
->> $ 8 ? : 00000010 00000080 00000004 8026e000
->> $12 ? : 80273920 00000002 00000001 00000002
->> $16 ? : 80e7ad00 802e7000 00000000 807a013c
->> $20 ? : 8027a6f4 00000000 00407ed4 00000000
->> $24 ? : 3b9aca00 80014630
->> $28 ? : 802a0000 802a1d48 80e7ad00 80784704
->> Hi ? ?: 00000018
->> Lo ? ?: 52101200
->> epc ? : 8013e42c 0x8013e42c
->> ? ? Not tainted
->> ra ? ?: 80784704 0x80784704
->> Status: 1000bc03 ? ?KERNEL EXL IE
->> Cause : 0080001c
->> PrId ?: 00024000 (Broadcom BCM4710)
->> Modules linked in: b43(+) usb_storage ohci_hcd ip6t_REJECT ip6t_LOG
->> ip6t_rt ip6t_hbh ip6t_mh ip6t_ipv6header ip6t_frag ip6t_eui64 ip6t_ah
->> ip6table_raw ip6_queue ip6table_mangle ip6table_filter ip6_tables
->> nf_conntrack_ipv6 nf_nat_tftp nf_conntrack_tftp nf_nat_irc
->> nf_conntrack_irc nf_nat_ftp nf_conntrack_ftp xt_iprange xt_string
->> ipt_MASQUERADE iptable_nat nf_nat xt_NOTRACK iptable_raw xt_state
->> nf_conntrack_ipv4 nf_defrag_ipv4 nf_conntrack sd_mod ipt_REJECT
->> xt_TCPMSS ipt_LOG xt_comment xt_multiport xt_mac xt_limit
->> iptable_mangle iptable_filter ip_tables xt_tcpudp x_tables sit ext2
->> tunnel4 ext3 jbd nls_utf8 mac80211 usbcore ts_fsm ts_bm ts_kmp
->> switch_core scsi_mod nls_base mbcache crc16 cfg80211 compat arc4
->> aes_generic deflate ecb cbc ipv6 diag [last unloaded: switch_core]
->> Process insmod (pid: 1115, threadinfo=802a0000, task=80dc5a38, tls=00000000)
->> Stack : 00000662 800dfefc 00004318 00000009 80a27f84 80a27f2c 00000000 80e7ad00
->> ? ? ? ? 80851000 80851400 80e7ad88 802e72f8 00000001 806f4380 807a0120 80851058
->> ? ? ? ? 807a013c 807a013c 8027a6f4 00000000 00407ed4 00000002 7fb5beb8 80186954
->> ? ? ? ? 80851058 806f4380 fffffffe 802542cc ffffffed ffffffed 80855180 80167598
->> ? ? ? ? 8027a6f4 80122cf8 80340010 00000004 808551b4 80855180 807a013c 8016774c
->> ? ? ? ? ...
->> Call Trace:[<800dfefc>] 0x800dfefc
->> [<80186954>] 0x80186954
->> [<80167598>] 0x80167598
->> [<80122cf8>] 0x80122cf8
->> [<8016774c>] 0x8016774c
->> [<80122d40>] 0x80122d40
->> [<801676e0>] 0x801676e0
->> [<80166c90>] 0x80166c90
->> [<80122dd0>] 0x80122dd0
->> [<80166458>] 0x80166458
->> [<80083d38>] 0x80083d38
->> [<80632000>] 0x80632000
->> [<80167adc>] 0x80167adc
->> [<80055054>] 0x80055054
->> [<80632000>] 0x80632000
->> [<80632020>] 0x80632020
->> [<8000c4e0>] 0x8000c4e0
->> [<8004271c>] 0x8004271c
->> [<80055730>] 0x80055730
->> [<8008e040>] 0x8008e040
->> [<80003630>] 0x80003630
->
-> Any chance of getting these addresses translated into something a bit more
-> symbolic? There is a package that does this, but I don't remember the name. Can
-> anyone help with that part?
+> This hacks leads to incorrect SPROM parsing for me and reading for
+> example MAC as: 00:00:00:54:00:00. Michael G. who introduced this
+> confirmed it is not needed anymore.
+> 
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> Michael: I guess I could add your Tested-by. Is that right?
 
-Daniel: anything new on this? Could you put that card in some "normal"
-machine where it's relatively easy to install deubgging symbols?
+That ist right. I suppose the correct entry would be
+Tested-by: Michael Gerdau <mgd@qata.de>
+
+> John: it's 2.6.38 ofc. It should apply cleanly no matter if you applied
+> my previous patch for guessing unknown SPROM revision. There is not
+> dependence between that 2 patches.
+> ---
+>  drivers/ssb/pci.c |    4 ----
+>  1 files changed, 0 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+> index b5343ac..f529663 100644
+> --- a/drivers/ssb/pci.c
+> +++ b/drivers/ssb/pci.c
+> @@ -580,10 +580,6 @@ static int sprom_extract(struct ssb_bus *bus, struct
+> ssb_sprom *out, * Always extract r1. */
+>  		out->revision = 1;
+>  		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n",
+> out->revision); -	} else if (bus->chip_id == 0x4321) {
+> -		/* the BCM4328 has a chipid == 0x4321 and a rev 4 SPROM */
+> -		out->revision = 4;
+> -		ssb_dprintk(KERN_DEBUG PFX "SPROM treated as revision %d\n",
+> out->revision); }
+> 
+>  	switch (out->revision) {
+
 
 -- 
-Rafa?
+ Michael Gerdau       email: mgd at qata.de
+ GPG-keys available on request or at public keyserver
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 198 bytes
+Desc: This is a digitally signed message part.
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101118/465405ee/attachment.sig>
