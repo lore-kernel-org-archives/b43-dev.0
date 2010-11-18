@@ -1,48 +1,38 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 18 Nov 2010 11:29:30 -0600
-Subject: [PATCH] ssb: fail registration for unknown SPROM revision
-In-Reply-To: <1290100075.12596.8.camel@maggie>
-References: <1288823326-9686-1-git-send-email-zajec5@gmail.com>	
-	<1288823326-9686-2-git-send-email-zajec5@gmail.com>	
-	<20101116212321.GF10774@tuxdriver.com>
-	<1290013976.2513.14.camel@maggie>	
-	<20101118162748.GB2468@tuxdriver.com>
-	<1290098156.12596.2.camel@maggie>	
-	<AANLkTimh_8X1uRPudmQLDOTeA_X0ciR9BbDgyahLDMSs@mail.gmail.com>	
-	(sfid-20101118_174421_892253_3B53C8D3)
-	<1290098865.12596.6.camel@maggie>	 <4CE55C3B.6020803@lwfinger.net>
-	(sfid-20101118_180314_721728_2D534AE3)
-	<1290100075.12596.8.camel@maggie>
-Message-ID: <4CE5627A.6060206@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 18 Nov 2010 21:11:41 +0100
+Subject: [PATCH 1/3] b43: N-PHY: fix BPHY init
+Message-ID: <1290111103-19308-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <mb@bu3sch.de>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 11/18/2010 11:07 AM, Michael B?sch wrote:
-> On Thu, 2010-11-18 at 11:02 -0600, Larry Finger wrote: 
->> On 11/18/2010 10:47 AM, Michael B?sch wrote:
->>> If it would really succeed to initialize the device, this would be a
->>> regulatory issue, because the sprom contains various power amplifier
->>> calibration data. I think it should rather fail and be fixed correctly
->>> instead of incorrectly using rev1 in that case.
->>
->> I agree that it is better to fail than use incorrect power data.
->>
->> Would it be useful if the SPROM data were logged when the revision is crap?
-> 
-> 
-> We need to keep in mind that there will be no new SSB devices.
-> It seems pretty much EOL'ed by Broadcom.
-> So I'm not sure whether this would be of any use or just random dead
-> code.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Good point. When we get the data for the one case we know exists, we will have a
-better idea if a special quirk for this case is feasible. Assuming that this is
-not the only example of this hardware, then we might limit the breakage from
-this patch. At least the random code would be needed and useful in keeping our
-maintainer happy, which has a some merit.
-
-Larry
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 2c60793..ff0c2b9 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -1579,13 +1579,13 @@ static void b43_nphy_bphy_init(struct b43_wldev *dev)
+ 	u16 val;
+ 
+ 	val = 0x1E1F;
+-	for (i = 0; i < 14; i++) {
++	for (i = 0; i < 16; i++) {
+ 		b43_phy_write(dev, B43_PHY_N_BMODE(0x88 + i), val);
+ 		val -= 0x202;
+ 	}
+ 	val = 0x3E3F;
+ 	for (i = 0; i < 16; i++) {
+-		b43_phy_write(dev, B43_PHY_N_BMODE(0x97 + i), val);
++		b43_phy_write(dev, B43_PHY_N_BMODE(0x98 + i), val);
+ 		val -= 0x202;
+ 	}
+ 	b43_phy_write(dev, B43_PHY_N_BMODE(0x38), 0x668);
+-- 
+1.7.1
