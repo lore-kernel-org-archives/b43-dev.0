@@ -1,39 +1,54 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Fri, 19 Nov 2010 18:15:17 +0100
-Subject: [PATCH V2] b43: rfkill: use HI enabled bit for all devices
-In-Reply-To: <AANLkTimFQ9UYWKtHpjXBTS0PPJcB_vPD7kawfffY_c+-@mail.gmail.com>
-	(sfid-20101119_180023_531984_6B3BA604)
-References: <1290028477-6462-1-git-send-email-zajec5@gmail.com>
-	<AANLkTikXqg9boY1H_OPAvs7WPd6SXUt8DpykRHuRxB6E@mail.gmail.com>
-	<1290184873.23033.3.camel@maggie>
-	<AANLkTimFQ9UYWKtHpjXBTS0PPJcB_vPD7kawfffY_c+-@mail.gmail.com>
-	(sfid-20101119_180023_531984_6B3BA604)
-Message-ID: <1290186917.23033.8.camel@maggie>
+From: Daniel Klaffenbach <danielklaffenbach@gmail.com>
+Date: Fri, 19 Nov 2010 18:26:25 +0100
+Subject: BCM4318KFBG not recognized by b43
+In-Reply-To: <AANLkTimAk2Mf7PvhyOZ3PGEg15hgznbySADn6OpbGS4F@mail.gmail.com>
+References: <AANLkTinoQH52c33L2UMo3=03Oq2qGqNDcnQ3iiffZ334@mail.gmail.com>
+	<201011172348.43346.danielklaffenbach@gmail.com>
+	<AANLkTimAk2Mf7PvhyOZ3PGEg15hgznbySADn6OpbGS4F@mail.gmail.com>
+Message-ID: <201011191826.31024.danielklaffenbach@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>
-Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Fri, 2010-11-19 at 17:59 +0100, G?bor Stefanik wrote: 
-> > There's no difference.
-> > (int)0 implicitly casts to false and anything else to true.
-> 
-> I know, just for the sake of coding style.
+Hi,
 
-All of my code in b43 uses 0/1. That's just less characters to write
-and is as readable as true/false (to me).
-And most b43 G code existed before bool was added to the kernel. ;)
+On Thursday 18 November 2010 00:10:23 Rafa? Mi?ecki wrote:
+> Would be nice. I was afraid compiling kernel for OpenWRT won't be
+> easy/fast.
+I've recompiled the latest OpenWRT trunk. I did turn on debugging symbols and 
+I've also applied the patch I did send earlier and to my surprise the module 
+loded without any complaints. dmesg gave me the following message:
 
-> Same as initializing
-> pointers to NULL, not 0 (though AFAIK there are platforms where 0x0 is
-> a valid memory address, so using NULL is more than just coding style).
+b43-phy0: Broadcom 4318 WLAN found (core revision 9)
+ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
+Registered led device: b43-phy0::tx
+Registered led device: b43-phy0::rx
+Registered led device: b43-phy0::radio
+Broadcom 43xx driver loaded [ Features: PL, GPIO LED Mask: 0x000f,
+Firmware-ID: FW13 ]
+b43 ssb1:0: firmware: requesting b43/ucode5.fw
+b43 ssb1:0: firmware: requesting b43/pcm5.fw
+b43 ssb1:0: firmware: requesting b43/b0g0initvals5.fw
+b43 ssb1:0: firmware: requesting b43/b0g0bsinitvals5.fw
+b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
 
-No it is not. C handles the case for NULL not being zero and generates
-correct code even if 0 is used. But Linux doesn't support those
-platforms due to other reasons (memset(..., 0, ...) on struct
-with pointers, for example).
+After doing some basic testing I can confirm that the card is working! I do not 
+know why it did give me the errors the last time, but I also did a nvram reset 
+of the box today - maybe that did the trick.
 
--- 
-Greetings Michael.
+It would be nice if you could review my changes to 
+drivers/ssb/b43_pci_bridge.c and include/linux/pci_ids.h and add the vendor id 
+upstream.
+
+
+Regards,
+Daniel
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 198 bytes
+Desc: This is a digitally signed message part.
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101119/3ee0c1d3/attachment.sig>
