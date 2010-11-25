@@ -1,36 +1,37 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 22 Nov 2010 13:12:21 -0600
-Subject: b43 error under heavy load
-In-Reply-To: <1290451982.20888.2.camel@maggie>
-References: <4CEAB969.20702@lwfinger.net>	
-	(sfid-20101122_194209_226222_FFFFFFFFA98AFC1F)
-	<1290451982.20888.2.camel@maggie>
-Message-ID: <4CEAC095.7020706@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 25 Nov 2010 10:22:22 +0100
+Subject: Request for bisecting DMA partial fix
+In-Reply-To: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
+References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
+Message-ID: <AANLkTintrxtNDKJRPiNXAvr2XX3Fa5ZNBqwca59d9GfV@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <mb@bu3sch.de>
-Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
+To: b43-dev@lists.infradead.org
 
-On 11/22/2010 12:53 PM, Michael B?sch wrote:
-> On Mon, 2010-11-22 at 12:41 -0600, Larry Finger wrote: 
->> Under heavy load with multiple streams, I'm getting errors from my BCM4312
->> (14e4:4315) device as follows:
->>
->> b43-phy0 debug: TX-status contains invalid cookie: 0x0D4D
->> b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 76
->> b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 78
->> (and continues).
->>
->> Clearly that cookie is garbage as it has a slot number of 0. Any suggestions on
->> diagnostic information that I could dump to help debug this?
-> 
-> I think that probably is a firmware or hardware bug. The affected
-> kernel code was not changed in years, as far as I know.
+W dniu 8 listopada 2010 20:42 u?ytkownik Rafa? Mi?ecki
+<zajec5@gmail.com> napisa?:
+> We are quite sure that some patch than gone into mainline between
+> 2.6.34 and 2.6.35 partially fixed DMA errors. It was not b43-specific
+> fix and it probably wasn't commited via wireless-testing.
+>
+> The problem is this fix was only partial, under high transfer this is
+> still noticeable. I think the shortest way to understand this and fix
+> it totally is to find commit that partially fixed DMA errors.
+>
+> So we need someone with:
+> 1) Machine that throws DMA errors on 2.6.34 and works noticeably
+> better with 2.6.35
+> 2) Time to bisect commit
+> 3) Basic kernel building skills (however I believe we can help in case
+> of problems)
+>
+> I believe bisecting has to be done on Linus's tree, between mentioned kernels.
+>
+> So is there anyone around who could handle this task?
 
-Thanks. I'll see if I can figure out a way for the driver to recover more
-gracefully. In the meantime, I will be dumping the entire TX status struct to
-see if that helps in seeing what is wrong.
+Anyone? Please?
 
-Larry
+-- 
+Rafa?
