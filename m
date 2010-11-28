@@ -1,53 +1,25 @@
-From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 28 Nov 2010 12:59:45 +0100
-Subject: [PATCH 4/4] b43: N-PHY: fix RSSI calibration
-In-Reply-To: <1290945585-20864-1-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 28 Nov 2010 13:01:43 +0100
+Subject: [PATCH 3/4] b43: N-PHY: initialize perical variable, add missing
+	call to CCA reset
+In-Reply-To: <1290945585-20864-3-git-send-email-zajec5@gmail.com>
 References: <1290945585-20864-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1290945585-20864-4-git-send-email-zajec5@gmail.com>
+	<1290945585-20864-3-git-send-email-zajec5@gmail.com>
+Message-ID: <AANLkTinwpM_GkhA9=ScaghnXdjV+-+U67aBgpewho1=0@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/phy_n.c |   14 ++++++++------
- 1 files changed, 8 insertions(+), 6 deletions(-)
+W dniu 28 listopada 2010 12:59 u?ytkownik Rafa? Mi?ecki
+<zajec5@gmail.com> napisa?:
+> + ? ? ? /* Specs don't say about reset here, but it makes wl and b43 dumps
+> + ? ? ? ? ?identical, it really seems wl performs this */
+> + ? ? ? b43_nphy_reset_cca(dev);
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 31bed83..bf09962 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -2064,7 +2064,10 @@ static void b43_nphy_rev2_rssi_cal(struct b43_wldev *dev, u8 type)
- 	u16 class, override;
- 	u8 regs_save_radio[2];
- 	u16 regs_save_phy[2];
-+
- 	s8 offset[4];
-+	u8 core;
-+	u8 rail;
- 
- 	u16 clip_state[2];
- 	u16 clip_off[2] = { 0xFFFF, 0xFFFF };
-@@ -2165,12 +2168,11 @@ static void b43_nphy_rev2_rssi_cal(struct b43_wldev *dev, u8 type)
- 		if (results_min[i] == 248)
- 			offset[i] = code - 32;
- 
--		if (i % 2 == 0)
--			b43_nphy_scale_offset_rssi(dev, 0, offset[i], 1, 0,
--							type);
--		else
--			b43_nphy_scale_offset_rssi(dev, 0, offset[i], 2, 1,
--							type);
-+		core = (i / 2) ? 2 : 1;
-+		rail = (i % 2) ? 1 : 0;
-+
-+		b43_nphy_scale_offset_rssi(dev, 0, offset[i], core, rail,
-+						type);
- 	}
- 
- 	b43_radio_maskset(dev, B2055_C1_PD_RSSIMISC, 0xF8, state[0]);
+If someone is interested in tools, dumps, let me know.
+
 -- 
-1.6.3.3
+Rafa?
