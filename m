@@ -1,25 +1,104 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 28 Nov 2010 13:01:43 +0100
-Subject: [PATCH 3/4] b43: N-PHY: initialize perical variable, add missing
-	call to CCA reset
-In-Reply-To: <1290945585-20864-3-git-send-email-zajec5@gmail.com>
-References: <1290945585-20864-1-git-send-email-zajec5@gmail.com>
-	<1290945585-20864-3-git-send-email-zajec5@gmail.com>
-Message-ID: <AANLkTinwpM_GkhA9=ScaghnXdjV+-+U67aBgpewho1=0@mail.gmail.com>
+From: Ariel Pedraza <pedrazaa@yahoo.com>
+Date: Mon, 29 Nov 2010 04:27:08 -0800 (PST)
+Subject: brcm80211 driver inject
+In-Reply-To: <AANLkTikp0r4H-FKP-9PAc83yD9AVd-JFfs-WxBCmkujc@mail.gmail.com>
+Message-ID: <533739.476.qm@web111407.mail.gq1.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-W dniu 28 listopada 2010 12:59 u?ytkownik Rafa? Mi?ecki
-<zajec5@gmail.com> napisa?:
-> + ? ? ? /* Specs don't say about reset here, but it makes wl and b43 dumps
-> + ? ? ? ? ?identical, it really seems wl performs this */
-> + ? ? ? b43_nphy_reset_cca(dev);
+I downloaded the compat-wireless-2010-10-11 from http://wireless.kernel.org/en/users/Download...
 
-If someone is interested in tools, dumps, let me know.
+--- El vie, 11/26/10, G?bor Stefanik <netrolller.3d@gmail.com> escribi?:
 
--- 
-Rafa?
+> De: G?bor Stefanik <netrolller.3d@gmail.com>
+> Asunto: Re: brcm80211 driver inject
+> A: "Ariel Pedraza" <pedrazaa@yahoo.com>
+> Cc: b43-dev at lists.infradead.org
+> Fecha: viernes, 26 de noviembre de 2010, 09:25 pm
+> 2010/11/26 Ariel Pedraza <pedrazaa@yahoo.com>:
+> > Hi, the /net/wireless/chan.c is different today, the
+> problem persist (negative channel) but cannot apply this
+> patch anymore even manually? do you know where can I found
+> a new patch version or tell me how to change in the new
+> source code please?
+> >
+> > Thank you
+> 
+> Hi!
+> 
+> Just checked the current wireless-testing, the code is
+> still the same.
+> What tree are you on?
+> 
+> --G?bor
+> 
+> >
+> >
+> > --- El lun, 10/18/10, G?bor Stefanik <netrolller.3d@gmail.com>
+> escribi?:
+> >
+> >> De: G?bor Stefanik <netrolller.3d@gmail.com>
+> >> Asunto: Re: brcm80211 driver inject
+> >> A: "Ariel Pedraza" <pedrazaa@yahoo.com>
+> >> Cc: b43-dev at lists.infradead.org
+> >> Fecha: lunes, 18 de octubre de 2010, 02:23 pm
+> >> On Mon, Oct 18, 2010 at 3:48 PM,
+> >> Ariel Pedraza <pedrazaa@yahoo.com>
+> >> wrote:
+> >> > Hi, did you know if there is a solution for
+> this
+> >> error?:
+> >> >
+> >> > "mon0 is on channel -1, but the AP uses
+> channel 1"
+> >> >
+> >> > on programs like aireplay-ng, I'm using the
+> brcm80211
+> >> driver.
+> >> >
+> >> > Thanks
+> >>
+> >> Known bug in mac80211.
+> >> http://patches.aircrack-ng.org/channel-negative-one-maxim.patch
+> >> fixes
+> >> it, but is unsuitable for inclusion, and some
+> kernel
+> >> developers
+> >> actually consider this a feature, and refuse to
+> fix it.
+> >>
+> >> >
+> >> >
+> >> >
+> >> >
+> >> >
+> _______________________________________________
+> >> > b43-dev mailing list
+> >> > b43-dev at lists.infradead.org
+> >> > http://lists.infradead.org/mailman/listinfo/b43-dev
+> >> >
+> >>
+> >>
+> >>
+> >> --
+> >> Vista: [V]iruses, [I]ntruders, [S]pyware,
+> [T]rojans and
+> >> [A]dware. :-)
+> >>
+> >
+> >
+> >
+> >
+> 
+> 
+> 
+> -- 
+> Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and
+> [A]dware. :-)
+> 
+
+
+      
