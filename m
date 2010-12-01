@@ -1,52 +1,42 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 1 Dec 2010 20:55:52 +0100
-Subject: Request for bisecting DMA partial fix
-In-Reply-To: <20101126173952.GC2370@markov>
-References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
-	<AANLkTintrxtNDKJRPiNXAvr2XX3Fa5ZNBqwca59d9GfV@mail.gmail.com>
-	<20101126173952.GC2370@markov>
-Message-ID: <AANLkTi=g3bXnGiqC3zH6gFVi8tLhoiHYbDnhWOXptRk7@mail.gmail.com>
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Wed, 01 Dec 2010 22:56:59 +0100
+Subject: RFC - removal of SPROM fallback
+In-Reply-To: <4CF69ED1.1070406@lwfinger.net>
+	(sfid-20101201_201546_954964_FFFFFFFFC298F049)
+References: <4CF69ED1.1070406@lwfinger.net>
+	(sfid-20101201_201546_954964_FFFFFFFFC298F049)
+Message-ID: <1291240619.1960.3.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: John Linville <linville@tuxdriver.com>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-W dniu 26 listopada 2010 18:39 u?ytkownik Eric Garrido
-<eric@ericgar.com> napisa?:
-> On 2010-11-25 10:22am, Rafa? Mi?ecki wrote:
->> W dniu 8 listopada 2010 20:42 u?ytkownik Rafa? Mi?ecki
->> <zajec5@gmail.com> napisa?:
->> > We are quite sure that some patch than gone into mainline between
->> > 2.6.34 and 2.6.35 partially fixed DMA errors. It was not b43-specific
->> > fix and it probably wasn't commited via wireless-testing.
->> >
->> > The problem is this fix was only partial, under high transfer this is
->> > still noticeable. I think the shortest way to understand this and fix
->> > it totally is to find commit that partially fixed DMA errors.
->> >
->> > So we need someone with:
->> > 1) Machine that throws DMA errors on 2.6.34 and works noticeably
->> > better with 2.6.35
->> > 2) Time to bisect commit
->> > 3) Basic kernel building skills (however I believe we can help in case
->> > of problems)
->> >
->> > I believe bisecting has to be done on Linus's tree, between mentioned kernels.
->> >
->> > So is there anyone around who could handle this task?
->>
->> Anyone? Please?
->
-> I have 2) and 3), plus have a Lenovo S10 that I haven't used in months
-> that appears (based on a GP and some research) to be susceptible to
-> this issue. In fact, I think I hit this issue and started using wl
-> oh so long ago (sorry!).
->
-> I'm away for the NA holiday, but I can try to verify I have 1) and
-> then poke at this on Sunday. I'll let you know.
+On Wed, 2010-12-01 at 13:15 -0600, Larry Finger wrote: 
+> At one time, we thought that we had found BCM43xx devices with no SPROM. In the
+> one case that I remember, it was because the SPROM had been relocated.
+> 
+> I now have the data from John's device that needs the revision fixup and I know
+> what is wrong - it is rev 2 with corrupted CRC. The defaulting to rev 1 is
+> getting almost everything wrong, including MAC address and vendor. My plan is to
+> write a better fixup routine.
+> 
+> At the moment, we have some SPROM fallback code that has not been fully
+> implemented, and is probably not needed. Are there any objections to stripping
+> this code out of drivers/ssb/pci.c and drivers/ssb/sprom.c?
 
-Ping? :)
+Yes. The code is needed for bcm63xx embedded devices. The code that uses
+it currently is not in mainline, though. It can be found in the OpenWRT
+repositories.
+
+But I still think that the SPROM fallback mechanism should be replaced
+by a "platform data" based mechanism, or similar. Just removing it
+without replacement is not an option, because bcm63xx embedded really
+does not have an SPROM.
+
+The bcm63xx was the reason the fallback mechanism was implemented in
+the first place. See git logs for more details.
 
 -- 
-Rafa?
+Greetings Michael.
