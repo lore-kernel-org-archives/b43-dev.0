@@ -1,115 +1,27 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 02 Dec 2010 10:36:53 -0600
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 2 Dec 2010 18:59:25 +0100
 Subject: [RFC/RFT] ssb: Attempt to recover from SPROM CRC error
-Message-ID: <4cf7cb25.SwkH7gALTG7E00Zb%Larry.Finger@lwfinger.net>
+In-Reply-To: <4cf7cb25.SwkH7gALTG7E00Zb%Larry.Finger@lwfinger.net>
+References: <4cf7cb25.SwkH7gALTG7E00Zb%Larry.Finger@lwfinger.net>
+Message-ID: <AANLkTikchuCXgBA+JqFEOUgrQFrhorP=n1UYvWOZpApp@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-Current code defaults to SPROM revision 1 if there is a CRC error. In at
-least one known case, most of the corrupt contents are reasonable and
-it is possible to extract the correct MAC address and TX power settings
-from what is read. With this patch, an attempt is made to match the
-apparent revision number with certain SPROM signatures. For those revisions
-without such a feature, a reasonable guess is made. If the apparent
-revision is invalid, or if the signature does not match, the previous
-behavior is kept.
+2010/12/2 Larry Finger <Larry.Finger@lwfinger.net>:
+> + ? ? ? ? ? ? ? ? ? ? ? revision = buf[SSB_SPROMSIZE_WORDS_R4 - 1] & 0x00FF;
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
+Should we define macro for that, to do not duplicate code from this part:
+sprom_extract(...):
+out->revision = in[size - 1] & 0x00FF;
+?
 
-John,
+I don't vote for any solution, but maybe one should be preferred and
+you just didn't notice that? I noone have problem with this liiitle
+duplication, ignore me ;)
 
-Could you please test this patch with your card?
-
-Thanks,
-
-Larry
----
-
-Index: linux-2.6/drivers/ssb/pci.c
-===================================================================
---- linux-2.6.orig/drivers/ssb/pci.c
-+++ linux-2.6/drivers/ssb/pci.c
-@@ -620,6 +620,7 @@ static int ssb_pci_sprom_get(struct ssb_
- 	const struct ssb_sprom *fallback;
- 	int err = -ENOMEM;
- 	u16 *buf;
-+	u16 revision;
- 
- 	if (!ssb_is_sprom_available(bus)) {
- 		ssb_printk(KERN_ERR PFX "No SPROM available!\n");
-@@ -671,6 +672,50 @@ static int ssb_pci_sprom_get(struct ssb_
- 			}
- 			ssb_printk(KERN_WARNING PFX "WARNING: Invalid"
- 				   " SPROM CRC (corrupt SPROM)\n");
-+			/* At this point, we have a faulty SPROM image.
-+			 * In case only part of it is corrupt, try to
-+			 * determine what rev we might have */
-+			revision = buf[SSB_SPROMSIZE_WORDS_R4 - 1] & 0x00FF;
-+			switch (revision) {
-+			case 4:
-+			case 5:
-+				/* Rev 4 and 5 have 0x5372 at byte offset
-+				 * SSB_SPROM4_SIG */
-+				if (buf[SSB_SPROM4_SIG >> 1] == 0x5372)
-+					sprom->revision = revision;
-+				break;
-+			case 8:
-+				/* Rev has 0x5372 at byte offset
-+				 * SSB_SPROM8_SIG */
-+				if (buf[SSB_SPROM8_SIG >> 1] == 0x5372)
-+					sprom->revision = revision;
-+				break;
-+			default:
-+				/* Try a rev 1, 2, or 3 size. This test will
-+				 * not be robust as these versions have no
-+				 * signature value */
-+				revision = buf[SSB_SPROMSIZE_WORDS_R123 - 1] &
-+					   0x00FF;
-+				switch (revision) {
-+				case 1:
-+					/* Rev 1 will have 0xFFFF in the board
-+					 * flags high position */
-+					if (buf[SSB_SPROM2_BFLHI>>1] == 0xFFFF)
-+						sprom->revision = revision;
-+					break;
-+				case 2:
-+				case 3:
-+					/* Revs 2 and 3 will not have 0xFFFF in
-+					 * the board flags high position */
-+					if (buf[SSB_SPROM2_BFLHI>>1] != 0xFFFF)
-+						sprom->revision = revision;
-+					break;
-+				default:
-+					/* The revision is not reasonable */
-+					break;
-+				}
-+				break;
-+			}
- 		}
- 	}
- 	err = sprom_extract(bus, sprom, buf, bus->sprom_size);
-Index: linux-2.6/include/linux/ssb/ssb_regs.h
-===================================================================
---- linux-2.6.orig/include/linux/ssb/ssb_regs.h
-+++ linux-2.6/include/linux/ssb/ssb_regs.h
-@@ -266,6 +266,7 @@
- #define  SSB_SPROM3_OFDMGPO		0x107A	/* G-PHY OFDM Power Offset (4 bytes, BigEndian) */
- 
- /* SPROM Revision 4 */
-+#define SSB_SPROM4_SIG			0x0040	/* Rev 4/5 signature */
- #define SSB_SPROM4_BFLLO		0x0044	/* Boardflags (low 16 bits) */
- #define SSB_SPROM4_BFLHI		0x0046  /* Board Flags Hi */
- #define SSB_SPROM4_IL0MAC		0x004C	/* 6 byte MAC address for a/b/g/n */
-@@ -329,6 +330,7 @@
- #define  SSB_SPROM5_GPIOB_P3_SHIFT	8
- 
- /* SPROM Revision 8 */
-+#define SSB_SPROM8_SIG			0x0080	/* Rev 8 signature */
- #define SSB_SPROM8_BOARDREV		0x0082	/* Board revision */
- #define SSB_SPROM8_BFLLO		0x0084	/* Board flags (bits 0-15) */
- #define SSB_SPROM8_BFLHI		0x0086	/* Board flags (bits 16-31) */
+-- 
+Rafa?
