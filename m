@@ -1,21 +1,63 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 2 Dec 2010 18:55:45 +0100
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Thu, 02 Dec 2010 23:15:54 +0100
 Subject: [RFC/RFT] ssb: Attempt to recover from SPROM CRC error
 In-Reply-To: <4cf7cb25.SwkH7gALTG7E00Zb%Larry.Finger@lwfinger.net>
+	(sfid-20101202_173713_192185_FFFFFFFF949EBC0D)
 References: <4cf7cb25.SwkH7gALTG7E00Zb%Larry.Finger@lwfinger.net>
-Message-ID: <AANLkTi=eFis8_Z6f2VXsuB2ojhygtkEFYnrr8ZXbyNwF@mail.gmail.com>
+	(sfid-20101202_173713_192185_FFFFFFFF949EBC0D)
+Message-ID: <1291328154.13801.0.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+Cc: John W Linville <linville@tuxdriver.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-2010/12/2 Larry Finger <Larry.Finger@lwfinger.net>:
-> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? if (buf[SSB_SPROM4_SIG >> 1] == 0x5372)
-> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? sprom->revision = revision;
+On Thu, 2010-12-02 at 10:36 -0600, Larry Finger wrote: 
+> Current code defaults to SPROM revision 1 if there is a CRC error. In at
+> least one known case, most of the corrupt contents are reasonable and
+> it is possible to extract the correct MAC address and TX power settings
+> from what is read. With this patch, an attempt is made to match the
+> apparent revision number with certain SPROM signatures. For those revisions
+> without such a feature, a reasonable guess is made. If the apparent
+> revision is invalid, or if the signature does not match, the previous
+> behavior is kept.
+> 
+> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+> ---
+> 
+> John,
+> 
+> Could you please test this patch with your card?
+> 
+> Thanks,
+> 
+> Larry
+> ---
+> 
+> Index: linux-2.6/drivers/ssb/pci.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/ssb/pci.c
+> +++ linux-2.6/drivers/ssb/pci.c
+> @@ -620,6 +620,7 @@ static int ssb_pci_sprom_get(struct ssb_
+>  	const struct ssb_sprom *fallback;
+>  	int err = -ENOMEM;
+>  	u16 *buf;
+> +	u16 revision;
+>  
+>  	if (!ssb_is_sprom_available(bus)) {
+>  		ssb_printk(KERN_ERR PFX "No SPROM available!\n");
+> @@ -671,6 +672,50 @@ static int ssb_pci_sprom_get(struct ssb_
+>  			}
+>  			ssb_printk(KERN_WARNING PFX "WARNING: Invalid"
+>  				   " SPROM CRC (corrupt SPROM)\n");
+> +			/* At this point, we have a faulty SPROM image.
+> +			 * In case only part of it is corrupt, try to
+> +			 * determine what rev we might have */
+> +			revision = buf[SSB_SPROMSIZE_WORDS_R4 - 1] & 0x00FF;
 
-Please use SPOFF macro for determining offset in buf.
+I think this could possibly overrun the buffer, or did I get something
+wrong?
 
 -- 
-Rafa?
+Greetings Michael.
