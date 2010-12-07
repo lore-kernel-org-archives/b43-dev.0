@@ -1,46 +1,48 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Tue, 07 Dec 2010 22:08:37 +0100
-Subject: [PATCH 2/4] b43: set TMS to work with current band width for N-PHY
-In-Reply-To: <1291755360-21570-3-git-send-email-zajec5@gmail.com>
-	(sfid-20101207_155651_681285_648FF7A9)
+From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
+Date: Tue, 7 Dec 2010 23:57:31 +0100
+Subject: [PATCH 0/4] Make N-PHY support experimental
+In-Reply-To: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
 References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
-	<1291755360-21570-3-git-send-email-zajec5@gmail.com>
-	(sfid-20101207_155651_681285_648FF7A9)
-Message-ID: <1291756117.27497.101.camel@maggie>
+Message-ID: <AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
 Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Tue, 2010-12-07 at 21:55 +0100, Rafa? Mi?ecki wrote: 
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> ---
->  drivers/net/wireless/b43/main.c       |    6 ++++++
->  drivers/net/wireless/b43/phy_common.c |    7 +++++++
->  drivers/net/wireless/b43/phy_common.h |    2 ++
->  drivers/net/wireless/b43/phy_n.c      |    7 -------
->  4 files changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-> index fa48803..670fd7b 100644
-> --- a/drivers/net/wireless/b43/main.c
-> +++ b/drivers/net/wireless/b43/main.c
-> @@ -1150,6 +1150,12 @@ void b43_wireless_core_reset(struct b43_wldev *dev, u32 flags)
->  
->  	flags |= B43_TMSLOW_PHYCLKEN;
->  	flags |= B43_TMSLOW_PHYRESET;
-> +	if (dev->phy.type == B43_PHYTYPE_N) {
-> +		if (b43_channel_type_is_40mhz(dev->phy.channel_type))
+2010/12/7 Rafa? Mi?ecki <zajec5@gmail.com>:
+> Finally, thanks for Larry and Francesco I got b43 working with BCM4328 chipset!
 
-Is channel_type already set at this time?
+Do you mean BCM4321 (14e4:4328)? BCM4328 is AFAIK handled by brcmfmac.
 
-> +			flags |= B43_TMSLOW_PHYCLKSPEED_160MHZ;
-> +		else
-> +			flags |= B43_TMSLOW_PHYCLKSPEED_80MHZ;
-> +	}
+>
+> It's not perfectly stable yet, but scanning and associating to open network
+> works! It has to be tested, improved, there are some PHY errors from time to
+> time, but generally it works :)
+>
+> Rafa? Mi?ecki (4):
+> ?b43: N-PHY: silence warnings
+> ?b43: set TMS to work with current band width for N-PHY
+> ?b43: fix split of N-PHY devices into supported and not (based on PHY
+> ? ?rev)
+> ?b43: rename config option for N-PHY, drop BROKEN
+>
+> ?drivers/net/wireless/b43/Kconfig ? ? ?| ? 13 +++++++------
+> ?drivers/net/wireless/b43/Makefile ? ? | ? ?8 ++++----
+> ?drivers/net/wireless/b43/main.c ? ? ? | ? 12 +++++++++---
+> ?drivers/net/wireless/b43/phy_common.c | ? ?9 ++++++++-
+> ?drivers/net/wireless/b43/phy_common.h | ? ?2 ++
+> ?drivers/net/wireless/b43/phy_n.c ? ? ?| ? 16 ++++++----------
+> ?6 files changed, 36 insertions(+), 24 deletions(-)
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at ?http://vger.kernel.org/majordomo-info.html
+>
+
 
 
 -- 
-Greetings Michael.
+Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
