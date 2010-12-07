@@ -1,9 +1,9 @@
 From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue,  7 Dec 2010 09:42:06 +0100
-Subject: [PATCH 3/4] b43: N-PHY: implement own maskset
+Date: Tue,  7 Dec 2010 09:42:07 +0100
+Subject: [PATCH 4/4] b43: flush PHY writes when needed
 In-Reply-To: <1291711327-4690-1-git-send-email-zajec5@gmail.com>
 References: <1291711327-4690-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1291711327-4690-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1291711327-4690-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,40 +11,58 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-This let us avoid double addressing while still having reg check.
-
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+ drivers/net/wireless/b43/phy_common.c |    5 +++++
+ drivers/net/wireless/b43/phy_common.h |    6 ++++++
+ 2 files changed, 11 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 905f1d7..f78f4e9 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -3705,6 +3705,15 @@ static void b43_nphy_op_write(struct b43_wldev *dev, u16 reg, u16 value)
- 	b43_write16(dev, B43_MMIO_PHY_DATA, value);
+diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
+index fa7f83f..0a91fc3 100644
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -231,6 +231,7 @@ void b43_radio_maskset(struct b43_wldev *dev, u16 offset, u16 mask, u16 set)
+ u16 b43_phy_read(struct b43_wldev *dev, u16 reg)
+ {
+ 	assert_mac_suspended(dev);
++	dev->phy.writes_counter = 0;
+ 	return dev->phy.ops->phy_read(dev, reg);
  }
  
-+static void b43_nphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
-+				 u16 set)
-+{
-+	check_phyreg(dev, reg);
-+	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
-+	b43_write16(dev, B43_MMIO_PHY_DATA,
-+		    (b43_read16(dev, B43_MMIO_PHY_DATA) & mask) | set);
-+}
-+
- static u16 b43_nphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+@@ -238,6 +239,10 @@ void b43_phy_write(struct b43_wldev *dev, u16 reg, u16 value)
  {
- 	/* Register 1 is a 32-bit register. */
-@@ -3799,6 +3808,7 @@ const struct b43_phy_operations b43_phyops_n = {
- 	.init			= b43_nphy_op_init,
- 	.phy_read		= b43_nphy_op_read,
- 	.phy_write		= b43_nphy_op_write,
-+	.phy_maskset		= b43_nphy_op_maskset,
- 	.radio_read		= b43_nphy_op_radio_read,
- 	.radio_write		= b43_nphy_op_radio_write,
- 	.software_rfkill	= b43_nphy_op_software_rfkill,
+ 	assert_mac_suspended(dev);
+ 	dev->phy.ops->phy_write(dev, reg, value);
++	if (++dev->phy.writes_counter == B43_MAX_WRITES_IN_ROW) {
++		b43_read16(dev, B43_MMIO_PHY_VER);
++		dev->phy.writes_counter = 0;
++	}
+ }
+ 
+ void b43_phy_copy(struct b43_wldev *dev, u16 destreg, u16 srcreg)
+diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
+index 0e61942..2ed60e5 100644
+--- a/drivers/net/wireless/b43/phy_common.h
++++ b/drivers/net/wireless/b43/phy_common.h
+@@ -39,6 +39,9 @@ struct b43_c32 { s32 i, q; };
+ #define B43_PHYVER_TYPE_SHIFT		8
+ #define B43_PHYVER_VERSION		0x00FF
+ 
++/* PHY writes need to be flushed if we reach limit */
++#define B43_MAX_WRITES_IN_ROW		24
++
+ /**
+  * enum b43_interference_mitigation - Interference Mitigation mode
+  *
+@@ -232,6 +235,9 @@ struct b43_phy {
+ 	/* PHY revision number. */
+ 	u8 rev;
+ 
++	/* Count writes since last read */
++	u8 writes_counter;
++
+ 	/* Radio versioning */
+ 	u16 radio_manuf;	/* Radio manufacturer */
+ 	u16 radio_ver;		/* Radio version */
 -- 
 1.6.3.3
