@@ -1,42 +1,29 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue, 07 Dec 2010 20:21:24 +0100
-Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
-In-Reply-To: <4CFE538A.10808@lwfinger.net>
-References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
-	<4CFE538A.10808@lwfinger.net>
-Message-ID: <4CFE8934.4060803@hauke-m.de>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 07 Dec 2010 14:00:35 -0600
+Subject: [PATCH 1/4] b43: N-PHY: update init tables
+In-Reply-To: <5001512.1291751372533.JavaMail.root@elwamui-cypress.atl.sa.earthlink.net>
+References: <5001512.1291751372533.JavaMail.root@elwamui-cypress.atl.sa.earthlink.net>
+Message-ID: <4CFE9263.4060108@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: ikorot@earthlink.net
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On 12/07/2010 04:32 PM, Larry Finger wrote:
-> On 12/07/2010 06:28 AM, Rafa? Mi?ecki wrote:
->> W dniu 7 grudnia 2010 13:21 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
->>> Currently we tell ppl to use 4.150.10.5 for G-PHY and 4.174.64.19 for
->>> LP-PHY on our wiki page.
->>>
->>> Firmware files for G-PHY differ a little between there two versions,
->>> but did we actually get any problems reports?
->>>
->>> Can we drop 4.150.10.5 description?
->>
->> openSUSE 11.3 seems to download 4.174.64.19 only with it's script and
->> I didn't heard about any reports. One more point for dropping
->> 4.150.10.5?
+On 12/07/2010 01:49 PM, ikorot at earthlink.net wrote:
+>> One reason is that these tables changed from non-zero to zero values between
+>> Broadcom driver 4.174.64.19 and 5.10.56.46. As they might change again, I think
+>> we should retain the full version.
 > 
-> I pushed the patch to change openSUSE's script early in the beta testing for
-> that release. I have heard no complaints either. I agree that 4.150.10.5 should
-> be dropped.
+> Is there a way to check for version of the driver?
+> This way whoever uses old one won't be screwed...
 
-We had serious issues with firmware version 4.174.64.19 in OpenWrt and
-switched back to the old on as the default option. This issue afftected
-mostly LP-PHY devices.
+That will not be a problem as no older version of b43 works at all with b43. To
+help you understand this change, when the 4.174.64.19 Broadcom driver was
+reverse-engineered, the tables had non-zero values. Rafel later compared the
+trace dumps of b43 with the latest version of wl and found that the values are
+now zero. When I rechecked driver 5.10.56.46, I found them to be zero there as
+well and changed the specs.
 
-See the Bug report: https://dev.openwrt.org/ticket/6907 This was with
-kernel 2.6.32 and compat-wireless from  round about March to May 2010.
-Stable means the old firmware version and experimental the new one in
-the bug report.
-
-Hauke
+Larry
