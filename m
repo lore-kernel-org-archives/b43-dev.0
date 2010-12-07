@@ -1,9 +1,9 @@
 From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue,  7 Dec 2010 21:55:57 +0100
-Subject: [PATCH 1/4] b43: N-PHY: silence warnings
+Date: Tue,  7 Dec 2010 21:55:58 +0100
+Subject: [PATCH 2/4] b43: set TMS to work with current band width for N-PHY
 In-Reply-To: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
 References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1291755360-21570-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1291755360-21570-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,48 +13,77 @@ Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c |    8 ++++++--
- 1 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/wireless/b43/main.c       |    6 ++++++
+ drivers/net/wireless/b43/phy_common.c |    7 +++++++
+ drivers/net/wireless/b43/phy_common.h |    2 ++
+ drivers/net/wireless/b43/phy_n.c      |    7 -------
+ 4 files changed, 15 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index fa48803..670fd7b 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -1150,6 +1150,12 @@ void b43_wireless_core_reset(struct b43_wldev *dev, u32 flags)
+ 
+ 	flags |= B43_TMSLOW_PHYCLKEN;
+ 	flags |= B43_TMSLOW_PHYRESET;
++	if (dev->phy.type == B43_PHYTYPE_N) {
++		if (b43_channel_type_is_40mhz(dev->phy.channel_type))
++			flags |= B43_TMSLOW_PHYCLKSPEED_160MHZ;
++		else
++			flags |= B43_TMSLOW_PHYCLKSPEED_80MHZ;
++	}
+ 	ssb_device_enable(dev->dev, flags);
+ 	msleep(2);		/* Wait for the PLL to turn on. */
+ 
+diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
+index 0a91fc3..412f1b6 100644
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -429,6 +429,13 @@ void b43_phyop_switch_analog_generic(struct b43_wldev *dev, bool on)
+ 	b43_write16(dev, B43_MMIO_PHY0, on ? 0 : 0xF4);
+ }
+ 
++
++bool b43_channel_type_is_40mhz(enum nl80211_channel_type channel_type)
++{
++	return (channel_type == NL80211_CHAN_HT40MINUS ||
++		channel_type == NL80211_CHAN_HT40PLUS);
++}
++
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/Cordic */
+ struct b43_c32 b43_cordic(int theta)
+ {
+diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
+index 2ed60e5..2401bee 100644
+--- a/drivers/net/wireless/b43/phy_common.h
++++ b/drivers/net/wireless/b43/phy_common.h
+@@ -436,6 +436,8 @@ int b43_phy_shm_tssi_read(struct b43_wldev *dev, u16 shm_offset);
+  */
+ void b43_phyop_switch_analog_generic(struct b43_wldev *dev, bool on);
+ 
++bool b43_channel_type_is_40mhz(enum nl80211_channel_type channel_type);
++
+ struct b43_c32 b43_cordic(int theta);
+ 
+ #endif /* LINUX_B43_PHY_COMMON_H_ */
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index f78f4e9..d41da7f 100644
+index d41da7f..3517341 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -258,7 +258,8 @@ static void b43_nphy_tx_power_fix(struct b43_wldev *dev)
+@@ -88,13 +88,6 @@ static void b43_nphy_rf_control_override(struct b43_wldev *dev, u16 field,
+ static void b43_nphy_rf_control_intc_override(struct b43_wldev *dev, u8 field,
+ 						u16 value, u8 core);
  
- 	for (i = 0; i < 2; i++) {
- 		if (dev->phy.rev >= 3) {
--			/* TODO */
-+			/* FIXME: support 5GHz */
-+			txgain = b43_ntab_tx_gain_rev3plus_2ghz[txpi[i]];
- 			radio_gain = (txgain >> 16) & 0x1FFFF;
- 		} else {
- 			txgain = b43_ntab_tx_gain_rev0_1_2[txpi[i]];
-@@ -613,6 +614,8 @@ static void b43_nphy_rx_iq_coeffs(struct b43_wldev *dev, bool write,
- 	}
+-static inline bool b43_channel_type_is_40mhz(
+-					enum nl80211_channel_type channel_type)
+-{
+-	return (channel_type == NL80211_CHAN_HT40MINUS ||
+-		channel_type == NL80211_CHAN_HT40PLUS);
+-}
+-
+ void b43_nphy_set_rxantenna(struct b43_wldev *dev, int antenna)
+ {//TODO
  }
- 
-+#if 0
-+/* Ready but not used anywhere */
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/RxCalPhyCleanup */
- static void b43_nphy_rx_cal_phy_cleanup(struct b43_wldev *dev, u8 core)
- {
-@@ -694,6 +697,7 @@ static void b43_nphy_rx_cal_phy_setup(struct b43_wldev *dev, u8 core)
- 	b43_nphy_rf_control_intc_override(dev, 1, rxval, (core + 1));
- 	b43_nphy_rf_control_intc_override(dev, 1, txval, (2 - core));
- }
-+#endif
- 
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/CalcRxIqComp */
- static void b43_nphy_calc_rx_iq_comp(struct b43_wldev *dev, u8 mask)
-@@ -3088,7 +3092,7 @@ static int b43_nphy_rev2_cal_rx_iq(struct b43_wldev *dev,
- 	u8 rfctl[2];
- 	u8 afectl_core;
- 	u16 tmp[6];
--	u16 cur_hpf1, cur_hpf2, cur_lna;
-+	u16 uninitialized_var(cur_hpf1), uninitialized_var(cur_hpf2), cur_lna;
- 	u32 real, imag;
- 	enum ieee80211_band band;
- 
 -- 
 1.6.3.3
