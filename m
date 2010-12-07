@@ -1,29 +1,31 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 07 Dec 2010 14:00:35 -0600
-Subject: [PATCH 1/4] b43: N-PHY: update init tables
-In-Reply-To: <5001512.1291751372533.JavaMail.root@elwamui-cypress.atl.sa.earthlink.net>
-References: <5001512.1291751372533.JavaMail.root@elwamui-cypress.atl.sa.earthlink.net>
-Message-ID: <4CFE9263.4060108@lwfinger.net>
+From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue,  7 Dec 2010 21:55:56 +0100
+Subject: [PATCH 0/4] Make N-PHY support experimental
+Message-ID: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ikorot@earthlink.net
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 12/07/2010 01:49 PM, ikorot at earthlink.net wrote:
->> One reason is that these tables changed from non-zero to zero values between
->> Broadcom driver 4.174.64.19 and 5.10.56.46. As they might change again, I think
->> we should retain the full version.
-> 
-> Is there a way to check for version of the driver?
-> This way whoever uses old one won't be screwed...
+Finally, thanks for Larry and Francesco I got b43 working with BCM4328 chipset!
 
-That will not be a problem as no older version of b43 works at all with b43. To
-help you understand this change, when the 4.174.64.19 Broadcom driver was
-reverse-engineered, the tables had non-zero values. Rafel later compared the
-trace dumps of b43 with the latest version of wl and found that the values are
-now zero. When I rechecked driver 5.10.56.46, I found them to be zero there as
-well and changed the specs.
+It's not perfectly stable yet, but scanning and associating to open network
+works! It has to be tested, improved, there are some PHY errors from time to
+time, but generally it works :)
 
-Larry
+Rafa?? Mi??ecki (4):
+  b43: N-PHY: silence warnings
+  b43: set TMS to work with current band width for N-PHY
+  b43: fix split of N-PHY devices into supported and not (based on PHY
+    rev)
+  b43: rename config option for N-PHY, drop BROKEN
+
+ drivers/net/wireless/b43/Kconfig      |   13 +++++++------
+ drivers/net/wireless/b43/Makefile     |    8 ++++----
+ drivers/net/wireless/b43/main.c       |   12 +++++++++---
+ drivers/net/wireless/b43/phy_common.c |    9 ++++++++-
+ drivers/net/wireless/b43/phy_common.h |    2 ++
+ drivers/net/wireless/b43/phy_n.c      |   16 ++++++----------
+ 6 files changed, 36 insertions(+), 24 deletions(-)
