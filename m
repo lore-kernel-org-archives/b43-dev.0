@@ -1,10 +1,10 @@
 From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  9 Dec 2010 20:56:00 +0100
-Subject: [PATCH 3/4] b43: N-PHY: use designed function and macro for writing
-	tables
+Date: Thu,  9 Dec 2010 20:56:01 +0100
+Subject: [PATCH 4/4] b43: rename TMS defines,
+	drop useless condition from core reset
 In-Reply-To: <1291924561-21630-1-git-send-email-zajec5@gmail.com>
 References: <1291924561-21630-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1291924561-21630-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1291924561-21630-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,54 +12,59 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+As discussed we do not know band width at core reset time and it is not a good
+idea to reset whole just to change band. So just set unconditionally 20 MHz
+band width as default during core reset.
+
+As for defines PHY clock changed to band width in specs and it makes much more
+sens to call defines by band width which is self-explainable. Updated specs do
+not mention 0 value, but comparing to old ones you can notice lineral relation
+between PHY clock speed and band width. So it makes sense for 0x0 value to be
+10 MHz band width.
+
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c |   31 ++++++++++---------------------
- 1 files changed, 10 insertions(+), 21 deletions(-)
+ drivers/net/wireless/b43/b43.h  |    8 ++++----
+ drivers/net/wireless/b43/main.c |    8 ++------
+ 2 files changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index e12f399..a1aa570 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -1209,29 +1209,18 @@ static void b43_nphy_workarounds(struct b43_wldev *dev)
- 			b43_radio_set(dev, B2055_C2_TX_RF_SPARE, 0x8);
- 		}
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 9aad2ca..bd4cb75 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -416,10 +416,10 @@ enum {
  
--		/* TODO: convert to b43_ntab_write? */
--		b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2000);
--		b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x000A);
--		b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2010);
--		b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x000A);
--		b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2002);
--		b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0xCDAA);
--		b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2012);
--		b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0xCDAA);
-+		b43_ntab_write(dev, B43_NTAB16(8, 0x00), 0x000A);
-+		b43_ntab_write(dev, B43_NTAB16(8, 0x10), 0x000A);
-+		b43_ntab_write(dev, B43_NTAB16(8, 0x02), 0xCDAA);
-+		b43_ntab_write(dev, B43_NTAB16(8, 0x12), 0xCDAA);
+ /* 802.11 core specific TM State Low (SSB_TMSLOW) flags */
+ #define B43_TMSLOW_GMODE		0x20000000	/* G Mode Enable */
+-#define B43_TMSLOW_PHYCLKSPEED		0x00C00000	/* PHY clock speed mask (N-PHY only) */
+-#define  B43_TMSLOW_PHYCLKSPEED_40MHZ	0x00000000	/* 40 MHz PHY */
+-#define  B43_TMSLOW_PHYCLKSPEED_80MHZ	0x00400000	/* 80 MHz PHY */
+-#define  B43_TMSLOW_PHYCLKSPEED_160MHZ	0x00800000	/* 160 MHz PHY */
++#define B43_TMSLOW_PHY_BANDWIDTH	0x00C00000	/* PHY band width and clock speed mask (N-PHY only) */
++#define  B43_TMSLOW_PHY_BANDWIDTH_10MHZ	0x00000000	/* 10 MHz bandwidth, 40 MHz PHY */
++#define  B43_TMSLOW_PHY_BANDWIDTH_20MHZ	0x00400000	/* 20 MHz bandwidth, 80 MHz PHY */
++#define  B43_TMSLOW_PHY_BANDWIDTH_40MHZ	0x00800000	/* 40 MHz bandwidth, 160 MHz PHY */
+ #define B43_TMSLOW_PLLREFSEL		0x00200000	/* PLL Frequency Reference Select (rev >= 5) */
+ #define B43_TMSLOW_MACPHYCLKEN		0x00100000	/* MAC PHY Clock Control Enable (rev >= 5) */
+ #define B43_TMSLOW_PHYRESET		0x00080000	/* PHY Reset */
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 9ae3f61..1aec160 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -1150,12 +1150,8 @@ void b43_wireless_core_reset(struct b43_wldev *dev, u32 flags)
  
- 		if (dev->phy.rev < 2) {
--			b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2008);
--			b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x0000);
--			b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2018);
--			b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x0000);
--			b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2007);
--			b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x7AAB);
--			b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2017);
--			b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x7AAB);
--			b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2006);
--			b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x0800);
--			b43_phy_write(dev, B43_NPHY_TABLE_ADDR, 0x2016);
--			b43_phy_write(dev, B43_NPHY_TABLE_DATALO, 0x0800);
-+			b43_ntab_write(dev, B43_NTAB16(8, 0x08), 0x0000);
-+			b43_ntab_write(dev, B43_NTAB16(8, 0x18), 0x0000);
-+			b43_ntab_write(dev, B43_NTAB16(8, 0x07), 0x7AAB);
-+			b43_ntab_write(dev, B43_NTAB16(8, 0x17), 0x7AAB);
-+			b43_ntab_write(dev, B43_NTAB16(8, 0x06), 0x0800);
-+			b43_ntab_write(dev, B43_NTAB16(8, 0x16), 0x0800);
- 		}
+ 	flags |= B43_TMSLOW_PHYCLKEN;
+ 	flags |= B43_TMSLOW_PHYRESET;
+-	if (dev->phy.type == B43_PHYTYPE_N) {
+-		if (b43_channel_type_is_40mhz(dev->phy.channel_type))
+-			flags |= B43_TMSLOW_PHYCLKSPEED_160MHZ;
+-		else
+-			flags |= B43_TMSLOW_PHYCLKSPEED_80MHZ;
+-	}
++	if (dev->phy.type == B43_PHYTYPE_N)
++		flags |= B43_TMSLOW_PHY_BANDWIDTH_20MHZ; /* Make 20 MHz def */
+ 	ssb_device_enable(dev->dev, flags);
+ 	msleep(2);		/* Wait for the PLL to turn on. */
  
- 		b43_phy_write(dev, B43_NPHY_RFCTL_LUT_TRSW_LO1, 0x2D8);
 -- 
 1.6.3.3
