@@ -1,5 +1,5 @@
 From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Thu, 09 Dec 2010 15:28:17 +0100
+Date: Thu, 09 Dec 2010 15:41:44 +0100
 Subject: [PATCH 2/4] b43: set TMS to work with current band width for N-PHY
 In-Reply-To: <AANLkTinJUsKzNO6vO8F9KupxF0uc1h97wffhAgBas1Pe@mail.gmail.com>
 	(sfid-20101209_152344_283295_FFFFFFFFF86E6A27)
@@ -11,7 +11,7 @@ References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
 	<1291904384.2905.2.camel@maggie>
 	<AANLkTinJUsKzNO6vO8F9KupxF0uc1h97wffhAgBas1Pe@mail.gmail.com>
 	(sfid-20101209_152344_283295_FFFFFFFFF86E6A27)
-Message-ID: <1291904897.2905.5.camel@maggie>
+Message-ID: <1291905704.2905.9.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -45,38 +45,15 @@ On Thu, 2010-12-09 at 15:23 +0100, Rafa? Mi?ecki wrote:
 > >> >>> +             if (b43_channel_type_is_40mhz(dev->phy.channel_type))
 > >> >>
 > >> >> Is channel_type already set at this time?
-> >> >
-> >> > Yeah, that core switching seems to be a little tricky. I didn't figure
-> >> > it out completely yet. We may need to fix that, or fix calls to this
-> >> > function.
-> >> >
-> >> > Thanks for reviewing!
-> >>
-> >> In other words: it will work for now, but we need to fix that in
-> >> future if we want to get 40 MHz channels working.
-> >
-> > That's exactly what I was saying. ;)
-> > To answer my original question: No, channel_type is not set, but the
-> > code will work for non-40mhz.
-> >
-> > This seems a bit tricky to fix, though. Maybe we should reset the
-> > wireless core twice. Once initially and once again after the
-> > configuration was set. The first reset would just be to be able
-> > to access the PHY and wireless core at all to probe it.
-> 
-> Even more tricky is that we already reset code twice... At least in
-> b43_wireless_core_attach. Will have to redesign that a little.
 
-I don't think so.
-We will have to live with at least two resets.
-The first is to make the device accessible, so that we can fetch
-the device type and revision numbers (phy type, rev, radio type,....)
-After that is done, the device is shut down completely and reinitialized
-when the interface comes up with the correct parameters.
-It is important that no device setup is done whatsoever at attach stage.
-Doing so would also break suspend/resume.
-
-I do not think a redesign of the init code is required.
+The more I think about this, the wronger it looks to me.
+Why do we care about the channel type at reset time anyway?
+I guess the channel type is a parameter that can change any time on an
+operating card. So just unconditionally set B43_TMSLOW_PHYCLKSPEED_80MHZ
+at reset time and set the correct TMSLOW bits later when channel_type is
+actually changed. That seems to be the only sane thing to do.
+I guess we don't want to fully reset the device when channel_type
+changes, do we?
 
 -- 
 Greetings Michael.
