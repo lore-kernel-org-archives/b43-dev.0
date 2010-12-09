@@ -1,52 +1,29 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 9 Dec 2010 15:06:09 +0100
-Subject: [PATCH 1/4] b43: N-PHY: update init tables
-In-Reply-To: <1127342.1291773334294.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
-References: <1127342.1291773334294.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
-Message-ID: <AANLkTimvWbag5N1XdMN7urwXqnU9b_FNd4fKfbexX=oh@mail.gmail.com>
+Date: Thu, 9 Dec 2010 15:09:15 +0100
+Subject: [PATCH 0/4] Make N-PHY support experimental
+In-Reply-To: <AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
+References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
+	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
+Message-ID: <AANLkTimU1wJo1tDpa+g-_p1fgZqDeNHp5TPH-7Yghqe_@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ikorot@earthlink.net
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-2010/12/8  <ikorot@earthlink.net>:
-> Larry,
+W dniu 7 grudnia 2010 23:57 u?ytkownik G?bor Stefanik
+<netrolller.3d@gmail.com> napisa?:
+> 2010/12/7 Rafa? Mi?ecki <zajec5@gmail.com>:
+>> Finally, thanks for Larry and Francesco I got b43 working with BCM4328 chipset!
 >
->
-> -----Original Message-----
->>From: Larry Finger <Larry.Finger@lwfinger.net>
->>Sent: Dec 7, 2010 12:00 PM
->>To: ikorot at earthlink.net
->>Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
->>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
->>
->>On 12/07/2010 01:49 PM, ikorot at earthlink.net wrote:
->>>> One reason is that these tables changed from non-zero to zero values between
->>>> Broadcom driver 4.174.64.19 and 5.10.56.46. As they might change again, I think
->>>> we should retain the full version.
->>>
->>> Is there a way to check for version of the driver?
->>> This way whoever uses old one won't be screwed...
->>
->>That will not be a problem as no older version of b43 works at all with b43. To
->>help you understand this change, when the 4.174.64.19 Broadcom driver was
->>reverse-engineered, the tables had non-zero values. Rafel later compared the
->>trace dumps of b43 with the latest version of wl and found that the values are
->>now zero. When I rechecked driver 5.10.56.46, I found them to be zero there as
->>well and changed the specs.
->
-> Well, it maybe feasible to keep the old values and check
-> the version of the driver, since you are saying yourself
-> that the value might be changing in the future.
-> Maybe for couple of releases only?
+> Do you mean BCM4321 (14e4:4328)? BCM4328 is AFAIK handled by brcmfmac.
 
-Sorry, but I don't understand that at all. What do you mean by version
-of the driver? What driver?
+Yeah, I removed following hack some time ago:
+-       } else if (bus->chip_id == 0x4321) {
+-               /* the BCM4328 has a chipid == 0x4321 and a rev 4 SPROM */
+and got lost what is my chipset. You're right.
 
-b43 comes with tables built in, there is no way b43 could use tables
-from other version of b43...
 
 -- 
 Rafa?
