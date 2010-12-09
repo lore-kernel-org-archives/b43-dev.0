@@ -1,28 +1,34 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 9 Dec 2010 17:10:21 +0100
-Subject: [PATCH 0/4] Make N-PHY support experimental
-In-Reply-To: <4D00F3C3.6040801@lwfinger.net>
-References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
-	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
-	<4CFEFD8D.1080808@lwfinger.net>
-	<AANLkTi=mDh9wkp+u3ebuXqF8Q-rTW_YCtee3CmCBdWTh@mail.gmail.com>
-	<4D00F3C3.6040801@lwfinger.net>
-Message-ID: <AANLkTinfcVZ8X=r0w+digSJ6RoZeOCA8jEW=J6hcb7o9@mail.gmail.com>
+From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu,  9 Dec 2010 20:55:58 +0100
+Subject: [PATCH 1/4] b43: N-PHY: use correct bit for controlling MAC and PHY
+Message-ID: <1291924561-21630-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2010/12/9 Larry Finger <Larry.Finger@lwfinger.net>:
-> I am willing to buy a higher PHY rev device for testing. Any idea what is in a
-> 4324A-BRCM1036? See
-> http://cgi.ebay.com/Broadcom-Mini-PCI-e-802-11-a-b-g-n-Wireless-Card-/190477425068?pt=LH_DefaultDomain_0&hash=item2c5956d9ac.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Shipping to: United States
-
-:(
-
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 61875c8..e12f399 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -3278,9 +3278,9 @@ static void b43_nphy_mac_phy_clock_set(struct b43_wldev *dev, bool on)
+ {
+ 	u32 tmslow = ssb_read32(dev->dev, SSB_TMSLOW);
+ 	if (on)
+-		tmslow |= SSB_TMSLOW_PHYCLK;
++		tmslow |= B43_TMSLOW_MACPHYCLKEN;
+ 	else
+-		tmslow &= ~SSB_TMSLOW_PHYCLK;
++		tmslow &= ~B43_TMSLOW_MACPHYCLKEN;
+ 	ssb_write32(dev->dev, SSB_TMSLOW, tmslow);
+ }
+ 
 -- 
-Rafa?
+1.6.3.3
