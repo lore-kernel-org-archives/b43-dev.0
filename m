@@ -1,44 +1,37 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Fri, 10 Dec 2010 20:04:15 +0100
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Fri, 10 Dec 2010 20:08:40 +0100
 Subject: b43 N PHY status report
-In-Reply-To: <4D02793E.2050004@lwfinger.net>
+In-Reply-To: <AANLkTik2MdDg4g4dFuB6ozZ3Pp3pPORmSAxRAbtznTLP@mail.gmail.com>
 References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
 	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
 	<4CFFA112.7030800@lwfinger.net>
 	<885729A3-72D4-4EFC-AAFE-D2B573E00ED9@ing.unibs.it>
 	<1292006874.3531.4.camel@jlt3.sipsolutions.net>
 	<4D02793E.2050004@lwfinger.net>
-Message-ID: <AANLkTik2MdDg4g4dFuB6ozZ3Pp3pPORmSAxRAbtznTLP@mail.gmail.com>
+	<AANLkTik2MdDg4g4dFuB6ozZ3Pp3pPORmSAxRAbtznTLP@mail.gmail.com>
+Message-ID: <1292008120.3531.5.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-On Fri, Dec 10, 2010 at 8:02 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> On 12/10/2010 12:47 PM, Johannes Berg wrote:
->> On Fri, 2010-12-10 at 19:30 +0100, Francesco Gringoli wrote:
->>
->>> [ 1117.516031] unregister_netdevice: waiting for wlan1 to become free. Usage count = 1
->>>
->>> and the device is never release (by who?). I have to reboot.
->>
->> That's a bug in the ipv6 code, upgrade your kernel :-)
->
-> I would not have seen that as IPv6 is disabled in my kernels.
+On Fri, 2010-12-10 at 20:04 +0100, G?bor Stefanik wrote:
+> On Fri, Dec 10, 2010 at 8:02 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> > On 12/10/2010 12:47 PM, Johannes Berg wrote:
+> >> On Fri, 2010-12-10 at 19:30 +0100, Francesco Gringoli wrote:
+> >>
+> >>> [ 1117.516031] unregister_netdevice: waiting for wlan1 to become free. Usage count = 1
+> >>>
+> >>> and the device is never release (by who?). I have to reboot.
+> >>
+> >> That's a bug in the ipv6 code, upgrade your kernel :-)
+> >
+> > I would not have seen that as IPv6 is disabled in my kernels.
+> 
+> Are you serious? Disabling ipv6 with ipv4 exhaustion expected in January?
 
-Are you serious? Disabling ipv6 with ipv4 exhaustion expected in January?
+Can we stop this thread right here and go on-topic again please?
 
->
-> Larry
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at ?http://vger.kernel.org/majordomo-info.html
->
-
-
-
--- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+johannes
