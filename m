@@ -1,35 +1,66 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 09 Dec 2010 22:05:49 -0600
-Subject: [PATCH 0/4] Make N-PHY support experimental
-In-Reply-To: <4D01A3EC.9000408@gmail.com>
-References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>	<4CFEFD8D.1080808@lwfinger.net>	<AANLkTi=mDh9wkp+u3ebuXqF8Q-rTW_YCtee3CmCBdWTh@mail.gmail.com>	<4D00F3C3.6040801@lwfinger.net>	<1291908338.3540.16.camel@jlt3.sipsolutions.net>	<AANLkTimZTzMbQenxs6-1awdoGBhbJz2kyGBSO9v2+fzn@mail.gmail.com>	<1291908833.3540.18.camel@jlt3.sipsolutions.net>	<AANLkTin133Lq1z1paMboMczaATkAE6zv3gVfXCPSB=hq@mail.gmail.com>
-	<4D00FDD4.3050705@lwfinger.net> <4D01A3EC.9000408@gmail.com>
-Message-ID: <4D01A71D.7060206@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 10 Dec 2010 07:36:56 +0100
+Subject: [PATCH 1/4] b43: N-PHY: update init tables
+In-Reply-To: <26490304.1291947984094.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
+References: <26490304.1291947984094.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
+Message-ID: <AANLkTi=CP0x_iE8ENieujGbTEOD5X67--xA0TKwQ-GTe@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jon Saul <rectifier04@gmail.com>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, b43-dev@lists.infradead.org
+To: ikorot@earthlink.net
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On 12/09/2010 09:52 PM, Jon Saul wrote:
-> On 12/09/2010 10:03 AM, Larry Finger wrote:
->> I sent a question to the seller of the card I mentioned earlier asking them to
->> tell me the PCI IDs and explaining why I needed to know. If they answer, we will
->> at least know if it is a 14e4:432b. If so, then it certainly will have a PHY rev
->>> 2. At that price, I'm willing to buy it myself, but there should be money
->> available to get things for Rafa?. Who has those funds? I think the last time I
->> got something though the donations, it was Stefano, but that was a long time ago.
+W dniu 10 grudnia 2010 03:26 u?ytkownik  <ikorot@earthlink.net> napisa?:
+> -----Original Message-----
+>>From: Rafa? Mi?ecki <zajec5@gmail.com>
+>>Sent: Dec 9, 2010 6:06 AM
+>>To: ikorot at earthlink.net
+>>Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
+>>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
 >>
->> Rafa?: If I get a rev > 2 card, you can certainly ssh into my computer for
->> testing, or I can do the runs here and send you the dumps.
+>>2010/12/8 ?<ikorot@earthlink.net>:
+>>> Larry,
+>>>
+>>>
+>>> -----Original Message-----
+>>>>From: Larry Finger <Larry.Finger@lwfinger.net>
+>>>>Sent: Dec 7, 2010 12:00 PM
+>>>>To: ikorot at earthlink.net
+>>>>Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
+>>>>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
+>>>>
+>>>>On 12/07/2010 01:49 PM, ikorot at earthlink.net wrote:
+>>>>>> One reason is that these tables changed from non-zero to zero values between
+>>>>>> Broadcom driver 4.174.64.19 and 5.10.56.46. As they might change again, I think
+>>>>>> we should retain the full version.
+>>>>>
+>>>>> Is there a way to check for version of the driver?
+>>>>> This way whoever uses old one won't be screwed...
+>>>>
+>>>>That will not be a problem as no older version of b43 works at all with b43. To
+>>>>help you understand this change, when the 4.174.64.19 Broadcom driver was
+>>>>reverse-engineered, the tables had non-zero values. Rafel later compared the
+>>>>trace dumps of b43 with the latest version of wl and found that the values are
+>>>>now zero. When I rechecked driver 5.10.56.46, I found them to be zero there as
+>>>>well and changed the specs.
+>>>
+>>> Well, it maybe feasible to keep the old values and check
+>>> the version of the driver, since you are saying yourself
+>>> that the value might be changing in the future.
+>>> Maybe for couple of releases only?
 >>
->> Larry
-> I have a 14e4:432b card and am willing to help any way I can.
+>>Sorry, but I don't understand that at all. What do you mean by version
+>>of the driver? What driver?
+>
+> #if B43_VERSION <= x.x.x.x
+> // table initialized to some values
+> #else
+> //table initialized to 0's
+> #endif
 
-Thanks for the offer. I bought one that should have those ID values on Ebay
-today. If it is not a 432b, or some other N PHY with rev > 2, I have the right
-to return it. The seller did not know the IDs. In that case, I will contact you
-to see what we can arrange.
+You want to put condition checking b43 version in... b43 driver? I
+can't follow you.
 
-Larry
+-- 
+Rafa?
