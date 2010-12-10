@@ -1,24 +1,70 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 08 Dec 2010 09:15:30 -0600
-Subject: b43 N PHY status report
-In-Reply-To: <AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
-References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
-	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
-Message-ID: <4CFFA112.7030800@lwfinger.net>
+From: ikorot at earthlink.net <ikorot@earthlink.net>
+Date: Thu, 9 Dec 2010 18:26:23 -0800 (GMT-08:00)
+Subject: [PATCH 1/4] b43: N-PHY: update init tables
+Message-ID: <26490304.1291947984094.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-Rafa?,
+Rafal,
 
-The N PHY driver is remarkably stable. So far, my link has been up for nearly 16
-hours under normal conditions - I have not yet tried any stress tests. Other
-than the PHY errors that you noted, my link has only reported 2 other unusual
-events. I have had 3 "Deauthentication for reason 3" from which it recovered in
-one try. Also logged are 9 instances of "RX: Packet size underrun (2)/Packet
-dropped" events. Again, these caused no problems.
 
-Larry
+-----Original Message-----
+>From: Rafa? Mi?ecki <zajec5@gmail.com>
+>Sent: Dec 9, 2010 6:06 AM
+>To: ikorot at earthlink.net
+>Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
+>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
+>
+>2010/12/8  <ikorot@earthlink.net>:
+>> Larry,
+>>
+>>
+>> -----Original Message-----
+>>>From: Larry Finger <Larry.Finger@lwfinger.net>
+>>>Sent: Dec 7, 2010 12:00 PM
+>>>To: ikorot at earthlink.net
+>>>Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
+>>>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
+>>>
+>>>On 12/07/2010 01:49 PM, ikorot at earthlink.net wrote:
+>>>>> One reason is that these tables changed from non-zero to zero values between
+>>>>> Broadcom driver 4.174.64.19 and 5.10.56.46. As they might change again, I think
+>>>>> we should retain the full version.
+>>>>
+>>>> Is there a way to check for version of the driver?
+>>>> This way whoever uses old one won't be screwed...
+>>>
+>>>That will not be a problem as no older version of b43 works at all with b43. To
+>>>help you understand this change, when the 4.174.64.19 Broadcom driver was
+>>>reverse-engineered, the tables had non-zero values. Rafel later compared the
+>>>trace dumps of b43 with the latest version of wl and found that the values are
+>>>now zero. When I rechecked driver 5.10.56.46, I found them to be zero there as
+>>>well and changed the specs.
+>>
+>> Well, it maybe feasible to keep the old values and check
+>> the version of the driver, since you are saying yourself
+>> that the value might be changing in the future.
+>> Maybe for couple of releases only?
+>
+>Sorry, but I don't understand that at all. What do you mean by version
+>of the driver? What driver?
+
+#if B43_VERSION <= x.x.x.x
+// table initialized to some values
+#else
+//table initialized to 0's
+#endif
+
+>
+>b43 comes with tables built in, there is no way b43 could use tables
+>from other version of b43...
+
+Thank you.
+
+>
+>-- 
+>Rafa?
