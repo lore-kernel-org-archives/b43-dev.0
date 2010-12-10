@@ -1,37 +1,91 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 10 Dec 2010 20:08:40 +0100
-Subject: b43 N PHY status report
-In-Reply-To: <AANLkTik2MdDg4g4dFuB6ozZ3Pp3pPORmSAxRAbtznTLP@mail.gmail.com>
-References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
-	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
-	<4CFFA112.7030800@lwfinger.net>
-	<885729A3-72D4-4EFC-AAFE-D2B573E00ED9@ing.unibs.it>
-	<1292006874.3531.4.camel@jlt3.sipsolutions.net>
-	<4D02793E.2050004@lwfinger.net>
-	<AANLkTik2MdDg4g4dFuB6ozZ3Pp3pPORmSAxRAbtznTLP@mail.gmail.com>
-Message-ID: <1292008120.3531.5.camel@jlt3.sipsolutions.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 10 Dec 2010 20:33:53 +0100
+Subject: [PATCH 1/4] b43: N-PHY: update init tables
+In-Reply-To: <3300273.1292008199474.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
+References: <3300273.1292008199474.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
+Message-ID: <AANLkTikZckiQBb+nZMFySFsA1K1fAjCRPCAwE9jOutwu@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: ikorot@earthlink.net
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Fri, 2010-12-10 at 20:04 +0100, G?bor Stefanik wrote:
-> On Fri, Dec 10, 2010 at 8:02 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> > On 12/10/2010 12:47 PM, Johannes Berg wrote:
-> >> On Fri, 2010-12-10 at 19:30 +0100, Francesco Gringoli wrote:
-> >>
-> >>> [ 1117.516031] unregister_netdevice: waiting for wlan1 to become free. Usage count = 1
-> >>>
-> >>> and the device is never release (by who?). I have to reboot.
-> >>
-> >> That's a bug in the ipv6 code, upgrade your kernel :-)
-> >
-> > I would not have seen that as IPv6 is disabled in my kernels.
-> 
-> Are you serious? Disabling ipv6 with ipv4 exhaustion expected in January?
+W dniu 10 grudnia 2010 20:09 u?ytkownik  <ikorot@earthlink.net> napisa?:
+> Rafal,
+>
+>
+> -----Original Message-----
+>>From: Rafa? Mi?ecki <zajec5@gmail.com>
+>>Sent: Dec 9, 2010 10:36 PM
+>>To: ikorot at earthlink.net
+>>Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
+>>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
+>>
+>>W dniu 10 grudnia 2010 03:26 u?ytkownik ?<ikorot@earthlink.net> napisa?:
+>>> -----Original Message-----
+>>>>From: Rafa? Mi?ecki <zajec5@gmail.com>
+>>>>Sent: Dec 9, 2010 6:06 AM
+>>>>To: ikorot at earthlink.net
+>>>>Cc: Larry Finger <Larry.Finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
+>>>>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
+>>>>
+>>>>2010/12/8 ?<ikorot@earthlink.net>:
+>>>>> Larry,
+>>>>>
+>>>>>
+>>>>> -----Original Message-----
+>>>>>>From: Larry Finger <Larry.Finger@lwfinger.net>
+>>>>>>Sent: Dec 7, 2010 12:00 PM
+>>>>>>To: ikorot at earthlink.net
+>>>>>>Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless at vger.kernel.org, b43-dev at lists.infradead.org
+>>>>>>Subject: Re: [PATCH 1/4] b43: N-PHY: update init tables
+>>>>>>
+>>>>>>On 12/07/2010 01:49 PM, ikorot at earthlink.net wrote:
+>>>>>>>> One reason is that these tables changed from non-zero to zero values between
+>>>>>>>> Broadcom driver 4.174.64.19 and 5.10.56.46. As they might change again, I think
+>>>>>>>> we should retain the full version.
+>>>>>>>
+>>>>>>> Is there a way to check for version of the driver?
+>>>>>>> This way whoever uses old one won't be screwed...
+>>>>>>
+>>>>>>That will not be a problem as no older version of b43 works at all with b43. To
+>>>>>>help you understand this change, when the 4.174.64.19 Broadcom driver was
+>>>>>>reverse-engineered, the tables had non-zero values. Rafel later compared the
+>>>>>>trace dumps of b43 with the latest version of wl and found that the values are
+>>>>>>now zero. When I rechecked driver 5.10.56.46, I found them to be zero there as
+>>>>>>well and changed the specs.
+>>>>>
+>>>>> Well, it maybe feasible to keep the old values and check
+>>>>> the version of the driver, since you are saying yourself
+>>>>> that the value might be changing in the future.
+>>>>> Maybe for couple of releases only?
+>>>>
+>>>>Sorry, but I don't understand that at all. What do you mean by version
+>>>>of the driver? What driver?
+>>>
+>>> #if B43_VERSION <= x.x.x.x
+>>> // table initialized to some values
+>>> #else
+>>> //table initialized to 0's
+>>> #endif
+>>
+>>You want to put condition checking b43 version in... b43 driver? I
+>>can't follow you.
+>
+> Yes.
+> And what you can't follow?
+>
+> For historical purposes and to better understand the changes and ease the
+> debugging I proposed this addition.
+> Besides if for some reason in future versions Broadcom will decide to return to
+> the same values for init tables, the changes will be very simple.
 
-Can we stop this thread right here and go on-topic again please?
+So I guess you meant using "#if 0" for commenting old values?
 
-johannes
+I guess we could do that instead deleting old values, but fortunately
+it's git so we always can browse history and restore old values
+without problems :)
+
+-- 
+Rafa?
