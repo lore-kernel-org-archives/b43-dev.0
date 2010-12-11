@@ -1,48 +1,62 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 11 Dec 2010 11:39:02 -0600
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Sat, 11 Dec 2010 18:49:29 +0100
 Subject: Question about SPROM Readout
-In-Reply-To: <1292057237.20015.2.camel@maggie>
-References: <4D02A466.2030607@lwfinger.net>	(sfid-20101210_230619_560696_1D62D066)
+In-Reply-To: <4D03B736.5030301@lwfinger.net>
+	(sfid-20101211_183847_601258_39942E98)
+References: <4D02A466.2030607@lwfinger.net>
+	(sfid-20101210_230619_560696_1D62D066)
 	<1292057237.20015.2.camel@maggie>
-Message-ID: <4D03B736.5030301@lwfinger.net>
+	<4D03B736.5030301@lwfinger.net> (sfid-20101211_183847_601258_39942E98)
+Message-ID: <1292089769.20015.14.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 12/11/2010 02:47 AM, Michael B?sch wrote:
-> On Fri, 2010-12-10 at 16:06 -0600, Larry Finger wrote: 
->> On the box with the SPROM located at 0x0800 rather than 0x1000, a readout cycle
->> dumps data from whatever core happens to be mapped in the region 0x0 - 0xFFF. As
->> this is usually not the ChipCommon core, the SPROM dump is usually garbage.
->> Similarly, an SPROM write would overwrite lots of things.
+On Sat, 2010-12-11 at 11:39 -0600, Larry Finger wrote: 
+> On 12/11/2010 02:47 AM, Michael B?sch wrote:
+> > On Fri, 2010-12-10 at 16:06 -0600, Larry Finger wrote: 
+> >> On the box with the SPROM located at 0x0800 rather than 0x1000, a readout cycle
+> >> dumps data from whatever core happens to be mapped in the region 0x0 - 0xFFF. As
+> >> this is usually not the ChipCommon core, the SPROM dump is usually garbage.
+> >> Similarly, an SPROM write would overwrite lots of things.
+> > 
+> > No wait. The SPROM is not mapped into the core MMIO. It is mapped right
+> > above it. So a core switch does not affect it.
+> > Core window goes from 0-0x800 (0r 0-0x1000 on PCI-E). Above this, the
+> > SPROM is statically mapped.
 > 
-> No wait. The SPROM is not mapped into the core MMIO. It is mapped right
-> above it. So a core switch does not affect it.
-> Core window goes from 0-0x800 (0r 0-0x1000 on PCI-E). Above this, the
-> SPROM is statically mapped.
+> I see where the io_resource is mapped from 0x100 - 0x7FF, but not where it gets
+> changed for PCIe.
 
-I see where the io_resource is mapped from 0x100 - 0x7FF, but not where it gets
-changed for PCIe.
+We request and map all PCI regions with the sizes that the PCI subsystem
+autodetects. So there is no need to "change" something for PCIe.
+Note that the region we're interested in is the memory region,
+not the I/O region.
 
-This is the SPROM dump I get on the box in question:
+> This is the SPROM dump I get on the box in question:
+> 
+> SPROM=$(find /sys -name ssb_sprom)
+> cat $SPROM
+> DE0168000187570600000000C0000A001400000080000F0047004700830164003009C0FC00000
+> 00000000000000001030001000002000200010004000400000002000000030002000E00470000
+> 28000001000500C0FCE005FFFFFFFF0A0011010800000000000000DB48000000000000FAAB000
+> 00100000000008904B9C98887060010270100E0320000000000000702000000001A04FA000A0E
+> 0B090E0200000100000000003F01FFFF0000FC03427B0200900700000000B80B0080140414040
+> 0000000FA000000000000004C1DE204AA000000F401410000000000000000009B0800000000A2
+> 04000000000000000000000000000000000000000000000000000000004E002A003905D10AB70
+> 35517A92A6004420085030000000085033505B8005B0411000300B602640A0000320200001C08
+> 46000000000000000000000000000000000000000000000000000000000000000000000000000
+> 000010000004252434D5F544553545F5353494400000000000000000000000000000000000039
+> 00000050000000C0FC00000000000000000000000000000000000000000000000000000000000
+> 000000000000000000000000000000000
+> 
+> These are clearly not the data from a real SPROM.
 
-SPROM=$(find /sys -name ssb_sprom)
-cat $SPROM
-DE0168000187570600000000C0000A001400000080000F0047004700830164003009C0FC00000
-00000000000000001030001000002000200010004000400000002000000030002000E00470000
-28000001000500C0FCE005FFFFFFFF0A0011010800000000000000DB48000000000000FAAB000
-00100000000008904B9C98887060010270100E0320000000000000702000000001A04FA000A0E
-0B090E0200000100000000003F01FFFF0000FC03427B0200900700000000B80B0080140414040
-0000000FA000000000000004C1DE204AA000000F401410000000000000000009B0800000000A2
-04000000000000000000000000000000000000000000000000000000004E002A003905D10AB70
-35517A92A6004420085030000000085033505B8005B0411000300B602640A0000320200001C08
-46000000000000000000000000000000000000000000000000000000000000000000000000000
-000010000004252434D5F544553545F5353494400000000000000000000000000000000000039
-00000050000000C0FC00000000000000000000000000000000000000000000000000000000000
-000000000000000000000000000000000
+Yeah, well. Maybe they simply relocated the SPROM again or changed the
+way it has to be accessed in another way. Or there simply is a bug in
+all that crazy SPROM detect logic that was added for PCIe devices.
 
-These are clearly not the data from a real SPROM.
-
-Larry
+-- 
+Greetings Michael.
