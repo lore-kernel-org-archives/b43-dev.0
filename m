@@ -1,31 +1,35 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Sat, 11 Dec 2010 10:49:55 +0100
-Subject: [PATCH 1/4] b43: N-PHY: update init tables
-In-Reply-To: <21458014.1292018042407.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
-	(sfid-20101210_165420_341725_682F2F26)
-References: <21458014.1292018042407.JavaMail.root@elwamui-rubis.atl.sa.earthlink.net>
-	(sfid-20101210_165420_341725_682F2F26)
-Message-ID: <1292060995.20015.6.camel@maggie>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 11 Dec 2010 18:16:04 +0100
+Subject: Request for bisecting DMA partial fix
+In-Reply-To: <20101211085104.GB22346@markov>
+References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
+	<AANLkTintrxtNDKJRPiNXAvr2XX3Fa5ZNBqwca59d9GfV@mail.gmail.com>
+	<20101126173952.GC2370@markov>
+	<AANLkTi=g3bXnGiqC3zH6gFVi8tLhoiHYbDnhWOXptRk7@mail.gmail.com>
+	<20101211085104.GB22346@markov>
+Message-ID: <AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Fri, 2010-12-10 at 13:54 -0800, ikorot at earthlink.net wrote: 
-> Well, after 5 or 6 month will you remember the commit that introduced
-> the change?
-> Yes, you can browse the history, but it will be an extra effort to find
-> it.
-> 
-> I understand that the code will be bigger in size, but if it takes
-> just adding 2 lines of code comparing to looking thru history and 
-> then copying the values to sources.
+W dniu 11 grudnia 2010 09:51 u?ytkownik Eric Garrido <eric@ericgar.com> napisa?:
+> On 2010-12-01 ?8:55pm, Rafa? Mi?ecki wrote:
+>> > I'm away for the NA holiday, but I can try to verify I have 1) and
+>> > then poke at this on Sunday. I'll let you know.
+>>
+>> Ping? :)
+>
+> Ack. My apologies. Life got in the way (giving notice to my employer,
+> when one would think I'd work *less* afterward, but the opposite has
+> proven to be true). I should be *actually* able to do this tomorrow,
+> and if need be, on Sunday.
 
-Come on... what the heck!?
-We have version control and we know how to use it. So we don't have to
-keep old code versions in the source files. This is not going to happen.
-Ever.
+Great, thanks :)
+
+Larry: when you noticed this fix on your machine, did you use same
+config for building new kernel as was used for earlier (distro?) one?
 
 -- 
-Greetings Michael.
+Rafa?
