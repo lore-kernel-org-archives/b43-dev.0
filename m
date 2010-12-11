@@ -1,37 +1,48 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 11 Dec 2010 11:22:46 -0600
-Subject: Request for bisecting DMA partial fix
-In-Reply-To: <AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
-References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>	<AANLkTintrxtNDKJRPiNXAvr2XX3Fa5ZNBqwca59d9GfV@mail.gmail.com>	<20101126173952.GC2370@markov>	<AANLkTi=g3bXnGiqC3zH6gFVi8tLhoiHYbDnhWOXptRk7@mail.gmail.com>	<20101211085104.GB22346@markov>
-	<AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
-Message-ID: <4D03B366.3060008@lwfinger.net>
+Date: Sat, 11 Dec 2010 11:39:02 -0600
+Subject: Question about SPROM Readout
+In-Reply-To: <1292057237.20015.2.camel@maggie>
+References: <4D02A466.2030607@lwfinger.net>	(sfid-20101210_230619_560696_1D62D066)
+	<1292057237.20015.2.camel@maggie>
+Message-ID: <4D03B736.5030301@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 12/11/2010 11:16 AM, Rafa? Mi?ecki wrote:
-> W dniu 11 grudnia 2010 09:51 u?ytkownik Eric Garrido <eric@ericgar.com> napisa?:
->> On 2010-12-01  8:55pm, Rafa? Mi?ecki wrote:
->>>> I'm away for the NA holiday, but I can try to verify I have 1) and
->>>> then poke at this on Sunday. I'll let you know.
->>>
->>> Ping? :)
->>
->> Ack. My apologies. Life got in the way (giving notice to my employer,
->> when one would think I'd work *less* afterward, but the opposite has
->> proven to be true). I should be *actually* able to do this tomorrow,
->> and if need be, on Sunday.
+On 12/11/2010 02:47 AM, Michael B?sch wrote:
+> On Fri, 2010-12-10 at 16:06 -0600, Larry Finger wrote: 
+>> On the box with the SPROM located at 0x0800 rather than 0x1000, a readout cycle
+>> dumps data from whatever core happens to be mapped in the region 0x0 - 0xFFF. As
+>> this is usually not the ChipCommon core, the SPROM dump is usually garbage.
+>> Similarly, an SPROM write would overwrite lots of things.
 > 
-> Great, thanks :)
-> 
-> Larry: when you noticed this fix on your machine, did you use same
-> config for building new kernel as was used for earlier (distro?) one?
+> No wait. The SPROM is not mapped into the core MMIO. It is mapped right
+> above it. So a core switch does not affect it.
+> Core window goes from 0-0x800 (0r 0-0x1000 on PCI-E). Above this, the
+> SPROM is statically mapped.
 
-No. I always trim the module list to match the hardware on the machine, and add
-some module hacking options that they leave off.
+I see where the io_resource is mapped from 0x100 - 0x7FF, but not where it gets
+changed for PCIe.
 
-I need to go back to 2.6.34 to verify that I do get DMA errors with that kernel.
+This is the SPROM dump I get on the box in question:
+
+SPROM=$(find /sys -name ssb_sprom)
+cat $SPROM
+DE0168000187570600000000C0000A001400000080000F0047004700830164003009C0FC00000
+00000000000000001030001000002000200010004000400000002000000030002000E00470000
+28000001000500C0FCE005FFFFFFFF0A0011010800000000000000DB48000000000000FAAB000
+00100000000008904B9C98887060010270100E0320000000000000702000000001A04FA000A0E
+0B090E0200000100000000003F01FFFF0000FC03427B0200900700000000B80B0080140414040
+0000000FA000000000000004C1DE204AA000000F401410000000000000000009B0800000000A2
+04000000000000000000000000000000000000000000000000000000004E002A003905D10AB70
+35517A92A6004420085030000000085033505B8005B0411000300B602640A0000320200001C08
+46000000000000000000000000000000000000000000000000000000000000000000000000000
+000010000004252434D5F544553545F5353494400000000000000000000000000000000000039
+00000050000000C0FC00000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000
+
+These are clearly not the data from a real SPROM.
 
 Larry
