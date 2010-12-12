@@ -1,7 +1,8 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 11 Dec 2010 21:34:25 -0600
-Subject: [PATCH 1/2] ssb: Attempt recovery from corrupt sprom
-Message-ID: <4d0442c1.5R+Q6u6bksIzTSW6%Larry.Finger@lwfinger.net>
+Date: Sat, 11 Dec 2010 21:35:35 -0600
+Subject: [PATCH 2/2] ssb: Save sprom image for dump of device at alternate
+	location
+Message-ID: <4d044307.Ipm73VWEgifFrF0m%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,14 +10,13 @@ Content-Transfer-Encoding: 7bit
 To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
 Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-Current code defaults to SPROM revision 1 if there is a CRC error. In at
-least one known case, most of the corrupt contents are reasonable and
-it is possible to extract the correct MAC address and TX power settings
-from what is read. With this patch, an attempt is made to match the
-apparent revision number with certain SPROM signatures. For those revisions
-without such a feature, a reasonable guess is made. If the apparent
-revision is invalid, or if the signature does not match, the previous
-behavior is kept.
+Some recent Broadcom devices in netbooks have an SPROM that is located
+at 0x0800, not the normal location of 0x1000. Initial reading of the
+SPROM has been solved in a previous commit; however, dumping to a console
+no longer works. This difficulty is fixed by saving the SPROM image
+from the initial read, and only freeing that memory at module unload.
+
+Uploading a new SPROM image is not supported for these devices.
 
 Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
 ---
@@ -25,93 +25,107 @@ John,
 
 This is 2.6.38 material.
 
-Thanks,
-
 Larry
 ---
-
+ 
 Index: wireless-testing/drivers/ssb/pci.c
 ===================================================================
 --- wireless-testing.orig/drivers/ssb/pci.c
 +++ wireless-testing/drivers/ssb/pci.c
-@@ -661,6 +661,7 @@ static int ssb_pci_sprom_get(struct ssb_
- 	const struct ssb_sprom *fallback;
- 	int err;
- 	u16 *buf;
-+	u16 revision;
- 
- 	if (!ssb_is_sprom_available(bus)) {
- 		ssb_printk(KERN_ERR PFX "No SPROM available!\n");
-@@ -712,6 +713,52 @@ static int ssb_pci_sprom_get(struct ssb_
+@@ -709,7 +709,7 @@ static int ssb_pci_sprom_get(struct ssb_
+ 			if (fallback) {
+ 				memcpy(sprom, fallback, sizeof(*sprom));
+ 				err = 0;
+-				goto out_free;
++				goto out;
  			}
  			ssb_printk(KERN_WARNING PFX "WARNING: Invalid"
  				   " SPROM CRC (corrupt SPROM)\n");
-+			/* At this point, we have a faulty SPROM image.
-+			 * In case only part of it is corrupt, try to
-+			 * determine what rev we might have */
-+			revision = buf[SPOFF(SSB_SPROMSIZE_WORDS_R4)] & 0x00FF;
-+			switch (revision) {
-+			case 4:
-+			case 5:
-+				/* Rev 4 and 5 have 0x5372 at byte offset
-+				 * SSB_SPROM4_SIG */
-+				if (buf[SPOFF(SSB_SPROM4_SIG)] == 0x5372)
-+					sprom->revision = revision;
-+				break;
-+			case 8:
-+				/* Rev has 0x5372 at byte offset
-+				 * SSB_SPROM8_SIG */
-+				if (buf[SPOFF(SSB_SPROM8_SIG)] == 0x5372)
-+					sprom->revision = revision;
-+				break;
-+			default:
-+				/* Try a rev 1, 2, or 3 size. This test will
-+				 * not be robust as these versions have no
-+				 * signature value */
-+				revision = buf[SPOFF(SSB_SPROMSIZE_WORDS_R123)]
-+					   & 0x00FF;
-+				switch (revision) {
-+				case 1:
-+					/* Rev 1 will have 0xFFFF in the board
-+					 * flags high position */
-+					if (buf[SPOFF(SSB_SPROM2_BFLHI)] ==
-+					    0xFFFF)
-+						sprom->revision = revision;
-+					break;
-+				case 2:
-+				case 3:
-+					/* Revs 2 and 3 will not have 0xFFFF in
-+					 * the board flags high position */
-+					if (buf[SPOFF(SSB_SPROM2_BFLHI)] !=
-+					    0xFFFF)
-+						sprom->revision = revision;
-+					break;
-+				default:
-+					/* The revision is not reasonable */
-+					break;
-+				}
-+				break;
-+			}
- 		}
+@@ -763,8 +763,8 @@ static int ssb_pci_sprom_get(struct ssb_
  	}
  	err = sprom_extract(bus, sprom, buf, bus->sprom_size);
-Index: wireless-testing/include/linux/ssb/ssb_regs.h
+ 
+-out_free:
+-	kfree(buf);
++out:
++	bus->sprom_data = buf;
+ 	return err;
+ }
+ 
+@@ -1013,6 +1013,7 @@ void ssb_pci_exit(struct ssb_bus *bus)
+ 	if (bus->bustype != SSB_BUSTYPE_PCI)
+ 		return;
+ 
++	kfree(bus->sprom_data);
+ 	pdev = bus->host_pci;
+ 	device_remove_file(&pdev->dev, &dev_attr_ssb_sprom);
+ }
+Index: wireless-testing/drivers/ssb/sprom.c
 ===================================================================
---- wireless-testing.orig/include/linux/ssb/ssb_regs.h
-+++ wireless-testing/include/linux/ssb/ssb_regs.h
-@@ -266,6 +266,7 @@
- #define  SSB_SPROM3_OFDMGPO		0x107A	/* G-PHY OFDM Power Offset (4 bytes, BigEndian) */
+--- wireless-testing.orig/drivers/ssb/sprom.c
++++ wireless-testing/drivers/ssb/sprom.c
+@@ -72,24 +72,29 @@ ssize_t ssb_attr_sprom_show(struct ssb_b
+ 	ssize_t count = 0;
+ 	size_t sprom_size_words = bus->sprom_size;
  
- /* SPROM Revision 4 */
-+#define SSB_SPROM4_SIG			0x0040	/* Rev 4/5 signature */
- #define SSB_SPROM4_BFLLO		0x0044	/* Boardflags (low 16 bits) */
- #define SSB_SPROM4_BFLHI		0x0046  /* Board Flags Hi */
- #define SSB_SPROM4_IL0MAC		0x004C	/* 6 byte MAC address for a/b/g/n */
-@@ -369,6 +370,7 @@
- #define  SSB_SPROM5_GPIOB_P3_SHIFT	8
+-	sprom = kcalloc(sprom_size_words, sizeof(u16), GFP_KERNEL);
+-	if (!sprom)
+-		goto out;
+-
+-	/* Use interruptible locking, as the SPROM write might
+-	 * be holding the lock for several seconds. So allow userspace
+-	 * to cancel operation. */
+-	err = -ERESTARTSYS;
+-	if (mutex_lock_interruptible(&bus->sprom_mutex))
+-		goto out_kfree;
+-	err = sprom_read(bus, sprom);
+-	mutex_unlock(&bus->sprom_mutex);
+-
++	if (bus->sprom_data) {
++		sprom = bus->sprom_data;
++		err = 0;
++	} else {
++		sprom = kcalloc(sprom_size_words, sizeof(u16), GFP_KERNEL);
++		if (!sprom)
++			goto out;
++
++		/* Use interruptible locking, as the SPROM write might
++		 * be holding the lock for several seconds. So allow userspace
++		 * to cancel operation. */
++		err = -ERESTARTSYS;
++		if (mutex_lock_interruptible(&bus->sprom_mutex))
++			goto out_kfree;
++		err = sprom_read(bus, sprom);
++		mutex_unlock(&bus->sprom_mutex);
++	}
+ 	if (!err)
+ 		count = sprom2hex(sprom, buf, PAGE_SIZE, sprom_size_words);
  
- /* SPROM Revision 8 */
-+#define SSB_SPROM8_SIG			0x0080	/* Rev 8 signature */
- #define SSB_SPROM8_BOARDREV		0x0082	/* Board revision */
- #define SSB_SPROM8_BFLLO		0x0084	/* Board flags (bits 0-15) */
- #define SSB_SPROM8_BFLHI		0x0086	/* Board flags (bits 16-31) */
+ out_kfree:
+-	kfree(sprom);
++	if (!bus->sprom_data)
++		kfree(sprom);
+ out:
+ 	return err ? err : count;
+ }
+@@ -105,6 +110,8 @@ ssize_t ssb_attr_sprom_store(struct ssb_
+ 	size_t sprom_size_words = bus->sprom_size;
+ 	struct ssb_freeze_context freeze;
+ 
++	if (bus->sprom_offset < SSB_SPROM_BASE1)
++		return -EINVAL;
+ 	sprom = kcalloc(bus->sprom_size, sizeof(u16), GFP_KERNEL);
+ 	if (!sprom)
+ 		goto out;
+Index: wireless-testing/include/linux/ssb/ssb.h
+===================================================================
+--- wireless-testing.orig/include/linux/ssb/ssb.h
++++ wireless-testing/include/linux/ssb/ssb.h
+@@ -311,6 +311,7 @@ struct ssb_bus {
+ 	u16 chip_rev;
+ 	u16 sprom_offset;
+ 	u16 sprom_size;		/* number of words in sprom */
++	u16 *sprom_data;	/* saved sprom raw data */
+ 	u8 chip_package;
+ 
+ 	/* List of devices (cores) on the backplane. */
