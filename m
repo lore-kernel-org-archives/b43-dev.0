@@ -1,53 +1,117 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 11 Dec 2010 20:55:11 +0100
-Subject: Request for bisecting DMA partial fix
-In-Reply-To: <4D03B366.3060008@lwfinger.net>
-References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
-	<AANLkTintrxtNDKJRPiNXAvr2XX3Fa5ZNBqwca59d9GfV@mail.gmail.com>
-	<20101126173952.GC2370@markov>
-	<AANLkTi=g3bXnGiqC3zH6gFVi8tLhoiHYbDnhWOXptRk7@mail.gmail.com>
-	<20101211085104.GB22346@markov>
-	<AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
-	<4D03B366.3060008@lwfinger.net>
-Message-ID: <AANLkTi=L9x-1H1RGp3C0ozYFnQQHw-4BHGB26fMHJjeL@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sat, 11 Dec 2010 21:34:25 -0600
+Subject: [PATCH 1/2] ssb: Attempt recovery from corrupt sprom
+Message-ID: <4d0442c1.5R+Q6u6bksIzTSW6%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-W dniu 11 grudnia 2010 18:22 u?ytkownik Larry Finger
-<Larry.Finger@lwfinger.net> napisa?:
-> On 12/11/2010 11:16 AM, Rafa? Mi?ecki wrote:
->> W dniu 11 grudnia 2010 09:51 u?ytkownik Eric Garrido <eric@ericgar.com> napisa?:
->>> On 2010-12-01 ?8:55pm, Rafa? Mi?ecki wrote:
->>>>> I'm away for the NA holiday, but I can try to verify I have 1) and
->>>>> then poke at this on Sunday. I'll let you know.
->>>>
->>>> Ping? :)
->>>
->>> Ack. My apologies. Life got in the way (giving notice to my employer,
->>> when one would think I'd work *less* afterward, but the opposite has
->>> proven to be true). I should be *actually* able to do this tomorrow,
->>> and if need be, on Sunday.
->>
->> Great, thanks :)
->>
->> Larry: when you noticed this fix on your machine, did you use same
->> config for building new kernel as was used for earlier (distro?) one?
->
-> No. I always trim the module list to match the hardware on the machine, and add
-> some module hacking options that they leave off.
->
-> I need to go back to 2.6.34 to verify that I do get DMA errors with that kernel.
+Current code defaults to SPROM revision 1 if there is a CRC error. In at
+least one known case, most of the corrupt contents are reasonable and
+it is possible to extract the correct MAC address and TX power settings
+from what is read. With this patch, an attempt is made to match the
+apparent revision number with certain SPROM signatures. For those revisions
+without such a feature, a reasonable guess is made. If the apparent
+revision is invalid, or if the signature does not match, the previous
+behavior is kept.
 
-I don't want to try be smarter than you... ;) but is that possible you
-used distro's 2.6.34, and then directly switched to self-compiled
-2.6.35? Then difference in frequency of DMA errors could be matter of
-kernel configuration.
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
 
-Of course, as you said, compiling 2.6.34 with your standard
-configuration would explain that.
+John,
 
--- 
-Rafa?
+This is 2.6.38 material.
+
+Thanks,
+
+Larry
+---
+
+Index: wireless-testing/drivers/ssb/pci.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/pci.c
++++ wireless-testing/drivers/ssb/pci.c
+@@ -661,6 +661,7 @@ static int ssb_pci_sprom_get(struct ssb_
+ 	const struct ssb_sprom *fallback;
+ 	int err;
+ 	u16 *buf;
++	u16 revision;
+ 
+ 	if (!ssb_is_sprom_available(bus)) {
+ 		ssb_printk(KERN_ERR PFX "No SPROM available!\n");
+@@ -712,6 +713,52 @@ static int ssb_pci_sprom_get(struct ssb_
+ 			}
+ 			ssb_printk(KERN_WARNING PFX "WARNING: Invalid"
+ 				   " SPROM CRC (corrupt SPROM)\n");
++			/* At this point, we have a faulty SPROM image.
++			 * In case only part of it is corrupt, try to
++			 * determine what rev we might have */
++			revision = buf[SPOFF(SSB_SPROMSIZE_WORDS_R4)] & 0x00FF;
++			switch (revision) {
++			case 4:
++			case 5:
++				/* Rev 4 and 5 have 0x5372 at byte offset
++				 * SSB_SPROM4_SIG */
++				if (buf[SPOFF(SSB_SPROM4_SIG)] == 0x5372)
++					sprom->revision = revision;
++				break;
++			case 8:
++				/* Rev has 0x5372 at byte offset
++				 * SSB_SPROM8_SIG */
++				if (buf[SPOFF(SSB_SPROM8_SIG)] == 0x5372)
++					sprom->revision = revision;
++				break;
++			default:
++				/* Try a rev 1, 2, or 3 size. This test will
++				 * not be robust as these versions have no
++				 * signature value */
++				revision = buf[SPOFF(SSB_SPROMSIZE_WORDS_R123)]
++					   & 0x00FF;
++				switch (revision) {
++				case 1:
++					/* Rev 1 will have 0xFFFF in the board
++					 * flags high position */
++					if (buf[SPOFF(SSB_SPROM2_BFLHI)] ==
++					    0xFFFF)
++						sprom->revision = revision;
++					break;
++				case 2:
++				case 3:
++					/* Revs 2 and 3 will not have 0xFFFF in
++					 * the board flags high position */
++					if (buf[SPOFF(SSB_SPROM2_BFLHI)] !=
++					    0xFFFF)
++						sprom->revision = revision;
++					break;
++				default:
++					/* The revision is not reasonable */
++					break;
++				}
++				break;
++			}
+ 		}
+ 	}
+ 	err = sprom_extract(bus, sprom, buf, bus->sprom_size);
+Index: wireless-testing/include/linux/ssb/ssb_regs.h
+===================================================================
+--- wireless-testing.orig/include/linux/ssb/ssb_regs.h
++++ wireless-testing/include/linux/ssb/ssb_regs.h
+@@ -266,6 +266,7 @@
+ #define  SSB_SPROM3_OFDMGPO		0x107A	/* G-PHY OFDM Power Offset (4 bytes, BigEndian) */
+ 
+ /* SPROM Revision 4 */
++#define SSB_SPROM4_SIG			0x0040	/* Rev 4/5 signature */
+ #define SSB_SPROM4_BFLLO		0x0044	/* Boardflags (low 16 bits) */
+ #define SSB_SPROM4_BFLHI		0x0046  /* Board Flags Hi */
+ #define SSB_SPROM4_IL0MAC		0x004C	/* 6 byte MAC address for a/b/g/n */
+@@ -369,6 +370,7 @@
+ #define  SSB_SPROM5_GPIOB_P3_SHIFT	8
+ 
+ /* SPROM Revision 8 */
++#define SSB_SPROM8_SIG			0x0080	/* Rev 8 signature */
+ #define SSB_SPROM8_BOARDREV		0x0082	/* Board revision */
+ #define SSB_SPROM8_BFLLO		0x0084	/* Board flags (bits 0-15) */
+ #define SSB_SPROM8_BFLHI		0x0086	/* Board flags (bits 16-31) */
