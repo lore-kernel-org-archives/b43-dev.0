@@ -1,37 +1,43 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Sun, 12 Dec 2010 17:12:19 +0100
-Subject: [PATCH 2/2] ssb: Save sprom image for dump of device at
-	alternate location
-In-Reply-To: <4D04F2AF.5080706@lwfinger.net>
-	(sfid-20101212_170450_663695_3B8CD5F6)
-References: <4d044307.Ipm73VWEgifFrF0m%Larry.Finger@lwfinger.net>
-	(sfid-20101212_043513_712988_FFFFFFFF9320429C)
-	<1292143551.20015.24.camel@maggie> <4D04EB7D.1090009@lwfinger.net>
-	(sfid-20101212_103356_973639_7B7006EC) <1292168319.3572.6.camel@maggie>
-	<4D04F2AF.5080706@lwfinger.net> (sfid-20101212_170450_663695_3B8CD5F6)
-Message-ID: <1292170339.3572.11.camel@maggie>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 13 Dec 2010 18:00:45 +0100
+Subject: b43 N PHY status report
+In-Reply-To: <20101210184437.1975.qmail@stuge.se>
+References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
+	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
+	<4CFFA112.7030800@lwfinger.net>
+	<20101210165712.17625.qmail@stuge.se>
+	<4D02604F.7040009@lwfinger.net>
+	<20101210183448.32723.qmail@stuge.se>
+	<20101210184437.1975.qmail@stuge.se>
+Message-ID: <AANLkTik8OfphxpgaNF-crH=9R=NUPmvB=R-6VupaAJuW@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Sun, 2010-12-12 at 10:05 -0600, Larry Finger wrote: 
-> On 12/12/2010 09:38 AM, Michael B?sch wrote:
-> > 
-> > So, do we actually make sure the wireless core is mapped while reading
-> > SPROM from offset 0x800? I guess not and it just works by accident,
-> > because the core is still mapped from a previous operation.
-> 
-> I have core switching debug enabled on that box. When the SPROM is read, the
-> ChipCommon core is mapped, and no other core has yet been selected.
+2010/12/10 Peter Stuge <peter@stuge.se>:
+> Peter Stuge wrote:
+>> Auction from November:
+>>
+>> http://cgi.ebay.com/ws/eBayISAPI.dll?ViewItem&item=270634152387
+>
+> Make that
+> http://cgi.ebay.co.uk/ws/eBayISAPI.dll?ViewItem&item=270634152387
+>
+>
+>> http://cgi.ebay.co.uk/ws/eBayISAPI.dll?VISuperSize&item=270634152387
+>
+> and
+> http://i.ebayimg.com/16/!B2kGntQBGk~$(KGrHqR,!iIE)qvw8QW3BMjCQu1iiw~~_3.JPG
 
-Well, ok. Whatever core it is, it's coincidence that it is mapped.
-I'd rather prefer an explicit mapping of the chipcommon before
-the area is accessed. The chipcommon MMIO functions could probably
-be used. That would be easiest. (16bit function does not exist, yet,
-but is trivial to add).
+I've got a mail from user who unmounted his wireless card from Asus
+WL-500W. This card is MiniPCI (not express!) and from all the specs I
+can see this router is 802.11n. Also, this card has 3 antennas
+connectors. One weird thing is that this card is labeled as BCM4312...
+
+I asked for renting this card, it would be nice to test b43 to support
+such a card as well.
 
 -- 
-Greetings Michael.
+Rafa?
