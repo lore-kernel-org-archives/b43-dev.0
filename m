@@ -1,73 +1,33 @@
-From: h2o-post <h2o-post@gmx.net>
-Date: Mon, 13 Dec 2010 20:44:26 +0100
-Subject: AW: Release of Maranello firmware source code for Broadcom cards
-In-Reply-To: <AANLkTimUdX1duphd=QYRz_i-TERfXbjOM1QEXaTUO13M@mail.gmail.com>
-References: <2518B44B-D014-4ABA-AE31-BD75691488AB@ing.unibs.it>	<1DBB75B1-733F-4DFC-A541-2C2C986586A6@ing.unibs.it>	<AANLkTika70YCWU8eG5QHO+Bdf5XakEOg_b+UJdgCG4A0@mail.gmail.com>	<E338C554-ADF5-490D-825D-E04D295664F0@ing.unibs.it>
-	<AANLkTimUdX1duphd=QYRz_i-TERfXbjOM1QEXaTUO13M@mail.gmail.com>
-Message-ID: <016c01cb9afe$27bd5000$7737f000$@gmx.net>
+From: Eric Garrido <eric@ericgar.com>
+Date: Mon, 13 Dec 2010 23:23:51 -0500
+Subject: Request for bisecting DMA partial fix
+In-Reply-To: <AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
+References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
+	<AANLkTintrxtNDKJRPiNXAvr2XX3Fa5ZNBqwca59d9GfV@mail.gmail.com>
+	<20101126173952.GC2370@markov>
+	<AANLkTi=g3bXnGiqC3zH6gFVi8tLhoiHYbDnhWOXptRk7@mail.gmail.com>
+	<20101211085104.GB22346@markov>
+	<AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
+Message-ID: <20101214042351.GE6480@hilbert.ericgar.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?'Rafa=C5=82_Mi=C5=82ecki'?= <zajec5@gmail.com>, francesco.gringoli@ing.unibs.it
-Cc: 'linux-wireless' <linux-wireless@vger.kernel.org>, b43-dev@lists.infradead.org, 'Bo Han' <bohan@cs.umd.edu>
+To: b43-dev@lists.infradead.org
 
-Hi Francesco,
+On 2010-12-11  6:16pm, Rafa? Mi?ecki wrote:
+> W dniu 11 grudnia 2010 09:51 u?ytkownik Eric Garrido <eric@ericgar.com> napisa?:
+> > On 2010-12-01 ?8:55pm, Rafa? Mi?ecki wrote:
+> >> > I'm away for the NA holiday, but I can try to verify I have 1) and
+> >> > then poke at this on Sunday. I'll let you know.
+> >>
+> >> Ping? :)
+> >
+> > Ack. My apologies. Life got in the way (giving notice to my employer,
+> > when one would think I'd work *less* afterward, but the opposite has
+> > proven to be true). I should be *actually* able to do this tomorrow,
+> > and if need be, on Sunday.
+> 
+> Great, thanks :)
 
-We are running a mesh network with 45 nodes all by Linksys wrt54g routers in our village to get somehow internet connectivity.
-As I saw your maranello paper  I am curious to test your Broadcom firmware in our productive net.
-Is the firmware already available that supports this kind of crc frame checking ?
-
-Regards Thomas
-
------Urspr?ngliche Nachricht-----
-Von: b43-dev-bounces at lists.infradead.org [mailto:b43-dev-bounces at lists.infradead.org] Im Auftrag von Rafal Milecki
-Gesendet: Sonntag, 10. Oktober 2010 19:36
-An: francesco.gringoli at ing.unibs.it
-Cc: linux-wireless; b43-dev at lists.infradead.org; Bo Han
-Betreff: Re: Release of Maranello firmware source code for Broadcom cards
-
-W dniu 10 pa?dziernika 2010 18:53 u?ytkownik <francesco.gringoli@ing.unibs.it> napisa?:
-> On Oct 10, 2010, at 4:47 PM, Rafa? Mi?ecki wrote:
->
->> 2010/10/10  <francesco.gringoli@ing.unibs.it>:
->>> Hello there,
->>>
->>> we released the source code of the Maranello firmware and all the 
->>> necessary kernel patches. It was tested on Broadcom 4318/4306 pci 
->>> cards on PC architecture. Find all the necessary files browsing from
->>>
->>> http://www.ing.unibs.it/openfwwf
->>>
->>> or go directly here
->>>
->>> http://www.cs.umd.edu/projects/maranello
->>>
->>>
->>> Maranello is an enhancement of the 802.11 DCF standard: it 
->>> implements a Partial Packet Recovery technique to retransmit only 
->>> the corrupt parts of failed packets. This reduces the airtime and 
->>> contributes to enhance the throughput. It was written starting from 
->>> OpenFWWF5.2 by adding a number of new features.
->>>
->> Did you just add recovery feature to OpenFWWF 5.2 or did you improve 
->> basic OpenFWWF as well?
->>
->> My 4318 with OpenFWWF 5.2 stops transmitting after few MB. Can 
->> Maranello contain any fix for this? I'll able to test this later next 
->> week.
->
-> No, I don't think so. OpenFWWF5.2 does not handle correctly fifo overflow conditions. We have a testing firmware that handles them (and that works perfectly on WRT54GL): I hope we can release it soon.
-
-Wow, that's great! If you need more testing, I'm willing to do some.
-If you need full root access to machine with 4318 running wireless-testing, just mail me privately.
-
-Really hope you will manage to release that soon :)
-
---
-Rafa?
-
-_______________________________________________
-b43-dev mailing list
-b43-dev at lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+I'm still hacking on this and will report any findings.
