@@ -1,33 +1,40 @@
-From: Eric Garrido <eric@ericgar.com>
-Date: Mon, 13 Dec 2010 23:23:51 -0500
-Subject: Request for bisecting DMA partial fix
-In-Reply-To: <AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
-References: <AANLkTikLFuFd=155fO-VScNh7XKtZCMcR0DTo1V4-hHu@mail.gmail.com>
-	<AANLkTintrxtNDKJRPiNXAvr2XX3Fa5ZNBqwca59d9GfV@mail.gmail.com>
-	<20101126173952.GC2370@markov>
-	<AANLkTi=g3bXnGiqC3zH6gFVi8tLhoiHYbDnhWOXptRk7@mail.gmail.com>
-	<20101211085104.GB22346@markov>
-	<AANLkTi=zLV_BrJ2XqGNc9YVBmnWRDW3KYKFx2DhFeRiw@mail.gmail.com>
-Message-ID: <20101214042351.GE6480@hilbert.ericgar.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 14 Dec 2010 14:37:59 -0600
+Subject: [PATCH] p54usb: New USB ID for Gemtek WUBI-100GW
+Message-ID: <4d07d5a7.FnajdVI89jsmLq/B%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: John W Linville <linville@tuxdriver.com>, chunkeey@web.de
+Cc: ecosta.tmp@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On 2010-12-11  6:16pm, Rafa? Mi?ecki wrote:
-> W dniu 11 grudnia 2010 09:51 u?ytkownik Eric Garrido <eric@ericgar.com> napisa?:
-> > On 2010-12-01 ?8:55pm, Rafa? Mi?ecki wrote:
-> >> > I'm away for the NA holiday, but I can try to verify I have 1) and
-> >> > then poke at this on Sunday. I'll let you know.
-> >>
-> >> Ping? :)
-> >
-> > Ack. My apologies. Life got in the way (giving notice to my employer,
-> > when one would think I'd work *less* afterward, but the opposite has
-> > proven to be true). I should be *actually* able to do this tomorrow,
-> > and if need be, on Sunday.
-> 
-> Great, thanks :)
+From: Eduardo Costa <ecosta.tmp@gmail.com>
 
-I'm still hacking on this and will report any findings.
+This USB ID is for the WUBI-100GW 802.11g Wireless LAN USB Device that
+uses p54usb.
+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Eduardo Costa <ecosta.tmp@gmail.com>
+Cc: Stable <stable@kernel.org>
+---
+
+John,
+
+2.6.37 material.
+
+Larry
+---
+
+Index: wireless-testing/drivers/net/wireless/p54/p54usb.c
+===================================================================
+--- wireless-testing.orig/drivers/net/wireless/p54/p54usb.c
++++ wireless-testing/drivers/net/wireless/p54/p54usb.c
+@@ -61,6 +61,7 @@ static struct usb_device_id p54u_table[]
+ 	{USB_DEVICE(0x107b, 0x55f2)},	/* Gateway WGU-210 (Gemtek) */
+ 	{USB_DEVICE(0x124a, 0x4023)},	/* Shuttle PN15, Airvast WM168g, IOGear GWU513 */
+ 	{USB_DEVICE(0x1435, 0x0210)},	/* Inventel UR054G */
++	{USB_DEVICE(0x15a9, 0x0002)},	/* Gemtek WUBI-100GW 802.11g */
+ 	{USB_DEVICE(0x1630, 0x0005)},	/* 2Wire 802.11g USB (v1) / Z-Com */
+ 	{USB_DEVICE(0x182d, 0x096b)},	/* Sitecom WL-107 */
+ 	{USB_DEVICE(0x1915, 0x2234)},	/* Linksys WUSB54G OEM */
