@@ -1,162 +1,55 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Sat, 18 Dec 2010 07:10:47 +0100
-Subject: [RFC][PATCH] b43: N-PHY: prepare for 2056 radio tables writing
-In-Reply-To: <1292628161-6201-1-git-send-email-zajec5@gmail.com>
-	(sfid-20101217_182318_257450_0DD1BC69)
-References: <1292628161-6201-1-git-send-email-zajec5@gmail.com>
-	(sfid-20101217_182318_257450_0DD1BC69)
-Message-ID: <1292652647.7646.1.camel@maggie>
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Tue, 21 Dec 2010 09:25:26 +0000
+Subject: b43 N PHY status report
+In-Reply-To: <1292008120.3531.5.camel@jlt3.sipsolutions.net>
+References: <1291755360-21570-1-git-send-email-zajec5@gmail.com>
+	<AANLkTikp9ErFopLZVmXMjN3tXF2L62SwEEcujKeOBLYC@mail.gmail.com>
+	<4CFFA112.7030800@lwfinger.net>
+	<885729A3-72D4-4EFC-AAFE-D2B573E00ED9@ing.unibs.it>
+	<1292006874.3531.4.camel@jlt3.sipsolutions.net>
+	<4D02793E.2050004@lwfinger.net>
+	<AANLkTik2MdDg4g4dFuB6ozZ3Pp3pPORmSAxRAbtznTLP@mail.gmail.com>
+	<1292008120.3531.5.camel@jlt3.sipsolutions.net>
+Message-ID: <1292923526.2577.53.camel@macbook.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: =?ISO-8859-1?Q?G=E1bor?= Stefanik <netrolller.3d@gmail.com>, wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Larry Finger <Larry.Finger@lwfinger.net>
 
-On Sat, 2010-12-18 at 00:22 +0100, Rafa? Mi?ecki wrote: 
-> ---
-> Here is the way I'd like to handle many different tables, 3 for every PHY rev.
+On Fri, 2010-12-10 at 20:08 +0100, Johannes Berg wrote:
+> On Fri, 2010-12-10 at 20:04 +0100, G?bor Stefanik wrote:
+> > On Fri, Dec 10, 2010 at 8:02 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> > > On 12/10/2010 12:47 PM, Johannes Berg wrote:
+> > >> On Fri, 2010-12-10 at 19:30 +0100, Francesco Gringoli wrote:
+> > >>
+> > >>> [ 1117.516031] unregister_netdevice: waiting for wlan1 to become free. Usage count = 1
+> > >>>
+> > >>> and the device is never release (by who?). I have to reboot.
+> > >>
+> > >> That's a bug in the ipv6 code, upgrade your kernel :-)
+> > >
+> > > I would not have seen that as IPv6 is disabled in my kernels.
+> > 
+> > Are you serious? Disabling ipv6 with ipv4 exhaustion expected in January?
 > 
-> This adds some helper structure, pointers and magic macro. I understand this
-> but is this readable for others?
-> 
-> Advantage of this crazy layout is that we avoid mess like:
-> b2056_find_syn_table()
-> {
-> 	if (phy == 3)
-> 		return table_phy3;
-> 	else if (phy == 4)
-> 		return table_phy4;
-> 	...
-> 	else if (phy == 9)
-> 		return table_phy9;
-> }
-> ... same for tx and rx.
-> 
-> Any objections?
-> ---
->  drivers/net/wireless/b43/radio_2056.c |   82 +++++++++++++++++++++++++++++++++
->  drivers/net/wireless/b43/radio_2056.h |    3 +
->  2 files changed, 85 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/b43/radio_2056.c b/drivers/net/wireless/b43/radio_2056.c
-> index 0cdf6a4..d30c10a 100644
-> --- a/drivers/net/wireless/b43/radio_2056.c
-> +++ b/drivers/net/wireless/b43/radio_2056.c
-> @@ -24,6 +24,47 @@
->  #include "radio_2056.h"
->  #include "phy_common.h"
->  
-> +struct b2056_inittab_entry {
-> +	/* Value to write if we use the 5GHz band. */
-> +	u16 ghz5;
-> +	/* Value to write if we use the 2.4GHz band. */
-> +	u16 ghz2;
-> +	/* Flags */
-> +	u8 flags;
-> +#define B2056_INITTAB_ENTRY_OK	0x01
-> +#define B2056_INITTAB_UPLOAD	0x02
-> +};
-> +#define UPLOAD		.flags = B2056_INITTAB_ENTRY_OK | B2056_INITTAB_UPLOAD
-> +#define NOUPLOAD	.flags = B2056_INITTAB_ENTRY_OK
-> +
-> +struct b2056_inittabs_pts {
-> +	const struct b2056_inittab_entry *syn;
-> +	unsigned int syn_length;
-> +	const struct b2056_inittab_entry *tx;
-> +	unsigned int tx_length;
-> +	const struct b2056_inittab_entry *rx;
-> +	unsigned int rx_length;
-> +};
-> +
-> +static const struct b2056_inittab_entry b2056_inittab_rev3_syn[] = {
-> +};
-> +static const struct b2056_inittab_entry b2056_inittab_rev3_tx[] = {
-> +};
-> +static const struct b2056_inittab_entry b2056_inittab_rev3_rx[] = {
-> +};
-> +
-> +#define INITTABSPTS(prefix) \
-> +	.syn 		= prefix##_syn,			\
-> +	.syn_length	= ARRAY_SIZE(prefix##_syn),	\
-> +	.tx 		= prefix##_tx,			\
-> +	.tx_length	= ARRAY_SIZE(prefix##_tx),	\
-> +	.rx 		= prefix##_rx,			\
-> +	.rx_length	= ARRAY_SIZE(prefix##_rx)
-> +
-> +struct b2056_inittabs_pts b2056_inittabs[] = {
-> +	[3] = { INITTABSPTS(b2056_inittab_rev3) },
-> +};
-> +
->  #define RADIOREGS3(r00, r01, r02, r03, r04, r05, r06, r07, r08, r09, \
->  		   r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, \
->  		   r20, r21, r22, r23, r24, r25, r26, r27, r28, r29, \
-> @@ -6045,6 +6086,47 @@ static const struct b43_nphy_channeltab_entry_rev3 b43_nphy_channeltab_rev8[] =
->    },
->  };
->  
-> +static void b2056_upload_inittab(struct b43_wldev *dev, bool ghz5,
-> +				 bool ignore_uploadflag, u16 routing,
-> +				 const struct b2056_inittab_entry *e,
-> +				 unsigned int length)
-> +{
-> +	unsigned int i;
-> +	u16 value;
-> +
-> +	for (i = 0; i < length; i++) {
-> +		if (!(e->flags & B2056_INITTAB_ENTRY_OK))
-> +			continue;
-> +		if ((e->flags & B2056_INITTAB_UPLOAD) || ignore_uploadflag) {
-> +			if (ghz5)
-> +				value = e->ghz5;
-> +			else
-> +				value = e->ghz2;
-> +			b43_radio_write(dev, routing | i, value);
-> +		}
-> +		e++;
-> +	}
-> +}
-> +
-> +void b2056_upload_inittabs(struct b43_wldev *dev,
-> +			   bool ghz5, bool ignore_uploadflag)
-> +{
-> +	struct b2056_inittabs_pts *pts;
-> +
-> +	pts = &b2056_inittabs[dev->phy.rev];
+> Can we stop this thread right here and go on-topic again please?
 
-I'm OK with this, except that this really needs more sanity checking
-here. You need to check the array boundaries and check for
-uninitialized (all-zero) entries and print a big fat warn-on.
+On-topic:
 
-> +
-> +	b2056_upload_inittab(dev, ghz5, ignore_uploadflag,
-> +				B2056_SYN, pts->syn, pts->syn_length);
-> +	b2056_upload_inittab(dev, ghz5, ignore_uploadflag,
-> +				B2056_TX0, pts->tx, pts->tx_length);
-> +	b2056_upload_inittab(dev, ghz5, ignore_uploadflag,
-> +				B2056_TX1, pts->tx, pts->tx_length);
-> +	b2056_upload_inittab(dev, ghz5, ignore_uploadflag,
-> +				B2056_RX0, pts->rx, pts->rx_length);
-> +	b2056_upload_inittab(dev, ghz5, ignore_uploadflag,
-> +				B2056_RX1, pts->rx, pts->rx_length);
-> +}
-> +
->  /* TODO: add support for rev4+ devices by searching in rev4+ tables */
->  const struct b43_nphy_channeltab_entry_rev3 *
->  b43_nphy_get_chantabent_rev3(struct b43_wldev *dev, u16 freq)
-> diff --git a/drivers/net/wireless/b43/radio_2056.h b/drivers/net/wireless/b43/radio_2056.h
-> index 302600c..d601f6e 100644
-> --- a/drivers/net/wireless/b43/radio_2056.h
-> +++ b/drivers/net/wireless/b43/radio_2056.h
-> @@ -1114,4 +1114,7 @@ struct b43_nphy_channeltab_entry_rev3 {
->  	struct b43_phy_n_sfo_cfg phy_regs;
->  };
->  
-> +void b2056_upload_inittabs(struct b43_wldev *dev,
-> +			   bool ghz5, bool ignore_uploadflag);
-> +
->  #endif /* B43_RADIO_2056_H_ */
+Anyone working on or testing network device drivers should be using
+IPv6. IPv6 will exercise code paths and network behaviour that Legacy IP
+rarely does, in particular using multicast to do neighbour discovery.
+And on wireless networks when multicast will be handled differently by
+the AP, that makes more difference than on wired where it's mostly the
+MAC filters that get neglected.
 
+I've seen a number of broken drivers because their authors were only
+testing with Legacy IP and not IPv6.
+
+It's not hard to set up IPv6. Larry, if you need any pointers I'd be
+more than happy to help.
 
 -- 
-Greetings Michael.
+dwmw2
