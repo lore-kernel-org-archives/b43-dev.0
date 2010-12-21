@@ -1,32 +1,29 @@
-From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 21 Dec 2010 11:50:22 +0100
-Subject: [PATCH 4/4] b43: N-PHY: avoid PHY hangs for rev 3 and 4
-In-Reply-To: <1292928622-27651-1-git-send-email-zajec5@gmail.com>
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Tue, 21 Dec 2010 12:34:33 +0100
+Subject: [PATCH 2/4] b43: N-PHY: implement radio 2056 init steps
+In-Reply-To: <1292928622-27651-2-git-send-email-zajec5@gmail.com>
+	(sfid-20101221_115045_163491_FFFFFFFFB31FEB6B)
 References: <1292928622-27651-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1292928622-27651-4-git-send-email-zajec5@gmail.com>
+	<1292928622-27651-2-git-send-email-zajec5@gmail.com>
+	(sfid-20101221_115045_163491_FFFFFFFFB31FEB6B)
+Message-ID: <1292931273.13493.2.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/phy_n.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+On Tue, 2010-12-21 at 11:50 +0100, Rafa? Mi?ecki wrote: 
+> +static void b43_radio_init2056_post(struct b43_wldev *dev)
+> +{
+> +	b43_radio_set(dev, B2056_SYN_COM_CTRL, 0xB);
+> +	b43_radio_set(dev, B2056_SYN_COM_PU, 0x2);
+> +	b43_radio_set(dev, B2056_SYN_COM_RESET, 0x2);
+> +	mdelay(1);
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index f0b264c..63d8db3 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -3667,6 +3667,7 @@ static void b43_nphy_op_prepare_structs(struct b43_wldev *dev)
- 
- 	memset(nphy, 0, sizeof(*nphy));
- 
-+	nphy->hang_avoid = (phy->rev == 3 || phy->rev == 4);
- 	nphy->gain_boost = true; /* this way we follow wl, assume it is true */
- 	nphy->txrx_chain = 2; /* sth different than 0 and 1 for now */
- 	nphy->phyrxchain = 3; /* to avoid b43_nphy_set_rx_core_state like wl */
+Please don't use mdelay() ever. The driver is fully preemptible.
+Use msleep() instead.
+
 -- 
-1.6.3.3
+Greetings Michael.
