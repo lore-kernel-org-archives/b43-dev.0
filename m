@@ -1,139 +1,96 @@
-From: =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 21 Dec 2010 23:57:48 +0100
-Subject: [PATCH 2/2 V2] b43: N-PHY: update 2056 radio on channel switch on
-	rev3+
-In-Reply-To: <1292972268-26327-1-git-send-email-zajec5@gmail.com>
-References: <1292956819-21166-2-git-send-email-zajec5@gmail.com>
-	<1292972268-26327-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1292972268-26327-2-git-send-email-zajec5@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Wed, 29 Dec 2010 18:30:40 -0600
+Subject: 2.6.37-rc7: Regression: b43: crashes in hwrng_register()
+In-Reply-To: <20101229195440.GD5838@darkside.kls.lan>
+References: <4D1A8200.4010609@lwfinger.net>
+	<20101229195440.GD5838@darkside.kls.lan>
+Message-ID: <4D1BD2B0.4020101@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?utf-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Mario 'BitKoenig' Holbe <Mario.Holbe@TU-Ilmenau.DE>
+Cc: LKML <linux-kernel@vger.kernel.org>, wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-V2: break lines to match 80 chars width
+On 12/29/2010 01:54 PM, Mario 'BitKoenig' Holbe wrote:
+> Hello Larry,
+> 
+> On Tue, Dec 28, 2010 at 06:34:08PM -0600, Larry Finger wrote:
+>> Mario Holbe wrote:
+>>> on 2.6.37-rc7 the b43 driver crashes in hwrng_register(). This makes the
+> ...
+>>> This issue does also exist in 2.6.37-rc5.
+>>> This issue does not exist in 2.6.36.2.
+> ...
+>>> [ 29.868632] BUG: unable to handle kernel paging request at 907cde0c
+>>> [ 29.868640] IP: [<f8d543cc>] hwrng_register+0x4c/0x139 [rng_core]
+> ...
+>>> [ 29.868884] Call Trace:
+>>> [ 29.868909] [<f8e5a870>] ? b43_wireless_core_init+0xd0c/0xdd6 [b43]
+>>
+>> I almost missed this posting.
+> 
+> You're welcome :)
+> 
+>> Please post wireless problems with
+>> linux-wireless at vger.kernel.org for better visibility.
+> 
+> Sorry and thanks for completing the CC: list.
+> 
+>> I have a BCM4312 (14e4:4315) on a netbook that does not have this problem, thus
+>> I will have to rely on your debugging. An additional difficulty is that the only
+>> changes to b43 between 2.6.36 and 2.6.37 are adding an additional PCI ID, some
+>> fixes to the SDIO driver, and some code for an 802.11n device. None of these
+>> should affect your 802.11 b/g unit.
+>>
+>> Is it possible for you to bisect between 2.6.36 and 2.6.37-rc5? I wish I could
+>> suggest some way to minimize the number of commits and builds, but the problem
+>> could be anywhere.
+> 
+> To be honest, I never bisected such a huge amount of commits before and
+> I'm somewhat afraid of doing it.
+> 
+> However, I think I'm able to nail the issue down to:
+> commit 84c164a34ffe67908a932a2d641ec1a80c2d5435 which went to 2.6.37-rc1.
+> Author: John W. Linville <linville@tuxdriver.com>
+> Date:   Fri Aug 6 15:31:45 2010 -0400
+> 
+>     b43: move hwrng registration driver to wireless core initialization
+> 
+> Message-ID: <1281126412-5089-1-git-send-email-linville@tuxdriver.com>
+> http://marc.info/?l=linux-wireless&m=128112658829379&w=2
+> 
+> I did 2 things:
+> 1. I (manually) reverted 84c164a34ffe67908a932a2d641ec1a80c2d5435 from
+>    2.6.37-rc7: The crash disappears, b43 is useable.
+> 2. I added 84c164a34ffe67908a932a2d641ec1a80c2d5435 to 2.6.36.2: The
+>    crash shows up as with vanilla 2.6.37-rc7.
+> 
+> I'm not sure why this is not reproducible for you, probably it has
+> something to do with the VIA Nano having a second HW-RNG driven by
+> via-rng. I experienced crashes in the past with earlier kernels when I
+> tried to move RNGs around via /sys/devices/virtual/misc/hw_random, but
+> never took the time to trace them down since I just got it working :)
+> 
+> Oh, I'm still able to trigger a crash with
+> $ cat /sys/devices/virtual/misc/hw_random/rng_available
+> on 2.6.37-rc7 without 84c164a34ffe67908a932a2d641ec1a80c2d5435 as well
+> as on vanilla 2.6.36.2. Probably this is (better) reproducible for you?
+> 
+> I suspect both (the 84c164a34ffe67908a932a2d641ec1a80c2d5435 crash as
+> well as the cat rng_available crash) having something to do with a
+> partially uninitialized rng-struct, or better: parts of the rng-struct
+> that are free()d too early (i.e. within its lifetime).
 
-John: not a big problem at all :)
----
- drivers/net/wireless/b43/phy_n.c |   95 +++++++++++++++++++++++++++++++++++++-
- 1 files changed, 94 insertions(+), 1 deletions(-)
+Thanks for finding the problem. Obviously, I did not go back far enough in the
+record to find the commit that you implicate.
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index dded231..ab81ed8 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -139,6 +139,99 @@ static void b43_chantab_radio_upload(struct b43_wldev *dev,
- 	b43_radio_write(dev, B2055_C2_TX_MXBGTRIM, e->radio_c2_tx_mxbgtrim);
- }
- 
-+static void b43_chantab_radio_2056_upload(struct b43_wldev *dev,
-+				const struct b43_nphy_channeltab_entry_rev3 *e)
-+{
-+	b43_radio_write(dev, B2056_SYN_PLL_VCOCAL1, e->radio_syn_pll_vcocal1);
-+	b43_radio_write(dev, B2056_SYN_PLL_VCOCAL2, e->radio_syn_pll_vcocal2);
-+	b43_radio_write(dev, B2056_SYN_PLL_REFDIV, e->radio_syn_pll_refdiv);
-+	b43_radio_write(dev, B2056_SYN_PLL_MMD2, e->radio_syn_pll_mmd2);
-+	b43_radio_write(dev, B2056_SYN_PLL_MMD1, e->radio_syn_pll_mmd1);
-+	b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER1,
-+					e->radio_syn_pll_loopfilter1);
-+	b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER2,
-+					e->radio_syn_pll_loopfilter2);
-+	b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER3,
-+					e->radio_syn_pll_loopfilter3);
-+	b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER4,
-+					e->radio_syn_pll_loopfilter4);
-+	b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER5,
-+					e->radio_syn_pll_loopfilter5);
-+	b43_radio_write(dev, B2056_SYN_RESERVED_ADDR27,
-+					e->radio_syn_reserved_addr27);
-+	b43_radio_write(dev, B2056_SYN_RESERVED_ADDR28,
-+					e->radio_syn_reserved_addr28);
-+	b43_radio_write(dev, B2056_SYN_RESERVED_ADDR29,
-+					e->radio_syn_reserved_addr29);
-+	b43_radio_write(dev, B2056_SYN_LOGEN_VCOBUF1,
-+					e->radio_syn_logen_vcobuf1);
-+	b43_radio_write(dev, B2056_SYN_LOGEN_MIXER2, e->radio_syn_logen_mixer2);
-+	b43_radio_write(dev, B2056_SYN_LOGEN_BUF3, e->radio_syn_logen_buf3);
-+	b43_radio_write(dev, B2056_SYN_LOGEN_BUF4, e->radio_syn_logen_buf4);
-+
-+	b43_radio_write(dev, B2056_RX0 | B2056_RX_LNAA_TUNE,
-+					e->radio_rx0_lnaa_tune);
-+	b43_radio_write(dev, B2056_RX0 | B2056_RX_LNAG_TUNE,
-+					e->radio_rx0_lnag_tune);
-+
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_INTPAA_BOOST_TUNE,
-+					e->radio_tx0_intpaa_boost_tune);
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_INTPAG_BOOST_TUNE,
-+					e->radio_tx0_intpag_boost_tune);
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_PADA_BOOST_TUNE,
-+					e->radio_tx0_pada_boost_tune);
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_PADG_BOOST_TUNE,
-+					e->radio_tx0_padg_boost_tune);
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_PGAA_BOOST_TUNE,
-+					e->radio_tx0_pgaa_boost_tune);
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_PGAG_BOOST_TUNE,
-+					e->radio_tx0_pgag_boost_tune);
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_MIXA_BOOST_TUNE,
-+					e->radio_tx0_mixa_boost_tune);
-+	b43_radio_write(dev, B2056_TX0 | B2056_TX_MIXG_BOOST_TUNE,
-+					e->radio_tx0_mixg_boost_tune);
-+
-+	b43_radio_write(dev, B2056_RX1 | B2056_RX_LNAA_TUNE,
-+					e->radio_rx1_lnaa_tune);
-+	b43_radio_write(dev, B2056_RX1 | B2056_RX_LNAG_TUNE,
-+					e->radio_rx1_lnag_tune);
-+
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_INTPAA_BOOST_TUNE,
-+					e->radio_tx1_intpaa_boost_tune);
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_INTPAG_BOOST_TUNE,
-+					e->radio_tx1_intpag_boost_tune);
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_PADA_BOOST_TUNE,
-+					e->radio_tx1_pada_boost_tune);
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_PADG_BOOST_TUNE,
-+					e->radio_tx1_padg_boost_tune);
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_PGAA_BOOST_TUNE,
-+					e->radio_tx1_pgaa_boost_tune);
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_PGAG_BOOST_TUNE,
-+					e->radio_tx1_pgag_boost_tune);
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_MIXA_BOOST_TUNE,
-+					e->radio_tx1_mixa_boost_tune);
-+	b43_radio_write(dev, B2056_TX1 | B2056_TX_MIXG_BOOST_TUNE,
-+					e->radio_tx1_mixg_boost_tune);
-+}
-+
-+/* http://bcm-v4.sipsolutions.net/802.11/PHY/Radio/2056Setup */
-+static void b43_radio_2056_setup(struct b43_wldev *dev,
-+				const struct b43_nphy_channeltab_entry_rev3 *e)
-+{
-+	B43_WARN_ON(dev->phy.rev < 3);
-+
-+	b43_chantab_radio_2056_upload(dev, e);
-+	/* TODO */
-+	udelay(50);
-+	/* VCO calibration */
-+	b43_radio_write(dev, B2056_SYN_PLL_VCOCAL12, 0x00);
-+	b43_radio_write(dev, B2056_TX_INTPAA_PA_MISC, 0x38);
-+	b43_radio_write(dev, B2056_TX_INTPAA_PA_MISC, 0x18);
-+	b43_radio_write(dev, B2056_TX_INTPAA_PA_MISC, 0x38);
-+	b43_radio_write(dev, B2056_TX_INTPAA_PA_MISC, 0x39);
-+	udelay(300);
-+}
-+
- static void b43_chantab_phy_upload(struct b43_wldev *dev,
- 				   const struct b43_phy_n_sfo_cfg *e)
- {
-@@ -3635,7 +3728,7 @@ static int b43_nphy_set_channel(struct b43_wldev *dev,
- 	if (dev->phy.rev >= 3) {
- 		tmp = (channel->band == IEEE80211_BAND_5GHZ) ? 4 : 0;
- 		b43_radio_maskset(dev, 0x08, 0xFFFB, tmp);
--		/* TODO: PHY Radio2056 Setup (dev, tabent_r3); */
-+		b43_radio_2056_setup(dev, tabent_r3);
- 		b43_nphy_channel_setup(dev, &(tabent_r3->phy_regs), channel);
- 	} else {
- 		tmp = (channel->band == IEEE80211_BAND_5GHZ) ? 0x0020 : 0x0050;
--- 
-1.6.3.3
+Please show the output of "egrep "B43|RNG|RANDOM" .config".
+
+It should not matter, but please try the attached patch.
+
+Larry
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: b43_fix_hwrng_not_enabled
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20101229/1110c89c/attachment.ksh>
