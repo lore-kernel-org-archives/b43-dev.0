@@ -1,56 +1,54 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 04 Jan 2011 12:19:21 -0600
-Subject: [PATCH] b43: N-PHY: enable support for PHYs rev 3 and higher
-In-Reply-To: <20110104181140.GC11333@tuxdriver.com>
-References: <1292963384-23684-1-git-send-email-zajec5@gmail.com>
-	<AANLkTikwKOLJ6A-DTEuVg43_g_cWgDg2xK4M6qQ0Lm4U@mail.gmail.com>
-	<4D234604.8010602@lwfinger.net>
-	<20110104181140.GC11333@tuxdriver.com>
-Message-ID: <4D2364A9.3050707@lwfinger.net>
+Date: Thu, 06 Jan 2011 14:07:37 -0600
+Subject: Odd behavior of ssb, b43, b43legacy, and b44
+Message-ID: <4D262109.20504@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-On 01/04/2011 12:11 PM, John W. Linville wrote:
-> On Tue, Jan 04, 2011 at 10:08:36AM -0600, Larry Finger wrote:
->> On 01/04/2011 09:50 AM, Rafa? Mi?ecki wrote:
->>> W dniu 21 grudnia 2010 21:29 u?ytkownik Rafa? Mi?ecki
->>> <zajec5@gmail.com> napisa?:
->>>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->>>> ---
->>>> John: can we still make it for 2.6.38 merge? It was tested with 14e4:432b,
->>>> support seems to be on the same level as for PHYs 1 and 2.
->>>
->>> John, I dont see patches for rev3+ in wireless-testing. Any problems with them?
->>>
->>> It means:
->>> [PATCH 1/4] b43: use correct firmware for newer cores
->>> [PATCH 2/4 v2] b43: N-PHY: implement radio 2056 init steps
->>> [PATCH 3/4] b43: N-PHY: add init tables for 2056 radio
->>> [PATCH 4/4] b43: N-PHY: avoid PHY hangs for rev 3 and 4
->>>
->>> [PATCH 1/2] b43: N-PHY: use correct channel tables for rev4+
->>> [PATCH 2/2 v2] b43: N-PHY: update 2056 radio on channel switch on rev3+
->>> and this one.
->>
->> John,
->>
->> I have been testing these patches with a 14e4:432b device for at least two
->> weeks. With them, the driver still does not handle WPA/WPA2 encryption and falls
->> over with OFDM rates, but it is rock solid with WEP encryption and at 11 Mb/s.
->> Rafa? and I have some ideas why the limitations, but the holidays have
->> interfered with debugging.
->>
->> Larry
-> 
-> And with merging...
-> 
-> I hope to get caught-up soon.
+Michael,
 
-I hope there are some rtlwifi/rtl8192ce updates there as well. I'll wait for
-some new merges before I bug you about the specific patches.
+On one of my boxes, I have installed two PCI-format BCM43xx cards for testing.
+One is a BCM4306 Rev. 3, which uses b43. The other is a BCM4303, which uses
+b43legacy. The output of lspci -nn for these devices is
+
+01:09.0 Network controller [0280]: Broadcom Corporation BCM4306 802.11b/g
+Wireless LAN Controller [14e4:4320] (rev 03)
+01:0a.0 Network controller [0280]: Broadcom Corporation BCM4303 802.11b Wireless
+LAN Controller [14e4:4301] (rev 02)
+
+Upon booting, I noticed the following messages in the log:
+
+ b44: b44.c:v2.0
+ b44: Invalid MAC address found in EEPROM
+ b44 ssb1:1: Problem fetching invariants of chip, aborting
+
+ b44: probe of ssb1:1 failed with error -22
+
+As this box does not have a b44 installed, I wondered why this was happening.
+When I unloaded all the drivers and used modprobe to load ssb, I found that b43,
+b43legacy and b44 were all loaded. The console output is
+
+finger at pam:~> lsmod | grep b4             <== none loaded
+finger@pam:~> sudo modprobe -v ssb        <== load ssb
+insmod /lib/modules/2.6.37-wl+/kernel/drivers/ssb/ssb.ko
+
+The above looks normal, but look at what is now resident!
+
+finger@pam:~> lsmod | grep b4
+b43legacy             115302  0
+b44                    28767  0
+b43                   174321  0
+ssb                    38157  3 b43legacy,b44,b43
+mac80211              266240  2 b43legacy,b43
+cfg80211              161930  3 b43legacy,b43,mac80211
+
+Any idea why loading ssb should silently load b43legacy AND b44? Any ideas on
+where to look?
+
+Thanks,
 
 Larry
