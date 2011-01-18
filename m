@@ -1,34 +1,21 @@
 From: dylan cristiani <d.cristiani@idem-tech.it>
-Date: Mon, 17 Jan 2011 14:51:06 +0100
+Date: Tue, 18 Jan 2011 11:58:55 +0100
 Subject: Trouble using bcm4318 compact flash with b43 driver
-In-Reply-To: <20110117110618.0000170f@unknown>
+In-Reply-To: <20110117145106.00001ec8@unknown>
 References: <20110114182113.0000753f@unknown> <4D309B73.8050402@lwfinger.net>
 	<20110115080500.00001c48@unknown> <4D31CDA3.9040304@lwfinger.net>
-	<20110117110618.0000170f@unknown>
-Message-ID: <20110117145106.00001ec8@unknown>
+	<20110117110618.0000170f@unknown> <20110117145106.00001ec8@unknown>
+Message-ID: <20110118115855.00007877@unknown>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, 17 Jan 2011 11:06:18 +0100
+On Mon, 17 Jan 2011 14:51:06 +0100
 dylan cristiani <d.cristiani@idem-tech.it> wrote:
 
-> On Sat, 15 Jan 2011 10:38:59 -0600
-> Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> 
-> > On 01/15/2011 01:05 AM, Dylan Cristiani wrote:
-> > > it will be hard i must try to find some sniffer somewhere
-> > >>
-> > >> Larry
-> > > for now tks larry!
-> > 
-> > One other thing. Before you try to make the connection, start the
-> > command 'iw event -t -f' in another terminal to see what events are
-> > happening.
-> > 
-> > Larry
+...snipped
 > here comes the 'iw event -t -f' log:
 > 
 > nylux:~ #iw event -t -f
@@ -73,6 +60,12 @@ dylan cristiani <d.cristiani@idem-tech.it> wrote:
 > after this i cutted the log because it loops forever between 'scan
 > started' and 'scan finished' without any more association between the
 > module and the AP! i hope this logs can tell you something to help me.
-> for now tks
-PS for sure, AP side, there are no rules, nor blacklists, nor filters
-nor timer to disconnect anyone from the net!
+> for now tks  
+Hi Larry i've some news: i tryied with kernel 2.6.35 and it works!
+the module associates to AP and i can browse the net, ping external
+addresses and so on...; it seems that some drivers' changes made things
+go worste for my 'platform': do you have any suggestions?
+Note that all kernel settings are the same in 2.6.35, 2.6.36 and 2.6.37
+except, obviously, for the new kernel's parameters of the latter two.
+
+dylan
