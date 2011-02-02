@@ -1,99 +1,61 @@
-From: Dale Walsh <dale@daleenterprise.com>
-Date: Wed, 2 Feb 2011 02:50:44 -0500
-Subject: unable to write flashrom, functionality broken?
-In-Reply-To: <4D4834C0.5060701@lwfinger.net>
-References: <26E2E0F1-1CD4-4A96-B96F-D1F7B6EE5B17@daleenterprise.com>
-	<4D4834C0.5060701@lwfinger.net>
-Message-ID: <463A54B6-A0A4-4197-A19A-067FBDC63F66@daleenterprise.com>
+From: dylan cristiani <d.cristiani@idem-tech.it>
+Date: Wed, 2 Feb 2011 10:11:51 +0100
+Subject: Trouble using bcm4318 compact flash with b43 driver
+In-Reply-To: <4D486FC0.3020507@lwfinger.net>
+References: <20110114182113.0000753f@unknown> <4D309B73.8050402@lwfinger.net>
+	<20110115080500.00001c48@unknown> <4D31CDA3.9040304@lwfinger.net>
+	<20110117110618.0000170f@unknown> <20110117145106.00001ec8@unknown>
+	<20110118115855.00007877@unknown> <4D35A506.3090702@lwfinger.net>
+	<20110119140328.00002dd2@unknown> <20110121165137.000016ff@unknown>
+	<4D39C0B9.8050708@lwfinger.net> <20110121225408.00003e2c@unknown>
+	<4D3A050D.3090106@lwfinger.net> <20110122114834.00007abc@unknown>
+	<20110201154135.00006f0b@unknown> <4D486FC0.3020507@lwfinger.net>
+Message-ID: <20110202101151.00007105@unknown>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Feb 01, 2011, at 11:28 AM, Larry Finger wrote:
+On Tue, 01 Feb 2011 14:40:32 -0600
+Larry Finger <Larry.Finger@lwfinger.net> wrote:
 
-> On 02/01/2011 05:23 AM, Dale Walsh wrote:
->> I had a hard drive failure which forced me to perform a fresh/clean
->> installation of ubuntu 10 on a new drive since the old drive no  
->> longer
->> functions (it was rather old).
->>
->> My use of the b43 software is only for modification of the PCI  
->> ID's of
->> the flashrom and the original installation was provided to me on  
->> the HD.
->>
->> Now I am unable to write the flashrom after the new installation it
->> always reports "write error: Operation Not Supported" and this is  
->> using
->> the same cards I was flashing before, I even tried using
->> a previously modified card and I get the same failure.
->>
->> Since it worked before I can only conclude that the new software is
->> broken and the ability to write is a requirement, can someone help me
->> resolve this please.
->
-> I do not doubt that the SPROM writing function is broken, but I  
-> wonder why you
-> are needing it now. Why was it necessary to rewrite the SPROM in  
-> the first
-> place? Once that was done, then it should never need to be done  
-> again. Please
-> explain what you did and what you are doing now.
-
-Since not all cards are created equal I take a card with specific  
-features and functionality, change the ID's to my own for use with my  
-own custom drivers which provides added functionality for cards with  
-my ID's.
-
-If the cards do not have my ID's they have the basic functionality  
-that people are used to seeing, with my ID's they have the ability to  
-run in simultaneous dual band mode (2.4ghz and 5ghz adhoc) and I use  
-these ID's to ensure that the drivers only work on cards I approve.
-
-My only need for linux is to rebrand the cards with my ID's.
-
-If I understood enough about the write mechanism I would forego the  
-b43 code all together and create an app that reads and writes the  
-flashrom but the time involved  in sifting through the ubuntu code  
-due to it's source structure makes it a daunting task that turns me off.
-
-
-As before when working in the original installation (provided to me  
-as a working installation) I would do the following: (both cat and cp  
-fail)
-
-
-sudo su; # become root to avoid permission issues
-
-cd /PATH TO DIR OF ssb_sprom; # I verify ssb_sprom exists in this  
-location
-
-rmmod b43; # unload the driver
-
-cat updated_sprom >ssb_sprom; # write the updated file
-
-
-This results in write failure under the new installation.
-
-
-cp updated_sprom >ssb_sprom
-
-
-This also results in a write failure under the new installation.
-
->
+> On 02/01/2011 08:41 AM, dylan cristiani wrote:
+> > i have some news: i went back to kernel version 2.6.26 and it worked
+> > so i moved forward kernel by kernel and it works till kernel 2.6.32;
+> > first kernel that shows up the problem is 2.6.33 and, at module
+> > loading time i can see for the first time, after loading firmware,
+> > the following debug info (don't know if it's helpful but same
+> > message happears in every non-working kernel from 2.6.33 to 2.6.37):
+> > 
+> > "b43-phy0 warning: Invalid max-TX-power value in SPROM"
+> 
+> Between 2.6.32 and 2.6.33, there were only 6 patches that touched
+> SSB. Two of them (e33761e and 3ba6018) affected SPROM writing, one
+> (37ace3d) was only for PCMCIA, and one (ac2752c) only affected
+> logging of a core scan. The two remaining are 391ae22 that fixed an
+> SDIO typo and 8b45499 that put host pointers in a union should be the
+> only ones that needed testing.
+> 
+> Those patches are attached. Try each of them in turn to 2.6.33 with a
+> 'patch -p1 -R < patch_name' If it doesn't help, use the same command
+> without the "-R" to reapply. I'm guessing that 8b45499 is more likely
+> to be the problem, and I would try it first.
+> 
 > Larry
->
+Hi Larry i tryied to reverte two patches you sent me but nothing
+happens; but i discovered interesting behaviour: the mac address of the
+module is:
+00:0B:B6....
+but starting from 2.6.33 the chip is read as:
+14:0B:B6....
+(maybe the '0x14' value could be '20dBm' related to the max-TX-power
+value.....); so it seems that the driver is faulty reading the chip
+properties from sprom (in fact till the 2.6.32 the mac address was
+correct and the max-TX-power warning wasn't issued); i noticed that
+into drivers/ssb/pcmcia.c tha way to read properties from the chip is
+changed also; hope this helps
 
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110202/03c4f448/attachment.html>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: PGP.sig
-Type: application/pgp-signature
-Size: 188 bytes
-Desc: This is a digitally signed message part
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110202/03c4f448/attachment.sig>
+thanks
+
+dylan
