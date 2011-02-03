@@ -1,87 +1,242 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 02 Feb 2011 21:27:11 -0600
-Subject: unable to write flashrom, functionality broken?
-In-Reply-To: <463A54B6-A0A4-4197-A19A-067FBDC63F66@daleenterprise.com>
-References: <26E2E0F1-1CD4-4A96-B96F-D1F7B6EE5B17@daleenterprise.com>	<4D4834C0.5060701@lwfinger.net>
-	<463A54B6-A0A4-4197-A19A-067FBDC63F66@daleenterprise.com>
-Message-ID: <4D4A208F.50408@lwfinger.net>
+From: dylan cristiani <d.cristiani@idem-tech.it>
+Date: Thu, 3 Feb 2011 09:28:34 +0100
+Subject: Trouble using bcm4318 compact flash with b43 driver
+In-Reply-To: <4D49D39F.2000700@lwfinger.net>
+References: <20110114182113.0000753f@unknown> <4D309B73.8050402@lwfinger.net>
+	<20110115080500.00001c48@unknown> <4D31CDA3.9040304@lwfinger.net>
+	<20110117110618.0000170f@unknown> <20110117145106.00001ec8@unknown>
+	<20110118115855.00007877@unknown> <4D35A506.3090702@lwfinger.net>
+	<20110119140328.00002dd2@unknown> <20110121165137.000016ff@unknown>
+	<4D39C0B9.8050708@lwfinger.net> <20110121225408.00003e2c@unknown>
+	<4D3A050D.3090106@lwfinger.net> <20110122114834.00007abc@unknown>
+	<20110201154135.00006f0b@unknown> <4D486FC0.3020507@lwfinger.net>
+	<20110202101151.00007105@unknown> <20110202125529.00002e75@unknown>
+	<20110202163002.00005927@unknown> <4D49D39F.2000700@lwfinger.net>
+Message-ID: <20110203092834.0000420f@unknown>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 02/02/2011 01:50 AM, Dale Walsh wrote:
-> On Feb 01, 2011, at 11:28 AM, Larry Finger wrote:
-> 
->> On 02/01/2011 05:23 AM, Dale Walsh wrote:
->>> I had a hard drive failure which forced me to perform a fresh/clean
->>> installation of ubuntu 10 on a new drive since the old drive no longer
->>> functions (it was rather old).
->>>
->>> My use of the b43 software is only for modification of the PCI ID's of
->>> the flashrom and the original installation was provided to me on the HD.
->>>
->>> Now I am unable to write the flashrom after the new installation it
->>> always reports "write error: Operation Not Supported" and this is using
->>> the same cards I was flashing before, I even tried using
->>> a previously modified card and I get the same failure.
->>>
->>> Since it worked before I can only conclude that the new software is
->>> broken and the ability to write is a requirement, can someone help me
->>> resolve this please.
->>
->> I do not doubt that the SPROM writing function is broken, but I wonder
->> why you
->> are needing it now. Why was it necessary to rewrite the SPROM in the first
->> place? Once that was done, then it should never need to be done again.
->> Please
->> explain what you did and what you are doing now.
-> 
-> Since not all cards are created equal I take a card with specific
-> features and functionality, change the ID's to my own for use with my
-> own custom drivers which provides added functionality for cards with my
-> ID's.
-> 
-> If the cards do not have my ID's they have the basic functionality that
-> people are used to seeing, with my ID's they have the ability to run
-> in simultaneous dual band mode (2.4ghz and 5ghz adhoc) and I use these
-> ID's to ensure that the drivers only work on cards I approve.
-> 
-> My only need for linux is to rebrand the cards with my ID's.
-> 
-> If I understood enough about the write mechanism I would forego the b43
-> code all together and create an app that reads and writes the flashrom
-> but the time involved  in sifting through the ubuntu code due to it's
-> source structure makes it a daunting task that turns me off.
-> 
-> 
-> As before when working in the original installation (provided to me as a
-> working installation) I would do the following: (both cat and cp fail)
-> 
-> 
-> sudo su; # become root to avoid permission issues
-> 
-> cd /PATH TO DIR OF ssb_sprom; # I verify ssb_sprom exists in this location
-> 
-> rmmod b43; # unload the driver
-> 
-> cat updated_sprom >ssb_sprom; # write the updated file
-> 
-> 
-> This results in write failure under the new installation.
-> 
-> 
-> cp updated_sprom >ssb_sprom
-> 
-> 
-> This also results in a write failure under the new installation.
+On Wed, 02 Feb 2011 15:58:55 -0600
+Larry Finger <Larry.Finger@lwfinger.net> wrote:
 
-I'm a little confused as the PCI IDs are not in the SPROM. Using the procedure
-you describe, you would be unable to change them.
-
-You say you use Ubuntu 10. Is it 10.04 or 10.10? The earlier one uses kernel
-2.6.32, which I have not tested; however, I did try kernels 2.6.34 and 2.6.38.
-Both could write the SPROM for a Cardbus device without any problem.
-
-Larry
+> On 02/02/2011 09:30 AM, dylan cristiani wrote:
+> > On Wed, 2 Feb 2011 12:55:29 +0100
+> > dylan cristiani <d.cristiani@idem-tech.it> wrote:
+> > 
+> >> On Wed, 2 Feb 2011 10:11:51 +0100
+> >> dylan cristiani <d.cristiani@idem-tech.it> wrote:
+> >>
+> >>> On Tue, 01 Feb 2011 14:40:32 -0600
+> >>> Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> >>>
+> >>>> On 02/01/2011 08:41 AM, dylan cristiani wrote:
+> >>>>> i have some news: i went back to kernel version 2.6.26 and it
+> >>>>> worked so i moved forward kernel by kernel and it works till
+> >>>>> kernel 2.6.32; first kernel that shows up the problem is 2.6.33
+> >>>>> and, at module loading time i can see for the first time, after
+> >>>>> loading firmware, the following debug info (don't know if it's
+> >>>>> helpful but same message happears in every non-working kernel
+> >>>>> from 2.6.33 to 2.6.37):
+> >>>>>
+> >>>>> "b43-phy0 warning: Invalid max-TX-power value in SPROM"
+> >>>>
+> >>>> Between 2.6.32 and 2.6.33, there were only 6 patches that touched
+> >>>> SSB. Two of them (e33761e and 3ba6018) affected SPROM writing,
+> >>>> one (37ace3d) was only for PCMCIA, and one (ac2752c) only
+> >>>> affected logging of a core scan. The two remaining are 391ae22
+> >>>> that fixed an SDIO typo and 8b45499 that put host pointers in a
+> >>>> union should be the only ones that needed testing.
+> >>>>
+> >>>> Those patches are attached. Try each of them in turn to 2.6.33
+> >>>> with a 'patch -p1 -R < patch_name' If it doesn't help, use the
+> >>>> same command without the "-R" to reapply. I'm guessing that
+> >>>> 8b45499 is more likely to be the problem, and I would try it
+> >>>> first.
+> >>>>
+> >>>> Larry
+> >>> Hi Larry i tryied to reverte two patches you sent me but nothing
+> >>> happens; but i discovered interesting behaviour: the mac address
+> >>> of the module is:
+> >>> 00:0B:B6....
+> >>> but starting from 2.6.33 the chip is read as:
+> >>> 14:0B:B6....
+> >>> (maybe the '0x14' value could be '20dBm' related to the
+> >>> max-TX-power value.....); so it seems that the driver is faulty
+> >>> reading the chip properties from sprom (in fact till the 2.6.32
+> >>> the mac address was correct and the max-TX-power warning wasn't
+> >>> issued); i noticed that into drivers/ssb/pcmcia.c tha way to read
+> >>> properties from the chip is changed also; hope this helps
+> >> Hi larry i located the problem: at ssb level the info (MAC,
+> >> max-TX-power and friends) are ok, while when at b43 driver level
+> >> there are some data corruption; here comes the log of some debug i
+> >> put into drivers followed by the code slices where i put the
+> >> debug; i'm sure i'll find the trouble:
+> >>
+> >> boot log
+> >> ...
+> >> MMMMAC0 = 0
+> >> MMMMAC1 = b
+> >> MMMMAC1 = 6b
+> >> MMMMAC1 = 1e
+> >> MMMMAC1 = 3e
+> >> MMMMAC1 = 86
+> >>
+> >> sprom->maxpwr_bg = 76
+> >>
+> >> ssb: Sonics Silicon Backplane found on PCMCIA device pcmcia0.0
+> >>
+> >> IEEEMMMMAC0 = 14
+> >> IEEEMMMMAC1 = b
+> >> IEEEMMMMAC1 = 6b
+> >> IEEEMMMMAC1 = 1e
+> >> IEEEMMMMAC1 = 3e
+> >> IEEEMMMMAC1 = 86
+> >>
+> >> b43-phy0: Broadcom 4318 WLAN found (core revision 9)
+> >> Broadcom 43xx driver loaded [ Features: M, Firmware-ID: FW13 ]
+> >> Reconfiguring network interfaces... 
+> >> ip: RTNETLINK answers: File exists 
+> >> b43 ssb0:0: firmware: requesting b43/ucode5.fw
+> >> buf=31 a 0loading=1buf=30 a 0loading=0
+> >> b43 ssb0:0: firmware: requesting b43/pcm5.fw
+> >> buf=31 a 0loading=1buf=30 a 0loading=0
+> >> b43 ssb0:0: firmware: requesting b43/b0g0initvals5.fw
+> >> buf=31 a 0loading=1buf=30 a 0loading=0
+> >> b43 ssb0:0: firmware: requesting b43/b0g0bsinitvals5.fw
+> >> buf=31 a 0loading=1buf=30 a 0loading=0
+> >> b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
+> >>
+> >> phy_g max_pwr_bg = 65535
+> >>
+> >> b43-phy0 warning: Invalid max-TX-power value in SPROM.
+> >> udhcpc (v1.17.4) started
+> >> Sending discover...
+> >> phy_g max_pwr_bg = 80
+> >> Sending discover...
+> >> Sending discover...
+> >> No lease, failing
+> >> .....
+> >>
+> >> and here the sources:
+> >>
+> >> drivers/ssb/pcmcia.c
+> >>
+> >> static int ssb_pcmcia_get_mac(struct pcmcia_device *p_dev,
+> >> 			tuple_t *tuple,
+> >> 			void *priv)
+> >> {
+> >> 	struct ssb_sprom *sprom = priv;
+> >>
+> >> 	if (tuple->TupleData[0] != CISTPL_FUNCE_LAN_NODE_ID)
+> >> 		return -EINVAL;
+> >> 	if (tuple->TupleDataLen != ETH_ALEN + 2)
+> >> 		return -EINVAL;
+> >> 	if (tuple->TupleData[1] != ETH_ALEN)
+> >> 		return -EINVAL;
+> >> 	memcpy(sprom->il0mac, &tuple->TupleData[2], ETH_ALEN);
+> >>
+> >> //ssb_log
+> >> 	printk(KERN_INFO "MMMMAC0 = %x", sprom->il0mac[0]);
+> >> 	printk(KERN_INFO "MMMMAC1 = %x", sprom->il0mac[1]);
+> >> 	printk(KERN_INFO "MMMMAC1 = %x", sprom->il0mac[2]);
+> >> 	printk(KERN_INFO "MMMMAC1 = %x", sprom->il0mac[3]);
+> >> 	printk(KERN_INFO "MMMMAC1 = %x", sprom->il0mac[4]);
+> >> 	printk(KERN_INFO "MMMMAC1 = %x", sprom->il0mac[5]);
+> >> //ssb_log
+> >>
+> >> 	return 0;
+> >> };
+> >> .....
+> >>
+> >> static int ssb_pcmcia_do_get_invariants(struct pcmcia_device
+> >> *p_dev, tuple_t *tuple,
+> >> 					void *priv)
+> >> {
+> >> .....
+> >>
+> >> 		sprom->maxpwr_bg = tuple->TupleData[8];
+> >> //ssb_log
+> >> 		printk(KERN_INFO "sprom->maxpwr_bg = %d",
+> >> 		sprom->maxpwr_bg); 
+> >> //ssb_log
+> >>
+> >> ......
+> >>
+> >>
+> >> drivers/net/wireless/b43/main.c
+> >>
+> >> static int b43_wireless_init(struct ssb_device *dev)
+> >> {
+> >> ....
+> >>
+> >> 	if (is_valid_ether_addr(sprom->et1mac))
+> >> 		SET_IEEE80211_PERM_ADDR(hw, sprom->et1mac);
+> >> 	else
+> >> 		SET_IEEE80211_PERM_ADDR(hw, sprom->il0mac);
+> >>
+> >> //b43_main_log
+> >> 	printk(KERN_INFO "IEEEMMMMAC0 = %x", sprom->il0mac[0]);
+> >> 	printk(KERN_INFO "IEEEMMMMAC1 = %x", sprom->il0mac[1]);
+> >> 	printk(KERN_INFO "IEEEMMMMAC1 = %x", sprom->il0mac[2]);
+> >> 	printk(KERN_INFO "IEEEMMMMAC1 = %x", sprom->il0mac[3]);
+> >> 	printk(KERN_INFO "IEEEMMMMAC1 = %x", sprom->il0mac[4]);
+> >> 	printk(KERN_INFO "IEEEMMMMAC1 = %x", sprom->il0mac[5]);
+> >> //b43_main_log
+> >>
+> >> ....
+> >>
+> >> drivers/net/wireless/b43/phy_g.c
+> >>
+> >>
+> >> 	/* Estimate the TX power emission based on the TSSI */
+> >> 	estimated_pwr = b43_gphy_estimate_power_out(dev,
+> >> average_tssi);
+> >>
+> >> 	B43_WARN_ON(phy->type != B43_PHYTYPE_G);
+> >> 	max_pwr = dev->dev->bus->sprom.maxpwr_bg;
+> >>
+> >> //b43_phyg_log
+> >> 	printk(KERN_INFO "phy_g max_pwr_bg = %d\n", max_pwr);
+> >> //b43_phyg_log
+> >>
+> >> 	if (dev->dev->bus->sprom.boardflags_lo & B43_BFL_PACTRL)
+> >> 		max_pwr -= 3; /* minus 0.75 */
+> >>
+> >> 	if (unlikely(max_pwr >= INT_TO_Q52(30/*dBm*/))) {
+> >> 		b43warn(dev->wl,
+> >> 			"Invalid max-TX-power value in SPROM.\n");
+> >> 		max_pwr = INT_TO_Q52(20); /* fake it */
+> >> 		dev->dev->bus->sprom.maxpwr_bg = max_pwr;
+> >> 	}
+> >> ....
+> > I try to send you a 'maybe regular' patch: this solves the issue;
+> > before the patch, the MSB of the MAC address were overridden by one
+> > assignement inside function ssb_pcmcia_get_invariants(...); here
+> > the patch
+> > 
+> > 
+> > --- a/drivers/ssb/pcmcia.c
+> > +++ b/drivers/ssb/pcmcia.c
+> > @@ -735,5 +735,5 @@ int ssb_pcmcia_get_invariants(struct ssb_bus
+> > *bus, /* Fetch the vendor specific tuples. */
+> > 	res = pcmcia_loop_tuple(bus->host_pcmcia, SSB_PCMCIA_CIS,
+> > -				ssb_pcmcia_do_get_invariants,
+> > sprom);
+> > +				ssb_pcmcia_do_get_invariants, iv);
+> > 	if ((res == 0) || (res == -ENOSPC))
+> > 		return 0;
+> 
+> Does this one-liner solve all the problems, or just the MAC address?
+> 
+> Larry
+as i can see all the problem becuase also the max-TX-power keep the 
+righ value; the fact is that now the structure of
+ssb_pcmcia_do_get_invariants doesn't waste the one of
+ssb_pcmcia_get_mac and viceversa so all fields seems to be right; in
+fact i can just see that MAC and max-TX-power are correct and the
+wireless module is working very well, but if you want to suggest me
+some values to be checked feel free!
+Do you think that we must cc also the linux-arm-kernel list?
