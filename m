@@ -1,68 +1,87 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Wed, 02 Feb 2011 23:40:08 +0100
-Subject: Trouble using bcm4318 compact flash with b43 driver
-In-Reply-To: <20110202163002.00005927@unknown>
-	(sfid-20110202_103008_176343_E21C9E30)
-References: <20110114182113.0000753f@unknown>
-	<4D309B73.8050402@lwfinger.net> <20110115080500.00001c48@unknown>
-	<4D31CDA3.9040304@lwfinger.net> <20110117110618.0000170f@unknown>
-	<20110117145106.00001ec8@unknown> <20110118115855.00007877@unknown>
-	<4D35A506.3090702@lwfinger.net> <20110119140328.00002dd2@unknown>
-	<20110121165137.000016ff@unknown> <4D39C0B9.8050708@lwfinger.net>
-	<20110121225408.00003e2c@unknown> <4D3A050D.3090106@lwfinger.net>
-	<20110122114834.00007abc@unknown> <20110201154135.00006f0b@unknown>
-	<4D486FC0.3020507@lwfinger.net> <20110202101151.00007105@unknown>
-	<20110202125529.00002e75@unknown>  <20110202163002.00005927@unknown>
-	(sfid-20110202_103008_176343_E21C9E30)
-Message-ID: <1296686408.26739.18.camel@maggie>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Wed, 02 Feb 2011 21:27:11 -0600
+Subject: unable to write flashrom, functionality broken?
+In-Reply-To: <463A54B6-A0A4-4197-A19A-067FBDC63F66@daleenterprise.com>
+References: <26E2E0F1-1CD4-4A96-B96F-D1F7B6EE5B17@daleenterprise.com>	<4D4834C0.5060701@lwfinger.net>
+	<463A54B6-A0A4-4197-A19A-067FBDC63F66@daleenterprise.com>
+Message-ID: <4D4A208F.50408@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Wed, 2011-02-02 at 16:30 +0100, dylan cristiani wrote: 
-> --- a/drivers/ssb/pcmcia.c
-> +++ b/drivers/ssb/pcmcia.c
-> @@ -735,5 +735,5 @@ int ssb_pcmcia_get_invariants(struct ssb_bus *bus,
-> 	/* Fetch the vendor specific tuples. */
-> 	res = pcmcia_loop_tuple(bus->host_pcmcia, SSB_PCMCIA_CIS,
-> -				ssb_pcmcia_do_get_invariants, sprom);
-> +				ssb_pcmcia_do_get_invariants, iv);
-> 	if ((res == 0) || (res == -ENOSPC))
-> 		return 0;
+On 02/02/2011 01:50 AM, Dale Walsh wrote:
+> On Feb 01, 2011, at 11:28 AM, Larry Finger wrote:
+> 
+>> On 02/01/2011 05:23 AM, Dale Walsh wrote:
+>>> I had a hard drive failure which forced me to perform a fresh/clean
+>>> installation of ubuntu 10 on a new drive since the old drive no longer
+>>> functions (it was rather old).
+>>>
+>>> My use of the b43 software is only for modification of the PCI ID's of
+>>> the flashrom and the original installation was provided to me on the HD.
+>>>
+>>> Now I am unable to write the flashrom after the new installation it
+>>> always reports "write error: Operation Not Supported" and this is using
+>>> the same cards I was flashing before, I even tried using
+>>> a previously modified card and I get the same failure.
+>>>
+>>> Since it worked before I can only conclude that the new software is
+>>> broken and the ability to write is a requirement, can someone help me
+>>> resolve this please.
+>>
+>> I do not doubt that the SPROM writing function is broken, but I wonder
+>> why you
+>> are needing it now. Why was it necessary to rewrite the SPROM in the first
+>> place? Once that was done, then it should never need to be done again.
+>> Please
+>> explain what you did and what you are doing now.
+> 
+> Since not all cards are created equal I take a card with specific
+> features and functionality, change the ID's to my own for use with my
+> own custom drivers which provides added functionality for cards with my
+> ID's.
+> 
+> If the cards do not have my ID's they have the basic functionality that
+> people are used to seeing, with my ID's they have the ability to run
+> in simultaneous dual band mode (2.4ghz and 5ghz adhoc) and I use these
+> ID's to ensure that the drivers only work on cards I approve.
+> 
+> My only need for linux is to rebrand the cards with my ID's.
+> 
+> If I understood enough about the write mechanism I would forego the b43
+> code all together and create an app that reads and writes the flashrom
+> but the time involved  in sifting through the ubuntu code due to it's
+> source structure makes it a daunting task that turns me off.
+> 
+> 
+> As before when working in the original installation (provided to me as a
+> working installation) I would do the following: (both cat and cp fail)
+> 
+> 
+> sudo su; # become root to avoid permission issues
+> 
+> cd /PATH TO DIR OF ssb_sprom; # I verify ssb_sprom exists in this location
+> 
+> rmmod b43; # unload the driver
+> 
+> cat updated_sprom >ssb_sprom; # write the updated file
+> 
+> 
+> This results in write failure under the new installation.
+> 
+> 
+> cp updated_sprom >ssb_sprom
+> 
+> 
+> This also results in a write failure under the new installation.
 
-That patch seems right.
-I guess that the regression was introduced with the general PCMCIA
-changes by Dominik Brodowski back in October.
+I'm a little confused as the PCI IDs are not in the SPROM. Using the procedure
+you describe, you would be unable to change them.
 
+You say you use Ubuntu 10. Is it 10.04 or 10.10? The earlier one uses kernel
+2.6.32, which I have not tested; however, I did try kernels 2.6.34 and 2.6.38.
+Both could write the SPROM for a Cardbus device without any problem.
 
-
-However...
-
-I do actually have serious trouble to figure out what you're doing.
-I'm not saying that there is no bug, but I don't understand what you're
-doing to trigger and/or track down the bug.
-
-Let's look at two facts you gave us in previous email:
-
-1) You want to change the PCI IDs. That implies you have a PCI card.
-2) You are patching stuff in the PCMCIA code.
-
-These two things are mutually exclusive.
-You card is either PCI xor PCMCIA. So only one of these facts can
-be true.
-
-If it really is PCMCIA, I'll have to say that the SSB-PCMCIA
-SPROM writing code is basically untested. That means I would be
-surprised if it worked at all.
-
-PS:
-I also want to note that it is wrong to override the SPROM with
-an image acquired elsewhere. The SPROM contains important calibration
-data that is card-specific. So you cannot take the SPROM from one
-card and put it into another. Even if it's exactly the same card type.
-You must read SPROM -> modify that image -> write SPROM back.
-
--- 
-Greetings Michael.
+Larry
