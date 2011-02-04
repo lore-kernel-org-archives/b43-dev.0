@@ -1,8 +1,8 @@
 From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Fri, 04 Feb 2011 13:21:37 +0100
+Date: Fri, 04 Feb 2011 17:55:26 +0100
 Subject: unable to write flashrom, functionality broken?
-In-Reply-To: <20AF06EF-A5CC-4944-8C9D-26A451A37AE4@daleenterprise.com>
-	(sfid-20110204_070621_977672_615B1101)
+In-Reply-To: <F7733BBE-DFBC-4054-98D0-FB909DD14123@daleenterprise.com>
+	(sfid-20110204_071731_855077_8D4037D1)
 References: <26E2E0F1-1CD4-4A96-B96F-D1F7B6EE5B17@daleenterprise.com>
 	<4D4834C0.5060701@lwfinger.net>
 	<463A54B6-A0A4-4197-A19A-067FBDC63F66@daleenterprise.com>
@@ -12,45 +12,46 @@ References: <26E2E0F1-1CD4-4A96-B96F-D1F7B6EE5B17@daleenterprise.com>
 	<BBF13C67-6DC8-4ED3-A4C2-13F6FB4F090A@daleenterprise.com>
 	<1296770788.9535.1.camel@maggie> <20110203223430.18158.qmail@stuge.se>
 	<1296773390.9535.13.camel@maggie> <20110203234730.28953.qmail@stuge.se>
+	(sfid-20110204_004735_721902_FFFFFFFFD8BEB068)
 	<1296779345.9535.46.camel@maggie>
 	<C038DB15-6427-46CC-A730-1A39CE6B9317@daleenterprise.com>
-	<AANLkTinwd78AvXH5qy3+q3Y+_WecX4dcfnQzY5wQ3JUn@mail.gmail.com>
-	<20AF06EF-A5CC-4944-8C9D-26A451A37AE4@daleenterprise.com>
-	(sfid-20110204_070621_977672_615B1101)
-Message-ID: <1296822097.19557.24.camel@maggie>
+	(sfid-20110203_221456_874114_36A0BE2C)
+	<1296818455.19557.11.camel@maggie>
+	<F7733BBE-DFBC-4054-98D0-FB909DD14123@daleenterprise.com>
+	(sfid-20110204_071731_855077_8D4037D1)
+Message-ID: <1296838526.1614.13.camel@Nokia-N900>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Fri, 2011-02-04 at 07:06 -0500, Dale Walsh wrote: 
-> If you wish to knit-pick over details knock yourself out but you need  
-> to stop making assumptions about what I know and don't know.
+> Support the code you provide publicly is your purpose, me fixing it?  
+> for you is not support.
 
-No. You really just need to stop guessing around.
+So far there was no fix needed, because it's not broken.
 
-> Explaining in great detail serves no real purpose
+> What questionable business?
+>
+> It's against the law to modify a cards ID's?
 
-I already figured out that you're not interested in falsifications of
-your flawed logics.
+Don't get me started with "law". You're distributing quite a few interresting files on your public http server's download area.
 
-> It also seems that people involved with these projects are too  
-> sensitive, if you don't say something just right or don't mention  
-> something they get bent out of shape and go off attacking people  
-> labeling them as morons and idiots, very professional for someone  
-> involved in a public project who goal is to support the code they  
-> provide.
+> You like the ubuntu code base and that is your choice,
 
-Please quote me with context saying that you're a moron or an idiot.
+i did not say that.
+?  
+> different, I believe it suffers from poor management and it is not?  
+> your place to dictate what my opinion should be.
+>
+> Since you acknowledge you are responsible for this b43 code then make
 
-YOU are the one getting personal. YOU are the one who claimed in
-the first place that our software was crap.
+no i don't. i currently am the ssb maintainer.
 
-> I'm not familiar with the code base because after looking at all the  
-> files I've personally decided it's a structured mess
+> You know what, no need to respond, you have nothing intelligent to?  
+> add as evident of your responses
 
-See?
-
--- 
-Greetings Michael.
+as I said. You are the one who drives this discussion into the nontechnical corner.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110204/770bb988/attachment.html>
