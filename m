@@ -1,50 +1,28 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 5 Feb 2011 14:35:07 +0100
+Date: Sat, 5 Feb 2011 14:38:37 +0100
 Subject: Table of PCIs, chipsets, etc. on b43 wiki page
-In-Reply-To: <4D4CC268.2080008@lwfinger.net>
+In-Reply-To: <AANLkTi=ug=bqcegmE4an1zQCCHFFjtNJ7DxYSey6vkXx@mail.gmail.com>
 References: <AANLkTimPBdmiOQ=+TRzEGK4N8yZwj071b_pVkQzmw0RW@mail.gmail.com>
 	<4D4C5595.7060903@lwfinger.net>
 	<AANLkTi=QUEYGSnatgc6vfpOht0K3FzYRE38WgrAWbb8N@mail.gmail.com>
 	<4D4CC268.2080008@lwfinger.net>
-Message-ID: <AANLkTimdK0QqHYCav2T=XMhn-77QE0dkbhxtbbxrgz8K@mail.gmail.com>
+	<AANLkTinSVSx_AZ=sc+f5UF_8WRRtnotXZxOdXU4YOEB8@mail.gmail.com>
+	<AANLkTi=ug=bqcegmE4an1zQCCHFFjtNJ7DxYSey6vkXx@mail.gmail.com>
+Message-ID: <AANLkTi=HkUpDgMU+dOOMffqs=u9fMi-vM-KT=6-1Xg=j@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 5 lutego 2011 04:22 u?ytkownik Larry Finger
-<Larry.Finger@lwfinger.net> napisa?:
-> On 02/04/2011 02:27 PM, Rafa? Mi?ecki wrote:
->> W dniu 4 lutego 2011 20:37 u?ytkownik Larry Finger
->> <Larry.Finger@lwfinger.net> napisa?:
->>> On 02/04/2011 12:56 PM, Rafa? Mi?ecki wrote:
->>>> I'd like to propose little (nothing big) reogranisation of b43 hardware table:
->>>> http://wireless.kernel.org/Zajec?action=recall&rev=4
->>>>
->>>> Changed columns support/supported and driver/alternatives.
->>>>
->>>> Are you fine with that? Can we use colored one?
->>>
->>> I like the colored one.
->>>
->>> Some small changes:
->>>
->>> I would eliminate the second 14e4:4312 line and move the wl entry to the first
->>> one. I don't know if wl supports 5 GHz on that chip. I don't have mine any longer.
->>
->> Do you know anything about that duplicated ID? Is that true at all?
->> Why we don't support device with that duplicated ID? Why do you want
->> to remove it?
->
-> I'm not sure that there really is an 802.11b/g device with ID 14e4:4312. There
-> are two flavors of BCM4312, one that is 802.11a/b/g (14e4:4312), and an
-> 802.11b/g device with ID 14e4:4315, which is the LP PHY. I suspect that the
-> confusion over the two BCM4312 items led to the duplicate entry in this table.
+2011/2/5 Jonas Gorski <jonas.gorski@gmail.com>:
+> It doesn't seem to be complete though; I have a 2G BCM4322 on
+> a BCM6358 board that uses the PCI ID 14e4:4322.
 
-Hm, it was actually you who added that entry:
-http://wireless.kernel.org/en/users/Drivers/b43?action=diff&rev1=135&rev2=136
-http://wireless.kernel.org/en/users/Drivers/b43?action=diff&rev1=136&rev2=137
+Can you double check that your 14e4:4322 is BCM4322, check it's PHY
+version (plus revision) and add entry for it in table:
+http://wireless.kernel.org/en/users/Drivers/b43
+?
 
 -- 
 Rafa?
