@@ -1,35 +1,60 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Tue, 08 Feb 2011 16:28:53 +0100
-Subject: AW: 802.11 MAC state information
-In-Reply-To: <00dc01cbc7a3$dbcc0a10$93641e30$@gmx.net>
-	(sfid-20110208_102132_361673_7C2434FF)
-References: <009801cbc77c$17225830$45670890$@gmx.net>
-	(sfid-20110208_053652_042296_D74736C9)
-	<1297175263.29400.11.camel@maggie>
-	<00dc01cbc7a3$dbcc0a10$93641e30$@gmx.net>
-	(sfid-20110208_102132_361673_7C2434FF)
-Message-ID: <1297178933.29400.16.camel@maggie>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue,  8 Feb 2011 23:32:17 +0100
+Subject: [PATCH] ssb: extract boardflags2 for SPROMs rev 4 and 5
+Message-ID: <1297204337-7932-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Tue, 2011-02-08 at 16:21 +0100, h2o-post wrote: 
-> I would like to sample if the Broadcom wifi card (MAC) is transmitting, receiving or idle over time.
-> Within the Atheros hardware there are register counters that count if one of the above - I call them - mac-state are present.
-> Which those measurements I am looking into airtime consumption of different packets for sending and receiving.
-> For example: 1500Byte udp packet causes the sender wifi card @54Mbit  to be busy by this transmission for 240 micro sec (what I measure in the Atheros hardware is a txcounter increase by ~9600 ticks @40MHz)... also quite interesting are the distributions of receiving states over time and cca channel sensing busy over time.
-> I have implemented I quite fast mechanism to read/dump the Atheros registers to a trace file in order to validate different upper layer traffic patterns/settings. I would like to extend this measurement to Broadcom hardware as well. 
-> For Atheros also the wprobe-utility from nbd,  a nice tool that make use out of this "mac-state" over time measurements, maybe you have heard about it ?
-> 
-> Does this make sense to you what I am interested in ?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/pci.c            |    4 ++++
+ include/linux/ssb/ssb_regs.h |    4 ++++
+ 2 files changed, 8 insertions(+), 0 deletions(-)
 
-The best and most accurate way to achieve this certainly is to
-modify the firmware.
-I don't know if the stock firmware provides enough information for
-this without modification. You'll probably have to dig through the
-specs wiki.
-
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index 158449e..5b33b3b 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -468,10 +468,14 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
+ 		SPEX(country_code, SSB_SPROM4_CCODE, 0xFFFF, 0);
+ 		SPEX(boardflags_lo, SSB_SPROM4_BFLLO, 0xFFFF, 0);
+ 		SPEX(boardflags_hi, SSB_SPROM4_BFLHI, 0xFFFF, 0);
++		SPEX(boardflags2_lo, SSB_SPROM4_BFL2LO, 0xFFFF, 0);
++		SPEX(boardflags2_hi, SSB_SPROM4_BFL2HI, 0xFFFF, 0);
+ 	} else {
+ 		SPEX(country_code, SSB_SPROM5_CCODE, 0xFFFF, 0);
+ 		SPEX(boardflags_lo, SSB_SPROM5_BFLLO, 0xFFFF, 0);
+ 		SPEX(boardflags_hi, SSB_SPROM5_BFLHI, 0xFFFF, 0);
++		SPEX(boardflags2_lo, SSB_SPROM5_BFL2LO, 0xFFFF, 0);
++		SPEX(boardflags2_hi, SSB_SPROM5_BFL2HI, 0xFFFF, 0);
+ 	}
+ 	SPEX(ant_available_a, SSB_SPROM4_ANTAVAIL, SSB_SPROM4_ANTAVAIL_A,
+ 	     SSB_SPROM4_ANTAVAIL_A_SHIFT);
+diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
+index 489f7b6..df9211a 100644
+--- a/include/linux/ssb/ssb_regs.h
++++ b/include/linux/ssb/ssb_regs.h
+@@ -268,6 +268,8 @@
+ /* SPROM Revision 4 */
+ #define SSB_SPROM4_BFLLO		0x0044	/* Boardflags (low 16 bits) */
+ #define SSB_SPROM4_BFLHI		0x0046  /* Board Flags Hi */
++#define SSB_SPROM4_BFL2LO		0x0048	/* Board flags 2 (low 16 bits) */
++#define SSB_SPROM4_BFL2HI		0x004A	/* Board flags 2 Hi */
+ #define SSB_SPROM4_IL0MAC		0x004C	/* 6 byte MAC address for a/b/g/n */
+ #define SSB_SPROM4_CCODE		0x0052	/* Country Code (2 bytes) */
+ #define SSB_SPROM4_GPIOA		0x0056	/* Gen. Purpose IO # 0 and 1 */
+@@ -358,6 +360,8 @@
+ #define SSB_SPROM5_CCODE		0x0044	/* Country Code (2 bytes) */
+ #define SSB_SPROM5_BFLLO		0x004A	/* Boardflags (low 16 bits) */
+ #define SSB_SPROM5_BFLHI		0x004C  /* Board Flags Hi */
++#define SSB_SPROM5_BFL2LO		0x004E	/* Board flags 2 (low 16 bits) */
++#define SSB_SPROM5_BFL2HI		0x0050	/* Board flags 2 Hi */
+ #define SSB_SPROM5_IL0MAC		0x0052	/* 6 byte MAC address for a/b/g/n */
+ #define SSB_SPROM5_GPIOA		0x0076	/* Gen. Purpose IO # 0 and 1 */
+ #define  SSB_SPROM5_GPIOA_P0		0x00FF	/* Pin 0 */
 -- 
-Greetings Michael.
+1.7.1
