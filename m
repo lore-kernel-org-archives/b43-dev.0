@@ -1,35 +1,62 @@
 From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Tue, 15 Feb 2011 00:08:33 +0100
-Subject: Notes on ssb specs and implementation
-In-Reply-To: <AANLkTinnY2EzNBReVPqHYzi9xDvZNXFZqbUm66e9vTOM@mail.gmail.com>
-	(sfid-20110215_000306_559821_FFFFFFFF9C6FCD67)
-References: <AANLkTimfTt7kiwtSiPfE0kYRXwgHXJPAv19xuiv-M=NG@mail.gmail.com>
-	<1297282621.9734.5.camel@maggie>
-	<AANLkTinjDMSCqxWbAfjZO_JkfBZeRoAZOG5Pxvf1v8Xr@mail.gmail.com>
-	<1297720877.5683.3.camel@maggie>
-	<AANLkTi=ayavFKJw9s-n-AvMDrtMxXdDcjV+BnoxO-qkE@mail.gmail.com>
-	<1297723925.5683.11.camel@maggie>
-	<AANLkTinnY2EzNBReVPqHYzi9xDvZNXFZqbUm66e9vTOM@mail.gmail.com>
-	(sfid-20110215_000306_559821_FFFFFFFF9C6FCD67)
-Message-ID: <1297724913.5683.12.camel@maggie>
+Date: Tue, 15 Feb 2011 00:21:50 +0100
+Subject: [PATCH] ssb: Make ssb_wait_bit multi-bit safe
+Message-ID: <1297725710.5683.17.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>, b43-dev <b43-dev@lists.infradead.org>
+To: John Linville <linville@tuxdriver.com>
+Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
 
-On Tue, 2011-02-15 at 00:02 +0100, Rafa? Mi?ecki wrote: 
-> W dniu 14 lutego 2011 23:52 u?ytkownik Michael B?sch <mb@bu3sch.de> napisa?:
-> > On Mon, 2011-02-14 at 23:32 +0100, Rafa? Mi?ecki wrote:
-> >> Sure. It's not for submission, so you have to expect magic values.
-> >
-> > That patch doesn't look too bad.
-> 
-> Should we commit such a patch? Even if we didn't notice it to improve anything?
+ssb_wait_bit was designed for only one-bit bitmasks.
+People start using it for multi-bit bitmasks. Make the "set" case
+is safe for this. The "unset" case is already safe.
 
-I think it should wait until you got the device working.
-But once it works, it should be committed.
+This does not change behavior of the current code.
+
+Signed-off-by: Michael Buesch <mb@bu3sch.de>
+
+---
+
+Index: wireless-testing/drivers/ssb/main.c
+===================================================================
+--- wireless-testing.orig/drivers/ssb/main.c	2010-12-30 15:49:39.235946210 +0100
++++ wireless-testing/drivers/ssb/main.c	2011-02-15 00:17:35.727816704 +0100
+@@ -1192,10 +1192,10 @@ void ssb_device_enable(struct ssb_device
+ }
+ EXPORT_SYMBOL(ssb_device_enable);
+ 
+-/* Wait for a bit in a register to get set or unset.
++/* Wait for bitmask in a register to get set or cleared.
+  * timeout is in units of ten-microseconds */
+-static int ssb_wait_bit(struct ssb_device *dev, u16 reg, u32 bitmask,
+-			int timeout, int set)
++static int ssb_wait_bits(struct ssb_device *dev, u16 reg, u32 bitmask,
++			 int timeout, int set)
+ {
+ 	int i;
+ 	u32 val;
+@@ -1203,7 +1203,7 @@ static int ssb_wait_bit(struct ssb_devic
+ 	for (i = 0; i < timeout; i++) {
+ 		val = ssb_read32(dev, reg);
+ 		if (set) {
+-			if (val & bitmask)
++			if ((val & bitmask) == bitmask)
+ 				return 0;
+ 		} else {
+ 			if (!(val & bitmask))
+@@ -1227,8 +1227,8 @@ void ssb_device_disable(struct ssb_devic
+ 
+ 	reject = ssb_tmslow_reject_bitmask(dev);
+ 	ssb_write32(dev, SSB_TMSLOW, reject | SSB_TMSLOW_CLOCK);
+-	ssb_wait_bit(dev, SSB_TMSLOW, reject, 1000, 1);
+-	ssb_wait_bit(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
++	ssb_wait_bits(dev, SSB_TMSLOW, reject, 1000, 1);
++	ssb_wait_bits(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
+ 	ssb_write32(dev, SSB_TMSLOW,
+ 		    SSB_TMSLOW_FGC | SSB_TMSLOW_CLOCK |
+ 		    reject | SSB_TMSLOW_RESET |
 
 -- 
 Greetings Michael.
