@@ -1,62 +1,22 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Tue, 15 Feb 2011 00:21:50 +0100
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 15 Feb 2011 00:44:58 +0100
 Subject: [PATCH] ssb: Make ssb_wait_bit multi-bit safe
-Message-ID: <1297725710.5683.17.camel@maggie>
+In-Reply-To: <1297725710.5683.17.camel@maggie>
+References: <1297725710.5683.17.camel@maggie>
+Message-ID: <AANLkTimjkFJrWpubECRRNybmvYdcAh3UUbMOa0iv166g@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John Linville <linville@tuxdriver.com>
-Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>
+Cc: John Linville <linville@tuxdriver.com>, b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
 
-ssb_wait_bit was designed for only one-bit bitmasks.
-People start using it for multi-bit bitmasks. Make the "set" case
-is safe for this. The "unset" case is already safe.
+2011/2/15 Michael B?sch <mb@bu3sch.de>:
+> ssb_wait_bit was designed for only one-bit bitmasks.
+> People start using it for multi-bit bitmasks. Make the "set" case
+> is safe for this. The "unset" case is already safe.
 
-This does not change behavior of the current code.
-
-Signed-off-by: Michael Buesch <mb@bu3sch.de>
-
----
-
-Index: wireless-testing/drivers/ssb/main.c
-===================================================================
---- wireless-testing.orig/drivers/ssb/main.c	2010-12-30 15:49:39.235946210 +0100
-+++ wireless-testing/drivers/ssb/main.c	2011-02-15 00:17:35.727816704 +0100
-@@ -1192,10 +1192,10 @@ void ssb_device_enable(struct ssb_device
- }
- EXPORT_SYMBOL(ssb_device_enable);
- 
--/* Wait for a bit in a register to get set or unset.
-+/* Wait for bitmask in a register to get set or cleared.
-  * timeout is in units of ten-microseconds */
--static int ssb_wait_bit(struct ssb_device *dev, u16 reg, u32 bitmask,
--			int timeout, int set)
-+static int ssb_wait_bits(struct ssb_device *dev, u16 reg, u32 bitmask,
-+			 int timeout, int set)
- {
- 	int i;
- 	u32 val;
-@@ -1203,7 +1203,7 @@ static int ssb_wait_bit(struct ssb_devic
- 	for (i = 0; i < timeout; i++) {
- 		val = ssb_read32(dev, reg);
- 		if (set) {
--			if (val & bitmask)
-+			if ((val & bitmask) == bitmask)
- 				return 0;
- 		} else {
- 			if (!(val & bitmask))
-@@ -1227,8 +1227,8 @@ void ssb_device_disable(struct ssb_devic
- 
- 	reject = ssb_tmslow_reject_bitmask(dev);
- 	ssb_write32(dev, SSB_TMSLOW, reject | SSB_TMSLOW_CLOCK);
--	ssb_wait_bit(dev, SSB_TMSLOW, reject, 1000, 1);
--	ssb_wait_bit(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
-+	ssb_wait_bits(dev, SSB_TMSLOW, reject, 1000, 1);
-+	ssb_wait_bits(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
- 	ssb_write32(dev, SSB_TMSLOW,
- 		    SSB_TMSLOW_FGC | SSB_TMSLOW_CLOCK |
- 		    reject | SSB_TMSLOW_RESET |
+Thanks :)
 
 -- 
-Greetings Michael.
+Rafa?
