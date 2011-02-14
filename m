@@ -1,53 +1,44 @@
-From: Anisse Astier <anisse@astier.eu>
-Date: Thu, 10 Feb 2011 19:30:07 +0100
-Subject: LP PHY Dell device not working properly with b43 even in PIO mode
-In-Reply-To: <4D542365.6060307@lwfinger.net>
-References: <20110210181642.760948f3@destiny.ordissimo>
-	<4D542365.6060307@lwfinger.net>
-Message-ID: <20110210193007.25362a0b@destiny.ordissimo>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 14 Feb 2011 13:28:00 +0100
+Subject: Interesting note on "Unsupported SPROM revision"
+Message-ID: <AANLkTinJDQDjhnzMBPubNkowxrXFDfOEz83HA1fHgEDU@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Thu, 10 Feb 2011 11:41:57 -0600, Larry Finger <Larry.Finger@lwfinger.net> wrote :
+I wanted to be lazy and have 2 cards in my PC at the same time. So I
+tried putting my mini PCIe adapter to PCIe x8 slot instead of PCIe x1
+slot.
 
-> On 02/10/2011 11:16 AM, Anisse Astier wrote:
-> > [  103.627184] wlan0: associated
-> > [  103.677583] b43-phy0 debug: Using hardware based encryption for keyidx: 0, mac: 68:7f:74:16:57:c9
-> > [  148.586756] b43-phy0 ERROR: Fatal DMA error: 0x00000800, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-> > [  148.586788] b43-phy0 ERROR: This device does not support DMA on your system. It will now be switched to PIO.
-> > [  148.586791] b43-phy0: Controller RESET (DMA error) ...
-> > [  148.586794] b43-phy0 ERROR: Fatal DMA error: 0x00000800, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-> > [  148.586797] b43-phy0 ERROR: This device does not support DMA on your system. It will now be switched to PIO.
-> > [  148.586800] b43-phy0: Controller RESET (DMA error) ...
-> > [  148.586882] b43-phy0 debug: Wireless interface stopped
-> 
-> On some boxes, 14e4:4315 devices fail in b43 with with this DMA error. We don't
-> know why, nor do we know how to fix it. Unfortunately, none of the developers
-> have such a system, which makes the debugging harder.
-> 
-> I don't think the problem is with the Dell 1397, but with the motherboard on the
-> laptop. In fact, most of the problems have been with netbook computers with a
-> Phoenix BIOS. Does your system fit that description?
-It's indeed a Phoenix Bios. Machine model is Dell Vostro 1520, but
-definitely not a netbook.
+That resulted in:
+[    6.681088] ssb: PCI-ID not in fallback list
+[    6.681251] ssb: CHIPID not in nrcores fallback list
+[    6.681433] ssb: Core 0 found: UNKNOWN (cc 0x8FF, rev 0x7F, vendor 0xFFFF)
+[    6.689462] ssb: WARNING: Invalid SPROM CRC (corrupt SPROM)
+[    6.689467] ssb: Unsupported SPROM  revision 255 detected. Will extract v1
+[    6.697123] ssb: Sonics Silicon Backplane found on PCI device 0000:02:00.0
+[  277.718506] wl: module license 'unspecified' taints kernel.
+[  277.718513] Disabling lock debugging due to kernel taint
+[  277.744813] wl 0000:02:00.0: PCI INT A -> GSI 24 (level, low) -> IRQ 24
+[  277.744832] wl 0000:02:00.0: setting latency timer to 64
+[  277.745126] eth%d: 5.100.82.38 driver failed with code 11
 
-> 
-> > [  297.703041] b43-phy0 ERROR: MAC suspend failed
-> > [  297.854043] b43-phy0 ERROR: MAC suspend failed
-> > [  298.003042] b43-phy0 ERROR: MAC suspend failed
-> 
-> Are the MAC suspend failures in PIO mode a regression that recently appeared? I
-> cannot think of any changes that should have affected the LP PHY devices, but
-> anything is possible.
-> 
-> The only workaround I can suggest is to use wl. I hate to recommend
-> closed-source software, but there may be no alternative.
-Yep, I already packaged that driver, and planned to use it. I was in the
-mode give-every-time-I-have-left to b43 developers to test patches and
-try to find a solution.
+Instead of:
+[    6.615095] ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x17, vendor 0x4243)
+[    6.615109] ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x10,
+vendor 0x4243)
+[    6.615120] ssb: Core 2 found: PCI-E (cc 0x820, rev 0x0B, vendor 0x4243)
+[    6.615132] ssb: Core 3 found: PCI (cc 0x804, rev 0x0E, vendor 0x4243)
+[    6.615144] ssb: Core 4 found: USB 2.0 Device (cc 0x81A, rev 0x05,
+vendor 0x4243)
+[    6.615156] ssb: Core 5 found: UNKNOWN (cc 0x8FF, rev 0x00, vendor 0x4243)
+[    6.615167] ssb: Core 6 found: Internal Memory (cc 0x80E, rev 0x03,
+vendor 0x4243)
+[    6.639312] ssb: Sonics Silicon Backplane found on PCI device 0000:03:00.0
 
+Just wanted to put it on ML in case someone will ever hit that issue.
 
-Anisse
+-- 
+Rafa?
