@@ -1,36 +1,34 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 16 Feb 2011 13:58:26 +0100
-Subject: [PATCH 2/2] ssb: remove invalid define SSB_TMSLOW_PHYCLK
-In-Reply-To: <1297861106-18739-1-git-send-email-zajec5@gmail.com>
-References: <1297861106-18739-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1297861106-18739-2-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Wed, 16 Feb 2011 14:13:32 +0100
+Subject: [RFC] How to rename SSB_TMSLOW_*, B43_TMSLOW_*?
+Message-ID: <AANLkTimKE+WqChVf0XpeHsfHxT8=3vbnBh=Lo+1tLSwj@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, =?UTF-8?q?G=C3=A1bor=20Stefanik?= <netrolller.3d@gmail.com>
+To: Michael Buesch <mb@bu3sch.de>, George Kashperko <george@znau.edu.ua>, linux-wireless@vger.kernel.org
+Cc: b43-dev <b43-dev@lists.infradead.org>
 
-It was incorrectly introduced in d2730b2a6a019d14455556019d744ab051e6554b. We
-have already fixed function to use correct define, but forgot remove old one.
+Except for following 3 defines:
+#define  SSB_TMSLOW_RESET	0x00000001 /* Reset */
+#define  SSB_TMSLOW_REJECT_22	0x00000002 /* Reject (Backplane rev 2.2) */
+#define  SSB_TMSLOW_REJECT_23	0x00000004 /* Reject (Backplane rev 2.3) */
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-Cc: G?bor Stefanik <netrolller.3d@gmail.com>
----
- include/linux/ssb/ssb_regs.h |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+All our SSB_TMSLOW_* and B43_TMSLOW_* defines are some core control
+bits. As we now know, core control bits are not SSB specific or TMSLOW
+specific.
 
-diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
-index 489f7b6..01253c6 100644
---- a/include/linux/ssb/ssb_regs.h
-+++ b/include/linux/ssb/ssb_regs.h
-@@ -97,7 +97,6 @@
- #define  SSB_TMSLOW_RESET	0x00000001 /* Reset */
- #define  SSB_TMSLOW_REJECT_22	0x00000002 /* Reject (Backplane rev 2.2) */
- #define  SSB_TMSLOW_REJECT_23	0x00000004 /* Reject (Backplane rev 2.3) */
--#define  SSB_TMSLOW_PHYCLK	0x00000010 /* MAC PHY Clock Control Enable */
- #define  SSB_TMSLOW_CLOCK	0x00010000 /* Clock Enable */
- #define  SSB_TMSLOW_FGC		0x00020000 /* Force Gated Clocks On */
- #define  SSB_TMSLOW_PE		0x40000000 /* Power Management Enable */
+Should we (and how) define that names in this situation?
+
+For b43 I propose (quite obvious?) B43_CORE_CTL_*.
+
+However what about SSB_TMSLOW_*? George proposed SSB_CORECTL_*, but it
+contains "SSB", while that bits are not SSB specific. Same bits are
+used on AI bus. Should we use some SSBAI_CORE_CTL_* then? Any other
+ideas? Some better maybe?
+
+P.S.
+Personally I prefer CORE_CTL over CORECTL (George). Which one should we use?
+
 -- 
-1.7.1
+Rafa?
