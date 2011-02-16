@@ -1,46 +1,39 @@
 From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Wed, 16 Feb 2011 23:17:37 +0100
-Subject: [RFC] How to rename SSB_TMSLOW_*, B43_TMSLOW_*?
-In-Reply-To: <AANLkTimKE+WqChVf0XpeHsfHxT8=3vbnBh=Lo+1tLSwj@mail.gmail.com>
-	(sfid-20110216_141342_431478_3C8E43BA)
-References: <AANLkTimKE+WqChVf0XpeHsfHxT8=3vbnBh=Lo+1tLSwj@mail.gmail.com>
-	(sfid-20110216_141342_431478_3C8E43BA)
-Message-ID: <1297894657.32237.2.camel@maggie>
+Date: Wed, 16 Feb 2011 23:20:56 +0100
+Subject: [PATCH 1/2] ssb: trivial: fix SPROM extract warning formatting
+In-Reply-To: <1297861106-18739-1-git-send-email-zajec5@gmail.com>
+	(sfid-20110216_135811_600712_6253D5CA)
+References: <1297861106-18739-1-git-send-email-zajec5@gmail.com>
+	(sfid-20110216_135811_600712_6253D5CA)
+Message-ID: <1297894856.32237.5.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: George Kashperko <george@znau.edu.ua>, linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Wed, 2011-02-16 at 14:13 +0100, Rafa? Mi?ecki wrote: 
-> Except for following 3 defines:
-> #define  SSB_TMSLOW_RESET	0x00000001 /* Reset */
-> #define  SSB_TMSLOW_REJECT_22	0x00000002 /* Reject (Backplane rev 2.2) */
-> #define  SSB_TMSLOW_REJECT_23	0x00000004 /* Reject (Backplane rev 2.3) */
+On Wed, 2011-02-16 at 13:58 +0100, Rafa? Mi?ecki wrote: 
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+>  drivers/ssb/pci.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> All our SSB_TMSLOW_* and B43_TMSLOW_* defines are some core control
-> bits. As we now know, core control bits are not SSB specific or TMSLOW
-> specific.
-> 
-> Should we (and how) define that names in this situation?
-> 
-> For b43 I propose (quite obvious?) B43_CORE_CTL_*.
-> 
-> However what about SSB_TMSLOW_*? George proposed SSB_CORECTL_*, but it
-> contains "SSB", while that bits are not SSB specific. Same bits are
-> used on AI bus. Should we use some SSBAI_CORE_CTL_* then? Any other
-> ideas? Some better maybe?
-> 
-> P.S.
-> Personally I prefer CORE_CTL over CORECTL (George). Which one should we use?
+> diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+> index 158449e..127897c 100644
+> --- a/drivers/ssb/pci.c
+> +++ b/drivers/ssb/pci.c
+> @@ -641,7 +641,7 @@ static int sprom_extract(struct ssb_bus *bus, struct ssb_sprom *out,
+>  		break;
+>  	default:
+>  		ssb_printk(KERN_WARNING PFX "Unsupported SPROM"
+> -			   "  revision %d detected. Will extract"
+> +			   " revision %d detected. Will extract"
+>  			   " v1\n", out->revision);
+>  		out->revision = 1;
+>  		sprom_extract_r123(out, in);
 
-Let's simply put those bits into the drivers and call them
-DRIVERNAME_TMSLOW_FOOBAR
-
-The "TMSLOW" part seems rather important to me, because that makes it
-obvious what register these bits belong to. Note that's there's also
-TMSHIGH. It also follows current naming convention.
+ack for those two patches.
 
 -- 
 Greetings Michael.
