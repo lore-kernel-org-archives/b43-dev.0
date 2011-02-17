@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 17 Feb 2011 01:50:49 +0100
-Subject: [PATCH 0/2] ssb: improve device disabling
-Message-ID: <1297903851-5499-1-git-send-email-zajec5@gmail.com>
+Date: Thu, 17 Feb 2011 01:50:50 +0100
+Subject: [PATCH 1/2] ssb: when needed, reject IM input while disabling device
+In-Reply-To: <1297903851-5499-1-git-send-email-zajec5@gmail.com>
+References: <1297903851-5499-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1297903851-5499-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,35 +11,64 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-With that patches we follow specs and (as recently proved by MMIO dumps) wl.
-
-The more important patch is the first one. It detects problem (and warns) with
-SSB when it is in some broken state. We can for example hit such an issue when
-enabling DMA on 14e4:4329 (N-PHY, rev 1). The real fix is now known yet, but
-not we at least get warning. Switching to PIO on that card does not raise
-warning anymore (as expected).
-
-We all hate regressions and Michal says than enabling/disabling SSB device can
-be tricky. I have tested that patches with few b43 driven devices:
-14e4:4318 (BCM4318)
-14e4:4315 (BCM4312)
-14e4:4329 (BCM4321)
-14e4:4328 (BCM4321)
-14e4:432b (BCM4322)
-
-With each device I performed cold booting, loading b43, testing, bringing
-interface down and up, testing, reloading, testing. Sometime even more.
-
-Unfortunately I do not have aany other SSB devices, like that supported by b44
-or gige (OK, I did not even hear about gige earlier).
-
-Rafa? Mi?ecki (2):
-  ssb: when needed, reject IM input while disabling device
-  ssb: reset device only if it was enabled
-
- drivers/ssb/main.c           |   36 +++++++++++++++++++++++++++---------
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/main.c           |   16 +++++++++++++++-
  include/linux/ssb/ssb_regs.h |    2 ++
- 2 files changed, 29 insertions(+), 9 deletions(-)
+ 2 files changed, 17 insertions(+), 1 deletions(-)
 
+diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+index 08fed55..5b6160a 100644
+--- a/drivers/ssb/main.c
++++ b/drivers/ssb/main.c
+@@ -1220,7 +1220,7 @@ static int ssb_wait_bits(struct ssb_device *dev, u16 reg, u32 bitmask,
+ 
+ void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
+ {
+-	u32 reject;
++	u32 reject, val;
+ 
+ 	if (ssb_read32(dev, SSB_TMSLOW) & SSB_TMSLOW_RESET)
+ 		return;
+@@ -1229,12 +1229,26 @@ void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
+ 	ssb_write32(dev, SSB_TMSLOW, reject | SSB_TMSLOW_CLOCK);
+ 	ssb_wait_bits(dev, SSB_TMSLOW, reject, 1000, 1);
+ 	ssb_wait_bits(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
++
++	if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
++		val = ssb_read32(dev, SSB_IMSTATE);
++		val |= SSB_IMSTATE_REJECT;
++		ssb_write32(dev, SSB_IMSTATE, val);
++		ssb_wait_bits(dev, SSB_IMSTATE, SSB_IMSTATE_BUSY, 1000, 0);
++	}
++
+ 	ssb_write32(dev, SSB_TMSLOW,
+ 		    SSB_TMSLOW_FGC | SSB_TMSLOW_CLOCK |
+ 		    reject | SSB_TMSLOW_RESET |
+ 		    core_specific_flags);
+ 	ssb_flush_tmslow(dev);
+ 
++	if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
++		val = ssb_read32(dev, SSB_IMSTATE);
++		val &= ~SSB_IMSTATE_REJECT;
++		ssb_write32(dev, SSB_IMSTATE, val);
++	}
++
+ 	ssb_write32(dev, SSB_TMSLOW,
+ 		    reject | SSB_TMSLOW_RESET |
+ 		    core_specific_flags);
+diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
+index 489f7b6..8ac6346 100644
+--- a/include/linux/ssb/ssb_regs.h
++++ b/include/linux/ssb/ssb_regs.h
+@@ -85,6 +85,8 @@
+ #define  SSB_IMSTATE_AP_RSV	0x00000030 /* Reserved */
+ #define  SSB_IMSTATE_IBE	0x00020000 /* In Band Error */
+ #define  SSB_IMSTATE_TO		0x00040000 /* Timeout */
++#define  SSB_IMSTATE_BUSY	0x01800000 /* Busy (Backplane rev >= 2.3 only) */
++#define  SSB_IMSTATE_REJECT	0x02000000 /* Reject (Backplane rev >= 2.3 only) */
+ #define SSB_INTVEC		0x0F94     /* SB Interrupt Mask */
+ #define  SSB_INTVEC_PCI		0x00000001 /* Enable interrupts for PCI */
+ #define  SSB_INTVEC_ENET0	0x00000002 /* Enable interrupts for enet 0 */
 -- 
 1.7.3.4
