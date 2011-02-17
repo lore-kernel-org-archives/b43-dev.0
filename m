@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 17 Feb 2011 01:50:50 +0100
-Subject: [PATCH 1/2] ssb: when needed, reject IM input while disabling device
+Date: Thu, 17 Feb 2011 01:50:51 +0100
+Subject: [PATCH 2/2] ssb: reset device only if it was enabled
 In-Reply-To: <1297903851-5499-1-git-send-email-zajec5@gmail.com>
 References: <1297903851-5499-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1297903851-5499-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1297903851-5499-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,62 +13,62 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/ssb/main.c           |   16 +++++++++++++++-
- include/linux/ssb/ssb_regs.h |    2 ++
- 2 files changed, 17 insertions(+), 1 deletions(-)
+ drivers/ssb/main.c |   40 ++++++++++++++++++++++------------------
+ 1 files changed, 22 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
-index 08fed55..5b6160a 100644
+index 5b6160a..0c1c43a 100644
 --- a/drivers/ssb/main.c
 +++ b/drivers/ssb/main.c
-@@ -1220,7 +1220,7 @@ static int ssb_wait_bits(struct ssb_device *dev, u16 reg, u32 bitmask,
- 
- void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
- {
--	u32 reject;
-+	u32 reject, val;
- 
- 	if (ssb_read32(dev, SSB_TMSLOW) & SSB_TMSLOW_RESET)
+@@ -1226,27 +1226,31 @@ void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
  		return;
-@@ -1229,12 +1229,26 @@ void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
- 	ssb_write32(dev, SSB_TMSLOW, reject | SSB_TMSLOW_CLOCK);
- 	ssb_wait_bits(dev, SSB_TMSLOW, reject, 1000, 1);
- 	ssb_wait_bits(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
-+
-+	if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
-+		val = ssb_read32(dev, SSB_IMSTATE);
-+		val |= SSB_IMSTATE_REJECT;
-+		ssb_write32(dev, SSB_IMSTATE, val);
-+		ssb_wait_bits(dev, SSB_IMSTATE, SSB_IMSTATE_BUSY, 1000, 0);
-+	}
-+
- 	ssb_write32(dev, SSB_TMSLOW,
- 		    SSB_TMSLOW_FGC | SSB_TMSLOW_CLOCK |
- 		    reject | SSB_TMSLOW_RESET |
- 		    core_specific_flags);
- 	ssb_flush_tmslow(dev);
  
-+	if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
-+		val = ssb_read32(dev, SSB_IMSTATE);
-+		val &= ~SSB_IMSTATE_REJECT;
-+		ssb_write32(dev, SSB_IMSTATE, val);
-+	}
+ 	reject = ssb_tmslow_reject_bitmask(dev);
+-	ssb_write32(dev, SSB_TMSLOW, reject | SSB_TMSLOW_CLOCK);
+-	ssb_wait_bits(dev, SSB_TMSLOW, reject, 1000, 1);
+-	ssb_wait_bits(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
+ 
+-	if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
+-		val = ssb_read32(dev, SSB_IMSTATE);
+-		val |= SSB_IMSTATE_REJECT;
+-		ssb_write32(dev, SSB_IMSTATE, val);
+-		ssb_wait_bits(dev, SSB_IMSTATE, SSB_IMSTATE_BUSY, 1000, 0);
+-	}
++	if (ssb_read32(dev, SSB_TMSLOW) & SSB_TMSLOW_CLOCK) {
++		ssb_write32(dev, SSB_TMSLOW, reject | SSB_TMSLOW_CLOCK);
++		ssb_wait_bits(dev, SSB_TMSLOW, reject, 1000, 1);
++		ssb_wait_bits(dev, SSB_TMSHIGH, SSB_TMSHIGH_BUSY, 1000, 0);
 +
++		if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
++			val = ssb_read32(dev, SSB_IMSTATE);
++			val |= SSB_IMSTATE_REJECT;
++			ssb_write32(dev, SSB_IMSTATE, val);
++			ssb_wait_bits(dev, SSB_IMSTATE, SSB_IMSTATE_BUSY, 1000,
++				      0);
++		}
+ 
+-	ssb_write32(dev, SSB_TMSLOW,
+-		    SSB_TMSLOW_FGC | SSB_TMSLOW_CLOCK |
+-		    reject | SSB_TMSLOW_RESET |
+-		    core_specific_flags);
+-	ssb_flush_tmslow(dev);
++		ssb_write32(dev, SSB_TMSLOW,
++			SSB_TMSLOW_FGC | SSB_TMSLOW_CLOCK |
++			reject | SSB_TMSLOW_RESET |
++			core_specific_flags);
++		ssb_flush_tmslow(dev);
+ 
+-	if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
+-		val = ssb_read32(dev, SSB_IMSTATE);
+-		val &= ~SSB_IMSTATE_REJECT;
+-		ssb_write32(dev, SSB_IMSTATE, val);
++		if (ssb_read32(dev, SSB_IDLOW) & SSB_IDLOW_INITIATOR) {
++			val = ssb_read32(dev, SSB_IMSTATE);
++			val &= ~SSB_IMSTATE_REJECT;
++			ssb_write32(dev, SSB_IMSTATE, val);
++		}
+ 	}
+ 
  	ssb_write32(dev, SSB_TMSLOW,
- 		    reject | SSB_TMSLOW_RESET |
- 		    core_specific_flags);
-diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
-index 489f7b6..8ac6346 100644
---- a/include/linux/ssb/ssb_regs.h
-+++ b/include/linux/ssb/ssb_regs.h
-@@ -85,6 +85,8 @@
- #define  SSB_IMSTATE_AP_RSV	0x00000030 /* Reserved */
- #define  SSB_IMSTATE_IBE	0x00020000 /* In Band Error */
- #define  SSB_IMSTATE_TO		0x00040000 /* Timeout */
-+#define  SSB_IMSTATE_BUSY	0x01800000 /* Busy (Backplane rev >= 2.3 only) */
-+#define  SSB_IMSTATE_REJECT	0x02000000 /* Reject (Backplane rev >= 2.3 only) */
- #define SSB_INTVEC		0x0F94     /* SB Interrupt Mask */
- #define  SSB_INTVEC_PCI		0x00000001 /* Enable interrupts for PCI */
- #define  SSB_INTVEC_ENET0	0x00000002 /* Enable interrupts for enet 0 */
 -- 
 1.7.3.4
