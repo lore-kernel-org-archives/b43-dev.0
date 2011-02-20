@@ -1,63 +1,63 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 18 Feb 2011 16:21:29 -0600
-Subject: Request for free-distributable Broadcom's (G|LP)-PHY firmware
-In-Reply-To: <AANLkTikLbtV5dLu+Gu=8ibi=ERPiOykN9qBL4rPKS36g@mail.gmail.com>
-References: <AANLkTik45KLdLf5UpjPtXTNgy4Df_BupyQ3SzRr6gZgC@mail.gmail.com>	<AANLkTin_JcEyT21dTS=Ew868HJvZQ2FVZBGXjCZn=8O_@mail.gmail.com>	<4CBF640C.4080405@broadcom.com>	<AANLkTinfwhjvfJU6C97SPJ8YKRqyJaCoQnAcC_uKLZa=@mail.gmail.com>	<1287674517.2383.7.camel@dcbw.foobar.com>
-	<AANLkTikLbtV5dLu+Gu=8ibi=ERPiOykN9qBL4rPKS36g@mail.gmail.com>
-Message-ID: <4D5EF0E9.4050908@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 20 Feb 2011 14:05:48 +0100
+Subject: bcm4322 success!
+In-Reply-To: <201102201340.52880.christoph.thielecke@gmx.de>
+References: <201101032121.10454.christoph.thielecke@gmx.de>
+	<AANLkTikto8PkO8aD3x3i_E6b_GXKsx9XYJ0X+WjkrBaN@mail.gmail.com>
+	<201102201340.52880.christoph.thielecke@gmx.de>
+Message-ID: <AANLkTimRE9iAcoODyWmhcp0rOUAwEG_vy3Ozs7c3VM7N@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Dan Williams <dcbw@redhat.com>, Henry Ptasinski <henryp@broadcom.com>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On 02/18/2011 03:24 PM, Rafa? Mi?ecki wrote:
-> W dniu 21 pa?dziernika 2010 17:21 u?ytkownik Dan Williams
-> <dcbw@redhat.com>  napisa?:
->> On Thu, 2010-10-21 at 00:11 +0200, Rafa? Mi?ecki wrote:
->>> W dniu 20 pa?dziernika 2010 23:50 u?ytkownik Henry Ptasinski
->>> <henryp@broadcom.com>  napisa?:
->>>> Sorry for the delay in responding.  We are exploring what is possible but
->>>> for the moment the answer is no. At present our focus is on providing the
->>>> best open source solution we can for 4313, 43224, 43225, 4329 and future
->>>> chips sets.
->>>
->>> Thanks for answer.
->>>
->>> Please, can you make totally sure person responsible for this gets it
->>> totally right? I believe it's very important.
->>>
->>> The easiest step for you, which we still would appreciate is really
->>> trivial one. It's *not* about writing any code, *not* about releasing
->>> anything new. It's just about releasing in under friendly license.
->>> This firmware is already available, we have access to it, we use it.
->>> The problem is that distributions can not ship it.
->>>
->>> If you let me use simplification: all we need as first nice step is
->>> Broadcom to say: "You can use it".
->>
->> That's not enough to allow Fedora to ship it.  We'd need a clear license
->> from Broadcom (ex the existing Intel or Marvell firmware licenses)
->> before Fedora could feel comfortable about shipping it legally in all
->> jurisdictions.
->>
->> http://git.kernel.org/?p=linux/kernel/git/dwmw2/linux-firmware.git;a=blob;f=LICENCE.mwl8k;h=3224e1bbfba8ccd1d980f57eb88378f20bb2d146;hb=HEAD
->> http://git.kernel.org/?p=linux/kernel/git/dwmw2/linux-firmware.git;a=blob;f=LICENCE.libertas;h=1fd8766c26a170b50605455ae6f54b607baa12cf;hb=HEAD
->>
->> There's an existing Broadcom license in linux-firmware.git, and it *may*
->> be OK, but it's really, really long and given that other major companies
->> adopted the "shorter is better" approach, it's hard to believe that all
->> the existing Broadcom license text is actually needed.
+W dniu 20 lutego 2011 13:40 u?ytkownik Christoph Thielecke
+<christoph.thielecke@gmx.de> napisa?:
+> Hello,
 >
-> Few months later, is there any progress? Can we expect:
+>> > I found your blog entry with the christmas gift:
+>> > http://zajec.net/blog/view/2010-b43-and-nphy-rev-3-plus
+>> > (Patch: http://marc.info/?l=linux-wireless&m=129296339527734&w=2)
+>>
+>> Your problems come from fact that you applied only final patch
+>> enabling rev3+ support. That way you missed many important earlier
+>> patches (for example the one enabling correct firmware loading).
+>>
+>> Please use sth like wireless-testing git tree to get all needed
+>> patches. Using. compat-wireless may do the trick as well, however I
+>> didn't try it.
+> I can report success! I got it working at 2.6.38-rc5 by specifying options for
+> b43 module.
+> The specified options are:
+> nohwcrypt=1 hwtkip=0 qos=0 pio=1 bad_frames_preempt=1
 >
-> 1) Easier licensing of currently provided firmware (see Fedore case)
-> 2) Firmware for LP-PHY devices
-> ?
+> I'm using it currently ~30 minutes and its working fine.
 
-I think we can forget this whole business. It seems that Broadcom is content 
-with their business model, even though knowledgeable Linux users are avoiding 
-their products like the plague.
+Thanks for your report! Do you need that all options at all? I think
+hwtkip=0 is default one. Parameter qos should not matter. AFAIK pio is
+needed for some BCM4321s only. I didn't check what bad_frames_preempt
+does.
 
-Larry
+
+> wlan0 ? ? IEEE 802.11bg ?ESSID:"xxxxxxxxx"
+> ? ? ? ? ?Mode:Managed ?Frequency:2.432 GHz ?Access Point: 00:14:BF:xx:xx:x
+> ? ? ? ? ?Bit Rate=11 Mb/s ? Tx-Power=20 dBm
+> ? ? ? ? ?Retry ?long limit:7 ? RTS thr:off ? Fragment thr:off
+> ? ? ? ? ?Encryption key:off
+> ? ? ? ? ?Power Management:off
+> ? ? ? ? ?Link Quality=70/70 ?Signal level=0 dBm
+> ? ? ? ? ?Rx invalid nwid:0 ?Rx invalid crypt:0 ?Rx invalid frag:0
+> ? ? ? ? ?Tx excessive retries:4045 ?Invalid misc:1776 ? Missed beacon:0
+>
+> Its only 11Mbit (sure its a 54Mbit AP) but speed is constant ~ 500k/s.
+>
+> Btw: the driver from broadcom (wl) is NOT working but 4e3 does :-D
+
+Hm, that's interesting. wl should work too.
+
+As for speed, it's known issue. I still hope to get patches ready for
+2.6.39 merge window.
+
+-- 
+Rafa?
