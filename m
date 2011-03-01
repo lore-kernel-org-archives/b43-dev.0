@@ -1,97 +1,39 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 1 Mar 2011 14:33:36 +0100
-Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
-In-Reply-To: <4CFE8934.4060803@hauke-m.de>
-References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
-	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
-	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
-Message-ID: <AANLkTiku-AWYY2_J9JXOvh=5fu+q8uspcaXzo5mj-tXS@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue,  1 Mar 2011 21:40:39 +0100
+Subject: [PATCH 1/3] b43: N-PHY: rev3+: correct switching analog core
+Message-ID: <1299012041-7937-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-W dniu 7 grudnia 2010 20:21 u?ytkownik Hauke Mehrtens
-<hauke@hauke-m.de> napisa?:
-> On 12/07/2010 04:32 PM, Larry Finger wrote:
->> On 12/07/2010 06:28 AM, Rafa? Mi?ecki wrote:
->>> W dniu 7 grudnia 2010 13:21 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
->>>> Currently we tell ppl to use 4.150.10.5 for G-PHY and 4.174.64.19 for
->>>> LP-PHY on our wiki page.
->>>>
->>>> Firmware files for G-PHY differ a little between there two versions,
->>>> but did we actually get any problems reports?
->>>>
->>>> Can we drop 4.150.10.5 description?
->>>
->>> openSUSE 11.3 seems to download 4.174.64.19 only with it's script and
->>> I didn't heard about any reports. One more point for dropping
->>> 4.150.10.5?
->>
->> I pushed the patch to change openSUSE's script early in the beta testing for
->> that release. I have heard no complaints either. I agree that 4.150.10.5 should
->> be dropped.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
 
-Sorry for responding so late, that bug reports scared me at first
-look, I switched to sth else to forgot that case.
-
-
-> We had serious issues with firmware version 4.174.64.19 in OpenWrt and
-> switched back to the old on as the default option. This issue afftected
-> mostly LP-PHY devices.
->
-> See the Bug report: https://dev.openwrt.org/ticket/6907 This was with
-> kernel 2.6.32 and compat-wireless from ?round about March to May 2010.
-> Stable means the old firmware version and experimental the new one in
-> the bug report.
-
-OK, I can see there are 2 bug reports:
-https://dev.openwrt.org/ticket/7117
-https://dev.openwrt.org/ticket/6907
-
-First one #7117 is about some memory leak and "page allocation
-failure" as a result. It really should have nothing to do with
-firmware, I guess we just had some memory leak in b43.
-
-Second one #6907 is much worse...
-
-1) At beginning it's about hanging router, it seems to be also (the
-same?) memory leak. Probably scanning triggers it. Out of memory leads
-to killing process but that resulted in router hang. No firmware
-related. Not sure if it was fixed.
-
-2) jbemmel reported issue with card hang (not whole router), it
-happened with messages: "Channel switch to default failed" /
-"Microcode not responding". It was related to not allowed access to
-B43_MMIO_PHY0 register. No firmware related. Fixed by updating
-http://bcm-v4.sipsolutions.net/802.11/PHY/Anacore
-
-3) Now, (maybe) firmware related...
-
-a) jbemmel switched to 4.150.10.5 and updated b43 at the same time and
-reported success. No idea what really helped.
-
-b) ldolse reported success when "building with the stable B43". Not
-sure if he tried experimental.
-
-c) anup.vasudev probably tried 4.150.10.5 but reported "It still dosent work"
-
-d) linchen987 tried experimental firmware only and reported success
-for AP, error for STA. Didn't compare to stable firmware.
-
-e) zooloz tried experimental firmware reported success for few hours,
-then duplicated "MAC suspend failed" messages. Didn't compare this to
-stable firmware.
-
-f) anonymous reported "This still dosent work with the latest build
-from trunk.", even after trunk witched to stable firmware as default
-
-g) metamatt posted some reports but he didn't give us direct hint
-about firmware version.
-
-So... generally we know nothing :| Not a single straight report about
-relation between firmware and stability.
-
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index ab81ed8..b8e2b2a 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -3878,10 +3878,14 @@ static void b43_nphy_op_software_rfkill(struct b43_wldev *dev,
+ 	}
+ }
+ 
++/* http://bcm-v4.sipsolutions.net/802.11/PHY/Anacore */
+ static void b43_nphy_op_switch_analog(struct b43_wldev *dev, bool on)
+ {
+-	b43_phy_write(dev, B43_NPHY_AFECTL_OVER,
+-		      on ? 0 : 0x7FFF);
++	u16 val = on ? 0 : 0x7FFF;
++
++	if (dev->phy.rev >= 3)
++		b43_phy_write(dev, B43_NPHY_AFECTL_OVER1, val);
++	b43_phy_write(dev, B43_NPHY_AFECTL_OVER, val);
+ }
+ 
+ static int b43_nphy_op_switch_channel(struct b43_wldev *dev,
 -- 
-Rafa?
+1.7.3.4
