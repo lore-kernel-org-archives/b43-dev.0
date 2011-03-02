@@ -1,5 +1,5 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 2 Mar 2011 10:58:54 +0100
+Date: Wed, 2 Mar 2011 11:08:43 +0100
 Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
 In-Reply-To: <AANLkTimiPiEXftgg09HNAEp3N2+To+cn6uvsQ8+2ckNN@mail.gmail.com>
 References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
@@ -8,7 +8,7 @@ References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTiku-AWYY2_J9JXOvh=5fu+q8uspcaXzo5mj-tXS@mail.gmail.com>
 	<AANLkTinY_f8d7kue+k6TEQaotYc_7BP_nAxwubGt0eYJ@mail.gmail.com>
 	<AANLkTimiPiEXftgg09HNAEp3N2+To+cn6uvsQ8+2ckNN@mail.gmail.com>
-Message-ID: <AANLkTikmckvf3K-KEF7h0L-2mx-N5eQyapaF8fJiYrbs@mail.gmail.com>
+Message-ID: <AANLkTinPWhA_ArMhDXC7XwCT14qH-H19r0m79CoHj0nj@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -39,23 +39,11 @@ W dniu 2 marca 2011 04:30 u?ytkownik chris at martin.cc <chris@martin.cc> napisa
 >
 > b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
 > b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
-> device wlan0 entered promiscuous mode
-> br-lan: port 2(wlan0) entering forwarding state
-> hotplug2 invoked oom-killer: gfp_mask=0x80d0, order=0, oom_adj=0
 
-Thanks for your tests!
+Did you brought interface up, then down, then again up? I try to check
+if there is reason for loading firmware twice.
 
-I really need some help now. Does anyone have idea how changing
-firmware can cause out of memory on host? I try to imagine some
-reasons...
-1) We detect some problem with hw/fw (correctly or not) and go into
-some infinity recursion
-2) Newer firmware does sth differently with DMA, we allocate too much?
-OK, there is not even point "3" from me. I have no more ideas :|
-
-I could check than new vs. old firmware on my only LP-PHY, but how can
-I check for memory allocated by module? lsmod displays column "size"
-but I don't think it's about memory.
+Did you get the same messages with old (stable) firmware?
 
 -- 
 Rafa?
