@@ -1,15 +1,16 @@
 From: chris at martin.cc <chris@martin.cc>
-Date: Wed, 2 Mar 2011 23:17:40 +1100
+Date: Wed, 2 Mar 2011 23:20:38 +1100
 Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
-In-Reply-To: <AANLkTinPWhA_ArMhDXC7XwCT14qH-H19r0m79CoHj0nj@mail.gmail.com>
+In-Reply-To: <AANLkTikcvuBdOi=LM5Bx9cxO2yY=0BzSTn18r938KjSr@mail.gmail.com>
 References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
 	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
 	<AANLkTiku-AWYY2_J9JXOvh=5fu+q8uspcaXzo5mj-tXS@mail.gmail.com>
 	<AANLkTinY_f8d7kue+k6TEQaotYc_7BP_nAxwubGt0eYJ@mail.gmail.com>
 	<AANLkTimiPiEXftgg09HNAEp3N2+To+cn6uvsQ8+2ckNN@mail.gmail.com>
-	<AANLkTinPWhA_ArMhDXC7XwCT14qH-H19r0m79CoHj0nj@mail.gmail.com>
-Message-ID: <AANLkTi=9HiTE47FSoJzngG5HdbsbrYnjdxMRT0E-qKg8@mail.gmail.com>
+	<AANLkTikmckvf3K-KEF7h0L-2mx-N5eQyapaF8fJiYrbs@mail.gmail.com>
+	<AANLkTikcvuBdOi=LM5Bx9cxO2yY=0BzSTn18r938KjSr@mail.gmail.com>
+Message-ID: <AANLkTi=gjvA5=UxHENZ1ALcxomPEdL7NGeb7oFtdZ+t3@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -17,18 +18,21 @@ Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
 2011/3/2 Rafa? Mi?ecki <zajec5@gmail.com>:
->> b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
->> b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
 >
-> Did you brought interface up, then down, then again up? I try to check
-> if there is reason for loading firmware twice.
+> I checked for kernels in OpenWRT.
+> OpenWRT 10.03 is 2.6.32.10
+> OpenWRT 10.03.1-rc4 is 2.6.32.25
 >
-> Did you get the same messages with old (stable) firmware?
+> I can see 2.6.32(.0) at least have:
+> b43: Add LP PHY Analog Switch Support
+> that's good.
+>
+> Maybe compiling b43 with debugging could help to understand what is
+> going on? Could insmod b43.ko pio=1 be workaround?
 >
 
-No, not deliberately, it is done by the network start script, so it may.
-It does the same when I us the "Stable" version.
-Tomorrow I will manually bring up the interface and add it to the bridge.
+Just to clarify.  I tested 10.03-rc4 - and trunk wicth is 2.6.36.x
+I will also confirm the versions tomorrow
 
 ----------------------------------------------------------
 Chris Martin
