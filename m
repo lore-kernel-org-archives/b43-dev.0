@@ -1,7 +1,7 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 2 Mar 2011 14:12:25 +0100
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Wed, 02 Mar 2011 16:00:00 -0600
 Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
-In-Reply-To: <AANLkTim4XtL9+2mw7Kx_Cu_LXak8Y6a_CgkwtrUHf_bo@mail.gmail.com>
+In-Reply-To: <AANLkTi=gjvA5=UxHENZ1ALcxomPEdL7NGeb7oFtdZ+t3@mail.gmail.com>
 References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
 	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
@@ -9,77 +9,45 @@ References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTinY_f8d7kue+k6TEQaotYc_7BP_nAxwubGt0eYJ@mail.gmail.com>
 	<AANLkTimiPiEXftgg09HNAEp3N2+To+cn6uvsQ8+2ckNN@mail.gmail.com>
 	<AANLkTikmckvf3K-KEF7h0L-2mx-N5eQyapaF8fJiYrbs@mail.gmail.com>
-	<AANLkTim4XtL9+2mw7Kx_Cu_LXak8Y6a_CgkwtrUHf_bo@mail.gmail.com>
-Message-ID: <AANLkTinHzH2RjoxM+yQGttxmgpr3K=BNdXupHB6nJ-9B@mail.gmail.com>
+	<AANLkTikcvuBdOi=LM5Bx9cxO2yY=0BzSTn18r938KjSr@mail.gmail.com>
+	<AANLkTi=gjvA5=UxHENZ1ALcxomPEdL7NGeb7oFtdZ+t3@mail.gmail.com>
+Message-ID: <4D6EBDE0.8020005@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 2 marca 2011 13:14 u?ytkownik chris at martin.cc <chris@martin.cc> napisa?:
-> 2011/3/2 Rafa? Mi?ecki <zajec5@gmail.com>
+On 03/02/2011 06:20 AM, chris at martin.cc wrote:
+> 2011/3/2 Rafa? Mi?ecki<zajec5@gmail.com>:
 >>
->> W dniu 2 marca 2011 04:30 u?ytkownik chris at martin.cc <chris@martin.cc> napisa?:
->> > 2011/3/2 chris at martin.cc <chris@martin.cc>
->> >>
->> >> As one of the people why reported some of these issues, I am going to take it upon my self to
->> >> test the current b43 firmware with an ASUS WL500pv2. ?This uses the Broadcom 5354 SoC and > has a LP-PHY with Both the stable(4.150.10.5) and experimental?(4.178.10.4)?firmware.
->> >
->> > OK. ?I managed that faster that I expected
->> > I tested the latest (fresh checkout) of OpenWrt backfire 10.03
->> > I can confirm that when using the broadcom 5354 SoC (LP-PHY) that the
->> > experimental??(4.178.10.4)?firmware. causes "oom" errors.
->> > I repeated tests with both stable and experimental with the same
->> > configuration and the
->> > experimental version always caused "oom"
->> >
->> > happy to test anything else as needed. ?I currently have the stable
->> > version under a load test
->> >
->> > The following is the first "iteration" of the log - as up can see the
->> > firmware is loaded.
->> > The radio interface is added to the bridge and ?moved to the
->> > forwarding state, then POW.
->> >
->> > b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
->> > b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
->> > device wlan0 entered promiscuous mode
->> > br-lan: port 2(wlan0) entering forwarding state
->> > hotplug2 invoked oom-killer: gfp_mask=0x80d0, order=0, oom_adj=0
+>> I checked for kernels in OpenWRT.
+>> OpenWRT 10.03 is 2.6.32.10
+>> OpenWRT 10.03.1-rc4 is 2.6.32.25
 >>
->> Thanks for your tests!
+>> I can see 2.6.32(.0) at least have:
+>> b43: Add LP PHY Analog Switch Support
+>> that's good.
 >>
->> I really need some help now. Does anyone have idea how changing
->> firmware can cause out of memory on host? I try to imagine some
->> reasons...
->> 1) We detect some problem with hw/fw (correctly or not) and go into
->> some infinity recursion
->> 2) Newer firmware does sth differently with DMA, we allocate too much?
->> OK, there is not even point "3" from me. I have no more ideas :|
->>
->> I could check than new vs. old firmware on my only LP-PHY, but how can
->> I check for memory allocated by module? lsmod displays column "size"
->> but I don't think it's about memory.
+>> Maybe compiling b43 with debugging could help to understand what is
+>> going on? Could insmod b43.ko pio=1 be workaround?
 >>
 >
-> I did look in the source and found that there where 3 locations that
-> kmalloc() was called,
-> I added a printk(KERN_CRIT), just before each so I could determine so
-> that it would be displayed on the console.
-> But I didn't get anything. ?So it must be in a tight loop. ?And I'm
-> pretty sure that it is triggered by a packet being sent to the radio
-> from the bridge.
-> I did notice that there was some debug options so I will have a look
-> at that tomorrow.
+> Just to clarify.  I tested 10.03-rc4 - and trunk wicth is 2.6.36.x
+> I will also confirm the versions tomorrow
 
-There are many more allocs, for example: kzalloc, kmalloc. Could you
-put print before them as well?
+Chris,
 
-Also: could you try loading b43 with pio mode instead of dma? To do this:
-rmmod b43
-rmmod ssb
-insmod /lib/modules/2.6.32.x/b43.ko pio=1
+This problem is getting more and more curious.
 
--- 
-Rafa?
+I have two systems with 14e4:4315 LP PHY cards. One is x86_64 and the other is 
+i386. I added kmemleak checking to each and have been running networking for 
+about 3 hours on the 64-bit system, and 18 hours for 32 bit. Neither shows any 
+memory leaks associated with b43. Both are using 508.1084 firmware. Most of the 
+tests were in STA mode, but a few minutes with one hosting an AP for the other 
+has not shown any leaks.
+
+I imagine that memory is pretty tight on the openWRT system. Does "free" work 
+there? If so, what are the results just before you start the bridging?
+
+Larry
