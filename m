@@ -1,44 +1,54 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 6 Mar 2011 09:41:13 +0100
-Subject: 4311rev02 and Ad-hoc
-In-Reply-To: <199148524218.20110306013152@scalpnet.ru>
-References: <199148524218.20110306013152@scalpnet.ru>
-Message-ID: <AANLkTikCqS1mhByk_D5gLgL==T1EUXAj8DUp9nyaQy7P@mail.gmail.com>
+Date: Mon, 7 Mar 2011 13:26:59 +0100
+Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
+In-Reply-To: <AANLkTi=4zfLqC3uVi35TgehNYmm5SnoRph3=vPM+MWua@mail.gmail.com>
+References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
+	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
+	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
+	<AANLkTiku-AWYY2_J9JXOvh=5fu+q8uspcaXzo5mj-tXS@mail.gmail.com>
+	<AANLkTinY_f8d7kue+k6TEQaotYc_7BP_nAxwubGt0eYJ@mail.gmail.com>
+	<AANLkTimiPiEXftgg09HNAEp3N2+To+cn6uvsQ8+2ckNN@mail.gmail.com>
+	<AANLkTikmckvf3K-KEF7h0L-2mx-N5eQyapaF8fJiYrbs@mail.gmail.com>
+	<AANLkTikcvuBdOi=LM5Bx9cxO2yY=0BzSTn18r938KjSr@mail.gmail.com>
+	<AANLkTi=gjvA5=UxHENZ1ALcxomPEdL7NGeb7oFtdZ+t3@mail.gmail.com>
+	<4D6EBDE0.8020005@lwfinger.net>
+	<AANLkTimz2_tReWABmqH5HsNjzYRW0fkidS1qmQbSAoqr@mail.gmail.com>
+	<AANLkTin1SKsQSsMMUq-+0K_j=8GUxWQmP0HyyaxtD3z3@mail.gmail.com>
+	<AANLkTimwByPJQe-LK+qYx8r+mjjqrku5ios8Lzn2N84W@mail.gmail.com>
+	<AANLkTi=4zfLqC3uVi35TgehNYmm5SnoRph3=vPM+MWua@mail.gmail.com>
+Message-ID: <AANLkTikKvdq+vhyP+By=dZ+v8zFTmQHrp3g_fEfMJc6B@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/3/5 Andrei R <ra@scalpnet.ru>:
-> I use b43 on 2.6.35-27 kernel.
-> Hardware is 14e4:4311 (rev.02).
-> fwcutter is installed.
+W dniu 4 marca 2011 01:37 u?ytkownik chris at martin.cc <chris@martin.cc> napisa?:
+> 2011/3/3 Rafa? Mi?ecki <zajec5@gmail.com>:
+>>
+>> You can revert your switching to PIO and debugging messages if you
+>> wish. That doesn't matter.
+>>
+>>
+>> My idea of what is happening:
+>> 1) We try to use newer firmware which does not forgive us broken TX
+>> header anymore
+>> 2) Radio does not transmit, or transmits rubbishes
+>> 3) mac80211 detects failure of transmitting and hits some allocation
+>> loop, memory leak
+>>
+>> If that patches help, it means we satisfied newer firmware and TX
+>> transmission goes fine. However there still probably is some alloc bug
+>> in mac80211 that was exposed by b43.
+>>
 >
-> dmesg shows
-> b43-phy0: Broadcom 4311 WLAN found (core revision 13)
-> b43-phy0: Loading firmware version 410.2160 (2007-05-26 15:32:10)
+> Maybe the way to investigate this further is to look at what is being
+> passed between
+> mac80211 and b43, with the different firmwares.
 >
-> iwlist shows wifi nets near.
->
-> But if i try to connect to ad-hoc network through NetworkManager -
-> strange thing happens. It behaves as if a connection is established,
-> e.g. iwconfig shows correct ESSID and some Cell number.
->
-> ifconfig shows RX packets:0 on wlan0. Pings are timed out.
->
-> Does ad-hoc ever work on b43 with my hardware?
+> I will add some debugging on the weekend and see what I can uncover.
 
-I think ad-hoc should work. Your card is G-PHY, from that series I've
-only 4318, but will try ad-hoc with it anyway.
-
-What do you mean by cell number in "correct ESSID and some Cell number"?
-
-What other devices are in your ad-hoc network? What wireless cards/drivers?
-
-Does connecting to normal network works fine for you?
-
-Did you try connecting without NetworkManager?
+Did you play with that bug over weekend? Any news?
 
 -- 
 Rafa?
