@@ -1,32 +1,47 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Mon, 7 Mar 2011 22:51:22 +0100
-Subject: Looking for LP-PHY rev 2+
-In-Reply-To: <AANLkTikMO3M+=_5ibAvSShsa339-jMegBCWb1RAkK9Sr@mail.gmail.com>
-References: <AANLkTikMO3M+=_5ibAvSShsa339-jMegBCWb1RAkK9Sr@mail.gmail.com>
-Message-ID: <AANLkTimcioTv==Roa+Ya4VxkJ8yNwAJGZRhw6rB4oHS-@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 7 Mar 2011 23:37:03 +0100
+Subject: SSB bus driver documentation?
+Message-ID: <AANLkTikky+cwYO+S_QSebnyQRV9TftbeNZDzVN8EAT_7@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Michael Buesch <mb@bu3sch.de>, linux-wireless@vger.kernel.org
+Cc: b43-dev <b43-dev@lists.infradead.org>
 
-Probably the iPhone 3GS has one. No other card known.
+I spent few hours trying to understand/track ssb code and I'm giving
+up now. I can not understand basic code flow.
 
-2011/3/7 Rafa? Mi?ecki <zajec5@gmail.com>:
-> Hi,
->
-> Did anyone ever meet card with LP-PHY revision 2 or higher?
->
-> --
-> Rafa?
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
+We have some ssb_modinit, but I don't see it performing scanning bus
+at all. For some reason this function is aware of b43 bridge and gige
+driver. GigE driver doesn't seem to be module, while b43 seems to be.
+gige uses pci_device_id, while b43 uses ssb_device_id. I have no idea
+what b43 PCI bridge is. Flow seems to be ugly, at ssb_modinit we call
+ssb_gige_init which calls out ssb_driver_register. There is some magic
+"ssb_attach_queued_buses", which sounds like SSB (which is bus)
+attaching... buses.
+
+I wanted to at least understand when scanning of cores is done. I
+found "ssb_bus_scan", it is called from "ssb_bus_register". This
+function is called from code for every host, for example:
+ssb_bus_pcibus_register. This one seems to be called from
+ssb_pcihost_probe, however pcihost_wrapper is not module itself, it
+does not contains any devices table. This function seems to be
+registered with pci_register_driver from ssb_pcihost_register. That
+one gets called b43_pci_ssb_bridge_init. But damn, I don't remember
+anymore where I was 5 step ago. Not to mention whole code path.
 
 
+OK, I wrote all that to show you my confusion. I don't think asking
+any single questions will help understanding that. Is there any
+documentation I could read to get any basic understanding of ssb?
+
+
+P.S.
+Even one more thing: try to guess by function's name what can it be
+responsible for: "ssb_bus_ssbbus_register". It is used by some
+/arch/mips/bcm47xx/setup.c, but I can not image digging into next
+driver to understand whole architecture :|
 
 -- 
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+Rafa?
