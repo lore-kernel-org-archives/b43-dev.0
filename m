@@ -1,7 +1,7 @@
 From: chris at martin.cc <chris@martin.cc>
-Date: Tue, 8 Mar 2011 12:12:50 +1100
+Date: Tue, 8 Mar 2011 12:25:57 +1100
 Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
-In-Reply-To: <AANLkTikKvdq+vhyP+By=dZ+v8zFTmQHrp3g_fEfMJc6B@mail.gmail.com>
+In-Reply-To: <AANLkTimgfBXR6PxMM2V3DG9D0OvLhAd-PPkthN19UH8L@mail.gmail.com>
 References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
 	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
@@ -16,49 +16,51 @@ References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTin1SKsQSsMMUq-+0K_j=8GUxWQmP0HyyaxtD3z3@mail.gmail.com>
 	<AANLkTimwByPJQe-LK+qYx8r+mjjqrku5ios8Lzn2N84W@mail.gmail.com>
 	<AANLkTi=4zfLqC3uVi35TgehNYmm5SnoRph3=vPM+MWua@mail.gmail.com>
-	<AANLkTikKvdq+vhyP+By=dZ+v8zFTmQHrp3g_fEfMJc6B@mail.gmail.com>
-Message-ID: <AANLkTi=UBN=4dyOpU33F2WytgjRRZ3kinFYjZaKhmwkL@mail.gmail.com>
+	<AANLkTimgfBXR6PxMM2V3DG9D0OvLhAd-PPkthN19UH8L@mail.gmail.com>
+Message-ID: <AANLkTinn=A6ySigu+8AOUtt3QDa7=NpO882Q_Ln76CA+@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/3/7 Rafa? Mi?ecki <zajec5@gmail.com>
+2011/3/8 Rafa? Mi?ecki <zajec5@gmail.com>
 
 > W dniu 4 marca 2011 01:37 u?ytkownik chris at martin.cc <chris@martin.cc>
 > napisa?:
-> > 2011/3/3 Rafa? Mi?ecki <zajec5@gmail.com>:
-> >>
-> >> You can revert your switching to PIO and debugging messages if you
-> >> wish. That doesn't matter.
-> >>
-> >>
-> >> My idea of what is happening:
-> >> 1) We try to use newer firmware which does not forgive us broken TX
-> >> header anymore
-> >> 2) Radio does not transmit, or transmits rubbishes
-> >> 3) mac80211 detects failure of transmitting and hits some allocation
-> >> loop, memory leak
-> >>
-> >> If that patches help, it means we satisfied newer firmware and TX
-> >> transmission goes fine. However there still probably is some alloc bug
-> >> in mac80211 that was exposed by b43.
-> >>
-> >
 > > Maybe the way to investigate this further is to look at what is being
 > > passed between
 > > mac80211 and b43, with the different firmwares.
 > >
 > > I will add some debugging on the weekend and see what I can uncover.
 >
-> Did you play with that bug over weekend? Any news?
+> Maybe it'd make sense to check what we get from hardware with older
+> vs. newer firmware?
 >
+> Attached patch was compile-tested only.
+>
+> It may put a lot of messages in your dmesg, don't try to run it for too
+> long ;)
+>
+>
+Rafal
+
+I think something went wrong with the patch you attached.
+when I detach it, it contains
+
+  Building modules, stage 2.
+  MODPOST 1 modules
+
+And nothing else.
 
 
-Sorry,  but no, I didn't get a chance.  I will in the next day or two.
-I am planning to log all the ops functions and all the ieee80211 functions.
-and then compare the logs between the stable and experimental firmware.
+Further..  When I was testing the driver (both in AP and STA modes) I had it
+disconnected form the network, and disconnected from the bridge.  As a
+result there would have been very little data transmitted.  However there is
+lots of 802.11 traffic in the air.  So I think that we will find the problem
+on the receive path rather than the transmit path,  Just my 2c worth until I
+get some logging in there.
+
 
 ----------------------------------------------------------
 Chris Martin
@@ -66,4 +68,4 @@ m: +61 419 812 371
 ----------------------------------------------------------
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110308/4593f1bc/attachment-0001.html>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110308/bb28d478/attachment.html>
