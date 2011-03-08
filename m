@@ -1,115 +1,69 @@
-From: Michael Buesch <mb@bu3sch.de>
-Date: Tue, 08 Mar 2011 00:11:31 +0100
-Subject: SSB bus driver documentation?
-In-Reply-To: <AANLkTikky+cwYO+S_QSebnyQRV9TftbeNZDzVN8EAT_7@mail.gmail.com>
-	(sfid-20110307_233715_836311_FFFFFFFF9FD85835)
-References: <AANLkTikky+cwYO+S_QSebnyQRV9TftbeNZDzVN8EAT_7@mail.gmail.com>
-	(sfid-20110307_233715_836311_FFFFFFFF9FD85835)
-Message-ID: <1299539491.7802.18.camel@marge>
+From: chris at martin.cc <chris@martin.cc>
+Date: Tue, 8 Mar 2011 12:12:50 +1100
+Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
+In-Reply-To: <AANLkTikKvdq+vhyP+By=dZ+v8zFTmQHrp3g_fEfMJc6B@mail.gmail.com>
+References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
+	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
+	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
+	<AANLkTiku-AWYY2_J9JXOvh=5fu+q8uspcaXzo5mj-tXS@mail.gmail.com>
+	<AANLkTinY_f8d7kue+k6TEQaotYc_7BP_nAxwubGt0eYJ@mail.gmail.com>
+	<AANLkTimiPiEXftgg09HNAEp3N2+To+cn6uvsQ8+2ckNN@mail.gmail.com>
+	<AANLkTikmckvf3K-KEF7h0L-2mx-N5eQyapaF8fJiYrbs@mail.gmail.com>
+	<AANLkTikcvuBdOi=LM5Bx9cxO2yY=0BzSTn18r938KjSr@mail.gmail.com>
+	<AANLkTi=gjvA5=UxHENZ1ALcxomPEdL7NGeb7oFtdZ+t3@mail.gmail.com>
+	<4D6EBDE0.8020005@lwfinger.net>
+	<AANLkTimz2_tReWABmqH5HsNjzYRW0fkidS1qmQbSAoqr@mail.gmail.com>
+	<AANLkTin1SKsQSsMMUq-+0K_j=8GUxWQmP0HyyaxtD3z3@mail.gmail.com>
+	<AANLkTimwByPJQe-LK+qYx8r+mjjqrku5ios8Lzn2N84W@mail.gmail.com>
+	<AANLkTi=4zfLqC3uVi35TgehNYmm5SnoRph3=vPM+MWua@mail.gmail.com>
+	<AANLkTikKvdq+vhyP+By=dZ+v8zFTmQHrp3g_fEfMJc6B@mail.gmail.com>
+Message-ID: <AANLkTi=UBN=4dyOpU33F2WytgjRRZ3kinFYjZaKhmwkL@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On Mon, 2011-03-07 at 23:37 +0100, Rafa? Mi?ecki wrote:
-> We have some ssb_modinit, but I don't see it performing scanning bus
-> at all.
+2011/3/7 Rafa? Mi?ecki <zajec5@gmail.com>
 
-It just registers the bus type to the kernel.
+> W dniu 4 marca 2011 01:37 u?ytkownik chris at martin.cc <chris@martin.cc>
+> napisa?:
+> > 2011/3/3 Rafa? Mi?ecki <zajec5@gmail.com>:
+> >>
+> >> You can revert your switching to PIO and debugging messages if you
+> >> wish. That doesn't matter.
+> >>
+> >>
+> >> My idea of what is happening:
+> >> 1) We try to use newer firmware which does not forgive us broken TX
+> >> header anymore
+> >> 2) Radio does not transmit, or transmits rubbishes
+> >> 3) mac80211 detects failure of transmitting and hits some allocation
+> >> loop, memory leak
+> >>
+> >> If that patches help, it means we satisfied newer firmware and TX
+> >> transmission goes fine. However there still probably is some alloc bug
+> >> in mac80211 that was exposed by b43.
+> >>
+> >
+> > Maybe the way to investigate this further is to look at what is being
+> > passed between
+> > mac80211 and b43, with the different firmwares.
+> >
+> > I will add some debugging on the weekend and see what I can uncover.
+>
+> Did you play with that bug over weekend? Any news?
+>
 
-> For some reason this function is aware of b43 bridge and gige
-> driver. GigE driver doesn't seem to be module, while b43 seems to be.
 
-Well, b43-pci-bridge and gige should be standalone
-modules. However b43-pci-bridge is so small that it's
-not worth it and so it is integrated into ssb module.
-gige has some weird dependencies to the mips platform
-code, so it can't easily be standalone.
+Sorry,  but no, I didn't get a chance.  I will in the next day or two.
+I am planning to log all the ops functions and all the ieee80211 functions.
+and then compare the logs between the stable and experimental firmware.
 
-> while b43 uses ssb_device_id.
-
-Well, b43 is the driver for the "wireless" core of an SSB chip (bus).
-Therefore it is an ssb_device.
-
-> I have no idea
-> what b43 PCI bridge is.
-
-b43-pci-bridge is the driver for the host-pci device
-for SSB based PCI cards. Looks like this:
-
-PCI bus -> b43-pci-bridge -> SSB bus -> b43 (ssb_device)
-
-
-> Flow seems to be ugly, at ssb_modinit we call
-> ssb_gige_init which calls out ssb_driver_register.
-
-Well, that's just because we cannot have two module_init
-in one module.
-
-> There is some magic
-> "ssb_attach_queued_buses", which sounds like SSB (which is bus)
-> attaching... buses.
-
-This is just used for embedded devices.
-As I already said, this mechanism should be rewritten to use the
-standard platform_device mechanism.
-However, I doubt it would make it easier to understand. But it
-would be more ideomatic.
-
-> I wanted to at least understand when scanning of cores is done. I
-> found "ssb_bus_scan", it is called from "ssb_bus_register". This
-> function is called from code for every host, for example:
-> ssb_bus_pcibus_register. This one seems to be called from
-> ssb_pcihost_probe, however pcihost_wrapper is not module itself, it
-> does not contains any devices table. This function seems to be
-> registered with pci_register_driver from ssb_pcihost_register. That
-> one gets called b43_pci_ssb_bridge_init. But damn, I don't remember
-> anymore where I was 5 step ago. Not to mention whole code path.
-
-I think you're probably trying to understand the wrong thing here.
-If you want to understand kernel booting, you don't walk the code
-from physical CPU entry point to forking of the init process.
-
-There's a lot of standard kernel subsystem code involved here,
-so it certainly is very hard to "walk" the codepath by hand.
-
-What happens on a PCI card is pretty easy:
-
-SSB (ssb_modinit) registers the "SSB" bustype to the kernel. Now the kernel
-knows about the new bustype. No more no less.
-B43 registers the driver for the SSB wireless core.
-The b43-pci-bridge registers the toplevel PCI driver to the kernel.
-If the kernel detects such a device, it probes the driver (pcihost_wrapper).
-Which in turn registers the SSB bus. The kernel notices that the SSB bustype
-was registered and calls its initialization. Which in turn triggers scanning
-of the bus. The scanning discovers the devices and registers the SSB devices
-to the kernel. As the b43 driver already registered the SSB wireless core
-driver, the kernel matches that against the registered devices and calls
-b43 probe if it was found.
-
-> OK, I wrote all that to show you my confusion. I don't think asking
-> any single questions will help understanding that. Is there any
-> documentation I could read to get any basic understanding of ssb?
-
-No. But you should probably read something about the kernel device
-framework. Some book like Linux Device Drivers, perhaps.
-
-> 
-> P.S.
-> Even one more thing: try to guess by function's name what can it be
-> responsible for: "ssb_bus_ssbbus_register". It is used by some
-> /arch/mips/bcm47xx/setup.c, but I can not image digging into next
-> driver to understand whole architecture :|
-
-That function registers an SSB bus on an embedded system.
-It's basically the same thing what b43-pci-bridge does, except
-that the bustype is set to a different value and some minor things
-are done differently in the init process.
-
-As I said, this should use platform_device mechanism. But it would
-make it even harder for you to understand. :D
-
--- 
-Greetings, Michael.
+----------------------------------------------------------
+Chris Martin
+m: +61 419 812 371
+----------------------------------------------------------
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110308/4593f1bc/attachment-0001.html>
