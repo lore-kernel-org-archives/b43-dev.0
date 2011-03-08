@@ -1,102 +1,79 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Tue, 08 Mar 2011 12:19:04 +0100
-Subject: SSB bus driver documentation?
-In-Reply-To: <AANLkTikVN8QZjYc0jX4zcpO=xUwt4d8mfkPZkPSLvnMe@mail.gmail.com>
-	(sfid-20110308_120113_587954_FFFFFFFFCCCD7736)
-References: <AANLkTikky+cwYO+S_QSebnyQRV9TftbeNZDzVN8EAT_7@mail.gmail.com>
-	<1299539491.7802.18.camel@marge>
-	<AANLkTikVN8QZjYc0jX4zcpO=xUwt4d8mfkPZkPSLvnMe@mail.gmail.com>
-	(sfid-20110308_120113_587954_FFFFFFFFCCCD7736)
-Message-ID: <1299583144.7627.14.camel@maggie>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 8 Mar 2011 14:26:27 +0100
+Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
+In-Reply-To: <AANLkTinn=A6ySigu+8AOUtt3QDa7=NpO882Q_Ln76CA+@mail.gmail.com>
+References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
+	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
+	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
+	<AANLkTiku-AWYY2_J9JXOvh=5fu+q8uspcaXzo5mj-tXS@mail.gmail.com>
+	<AANLkTinY_f8d7kue+k6TEQaotYc_7BP_nAxwubGt0eYJ@mail.gmail.com>
+	<AANLkTimiPiEXftgg09HNAEp3N2+To+cn6uvsQ8+2ckNN@mail.gmail.com>
+	<AANLkTikmckvf3K-KEF7h0L-2mx-N5eQyapaF8fJiYrbs@mail.gmail.com>
+	<AANLkTikcvuBdOi=LM5Bx9cxO2yY=0BzSTn18r938KjSr@mail.gmail.com>
+	<AANLkTi=gjvA5=UxHENZ1ALcxomPEdL7NGeb7oFtdZ+t3@mail.gmail.com>
+	<4D6EBDE0.8020005@lwfinger.net>
+	<AANLkTimz2_tReWABmqH5HsNjzYRW0fkidS1qmQbSAoqr@mail.gmail.com>
+	<AANLkTin1SKsQSsMMUq-+0K_j=8GUxWQmP0HyyaxtD3z3@mail.gmail.com>
+	<AANLkTimwByPJQe-LK+qYx8r+mjjqrku5ios8Lzn2N84W@mail.gmail.com>
+	<AANLkTi=4zfLqC3uVi35TgehNYmm5SnoRph3=vPM+MWua@mail.gmail.com>
+	<AANLkTimgfBXR6PxMM2V3DG9D0OvLhAd-PPkthN19UH8L@mail.gmail.com>
+	<AANLkTinn=A6ySigu+8AOUtt3QDa7=NpO882Q_Ln76CA+@mail.gmail.com>
+Message-ID: <AANLkTin4udPC+iGcWpGF22q-jJ28eEL09tXTmCawxvfd@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On Tue, 2011-03-08 at 12:01 +0100, Rafa? Mi?ecki wrote: 
-> OK, today that ssb code makes more sense to me, thanks for help.
-> 
-> 
-> I'd like to ask few more questions:
-> 1) In case of PCI host we have b43_pci_bridge that loads ssb. What
-> about other hosts? I don't see any IDs table in sdio.c or pcmcia.c.
+W dniu 8 marca 2011 02:25 u?ytkownik chris at martin.cc <chris@martin.cc> napisa?:
+>
+> 2011/3/8 Rafa? Mi?ecki <zajec5@gmail.com>
+>>
+>> W dniu 4 marca 2011 01:37 u?ytkownik chris at martin.cc <chris@martin.cc>
+>> napisa?:
+>> > Maybe the way to investigate this further is to look at what is being
+>> > passed between
+>> > mac80211 and b43, with the different firmwares.
+>> >
+>> > I will add some debugging on the weekend and see what I can uncover.
+>>
+>> Maybe it'd make sense to check what we get from hardware with older
+>> vs. newer firmware?
+>>
+>> Attached patch was compile-tested only.
+>>
+>> It may put a lot of messages in your dmesg, don't try to run it for too
+>> long ;)
+>>
+>
+> Rafal
+> I think?something?went wrong with the patch you attached.
+> when I detach it, it contains
+>
+> ??Building modules, stage 2.
+> ??MODPOST 1 modules
+> And nothing else.
+>
+> Further.. ?When I was testing the driver (both in AP and STA modes) I had it
+> disconnected form the network, and disconnected from the bridge. ?As a
+> result there would have been very little data transmitted. ?However there is
+> lots of 802.11 traffic in the air. ?So I think that we will find the problem
+> on the receive path rather than the transmit path, ?Just my 2c worth until I
+> get some logging in there.
 
-That part is in b43. b43_pci_bridge is only in SSB, because it is
-shared between b43 and b43legacy.
+Whoops, sorry. Can you try attached patch? And compare old and new
+firmware with this patch applied?
 
-> 2) Could you say a word more about pcihost_wrapper? What is this for?
-> I can see we use that in pci bridge. What we can't call
-> ssb_bus_pcibus_register directly?
-
-It's just a library of common PCI initialization functions. It's
-used from b43_pci_bridge and from b44's PCI init code.
-
-> 3) What is embedded.c?
-
-A collection of functions for embedded devices (SSB without host bus),
-only.
-
-> 1) main.c::ssb_modinit
-> Hacks for bridge and gige (both being not modules) are not documented.
-> New developer have no idea why we call b43_pci_ssb_bridge_init and
-> ssb_gige_init. Tracking that calls lead to even more confusion.
-
-Well, it's pretty obvious what those functions do, if you know how
-the kernel device driver model works. They register device drivers.
-Which is done in the modinit function in almost all drivers.
-
-And I don't think those calls are "hacks". It's pretty standard stuff.
-
-> 2) ssb.h::ssb_bustype
-> SSB_BUSTYPE_SSB,
-> SSB_BUSTYPE_PCI,
-> SSB_BUSTYPE_PCMCIA,
-> SSB_BUSTYPE_SDIO,
-> I think first define is confusing. Is sounds like SSB being host for
-> SSB, or whatever... I think it should be sth like SSB_BUSTYPE_SYSTEM,
-> SSB_BUSTYPE_NONE, SSB_BUSTYPE_NATIVE, SSB_BUSTYPE_EMBEDDED, or sth.
-
-Well, SSB_BUSTYPE_NONE probably is the best choice of all of those.
-
-It should actually be SSB_HOSTBUSTYPE_...
-
-But it's probably not worth changing.
-
-> 3) main.c::ssb_ssb_ops
-> We keep all host-specific ops in separated files, but not in this
-> case. OK, it makes some sense as this one is not for host, but I think
-> it makes main.c more complicated and we can not compile SSB without
-> it. I think we could build every PC kernel without this, right?
-
-I think your goal was to reduce complexity? Now you want to increase it
-just to save some 20 bytes? Could put it into embedded.c, if you
-care.
-
-> 4) scan.c::scan_switchcore
-> Why we don't have ops->switchcore? We could get rid of that switch
-> with simple pointer.
-
-No. scan.c is special in that almost nothing is initialized, yet.
-That is why we have custom read and switch core helpers here.
-
-We do _not_ need core switch as an ops pointer, because after scanning
-the core switch is _completely_ hidden in the read/write ops
-implementations.
-
-> 5) scan.c::scan_read32
-> I'm not sure about this yet... but do we need that here? Shouldn't
-> scan.c focus on just scanning? It's just one another "offset +=
-> current_coreidx * SSB_CORE_SIZE;" calculation.
-> 
-> 
-> I criticized scan.c::scan_read32, but could you say why do we need
-> that specific read at all?
-
-Because ops is not usable, yet. The task of scan is to create the
-ssb_devices. The ops expect an ssb_device as argument. We can't
-pass an ssb_device that we're about to detect.
+As you can see from one of my prev mail, I also suspect RX. That's why
+patch tries to print some info about RX, headers we receive from
+firmware.
 
 -- 
-Greetings Michael.
+Rafa?
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: xmit.dbg.patch
+Type: application/octet-stream
+Size: 1225 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110308/9add0483/attachment.obj>
