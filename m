@@ -1,5 +1,5 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 9 Mar 2011 01:47:03 +0100
+From: chris at martin.cc <chris@martin.cc>
+Date: Wed, 9 Mar 2011 11:47:14 +1100
 Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
 In-Reply-To: <AANLkTim4eRtmbXCbXSq-u7Md04ppXj5A41BQvFOXR0zw@mail.gmail.com>
 References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
@@ -20,17 +20,18 @@ References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTinn=A6ySigu+8AOUtt3QDa7=NpO882Q_Ln76CA+@mail.gmail.com>
 	<AANLkTin4udPC+iGcWpGF22q-jJ28eEL09tXTmCawxvfd@mail.gmail.com>
 	<AANLkTim4eRtmbXCbXSq-u7Md04ppXj5A41BQvFOXR0zw@mail.gmail.com>
-Message-ID: <AANLkTikk530LEg3E4-tB115jbrNh-Z+z2zR3+zju4DT6@mail.gmail.com>
+Message-ID: <AANLkTi=rqEDbvwzUPCYORFS2C068ymFGWoMTTcJv_y44@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 9 marca 2011 01:44 u?ytkownik chris at martin.cc <chris@martin.cc> napisa?:
+2011/3/9 chris at martin.cc <chris@martin.cc>
+
 > 2011/3/9 Rafa? Mi?ecki <zajec5@gmail.com>
->>
->> W dniu 8 marca 2011 02:25 u?ytkownik chris at martin.cc <chris@martin.cc>
+>
+> W dniu 8 marca 2011 02:25 u?ytkownik chris at martin.cc <chris@martin.cc>
 >> napisa?:
 >> >
 >> > 2011/3/8 Rafa? Mi?ecki <zajec5@gmail.com>
@@ -51,15 +52,23 @@ W dniu 9 marca 2011 01:44 u?ytkownik chris at martin.cc <chris@martin.cc> napisa
 >> >> It may put a lot of messages in your dmesg, don't try to run it for too
 >> >> long ;)
 >> >>
+>>
 >
 > I the just tested the patch
-> Very curious.. ?I get nothing.
+> Very curious..  I get nothing.
+>
 > I double checked that the patch was applied.
-> I cleaned the object files, to ensure that it was?compiled
+> I cleaned the object files, to ensure that it was compiled
 > I ensured that CONFIG_B43_DEBUG was enabled
+>
 > But the lines are never called
+>
 
-With which firmware did you test?
-
--- 
-Rafa?
+I also tried both experimental and stable, with the same result
+----------------------------------------------------------
+Chris Martin
+m: +61 419 812 371
+----------------------------------------------------------
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110309/c876d564/attachment.html>
