@@ -1,7 +1,7 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 8 Mar 2011 14:26:27 +0100
+From: chris at martin.cc <chris@martin.cc>
+Date: Wed, 9 Mar 2011 11:44:33 +1100
 Subject: Switching to 4.174.64.19 firmware for G-PHY cards?
-In-Reply-To: <AANLkTinn=A6ySigu+8AOUtt3QDa7=NpO882Q_Ln76CA+@mail.gmail.com>
+In-Reply-To: <AANLkTin4udPC+iGcWpGF22q-jJ28eEL09tXTmCawxvfd@mail.gmail.com>
 References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTimyHvCh_k9fV1v_OpcLFvobudRriB4GqvJNrciL@mail.gmail.com>
 	<4CFE538A.10808@lwfinger.net> <4CFE8934.4060803@hauke-m.de>
@@ -18,62 +18,52 @@ References: <AANLkTi=8ENWqp81v3KF=nf3Bi6Y2P92NL9x4T2SMd+NZ@mail.gmail.com>
 	<AANLkTi=4zfLqC3uVi35TgehNYmm5SnoRph3=vPM+MWua@mail.gmail.com>
 	<AANLkTimgfBXR6PxMM2V3DG9D0OvLhAd-PPkthN19UH8L@mail.gmail.com>
 	<AANLkTinn=A6ySigu+8AOUtt3QDa7=NpO882Q_Ln76CA+@mail.gmail.com>
-Message-ID: <AANLkTin4udPC+iGcWpGF22q-jJ28eEL09tXTmCawxvfd@mail.gmail.com>
+	<AANLkTin4udPC+iGcWpGF22q-jJ28eEL09tXTmCawxvfd@mail.gmail.com>
+Message-ID: <AANLkTim4eRtmbXCbXSq-u7Md04ppXj5A41BQvFOXR0zw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 8 marca 2011 02:25 u?ytkownik chris at martin.cc <chris@martin.cc> napisa?:
->
-> 2011/3/8 Rafa? Mi?ecki <zajec5@gmail.com>
->>
->> W dniu 4 marca 2011 01:37 u?ytkownik chris at martin.cc <chris@martin.cc>
->> napisa?:
->> > Maybe the way to investigate this further is to look at what is being
->> > passed between
->> > mac80211 and b43, with the different firmwares.
->> >
->> > I will add some debugging on the weekend and see what I can uncover.
->>
->> Maybe it'd make sense to check what we get from hardware with older
->> vs. newer firmware?
->>
->> Attached patch was compile-tested only.
->>
->> It may put a lot of messages in your dmesg, don't try to run it for too
->> long ;)
->>
->
-> Rafal
-> I think?something?went wrong with the patch you attached.
-> when I detach it, it contains
->
-> ??Building modules, stage 2.
-> ??MODPOST 1 modules
-> And nothing else.
->
-> Further.. ?When I was testing the driver (both in AP and STA modes) I had it
-> disconnected form the network, and disconnected from the bridge. ?As a
-> result there would have been very little data transmitted. ?However there is
-> lots of 802.11 traffic in the air. ?So I think that we will find the problem
-> on the receive path rather than the transmit path, ?Just my 2c worth until I
-> get some logging in there.
+2011/3/9 Rafa? Mi?ecki <zajec5@gmail.com>
 
-Whoops, sorry. Can you try attached patch? And compare old and new
-firmware with this patch applied?
+> W dniu 8 marca 2011 02:25 u?ytkownik chris at martin.cc <chris@martin.cc>
+> napisa?:
+> >
+> > 2011/3/8 Rafa? Mi?ecki <zajec5@gmail.com>
+> >>
+> >> W dniu 4 marca 2011 01:37 u?ytkownik chris at martin.cc <chris@martin.cc>
+> >> napisa?:
+> >> > Maybe the way to investigate this further is to look at what is being
+> >> > passed between
+> >> > mac80211 and b43, with the different firmwares.
+> >> >
+> >> > I will add some debugging on the weekend and see what I can uncover.
+> >>
+> >> Maybe it'd make sense to check what we get from hardware with older
+> >> vs. newer firmware?
+> >>
+> >> Attached patch was compile-tested only.
+> >>
+> >> It may put a lot of messages in your dmesg, don't try to run it for too
+> >> long ;)
+> >>
+>
 
-As you can see from one of my prev mail, I also suspect RX. That's why
-patch tries to print some info about RX, headers we receive from
-firmware.
+I the just tested the patch
+Very curious..  I get nothing.
 
--- 
-Rafa?
+I double checked that the patch was applied.
+I cleaned the object files, to ensure that it was compiled
+I ensured that CONFIG_B43_DEBUG was enabled
+
+But the lines are never called
+
+----------------------------------------------------------
+Chris Martin
+m: +61 419 812 371
+----------------------------------------------------------
 -------------- next part --------------
-A non-text attachment was scrubbed...
-Name: xmit.dbg.patch
-Type: application/octet-stream
-Size: 1225 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110308/9add0483/attachment.obj>
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110309/be0cd511/attachment.html>
