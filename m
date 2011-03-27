@@ -1,27 +1,44 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Wed, 23 Mar 2011 16:30:45 +0100
-Subject: [PATCH] b43-fwcutter: Add info for firmware version 508.1084
-In-Reply-To: <4d6d96cf.bzaH6nkkqUvbfWXI%Larry.Finger@lwfinger.net>
-	(sfid-20110302_020118_070479_3EB6C68A)
-References: <4d6d96cf.bzaH6nkkqUvbfWXI%Larry.Finger@lwfinger.net>
-	(sfid-20110302_020118_070479_3EB6C68A)
-Message-ID: <1300894245.20830.2.camel@maggie>
+From: =?ISO-8859-1?Q?Christian_Sch=E4fer?= <schaefer@rostlab.org>
+Date: Sun, 27 Mar 2011 11:23:56 +0200
+Subject: New device in MacBook Pro, yet unsupported?
+Message-ID: <4D8F022C.2050606@rostlab.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Tue, 2011-03-01 at 19:01 -0600, Larry Finger wrote: 
-> Add details for extracting firmware from
-> http://mirror2.openwrt.org/sources/broadcom-wl-5.10.56.27.3_mipsel.tar.bz2. A
-> firmware source of this vintage is needed for Rev 16 802.11 cores found in the
-> 14e4:432b N PHY devices.
-> 
-> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-> ---
+Hi there,
 
-Thanks. Applied and released fwcutter-014
+I've got here a recent 13" MacBook Pro (8,1), running Ubuntu on it 
+(natty). The wireless device seems to be currently unsupported by the 
+b43 driver (as of kernel 2.6.38). It seems to be a bcm4331, lspci -vn 
+gives the following:
+
+03:00.0 0280: 14e4:4331 (rev 02)
+     Subsystem: 106b:00d6
+     Flags: bus master, fast devsel, latency 0, IRQ 11
+     Memory at a0600000 (64-bit, non-prefetchable) [size=16K]
+     Capabilities: [40] Power Management version 3
+     Capabilities: [58] Vendor Specific Information: Len=78 <?>
+     Capabilities: [48] MSI: Enable- Count=1/1 Maskable- 64bit+
+     Capabilities: [d0] Express Endpoint, MSI 00
+     Capabilities: [100] Advanced Error Reporting
+     Capabilities: [13c] Virtual Channel
+     Capabilities: [160] Device Serial Number 83-0e-47-ff-ff-36-e0-f8
+     Capabilities: [16c] Power Budgeting <?>
+
+To my current knowledge, the only way to get it working is by means of 
+ndiswrapper. Are there any plans already to get this device supported 
+natively? Please let me know if you need further information regarding 
+the device.
+
+Thanks,
+Chris
 
 -- 
-Greetings Michael.
+Dipl.-Bioinf. Christian Schaefer
+Technical University Munich
+Department for Bioinformatics / Rostlab
+http://www.rostlab.org/~schaefer
+http://gsish.tum.edu/
