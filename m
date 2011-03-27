@@ -1,51 +1,27 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 27 Mar 2011 11:43:32 +0200
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Sun, 27 Mar 2011 12:12:39 +0200
 Subject: New device in MacBook Pro, yet unsupported?
 In-Reply-To: <AANLkTim5s4rKS2Khm-vpzcPM8mKAwRCtH1x=mmaqr=m9@mail.gmail.com>
 References: <4D8F022C.2050606@rostlab.org>
 	<AANLkTim5s4rKS2Khm-vpzcPM8mKAwRCtH1x=mmaqr=m9@mail.gmail.com>
-Message-ID: <AANLkTi=oX+O9pkRqj1ByB_SZMt4w43a_z3bGOp9AeT2L@mail.gmail.com>
+Message-ID: <BANLkTikunf4STpcCwJHfa-HSSYgQGGyMOw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 27 marca 2011 11:42 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
-> 2011/3/27 Christian Sch?fer <schaefer@rostlab.org>:
->> Hi there,
->>
->> I've got here a recent 13" MacBook Pro (8,1), running Ubuntu on it (natty).
->> The wireless device seems to be currently unsupported by the b43 driver (as
->> of kernel 2.6.38). It seems to be a bcm4331, lspci -vn gives the following:
->>
->> 03:00.0 0280: 14e4:4331 (rev 02)
->> ? ?Subsystem: 106b:00d6
->> ? ?Flags: bus master, fast devsel, latency 0, IRQ 11
->> ? ?Memory at a0600000 (64-bit, non-prefetchable) [size=16K]
->> ? ?Capabilities: [40] Power Management version 3
->> ? ?Capabilities: [58] Vendor Specific Information: Len=78 <?>
->> ? ?Capabilities: [48] MSI: Enable- Count=1/1 Maskable- 64bit+
->> ? ?Capabilities: [d0] Express Endpoint, MSI 00
->> ? ?Capabilities: [100] Advanced Error Reporting
->> ? ?Capabilities: [13c] Virtual Channel
->> ? ?Capabilities: [160] Device Serial Number 83-0e-47-ff-ff-36-e0-f8
->> ? ?Capabilities: [16c] Power Budgeting <?>
->>
->> To my current knowledge, the only way to get it working is by means of
->> ndiswrapper. Are there any plans already to get this device supported
->> natively? Please let me know if you need further information regarding the
->> device.
->
-> What about
->
-> modprobe b43
-> dmesg | grep b43
-> ?
+2011/3/27 Rafa? Mi?ecki <zajec5@gmail.com>:
+> This is new card without real entry in pciid, someone just typed some
+> dumb BCM4331 in http://pci-ids.ucw.cz/read/PC/14e4/4331
 
-Please, provide also dmesg | grep ssb.
+BCM4331 seems to be correct:
 
-This can be AI card, not ssb.
+<http://lxr.linux.no/#linux+v2.6.38/drivers/staging/brcm80211/include/bcmdevs.h#L53>:
 
--- 
-Rafa?
+#define BCM4331_D11N_ID         0x4331  /* 4331 802.11n dualband id */
+
+Since this is a three stream device, this is most likely an AI card.
+So if any driver might support it, then it's brcm80211 from staging.
+
+Jonas
