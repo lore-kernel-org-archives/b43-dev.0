@@ -1,32 +1,23 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 1 Apr 2011 16:49:45 +0200
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Fri, 01 Apr 2011 18:00:46 +0200
 Subject: ChipCommon as independent driver?
-Message-ID: <AANLkTikGp+ZFhTtsaW7E4SO_5trte1_eF4KLWbkwVty5@mail.gmail.com>
+In-Reply-To: <AANLkTikGp+ZFhTtsaW7E4SO_5trte1_eF4KLWbkwVty5@mail.gmail.com>
+	(sfid-20110401_104947_004628_8A7D9C8C)
+References: <AANLkTikGp+ZFhTtsaW7E4SO_5trte1_eF4KLWbkwVty5@mail.gmail.com>
+	(sfid-20110401_104947_004628_8A7D9C8C)
+Message-ID: <1301673646.5219.18.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org
 
-I wanted to make ChipCommon independed, to make it usable with any
-bus. The problem is:
-void ssb_chipco_set_clockmode(struct ssb_chipcommon *cc, enum ssb_clkmode mode)
+On Fri, 2011-04-01 at 16:49 +0200, Rafa? Mi?ecki wrote: 
+> Do you have idea how we could nicely solve that issue?
 
-This function calls code from pci.c which gives us a loop:
-WARNING: Module
-/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/net/wireless/b43/b43.ko
-ignored, due to loop
-WARNING: Module
-/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/ssb/ssb.ko
-ignored, due to loop
-WARNING: Loop detected:
-/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/ssb/bcmcorecc.ko
-needs ssb.ko which needs bcmcorecc.ko again!
-WARNING: Module
-/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/ssb/bcmcorecc.ko
-ignored, due to loop
-
-Do you have idea how we could nicely solve that issue?
+Yeah. Just don't share code between ssb and bcmai.
+That's the only clean solution to that mess.
 
 -- 
-Rafa?
+Greetings Michael.
