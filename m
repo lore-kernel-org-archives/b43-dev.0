@@ -1,88 +1,32 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri,  1 Apr 2011 13:26:52 +0200
-Subject: [PATCH] ssb: pci: implement serdes workaround
-Message-ID: <1301657212-12126-1-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 1 Apr 2011 16:49:45 +0200
+Subject: ChipCommon as independent driver?
+Message-ID: <AANLkTikGp+ZFhTtsaW7E4SO_5trte1_eF4KLWbkwVty5@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/ssb/driver_pcicore.c |   31 ++++++++++++++++++++++++++++---
- 1 files changed, 28 insertions(+), 3 deletions(-)
+I wanted to make ChipCommon independed, to make it usable with any
+bus. The problem is:
+void ssb_chipco_set_clockmode(struct ssb_chipcommon *cc, enum ssb_clkmode mode)
 
-diff --git a/drivers/ssb/driver_pcicore.c b/drivers/ssb/driver_pcicore.c
-index 76cbf96..1ba9f0e 100644
---- a/drivers/ssb/driver_pcicore.c
-+++ b/drivers/ssb/driver_pcicore.c
-@@ -15,6 +15,11 @@
- 
- #include "ssb_private.h"
- 
-+static u32 ssb_pcie_read(struct ssb_pcicore *pc, u32 address);
-+static void ssb_pcie_write(struct ssb_pcicore *pc, u32 address, u32 data);
-+static u16 ssb_pcie_mdio_read(struct ssb_pcicore *pc, u8 device, u8 address);
-+static void ssb_pcie_mdio_write(struct ssb_pcicore *pc, u8 device,
-+				u8 address, u16 data);
- 
- static inline
- u32 pcicore_read32(struct ssb_pcicore *pc, u16 offset)
-@@ -403,6 +408,27 @@ static int pcicore_is_in_hostmode(struct ssb_pcicore *pc)
- }
- #endif /* CONFIG_SSB_PCICORE_HOSTMODE */
- 
-+/**************************************************
-+ * Workarounds.
-+ **************************************************/
-+
-+static u8 ssb_pcicore_polarity_workaround(struct ssb_pcicore *pc)
-+{
-+	return (ssb_pcie_read(pc, 0x204) & 0x10) ? 0xC0 : 0x80;
-+}
-+
-+static void ssb_pcicore_serdes_workaround(struct ssb_pcicore *pc)
-+{
-+	const u8 serdes_pll_device = 0x1D;
-+	const u8 serdes_rx_device = 0x1F;
-+	u16 tmp;
-+
-+	ssb_pcie_mdio_write(pc, serdes_rx_device, 1 /* Control */,
-+			    ssb_pcicore_polarity_workaround(pc));
-+	tmp = ssb_pcie_mdio_read(pc, serdes_pll_device, 1 /* Control */);
-+	if (tmp & 0x4000)
-+		ssb_pcie_mdio_write(pc, serdes_pll_device, 1, tmp & ~0x4000);
-+}
- 
- /**************************************************
-  * Generic and Clientmode operation code.
-@@ -430,6 +456,8 @@ void ssb_pcicore_init(struct ssb_pcicore *pc)
- #endif /* CONFIG_SSB_PCICORE_HOSTMODE */
- 	if (!pc->hostmode)
- 		ssb_pcicore_init_clientmode(pc);
-+
-+	ssb_pcicore_serdes_workaround(pc);
- }
- 
- static u32 ssb_pcie_read(struct ssb_pcicore *pc, u32 address)
-@@ -467,8 +495,6 @@ static void ssb_pcie_mdio_set_phy(struct ssb_pcicore *pc, u8 phy)
- 	}
- }
- 
--#if 0
--//done but not used yet
- static u16 ssb_pcie_mdio_read(struct ssb_pcicore *pc, u8 device, u8 address)
- {
- 	const u16 mdio_control = 0x128;
-@@ -508,7 +534,6 @@ static u16 ssb_pcie_mdio_read(struct ssb_pcicore *pc, u8 device, u8 address)
- 	pcicore_write32(pc, mdio_control, 0);
- 	return ret;
- }
--#endif
- 
- static void ssb_pcie_mdio_write(struct ssb_pcicore *pc, u8 device,
- 				u8 address, u16 data)
+This function calls code from pci.c which gives us a loop:
+WARNING: Module
+/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/net/wireless/b43/b43.ko
+ignored, due to loop
+WARNING: Module
+/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/ssb/ssb.ko
+ignored, due to loop
+WARNING: Loop detected:
+/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/ssb/bcmcorecc.ko
+needs ssb.ko which needs bcmcorecc.ko again!
+WARNING: Module
+/lib/modules/2.6.39-rc1-wl-wireless+/kernel/drivers/ssb/bcmcorecc.ko
+ignored, due to loop
+
+Do you have idea how we could nicely solve that issue?
+
 -- 
-1.7.1
+Rafa?
