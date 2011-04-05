@@ -1,28 +1,80 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Tue, 05 Apr 2011 21:29:43 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 5 Apr 2011 22:15:53 +0200
 Subject: [RFC][PATCH] bcmai: introduce AI driver
-In-Reply-To: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
-	(sfid-20110405_212040_948160_FFFFFFFFD5D634B4)
+In-Reply-To: <1302032137.3969.10.camel@Joe-Laptop>
 References: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
-	(sfid-20110405_212040_948160_FFFFFFFFD5D634B4)
-Message-ID: <1302031783.1923.4.camel@maggie>
+	<1302032137.3969.10.camel@Joe-Laptop>
+Message-ID: <BANLkTimTmqop-xzFsWr1=2RXv5z6iTre4Q@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>, Larry Finger <Larry.Finger@lwfinger.net>, George Kashperko <george@znau.edu.ua>, b43-dev@lists.infradead.org
+To: Joe Perches <joe@perches.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, Arend van Spriel <arend@broadcom.com>, Larry Finger <Larry.Finger@lwfinger.net>, George Kashperko <george@znau.edu.ua>, b43-dev@lists.infradead.org
 
-On Tue, 2011-04-05 at 21:57 +0200, Rafa? Mi?ecki wrote: 
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> ---
-> I believe this driver implements AI support in the proper way. This introduces
-> support for the *bus* and lets drivers register for specific cores. It was
-> tested with b43 and BCM4313, reading PHY info works fine.
+2011/4/5 Joe Perches <joe@perches.com>:
+> On Tue, 2011-04-05 at 21:57 +0200, Rafa? Mi?ecki wrote:
+>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+>
+> Just some trivia.
+>
+>> diff --git a/drivers/bcmai/b43_pci_ai_bridge.c b/drivers/bcmai/b43_pci_ai_bridge.c
+> []
+>> +#include <linux/bcmai/bcmai.h>
+>> +#include <linux/bcmai/bcmai_regs.h>
+>> +#include <linux/pci.h>
+>> +
+>> +static const struct pci_device_id b43_pci_ai_bridge_tbl[] = {
+>
+> DEFINE_PCI_DEVICE_TABLE
 
-Looks pretty good.
-I currently don't have the time to go through the stuff in detail, 
-but from it quick look you get a *thumbs up* from me :)
+Thanks, I'll convert.
+
+
+>> diff --git a/drivers/bcmai/core.c b/drivers/bcmai/core.c
+> []
+>> + ? ? ? ? ? ? bcmai_err("Power control not implemented!\n");
+> []
+>> diff --git a/include/linux/bcmai/bcmai.h b/include/linux/bcmai/bcmai.h
+> []
+>> +#define bcmai_info(fmt, args...) ? ? printk(KERN_INFO "bcmai: " fmt, ##args)
+>> +#ifdef CONFIG_BCMAI_DEBUG
+>> +#define bcmai_dbg(fmt, args...) ? ? ? ? ? ? ?printk(KERN_DEBUG "bcmai debug: " fmt, ##args)
+>> +#else
+>> +#define bcmai_dbg(fmt, args...) ? ? ? ? ? ? ?do { } while (0)
+>> +#endif
+>> +#define bcmai_err(fmt, args...) ? ? ? ? ? ? ?printk(KERN_ERR "bcmai error: " fmt, ##args)
+>
+> I think there's very little value in prefixing
+> "error" and "debug" in front of equivalent
+> KERN_<level> message levels.
+>
+> I think you might as well just use pr_<level>
+> and pr_fmt.
+
+Hm, I've taken this idea from ssb and b43:
+[b43err] printk(KERN_ERR "b43-%s ERROR: %pV", ...);
+[_pll_init] ssb_printk(KERN_ERR PFX "ERROR: PLL init unknown for...
+
+Some more reviews, please? Should I drop that prefix, is Joe right? Or
+is there some official coding-style for such a situations?
+
+
+
+>> diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+> []
+>> +/* AI core, see drivers/bcmai/ */
+>> +struct bcmai_device_id {
+>> + ? ? __u16 ? manuf;
+>> + ? ? __u16 ? id;
+>> + ? ? __u8 ? ?rev;
+>> +};
+>
+> Do some of these structs need __packed declarations?
+
+I was reading about __packed long time ago and it was a little tricky
+for me. However I don't see anything in mod_devicetable.h using that
+__packed. Why should we?
 
 -- 
-Greetings Michael.
+Rafa?
