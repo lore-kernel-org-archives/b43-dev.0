@@ -1,119 +1,28 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue,  5 Apr 2011 22:07:08 +0200
-Subject: [TESTING ONLY][PATCH] b43: subscribe to bcmai
-Message-ID: <1302034028-1947-1-git-send-email-zajec5@gmail.com>
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Date: Tue, 05 Apr 2011 21:29:43 +0200
+Subject: [RFC][PATCH] bcmai: introduce AI driver
+In-Reply-To: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
+	(sfid-20110405_212040_948160_FFFFFFFFD5D634B4)
+References: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
+	(sfid-20110405_212040_948160_FFFFFFFFD5D634B4)
+Message-ID: <1302031783.1923.4.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>, Arend van Spriel <arend@broadcom.com>, Larry Finger <Larry.Finger@lwfinger.net>, George Kashperko <george@znau.edu.ua>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>, Larry Finger <Larry.Finger@lwfinger.net>, George Kashperko <george@znau.edu.ua>, b43-dev@lists.infradead.org
 
----
- drivers/net/wireless/b43/b43.h  |    1 +
- drivers/net/wireless/b43/main.c |   43 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 43 insertions(+), 1 deletions(-)
+On Tue, 2011-04-05 at 21:57 +0200, Rafa? Mi?ecki wrote: 
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> I believe this driver implements AI support in the proper way. This introduces
+> support for the *bus* and lets drivers register for specific cores. It was
+> tested with b43 and BCM4313, reading PHY info works fine.
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index bd4cb75..283ee1d 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -6,6 +6,7 @@
- #include <linux/interrupt.h>
- #include <linux/hw_random.h>
- #include <linux/ssb/ssb.h>
-+#include <linux/bcmai/bcmai.h>
- #include <net/mac80211.h>
- 
- #include "debugfs.h"
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 57eb5b6..b35c49b 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -125,9 +125,15 @@ static const struct ssb_device_id b43_ssb_tbl[] = {
- 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 16),
- 	SSB_DEVTABLE_END
- };
--
- MODULE_DEVICE_TABLE(ssb, b43_ssb_tbl);
- 
-+static const struct bcmai_device_id b43_bcmai_tbl[] = {
-+	BCMAI_CORE(BCMAI_MANUF_BCM, SSB_DEV_80211, 0x17),
-+	BCMAI_CORE(BCMAI_MANUF_BCM, SSB_DEV_80211, 0x18),
-+	BCMAI_CORETABLE_END
-+};
-+MODULE_DEVICE_TABLE(bcmai, b43_bcmai_tbl);
-+
- /* Channel and ratetables are shared for all devices.
-  * They can't be const, because ieee80211 puts some precalculated
-  * data in there. This data is the same for all devices, so we don't
-@@ -5069,6 +5075,28 @@ static void b43_remove(struct ssb_device *dev)
- 	}
- }
- 
-+static int b43_bcmai_probe(struct bcmai_device *core)
-+{
-+	printk(KERN_INFO "Success! Hello world! :)\n");
-+
-+	bcmai_core_enable(core, 0x4);
-+
-+	u16 tmp = bcmai_read16(core, B43_MMIO_PHY_VER);
-+	u16 analog_type = (tmp & B43_PHYVER_ANALOG) >> B43_PHYVER_ANALOG_SHIFT;
-+	u16 phy_type = (tmp & B43_PHYVER_TYPE) >> B43_PHYVER_TYPE_SHIFT;
-+	u16 phy_rev = (tmp & B43_PHYVER_VERSION);
-+
-+	bcmai_info("PHY (Analog %u, Type %u, Revision %u)\n",
-+		analog_type, phy_type, phy_rev);
-+
-+	return 0;
-+}
-+
-+static void b43_bcmai_remove(struct bcmai_device *core)
-+{
-+	printk(KERN_INFO "Success! Bye :)\n");
-+}
-+
- /* Perform a hardware reset. This can be called from any context. */
- void b43_controller_restart(struct b43_wldev *dev, const char *reason)
- {
-@@ -5086,6 +5114,13 @@ static struct ssb_driver b43_ssb_driver = {
- 	.remove		= b43_remove,
- };
- 
-+static struct bcmai_driver b43_bcmai_driver = {
-+	.name		= KBUILD_MODNAME,
-+	.id_table	= b43_bcmai_tbl,
-+	.probe		= b43_bcmai_probe,
-+	.remove		= b43_bcmai_remove,
-+};
-+
- static void b43_print_driverinfo(void)
- {
- 	const char *feat_pci = "", *feat_pcmcia = "", *feat_nphy = "",
-@@ -5127,6 +5162,9 @@ static int __init b43_init(void)
- 	err = ssb_driver_register(&b43_ssb_driver);
- 	if (err)
- 		goto err_sdio_exit;
-+	err = bcmai_driver_register(&b43_bcmai_driver);
-+	if (err)
-+		goto err_ssb_driver_exit;
- 	b43_print_driverinfo();
- 
- 	return err;
-@@ -5137,11 +5175,14 @@ err_pcmcia_exit:
- 	b43_pcmcia_exit();
- err_dfs_exit:
- 	b43_debugfs_exit();
-+err_ssb_driver_exit:
-+	ssb_driver_unregister(&b43_ssb_driver);
- 	return err;
- }
- 
- static void __exit b43_exit(void)
- {
-+	bcmai_driver_unregister(&b43_bcmai_driver);
- 	ssb_driver_unregister(&b43_ssb_driver);
- 	b43_sdio_exit();
- 	b43_pcmcia_exit();
+Looks pretty good.
+I currently don't have the time to go through the stuff in detail, 
+but from it quick look you get a *thumbs up* from me :)
+
 -- 
-1.7.3.4
+Greetings Michael.
