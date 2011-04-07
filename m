@@ -1,36 +1,35 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 7 Apr 2011 22:18:25 +0200
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 07 Apr 2011 15:20:39 -0500
 Subject: A small error in b43
 In-Reply-To: <4D9E19F4.7070500@gmail.com>
 References: <4D9E19F4.7070500@gmail.com>
-Message-ID: <BANLkTi=pPUcMFHmyBY8ouuqcYUum1+d4Tw@mail.gmail.com>
+Message-ID: <4D9E1C97.3030007@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/4/7 Gregory Bellier <gregory.bellier@gmail.com>:
+On 04/07/2011 03:09 PM, Gregory Bellier wrote:
 > Dear list,
 >
 > I would like to test the b43 driver for a BCM4322. I tried with 2.6.38.2 and
 > 2.6.39-rc2 but I'm stuck with a firmware error in dmesg :
-> [ ? 75.922582] b43-phy0 ERROR: Firmware file "b43/ucode16_mimo.fw" not found
-> [ ? 75.922587] b43-phy0 ERROR: Firmware file "b43-open/ucode16_mimo.fw" not
-> found
-> [ ? 75.922590] b43-phy0 ERROR: You must go to
-> http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download
-> the correct firmware for this driver version. Please carefully read all
-> instructions on this website.
+> [ 75.922582] b43-phy0 ERROR: Firmware file "b43/ucode16_mimo.fw" not found
+> [ 75.922587] b43-phy0 ERROR: Firmware file "b43-open/ucode16_mimo.fw" not found
+> [ 75.922590] b43-phy0 ERROR: You must go to
+> http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the
+> correct firmware for this driver version. Please carefully read all instructions
+> on this website.
 >
 > I have b43-fwcutter v13.
 >
 > # b43-fwcutter -w /lib/firmware/ broadcom-wl-4.178.10.4/linux/wl_apsta.o
 > This file is recognised as:
-> ?ID ? ? ? ? : ?FW15
-> ?filename ? : ?wl_apsta.o
-> ?version ? ?: ?478.104
-> ?MD5 ? ? ? ?: ?bb8537e3204a1ea5903fe3e66b5e2763
+> ID : FW15
+> filename : wl_apsta.o
+> version : 478.104
+> MD5 : bb8537e3204a1ea5903fe3e66b5e2763
 > Extracting b43/ucode5.fw
 > Extracting b43/pcm5.fw
 > Extracting b43/b0g0bsinitvals5.fw
@@ -77,13 +76,12 @@ To: b43-dev@lists.infradead.org
 > /lib/firmware/b43 : # sudo ln -s ucode16.fw ucode16_mimo.fw
 > And it worked like this.
 
-Symlink should work for now. The real solution is not use:
-http://mirror2.openwrt.org/sources/broadcom-wl-5.10.56.27.3_mipsel.tar.bz2
-and the newest fwcutter (which is needed to support this 5.10.56.27.3).
+I'm not sure if those two firmware files are equivalent or not.
 
-I still hope to get easy access to newer broadcom-wl, so I'm waiting
-with updating howto on wiki page. I just mailed OpenWRT team day or
-two ago.
+There is a new version of b43-fwcutter in the git repository at 
+git://git.bu3sch.de/b43-tools.git that knows how to extract the firmware from 
+URL http://mirror2.openwrt.org/sources/broadcom-wl-5.10.56.27.3_mipsel.tar.bz2. 
+After untarring, the object file is
+broadcom-wl-5.10.56.27.3/driver/wl_apsta/wl_prebuilt.o
 
--- 
-Rafa?
+Larry
