@@ -1,36 +1,24 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 9 Apr 2011 01:16:24 +0200
-Subject: [PATCH][2.6.39?] b43: trivial: update module info about firmware
-In-Reply-To: <BANLkTi=7OZ40Tn-=8KCX_ReNsUQ3euwTfQ@mail.gmail.com>
-References: <1302267632-2326-1-git-send-email-zajec5@gmail.com>
-	<1302299890.28673.1.camel@maggie>
-	<BANLkTi=7OZ40Tn-=8KCX_ReNsUQ3euwTfQ@mail.gmail.com>
-Message-ID: <BANLkTi=fbjLbERhsiqiWSJSGcBk1eeA5Yg@mail.gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Sat, 9 Apr 2011 01:28:44 +0200
+Subject: Wrong offset for SSB_SPROM4_ANTAVAIL?
+Message-ID: <BANLkTin-p+XQaWRezBP4Ux7NvLf3cB26DA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-W dniu 9 kwietnia 2011 01:16 u?ytkownik Rafa? Mi?ecki
-<zajec5@gmail.com> napisa?:
-> W dniu 8 kwietnia 2011 23:58 u?ytkownik Michael B?sch <mb@bu3sch.de> napisa?:
->> On Fri, 2011-04-08 at 15:00 +0200, Rafa? Mi?ecki wrote:
->>> We do not use ucode9,
->>
->> Well, but we should.
->> There are only minor differences between r5 and r9 firmware.
->> r9 basically is a r5 firmware with workarounds added that are
->> needed for r9 devices.
->>
->> So I think we should start using r9 instead of removing it here.
->
-> I meant to add support for loading ucode 9 later and the re-add info
-> about this. But OK, I'll make V2 which only adds 16_mimo. For normal
-> development cycle (wireless-testing) I'll add ucode9 loading support.
+Hello,
 
-John: wait for V2 please.
+while matching SPROM content to its offsets, I noticed that
+SSB_SPROM4_ANTAVAIL has an odd offset (0x5d)[1]. Shouldn't this be
+rather even (probably 0x5c), since the SPROM consists of 16 bit words?
 
--- 
-Rafa?
+Regards
+Jonas
+
+[1] <http://git.kernel.org/?p=linux/kernel/git/linville/wireless-next-2.6.git;a=blob;f=include/linux/ssb/ssb_regs.h;h=402955ae48ceac9c118833bed28ca093407e4638;hb=HEAD#l290>
+
+P.S: I currently lack the free space for yet another kernel git tree,
+so I would prefer if somebody else fixes this - assuming my analysis
+is right ;-)
