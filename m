@@ -1,23 +1,28 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 8 Apr 2011 15:07:45 +0200
-Subject: Sharing SPROM struct?
-In-Reply-To: <1302208781.3558.6.camel@Nokia-N900>
-References: <BANLkTikBJdTq2FWjmmjpkjOT=N0td4BRXQ@mail.gmail.com>
-	<1302208781.3558.6.camel@Nokia-N900>
-Message-ID: <BANLkTimptG4UX8s_o0aPLzirqk+GjRr9WQ@mail.gmail.com>
+Date: Fri, 8 Apr 2011 18:56:13 +0200
+Subject: [RFC][PATCH] bcmai: introduce AI driver
+In-Reply-To: <op.vtisojsk3ri7v4@arend-laptop>
+References: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
+	<op.vtisojsk3ri7v4@arend-laptop>
+Message-ID: <BANLkTin1yyow595tcYveB5fh8q3x+U_GOw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-2011/4/7 Michael B?sch <mb@bu3sch.de>:
-> Hm. Not sure. It probably simplifies b43.
-> If there is not too much legacy crap in the struct, share it.
-> Otherwise don't.
+2011/4/6 Arend van Spriel <arend@broadcom.com>:
+> 3. Device identification
+>
+> The cores are identified by manufacturer, core id and revision in your
+> patch. I would not use the revision because 4 out of 5 times a revision
+> change does indicate a hardware change but no change in programming
+> interface. The enumeration data does contain a more selective field
+> indicating the core class (4 bits following the core identifier). I suggest
+> to replace the revision field by this class field.
 
-OK, I'll try to share this as long as we don't have to add any AI
-specific fields to it. Thx for opinion.
+Could you say something more about *class*, please? For my BCM43224 it
+seems to be 0x0. WIll check BCM4313 in a moment.
 
 -- 
 Rafa?
