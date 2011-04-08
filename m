@@ -1,44 +1,60 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 8 Apr 2011 19:14:09 +0200
+Date: Fri, 8 Apr 2011 19:27:11 +0200
 Subject: [RFC][PATCH] bcmai: introduce AI driver
-In-Reply-To: <BANLkTi=DiGX=yg9HAxYHwKdOvedJdYC_sw@mail.gmail.com>
+In-Reply-To: <op.vtmqm7fw3ri7v4@arend-laptop>
 References: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
 	<op.vtisojsk3ri7v4@arend-laptop>
 	<BANLkTin1yyow595tcYveB5fh8q3x+U_GOw@mail.gmail.com>
-	<BANLkTi=DiGX=yg9HAxYHwKdOvedJdYC_sw@mail.gmail.com>
-Message-ID: <BANLkTinCFnFELn_BPFWE+WCHtZB7d0o1gg@mail.gmail.com>
+	<op.vtmqm7fw3ri7v4@arend-laptop>
+Message-ID: <BANLkTimy8LEqBqeJQD5SY=e8ZgEy8pRVHw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-2011/4/8 Rafa? Mi?ecki <zajec5@gmail.com>:
-> 2011/4/8 Rafa? Mi?ecki <zajec5@gmail.com>:
+2011/4/8 Arend van Spriel <arend@broadcom.com>:
+> On Fri, 08 Apr 2011 18:56:13 +0200, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>
+>> 2011/4/6 Arend van Spriel <arend@broadcom.com>:
+>>>
+>>> 3. Device identification
+>>>
+>>> The cores are identified by manufacturer, core id and revision in your
+>>> patch. I would not use the revision because 4 out of 5 times a revision
+>>> change does indicate a hardware change but no change in programming
+>>> interface. The enumeration data does contain a more selective field
+>>> indicating the core class (4 bits following the core identifier). I
+>>> suggest
+>>> to replace the revision field by this class field.
+>>
 >> Could you say something more about *class*, please? For my BCM43224 it
 >> seems to be 0x0. WIll check BCM4313 in a moment.
+>>
 >
-> Same for BCM4313.
+> In principal the manufacturer id is unique (defined/assigned by JEDEC
+> www.jedec.org) and the chip id and chip class are defined by the
+> manufacturer. So I can only indicate what classes Broadcom uses in
+> combination with the manufacturer id BRCM, ARM and MIPS.
 >
-> BCM43224:
-> axi: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x22, class 0x0)
-> axi: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x17, class 0x0)
-> axi: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x0F, class 0x0)
+> /* Component Classes */
+> #define CC_SIM ? ? ? ? ? ? ? ? ?0
+> #define CC_EROM ? ? ? ? ? ? ? ? 1
+> #define CC_CORESIGHT ? ? ? ? ? ?9
+> #define CC_VERIF ? ? ? ? ? ? ? ?0xb
+> #define CC_OPTIMO ? ? ? ? ? ? ? 0xd
+> #define CC_GEN ? ? ? ? ? ? ? ? ?0xe
+> #define CC_PRIMECELL ? ? ? ? ? ?0xf
 >
-> BCM4313
-> axi: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x24, class 0x0)
-> axi: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x18, class 0x0)
-> axi: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x11, class 0x0)
+> Looking at this it seems strange that you see a class value of 0x0. It may
+> be rarely used or for non-production chips only (for simulation, chip
+> bringup) which may require additional (debug) functions. So question is
+> whether you will need it, but it is specified by ARM and it is up to
+> manufacturers to use it. So I it is better to be safe than sorry and have
+> this in the device id.
 
-This is last one, really ;)
-
-This is MMIO dump (from wl):
-R 4 92.541328 1 0xfaafc000 0x4bf80001 0x0 0
-R 4 92.541351 1 0xfaafc014 0x4bf81201 0x0 0
-R 4 92.541373 1 0xfaafc028 0x4bf82001 0x0 0
-
-So there is not any mistake in my reading code. This the youngest 0x1
-is SCAN_ER_VALID.
+OK, thanks. I'm compiling kernel with patch V2 right now. Of course
+class included.
 
 -- 
 Rafa?
