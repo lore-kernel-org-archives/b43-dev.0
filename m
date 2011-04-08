@@ -1,27 +1,42 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
-Date: Fri, 08 Apr 2011 23:58:10 +0200
+From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
+Date: Sat, 9 Apr 2011 00:11:35 +0200
 Subject: [PATCH][2.6.39?] b43: trivial: update module info about firmware
-In-Reply-To: <1302267632-2326-1-git-send-email-zajec5@gmail.com>
-	(sfid-20110408_082321_349809_A49377CD)
+In-Reply-To: <1302299890.28673.1.camel@maggie>
 References: <1302267632-2326-1-git-send-email-zajec5@gmail.com>
-	(sfid-20110408_082321_349809_A49377CD)
-Message-ID: <1302299890.28673.1.camel@maggie>
+	<1302299890.28673.1.camel@maggie>
+Message-ID: <BANLkTik_QTuAG+c7LnHt87_kKRy4HM6zvQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: =?ISO-8859-1?Q?Michael_B=FCsch?= <mb@bu3sch.de>
+Cc: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Fri, 2011-04-08 at 15:00 +0200, Rafa? Mi?ecki wrote: 
-> We do not use ucode9,
+2011/4/8 Michael B?sch <mb@bu3sch.de>:
+> On Fri, 2011-04-08 at 15:00 +0200, Rafa? Mi?ecki wrote:
+>> We do not use ucode9,
+>
+> Well, but we should.
+> There are only minor differences between r5 and r9 firmware.
+> r9 basically is a r5 firmware with workarounds added that are
+> needed for r9 devices.
+>
+> So I think we should start using r9 instead of removing it here.
+>
 
-Well, but we should.
-There are only minor differences between r5 and r9 firmware.
-r9 basically is a r5 firmware with workarounds added that are
-needed for r9 devices.
+With a fallback to r5 if no r9 firmware can be found... just to keep
+OpenFWWF working.
 
-So I think we should start using r9 instead of removing it here.
+> --
+> Greetings Michael.
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at ?http://vger.kernel.org/majordomo-info.html
+>
+
+
 
 -- 
-Greetings Michael.
+Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
