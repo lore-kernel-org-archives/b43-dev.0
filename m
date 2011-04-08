@@ -1,23 +1,37 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 8 Apr 2011 21:17:07 +0200
-Subject: New device in MacBook Pro, yet unsupported?
-In-Reply-To: <BANLkTi=GHKddWTfB1gkhbWvpaG9bsX3zRw@mail.gmail.com>
-References: <4D8F022C.2050606@rostlab.org>
-	<AANLkTikdg-ZQ2rDL901A_HZ9TnYiQHG2h-jmhOrM_t6D@mail.gmail.com>
-	<BANLkTimiCVU8JL-eMT0v1s1GswC+hwkLFQ@mail.gmail.com>
-	<4D9D8D4D.3030603@rostlab.org>
-	<BANLkTi=GHKddWTfB1gkhbWvpaG9bsX3zRw@mail.gmail.com>
-Message-ID: <BANLkTimD1kShH+5s2_45WqntYCCgC4_uRg@mail.gmail.com>
+Date: Fri, 8 Apr 2011 21:46:19 +0200
+Subject: [RFC][WAS:bcmai][PATCH V2] axi: add AXI bus driver
+In-Reply-To: <1302290881.1664.7.camel@Joe-Laptop>
+References: <1302291900-1902-1-git-send-email-zajec5@gmail.com>
+	<1302290881.1664.7.camel@Joe-Laptop>
+Message-ID: <BANLkTi=QwBOxfxy13PxeX+LRuccV_p06zA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-Could you apply my axi patch, compile axi module, load it and provide
-dmesg | grep axi output?
+2011/4/8 Joe Perches <joe@perches.com>:
+> On Fri, 2011-04-08 at 21:45 +0200, Rafa? Mi?ecki wrote:
+>> diff --git a/include/linux/axi/axi.h b/include/linux/axi/axi.h
+> []
+>> +#define axi_info ? ? pr_info
+>> +#ifdef CONFIG_AXI_DEBUG
+>> +#define axi_debug ? ?pr_debug
+>> +#else
+>> +#define axi_debug ? ?do { } while (0)
+>> +#endif
+>> +#define axi_err ? ? ? ? ? ? ?pr_err
+>
+> I think redefining standard functionality like
+> this doesn't gain anything and loses some basic
+> grep capability.
 
-http://marc.info/?l=linux-wireless&m=130228970402623&w=2
+But on the other hand using:
+pr_info, pr_err, BUT axi_debug
+can easily lead to mistakes.
+
+Or is this possible to re-define pr_debug locally?
 
 -- 
 Rafa?
