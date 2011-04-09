@@ -1,55 +1,31 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 9 Apr 2011 02:03:03 +0200
-Subject: [RFC][WAS:bcmai][PATCH V2] axi: add AXI bus driver
-In-Reply-To: <1302292554.1664.12.camel@Joe-Laptop>
-References: <1302291900-1902-1-git-send-email-zajec5@gmail.com>
-	<1302290881.1664.7.camel@Joe-Laptop>
-	<BANLkTi=QwBOxfxy13PxeX+LRuccV_p06zA@mail.gmail.com>
-	<1302292554.1664.12.camel@Joe-Laptop>
-Message-ID: <BANLkTimQBAHgFaH0RVCOYBGSKuHN2Dprmw@mail.gmail.com>
+Date: Sat, 9 Apr 2011 10:10:57 +0200
+Subject: Wrong offset for SSB_SPROM4_ANTAVAIL?
+In-Reply-To: <BANLkTin-p+XQaWRezBP4Ux7NvLf3cB26DA@mail.gmail.com>
+References: <BANLkTin-p+XQaWRezBP4Ux7NvLf3cB26DA@mail.gmail.com>
+Message-ID: <BANLkTinWc6egggjnY=FAB2fZsV7aOTusBQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-2011/4/8 Joe Perches <joe@perches.com>:
-> On Fri, 2011-04-08 at 21:46 +0200, Rafa? Mi?ecki wrote:
->> 2011/4/8 Joe Perches <joe@perches.com>:
->> > On Fri, 2011-04-08 at 21:45 +0200, Rafa? Mi?ecki wrote:
->> >> diff --git a/include/linux/axi/axi.h b/include/linux/axi/axi.h
->> > []
->> >> +#define axi_info ? ? pr_info
->> >> +#ifdef CONFIG_AXI_DEBUG
->> >> +#define axi_debug ? ?pr_debug
->> >> +#else
->> >> +#define axi_debug ? ?do { } while (0)
->> >> +#endif
->> >> +#define axi_err ? ? ? ? ? ? ?pr_err
->> >
->> > I think redefining standard functionality like
->> > this doesn't gain anything and loses some basic
->> > grep capability.
->>
->> But on the other hand using:
->> pr_info, pr_err, BUT axi_debug
->> can easily lead to mistakes.
->>
->> Or is this possible to re-define pr_debug locally?
+2011/4/9 Jonas Gorski <jonas.gorski@gmail.com>:
+> while matching SPROM content to its offsets, I noticed that
+> SSB_SPROM4_ANTAVAIL has an odd offset (0x5d)[1]. Shouldn't this be
+> rather even (probably 0x5c), since the SPROM consists of 16 bit words?
 >
-> It is, but is that CONFIG_AXI_DEBUG actually
-> worthwhile?
+> Regards
+> Jonas
 >
-> If you think so, doesn't adding this to the Makefile
-> give you the same capability?
+> [1] <http://git.kernel.org/?p=linux/kernel/git/linville/wireless-next-2.6.git;a=blob;f=include/linux/ssb/ssb_regs.h;h=402955ae48ceac9c118833bed28ca093407e4638;hb=HEAD#l290>
 >
-> ccflags-$(CONFIG_CONFIG_AXI_DEBUG) := -DDEBUG
+> P.S: I currently lack the free space for yet another kernel git tree,
+> so I would prefer if somebody else fixes this - assuming my analysis
+> is right ;-)
 
-But pr_debug does not depend on DEBUG define:
-http://lxr.free-electrons.com/source/tools/perf/util/include/linux/kernel.h#L94
-
-How do you expect -DDEBUG to affect pr_debug? Could you explain this
-to me, please?
+I'll have time after weekend. There is some mess generally. We have
+ETHPHY instead of some LEDS and we have MASKs inverted for ANTENNA.
 
 -- 
 Rafa?
