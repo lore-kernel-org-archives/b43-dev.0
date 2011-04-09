@@ -1,11 +1,11 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 10 Apr 2011 00:11:26 +0200
+Date: Sun, 10 Apr 2011 00:14:24 +0200
 Subject: Wrong offset for SSB_SPROM4_ANTAVAIL?
 In-Reply-To: <1302348690.32142.0.camel@maggie>
 References: <BANLkTin-p+XQaWRezBP4Ux7NvLf3cB26DA@mail.gmail.com>
 	<BANLkTinWc6egggjnY=FAB2fZsV7aOTusBQ@mail.gmail.com>
 	<1302348690.32142.0.camel@maggie>
-Message-ID: <BANLkTinQFNTi5QJVLrCdm8+35pqY9o5+fw@mail.gmail.com>
+Message-ID: <BANLkTim2atG_O3u6k4gMPEsixcjp3dz5Qw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -35,23 +35,28 @@ W dniu 9 kwietnia 2011 13:31 u?ytkownik Michael B?sch <mb@bu3sch.de> napisa?:
 > There were bugfixes in the struct that were probably not propagated
 > up to the specs.
 
+Another one:
+
 http://bcm-v4.sipsolutions.net/SPROM
 Revision 4 SPROM
-0x005A
-bits 15-8: LED Powersave Duty Cycle 	
-bits 7-0: LED Powersave Duty Cycle 	
+0x005C 	
+bits 7-0: 802.11B/G Antennas Available 	
+bits 15-8: 802.11A Antenas Available
+[my comments]
+7-0 means 0xFF
+15-8 means 0xFF00
 
 bcmsrom_fmt.h:
-#define	SROM4_LEDDC		45
-45 == 0x2D; 0x2D * 2 == 0x5A
+#define	SROM4_AA2G_MASK		0x00ff
+#define	SROM4_AA5G_MASK		0xff00
 
-bcm-v4 specs and brcm80211 agree about this one. However:
-#define SSB_SPROM4_ETHPHY		0x005A	/* Ethernet PHY settings ?? */
-#define  SSB_SPROM4_ETHPHY_ET0A		0x001F	/* MII Address for enet0 */
-#define  SSB_SPROM4_ETHPHY_ET1A		0x03E0	/* MII Address for enet1 */
-#define  SSB_SPROM4_ETHPHY_ET1A_SHIFT	5
-#define  SSB_SPROM4_ETHPHY_ET0M		(1<<14)	/* MDIO for enet0 */
-#define  SSB_SPROM4_ETHPHY_ET1M		(1<<15)	/* MDIO for enet1 */
+However ssb seems to implement that masks switched:
+#define  SSB_SPROM4_ANTAVAIL_A		0x00FF	/* A-PHY bitfield */
+#define  SSB_SPROM4_ANTAVAIL_BG		0xFF00	/* B-PHY and G-PHY bitfield */
+(agaik A==5GHz; G==2GHz)
+
+
+It seems that for both cases specs are fine.
 
 -- 
 Rafa?
