@@ -1,47 +1,32 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 10 Apr 2011 13:32:43 +0200
-Subject: [RFC][PATCH] bcmai: introduce AI driver
-In-Reply-To: <op.vtpt6v173ri7v4@arend-laptop>
-References: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
-	<op.vtisojsk3ri7v4@arend-laptop> <20110410080159.GB2798@ucw.cz>
-	<BANLkTikL+GvaKN6nT-9WjpPjaJz0dR51KQ@mail.gmail.com>
-	<20110410082420.GA1460@localhost.ucw.cz>
-	<BANLkTim9JTpZGib+_C_vTFFhP5azbGwMjg@mail.gmail.com>
-	<op.vtpt6v173ri7v4@arend-laptop>
-Message-ID: <BANLkTimgJ--19=q-od7S8uj6T6AcXrtg7w@mail.gmail.com>
+Date: Sun, 10 Apr 2011 17:52:27 +0200
+Subject: [RFC][WAS:bcmai][PATCH V2] axi: add AXI bus driver
+In-Reply-To: <20110408220157.GC26019@kroah.com>
+References: <1302291900-1902-1-git-send-email-zajec5@gmail.com>
+	<20110408220157.GC26019@kroah.com>
+Message-ID: <BANLkTinZbw=GvkThyjMHbeQQ5arRVf2FUg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-W dniu 10 kwietnia 2011 11:33 u?ytkownik Arend van Spriel
-<arend@broadcom.com> napisa?:
-> On Sun, 10 Apr 2011 10:30:53 +0200, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+2011/4/9 Greg KH <greg@kroah.com>:
+> On Fri, Apr 08, 2011 at 09:45:00PM +0200, Rafa? Mi?ecki wrote:
+>> TODO:
+>> - Interrupts
+>> - Reloading driver
 >
->> 2011/4/10 Pavel Machek <pavel@ucw.cz>:
->>>>
->>>> >> >+config BCMAI_HOST_PCI_POSSIBLE
->>>> >> >+ ? ? ? bool
->>>> >> >+ ? ? ? depends on BCMAI && PCI = y
->>>> >> >+ ? ? ? default y
->>>> >> >+
->>>> >> >+config BCMAI_HOST_PCI
->>>> >> >+ ? ? ? bool "Support for AI on PCI-host bus"
->>>> >> >+ ? ? ? depends on BCMAI_HOST_PCI_POSSIBLE
->>>> >> >+
->
-> Hi Rafa?,
->
-> Could use term AMBA AXI instead which gives enough hits on Google to hint
-> interested people to more in depth information.
->
-> FYI: AXI = Advanced eXtensible Interface
-> ? ? ? ?High-speed interconnect for chip cores ( provides higher
-> bursts/transfers than predecessor AHB = Advanced High-performance Bus
-> (AHB)).
+> Please add to the TODO list:
+> ? ? ? ?- Documentation/ABI entries for new sysfs files
+> ? ? ? ?- proper Kconfig entry documentation for the different options
 
-"If you check PATCH V2, we renamed this to (AMBA) AXI"
+Could you tell me sth more about this? How am I expected to document this stuff?
+
+Should I create Documentation/ABI/testing/sysfs-bus-axi or what?
+
+Of course you can just point me to some place where I can read about
+proper documenting.
 
 -- 
 Rafa?
