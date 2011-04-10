@@ -1,52 +1,37 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 10 Apr 2011 10:30:53 +0200
-Subject: [RFC][PATCH] bcmai: introduce AI driver
-In-Reply-To: <20110410082420.GA1460@localhost.ucw.cz>
-References: <1302033463-1846-1-git-send-email-zajec5@gmail.com>
-	<op.vtisojsk3ri7v4@arend-laptop> <20110410080159.GB2798@ucw.cz>
-	<BANLkTikL+GvaKN6nT-9WjpPjaJz0dR51KQ@mail.gmail.com>
-	<20110410082420.GA1460@localhost.ucw.cz>
-Message-ID: <BANLkTim9JTpZGib+_C_vTFFhP5azbGwMjg@mail.gmail.com>
+From: Andy Botting <andy@andybotting.com>
+Date: Sun, 10 Apr 2011 10:16:58 +0100
+Subject: New device in MacBook Pro, yet unsupported?
+In-Reply-To: <BANLkTimD1kShH+5s2_45WqntYCCgC4_uRg@mail.gmail.com>
+References: <4D8F022C.2050606@rostlab.org>
+	<AANLkTikdg-ZQ2rDL901A_HZ9TnYiQHG2h-jmhOrM_t6D@mail.gmail.com>
+	<BANLkTimiCVU8JL-eMT0v1s1GswC+hwkLFQ@mail.gmail.com>
+	<4D9D8D4D.3030603@rostlab.org>
+	<BANLkTi=GHKddWTfB1gkhbWvpaG9bsX3zRw@mail.gmail.com>
+	<BANLkTimD1kShH+5s2_45WqntYCCgC4_uRg@mail.gmail.com>
+Message-ID: <BANLkTinQqr-QZ0LuGrhFrkTQPA9Gy7pdew@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-2011/4/10 Pavel Machek <pavel@ucw.cz>:
->> >> >+config BCMAI_HOST_PCI_POSSIBLE
->> >> >+ ? ? ? bool
->> >> >+ ? ? ? depends on BCMAI && PCI = y
->> >> >+ ? ? ? default y
->> >> >+
->> >> >+config BCMAI_HOST_PCI
->> >> >+ ? ? ? bool "Support for AI on PCI-host bus"
->> >> >+ ? ? ? depends on BCMAI_HOST_PCI_POSSIBLE
->> >> >+
->> >> >+config BCMAI_DEBUG
->> >> >+ ? ? ? bool "BCMAI debugging"
->> >> >+ ? ? ? depends on BCMAI
->> >> >+ ? ? ? help
->> >> >+ ? ? ? ? This turns on additional debugging messages.
->> >> >+
->> >> >+ ? ? ? ? If unsure, say N
->> >
->> > Totally useless ?:-(. It should really explain what AI means in this context.
->>
->> Feel free to propose sth.
+Hi Rafa?,
+
+I compiled it into my 2.6.38.2 kernel and booted it. When I modprobe'd
+it, I get nothing in dmesg.
+
+Anything else I can try?
+
+cheers,
+
+Andy
+
+2011/4/8 Rafa? Mi?ecki <zajec5@gmail.com>:
+> Could you apply my axi patch, compile axi module, load it and provide
+> dmesg | grep axi output?
 >
-> AFAICT AI means "artifical inteligence". So _you_ really need to fix your kconfig.
-
-I always though of AI as of "American Idiot"... or just one of another
-100 meanings: http://en.wikipedia.org/wiki/Ai_(disambiguation)
-
-For a short time we didn't know real name of this bus, we
-partially-guessed it to be AI. I can not help the fact this could be
-understood as "artifical intelligence".
-
-If you check PATCH V2, we renamed this to (AMBA) AXI. I don't have
-better idea so i'll have to stay this way. Unless someone has a better
-*proposal*.
-
--- 
-Rafa?
+> http://marc.info/?l=linux-wireless&m=130228970402623&w=2
+>
+> --
+> Rafa?
+>
