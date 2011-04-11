@@ -1,199 +1,99 @@
-From: chris at martin.cc <chris@martin.cc>
-Date: Mon, 11 Apr 2011 22:46:54 +1000
-Subject: Out of memory problem with newer firmware
-In-Reply-To: <BANLkTi=mdSO7-GnhxPy-TKH+foMSZGX4DQ@mail.gmail.com>
-References: <BANLkTin0-MWxJV=7cNnOhiSKbieuo7OAfQ@mail.gmail.com>
-	<BANLkTinXKpXgwkF6u51L3uKMT_K9=iHUBQ@mail.gmail.com>
-	<BANLkTi=mdSO7-GnhxPy-TKH+foMSZGX4DQ@mail.gmail.com>
-Message-ID: <BANLkTi=YBbRVuDw+VhVoz6Ve8pxFNUHWcw@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 11 Apr 2011 19:24:09 +0200
+Subject: [RFC][WAS:bcmai][PATCH V2] axi: add AXI bus driver
+In-Reply-To: <op.vtr9glg23ri7v4@arend-laptop>
+References: <1302291900-1902-1-git-send-email-zajec5@gmail.com>
+	<op.vtr9glg23ri7v4@arend-laptop>
+Message-ID: <BANLkTimG7JOCCe2ozJkKOdtPfZka5jZSNQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-2011/4/11 Rafa? Mi?ecki <zajec5@gmail.com>:
-> W dniu 11 kwietnia 2011 11:59 u?ytkownik chris at martin.cc
-> <chris@martin.cc> napisa?:
->> 2011/4/11 Rafa? Mi?ecki <zajec5@gmail.com>
->>>
->>> Summary:
->>> 1) Chris has ASUS WL500pv2 with OpenWRT
->>> 2) This is router with Broadcom 5354 SoC and LP-PHY card
->>> 3) Firmware 410.2160 (broadcom-wl-4.150.10.5.tar.bz2) works OK
->>> 4) Firmware 478.104 (broadcom-wl-4.178.10.4.tar.bz2) causes OOM
->>>
->>> Larry was testing his LP-PHY with kmemleak but didn't find anything.
->>>
->>> Chris traced a lot of skbs being allocated before OOM (500+).
->>>
->>> I suspect that with new firmware we provide slightly different RX
->>> packets to mac80211 and there is sth wrong with mac80211 causing SKBs
->>> not being freed. I don't have any other idea how changing firmware
->>> could cause out of memory problems.
->>>
->>> The alloc code is question is dma.c::~585
->>> skb = __dev_alloc_skb(ring->rx_buffersize, gfp_flags);
->>>
->>> I've written patch to dump data we provide mac80211. My hope is to
->>> notice differences in that data between older vs. newer firmware.
->>>
->>> Chris: could you try attached patch and provide dmesg from older and
->>> newer firmware with this patch applied?
->>>
->>> --
->>> Rafa?
->>
->>
->> I applied the patch to ?the latest OpenWrt trunk. (rev 26588) with
->> compat-wireless 2011-04-06
->>
->> Experimental (478.104)
->> -----------------------------------------------------------------------------------------------------
->> b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
->> b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
->> device wlan0 entered promiscuous mode
->> br-lan: port 2(wlan0) entering forwarding state
->> br-lan: port 2(wlan0) entering forwarding state
->> b43-phy0 ERROR: RX: phystat0:0x0000 phystat3:0x3140 macstat:0x01060000
->> chanstat:0x000D mactime:0x1FE0
->> b43-phy0 ERROR: RX: ieee80211_rx_status: band:0 freq:31 signal:15
->> antenna:0 rate_idx:0 flag:0x0080
->> b43-phy0 ERROR: RX: phystat0:0x0000 phystat3:0x8540 macstat:0x01060000
->> chanstat:0x000D mactime:0x3EB7
->> b43-phy0 ERROR: RX: ieee80211_rx_status: band:0 freq:31 signal:-74
->> antenna:0 rate_idx:0 flag:0x0080
->> b43-phy0 ERROR: RX: phystat0:0x0000 phystat3:0x3140 macstat:0x01060000
->> chanstat:0x000D mactime:0x779E
->> b43-phy0 ERROR: RX: ieee80211_rx_status: band:0 freq:31 signal:-2
->> antenna:0 rate_idx:0 flag:0x0080
->> b43-phy0 ERROR: RX: phystat0:0x0000 phystat3:0x3140 macstat:0x01060000
->> chanstat:0x000D mactime:0x1D85
->> b43-phy0 ERROR: RX: ieee80211_rx_status: band:0 freq:31 signal:-14
->> antenna:0 rate_idx:0 flag:0x0080
->> b43-phy0 ERROR: RX: phystat0:0x0000 phystat3:0x8540 macstat:0x01060000
->> chanstat:0x000D mactime:0x5142
->> b43-phy0 ERROR: RX: ieee80211_rx_status: band:0 freq:31 signal:-50
->> antenna:0 rate_idx:0 flag:0x0080
->>
->> Followed immediately by OOM
+2011/4/11 Arend van Spriel <arend@broadcom.com>:
+> On Fri, 08 Apr 2011 21:45:00 +0200, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 >
-> It's weird you got only 5 of my error-debugging messages. Earlier you
-> got ~500 allocs before OOM *and* I expected each alloc to be followed
-> by my error-debugging messages.
+>> Cc: Michael B?sch <mb@bu3sch.de>
+>> Cc: Larry Finger <Larry.Finger@lwfinger.net>
+>> Cc: George Kashperko <george@znau.edu.ua>
+>> Cc: Arend van Spriel <arend@broadcom.com>
+>> Cc: linux-arm-kernel at lists.infradead.org
+>> <linux-arm-kernel@lists.infradead.org>
+>> Cc: Russell King <rmk@arm.linux.org.uk>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: linuxdriverproject <devel@linuxdriverproject.org>
+>> Cc: linux-kernel at vger.kernel.org <linux-kernel@vger.kernel.org>
+>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+>> ---
+>> This is second try for introducing new bus driver.
+>> V2: Rename to axi
+>> ? ?Use DEFINE_PCI_DEVICE_TABLE in bridge
+>> ? ?Make use of pr_fmt and pr_*
+>> ? ?Store core class
+>> ? ?Rename bridge to not b43 specific
+>> ? ?Replace magic 0x1000 with BCMAI_CORE_SIZE
+>> ? ?Remove some old "ssb" names and defines
+>> ? ?Move BCMAI_ADDR_BASE def
+>> ? ?Add drvdata field
+>> TODO:
+>> - Interrupts
+>> - Reloading driver
+>> ---
+>> ?drivers/Kconfig ? ? ? ? ? ? ? ? ? ? ? ? ? | ? ?2 +
+>> ?drivers/Makefile ? ? ? ? ? ? ? ? ? ? ? ? ?| ? ?1 +
+>> ?include/linux/mod_devicetable.h ? ? ? ? ? | ? 17 ++
+>> ?scripts/mod/file2alias.c ? ? ? ? ? ? ? ? ?| ? 21 ++
 >
+> Hi Rafa?,
 >
->> Stable (410.2160)
->> -----------------------------------------------------------------------------------------------------
->> b43-phy0: Loading firmware version 410.2160 (2007-05-26 15:32:10)
->> b43-phy0: Loading firmware version 410.2160 (2007-05-26 15:32:10)
->> device wlan0 entered promiscuous mode
->> br-lan: port 2(wlan0) entering forwarding state
->> br-lan: port 2(wlan0) entering forwarding state
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x7940 macstat:0x01060000 ? ? ?chanstat:0x005D mactime:0xC2F6
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-19 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0020 phystat3:0x8540 macstat:0x01060004 ? ? ?chanstat:0x005D mactime:0xCD95
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-74 ? ? ?antenna:1 ? ? ? rate_idx:0 ? ? ?flag:0x0000
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x2240 macstat:0x01060000 ? ? ?chanstat:0x005D mactime:0x2B07
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-24 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0001 phystat3:0x31A0 macstat:0x01060000 ? ? ?chanstat:0x005D mactime:0xEAE0
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-19 ? ? ?antenna:0 ? ? ? rate_idx:11 ? ? flag:0x0000
->> b43-phy0 ERROR: RX:
->> phystat0:0x0001 phystat3:0x31A0 macstat:0x01060000 ? ? ?chanstat:0x005D mactime:0xEF34
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-22 ? ? ?antenna:0 ? ? ? rate_idx:11 ? ? flag:0x0000
->> device wlan0 left promiscuous mode
->> br-lan: port 2(wlan0) entering forwarding state
->> device wlan0 entered promiscuous mode
->> br-lan: port 2(wlan0) entering forwarding state
->> br-lan: port 2(wlan0) entering forwarding state
->> net_ratelimit: 348 callbacks suppressed
->> b43-phy0 ERROR: RX:
->> phystat0:0x0020 phystat3:0xB540 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0x52E8
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-21 ? ? ?antenna:1 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x3140 macstat:0x01068028 ? ? ?chanstat:0x005D mactime:0x5985
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-21 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0000
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x2240 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0xBB50
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-13 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x8540 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0x16DC
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-76 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x8540 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0x2000
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-77 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> net_ratelimit: 400 callbacks suppressed
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x3140 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0xE2DA
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-22 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0020 phystat3:0xB540 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0x4B9B
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-11 ? ? ?antenna:1 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x3140 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0x72D9
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-22 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x3140 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0xDB9C
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:2 ? ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> b43-phy0 ERROR: RX:
->> phystat0:0x0000 phystat3:0x8540 macstat:0x01068000 ? ? ?chanstat:0x005D mactime:0x40E8
->> b43-phy0 ERROR: RX: ieee80211_rx_status:
->> band:0 ?freq:33 signal:-79 ? ? ?antenna:0 ? ? ? rate_idx:0 ? ? ?flag:0x0080
->> NOHZ: local_softirq_pending 08
->> NOHZ: local_softirq_pending 08
->> NOHZ: local_softirq_pending 08
->>
->> No More messages after this, The device functions OK
+> I tried to apply this patch, but it failed as well. I did the 4 files
+> above manually and applied partial patch for the new files.
 >
-> Here I also expected to get 500 messages, unless there was not traffic
-> in the air.
+> When I load the module it seems to have succeeded once, but every insmod
+> attempt I do now fails with following trace:
 >
-> Conclusions:
-> 1) I need to prepare another patch with more detailed debugging
-> 2) There is difference in channel between firmwares. Channel is
-> (chanstat & 0x7F8) >> 3. In case of 478.104 it seems to got channel
-> (0x1000>>3)==1, in case of 410.2160 it seems you got channel
-> (0x51>>3)==11. Do you use AP mode? Did you switch between channels?
->
-> --
-> Rafa?
->
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.249239] axi-pci-bridge
+> 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.249312] Core 0 found:
+> ChipCommon (manuf 0x4BF, id 0x800, rev 0x22, class 0x0)
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.249339] Core 1 found: IEEE
+> 802.11 (manuf 0x4BF, id 0x812, rev 0x17, class 0x0)
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.249400] Core 2 found: PCIe
+> (manuf 0x4BF, id 0x820, rev 0x0F, class 0x0)
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.279913] Modules linked in:
+> axi(+) binfmt_misc nouveau ttm drm_kms_helper drm i2c_algo_bit
+> snd_hda_codec_hdmi snd_hda_codec_idt snd_hda_intel snd_hda_codec
+> snd_seq_midi snd_hwdep ppdev snd_rawmidi snd_pcm snd_seq_midi_event
+> parport_pc snd_seq snd_timer snd_seq_device lp pcmcia snd uvcvideo
+> soundcore snd_page_alloc dell_laptop videodev dell_wmi dcdbas
+> sparse_keymap intel_ips yenta_socket video pcmcia_rsrc pcmcia_core parport
+> intel_agp intel_gtt agpgart psmouse btusb bluetooth joydev serio_raw
+> usbhid hid mmc_block ahci sdhci_pci firewire_ohci sdhci e1000e
+> firewire_core mmc_core libahci crc_itu_t
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.280052]
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.280366] Pid: 2008, comm:
+> insmod Not tainted 2.6.39-rc1-staging-next-09270-gb905e26 #1 Dell Inc.
+> Latitude E6410/07XJP9
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.281090] EIP: 0060:[<c0213d3d>]
+> EFLAGS: 00010246 CPU: 1
+> Apr 11 16:43:43 arend-laptop kernel: [ ? 61.281812] EIP is at
+> kfree+0x10d/0x120
 
-I am using a more recent version of compat-wireless, with quite a few
-changes in mac80211
+Thank you Arend for testing.
 
-The configuration I am testing is the standard config from the openwrt build:
-  * AP (Master) mode.
-  * Channel 11
-  * No Encryption
-  * Single SSID
-  * Bridged
+What you see is some issue with kfree I do not understand. Please take
+a look at:
+"Crash with kfree(null) on MacBook? kobject_set_name_vargs"
+https://lkml.org/lkml/2011/4/10/71
 
-If I take it out of the bridge, it takes a little longer to fail:
-STA / AP mode doesn't appear to make any difference.
+When I call dev_set_name result with new name for device, internal
+implementation performs "kfree" on *old name*. Of course there was not
+old name, so kfree is being called on * char pointing to NULL. On my
+device it does not crash, but on yours and on Andy's it does.
 
-The Channel is "defiantly" set the same between firmware versions
-I think that you may be on to something with that.
+We got suggestion to enable SLUB/SLAB debugging. Andy didn't try it
+yet. Could you spend a moment trying to debug this?
 
-----------------------------------------------------------
-Chris Martin
-m: +61 419 812 371
-----------------------------------------------------------
+-- 
+Rafa?
