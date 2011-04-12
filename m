@@ -1,56 +1,150 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 12 Apr 2011 17:25:39 +0200
-Subject: [RFC][PATCH V3] axi: add AXI bus driver
-In-Reply-To: <20110412151453.GA20978@kroah.com>
-References: <20110411210631.GA28559@kroah.com>
-	<BANLkTim155YxMUVJ=pmVs-rNhkovGPG6OQ@mail.gmail.com>
-	<20110411212513.GA17809@kroah.com>
-	<BANLkTingqXAWTeOhcL6ER0UJfEdQF5Bo2A@mail.gmail.com>
-	<20110411215619.GA27943@kroah.com>
-	<BANLkTimjThXn347+=m98NsBXY84guJjNqA@mail.gmail.com>
-	<20110411223632.GB31833@kroah.com>
-	<BANLkTinpKKRCrBik6-9C5WqcSDGuEt5yCw@mail.gmail.com>
-	<20110411233506.GA13240@kroah.com>
-	<BANLkTi=cG3U8yXaQ6PusmNaWcr+AWv3e_w@mail.gmail.com>
-	<20110412151453.GA20978@kroah.com>
-Message-ID: <BANLkTi=6tDsBF9jULDXLJ05zaHrD-+EC2g@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 12 Apr 2011 20:58:43 +0200
+Subject: [TESTING ONLY][PATCH V2] b43: subscribe to axi
+Message-ID: <1302634723-3079-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2011/4/12 Greg KH <greg@kroah.com>:
-> On Tue, Apr 12, 2011 at 07:41:18AM +0200, Rafa? Mi?ecki wrote:
->> > You can't do that, no static struct devices please. ?Make these dynamic
->> > and everything will be fine. ?The -mm tree used to have a huge warning
->> > if you ever tried to register a statically allocated struct, but that
->> > didn't really work out, but would have saved you a lot of time here,
->> > sorry.
->> >
->> > So dynamically allocate the structures and you will be fine.
->>
->> Well, I saw that along kernel, I had no idea there is anything wrong
->> about this. It seems more ppl do not know about this:
->> struct radeon_ib ? ? ?ibs[RADEON_IB_POOL_SIZE];
->> struct radeon_pm_clock_info clock_info[8];
->> struct radeon_pm_profile profiles[PM_PROFILE_MAX];
->> struct radeon_surface_reg surface_regs[RADEON_GEM_MAX_SURFACES];
->
-> Are you sure these are all containing a 'struct device'?
+---
+V2: axi_info was dropped, use pr_info
+---
+ drivers/net/wireless/b43/b43.h  |    1 +
+ drivers/net/wireless/b43/main.c |   72 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 72 insertions(+), 1 deletions(-)
 
-I didn't catch from you mail that you mean "struct device" only. I
-though it apply to all structs.
-
-
->> checkpatch does no catch this, so maybe just some manual? Could you
->> point me to it?
->
-> It's a structure that has dynamic lifetime rules, you can't statically
-> allocate it safely. ?It's that simple.
-
-Ah, and this is a great explanation, for all the time I tough the
-problem is memory issue. Now it makes sense, thanks.
-
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index bd4cb75..991a08d 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -6,6 +6,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/hw_random.h>
+ #include <linux/ssb/ssb.h>
++#include <linux/axi/axi.h>
+ #include <net/mac80211.h>
+ 
+ #include "debugfs.h"
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 57eb5b6..6be170f 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -125,9 +125,15 @@ static const struct ssb_device_id b43_ssb_tbl[] = {
+ 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 16),
+ 	SSB_DEVTABLE_END
+ };
+-
+ MODULE_DEVICE_TABLE(ssb, b43_ssb_tbl);
+ 
++static const struct axi_device_id b43_axi_tbl[] = {
++	AXI_CORE(AXI_MANUF_BCM, AXI_CORE_80211, 0x17, AXI_ANY_CLASS),
++	AXI_CORE(AXI_MANUF_BCM, AXI_CORE_80211, 0x18, AXI_ANY_CLASS),
++	AXI_CORETABLE_END
++};
++MODULE_DEVICE_TABLE(axi, b43_axi_tbl);
++
+ /* Channel and ratetables are shared for all devices.
+  * They can't be const, because ieee80211 puts some precalculated
+  * data in there. This data is the same for all devices, so we don't
+@@ -5069,6 +5075,57 @@ static void b43_remove(struct ssb_device *dev)
+ 	}
+ }
+ 
++static int b43_axi_probe(struct axi_device *core)
++{
++	printk(KERN_INFO "Success! Hello world! :)\n");
++
++	axi_core_enable(core, 0x4);
++
++	u16 tmp = axi_read16(core, B43_MMIO_PHY_VER);
++	u16 analog_type = (tmp & B43_PHYVER_ANALOG) >> B43_PHYVER_ANALOG_SHIFT;
++	u16 phy_type = (tmp & B43_PHYVER_TYPE) >> B43_PHYVER_TYPE_SHIFT;
++	u16 phy_rev = (tmp & B43_PHYVER_VERSION);
++
++	pr_info("PHY (Analog %u, Type %u, Revision %u)\n",
++		analog_type, phy_type, phy_rev);
++
++	u16 radio_manuf = 0, radio_ver = 0, radio_rev, radio_id;
++	if (core->id.rev >= 24) {
++		axi_write16(core, 0x3D8, 0);
++		u16 r0 = axi_read16(core, 0x3DA);
++
++		axi_write16(core, 0x3D8, 1);
++		u16 r1 = axi_read16(core, 0x3DA);
++
++		axi_write16(core, 0x3D8, 2);
++		u16 r2 = axi_read16(core, 0x3DA);
++
++		radio_ver = (r0 & 0xF0) >> 4;
++		radio_id = (r2 << 8) | r1;
++		radio_rev = (r0 & 0xF);
++
++
++	} else {
++		axi_write16(core, B43_MMIO_RADIO_CONTROL, B43_RADIOCTL_ID);
++		u32 tmpx = axi_read16(core, B43_MMIO_RADIO_DATA_LOW);
++		axi_write16(core, B43_MMIO_RADIO_CONTROL, B43_RADIOCTL_ID);
++		tmpx |= (u32)axi_read16(core, B43_MMIO_RADIO_DATA_HIGH) << 16;
++
++		radio_manuf = (tmpx & 0x00000FFF);
++		radio_id = (tmpx & 0x0FFFF000) >> 12;
++		radio_rev = (tmpx & 0xF0000000) >> 28;
++	}
++	pr_info("RADIO (Manuf 0x%X, Version 0x%X, Id 0x%X, Revision %u)\n",
++		radio_manuf, radio_ver, radio_id, radio_rev);
++
++	return 0;
++}
++
++static void b43_axi_remove(struct axi_device *core)
++{
++	printk(KERN_INFO "Success! Bye :)\n");
++}
++
+ /* Perform a hardware reset. This can be called from any context. */
+ void b43_controller_restart(struct b43_wldev *dev, const char *reason)
+ {
+@@ -5086,6 +5143,13 @@ static struct ssb_driver b43_ssb_driver = {
+ 	.remove		= b43_remove,
+ };
+ 
++static struct axi_driver b43_axi_driver = {
++	.name		= KBUILD_MODNAME,
++	.id_table	= b43_axi_tbl,
++	.probe		= b43_axi_probe,
++	.remove		= b43_axi_remove,
++};
++
+ static void b43_print_driverinfo(void)
+ {
+ 	const char *feat_pci = "", *feat_pcmcia = "", *feat_nphy = "",
+@@ -5127,6 +5191,9 @@ static int __init b43_init(void)
+ 	err = ssb_driver_register(&b43_ssb_driver);
+ 	if (err)
+ 		goto err_sdio_exit;
++	err = axi_driver_register(&b43_axi_driver);
++	if (err)
++		goto err_ssb_driver_exit;
+ 	b43_print_driverinfo();
+ 
+ 	return err;
+@@ -5137,11 +5204,14 @@ err_pcmcia_exit:
+ 	b43_pcmcia_exit();
+ err_dfs_exit:
+ 	b43_debugfs_exit();
++err_ssb_driver_exit:
++	ssb_driver_unregister(&b43_ssb_driver);
+ 	return err;
+ }
+ 
+ static void __exit b43_exit(void)
+ {
++	axi_driver_unregister(&b43_axi_driver);
+ 	ssb_driver_unregister(&b43_ssb_driver);
+ 	b43_sdio_exit();
+ 	b43_pcmcia_exit();
 -- 
-Rafa?
+1.7.3.4
