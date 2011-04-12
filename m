@@ -1,107 +1,76 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 12 Apr 2011 07:52:19 +0200
+Date: Tue, 12 Apr 2011 13:40:36 +0200
 Subject: [RFC][PATCH V3] axi: add AXI bus driver
-In-Reply-To: <1302565473.2163.28.camel@Joe-Laptop>
+In-Reply-To: <BANLkTi=cG3U8yXaQ6PusmNaWcr+AWv3e_w@mail.gmail.com>
 References: <1302557114-7880-1-git-send-email-zajec5@gmail.com>
-	<1302565473.2163.28.camel@Joe-Laptop>
-Message-ID: <BANLkTikWSzLoQd_6s-jeL8OfUpekoK9hXA@mail.gmail.com>
+	<20110411210631.GA28559@kroah.com>
+	<BANLkTim155YxMUVJ=pmVs-rNhkovGPG6OQ@mail.gmail.com>
+	<20110411212513.GA17809@kroah.com>
+	<BANLkTingqXAWTeOhcL6ER0UJfEdQF5Bo2A@mail.gmail.com>
+	<20110411215619.GA27943@kroah.com>
+	<BANLkTimjThXn347+=m98NsBXY84guJjNqA@mail.gmail.com>
+	<20110411223632.GB31833@kroah.com>
+	<BANLkTinpKKRCrBik6-9C5WqcSDGuEt5yCw@mail.gmail.com>
+	<20110411233506.GA13240@kroah.com>
+	<BANLkTi=cG3U8yXaQ6PusmNaWcr+AWv3e_w@mail.gmail.com>
+Message-ID: <BANLkTikR2AwBdORYUdTCcAOPeMkKN7azQQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-2011/4/12 Joe Perches <joe@perches.com>:
-> On Mon, 2011-04-11 at 23:25 +0200, Rafa? Mi?ecki wrote:
+2011/4/12 Rafa? Mi?ecki <zajec5@gmail.com>:
+> 2011/4/12 Greg KH <greg@kroah.com>:
+>> On Tue, Apr 12, 2011 at 12:45:33AM +0200, Rafa? Mi?ecki wrote:
+>>> 2011/4/12 Greg KH <greg@kroah.com>:
+>>> > Then in your release function, free the struct axi_device. ?It's that
+>>> > simple. ?To try to free it before then would be wrong and cause
+>>> > problems.
+>>>
+>>> This is because it is defined as:
+>>> struct axi_device cores[AXI_MAX_NR_CORES];
+>>
+>> No way, seriously?
+>>
+>> You can't do that, no static struct devices please. ?Make these dynamic
+>> and everything will be fine. ?The -mm tree used to have a huge warning
+>> if you ever tried to register a statically allocated struct, but that
+>> didn't really work out, but would have saved you a lot of time here,
+>> sorry.
+>>
+>> So dynamically allocate the structures and you will be fine.
 >
->> ? Proper pr_* usage
+> Well, I saw that along kernel, I had no idea there is anything wrong
+> about this. It seems more ppl do not know about this:
+> struct radeon_ib ? ? ? ?ibs[RADEON_IB_POOL_SIZE];
+> struct radeon_pm_clock_info clock_info[8];
+> struct radeon_pm_profile profiles[PM_PROFILE_MAX];
+> struct radeon_surface_reg surface_regs[RADEON_GEM_MAX_SURFACES];
+> struct radeon_i2c_chan *i2c_bus[RADEON_MAX_I2C_BUS];
 >
-> Just trivia...
-
-The patch you were reviewing does not have pr_* stuff included, sorry.
-I published V3 by mistake missing some changes. Patch V3.1 alreay
-fixes that.
-
-
->> diff --git a/drivers/axi/axi_private.h b/drivers/axi/axi_private.h
->> new file mode 100644
->> index 0000000..1c995f5
->> --- /dev/null
->> +++ b/drivers/axi/axi_private.h
->> @@ -0,0 +1,45 @@
->> +#ifndef LINUX_AXI_PRIVATE_H_
->> +#define LINUX_AXI_PRIVATE_H_
->> +
->> +#include <linux/axi/axi.h>
->> +#include <linux/device.h>
->> +#include <linux/list.h>
->> +#include <linux/types.h>
->> +#include <linux/spinlock.h>
->> +#include <linux/pci.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/dma-mapping.h>
->> +#include <linux/types.h>
+> struct b43_key key[B43_NR_GROUP_KEYS * 2 + B43_NR_PAIRWISE_KEYS];
 >
-> Duplicate include of linux/types.h
-
-V3.1
-
-
->> +
->> +#ifndef pr_fmt
->> +#define pr_fmt(fmt) ? ? ? ? ?"axi: " fmt
->> +#endif
+> struct ssb_device devices[SSB_MAX_NR_CORES];
+> I guess I could fine more examples by simple grepping .h files.
 >
-> This needs to be before any include that includes kernel.h
-> and I believe
-> #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> is the same output and more normally used style.
->
-> Right now, you've got no prefix for any format string.
-> Try '$ strings built-in.o | grep "^<.>"' and see.
+> Is there some guide around with things like this we should avoid?
+> checkpatch does no catch this, so maybe just some manual? Could you
+> point me to it?
 
-V3.1
+Greg, my:
+struct ssb_device devices[SSB_MAX_NR_CORES];
+is part of "struct axi_bus", which we allocate dynamically anyway:
 
->> +void axi_pmu_workarounds(struct axi_drv_cc *cc)
->> +{
->> + ? ? struct axi_bus *bus = cc->core->bus;
->> +
->> + ? ? switch (bus->chipinfo.id) {
->> + ? ? case 0x4313:
->
-> Probably better to use defines.
+struct axi_bus *bus;
+bus = kzalloc(sizeof(*bus), GFP_KERNEL);
+if (!bus)
+	goto out;
 
-That magic hex values always match common name of chipsets, so it's
-looks pretty clean/obvious... Not sure if it's worth it?
-
->> + ? ? ? ? ? ? axi_chipco_chipctl_maskset(cc, 0, ~0, 0x7);
->> + ? ? ? ? ? ? break;
->> + ? ? case 0x4331:
->> + ? ? ? ? ? ? axi_err("Enabling Ext PA lines not implemented\n");
->
-> You should still remove axi_err/info/debug and
-> just use pr_<level>.
-
-V3.1
-
->> + ? ? ? ? ? ? break;
->> + ? ? case 43224:
->> + ? ? ? ? ? ? if (bus->chipinfo.rev == 0) {
->> + ? ? ? ? ? ? ? ? ? ? axi_err("Workarounds for 43224 rev 0 not fully "
->> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? "implemented\n");
->
-> I suggest you don't bother splitting and wrapping
-> format strings > 80 chars. ?Splitting makes grep
-> a bit harder.
->
-> ? ? ? ? ? ? ? ? ? ? ? ?pr_err("Workarounds for 43224 rev 0 not fully implemented\n");
->
-> Some hex and some decimal cases?
-> Maybe some comments for that?
-
-Well, such a trick from Broadcom. I believe wanted to keep 43* names
-for the chipsets, they invented sth like 43224 but they had only
-0xFFFF. So the used 0xA8D8==43224.
+So do we really need to dynamically alloc main structure and
+separately every of it's array of structs? Does it really make sense?
+Please point me to some place where I can read more about this. Some
+tips about coding style for such things, cases.
 
 -- 
 Rafa?
