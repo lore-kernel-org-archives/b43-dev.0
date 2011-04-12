@@ -1,19 +1,9 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 12 Apr 2011 13:40:36 +0200
-Subject: [RFC][PATCH V3] axi: add AXI bus driver
-In-Reply-To: <BANLkTi=cG3U8yXaQ6PusmNaWcr+AWv3e_w@mail.gmail.com>
-References: <1302557114-7880-1-git-send-email-zajec5@gmail.com>
-	<20110411210631.GA28559@kroah.com>
-	<BANLkTim155YxMUVJ=pmVs-rNhkovGPG6OQ@mail.gmail.com>
-	<20110411212513.GA17809@kroah.com>
-	<BANLkTingqXAWTeOhcL6ER0UJfEdQF5Bo2A@mail.gmail.com>
-	<20110411215619.GA27943@kroah.com>
-	<BANLkTimjThXn347+=m98NsBXY84guJjNqA@mail.gmail.com>
-	<20110411223632.GB31833@kroah.com>
-	<BANLkTinpKKRCrBik6-9C5WqcSDGuEt5yCw@mail.gmail.com>
-	<20110411233506.GA13240@kroah.com>
-	<BANLkTi=cG3U8yXaQ6PusmNaWcr+AWv3e_w@mail.gmail.com>
-Message-ID: <BANLkTikR2AwBdORYUdTCcAOPeMkKN7azQQ@mail.gmail.com>
+Date: Tue, 12 Apr 2011 15:04:48 +0200
+Subject: [RFC][PATCH] axi: add AXI bus driver
+In-Reply-To: <1302566227-23788-1-git-send-email-zajec5@gmail.com>
+References: <1302566227-23788-1-git-send-email-zajec5@gmail.com>
+Message-ID: <BANLkTi=jV12tOR_=idn0z+oO_RQ2xaFhCQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,56 +11,40 @@ Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
 2011/4/12 Rafa? Mi?ecki <zajec5@gmail.com>:
-> 2011/4/12 Greg KH <greg@kroah.com>:
->> On Tue, Apr 12, 2011 at 12:45:33AM +0200, Rafa? Mi?ecki wrote:
->>> 2011/4/12 Greg KH <greg@kroah.com>:
->>> > Then in your release function, free the struct axi_device. ?It's that
->>> > simple. ?To try to free it before then would be wrong and cause
->>> > problems.
->>>
->>> This is because it is defined as:
->>> struct axi_device cores[AXI_MAX_NR_CORES];
->>
->> No way, seriously?
->>
->> You can't do that, no static struct devices please. ?Make these dynamic
->> and everything will be fine. ?The -mm tree used to have a huge warning
->> if you ever tried to register a statically allocated struct, but that
->> didn't really work out, but would have saved you a lot of time here,
->> sorry.
->>
->> So dynamically allocate the structures and you will be fine.
->
-> Well, I saw that along kernel, I had no idea there is anything wrong
-> about this. It seems more ppl do not know about this:
-> struct radeon_ib ? ? ? ?ibs[RADEON_IB_POOL_SIZE];
-> struct radeon_pm_clock_info clock_info[8];
-> struct radeon_pm_profile profiles[PM_PROFILE_MAX];
-> struct radeon_surface_reg surface_regs[RADEON_GEM_MAX_SURFACES];
-> struct radeon_i2c_chan *i2c_bus[RADEON_MAX_I2C_BUS];
->
-> struct b43_key key[B43_NR_GROUP_KEYS * 2 + B43_NR_PAIRWISE_KEYS];
->
-> struct ssb_device devices[SSB_MAX_NR_CORES];
-> I guess I could fine more examples by simple grepping .h files.
->
-> Is there some guide around with things like this we should avoid?
-> checkpatch does no catch this, so maybe just some manual? Could you
-> point me to it?
+> Cc: Michael B?sch <mb@bu3sch.de>
+> Cc: Larry Finger <Larry.Finger@lwfinger.net>
+> Cc: George Kashperko <george@znau.edu.ua>
+> Cc: Arend van Spriel <arend@broadcom.com>
+> Cc: linux-arm-kernel at lists.infradead.org
+> Cc: Russell King <rmk@arm.linux.org.uk>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Andy Botting <andy@andybotting.com>
+> Cc: linuxdriverproject <devel@linuxdriverproject.org>
+> Cc: linux-kernel at vger.kernel.org <linux-kernel@vger.kernel.org>
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> V2: Rename to axi
+> ? ?Use DEFINE_PCI_DEVICE_TABLE in bridge
+> ? ?Make use of pr_fmt and pr_*
+> ? ?Store core class
+> ? ?Rename bridge to not b43 specific
+> ? ?Replace magic 0x1000 with BCMAI_CORE_SIZE
+> ? ?Remove some old "ssb" names and defines
+> ? ?Move BCMAI_ADDR_BASE def
+> ? ?Add drvdata field
+> V3: Fix reloading (kfree issue)
+> ? ?Add 14e4:0x4331
+> ? ?Fix non-initialized struct issue
+> ? ?Drop useless inline functions wrappers for pci core drv
+> ? ?Proper pr_* usage
+> V3.1: Include forgotten changes (pr_* and include related)
+> ? ?Explain why we dare to implement empty release function
 
-Greg, my:
-struct ssb_device devices[SSB_MAX_NR_CORES];
-is part of "struct axi_bus", which we allocate dynamically anyway:
+There is one more change I started to consider. Is "core" correct name
+for AXI's device? Almost everywhere we can read about *components* on
+the AXI interconnect.
 
-struct axi_bus *bus;
-bus = kzalloc(sizeof(*bus), GFP_KERNEL);
-if (!bus)
-	goto out;
-
-So do we really need to dynamically alloc main structure and
-separately every of it's array of structs? Does it really make sense?
-Please point me to some place where I can read more about this. Some
-tips about coding style for such things, cases.
+Maybe it'd make sense to s/core/comp/? Arend?
 
 -- 
 Rafa?
