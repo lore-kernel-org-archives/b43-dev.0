@@ -1,35 +1,47 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 14 Apr 2011 01:31:25 +0200
-Subject: [RFC][PATCH] axi: add AXI bus driver
-In-Reply-To: <1302726187.7911.11.camel@dev.znau.edu.ua>
-References: <1302566227-23788-1-git-send-email-zajec5@gmail.com>
-	<20110412133633.GR15130@legolas.emea.dhcp.ti.com>
-	<1302634039.14216.10.camel@dev.znau.edu.ua>
-	<BANLkTi=0sM2+nPYyd09G=Uy9rcEvaFErnA@mail.gmail.com>
-	<1302635550.14216.21.camel@dev.znau.edu.ua>
-	<BANLkTi=8mB9ZDTjF4yds6mkx+PmM+B_6Cg@mail.gmail.com>
-	<4DA4AC4B.90409@hauke-m.de>
-	<BANLkTiknRYWaDM1ThAxgXcdGqK8jeFaBPA@mail.gmail.com>
-	<BANLkTikqKtJuDS17mfFvxzMoXuBtJvCgTA@mail.gmail.com>
-	<1302640546.14216.65.camel@dev.znau.edu.ua>
-	<BANLkTim8dmTL-BVK3fcWHNBU9Eyz1k_T+Q@mail.gmail.com>
-	<op.vtvalzu33ri7v4@arend-laptop>
-	<BANLkTik6JZ-n3sVjCFK_x1yNRH3_o3_6rg@mail.gmail.com>
-	<1302726187.7911.11.camel@dev.znau.edu.ua>
-Message-ID: <BANLkTikR+Y=FwqO15iHhaA57NdfFi6-ykA@mail.gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Thu, 14 Apr 2011 01:36:27 +0200
+Subject: [RFC][PATCH V4] axi: add AXI bus driver
+In-Reply-To: <BANLkTinLn4Ug=gX4coHJbSzrkxdSMjgGeg@mail.gmail.com>
+References: <1302634375-2378-1-git-send-email-zajec5@gmail.com>
+	<20110413163113.GA24015@kroah.com>
+	<BANLkTin-4HrJzNrLOxRy_-a98S3ZF4aSQw@mail.gmail.com>
+	<1302726703.8015.1.camel@dev.znau.edu.ua>
+	<BANLkTimwZOJ0a5kVfaUzEcsMc39H999u0A@mail.gmail.com>
+	<1302727516.8015.9.camel@dev.znau.edu.ua>
+	<BANLkTi=wzzzeF-PmqLt9o8arW7nRaFRRJw@mail.gmail.com>
+	<1302729243.8479.1.camel@dev.znau.edu.ua>
+	<BANLkTinLn4Ug=gX4coHJbSzrkxdSMjgGeg@mail.gmail.com>
+Message-ID: <BANLkTimcy16ggC0C66V-fbuaJwg4Sna4Qw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-2011/4/13 George Kashperko <george@znau.edu.ua>:
-> Look brcm80211/inclue/aidmp.h for those.
+On 13 April 2011 23:19, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> 2011/4/13 George Kashperko <george@znau.edu.ua>:
+>>> I had no idea what you were referring to. We do not dig into PCIe
+>>> functions yet, so I believe for now we need this "if".
+>> You are already deep inside. Your host code drives pci function.
+>
+> But I don't use multiple PCIe functions, do not focus on that at all.
 
-Interesting, I found some register defines that hopefully should be
-common/general:
-http://infocenter.arm.com/help/topic/com.arm.doc.ddi0344c/Bgbhedeg.html
-http://infocenter.arm.com/help/topic/com.arm.doc.ddi0344c/Cfacacha.html
+I think what George meant is the following (please correct me if I
+understood you wrong) and has nothing to do with PCIe functions:
+<http://lxr.free-electrons.com/source/drivers/staging/brcm80211/util/aiutils.c#L522>
 
--- 
-Rafa?
+The chipcommon and PCIe core registers seem to be always available on
+PCIe and no core switching is necessary for them. So as long as you
+only access the core registers of chipcommon, PCIe + one other core,
+you never need to do any switching (except for the initial switch to
+the other core)
+
+But If you need to access the agent registers you do have to do adapt
+the PCIe windows.
+
+(This seems to apply also to PCI cards with a PCI core revision >= 13,
+but this is probably only relevant for SSB - unless Arend says there
+are/were also PCI cards with AMBA AXI backplanes ;-).
+
+
+Jonas
