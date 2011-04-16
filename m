@@ -1,45 +1,47 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 16 Apr 2011 15:41:00 +0200
-Subject: New device in MacBook Pro, yet unsupported?
-In-Reply-To: <BANLkTimPyu2CXP+pLTj_vhJjhkzV1ik1YA@mail.gmail.com>
-References: <BANLkTinooer0aFqJfn0ui+QXpLO6YkPhEg@mail.gmail.com>
-	<BANLkTimPyu2CXP+pLTj_vhJjhkzV1ik1YA@mail.gmail.com>
-Message-ID: <BANLkTikwu4q2+iNU5txeDsJ9kDs6QcRwVw@mail.gmail.com>
+Date: Sat, 16 Apr 2011 16:00:39 +0200
+Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
+In-Reply-To: <20110415195642.22440.qmail@stuge.se>
+References: <1302781431.21145.6.camel@dev.znau.edu.ua>
+	<BANLkTinvpt5vs+rXd3WN-a2JpGtTV+=Gyg@mail.gmail.com>
+	<4DA6E9BD.3090404@hauke-m.de>
+	<BANLkTinu+Q367oqQPiUehPcbMs-SBxbwFg@mail.gmail.com>
+	<1302786900.21965.52.camel@dev.znau.edu.ua>
+	<BANLkTimM8=-pX+Ea8Eyp4XyvP1APbUof9w@mail.gmail.com>
+	<1302892585.30441.12.camel@dev.znau.edu.ua>
+	<BANLkTi=16i+D8frz3X2f+JDtp4hbJKLL3A@mail.gmail.com>
+	<1302896541.30441.33.camel@dev.znau.edu.ua>
+	<BANLkTinPVaYC14Y=m5iu7GYodkRb6uTuPw@mail.gmail.com>
+	<20110415195642.22440.qmail@stuge.se>
+Message-ID: <BANLkTinNoX6GBG=6xVC8ZfOO4OyZ_o=sFg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-W dniu 16 kwietnia 2011 06:37 u?ytkownik Darren <dmbtech@gmail.com> napisa?:
-> I also just got a macbook pro 2011,
-> I ran the patch on 2.6.38.3, had a couple compiler errors related to
-> axi_debug (I just commented them out) added the pciid, and got some results:
-> Apr 16 00:01:36 dmb-MacBookPro kernel: [? 144.218759] axi-pci-bridge
-> 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
-> Apr 16 00:01:36 dmb-MacBookPro kernel: [? 144.218786] axi-pci-bridge
-> 0000:03:00.0: setting latency timer to 64
-> Apr 16 00:01:36 dmb-MacBookPro kernel: [? 144.218884] Core 0 found:
-> ChipCommon (manuf 0x4BF, id 0x800, rev 0x25, class 0x0)
-> Apr 16 00:01:36 dmb-MacBookPro kernel: [? 144.218919] Core 1 found: IEEE
-> 802.11 (manuf 0x4BF, id 0x812, rev 0x1D, class 0x0)
-> Apr 16 00:01:36 dmb-MacBookPro kernel: [? 144.218988] Core 2 found: PCIe
-> (manuf 0x4BF, id 0x820, rev 0x13, class 0x0)
-> Apr 16 00:01:36 dmb-MacBookPro kernel: [? 144.219142] PMU resource config
-> unknown for device 0x4331
-> Apr 16 00:01:36 dmb-MacBookPro kernel: [? 144.219150] Enabling Ext PA lines
-> not implemented
-> Apr 16 00:04:10 dmb-MacBookPro kernel: [? 144.248126] AXI registered
-> Anything else you want me to try? Looks encouraging.
+2011/4/15 Peter Stuge <peter@stuge.se>:
+> Rafa? Mi?ecki wrote:
+>> > On other hand just broadcom-specific bus looks like good alternative
+>> > too but here I just fail to decide on relevant naming.
+>>
+>> Just bcmamba / bcmaxi?
+>
+> Do bcm make any other (different) busses that would warrant a more
+> specific name, hinting somehow at the wireless cards specifically?
+>
+> Or is it just cool to have a short name? Me I always like short names.
 
-This seems to be the same situation as in case of Andy's machine. We
-don't have any reference driver so I'll be hard to implement support
-for this card.
+I don't think Broadcom is going to publish new cards based on AMBA
+with totally different cores discovery, agent (wrapper) programming,
+etc. However of course we never know that and I think Broadcom does
+not as well.
 
-Possible solutions I can see:
-1) Wait for wl to support BCM4331
-2) Try to use ndiswrapper and MMIO trace it's operations. Didn't try
-it ever, not sure how much is this possible.
+Of the other point there is no sense in calling it
+bcm_amba_axi_for_wifi as I believe we can meet other devices than just
+wifi on this architecture. So let's just call it bcmamba and there is
+not other much better solution. If in the future we will hit some
+problems we can always try some renaming, aliasing... we will see.
 
 -- 
 Rafa?
