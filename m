@@ -1,35 +1,60 @@
-From: Jonas Gorski <jonas.gorski+openwrt@gmail.com>
-Date: Sat, 16 Apr 2011 16:13:06 +0200
-Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
-In-Reply-To: <BANLkTinNoX6GBG=6xVC8ZfOO4OyZ_o=sFg@mail.gmail.com>
-References: <1302781431.21145.6.camel@dev.znau.edu.ua>
-	<BANLkTinvpt5vs+rXd3WN-a2JpGtTV+=Gyg@mail.gmail.com>
-	<4DA6E9BD.3090404@hauke-m.de>
-	<BANLkTinu+Q367oqQPiUehPcbMs-SBxbwFg@mail.gmail.com>
-	<1302786900.21965.52.camel@dev.znau.edu.ua>
-	<BANLkTimM8=-pX+Ea8Eyp4XyvP1APbUof9w@mail.gmail.com>
-	<1302892585.30441.12.camel@dev.znau.edu.ua>
-	<BANLkTi=16i+D8frz3X2f+JDtp4hbJKLL3A@mail.gmail.com>
-	<1302896541.30441.33.camel@dev.znau.edu.ua>
-	<BANLkTinPVaYC14Y=m5iu7GYodkRb6uTuPw@mail.gmail.com>
-	<20110415195642.22440.qmail@stuge.se>
-	<BANLkTinNoX6GBG=6xVC8ZfOO4OyZ_o=sFg@mail.gmail.com>
-Message-ID: <BANLkTinXUt1aNudnRqEG40vcrtMBCc3Nxg@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 17 Apr 2011 09:06:35 +0200
+Subject: A small error in b43
+In-Reply-To: <alpine.DEB.2.01.1104162313180.18728@trent.utfs.org>
+References: <alpine.DEB.2.01.1104162313180.18728@trent.utfs.org>
+Message-ID: <BANLkTimm-cJ6tvnuMpPvV4OPMmGXPZqCbA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On 16 April 2011 16:00, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> Of the other point there is no sense in calling it
-> bcm_amba_axi_for_wifi as I believe we can meet other devices than just
-> wifi on this architecture.
+2011/4/17 Christian Kujau <lists@nerdbynature.de>:
+> I just stumbled over the "A small error in b43" thread and wanted to say
+> thanks!
+>
+> With b43-fwcutter (git) and broadcom-wl-5.10.56.27.3/driver/wl_apsta/wl_prebuilt.o,
+> my BCM4322 chip finally works!
+>
+> 2.6.38.2-9.fc15.x86_64 / MacBookPro5,5
+>
+> 03:00.0 Network controller: Broadcom Corporation BCM4322 802.11a/b/g/n Wireless LAN Controller (rev 01)
+> ? ? ? ?Subsystem: Apple Computer Inc. Device 008d
+> ? ? ? ?Flags: bus master, fast devsel, latency 0, IRQ 23
+> ? ? ? ?Memory at d3200000 (64-bit, non-prefetchable) [size=16K]
+> ? ? ? ?Capabilities: [40] Power Management version 3
+> ? ? ? ?Capabilities: [58] Vendor Specific Information: Len=78 <?>
+> ? ? ? ?Capabilities: [e8] MSI: Enable- Count=1/1 Maskable- 64bit+
+> ? ? ? ?Capabilities: [d0] Express Endpoint, MSI 00
+> ? ? ? ?Capabilities: [100] Advanced Error Reporting
+> ? ? ? ?Capabilities: [13c] Virtual Channel
+> ? ? ? ?Capabilities: [160] Device Serial Number d5-53-bb-ff-ff-00-00-26
+> ? ? ? ?Capabilities: [16c] Power Budgeting <?>
+> ? ? ? ?Kernel driver in use: b43-pci-bridge
+> ? ? ? ?Kernel modules: ssb
+>
+> It's pretty slow (max ~500KBps vs. ~3MBps in MacOS) and even SSH
+> connections are a bit sluggish, but it's better than nothing :-)
+>
+> Thanks again!
+> Christian.
+>
+>
+> [ 4215.197290] b43-phy0: Loading firmware version 508.1084 (2009-01-14 01:32:01)
+> [ 4215.273450] ADDRCONF(NETDEV_UP): wlan0: link is not ready
+> [ 4238.260117] b43-phy1: Broadcom 4322 WLAN found (core revision 16)
+> [ 4238.283448] ieee80211 phy1: Selected rate control algorithm 'minstrel_ht'
+> [ 4238.283765] Registered led device: b43-phy1::tx
+> [ 4238.283801] Registered led device: b43-phy1::rx
+> [ 4238.283840] Registered led device: b43-phy1::radio
+> [ 4238.283864] Broadcom 43xx driver loaded [ Features: PMNLS, Firmware-ID: FW13 ]
+> [ 4238.486290] b43-phy1: Loading firmware version 508.1084 (2009-01-14 01:32:01)
 
-Current bcm47xx/53xx SoCs from Broadcom also use this architecture for
-the system bus (like the older ones used SSB), and they usually have
-ethernet macs, memory controllers, mips cores on it (and, as far as I
-can see, also always a 802.11 core).
+Thanks for your report! :) Support in 2.6.38 is known to be speed
+limited. Actually, if you check
+http://wireless.kernel.org/en/users/Drivers/b43 , we report BCM4322 as
+supported in 2.6.39+. With this newer kernel you should get 54M TX.
 
-
-Jonas
+-- 
+Rafa?
