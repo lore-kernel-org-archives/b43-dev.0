@@ -1,54 +1,92 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 18 Apr 2011 16:31:02 +0200
+Date: Mon, 18 Apr 2011 17:53:00 +0200
 Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
-In-Reply-To: <201104181619.35115.arnd@arndb.de>
+In-Reply-To: <1303140940.31595.45.camel@dev.znau.edu.ua>
 References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
 	<201104171938.12834.arnd@arndb.de>
 	<BANLkTim6iCAsViJQS4XrY-XObs8pp-BiQQ@mail.gmail.com>
 	<201104181619.35115.arnd@arndb.de>
-Message-ID: <BANLkTinB-9h=bZg9zg219i2wi3zUCA6mcw@mail.gmail.com>
+	<BANLkTinB-9h=bZg9zg219i2wi3zUCA6mcw@mail.gmail.com>
+	<1303140940.31595.45.camel@dev.znau.edu.ua>
+Message-ID: <BANLkTikBau8GYiO=Ez=m2t-72QJq3=vUrg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-W dniu 18 kwietnia 2011 16:19 u?ytkownik Arnd Bergmann <arnd@arndb.de> napisa?:
-> On Monday 18 April 2011, Rafa? Mi?ecki wrote:
->> W dniu 17 kwietnia 2011 19:38 u?ytkownik Arnd Bergmann <arnd@arndb.de> napisa?:
->>
->> > In general, the bus_type directly relates to how a device gets probed.
->> > If broadcom uses the same basic register layout as regular AMBA devices,
->> > it should use the amba bus type.
->>
->> From Broadcom side we *could* use some registers that are AMBA
->> specific, they are present... but there is totally no point in doing
->> that. Everything we use is Broadcom specific.
->>
->>
->> > I think it would be fine to extend the AMBA bus slightly if there are
->> > just minor differences.
->>
->> As I said, Broadcom specific driver use nothing from AMBA common
->> things. Plus we implement routines that are Broadcom specific and no
->> other platform will use them.
->
-> You mean the hardware has two sets of registers containing the same
-> information, one of them the standard registers, and one with broadcom
-> specific ones?
->
-> Why don't you just use the standard ones then?
+W dniu 18 kwietnia 2011 17:35 u?ytkownik George Kashperko
+<george@znau.edu.ua> napisa?:
+> Unfortunately still have just one axi-based box to play with. Will be
+> much appreciated if you could share EROM dumps from your boards to get
+> better understanding of agents/wrappers coupling and relations.
 
-No. Did you read my first mail in this thread?
+You're welcome.
 
-There is pair of cores for every device. First is AMBA-specific called
-agent/wrapper and second one is Broadcom-specific.
-
-AMBA specific core called agent/wrapper has AMBA specific registers:
-CID and PID. However we do not ever read that in Broadcom driver,
-because that are useless for us. On AMBA specific core we use only
-some Broadcom specific registers to manage (enable/disable) *second*
-(Broadcom-specific) core.
+It's just my standard card, not SoC.
 
 -- 
 Rafa?
+-------------- next part --------------
+0x4BF80001	TAG==CI		CID==0x800
+0x22004211	TAG==CI		PORTS==1+1	WRAPPERS==1+0
+0x00000003	TAG==MST_PORT
+0x18000005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+0x181000C5	TAG==ADDR	ST==MST_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+
+0x4BF81201	TAG==CI		CID==0x812
+0x17004211	TAG==CI		PORTS==1+1	WRAPPERS==1+0
+0x00000103	TAG==MST_PORT
+0x18001005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+0x181010C5	TAG==ADDR	ST==MST_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+
+0x4BF82001	TAG==CI		CID==0x820
+0x0F084411	TAG==CI		PORTS==1+2	WRAPPERS==1+1
+0x00000203	TAG==MST_PORT
+0x18002005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+0x08000135	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==1		AD_AG32==0	AD_SZ_MASK==0x30==SZD
+0x08000000					SIZEL==...			SD_SG32==0
+0x0000013D	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==1		AD_AG32==8	AD_SZ_MASK==0x30==SZD
+0x80000000					ADDRH==...
+0x00000008					SIZEL==...			SD_SG32==8
+0x80000000					SIZEH==...
+0x181020C5	TAG==ADDR	ST==MST_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+0x18103185	TAG==ADDR	ST==SLV_WRAP	ADDRL==...	PORT==1		AD_AG32==0	AD_SZ_MASK==0
+
+0x43B13501	TAG==CI		CID==0x135
+0x00080201	TAG==CI		PORTS==0+1	WRAPPERS==0+1
+0x18000065	TAG==ADDR	ST==BRIDGE	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0x60
+0x18104085	TAG==ADDR	ST==SLV_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+
+0x43B13501	TAG==CI		CID==0x135
+0x00080201	TAG==CI		PORTS==0+1	WRAPPERS==0+1
+0x18100075	TAG==ADDR	ST==BRIDGE	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0x30==SZD
+0x00009000					SIZEL=...
+0x18105085	TAG==ADDR	ST==SLV_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+
+0x43B36701	TAG==CI		CID==0x367 (note: OOB_ROUTER, we do not care about lack of wrappers)
+0x00000201	TAG==CI		PORTS==0+1	WRAPPERS==0+0
+0x18106005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
+
+0x43B36601	TAG==CI		CID==0x366
+0x00000201	TAG==CI		PORTS==0+1	WRAPPERS==0+0
+0x18107005	(...) ? NO WRAPPERS
+
+0x43B30101	TAG==CI		CID==0x301
+0x00000201	TAG==CI		PORTS==0+1	WRAPPERS==0+0
+0x18003005	(...) ? NO WRAPPERS
+
+0x43BFFF01	TAG==CI		CID==0xFFF
+0x00080201	TAG==CI		PORTS==0+1	WRAPPERS==0+1
+0x00000035	(...) ? MANUF_ARM && DEF_AI_COMP
+0x08000000	(...) ? MANUF_ARM && DEF_AI_COMP
+0x10000035	(...) ? MANUF_ARM && DEF_AI_COMP
+0x08000000	(...) ? MANUF_ARM && DEF_AI_COMP
+0x18004035	(...) ? MANUF_ARM && DEF_AI_COMP
+0x000FC000	(...) ? MANUF_ARM && DEF_AI_COMP
+0x18109035	(...) ? MANUF_ARM && DEF_AI_COMP
+0xE7EF7008	(...) ? MANUF_ARM && DEF_AI_COMP
+0x7FFFFFFF	(...) ? MANUF_ARM && DEF_AI_COMP
+0x18108085	(...) ? MANUF_ARM && DEF_AI_COMP
+
+0x0000000F	TAG==END
