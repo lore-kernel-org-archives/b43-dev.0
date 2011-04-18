@@ -1,52 +1,53 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 17 Apr 2011 23:34:43 +0200
-Subject: A small error in b43
-In-Reply-To: <alpine.DEB.2.01.1104171138421.18728@trent.utfs.org>
-References: <alpine.DEB.2.01.1104162313180.18728@trent.utfs.org>
-	<BANLkTimm-cJ6tvnuMpPvV4OPMmGXPZqCbA@mail.gmail.com>
-	<alpine.DEB.2.01.1104170131420.18728@trent.utfs.org>
-	<BANLkTin70cjZM1Rs5fL7mdByqrL0pL5__w@mail.gmail.com>
-	<alpine.DEB.2.01.1104171138421.18728@trent.utfs.org>
-Message-ID: <BANLkTikm=CWLgLzRfErtoCDsfW4gfvxjYg@mail.gmail.com>
+Date: Mon, 18 Apr 2011 14:19:38 +0200
+Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
+In-Reply-To: <201104171938.12834.arnd@arndb.de>
+References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
+	<1302892585.30441.12.camel@dev.znau.edu.ua>
+	<BANLkTi=16i+D8frz3X2f+JDtp4hbJKLL3A@mail.gmail.com>
+	<201104171938.12834.arnd@arndb.de>
+Message-ID: <BANLkTim6iCAsViJQS4XrY-XObs8pp-BiQQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-W dniu 17 kwietnia 2011 20:52 u?ytkownik Christian Kujau
-<lists@nerdbynature.de> napisa?:
-> On Sun, 17 Apr 2011 at 12:27, Rafa? Mi?ecki wrote:
->> How did you test this speed? Was this iperf or something else? 1.2MBps
->> is 9.6 Mbps. I was able to achieve 15.2 Mbps (1.9 MBps) with the same
->> card.
+W dniu 17 kwietnia 2011 19:38 u?ytkownik Arnd Bergmann <arnd@arndb.de> napisa?:
+> On Friday 15 April 2011, Rafa? Mi?ecki wrote:
+>> W dniu 15 kwietnia 2011 20:36 u?ytkownik George Kashperko
+>> <george@znau.edu.ua> napisa?:
+>> >> >> Arnd: I found you saying:
+>> >> >> > I believe the one thing we really want from this driver is the bus
+>> >> >> > scan code, which is not present in the amba bus implementation,
+>> >> >> I explained how it works, I believe scanning (EPROM in this case) it
+>> >> >> Broadcom specific, not really AMBA standard. How do you see it?
+>> >>
+>> >> Maybe EPROM is not Broadcom specific, but I suspect the content we
+>> >> deal with in bcmai/axi is Broadcom specific. I didn't see any notes of
+>> >> manuf/id/rev/class we deal with. So I guess everything we (out
+>> >> driver) read from EPROM is Bcm specific.
+>> >>
+>> >
+>> > Played around amba registers on bcm4716. For all amba cores present
+>> > (under all I mean broadcom ip core agents, oob router core, erom core,
+>> > and other I-dont-know-what-for cores present at 0x18100000). All those
+>> > feature AMBA_CID (0xb105f00d) as PrimeCell ID, and slightly different
+>> > PrimeCell PeripheralIDs:
+>> > * vendor 0xBB, part_number 0x368 for broadcom cores' agents;
+>> > * vendor 0xBB, part_number 0x367 for OOB router core (don't ask me wth
+>> > is this please);
+>> > * vendor 0xBB, part_number 0x366 for EROM core;
+>> >
+>> > ARM vendor id is 0x41. Might 0xBB is Broadcom vendor id but I've found
+>> > no evidence for that with google.
+>>
+>> Yeah, as I suspected, everything except Broadcom specific cores
+>> matches AMBA standards quite nicely. Still, I don't see anything in it
+>> we could use for driver.
+>>
+>> Let's wait for Russell and Arnd to comment.
 >
-> No, I did not involve any fancy tools, just netcat on both sides and "pv"
-> inbetween:
->
-> server$ nc -l 1234 | pv | dd of=/dev/null
-> client$ dd if=/dev/zero | nc server 1234
->
-> ..and "pv" prints out the data rate during the test (and "dd" does it too
-> at the end.
->
->> What were the conditions? Were you far away from AP?
->
-> The AP is a Linksys WRT54GL router (802.11abg) and I'm 3m away from it -
-> the same distance as when it's booted in MacOS.
->
-> I've just retested with MacOS again and with the "test" above I'm only
-> getting 2.5MBps too, not quite the 3MBps I was talking about. The AP is
-> quite old, so maybe I cannot get any higher than this anyway.
->
->> You can see my comparison for PHY rev4, which means for example
->> 14e4:432b: http://zajec.net/blog/view/2011-b43-n-phy-rev3plus-performance
->
-> I'm going to give iperf a try and report back.
-
-Thanks, I'll try nc && dd.
-
-Did you connect your server by cable to the AP?
-
--- 
-Rafa?
+> In general, the bus_type directly relates to how a device gets probed.
+> If broadcom uses the same basic register layout as regular AMBA devices,
+> it should use the amba bus type.
