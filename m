@@ -1,53 +1,54 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 18 Apr 2011 14:19:38 +0200
+Date: Mon, 18 Apr 2011 16:31:02 +0200
 Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
-In-Reply-To: <201104171938.12834.arnd@arndb.de>
+In-Reply-To: <201104181619.35115.arnd@arndb.de>
 References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
-	<1302892585.30441.12.camel@dev.znau.edu.ua>
-	<BANLkTi=16i+D8frz3X2f+JDtp4hbJKLL3A@mail.gmail.com>
 	<201104171938.12834.arnd@arndb.de>
-Message-ID: <BANLkTim6iCAsViJQS4XrY-XObs8pp-BiQQ@mail.gmail.com>
+	<BANLkTim6iCAsViJQS4XrY-XObs8pp-BiQQ@mail.gmail.com>
+	<201104181619.35115.arnd@arndb.de>
+Message-ID: <BANLkTinB-9h=bZg9zg219i2wi3zUCA6mcw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-W dniu 17 kwietnia 2011 19:38 u?ytkownik Arnd Bergmann <arnd@arndb.de> napisa?:
-> On Friday 15 April 2011, Rafa? Mi?ecki wrote:
->> W dniu 15 kwietnia 2011 20:36 u?ytkownik George Kashperko
->> <george@znau.edu.ua> napisa?:
->> >> >> Arnd: I found you saying:
->> >> >> > I believe the one thing we really want from this driver is the bus
->> >> >> > scan code, which is not present in the amba bus implementation,
->> >> >> I explained how it works, I believe scanning (EPROM in this case) it
->> >> >> Broadcom specific, not really AMBA standard. How do you see it?
->> >>
->> >> Maybe EPROM is not Broadcom specific, but I suspect the content we
->> >> deal with in bcmai/axi is Broadcom specific. I didn't see any notes of
->> >> manuf/id/rev/class we deal with. So I guess everything we (out
->> >> driver) read from EPROM is Bcm specific.
->> >>
->> >
->> > Played around amba registers on bcm4716. For all amba cores present
->> > (under all I mean broadcom ip core agents, oob router core, erom core,
->> > and other I-dont-know-what-for cores present at 0x18100000). All those
->> > feature AMBA_CID (0xb105f00d) as PrimeCell ID, and slightly different
->> > PrimeCell PeripheralIDs:
->> > * vendor 0xBB, part_number 0x368 for broadcom cores' agents;
->> > * vendor 0xBB, part_number 0x367 for OOB router core (don't ask me wth
->> > is this please);
->> > * vendor 0xBB, part_number 0x366 for EROM core;
->> >
->> > ARM vendor id is 0x41. Might 0xBB is Broadcom vendor id but I've found
->> > no evidence for that with google.
+W dniu 18 kwietnia 2011 16:19 u?ytkownik Arnd Bergmann <arnd@arndb.de> napisa?:
+> On Monday 18 April 2011, Rafa? Mi?ecki wrote:
+>> W dniu 17 kwietnia 2011 19:38 u?ytkownik Arnd Bergmann <arnd@arndb.de> napisa?:
 >>
->> Yeah, as I suspected, everything except Broadcom specific cores
->> matches AMBA standards quite nicely. Still, I don't see anything in it
->> we could use for driver.
+>> > In general, the bus_type directly relates to how a device gets probed.
+>> > If broadcom uses the same basic register layout as regular AMBA devices,
+>> > it should use the amba bus type.
 >>
->> Let's wait for Russell and Arnd to comment.
+>> From Broadcom side we *could* use some registers that are AMBA
+>> specific, they are present... but there is totally no point in doing
+>> that. Everything we use is Broadcom specific.
+>>
+>>
+>> > I think it would be fine to extend the AMBA bus slightly if there are
+>> > just minor differences.
+>>
+>> As I said, Broadcom specific driver use nothing from AMBA common
+>> things. Plus we implement routines that are Broadcom specific and no
+>> other platform will use them.
 >
-> In general, the bus_type directly relates to how a device gets probed.
-> If broadcom uses the same basic register layout as regular AMBA devices,
-> it should use the amba bus type.
+> You mean the hardware has two sets of registers containing the same
+> information, one of them the standard registers, and one with broadcom
+> specific ones?
+>
+> Why don't you just use the standard ones then?
+
+No. Did you read my first mail in this thread?
+
+There is pair of cores for every device. First is AMBA-specific called
+agent/wrapper and second one is Broadcom-specific.
+
+AMBA specific core called agent/wrapper has AMBA specific registers:
+CID and PID. However we do not ever read that in Broadcom driver,
+because that are useless for us. On AMBA specific core we use only
+some Broadcom specific registers to manage (enable/disable) *second*
+(Broadcom-specific) core.
+
+-- 
+Rafa?
