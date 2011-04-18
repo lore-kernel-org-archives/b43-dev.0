@@ -1,92 +1,50 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 18 Apr 2011 17:53:00 +0200
-Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
-In-Reply-To: <1303140940.31595.45.camel@dev.znau.edu.ua>
-References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
-	<201104171938.12834.arnd@arndb.de>
-	<BANLkTim6iCAsViJQS4XrY-XObs8pp-BiQQ@mail.gmail.com>
-	<201104181619.35115.arnd@arndb.de>
-	<BANLkTinB-9h=bZg9zg219i2wi3zUCA6mcw@mail.gmail.com>
-	<1303140940.31595.45.camel@dev.znau.edu.ua>
-Message-ID: <BANLkTikBau8GYiO=Ez=m2t-72QJq3=vUrg@mail.gmail.com>
+From: Todd Walter <twalter@rogers.com>
+Date: Mon, 18 Apr 2011 14:39:01 -0400
+Subject: Strange DMA error
+Message-ID: <4DAC8545.2050907@rogers.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-W dniu 18 kwietnia 2011 17:35 u?ytkownik George Kashperko
-<george@znau.edu.ua> napisa?:
-> Unfortunately still have just one axi-based box to play with. Will be
-> much appreciated if you could share EROM dumps from your boards to get
-> better understanding of agents/wrappers coupling and relations.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-You're welcome.
+I have a BCM4312 (using SSB) in a HP Mini 311 with an odd disconnect
+issue.  If I use the link heavily (ie, streaming a movie) then all is
+usually well.  If the link is idle it bombs with an error to stderr.
+This happens with the hardware power control on or off.  Long transfers
+do crash as well, just much less frequently.  For instance, a streamed
+movie might go an hour and I can simply re-cycle wlan0 and recover.
+However, if I am surfing it will die while I am reading one web page.
+PIO mode is worse; typically it fails during the 4-way handshake
+(timeout) and even when it works transfers will consume >70% of the CPU
+and crash.  When a PIO mode drops I have to cold-boot to recover use of
+the wireless card.  I have attached the PCI information for the card and
+dmesg output as I am at a loss as how to procede.
 
-It's just my standard card, not SoC.
+Thanks for your time,
 
--- 
-Rafa?
+- - Todd.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAk2shUUACgkQGfMwkL5Ux8eGYgCeMO0VYLPdh8E6aeht8WAL06JK
+0O0AnibwqpMM1+Ane/YrCQRroyGNmNwe
+=vrqi
+-----END PGP SIGNATURE-----
 -------------- next part --------------
-0x4BF80001	TAG==CI		CID==0x800
-0x22004211	TAG==CI		PORTS==1+1	WRAPPERS==1+0
-0x00000003	TAG==MST_PORT
-0x18000005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-0x181000C5	TAG==ADDR	ST==MST_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-
-0x4BF81201	TAG==CI		CID==0x812
-0x17004211	TAG==CI		PORTS==1+1	WRAPPERS==1+0
-0x00000103	TAG==MST_PORT
-0x18001005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-0x181010C5	TAG==ADDR	ST==MST_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-
-0x4BF82001	TAG==CI		CID==0x820
-0x0F084411	TAG==CI		PORTS==1+2	WRAPPERS==1+1
-0x00000203	TAG==MST_PORT
-0x18002005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-0x08000135	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==1		AD_AG32==0	AD_SZ_MASK==0x30==SZD
-0x08000000					SIZEL==...			SD_SG32==0
-0x0000013D	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==1		AD_AG32==8	AD_SZ_MASK==0x30==SZD
-0x80000000					ADDRH==...
-0x00000008					SIZEL==...			SD_SG32==8
-0x80000000					SIZEH==...
-0x181020C5	TAG==ADDR	ST==MST_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-0x18103185	TAG==ADDR	ST==SLV_WRAP	ADDRL==...	PORT==1		AD_AG32==0	AD_SZ_MASK==0
-
-0x43B13501	TAG==CI		CID==0x135
-0x00080201	TAG==CI		PORTS==0+1	WRAPPERS==0+1
-0x18000065	TAG==ADDR	ST==BRIDGE	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0x60
-0x18104085	TAG==ADDR	ST==SLV_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-
-0x43B13501	TAG==CI		CID==0x135
-0x00080201	TAG==CI		PORTS==0+1	WRAPPERS==0+1
-0x18100075	TAG==ADDR	ST==BRIDGE	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0x30==SZD
-0x00009000					SIZEL=...
-0x18105085	TAG==ADDR	ST==SLV_WRAP	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-
-0x43B36701	TAG==CI		CID==0x367 (note: OOB_ROUTER, we do not care about lack of wrappers)
-0x00000201	TAG==CI		PORTS==0+1	WRAPPERS==0+0
-0x18106005	TAG==ADDR	ST==SLV_PORT	ADDRL==...	PORT==0		AD_AG32==0	AD_SZ_MASK==0
-
-0x43B36601	TAG==CI		CID==0x366
-0x00000201	TAG==CI		PORTS==0+1	WRAPPERS==0+0
-0x18107005	(...) ? NO WRAPPERS
-
-0x43B30101	TAG==CI		CID==0x301
-0x00000201	TAG==CI		PORTS==0+1	WRAPPERS==0+0
-0x18003005	(...) ? NO WRAPPERS
-
-0x43BFFF01	TAG==CI		CID==0xFFF
-0x00080201	TAG==CI		PORTS==0+1	WRAPPERS==0+1
-0x00000035	(...) ? MANUF_ARM && DEF_AI_COMP
-0x08000000	(...) ? MANUF_ARM && DEF_AI_COMP
-0x10000035	(...) ? MANUF_ARM && DEF_AI_COMP
-0x08000000	(...) ? MANUF_ARM && DEF_AI_COMP
-0x18004035	(...) ? MANUF_ARM && DEF_AI_COMP
-0x000FC000	(...) ? MANUF_ARM && DEF_AI_COMP
-0x18109035	(...) ? MANUF_ARM && DEF_AI_COMP
-0xE7EF7008	(...) ? MANUF_ARM && DEF_AI_COMP
-0x7FFFFFFF	(...) ? MANUF_ARM && DEF_AI_COMP
-0x18108085	(...) ? MANUF_ARM && DEF_AI_COMP
-
-0x0000000F	TAG==END
+An embedded and charset-unspecified text was scrubbed...
+Name: b43_disconnect_problem.txt
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110418/886283dc/attachment-0003.txt>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: b43pci.txt
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110418/886283dc/attachment-0004.txt>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: hexspace.txt
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110418/886283dc/attachment-0005.txt>
