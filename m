@@ -1,32 +1,38 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 18 Apr 2011 20:57:09 +0200
-Subject: Strange DMA error
-In-Reply-To: <4DAC8545.2050907@rogers.com>
-References: <4DAC8545.2050907@rogers.com>
-Message-ID: <BANLkTi=awUBRSMhytKV7MyQGVP+GteZN_w@mail.gmail.com>
+Date: Tue, 19 Apr 2011 12:18:35 +0200
+Subject: [14e4:4315] Fatal DMA errors on Dell Vostro 1310 (Celeron M540)
+In-Reply-To: <4BB81CAD.10602@lwfinger.net>
+References: <20100402171105.GA10965@tsubasa>
+	<r2u69e28c911004030915x38f49291g64dc120a4998045d@mail.gmail.com>
+	<y2u69e28c911004030915scb998ccbvb21885215a524740@mail.gmail.com>
+	<201004032000.51561.mb@bu3sch.de> <4BB81CAD.10602@lwfinger.net>
+Message-ID: <BANLkTindomnkmp+hRhtsd_N1CbdZ_KKRTA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/4/18 Todd Walter <twalter@rogers.com>:
-> I have a BCM4312 (using SSB) in a HP Mini 311 with an odd disconnect
-> issue. ?If I use the link heavily (ie, streaming a movie) then all is
-> usually well. ?If the link is idle it bombs with an error to stderr.
-> This happens with the hardware power control on or off. ?Long transfers
-> do crash as well, just much less frequently. ?For instance, a streamed
-> movie might go an hour and I can simply re-cycle wlan0 and recover.
-> However, if I am surfing it will die while I am reading one web page.
-> PIO mode is worse; typically it fails during the 4-way handshake
-> (timeout) and even when it works transfers will consume >70% of the CPU
-> and crash. ?When a PIO mode drops I have to cold-boot to recover use of
-> the wireless card. ?I have attached the PCI information for the card and
-> dmesg output as I am at a loss as how to procede.
+2010/4/4 Larry Finger <Larry.Finger@lwfinger.net>:
+> With the PCI-E core selected, read the contents of MMIO address 0x0800.
+> Mask that result with 0xF000 and compare the result with (PCI-E core
+> index) << 12. If the two are not equal, maskset 0x800 with mask 0x0FFF
+> and set with (PCI-E core index) << 12.
 
-Can you just explain, what errors are you seeing? What is that bomb of
-errors in your stderr? Can you see anything else than just:
-wlan0: detected beacon loss from AP - sending probe request
+Larry, I think you didn't document this one in specs.
+
+
+> There is also a new section to be placed near the end of
+> ssb_pcicore_dev_irqvecs_enable() in the PCI-E branch of the if statement
+> according to the following:
+>
+> ?If (chip id is 0x4311 AND chip revision is 2) OR chip id is 0x4312
+> ? Maskset SSB_IMCFGLO with mask ~(SSB_IMCFGLO_SERTO |
+> ? ? SSB_IMCFGLO_REQTO) and set with 3
+>
+> So far, those are the only differences that I have found.
+
+Same here.
 
 -- 
 Rafa?
