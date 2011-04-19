@@ -1,69 +1,31 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 19 Apr 2011 16:20:17 +0200
-Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
-In-Reply-To: <op.vt6ufu1n3ri7v4@arend-laptop>
-References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
-	<1302892585.30441.12.camel@dev.znau.edu.ua>
-	<BANLkTi=16i+D8frz3X2f+JDtp4hbJKLL3A@mail.gmail.com>
-	<201104171938.12834.arnd@arndb.de> <op.vt6ufu1n3ri7v4@arend-laptop>
-Message-ID: <BANLkTimcR9Z54kgHDK63=jL1U-yvWspjRg@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 19 Apr 2011 22:40:22 +0200
+Subject: [PATCH 1/3] ssb: pci: trivial: correct amount of maximum retries
+Message-ID: <1303245624-3057-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-W dniu 19 kwietnia 2011 15:58 u?ytkownik Arend van Spriel
-<arend@broadcom.com> napisa?:
-> On Sun, 17 Apr 2011 19:38:12 +0200, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Hi Rafa?,
->
-> As you probably expected I tried to integrate and use your bcmai/bcmaxi/?
-> driver with our brcm80211 driver (making progress). In the mean time I tried
-> to follow the discussions going on, but I am still catching up.
->
->> Compare this to the PCI bus type, which essentially deals with devices
->> that have a PCI configuration space that contains generic (irq, memory,
->> vendor/device ID, ...) registers along with device specific registers.
->
-> How much alike is the (BCM)AXI bus type? My assumption was that each
-> registered PCI device is handled by a single driver module. In the
-> current(?) bcmai implementation each device driver is called with the
-> appropriate device structure reference, but it will also have the bus
-> structure reference and through that can also access other cores on the
-> (bcm)axi bus. This seems to me a potential issue when there are no
-> synchronization mechanisms in place (whether in a SoC configuration or
-> PCI-hosted). Does the PCI bus type allow driver for device A access
-> device B?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/driver_pcicore.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-There are bus-specific infos that have to be available for drivers,
-like board id, sprom, CC access. So bcmai(?) drivers have to have
-access to bus struct.
-
-One core driver should never touch other core, like 80211 touching ETH
-or USB or anything. Exception is CC and maybe PCI(e).
-
-I still have to make use of all windows to improve cores access.
-
-
->> A new bus_type really only makes sense if you expect a lot of devices
->> to use this and you want to have the probing in the bus. If you only
->> want to have a way to enumerate devices that get created by the
->> parent driver, you can also use platform devices.
->
-> The main assumption of the (bcm)axi driver seems to be that each core can
-> be considered as a device. Correct me if I am wrong, but I consider a
-> device to be an entity providing a particular system function. So an
-> ethernet device provides ethernet connectivity function, a mixer device
-> provides sound mixing function, and so on. The cores within a chip are not
-> always self-contained like this. To clarify let's say a system function is
-> realized by programming core A, core B, and finally trigger core A to set
-> the function in motion. This implies the need of coordination between the
-> programming steps on those cores.
-
-What cores may need to access each other? AFAIK so far we didn't meet
-such a cores.
-
+diff --git a/drivers/ssb/driver_pcicore.c b/drivers/ssb/driver_pcicore.c
+index 1ba9f0e..dbda168 100644
+--- a/drivers/ssb/driver_pcicore.c
++++ b/drivers/ssb/driver_pcicore.c
+@@ -522,7 +522,7 @@ static u16 ssb_pcie_mdio_read(struct ssb_pcicore *pc, u8 device, u8 address)
+ 	pcicore_write32(pc, mdio_data, v);
+ 	/* Wait for the device to complete the transaction */
+ 	udelay(10);
+-	for (i = 0; i < 200; i++) {
++	for (i = 0; i < max_retries; i++) {
+ 		v = pcicore_read32(pc, mdio_control);
+ 		if (v & 0x100 /* Trans complete */) {
+ 			udelay(10);
 -- 
-Rafa?
+1.7.3.4
