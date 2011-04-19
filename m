@@ -1,38 +1,69 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 19 Apr 2011 12:18:35 +0200
-Subject: [14e4:4315] Fatal DMA errors on Dell Vostro 1310 (Celeron M540)
-In-Reply-To: <4BB81CAD.10602@lwfinger.net>
-References: <20100402171105.GA10965@tsubasa>
-	<r2u69e28c911004030915x38f49291g64dc120a4998045d@mail.gmail.com>
-	<y2u69e28c911004030915scb998ccbvb21885215a524740@mail.gmail.com>
-	<201004032000.51561.mb@bu3sch.de> <4BB81CAD.10602@lwfinger.net>
-Message-ID: <BANLkTindomnkmp+hRhtsd_N1CbdZ_KKRTA@mail.gmail.com>
+Date: Tue, 19 Apr 2011 16:20:17 +0200
+Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
+In-Reply-To: <op.vt6ufu1n3ri7v4@arend-laptop>
+References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
+	<1302892585.30441.12.camel@dev.znau.edu.ua>
+	<BANLkTi=16i+D8frz3X2f+JDtp4hbJKLL3A@mail.gmail.com>
+	<201104171938.12834.arnd@arndb.de> <op.vt6ufu1n3ri7v4@arend-laptop>
+Message-ID: <BANLkTimcR9Z54kgHDK63=jL1U-yvWspjRg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-2010/4/4 Larry Finger <Larry.Finger@lwfinger.net>:
-> With the PCI-E core selected, read the contents of MMIO address 0x0800.
-> Mask that result with 0xF000 and compare the result with (PCI-E core
-> index) << 12. If the two are not equal, maskset 0x800 with mask 0x0FFF
-> and set with (PCI-E core index) << 12.
-
-Larry, I think you didn't document this one in specs.
-
-
-> There is also a new section to be placed near the end of
-> ssb_pcicore_dev_irqvecs_enable() in the PCI-E branch of the if statement
-> according to the following:
+W dniu 19 kwietnia 2011 15:58 u?ytkownik Arend van Spriel
+<arend@broadcom.com> napisa?:
+> On Sun, 17 Apr 2011 19:38:12 +0200, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> ?If (chip id is 0x4311 AND chip revision is 2) OR chip id is 0x4312
-> ? Maskset SSB_IMCFGLO with mask ~(SSB_IMCFGLO_SERTO |
-> ? ? SSB_IMCFGLO_REQTO) and set with 3
+> Hi Rafa?,
 >
-> So far, those are the only differences that I have found.
+> As you probably expected I tried to integrate and use your bcmai/bcmaxi/?
+> driver with our brcm80211 driver (making progress). In the mean time I tried
+> to follow the discussions going on, but I am still catching up.
+>
+>> Compare this to the PCI bus type, which essentially deals with devices
+>> that have a PCI configuration space that contains generic (irq, memory,
+>> vendor/device ID, ...) registers along with device specific registers.
+>
+> How much alike is the (BCM)AXI bus type? My assumption was that each
+> registered PCI device is handled by a single driver module. In the
+> current(?) bcmai implementation each device driver is called with the
+> appropriate device structure reference, but it will also have the bus
+> structure reference and through that can also access other cores on the
+> (bcm)axi bus. This seems to me a potential issue when there are no
+> synchronization mechanisms in place (whether in a SoC configuration or
+> PCI-hosted). Does the PCI bus type allow driver for device A access
+> device B?
 
-Same here.
+There are bus-specific infos that have to be available for drivers,
+like board id, sprom, CC access. So bcmai(?) drivers have to have
+access to bus struct.
+
+One core driver should never touch other core, like 80211 touching ETH
+or USB or anything. Exception is CC and maybe PCI(e).
+
+I still have to make use of all windows to improve cores access.
+
+
+>> A new bus_type really only makes sense if you expect a lot of devices
+>> to use this and you want to have the probing in the bus. If you only
+>> want to have a way to enumerate devices that get created by the
+>> parent driver, you can also use platform devices.
+>
+> The main assumption of the (bcm)axi driver seems to be that each core can
+> be considered as a device. Correct me if I am wrong, but I consider a
+> device to be an entity providing a particular system function. So an
+> ethernet device provides ethernet connectivity function, a mixer device
+> provides sound mixing function, and so on. The cores within a chip are not
+> always self-contained like this. To clarify let's say a system function is
+> realized by programming core A, core B, and finally trigger core A to set
+> the function in motion. This implies the need of coordination between the
+> programming steps on those cores.
+
+What cores may need to access each other? AFAIK so far we didn't meet
+such a cores.
 
 -- 
 Rafa?
