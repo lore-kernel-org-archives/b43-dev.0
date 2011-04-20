@@ -1,91 +1,56 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 20 Apr 2011 09:44:14 -0500
-Subject: [RFC][PATCH] ssb: cc: add & fix defines
-In-Reply-To: <BANLkTikssXGwo7e1aqz-Qb8D08mv9g_MNA@mail.gmail.com>
-References: <1303262232-2605-1-git-send-email-zajec5@gmail.com>	<4DAE3B17.4080308@lwfinger.net>
-	<BANLkTikssXGwo7e1aqz-Qb8D08mv9g_MNA@mail.gmail.com>
-Message-ID: <4DAEF13E.7000502@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 20 Apr 2011 19:14:09 +0200
+Subject: [RFC][PATCH] ssb: mark bus as powered up earlier?
+Message-ID: <1303319649-2189-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <mb@bu3sch.de>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 04/20/2011 03:15 AM, Rafa? Mi?ecki wrote:
-> 2011/4/20 Larry Finger<Larry.Finger@lwfinger.net>:
->> On 04/19/2011 08:17 PM, Rafa? Mi?ecki wrote:
->>>
->>> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
->>> ---
->>> With updated defines following MMIO with defines makes sense:
->>>   read32 0xf04001e0 ->    0x00010000
->>> write32 0xf04001e0<- 0x00010002 |= SSB_CHIPCO_CLKCTLST_FORCEHT
->>>   read32 0xf04001e0 ->    0x00010002
->>> (...)
->>>   read32 0xf04001e0 ->    0x00010002
->>>   read32 0xf04001e0 ->    0x00010002
->>>   read32 0xf04001e0 ->    0x00030002      (&    SSB_CHIPCO_CLKCTLST_HAVEHT)
->>>
->>> Of course MMIO does not come from 4328. It is from 4312 and wl (just SSB
->>> defs).
->>>
->>> The tricky part is that we were using SSB_CHIPCO_CLKCTLST_HAVEHT in PMU
->>> driver.
->>>
->>> My guess is that we were always checking for the wrong register and we got
->>> false positives on test for turning PLL down.
->>> ---
->>>   include/linux/ssb/ssb_driver_chipcommon.h |    9 +++++++--
->>>   1 files changed, 7 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/include/linux/ssb/ssb_driver_chipcommon.h
->>> b/include/linux/ssb/ssb_driver_chipcommon.h
->>> index ba83bc5..45e7b6c 100644
->>> --- a/include/linux/ssb/ssb_driver_chipcommon.h
->>> +++ b/include/linux/ssb/ssb_driver_chipcommon.h
->>> @@ -133,6 +133,9 @@
->>>   #define SSB_CHIPCO_GPIOIRQ            0x0074
->>>   #define SSB_CHIPCO_WATCHDOG           0x0080
->>>   #define SSB_CHIPCO_GPIOTIMER          0x0088          /* LED powersave
->>> (corerev>= 16) */
->>> +#define  SSB_CHIPCO_GPIOTIMER_OFFTIME  0x0000FFFF
->>> +#define  SSB_CHIPCO_GPIOTIMER_OFFTIME_SHIFT    0
->>> +#define  SSB_CHIPCO_GPIOTIMER_ONTIME   0xFFFF0000
->>>   #define  SSB_CHIPCO_GPIOTIMER_ONTIME_SHIFT    16
->>>   #define SSB_CHIPCO_GPIOTOUTM          0x008C          /* LED powersave
->>> (corerev>= 16) */
->>>   #define SSB_CHIPCO_CLOCK_N            0x0090
->>> @@ -191,8 +194,10 @@
->>>   #define  SSB_CHIPCO_CLKCTLST_HAVEALPREQ       0x00000008 /* ALP available
->>> request */
->>>   #define  SSB_CHIPCO_CLKCTLST_HAVEHTREQ        0x00000010 /* HT available
->>> request */
->>>   #define  SSB_CHIPCO_CLKCTLST_HWCROFF  0x00000020 /* Force HW clock
->>> request off */
->>> -#define  SSB_CHIPCO_CLKCTLST_HAVEHT    0x00010000 /* HT available */
->>> -#define  SSB_CHIPCO_CLKCTLST_HAVEALP   0x00020000 /* APL available */
->>> +#define  SSB_CHIPCO_CLKCTLST_HAVEHT    0x00010000 /* ALP available */
->>> +#define  SSB_CHIPCO_CLKCTLST_HAVEALP   0x00020000 /* HT available */
->>> +#define  SSB_CHIPCO_CLKCTLST_4328A0_HAVEHT     0x00010000 /* 4328a0 has
->>> reversed bits */
->>> +#define  SSB_CHIPCO_CLKCTLST_4328A0_HAVEALP    0x00020000 /* 4328a0 has
->>> reversed bits */
->>>   #define SSB_CHIPCO_HW_WORKAROUND      0x01E4 /* Hardware workaround
->>> (rev>= 20) */
->>>   #define SSB_CHIPCO_UART0_DATA         0x0300
->>>   #define SSB_CHIPCO_UART0_IMR          0x0304
->>
->> I agree that the HAVEHT bit is different for the 4328 than for the rest of
->> the versions, but I think you did not get the rest quite right. Having the
->> HT bit attached to a symbol named ALP and vice versa will only create
->> confusion. Make SSB_CHIPCO_CLKCTLST_HAVEHT be 0x00020000 and
->> SSB_CHIPCO_CLKCTLST_HAVEALP be 0x000100000.
->
-> It was bad idea to send patch so late. Did I really update comments
-> hoping it will work? :|
+---
+This order seems to be wrong for me, but how we didn't get any reports about
+errors? Are cores supported by ssb_chipco_set_clockmode so rare? Or is ssb so
+rarely compiled with DEBUG?
 
-I thought you were using the experimental, virtual compiler that produces code 
-based on intent as written in the comments. :)
+The problem is that ssb_chipco_set_clockmode may want to touch CC registers to
+control power of the bus. However touching registers without powered_up set
+causes warnings.
 
-Larry
+Am I right at this?
+---
+ drivers/ssb/main.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+index e06d634..076362e 100644
+--- a/drivers/ssb/main.c
++++ b/drivers/ssb/main.c
+@@ -1309,20 +1309,20 @@ EXPORT_SYMBOL(ssb_bus_may_powerdown);
+ 
+ int ssb_bus_powerup(struct ssb_bus *bus, bool dynamic_pctl)
+ {
+-	struct ssb_chipcommon *cc;
+ 	int err;
+ 	enum ssb_clkmode mode;
+ 
+ 	err = ssb_pci_xtal(bus, SSB_GPIO_XTAL | SSB_GPIO_PLL, 1);
+ 	if (err)
+ 		goto error;
+-	cc = &bus->chipco;
+-	mode = dynamic_pctl ? SSB_CLKMODE_DYNAMIC : SSB_CLKMODE_FAST;
+-	ssb_chipco_set_clockmode(cc, mode);
+ 
+ #ifdef CONFIG_SSB_DEBUG
+ 	bus->powered_up = 1;
+ #endif
++
++	mode = dynamic_pctl ? SSB_CLKMODE_DYNAMIC : SSB_CLKMODE_FAST;
++	ssb_chipco_set_clockmode(&bus->chipco, mode);
++
+ 	return 0;
+ error:
+ 	ssb_printk(KERN_ERR PFX "Bus powerup failed\n");
+-- 
+1.7.3.4
