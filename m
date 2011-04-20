@@ -1,67 +1,88 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 20 Apr 2011 09:29:53 +0200
-Subject: Could I (ab)use bus (struct bus_type) for virtual Broadcom bus?
-In-Reply-To: <op.vt76hofg3ri7v4@arend-laptop>
-References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
-	<201104171938.12834.arnd@arndb.de> <op.vt6ufu1n3ri7v4@arend-laptop>
-	<201104191635.40351.arnd@arndb.de> <op.vt76hofg3ri7v4@arend-laptop>
-Message-ID: <BANLkTinMe-KedeOAiQYES-LCC2O4BoE28w@mail.gmail.com>
+Date: Wed, 20 Apr 2011 10:15:53 +0200
+Subject: [RFC][PATCH] ssb: cc: add & fix defines
+In-Reply-To: <4DAE3B17.4080308@lwfinger.net>
+References: <1303262232-2605-1-git-send-email-zajec5@gmail.com>
+	<4DAE3B17.4080308@lwfinger.net>
+Message-ID: <BANLkTikssXGwo7e1aqz-Qb8D08mv9g_MNA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, b43-dev@lists.infradead.org
 
-2011/4/20 Arend van Spriel <arend@broadcom.com>:
-> On Tue, 19 Apr 2011 16:35:40 +0200, Arnd Bergmann <arnd@arndb.de> wrote:
+2011/4/20 Larry Finger <Larry.Finger@lwfinger.net>:
+> On 04/19/2011 08:17 PM, Rafa? Mi?ecki wrote:
+>>
+>> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+>> ---
+>> With updated defines following MMIO with defines makes sense:
+>> ?read32 0xf04001e0 -> ?0x00010000
+>> write32 0xf04001e0<- 0x00010002 |= SSB_CHIPCO_CLKCTLST_FORCEHT
+>> ?read32 0xf04001e0 -> ?0x00010002
+>> (...)
+>> ?read32 0xf04001e0 -> ?0x00010002
+>> ?read32 0xf04001e0 -> ?0x00010002
+>> ?read32 0xf04001e0 -> ?0x00030002 ? ? ?(& ?SSB_CHIPCO_CLKCTLST_HAVEHT)
+>>
+>> Of course MMIO does not come from 4328. It is from 4312 and wl (just SSB
+>> defs).
+>>
+>> The tricky part is that we were using SSB_CHIPCO_CLKCTLST_HAVEHT in PMU
+>> driver.
+>>
+>> My guess is that we were always checking for the wrong register and we got
+>> false positives on test for turning PLL down.
+>> ---
+>> ?include/linux/ssb/ssb_driver_chipcommon.h | ? ?9 +++++++--
+>> ?1 files changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/ssb/ssb_driver_chipcommon.h
+>> b/include/linux/ssb/ssb_driver_chipcommon.h
+>> index ba83bc5..45e7b6c 100644
+>> --- a/include/linux/ssb/ssb_driver_chipcommon.h
+>> +++ b/include/linux/ssb/ssb_driver_chipcommon.h
+>> @@ -133,6 +133,9 @@
+>> ?#define SSB_CHIPCO_GPIOIRQ ? ? ? ? ? ?0x0074
+>> ?#define SSB_CHIPCO_WATCHDOG ? ? ? ? ? 0x0080
+>> ?#define SSB_CHIPCO_GPIOTIMER ? ? ? ? ?0x0088 ? ? ? ? ?/* LED powersave
+>> (corerev>= 16) */
+>> +#define ?SSB_CHIPCO_GPIOTIMER_OFFTIME ?0x0000FFFF
+>> +#define ?SSB_CHIPCO_GPIOTIMER_OFFTIME_SHIFT ? ?0
+>> +#define ?SSB_CHIPCO_GPIOTIMER_ONTIME ? 0xFFFF0000
+>> ?#define ?SSB_CHIPCO_GPIOTIMER_ONTIME_SHIFT ? ?16
+>> ?#define SSB_CHIPCO_GPIOTOUTM ? ? ? ? ?0x008C ? ? ? ? ?/* LED powersave
+>> (corerev>= 16) */
+>> ?#define SSB_CHIPCO_CLOCK_N ? ? ? ? ? ?0x0090
+>> @@ -191,8 +194,10 @@
+>> ?#define ?SSB_CHIPCO_CLKCTLST_HAVEALPREQ ? ? ? 0x00000008 /* ALP available
+>> request */
+>> ?#define ?SSB_CHIPCO_CLKCTLST_HAVEHTREQ ? ? ? ?0x00000010 /* HT available
+>> request */
+>> ?#define ?SSB_CHIPCO_CLKCTLST_HWCROFF ?0x00000020 /* Force HW clock
+>> request off */
+>> -#define ?SSB_CHIPCO_CLKCTLST_HAVEHT ? ?0x00010000 /* HT available */
+>> -#define ?SSB_CHIPCO_CLKCTLST_HAVEALP ? 0x00020000 /* APL available */
+>> +#define ?SSB_CHIPCO_CLKCTLST_HAVEHT ? ?0x00010000 /* ALP available */
+>> +#define ?SSB_CHIPCO_CLKCTLST_HAVEALP ? 0x00020000 /* HT available */
+>> +#define ?SSB_CHIPCO_CLKCTLST_4328A0_HAVEHT ? ? 0x00010000 /* 4328a0 has
+>> reversed bits */
+>> +#define ?SSB_CHIPCO_CLKCTLST_4328A0_HAVEALP ? ?0x00020000 /* 4328a0 has
+>> reversed bits */
+>> ?#define SSB_CHIPCO_HW_WORKAROUND ? ? ?0x01E4 /* Hardware workaround
+>> (rev>= 20) */
+>> ?#define SSB_CHIPCO_UART0_DATA ? ? ? ? 0x0300
+>> ?#define SSB_CHIPCO_UART0_IMR ? ? ? ? ?0x0304
 >
->> On Tuesday 19 April 2011, Arend van Spriel wrote:
->>
->>> > A new bus_type really only makes sense if you expect a lot of devices
->>> > to use this and you want to have the probing in the bus. If you only
->>> > want to have a way to enumerate devices that get created by the
->>> > parent driver, you can also use platform devices.
->>>
->>> The main assumption of the (bcm)axi driver seems to be that each core can
->>> be considered as a device. Correct me if I am wrong, but I consider a
->>> device to be an entity providing a particular system function. So an
->>> ethernet device provides ethernet connectivity function, a mixer device
->>> provides sound mixing function, and so on. The cores within a chip are
->>> not
->>> always self-contained like this. To clarify let's say a system function
->>> is
->>> realized by programming core A, core B, and finally trigger core A to set
->>> the function in motion. This implies the need of coordination between the
->>> programming steps on those cores.
->>>
->>> Is my view on what is a device wrong? Does a platform device differ in
->>> this respect from a regular device?
->>
->> A platform device means something that cannot be probed, in every other
->> respect it is the same as other devices. From your explanation above,
->> it seems that you don't actually need to represent the cores on your
->> particular chips as struct device in Linux at all.
->>
->> If you wanted to use platform_device, the right way would probably
->> be an MFD device that creates multiple child devices (which end
->> up as platform_device, though you don't need to worry about that)
->> from the PCI driver. Then you could use the child devices completely
->> independent from one another.
->>
->> Since you say that the cores in this case are tightly coupled and
->> don't provide independent functionality to the system, there is
->> no need to represent them as devices.
->
-> Hi Arnd,
->
-> The case is a hypothetical one, but I consider it a likely one. The axi bus
-> driver currently registers each detected core as a device in the linux
-> device tree. My statement is that this implies loose or no coupling between
-> those cores, which is not true. One (or two) exceptions have already been
-> identified. I would expect your last line to read: ...to the system, those
-> cores should not be represented as devices.
+> I agree that the HAVEHT bit is different for the 4328 than for the rest of
+> the versions, but I think you did not get the rest quite right. Having the
+> HT bit attached to a symbol named ALP and vice versa will only create
+> confusion. Make SSB_CHIPCO_CLKCTLST_HAVEHT be 0x00020000 and
+> SSB_CHIPCO_CLKCTLST_HAVEALP be 0x000100000.
 
-I do not register that exceptional devices in my code.
+It was bad idea to send patch so late. Did I really update comments
+hoping it will work? :|
 
 -- 
 Rafa?
