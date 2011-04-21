@@ -1,56 +1,26 @@
-From: Peter Stuge <peter@stuge.se>
-Date: Thu, 21 Apr 2011 04:33:58 +0200
-Subject: One more lspci invisible Broadcom card, HP Compaq 6515b
-In-Reply-To: <BANLkTikr+akiow_O-THXkos_eHGPKBm5AQ@mail.gmail.com>
-References: <BANLkTikr+akiow_O-THXkos_eHGPKBm5AQ@mail.gmail.com>
-Message-ID: <20110421023358.7815.qmail@stuge.se>
+From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
+Date: Thu, 21 Apr 2011 20:31:43 +0200
+Subject: problems with b43 and greedy traffic
+Message-ID: <F77781A1-9992-4893-AA53-8D1FE37D772F@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Rafa? Mi?ecki wrote:
-> unitedriders has HP Compaq 6515b which physically has BCM4311 card.
-> The problem is lspci does not show his card:
-> 00:00.0 Host bridge: ATI Technologies Inc RS690 Host Bridge
-..
-> 00:14.4 PCI bridge: ATI Technologies Inc SBx00 PCI to PCI Bridge
-..
+Hello Michael,
 
-> Of course this is HP notebook with WiFi blacklist in BIOS, so
-> putting another card is not a option.
+I'm doing experiments sending greedy udp traffic from a b43 station to a b43 access point. I have noticed that switching from 2.6.34-rc7 to 2.6.35 the sendmsg call becomes "almost" non blocking when sending from a Broadcom nic while it is still as usual with other nics. 
 
-The whitelist could always be modified.
+If I load the channel with a 54Mb/s iperf stream (iperf -b54M ...) on < 2.6.35 I see that the application is blocked times to times when calling sendmsg() so that it is slowed down to the channel capabilities and packets are not internally dropped. Clearly they can still be lost on the air :-)
 
+With >= 2.6.35 the application is never blocked and all the packets exceeding the channel capabilities are internally lost by the kernel: in particular it is the asynchronous tx worker (b43_tx_work) that drops them, since it calls b43_dma_tx even if the interface has been stopped because the dma FIFO queue was full. Apart from packets being lost, the CPU load increases since packets cross all the kernel code, from udp_sendmsg down to b43_dma_tx even if they will be dropped.
 
-> I asked unitedriders for putting his BCM4311 in another machine. He
-> has access to some Sony VAIO, but card slot is different (I guess
-> HP has mini PCI, Sony has mini PCIe).
+I don't think this is the expected behavior on Linux: I did some testing to check what happens with other devices and I can experience only the first behavior on Intel and Atheros WiFi nics as well as on Fast Ethernet nics (in this case I run iperf -b100M :-) independently of the kernel version.
 
-It's completely possible that the HP has miniPCI, which would then be
-behind the SB600. But it's a little stupid not to have miniPCIe when
-the RS690 does support it.
+Strangely the b43 sources in 2.6.35 are really similar to those in 2.6.34-rc7 and the differences do not seem to justify the different behavior. There are also other weird observations (like qdisc never used in < 2.6.34-rc7) but I would like to have a first opinion from your side.
 
+Many thanks,
+-Francesco
 
-> Do you have any ideas other than faulty port or card?
-
-Sure, BIOS can fail at setting up decoding and bridges or the kernel
-can fail at following the setup.
-
-The BIOS can of course also do this selectively and/or on purpose,
-e.g. I could expect that if a wlan card is not in the whitelist.
-
-
-> unitedriders mentioned his HP has so called "touch sensive" wlan
-> switch, but it's unlikely it totally disables PCI port.
-
-Agree.
-
-
-This platform (RS690+SB600) is supported by coreboot. It would make a
-nice exercise for anyone interested in firmware development to create
-a coreboot port for his machine. (It's still a bit of work though.)
-
-
-//Peter
+P.S. what reported does not depend on the firmware version. I also tried a few cards (4306, 4311 and 4318) and nothing changed.
