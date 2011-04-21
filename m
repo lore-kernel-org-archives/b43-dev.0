@@ -1,46 +1,56 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 20 Apr 2011 21:02:52 -0500
+From: Peter Stuge <peter@stuge.se>
+Date: Thu, 21 Apr 2011 04:33:58 +0200
 Subject: One more lspci invisible Broadcom card, HP Compaq 6515b
 In-Reply-To: <BANLkTikr+akiow_O-THXkos_eHGPKBm5AQ@mail.gmail.com>
 References: <BANLkTikr+akiow_O-THXkos_eHGPKBm5AQ@mail.gmail.com>
-Message-ID: <4DAF904C.5070106@lwfinger.net>
+Message-ID: <20110421023358.7815.qmail@stuge.se>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 04/20/2011 05:42 PM, Rafa? Mi?ecki wrote:
->
-> Of course this is HP notebook with WiFi blacklist in BIOS, so putting
-> another card is not a option.
+Rafa? Mi?ecki wrote:
+> unitedriders has HP Compaq 6515b which physically has BCM4311 card.
+> The problem is lspci does not show his card:
+> 00:00.0 Host bridge: ATI Technologies Inc RS690 Host Bridge
+..
+> 00:14.4 PCI bridge: ATI Technologies Inc SBx00 PCI to PCI Bridge
+..
 
-The HP BIOS allows a small set of PCI IDs. Usually, some Intel cards will be 
-allowed as well as some Broadcom units.
+> Of course this is HP notebook with WiFi blacklist in BIOS, so
+> putting another card is not a option.
+
+The whitelist could always be modified.
+
 
 > I asked unitedriders for putting his BCM4311 in another machine. He
-> has access to some Sony VAIO, but card slot is different (I guess HP
-> has mini PCI, Sony has mini PCIe).
->
-> AFAIR last time I reported such a issue noone got any idea what could
-> be wrong. But it does not hurt to bring this question once again.
->
-> Do you have any ideas other than faulty port or card? Unfortunately
-> there is not other OS on this machine to test card detection with.
->
+> has access to some Sony VAIO, but card slot is different (I guess
+> HP has mini PCI, Sony has mini PCIe).
+
+It's completely possible that the HP has miniPCI, which would then be
+behind the SB600. But it's a little stupid not to have miniPCIe when
+the RS690 does support it.
+
+
+> Do you have any ideas other than faulty port or card?
+
+Sure, BIOS can fail at setting up decoding and bridges or the kernel
+can fail at following the setup.
+
+The BIOS can of course also do this selectively and/or on purpose,
+e.g. I could expect that if a wlan card is not in the whitelist.
+
+
 > unitedriders mentioned his HP has so called "touch sensive" wlan
 > switch, but it's unlikely it totally disables PCI port.
 
-Does the BIOS allow the wifi device to be disabled?
+Agree.
 
-If unitedriders has access to any other wifi card that will fit in the slot, 
-then the BIOS can be used to test the slot. If the other card is recognized, 
-then the BIOS error message will appear. That will definitely say that the 
-problem is not the bridge or the PCI adapter. I guess this machine has mini-PCI, 
-not mini-PCIe.
 
-The only other possibility is that all the hardware is good, but the kernel 
-cannot drive the bridge to which the BCM4311 is attached. Does the dmesg output 
-have any indication of this?
+This platform (RS690+SB600) is supported by coreboot. It would make a
+nice exercise for anyone interested in firmware development to create
+a coreboot port for his machine. (It's still a bit of work though.)
 
-Larry
+
+//Peter
