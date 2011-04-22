@@ -1,10 +1,10 @@
 From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
-Date: Fri, 22 Apr 2011 12:09:39 +0200
+Date: Fri, 22 Apr 2011 21:37:37 +0200
 Subject: problems with b43 and greedy traffic
 In-Reply-To: <4DB09CE6.9020405@lwfinger.net>
 References: <F77781A1-9992-4893-AA53-8D1FE37D772F@ing.unibs.it>
 	<4DB09CE6.9020405@lwfinger.net>
-Message-ID: <C47137B1-63AF-47CE-99E6-6FD35BA100E3@ing.unibs.it>
+Message-ID: <97728AB8-E890-4880-9D77-55F5980AF0A9@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -34,13 +34,28 @@ On Apr 21, 2011, at 11:08 PM, Larry Finger wrote:
 > Francesco,
 > 
 > I agree that there are no changes in b43 between 2.6.34-rc7 and 2.6.35 that would cause this problem. All but one of the changes are for N PHYs, and that one only removes some braces that are not needed. In addition, there are no changes in ssb that would affect anything other than SPROM loading.
-Yes, you're right, I agree something else caused this problem emerge but maybe it should be fixed in b43. All other drivers (at least those I tested) behave as expected.
+> 
+> Have you tried your test with a 2.6.38 kernel? Perhaps the problem has already been fixed. The other thing to do would be to try to bisect between .35 and .34-rc7. If you do that, consider the entire kernel, not just b43. If it is impossible for you to do either of the tests, please send me any command files that you are using, and I'll try it here.
+Hi Larry,
 
-> Have you tried your test with a 2.6.38 kernel? Perhaps the problem has already been fixed.
-Yes, I already tried: all kernels >= 2.6.35 show the same "problem".
+I just finished bisecting, git tells
 
-> The other thing to do would be to try to bisect between .35 and .34-rc7. If you do that, consider the entire kernel, not just b43. If it is impossible for you to do either of the tests, please send me any command files that you are using, and I'll try it here.
-Doing right now, I will let you know asap (if I come to a conclusion).
+	fc6055a5ba31e2c14e36e8939f9bf2b6d586a7f5 is first bad commit
+	commit fc6055a5ba31e2c14e36e8939f9bf2b6d586a7f5
+	Author: Eric Dumazet <eric.dumazet@gmail.com>
+	Date:   Fri Apr 16 12:18:22 2010 +0000
 
-Thanks,
+Some info to reproduce what I'm seeing:
+
+- receiver, can be whatever platform, run iperf like this
+	$: iperf -s -u -p 20002 -i 1
+
+- sender, whatever firmware, one of 4306-4318-4311 devices, run iperf like this
+	$: iperf -c RECEIVER_IP -u -p 20002 -b 1000M -i 1 -n 1
+
+This way you will force iperf on the sender to saturate the channel. Before this patch, the UDP socket used by iperf is blocking, -b 1000 doesn't do anything and everything goes fine, no datagram is lost at the sender. After this patch, -b 1000M will force the sending kernel to continuously accept a new datagrams, descend them to qdisc and device queue, and finally discard when the interface is stopped (that is most of the time since the device can't transmit more packets than the channel can accept).
+
+I don't know what to do in this case: as I said before, this problem shows only with b43, doesn't with Atheros (I only tested ar9170 usb devices) and intel ipw2200. Suggestions?
+
+Many thanks,
 -Francesco
