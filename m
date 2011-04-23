@@ -1,26 +1,50 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 23 Apr 2011 18:37:56 +0200
-Subject: [RFC][PATCH V2] ssb: cc: add & fix defines
-In-Reply-To: <1303290750-1992-1-git-send-email-zajec5@gmail.com>
-References: <1303290750-1992-1-git-send-email-zajec5@gmail.com>
-Message-ID: <BANLkTikL0ejKGgtGo=GmOFE-=KhqAGFeAA@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sat, 23 Apr 2011 19:30:28 +0200
+Subject: [PATCH 1/2] ssb: mark bus as powered up earlier
+Message-ID: <1303579829-2478-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-W dniu 20 kwietnia 2011 11:12 u?ytkownik Rafa? Mi?ecki
-<zajec5@gmail.com> napisa?:
-> We probably got false positive results for checking PLL being down.
->
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> ---
-> V2: update names, not just comments :| Thx Larry
+ssb_chipco_set_clockmode may want to touch CC registers to control power of the
+bus. However touching registers without powered_up set causes warnings.
 
-John: this was RFC, we generally received positive feedback (apart
-from my typo). Please, apply V2 of this patch.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/main.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+index e05ba6e..74aa2cc 100644
+--- a/drivers/ssb/main.c
++++ b/drivers/ssb/main.c
+@@ -1309,20 +1309,20 @@ EXPORT_SYMBOL(ssb_bus_may_powerdown);
+ 
+ int ssb_bus_powerup(struct ssb_bus *bus, bool dynamic_pctl)
+ {
+-	struct ssb_chipcommon *cc;
+ 	int err;
+ 	enum ssb_clkmode mode;
+ 
+ 	err = ssb_pci_xtal(bus, SSB_GPIO_XTAL | SSB_GPIO_PLL, 1);
+ 	if (err)
+ 		goto error;
+-	cc = &bus->chipco;
+-	mode = dynamic_pctl ? SSB_CLKMODE_DYNAMIC : SSB_CLKMODE_FAST;
+-	ssb_chipco_set_clockmode(cc, mode);
+ 
+ #ifdef CONFIG_SSB_DEBUG
+ 	bus->powered_up = 1;
+ #endif
++
++	mode = dynamic_pctl ? SSB_CLKMODE_DYNAMIC : SSB_CLKMODE_FAST;
++	ssb_chipco_set_clockmode(&bus->chipco, mode);
++
+ 	return 0;
+ error:
+ 	ssb_printk(KERN_ERR PFX "Bus powerup failed\n");
 -- 
-Rafa?
+1.7.3.4
