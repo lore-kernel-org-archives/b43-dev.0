@@ -1,37 +1,26 @@
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Sat, 23 Apr 2011 14:33:21 +0200
-Subject: [PATCH] drivers: brcmaxi: provide amba axi functionality in
-	separate module
-In-Reply-To: <op.vuallvn63ri7v4@arend-laptop>
-References: <1303331669-31293-1-git-send-email-arend@broadcom.com>
-	<201104211612.49805.arnd@arndb.de> <op.vuallvn63ri7v4@arend-laptop>
-Message-ID: <BANLkTinUWNvkigqkOQeYsyaAKnVXOCji8w@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 23 Apr 2011 18:37:56 +0200
+Subject: [RFC][PATCH V2] ssb: cc: add & fix defines
+In-Reply-To: <1303290750-1992-1-git-send-email-zajec5@gmail.com>
+References: <1303290750-1992-1-git-send-email-zajec5@gmail.com>
+Message-ID: <BANLkTikL0ejKGgtGo=GmOFE-=KhqAGFeAA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 
-On 21 April 2011 16:38, Arend van Spriel <arend@broadcom.com> wrote:
-> Would it be possible to make chipcommon driver optional (not doing the
-> initialization)?
+W dniu 20 kwietnia 2011 11:12 u?ytkownik Rafa? Mi?ecki
+<zajec5@gmail.com> napisa?:
+> We probably got false positive results for checking PLL being down.
+>
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> V2: update names, not just comments :| Thx Larry
 
-This would need to be done on a per-device/bus basis, at least for
-embedded. Consider the following setup (which is quite common for dual
-band routers):
+John: this was RFC, we generally received positive feedback (apart
+from my typo). Please, apply V2 of this patch.
 
-BCM4718
-+- Common Core <- provides flash write access, GPIOs, watchdog, ...
-+- 802.11 Core <- for 2.4Ghz wifi
-+- PCIe Core
-  + BCM43224
-    +- Common Core
-    +- 802.11 Core <- for 5Ghz wifi
-
-(I omitted any cores not relevant for the example)
-
-So eventually you want to able to drive both 802.11 cores, but can't
-exclusively claim both common cores.
-
-Regards
-Jonas
+-- 
+Rafa?
