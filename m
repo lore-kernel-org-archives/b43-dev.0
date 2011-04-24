@@ -1,54 +1,33 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 24 Apr 2011 11:04:19 +0200
-Subject: [PATCH V2 3/3] ssb: cc: clear GPIOPULL registers on init
-Message-ID: <1303635859-2187-3-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 24 Apr 2011 12:48:35 +0200
+Subject: Is there 14e4:4301 with BCM4303?
+Message-ID: <BANLkTimbOGYVofkqU1pE1=OH-2t3VAvXxQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-I noticed wl in case of my 14e4:4328 (which contains CC rev 19) does not clear
-that registers.
+I could not find info about BCM4303, but Jonas has posted some time
+ago bcmdevs.h with such a entry:
+#define BCM4303_D11B_ID         0x4303          /* 4303 802.11b */
 
-John: sorry for V2 so late, I noticed this just today.
----
- drivers/ssb/driver_chipcommon.c           |    6 ++++++
- include/linux/ssb/ssb_driver_chipcommon.h |    2 ++
- 2 files changed, 8 insertions(+), 0 deletions(-)
+So maybe BCM4303 really exists, however it does not seem to appear on
+14e4:4301. Of course Google is full of that, because we've wrong entry
+in lspci db:
+http://pci-ids.ucw.cz/read/PC/14e4/4301
+but Googling for "Broadcom 4303 WLAN found" gives only one result.
 
-diff --git a/drivers/ssb/driver_chipcommon.c b/drivers/ssb/driver_chipcommon.c
-index 7c031fd..b4b3733 100644
---- a/drivers/ssb/driver_chipcommon.c
-+++ b/drivers/ssb/driver_chipcommon.c
-@@ -260,6 +260,12 @@ void ssb_chipcommon_init(struct ssb_chipcommon *cc)
- 	if (cc->dev->id.revision >= 11)
- 		cc->status = chipco_read32(cc, SSB_CHIPCO_CHIPSTAT);
- 	ssb_dprintk(KERN_INFO PFX "chipcommon status is 0x%x\n", cc->status);
-+
-+	if (cc->dev->id.revision >= 20) {
-+		chipco_write32(cc, SSB_CHIPCO_GPIOPULLUP, 0);
-+		chipco_write32(cc, SSB_CHIPCO_GPIOPULLDOWN, 0);
-+	}
-+
- 	ssb_pmu_init(cc);
- 	chipco_powercontrol_init(cc);
- 	ssb_chipco_set_clockmode(cc, SSB_CLKMODE_FAST);
-diff --git a/include/linux/ssb/ssb_driver_chipcommon.h b/include/linux/ssb/ssb_driver_chipcommon.h
-index 2cdf249..6454e63 100644
---- a/include/linux/ssb/ssb_driver_chipcommon.h
-+++ b/include/linux/ssb/ssb_driver_chipcommon.h
-@@ -123,6 +123,8 @@
- #define SSB_CHIPCO_FLASHDATA		0x0048
- #define SSB_CHIPCO_BCAST_ADDR		0x0050
- #define SSB_CHIPCO_BCAST_DATA		0x0054
-+#define SSB_CHIPCO_GPIOPULLUP		0x0058		/* Rev >= 20 only */
-+#define SSB_CHIPCO_GPIOPULLDOWN		0x005C		/* Rev >= 20 only */
- #define SSB_CHIPCO_GPIOIN		0x0060
- #define SSB_CHIPCO_GPIOOUT		0x0064
- #define SSB_CHIPCO_GPIOOUTEN		0x0068
+The result is Ubuntu's launchpad:
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/192720
+this is full of:
+"Broadcom 4301 WLAN found"
+and only one reporter, Martin, posted info about 4303:
+"b43legacy-phy0: Broadcom 4303 WLAN found"
+
+I suspect this was hand-written with typo, probably suggested by entry in lspdi.
+
+Martin, can you comment on this?
+
 -- 
-1.7.3.4
+Rafa?
