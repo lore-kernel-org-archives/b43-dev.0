@@ -1,40 +1,143 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 26 Apr 2011 10:36:33 -0500
-Subject: Dumping PCI read/writes
-In-Reply-To: <BANLkTi=xaV0qOCu5rO=xn=R5V1HNDKd4+Q@mail.gmail.com>
-References: <BANLkTinAb4v+bGiFgLqFcdx_YpyiEVcgwQ@mail.gmail.com>	<4DB5BEEB.7060507@lwfinger.net>	<BANLkTim1_xQAE+-VHanQVaav4sHqhHOj_g@mail.gmail.com>
-	<BANLkTi=xaV0qOCu5rO=xn=R5V1HNDKd4+Q@mail.gmail.com>
-Message-ID: <4DB6E681.3070204@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 27 Apr 2011 17:39:47 +0200
+Subject: [PATCH 1/2] ssb: pci: separate workarounds
+Message-ID: <1303918788-4903-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 04/26/2011 04:23 AM, Rafa? Mi?ecki wrote:
-> W dniu 25 kwietnia 2011 20:38 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com>  napisa?:
->> W dniu 25 kwietnia 2011 20:35 u?ytkownik Larry Finger
->> <Larry.Finger@lwfinger.net>  napisa?:
->>> On 04/25/2011 01:13 PM, Rafa? Mi?ecki wrote:
->>>>
->>>> I've made b43 and wl dumps almost identical on Juan's HP machine. I
->>>> still get DMA errors.
->>>>
->>>> Does anyone still have patch to enable dumping PCI operations?
->>>
->>> The attached patch will log the reads and writes to the PCI config
->>> registers. Is it the one you wanted?
->>
->> Thanks.
->
-> If we assume that:
-> 1) Problem with b43 and DMA is pci config related
-> 2) Config writes done by wl can be noted by reading
->
-> Does it make sense to dump PCI config with "lspci -x" or "-xxx" for
-> cold boot vs. loaded&unloaded wl?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/driver_pcicore.c |   98 +++++++++++++++++++++++++-----------------
+ 1 files changed, 58 insertions(+), 40 deletions(-)
 
-I don't know if it will show anything, but it is an easy test.
-
-Larry
+diff --git a/drivers/ssb/driver_pcicore.c b/drivers/ssb/driver_pcicore.c
+index dbda168..adde4f0 100644
+--- a/drivers/ssb/driver_pcicore.c
++++ b/drivers/ssb/driver_pcicore.c
+@@ -21,6 +21,8 @@ static u16 ssb_pcie_mdio_read(struct ssb_pcicore *pc, u8 device, u8 address);
+ static void ssb_pcie_mdio_write(struct ssb_pcicore *pc, u8 device,
+ 				u8 address, u16 data);
+ 
++static void ssb_commit_settings(struct ssb_bus *bus);
++
+ static inline
+ u32 pcicore_read32(struct ssb_pcicore *pc, u16 offset)
+ {
+@@ -430,6 +432,60 @@ static void ssb_pcicore_serdes_workaround(struct ssb_pcicore *pc)
+ 		ssb_pcie_mdio_write(pc, serdes_pll_device, 1, tmp & ~0x4000);
+ }
+ 
++static void ssb_pcicore_pci_setup_workarounds(struct ssb_pcicore *pc)
++{
++	struct ssb_device *pdev = pc->dev;
++	struct ssb_bus *bus = pdev->bus;
++	u32 tmp;
++
++	tmp = pcicore_read32(pc, SSB_PCICORE_SBTOPCI2);
++	tmp |= SSB_PCICORE_SBTOPCI_PREF;
++	tmp |= SSB_PCICORE_SBTOPCI_BURST;
++	pcicore_write32(pc, SSB_PCICORE_SBTOPCI2, tmp);
++
++	if (pdev->id.revision < 5) {
++		tmp = ssb_read32(pdev, SSB_IMCFGLO);
++		tmp &= ~SSB_IMCFGLO_SERTO;
++		tmp |= 2;
++		tmp &= ~SSB_IMCFGLO_REQTO;
++		tmp |= 3 << SSB_IMCFGLO_REQTO_SHIFT;
++		ssb_write32(pdev, SSB_IMCFGLO, tmp);
++		ssb_commit_settings(bus);
++	} else if (pdev->id.revision >= 11) {
++		tmp = pcicore_read32(pc, SSB_PCICORE_SBTOPCI2);
++		tmp |= SSB_PCICORE_SBTOPCI_MRM;
++		pcicore_write32(pc, SSB_PCICORE_SBTOPCI2, tmp);
++	}
++}
++
++static void ssb_pcicore_pcie_setup_workarounds(struct ssb_pcicore *pc)
++{
++	struct ssb_device *pdev = pc->dev;
++	u32 tmp;
++
++	if ((pdev->id.revision == 0) || (pdev->id.revision == 1)) {
++		/* TLP Workaround register. */
++		tmp = ssb_pcie_read(pc, 0x4);
++		tmp |= 0x8;
++		ssb_pcie_write(pc, 0x4, tmp);
++	}
++	if (pdev->id.revision == 0) {
++		const u8 serdes_rx_device = 0x1F;
++
++		ssb_pcie_mdio_write(pc, serdes_rx_device,
++					2 /* Timer */, 0x8128);
++		ssb_pcie_mdio_write(pc, serdes_rx_device,
++					6 /* CDR */, 0x0100);
++		ssb_pcie_mdio_write(pc, serdes_rx_device,
++					7 /* CDR BW */, 0x1466);
++	} else if (pdev->id.revision == 1) {
++		/* DLLP Link Control register. */
++		tmp = ssb_pcie_read(pc, 0x100);
++		tmp |= 0x40;
++		ssb_pcie_write(pc, 0x100, tmp);
++	}
++}
++
+ /**************************************************
+  * Generic and Clientmode operation code.
+  **************************************************/
+@@ -646,48 +702,10 @@ int ssb_pcicore_dev_irqvecs_enable(struct ssb_pcicore *pc,
+ 	if (pc->setup_done)
+ 		goto out;
+ 	if (pdev->id.coreid == SSB_DEV_PCI) {
+-		tmp = pcicore_read32(pc, SSB_PCICORE_SBTOPCI2);
+-		tmp |= SSB_PCICORE_SBTOPCI_PREF;
+-		tmp |= SSB_PCICORE_SBTOPCI_BURST;
+-		pcicore_write32(pc, SSB_PCICORE_SBTOPCI2, tmp);
+-
+-		if (pdev->id.revision < 5) {
+-			tmp = ssb_read32(pdev, SSB_IMCFGLO);
+-			tmp &= ~SSB_IMCFGLO_SERTO;
+-			tmp |= 2;
+-			tmp &= ~SSB_IMCFGLO_REQTO;
+-			tmp |= 3 << SSB_IMCFGLO_REQTO_SHIFT;
+-			ssb_write32(pdev, SSB_IMCFGLO, tmp);
+-			ssb_commit_settings(bus);
+-		} else if (pdev->id.revision >= 11) {
+-			tmp = pcicore_read32(pc, SSB_PCICORE_SBTOPCI2);
+-			tmp |= SSB_PCICORE_SBTOPCI_MRM;
+-			pcicore_write32(pc, SSB_PCICORE_SBTOPCI2, tmp);
+-		}
++		ssb_pcicore_pci_setup_workarounds(pc);
+ 	} else {
+ 		WARN_ON(pdev->id.coreid != SSB_DEV_PCIE);
+-		//TODO: Better make defines for all these magic PCIE values.
+-		if ((pdev->id.revision == 0) || (pdev->id.revision == 1)) {
+-			/* TLP Workaround register. */
+-			tmp = ssb_pcie_read(pc, 0x4);
+-			tmp |= 0x8;
+-			ssb_pcie_write(pc, 0x4, tmp);
+-		}
+-		if (pdev->id.revision == 0) {
+-			const u8 serdes_rx_device = 0x1F;
+-
+-			ssb_pcie_mdio_write(pc, serdes_rx_device,
+-					    2 /* Timer */, 0x8128);
+-			ssb_pcie_mdio_write(pc, serdes_rx_device,
+-					    6 /* CDR */, 0x0100);
+-			ssb_pcie_mdio_write(pc, serdes_rx_device,
+-					    7 /* CDR BW */, 0x1466);
+-		} else if (pdev->id.revision == 1) {
+-			/* DLLP Link Control register. */
+-			tmp = ssb_pcie_read(pc, 0x100);
+-			tmp |= 0x40;
+-			ssb_pcie_write(pc, 0x100, tmp);
+-		}
++		ssb_pcicore_pcie_setup_workarounds(pc);
+ 	}
+ 	pc->setup_done = 1;
+ out:
+-- 
+1.7.3.4
