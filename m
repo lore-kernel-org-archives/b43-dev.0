@@ -1,40 +1,34 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
-Date: Wed, 27 Apr 2011 23:37:49 +0200
-Subject: [PATCH] ssb: cc: prepare clockmode support for cores rev 10+
-In-Reply-To: <BANLkTikJj4vA6obyCkqwsiG+Ha7aOnz=SQ@mail.gmail.com>
-References: <1303918811-4949-1-git-send-email-zajec5@gmail.com>
-	<1303936862.7373.5.camel@Nokia-N900>
-	<BANLkTikJj4vA6obyCkqwsiG+Ha7aOnz=SQ@mail.gmail.com>
-Message-ID: <1303940269.31395.6.camel@maggie>
+From: Alfred B. M. Cordero <otto-pilot@hushmail.com>
+Date: Fri, 29 Apr 2011 18:27:06 -0700
+Subject: b43 -- 4312 and built-in/static kernel
+Message-ID: <20110430012706.7ABA9E671D@smtp.hushmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Wed, 2011-04-27 at 22:52 +0200, Rafa? Mi?ecki wrote: 
-> 2011/4/27 Michael B?sch <m@bues.ch>:
-> >> +            /* udelay(150); TODO: not available in early init */
-> >
-> > udelay() should be available at this point. Are you confusing it with
-> > msleep(), which is not available that early?
-> 
-> I had no idea about this difference, thanks.
-> 
-> However I still think about initializing ChipCommon later, to let it
-> *sleep* and no to delay boot process. Should this be fine? Or are
-> there some important reasons to init ChipCommon early?
+Hello,
 
-I don't think it matters it all, if the boot process takes
-150 microseconds longer or not. So I'd rather not change it for
-no good reason.
-This new 0.00015 seconds (150 us) delay in chipcommon seems perfectly
-fine.
+I am building a static kernel. I have gotten the DVB card working 
+by adding
+the .fw to linux/firmware and so I am doing the same thing with the 
+4312.
+The kernel builds fine, the 4312 is found and seems fine.
+dmesg reports the card, lspci shows it and so does ifconfig -a.
 
-Even a few MMIO bus accesses will take longer than this tiny delay.
-And there are thousands of MMIO accesses on bootup.
-So it will hardly be measureable.
+ip link set dev wlan0 up pretty much hangs and none of the iw* 
+commands
+work.
 
--- 
-Greetings Michael.
+
+The problem may be that at the request_firmware stage there is a 
+mismatch
+between what I've compiled into the kernel and what 
+request_firmware is
+requesting. 
+
+I have ucode5.fw, b0g0bsinit and b0g0init in linux/firmware and
+added those to .config
+
+If anyone knows how to narrow this down it would be great.
