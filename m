@@ -1,50 +1,67 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 30 Apr 2011 00:20:10 -0500
-Subject: b43 -- 4312 and built-in/static kernel
-In-Reply-To: <20110430012706.7ABA9E671D@smtp.hushmail.com>
-References: <20110430012706.7ABA9E671D@smtp.hushmail.com>
-Message-ID: <4DBB9C0A.1070204@lwfinger.net>
+From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
+Date: Sat, 30 Apr 2011 17:54:18 +0200
+Subject: problems with b43 and greedy traffic
+In-Reply-To: <BANLkTi=xabq-2S_kr2NJjUc8Wk2YzEa-Bg@mail.gmail.com>
+References: <F77781A1-9992-4893-AA53-8D1FE37D772F@ing.unibs.it>
+	<4DB09CE6.9020405@lwfinger.net>
+	<3B553863-8A0A-4B8D-8F51-02FFF4B7A95C@ing.unibs.it>
+	<BANLkTi=xabq-2S_kr2NJjUc8Wk2YzEa-Bg@mail.gmail.com>
+Message-ID: <A4407086-3284-407C-BE53-A7038814880B@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 04/29/2011 08:27 PM, Alfred B. M. Cordero wrote:
-> Hello,
->
-> I am building a static kernel. I have gotten the DVB card working
-> by adding
-> the .fw to linux/firmware and so I am doing the same thing with the
-> 4312.
-> The kernel builds fine, the 4312 is found and seems fine.
-> dmesg reports the card, lspci shows it and so does ifconfig -a.
->
-> ip link set dev wlan0 up pretty much hangs and none of the iw*
-> commands
-> work.
->
->
-> The problem may be that at the request_firmware stage there is a
-> mismatch
-> between what I've compiled into the kernel and what
-> request_firmware is
-> requesting.
->
-> I have ucode5.fw, b0g0bsinit and b0g0init in linux/firmware and
-> added those to .config
->
-> If anyone knows how to narrow this down it would be great.
+On Apr 26, 2011, at 4:53 PM, Rafa? Mi?ecki wrote:
 
-What exactly do you mean by 4312? If you mean a PCI ID of 14e4:4312, then the 
-firmware above is partially correct. The ucode5.fw is correct, but you also need 
-b0g0initvals5.fw and b0g0initvals5.fw. In addition, you might need 
-a0g1initvals5.fw or a0g1initvals5. I no longer have one of those devices, thus I 
-cannot test.
+> Hi Francesco,
+> 
+> W dniu 26 kwietnia 2011 12:11 u?ytkownik
+> <francesco.gringoli@ing.unibs.it> napisa?:
+>> On Apr 21, 2011, at 11:08 PM, Larry Finger wrote:
+>> 
+>>> On 04/21/2011 01:31 PM, francesco.gringoli at ing.unibs.it wrote:
+>>>> Hello Michael,
+>>>> 
+>>>> I'm doing experiments sending greedy udp traffic from a b43 station to a b43 access point. I have noticed that switching from 2.6.34-rc7 to 2.6.35 the sendmsg call becomes "almost" non blocking when sending from a Broadcom nic while it is still as usual with other nics.
+>>>> 
+>>>> If I load the channel with a 54Mb/s iperf stream (iperf -b54M ...) on<  2.6.35 I see that the application is blocked times to times when calling sendmsg() so that it is slowed down to the channel capabilities and packets are not internally dropped. Clearly they can still be lost on the air :-)
+>>>> 
+>>>> With>= 2.6.35 the application is never blocked and all the packets exceeding the channel capabilities are internally lost by the kernel: in particular it is the asynchronous tx worker (b43_tx_work) that drops them, since it calls b43_dma_tx even if the interface has been stopped because the dma FIFO queue was full. Apart from packets being lost, the CPU load increases since packets cross all the kernel code, from udp_sendmsg down to b43_dma_tx even if they will be dropped.
+>>>> 
+>>>> I don't think this is the expected behavior on Linux: I did some testing to check what happens with other devices and I can experience only the first behavior on Intel and Atheros WiFi nics as well as on Fast Ethernet nics (in this case I run iperf -b100M :-) independently of the kernel version.
+>>>> 
+>>>> Strangely the b43 sources in 2.6.35 are really similar to those in 2.6.34-rc7 and the differences do not seem to justify the different behavior. There are also other weird observations (like qdisc never used in<  2.6.34-rc7) but I would like to have a first opinion from your side.
+>>>> 
+>>>> Many thanks,
+>>>> -Francesco
+>>>> 
+>>>> P.S. what reported does not depend on the firmware version. I also tried a few cards (4306, 4311 and 4318) and nothing changed.
+>>> 
+>>> Francesco,
+>>> 
+>>> I agree that there are no changes in b43 between 2.6.34-rc7 and 2.6.35 that would cause this problem. All but one of the changes are for N PHYs, and that one only removes some braces that are not needed. In addition, there are no changes in ssb that would affect anything other than SPROM loading.
+>>> 
+>>> Have you tried your test with a 2.6.38 kernel? Perhaps the problem has already been fixed. The other thing to do would be to try to bisect between .35 and .34-rc7. If you do that, consider the entire kernel, not just b43. If it is impossible for you to do either of the tests, please send me any command files that you are using, and I'll try it here.
+>>> 
+>>> Larry
+>> Hi Larry,
+>> 
+>> I tested SMP kernel and it is affected too. Do you think we should report this as a bug to the kernel bug list? Or could this depend on b43?
+>> 
+>> Unfortunately skb_orphan_try is called before the skb is sent down to the mac80211/driver: it is hence useless setting the "avoid orphan flag" in the skb within the b43 driver as suggested by Thomas. The next packet will have a different flag (I suppose) and it will be orphaned again.
+> 
+> I don't really have big knowledge about net architecture. I believe we
+> should try asking patch commiters about this issue. 	Eric Dumazet and
+> davem maybe?
 
-If you mean BCM4312 802.11b/g, then your firmware selection is wrong. This type 
-of device will have a PCI ID of 14e4:4315 and will require different firmware. 
-For these LP-PHY devices, b0g0initvals13.fw, lp0initvals13.fw, and ucode13.fw 
-are probably needed.
+Hi Rafa?,
 
-Larry
+thanks for your reply. That could be an idea: patching the kernel to avoid orphaning before dev_hard_start_xmit on a per driver basis requires a dedicated field in some bitmask of the net device structure. Should we contact them on netdev?
+
+-Francesco
+
+> 
+> -- 
+> Rafa?
