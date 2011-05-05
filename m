@@ -1,38 +1,27 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 5 May 2011 14:48:31 +0200
-Subject: AXI driver status => previously: Re: Could I (ab)use bus (struct
-	bus_type) for virtual Broadcom bus?
-In-Reply-To: <4DC2991F.6030703@broadcom.com>
-References: <BANLkTim7Uj2tsgFngWhUqFK_hk3Leg+sQA@mail.gmail.com>
-	<201104171938.12834.arnd@arndb.de> <op.vt6ufu1n3ri7v4@arend-laptop>
-	<201104191635.40351.arnd@arndb.de> <op.vt76hofg3ri7v4@arend-laptop>
-	<BANLkTinMe-KedeOAiQYES-LCC2O4BoE28w@mail.gmail.com>
-	<4DC2991F.6030703@broadcom.com>
-Message-ID: <BANLkTi=4zxFWKymsnZuycMowXJz_ciHuVQ@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 05 May 2011 11:55:48 -0500
+Subject: [PATCH] b43legacy: drop invalid IMCFGLO workaround
+In-Reply-To: <1304592364-5075-1-git-send-email-zajec5@gmail.com>
+References: <1304592364-5075-1-git-send-email-zajec5@gmail.com>
+Message-ID: <4DC2D694.3070200@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-W dniu 5 maja 2011 14:33 u?ytkownik Arend van Spriel
-<arend@broadcom.com> napisa?:
-> On 04/20/2011 09:29 AM, Rafa? Mi?ecki wrote:
->>
->> I do not register that exceptional devices in my code.
+On 05/05/2011 05:46 AM, Rafa? Mi?ecki wrote:
+> We were performing it on wrong core, it was outdated and is already
+> implemented in ssb.
 >
-> Hi Rafa?,
->
-> There has been some radio silence on the subject of the (bcm)axi driver. I
-> was getting a feeling that my concerns were almost all out of the way in
-> latest emails I got from Arnd and/or Jonas. Do you have an update of what
-> plans you have with this module.
+> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+> ---
+>   drivers/net/wireless/b43legacy/main.c |   32 --------------------------------
+>   1 files changed, 0 insertions(+), 32 deletions(-)
 
-Hey,
+Tested-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-I got some unique possibility to work on machine affected by DMA
-errors and I spent last 2 weeks only on solving this issue. I'm going
-to go back to AMBA topic again soo.
+and an ACK, of course.
 
--- 
-Rafa?
+Larry
