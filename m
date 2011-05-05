@@ -1,29 +1,60 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
-Date: Wed, 04 May 2011 14:48:57 +0200
-Subject: Question about IMCFGLO timeouts workaround
-In-Reply-To: <BANLkTimyDunC7anVitk=wCNJg5XN4B239A@mail.gmail.com>
-References: <BANLkTi=bppqp9K50n-5d5MOW53-LvdbfyQ@mail.gmail.com>
-	<1304512532.32096.4.camel@maggie>
-	<BANLkTimyDunC7anVitk=wCNJg5XN4B239A@mail.gmail.com>
-Message-ID: <1304513337.32096.6.camel@maggie>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu,  5 May 2011 12:45:52 +0200
+Subject: [PATCH] b43: drop invalid IMCFGLO workaround
+Message-ID: <1304592352-5042-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Wed, 2011-05-04 at 14:45 +0200, Rafa? Mi?ecki wrote: 
-> > Well, is REQTO and SERTO related to the PCI core only?
-> 
-> No. There are two documented cases:
-> 1) PCI (not e) cores rev < 5 need x32
-> 2) Some BCM4311 and BCM4312 need 0x03
-> 
-> This SSB_BUSTYPE_SSB with 0x53 is tricky for me and seems to be undocumented.
+We were performing it on wrong core, it was outdated and is already
+implemented in ssb.
 
-I'm not sure where it came from. It probably was there from the
-very first b43 version on. I don't remember why I put it there.
-Maybe you can find hints on the old (v3) specifications.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/main.c |   28 +---------------------------
+ 1 files changed, 1 insertions(+), 27 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 5af40d9..f907df0 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4213,33 +4213,7 @@ static void b43_bluetooth_coext_disable(struct b43_wldev *dev)
+ 
+ static void b43_imcfglo_timeouts_workaround(struct b43_wldev *dev)
+ {
+-#ifdef CONFIG_SSB_DRIVER_PCICORE
+-	struct ssb_bus *bus = dev->dev->bus;
+-	u32 tmp;
+-
+-	if (bus->pcicore.dev &&
+-	    bus->pcicore.dev->id.coreid == SSB_DEV_PCI &&
+-	    bus->pcicore.dev->id.revision <= 5) {
+-		/* IMCFGLO timeouts workaround. */
+-		tmp = ssb_read32(dev->dev, SSB_IMCFGLO);
+-		switch (bus->bustype) {
+-		case SSB_BUSTYPE_PCI:
+-		case SSB_BUSTYPE_PCMCIA:
+-			tmp &= ~SSB_IMCFGLO_REQTO;
+-			tmp &= ~SSB_IMCFGLO_SERTO;
+-			tmp |= 0x32;
+-			break;
+-		case SSB_BUSTYPE_SSB:
+-			tmp &= ~SSB_IMCFGLO_REQTO;
+-			tmp &= ~SSB_IMCFGLO_SERTO;
+-			tmp |= 0x53;
+-			break;
+-		default:
+-			break;
+-		}
+-		ssb_write32(dev->dev, SSB_IMCFGLO, tmp);
+-	}
+-#endif /* CONFIG_SSB_DRIVER_PCICORE */
++	/* TODO: implement 80211 core workaround here */
+ }
+ 
+ static void b43_set_synth_pu_delay(struct b43_wldev *dev, bool idle)
 -- 
-Greetings Michael.
+1.7.3.4
