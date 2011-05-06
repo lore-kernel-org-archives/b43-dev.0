@@ -1,50 +1,23 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 7 May 2011 00:14:43 +0200
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 06 May 2011 17:25:57 -0500
 Subject: Interesting 14e4:4321
-In-Reply-To: <BANLkTikoDzeujFhBYOeH4_1_d7X0B4pjBw@mail.gmail.com>
-References: <BANLkTim0usjWr8DqJQk+GQiBHmfgTjey7g@mail.gmail.com>
-	<4DC469E1.2040101@hauke-m.de>
-	<BANLkTikoDzeujFhBYOeH4_1_d7X0B4pjBw@mail.gmail.com>
-Message-ID: <BANLkTi=5C5VaJ0rJhJu50PLyP0ssjmozrw@mail.gmail.com>
+In-Reply-To: <BANLkTimqRJnhE4n-4UAxWOEObRmuSuBUSQ@mail.gmail.com>
+References: <BANLkTim0usjWr8DqJQk+GQiBHmfgTjey7g@mail.gmail.com>	<4DC467F8.9050503@lwfinger.net>
+	<BANLkTimqRJnhE4n-4UAxWOEObRmuSuBUSQ@mail.gmail.com>
+Message-ID: <4DC47575.7090700@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 6 maja 2011 23:56 u?ytkownik Jonas Gorski
-<jonas.gorski@gmail.com> napisa?:
-> 2011/5/6 Hauke Mehrtens <hauke@hauke-m.de>:
->> On 05/06/2011 10:40 PM, Rafa? Mi?ecki wrote:
->>> Swen has found 14e4:4321 in his WRT160N version 1.1. This is quite
->>> rare and interesting so I wanted to post all info about it :)
+On 05/06/2011 04:48 PM, Rafa? Mi?ecki wrote:
+>> Broadcom is really easy to hate!
 >
-> I didn't know BCM4321s identifying as 14e4:4321 are that seldom - the
-> mini-PCI card in my D-Link DSL-2741B (which is a BCM6358) also does
-> that.
+> It's some ooooold description from 2006 or so, so I'm sure it's
+> incorrect. I've no idea about 14e4:4320.
 
-Well, maybe they are well-known in OpeWRT community :) I believe we
-didn't have any reporters here. Unfortunately OpenWRT guys don't
-report their problems, fixes too often.
+The BCM4306 (14e4:4320) devices are the oldest 802.11b/g units. That is the one 
+where early revs use b43legacy and the newer ones use b43.
 
-
->>> Unfortunately this is one another BCM4321 with DMA not working. I
->>> really need to focus on this after fixing LP-PHY and adding BCMA.
->
-> Same here, dma is a no go (I have to use pio).
->
->> The SPROM is not stored on the pci card but in the nvram on the flash
->> chip of the device. This is now correctly read out in OpenWrt and we
->> will send some patches to mainline soon. [1] [2]
->
-> Same for the one in my BCM6358 - perhaps SPROM-less devices default to
-> their chip-id as the PCI device id (just wildly guessing)? I also have
-> a second BCM6358 with a BCM4322; same there (no SPROM, DMA doesn't
-> work, and it identifies as 14e4:4322).
-
-Ouch, I didn't know DMA errors also happen for BCM4322. My 14e4:432b
-one was working fine. Maybe this is Mini PCI vs. Mini PCIe? Do you
-know if your cards are PCI or PCIe?
-
--- 
-Rafa?
+Larry
