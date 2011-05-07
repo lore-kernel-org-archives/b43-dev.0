@@ -1,80 +1,30 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 7 May 2011 21:21:46 +0200
-Subject: [PATCH][WAS:bcmai,
-	axi] bcma: add Broadcom specific AMBA bus driver
-In-Reply-To: <1304794931.13983.44.camel@dev.znau.edu.ua>
-References: <1304632783-8781-1-git-send-email-zajec5@gmail.com>
-	<201105061605.31625.arnd@arndb.de>
-	<BANLkTikjr0ZTNOu69F+iKhwufE9KKMg4Tg@mail.gmail.com>
-	<BANLkTimGBNT4FkS4mO9ToLWft0bCEYcEgg@mail.gmail.com>
-	<1304790665.13983.10.camel@dev.znau.edu.ua>
-	<BANLkTikLFff_86Fvg+jSty9vGLENiELF2Q@mail.gmail.com>
-	<1304792795.13983.28.camel@dev.znau.edu.ua>
-	<BANLkTi=6BFD4OmtU1WPxjbFJQe36=mZKEA@mail.gmail.com>
-	<1304794931.13983.44.camel@dev.znau.edu.ua>
-Message-ID: <BANLkTik9FWgzpNWuMXXRjOj-rDvPNY_nCA@mail.gmail.com>
+Date: Sat, 7 May 2011 22:40:51 +0200
+Subject: ssb: where to reject dangling cores?
+Message-ID: <BANLkTimRasoDAbK+tLNFx8zK96Xe1hnHXg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org, Michael Buesch <mb@bu3sch.de>
+Cc: b43-dev <b43-dev@lists.infradead.org>
 
-2011/5/7 George Kashperko <george@znau.edu.ua>:
->> >>
->> >> The purpose is ridiculously trivial. Print user-friendly names on
->> >> scanning. Why not do that?
->> > Output like
->> > Core 0: ChipCommon (id 0x800, rev 18, vendor 0x14e4)
->> > and
->> > Core 0: id 0x800, rev 18, vendor 0x14e4
->> > both give to 99% of linux systems' end-users exactly the same consistent
->> > information. Its more than enough for diagnostic purposes (I guess
->> > scanning code does outputs this for diagnostic purposes by those less
->> > than 1% of people who are aware wth is actually that ChipCommon is, not
->> > to be just user friendly?).
->>
->> Really, what's wrong with that? Does it kill anyone's pet we print
->> this? We also do:
->> pr_err("Scanning failed because of wrong CID\n");
->> return -1;
->> While we could drop pr_err. Why to do this? Advanced used can always
->> check what -1 means.
->>
->> I just like this. I find situations when it's useful, while I don't
->> see real negatives. I want to keep this. Can we leave this that way?
->> Unless someone finds some really bad effects of this?
-> Nothing wrong except it makes kernel larger while gives _absolutely_ no
-> benefit to end users. Regardless bus code prints core name or not it
-> (core name) have absolutely no impact on driver matching.
->
-> Imagine yourself an end-user who haven't got his 80211 core matched with
-> driver and therefore he haven't got WiFi working.
-> If bus driver code outputs
-> Core X: id 0x812, rev. 8, vendor 0x4BF
-> you (as end user) will look where is 0x4BF/0x812 driver supporting
-> rev.8.
-> But if bus driver code outputs
-> Core X: MAC 802.11 (core id 0x812, rev. 8, vendor 0x4BF)
-> you (as end user) empowered with MAC 802.11 name knowledge will still
-> look where is 0x4BF/0x812 driver supporting rev.8.
+Michael, I can see code for ignoring dangling cores in both: ssb and b43.
 
-I'll ask linux-wireless instead of linux-usb or linux-arm.
+In ssb it's quite common, we have:
+1) we_support_multiple_80211_cores for 80211
+2) inline checks in ssb_bus_scan for PCI(E)
+3) inline check in ssb_bus_scan for ETHERNET
 
-I didn't expect longer discussion so I got this trivial example of
-pr_err. But it appears to be good example/question.
-
-How do you see relation between bcma_device_name and:
-int zd_ioread32v_locked(...) {
-	if (r) {
-		dev_dbg_f(zd_chip_dev(chip),
-			  "error: zd_ioread16v_locked. Error number %d\n", r);
-		return r;
-	}
+However there is also check in b43 at the beginning of b43_one_core_attach:
+if (!pdev ||
+	((pdev->device != 0x4321) &&
+	(pdev->device != 0x4313) && (pdev->device != 0x431A))) {
+	b43dbg(wl, "Ignoring unconnected 802.11 core\n");
+	return -ENODEV;
 }
 
-I believe according to your theory we should drop thi error message,
-right? It eats memory to keep this string while error code can always
-be checked in source.
+Should I move this check into ssb?
 
 -- 
 Rafa?
