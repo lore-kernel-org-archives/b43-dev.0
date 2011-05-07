@@ -1,150 +1,73 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 7 May 2011 19:35:52 +0200
+Date: Sat, 7 May 2011 20:05:24 +0200
 Subject: [PATCH][WAS:bcmai,
 	axi] bcma: add Broadcom specific AMBA bus driver
-In-Reply-To: <4DC5805C.2010202@hauke-m.de>
+In-Reply-To: <1304790665.13983.10.camel@dev.znau.edu.ua>
 References: <1304632783-8781-1-git-send-email-zajec5@gmail.com>
-	<4DC56FB9.5000208@hauke-m.de>
-	<BANLkTi=FfjK7obq0hj4TjYZc-GgzTuUC6g@mail.gmail.com>
-	<4DC57425.30206@hauke-m.de>
-	<BANLkTikTarvigU-xZNZikhLyvUWse448Tg@mail.gmail.com>
-	<4DC5805C.2010202@hauke-m.de>
-Message-ID: <BANLkTik1bZHk6+DqKpBdDOZW2=Sheia5kQ@mail.gmail.com>
+	<201105061605.31625.arnd@arndb.de>
+	<BANLkTikjr0ZTNOu69F+iKhwufE9KKMg4Tg@mail.gmail.com>
+	<BANLkTimGBNT4FkS4mO9ToLWft0bCEYcEgg@mail.gmail.com>
+	<1304790665.13983.10.camel@dev.znau.edu.ua>
+Message-ID: <BANLkTikLFff_86Fvg+jSty9vGLENiELF2Q@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-2011/5/7 Hauke Mehrtens <hauke@hauke-m.de>:
-> On 05/07/2011 06:51 PM, Rafa? Mi?ecki wrote:
->> 2011/5/7 Hauke Mehrtens <hauke@hauke-m.de>:
->>> On 05/07/2011 06:23 PM, Rafa? Mi?ecki wrote:
->>>> 2011/5/7 Hauke Mehrtens <hauke@hauke-m.de>:
->>>>> On 05/05/2011 11:59 PM, Rafa? Mi?ecki wrote:
->>>>>> Cc: Greg KH <greg@kroah.com>
->>>>>> Cc: Michael B?sch <mb@bu3sch.de>
->>>>>> Cc: Larry Finger <Larry.Finger@lwfinger.net>
->>>>>> Cc: George Kashperko <george@znau.edu.ua>
->>>>>> Cc: Arend van Spriel <arend@broadcom.com>
->>>>>> Cc: linux-arm-kernel at lists.infradead.org
->>>>>> Cc: Russell King <rmk@arm.linux.org.uk>
->>>>>> Cc: Arnd Bergmann <arnd@arndb.de>
->>>>>> Cc: Andy Botting <andy@andybotting.com>
->>>>>> Cc: linuxdriverproject <devel@linuxdriverproject.org>
->>>>>> Cc: linux-kernel at vger.kernel.org <linux-kernel@vger.kernel.org>
->>>>>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->>>>>> ---
->>>>>> V2: Rename to axi
->>>>>> ? ? Use DEFINE_PCI_DEVICE_TABLE in bridge
->>>>>> ? ? Make use of pr_fmt and pr_*
->>>>>> ? ? Store core class
->>>>>> ? ? Rename bridge to not b43 specific
->>>>>> ? ? Replace magic 0x1000 with BCMAI_CORE_SIZE
->>>>>> ? ? Remove some old "ssb" names and defines
->>>>>> ? ? Move BCMAI_ADDR_BASE def
->>>>>> ? ? Add drvdata field
->>>>>> V3: Fix reloading (kfree issue)
->>>>>> ? ? Add 14e4:0x4331
->>>>>> ? ? Fix non-initialized struct issue
->>>>>> ? ? Drop useless inline functions wrappers for pci core drv
->>>>>> ? ? Proper pr_* usage
->>>>>> V3.1: Include forgotten changes (pr_* and include related)
->>>>>> ? ? Explain why we dare to implement empty release function
->>>>>> V4: Add ABI documentation
->>>>>> ? ? Move struct device to wrapper and alloc it dynamically
->>>>>> ? ? checkpatch.pl pointed fixes
->>>>>> V5: Rename to bcma, AXI was really bad name
->>>>>> ? ? Use EXPORT_SYMBOL_GPL
->>>>>> ? ? Set pci driver fields in one place
->>>>>> ? ? Drop unlikely
->>>>>> ? ? Use BCMA_CORE_SIZE for calc in awrite32
->>>>>> ? ? Add README
->>>>>> ? ? Fix compilation (delay.h)
->>>>>> ---
->>>>>> ?Documentation/ABI/testing/sysfs-bus-bcma ? ?| ? 31 ++
->>>>>> ?drivers/Kconfig ? ? ? ? ? ? ? ? ? ? ? ? ? ? | ? ?2 +
->>>>>> ?drivers/Makefile ? ? ? ? ? ? ? ? ? ? ? ? ? ?| ? ?1 +
->>>>>> ?drivers/bcma/Kconfig ? ? ? ? ? ? ? ? ? ? ? ?| ? 33 +++
->>>>>> ?drivers/bcma/Makefile ? ? ? ? ? ? ? ? ? ? ? | ? ?7 +
->>>>>> ?drivers/bcma/README ? ? ? ? ? ? ? ? ? ? ? ? | ? 18 ++
->>>>>> ?drivers/bcma/TODO ? ? ? ? ? ? ? ? ? ? ? ? ? | ? ?3 +
->>>>>> ?drivers/bcma/bcma_private.h ? ? ? ? ? ? ? ? | ? 31 ++
->>>>>> ?drivers/bcma/core.c ? ? ? ? ? ? ? ? ? ? ? ? | ? 51 ++++
->>>>>> ?drivers/bcma/driver_chipcommon.c ? ? ? ? ? ?| ? 87 ++++++
->>>>>> ?drivers/bcma/driver_chipcommon_pmu.c ? ? ? ?| ?134 +++++++++
->>>>>> ?drivers/bcma/driver_pci.c ? ? ? ? ? ? ? ? ? | ?163 +++++++++++
->>>>>> ?drivers/bcma/host_pci.c ? ? ? ? ? ? ? ? ? ? | ?196 +++++++++++++
->>>>>> ?drivers/bcma/main.c ? ? ? ? ? ? ? ? ? ? ? ? | ?271 ++++++++++++++++++
->>>>>> ?drivers/bcma/scan.c ? ? ? ? ? ? ? ? ? ? ? ? | ?392 +++++++++++++++++++++++++++
->>>>>> ?drivers/bcma/scan.h ? ? ? ? ? ? ? ? ? ? ? ? | ? 56 ++++
->>>>>> ?include/linux/bcma/bcma.h ? ? ? ? ? ? ? ? ? | ?232 ++++++++++++++++
->>>>>> ?include/linux/bcma/bcma_driver_chipcommon.h | ?297 ++++++++++++++++++++
->>>>>> ?include/linux/bcma/bcma_driver_pci.h ? ? ? ?| ? 89 ++++++
->>>>>> ?include/linux/bcma/bcma_regs.h ? ? ? ? ? ? ?| ? 34 +++
->>>>>> ?include/linux/mod_devicetable.h ? ? ? ? ? ? | ? 17 ++
->>>>>> ?scripts/mod/file2alias.c ? ? ? ? ? ? ? ? ? ?| ? 22 ++
->>>>>> ?22 files changed, 2167 insertions(+), 0 deletions(-)
->>>>>> ?create mode 100644 Documentation/ABI/testing/sysfs-bus-bcma
->>>>>> ?create mode 100644 drivers/bcma/Kconfig
->>>>>> ?create mode 100644 drivers/bcma/Makefile
->>>>>> ?create mode 100644 drivers/bcma/README
->>>>>> ?create mode 100644 drivers/bcma/TODO
->>>>>> ?create mode 100644 drivers/bcma/bcma_private.h
->>>>>> ?create mode 100644 drivers/bcma/core.c
->>>>>> ?create mode 100644 drivers/bcma/driver_chipcommon.c
->>>>>> ?create mode 100644 drivers/bcma/driver_chipcommon_pmu.c
->>>>>> ?create mode 100644 drivers/bcma/driver_pci.c
->>>>>> ?create mode 100644 drivers/bcma/host_pci.c
->>>>>> ?create mode 100644 drivers/bcma/main.c
->>>>>> ?create mode 100644 drivers/bcma/scan.c
->>>>>> ?create mode 100644 drivers/bcma/scan.h
->>>>>> ?create mode 100644 include/linux/bcma/bcma.h
->>>>>> ?create mode 100644 include/linux/bcma/bcma_driver_chipcommon.h
->>>>>> ?create mode 100644 include/linux/bcma/bcma_driver_pci.h
->>>>>> ?create mode 100644 include/linux/bcma/bcma_regs.h
->>>>>>
->>>>> Hi,
->>>>>
->>>>> An entry in the MAINTAINERS file would be nice to find the right
->>>>> addresses to send patches to.
->>>>
->>>> Will do, thanks. Should I put some ML for this driver?
->>>> netdev at vger.kernel.org? linux-wireless at vger.kernel.org? So far there
->>>> are no net drivers for BCMA. Probably b43 will be the first (or
->>>> brcm80211).
->>>>
->>> There is a Ethernet core used on embedded devices with this bus and
->>> George wrote a driver for the first version of this bus implementation,
->>> he send to the ML. Most user will use this with some wireless devices so
->>> I would add linux-wireless at vger.kernel.org. Why does ssb uses netdev ML?
+2011/5/7 George Kashperko <george@znau.edu.ua>:
+>
+>> 2011/5/6 Rafa? Mi?ecki <zajec5@gmail.com>:
+>> > 2011/5/6 Arnd Bergmann <arnd@arndb.de>:
+>> >>> +const char *bcma_device_name(u16 coreid)
+>> >>> +{
+>> >>> + ? ? switch (coreid) {
+>> >>> + ? ? case BCMA_CORE_OOB_ROUTER:
+>> >>> + ? ? ? ? ? ? return "OOB Router";
+>> >>> + ? ? case BCMA_CORE_INVALID:
+>> >>> + ? ? ? ? ? ? return "Invalid";
+>> >>> + ? ? case BCMA_CORE_CHIPCOMMON:
+>> >>> + ? ? ? ? ? ? return "ChipCommon";
+>> >>> + ? ? case BCMA_CORE_ILINE20:
+>> >>> + ? ? ? ? ? ? return "ILine 20";
+>> >>
+>> >> It's better to make that a data structure than a switch() statement,
+>> >> both from readability and efficiency aspects.
+>> >
+>> > Well, maybe. We call it only once, at init time. In any case we're
+>> > still waiting for Broadcom to clarify which cores are really used for
+>> > BCMA.
 >>
->> Thanks, I didn't know about this ethernet driver. Have to check it!
->> Where was this published? Do you have a thread name?
->
-> I think he haven't send it to the mailing list, there is a link [0] in
-> some Ticket [1] at OpenWrt. This driver was derived from source code
-> Braodcom have published, but not under a GPL compatible license. It will
-> be nice if Braodcom would allow us to publish a driver under the terms
-> of the GPL for the Ethernet core based on their driver, without writing
-> a full spec of the driver like it was done for b43.
+>> Arnd: did you have a look at defines at all?
+>>
+>> Most of the defines have values in range 0x800 ? 0x837. Converting
+>> this to array means loosing 0x800 u16 entries. We can not use 0x800
+>> offset, because there are also some defined between 0x000 and 0x800:
+>> #define BCMA_CORE_OOB_ROUTER ? ? ? ? ? 0x367 ? /* Out of band */
+>> #define BCMA_CORE_INVALID ? ? ? ? ? ? ?0x700
+>>
+>> Oh and there is still:
+>> #define BCMA_CORE_DEFAULT ? ? ? ? ? ? ?0xFFF
+>> we could want to include. Then we would loose additional (0xFFF -
+>> 0x837) u16 entries in array.
+> What is the purpose for bcma_device_name in bus driver code ? Why not
+> define const char *name in struct bcma_driver and let driver writers
+> supply kernel with knowledge on new cores' names rather than hard type
+> those into the bus code ?
 
-OK, I'll stay away from this driver for now (license).
+The purpose is ridiculously trivial. Print user-friendly names on
+scanning. Why not do that?
+
+Let's allow user understand what his bus contains without looking info
+defines in .h.
 
 
->> I'm not sure if we want linux-wireless to be ML, if we already have
->> some Ethernet driver. Some network-general ML makes more sense then.
->> Maybe netdev would be better.
->
-> Some of the embedded devices also have a USB core on the BCMA bus and a
-> pci(e) host controller to connect other pci(e) devices. As most of the
-> patches for ssb came from the wireless guys and I do not thing this will
-> be different for bcma, I thing the wireless mailing list is the correct
-> place.
+> Also this will close the question Arend asked
+> you regarding same core ids with different manufacturer ids.
 
-Ups, yeah, you're right. I didn't think about USB, V90, PCI(e), etc...
-I think situations linux-wireless as most active or linux-kernel as
-most generic should be used. I think I'm fine with linux-wireless.
+I don't know what was Arend's question. I asked but it was few minutes
+ago. I guess he just wanted to point there can be other manufacturer's
+cores.
 
 -- 
 Rafa?
