@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon,  9 May 2011 00:20:16 +0200
-Subject: [PATCH] b43: trivial: include ssb word in ssb specific functions
-Message-ID: <1304893216-32283-1-git-send-email-zajec5@gmail.com>
+Date: Mon,  9 May 2011 00:21:18 +0200
+Subject: [PATCH V2] b43: trivial: include ssb word in ssb specific functions
+Message-ID: <1304893278-32318-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,9 +9,11 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-This can be helpful when we decide to add support for ther buses.
+This can be helpful when we decide to add support for other buses.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+V2: commit message typo
 ---
  drivers/net/wireless/b43/main.c |    8 ++++----
  1 files changed, 4 insertions(+), 4 deletions(-)
