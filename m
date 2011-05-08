@@ -1,38 +1,48 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
-Date: Sun, 08 May 2011 03:48:22 +0200
-Subject: ssb: where to reject dangling cores?
-In-Reply-To: <BANLkTimRasoDAbK+tLNFx8zK96Xe1hnHXg@mail.gmail.com>
-References: <BANLkTimRasoDAbK+tLNFx8zK96Xe1hnHXg@mail.gmail.com>
-Message-ID: <1304819302.21680.10.camel@maggie>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 8 May 2011 12:37:15 +0200
+Subject: [PATCH][WAS:bcmai,
+	axi] bcma: add Broadcom specific AMBA bus driver
+In-Reply-To: <20110508101609.GF27807@n2100.arm.linux.org.uk>
+References: <1304632783-8781-1-git-send-email-zajec5@gmail.com>
+	<201105061605.31625.arnd@arndb.de>
+	<BANLkTikjr0ZTNOu69F+iKhwufE9KKMg4Tg@mail.gmail.com>
+	<BANLkTimGBNT4FkS4mO9ToLWft0bCEYcEgg@mail.gmail.com>
+	<1304790665.13983.10.camel@dev.znau.edu.ua>
+	<BANLkTikLFff_86Fvg+jSty9vGLENiELF2Q@mail.gmail.com>
+	<1304792795.13983.28.camel@dev.znau.edu.ua>
+	<BANLkTi=6BFD4OmtU1WPxjbFJQe36=mZKEA@mail.gmail.com>
+	<20110508101609.GF27807@n2100.arm.linux.org.uk>
+Message-ID: <BANLkTikMruTibp64GjE9qP9r80JiHgAFXw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, Michael Buesch <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, 2011-05-07 at 22:40 +0200, Rafa? Mi?ecki wrote: 
-> Michael, I can see code for ignoring dangling cores in both: ssb and b43.
-> 
-> In ssb it's quite common, we have:
-> 1) we_support_multiple_80211_cores for 80211
-> 2) inline checks in ssb_bus_scan for PCI(E)
-> 3) inline check in ssb_bus_scan for ETHERNET
-> 
-> However there is also check in b43 at the beginning of b43_one_core_attach:
-> if (!pdev ||
-> 	((pdev->device != 0x4321) &&
-> 	(pdev->device != 0x4313) && (pdev->device != 0x431A))) {
-> 	b43dbg(wl, "Ignoring unconnected 802.11 core\n");
-> 	return -ENODEV;
-> }
-> 
-> Should I move this check into ssb?
+2011/5/8 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> On Sat, May 07, 2011 at 08:48:10PM +0200, Rafa? Mi?ecki wrote:
+>> Really, what's wrong with that? Does it kill anyone's pet we print
+>> this? We also do:
+>> pr_err("Scanning failed because of wrong CID\n");
+>> return -1;
+>> While we could drop pr_err. Why to do this? Advanced used can always
+>> check what -1 means.
+>
+> And why return -1 when we have a system of error codes? ?I _really_ wish
+> people would stop returning -1 for "some random error occurred".
 
-Well, I'm not sure. _Neither_ place looks fine. It's a dirty workaround
-for broken hardware.
+You commented on imagined code, but we actually do sth similar in code.
 
-If you really want to touch this mess, then yes. Move it into ssb.
+I did this because:
+1) I had no idea what err code would be valid for invalid EPROM layout
+(content). Nothing from include/asm-generic/errno-base.h sounds
+reasonable.
+2) I wanted to use different error codes for different EPROM layout
+issues. Sometimes we don't get CIA block. Sometimes we don't get CIB
+block. Sometimes there is problem with master port (not found in EPROM
+when expected). They all would probably use the same errno.
+
+Could you help me with this?
 
 -- 
-Greetings Michael.
+Rafa?
