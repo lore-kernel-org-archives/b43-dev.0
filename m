@@ -1,10 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun,  8 May 2011 19:09:22 +0200
-Subject: [PATCH 1/3] ssb: update list of devices supporting multiple 80211
-	cores
+Date: Sun,  8 May 2011 19:09:23 +0200
+Subject: [PATCH 2/3] b43: drop ssb-duplicated workaround for dangling cores
 In-Reply-To: <1304874564-6426-1-git-send-email-zajec5@gmail.com>
 References: <1304874564-6426-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1304874564-6426-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1304874564-6426-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -15,24 +14,38 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/ssb/scan.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
+ drivers/net/wireless/b43/main.c |   17 -----------------
+ 1 files changed, 0 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/ssb/scan.c b/drivers/ssb/scan.c
-index 7dca719..45e5bab 100644
---- a/drivers/ssb/scan.c
-+++ b/drivers/ssb/scan.c
-@@ -258,7 +258,10 @@ static int we_support_multiple_80211_cores(struct ssb_bus *bus)
- #ifdef CONFIG_SSB_PCIHOST
- 	if (bus->bustype == SSB_BUSTYPE_PCI) {
- 		if (bus->host_pci->vendor == PCI_VENDOR_ID_BROADCOM &&
--		    bus->host_pci->device == 0x4324)
-+		    ((bus->host_pci->device == 0x4313) ||
-+		     (bus->host_pci->device == 0x431A) ||
-+		     (bus->host_pci->device == 0x4321) ||
-+		     (bus->host_pci->device == 0x4324)))
- 			return 1;
- 	}
- #endif /* CONFIG_SSB_PCIHOST */
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index f907df0..b02fbab 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4837,25 +4837,8 @@ static void b43_one_core_detach(struct ssb_device *dev)
+ static int b43_one_core_attach(struct ssb_device *dev, struct b43_wl *wl)
+ {
+ 	struct b43_wldev *wldev;
+-	struct pci_dev *pdev;
+ 	int err = -ENOMEM;
+ 
+-	if (!list_empty(&wl->devlist)) {
+-		/* We are not the first core on this chip. */
+-		pdev = (dev->bus->bustype == SSB_BUSTYPE_PCI) ? dev->bus->host_pci : NULL;
+-		/* Only special chips support more than one wireless
+-		 * core, although some of the other chips have more than
+-		 * one wireless core as well. Check for this and
+-		 * bail out early.
+-		 */
+-		if (!pdev ||
+-		    ((pdev->device != 0x4321) &&
+-		     (pdev->device != 0x4313) && (pdev->device != 0x431A))) {
+-			b43dbg(wl, "Ignoring unconnected 802.11 core\n");
+-			return -ENODEV;
+-		}
+-	}
+-
+ 	wldev = kzalloc(sizeof(*wldev), GFP_KERNEL);
+ 	if (!wldev)
+ 		goto out;
 -- 
 1.7.3.4
