@@ -1,9 +1,10 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun,  8 May 2011 20:30:32 +0200
-Subject: [PATCH V2 2/3] b43: drop ssb-duplicated workaround for dangling cores
+Date: Sun,  8 May 2011 20:30:33 +0200
+Subject: [PATCH V2 3/3] b43legacy: drop ssb-duplicated workaround for dangling
+	cores
 In-Reply-To: <1304879433-7096-1-git-send-email-zajec5@gmail.com>
 References: <1304879433-7096-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1304879433-7096-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1304879433-7096-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,17 +17,17 @@ in ssb.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/main.c |   17 -----------------
- 1 files changed, 0 insertions(+), 17 deletions(-)
+ drivers/net/wireless/b43legacy/main.c |   18 ------------------
+ 1 files changed, 0 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index f907df0..b02fbab 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4837,25 +4837,8 @@ static void b43_one_core_detach(struct ssb_device *dev)
- static int b43_one_core_attach(struct ssb_device *dev, struct b43_wl *wl)
+diff --git a/drivers/net/wireless/b43legacy/main.c b/drivers/net/wireless/b43legacy/main.c
+index 2162663..f6d5446 100644
+--- a/drivers/net/wireless/b43legacy/main.c
++++ b/drivers/net/wireless/b43legacy/main.c
+@@ -3696,26 +3696,8 @@ static int b43legacy_one_core_attach(struct ssb_device *dev,
+ 				     struct b43legacy_wl *wl)
  {
- 	struct b43_wldev *wldev;
+ 	struct b43legacy_wldev *wldev;
 -	struct pci_dev *pdev;
  	int err = -ENOMEM;
  
@@ -40,8 +41,9 @@ index f907df0..b02fbab 100644
 -		 */
 -		if (!pdev ||
 -		    ((pdev->device != 0x4321) &&
--		     (pdev->device != 0x4313) && (pdev->device != 0x431A))) {
--			b43dbg(wl, "Ignoring unconnected 802.11 core\n");
+-		     (pdev->device != 0x4313) &&
+-		     (pdev->device != 0x431A))) {
+-			b43legacydbg(wl, "Ignoring unconnected 802.11 core\n");
 -			return -ENODEV;
 -		}
 -	}
