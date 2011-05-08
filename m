@@ -1,48 +1,42 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 8 May 2011 12:37:15 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 08 May 2011 14:48:15 +0200
 Subject: [PATCH][WAS:bcmai,
 	axi] bcma: add Broadcom specific AMBA bus driver
-In-Reply-To: <20110508101609.GF27807@n2100.arm.linux.org.uk>
+In-Reply-To: <1304632783-8781-1-git-send-email-zajec5@gmail.com>
 References: <1304632783-8781-1-git-send-email-zajec5@gmail.com>
-	<201105061605.31625.arnd@arndb.de>
-	<BANLkTikjr0ZTNOu69F+iKhwufE9KKMg4Tg@mail.gmail.com>
-	<BANLkTimGBNT4FkS4mO9ToLWft0bCEYcEgg@mail.gmail.com>
-	<1304790665.13983.10.camel@dev.znau.edu.ua>
-	<BANLkTikLFff_86Fvg+jSty9vGLENiELF2Q@mail.gmail.com>
-	<1304792795.13983.28.camel@dev.znau.edu.ua>
-	<BANLkTi=6BFD4OmtU1WPxjbFJQe36=mZKEA@mail.gmail.com>
-	<20110508101609.GF27807@n2100.arm.linux.org.uk>
-Message-ID: <BANLkTikMruTibp64GjE9qP9r80JiHgAFXw@mail.gmail.com>
+Message-ID: <4DC6910F.2020008@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-2011/5/8 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> On Sat, May 07, 2011 at 08:48:10PM +0200, Rafa? Mi?ecki wrote:
->> Really, what's wrong with that? Does it kill anyone's pet we print
->> this? We also do:
->> pr_err("Scanning failed because of wrong CID\n");
->> return -1;
->> While we could drop pr_err. Why to do this? Advanced used can always
->> check what -1 means.
->
-> And why return -1 when we have a system of error codes? ?I _really_ wish
-> people would stop returning -1 for "some random error occurred".
+On 05/05/2011 11:59 PM, Rafa? Mi?ecki wrote:
+.....
+> --- /dev/null
+> +++ b/drivers/bcma/bcma_private.h
+.....
+> +
+> +#define BCMA_ADDR_BASE		0x18000000
+> +#define BCMA_WRAP_BASE		0x18100000
+> +
+......
+> --- /dev/null
+> +++ b/drivers/bcma/scan.h
+> @@ -0,0 +1,56 @@
+> +#ifndef BCMA_SCAN_H_
+> +#define BCMA_SCAN_H_
+> +
+> +#define BCMA_ADDR_BASE		0x18000000
+> +#define BCMA_WRAP_BASE		0x18100000
+> +
+.....
 
-You commented on imagined code, but we actually do sth similar in code.
+While graping through the code I found this. BCMA_ADDR_BASE and
+BCMA_WRAP_BASE are defined twice.
 
-I did this because:
-1) I had no idea what err code would be valid for invalid EPROM layout
-(content). Nothing from include/asm-generic/errno-base.h sounds
-reasonable.
-2) I wanted to use different error codes for different EPROM layout
-issues. Sometimes we don't get CIA block. Sometimes we don't get CIB
-block. Sometimes there is problem with master port (not found in EPROM
-when expected). They all would probably use the same errno.
+Why are some constants defined in purpose specific headers in
+drivers/bcma/*.h like drivers/bcma/scan.h and some in
+drivers/bcma/bcma_private.h and other in include/linux/bcma/bcma_regs.h ?
 
-Could you help me with this?
-
--- 
-Rafa?
+Hauke
