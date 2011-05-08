@@ -1,46 +1,38 @@
 From: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
-Date: Sun, 08 May 2011 03:44:41 +0200
-Subject: [PATCH][WAS:bcmai,axi] bcma: add Broadcom specific AMBA bus driver
-In-Reply-To: <1304796956.13983.65.camel@dev.znau.edu.ua>
-References: <1304632783-8781-1-git-send-email-zajec5@gmail.com>
-	<201105061605.31625.arnd@arndb.de>
-	<BANLkTikjr0ZTNOu69F+iKhwufE9KKMg4Tg@mail.gmail.com>
-	<BANLkTimGBNT4FkS4mO9ToLWft0bCEYcEgg@mail.gmail.com>
-	<1304790665.13983.10.camel@dev.znau.edu.ua>
-	<BANLkTikLFff_86Fvg+jSty9vGLENiELF2Q@mail.gmail.com>
-	<1304792795.13983.28.camel@dev.znau.edu.ua>
-	<BANLkTi=6BFD4OmtU1WPxjbFJQe36=mZKEA@mail.gmail.com>
-	<1304794931.13983.44.camel@dev.znau.edu.ua>
-	<BANLkTik9FWgzpNWuMXXRjOj-rDvPNY_nCA@mail.gmail.com>
-	<1304796956.13983.65.camel@dev.znau.edu.ua>
-Message-ID: <1304819081.21680.6.camel@maggie>
+Date: Sun, 08 May 2011 03:48:22 +0200
+Subject: ssb: where to reject dangling cores?
+In-Reply-To: <BANLkTimRasoDAbK+tLNFx8zK96Xe1hnHXg@mail.gmail.com>
+References: <BANLkTimRasoDAbK+tLNFx8zK96Xe1hnHXg@mail.gmail.com>
+Message-ID: <1304819302.21680.10.camel@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Michael Buesch <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>
 
-On Sat, 2011-05-07 at 22:35 +0300, George Kashperko wrote: 
-> dbg_bcma_device_name
-> {
-> #ifdef DEBUG
-> 		case/switch/if/else stuff
-> #endif
-> 		return NULL;
+On Sat, 2011-05-07 at 22:40 +0200, Rafa? Mi?ecki wrote: 
+> Michael, I can see code for ignoring dangling cores in both: ssb and b43.
+> 
+> In ssb it's quite common, we have:
+> 1) we_support_multiple_80211_cores for 80211
+> 2) inline checks in ssb_bus_scan for PCI(E)
+> 3) inline check in ssb_bus_scan for ETHERNET
+> 
+> However there is also check in b43 at the beginning of b43_one_core_attach:
+> if (!pdev ||
+> 	((pdev->device != 0x4321) &&
+> 	(pdev->device != 0x4313) && (pdev->device != 0x431A))) {
+> 	b43dbg(wl, "Ignoring unconnected 802.11 core\n");
+> 	return -ENODEV;
 > }
-> But I don't see here much sense to hardcode names other than those of
-> buscommons/buscores for debugging purposes.
+> 
+> Should I move this check into ssb?
 
-Would you please read and understand the code before discussing this?
-That would help the discussion on the technical side.
+Well, I'm not sure. _Neither_ place looks fine. It's a dirty workaround
+for broken hardware.
 
-Those names are hardcoded by definition. And just like 14e4 is the PCI
-ID for Broadcom devices, 800 is the AXI ID for Broadcom Chipcommon.
-
-And building an #ifdef mess around this stuff is not better than having
-a few bytes of _helpful_ information messages.
-You are absolutely right that those messages only help 1% of the people.
-Just as _any_ other kernel message.
+If you really want to touch this mess, then yes. Move it into ssb.
 
 -- 
 Greetings Michael.
