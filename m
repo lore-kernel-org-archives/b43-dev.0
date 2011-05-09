@@ -1,55 +1,79 @@
-From: Cedric Sodhi <manday@gmx.net>
-Date: Mon, 9 May 2011 15:55:08 +0200
-Subject: BCMSMAC freezes system on trivial oeprations
-In-Reply-To: <20110509134416.GA1932@engine>
-References: <20110509134416.GA1932@engine>
-Message-ID: <20110509135508.GB1932@engine>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 9 May 2011 16:33:43 +0200
+Subject: [PATCH][WAS:bcmai,
+	axi] bcma: add Broadcom specific AMBA bus driver
+In-Reply-To: <201105081759.03032.arnd@arndb.de>
+References: <1304632783-8781-1-git-send-email-zajec5@gmail.com>
+	<201105081647.22091.arnd@arndb.de>
+	<BANLkTimhOCL7O1ERqUKkH_4sgq5xNYJZRg@mail.gmail.com>
+	<201105081759.03032.arnd@arndb.de>
+Message-ID: <BANLkTikoLnrVvAWC7v7+q1fe4+Qt3HF4ug@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-I need to reply to my own message. After I just returned home, it
-appeared that the computer had no problem whatsoever connecting to my
-local home network. As if nothing had ever happend. Well, the
-"WLAN-Button" still hardlocks the machine but apart from that I have no
-indication of problems.
+2011/5/8 Arnd Bergmann <arnd@arndb.de>:
+> On Sunday 08 May 2011 16:59:55 Rafa? Mi?ecki wrote:
+>> 2011/5/8 Arnd Bergmann <arnd@arndb.de>:
+>> >> >> diff --git a/drivers/bcma/TODO b/drivers/bcma/TODO
+>> >> >> new file mode 100644
+>> >> >> index 0000000..45eadc9
+>> >> >> --- /dev/null
+>> >> >> +++ b/drivers/bcma/TODO
+>> >> >> @@ -0,0 +1,3 @@
+>> >> >> +- Interrupts
+>> >> >> +- Defines for PCI core driver
+>> >> >> +- Convert bcma_bus->cores into linked list
+>> >> >
+>> >> > The last item doesn't make sense to me. Since you are using the regular
+>> >> > driver model, you can simply iterate over all child devices of any
+>> >> > dev.
+>> >>
+>> >> It's about optimization. Right now bcma_bus->cores is static array, we
+>> >> probably never will use all entries.
+>> >
+>> > Oh, I see. You should probably have neither of them. Instead allocate
+>> > the devices dynamically as you find them and do a device_register,
+>> > which will add the device into linked list.
+>>
+>> As I said, and wrote: TODO.
+>
+> Well, I think getting this part right is essential before the
+> patch can get merged.
+>
+>> > Maybe you didn't understand what I said: This should be
+>> >
+>> > struct bcma_device {
+>> > ? ? struct bcma_bus *bus;
+>> > ? ? struct bcma_device_id id;
+>> > ? ? struct device dev;
+>> > ? ? u8 core_index;
+>> >
+>> > ? ? u32 addr;
+>> > ? ? u32 wrap;
+>> >
+>> > ? ? void *drvdata;
+>> > };
+>> >
+>> > Here, bcma_device is the device, no need to follow pointers
+>> > around. It's how all bus_types work, you should just do the same.
+>>
+>> We can not use static "struct device", see Greg's comments in:
+>> [RFC][PATCH V3] axi: add AXI bus driver
+>> (not to mention we would have unused "struct device" in ChipCommon's
+>> and PCI's "struct bcma_device").
+>
+> Please reread what Greg explained, it's actually the same as what
+> I said here: Don't make the device static (you already don't),
+> don't put the device structure as a member in the bus structure
+> (as discussed above). Make the device a member of bcma_device,
+> so you get proper reference counting for it, in the way that
+> Greg explained.
 
-I'll let you know as soon as I know more and wpulwd appreciate any kind
-of comments in the meantime.
+Thanks for help & explaining! Unfortunately Greg didn't answer if my
+changed implementation is fine. I'll fix this!
 
-regards,
-Cedric
-
-
-On Mon, May 09, 2011 at 03:44:16PM +0200, Cedric Sodhi wrote:
-> I use an HP Touchsmart tm2 laptop which has an onboard BRCM 4727- I used to compile my kernel with BCMSMAC module.
-> 
-> At first, I got regular kernel panics that, according to the printed-out stack originated somewhere from the BRCM driver and for which I could not exactly tell the reason (I assume it had something to do with roaming between APs).
-> 
-> Also, the laptop has a dedicated button to activating/deactivating the WLAN device, besides it has a BIOS wired funtion key, that does the same - at least that what it does in Windows and what HP says it should do.
-> 
-> When pressing either of the buttons, the kernel would hard-lock without any further notice and the computer could only be brought down through a hard reset.
-> 
-> This was awful enough, so I though I could try enabling the rfkill kernel compoenent as it seems related (layman at work, as you can tell). Recompiling that way (linux-next, by the way, *not* on wireless-testing yet) and also modifiying another few minor settings resulted in a desaster:
-> 
-> Since then - *even after I have reerted all changes and gone back to the kernel which was known to have worked last!!!* - as soon as the BCMSMAC module is either ocmpiled in or loaded, trivial commands such as ifconfig, iwconfig or just exit (!!!) freeze in a State D (awaiting IO) and can not be killed by even kill -9 or -1.
-> 
-> Shutting the system down is equally impossible without the help of SysReqs. Pushing the WLAN-Button still hardfreezes the system.
-> 
-> You can safely assume that practically *any* operation that is remotely related to the device, such as echo'ing to the rfkill /sys device, too, plus many commands that appear not to be related at all, such as "exit" will freeze in state D and cannot be killed by any means possible.
-> 
-> Pressing aforementioned "WLAN Button" will make these commands resume, just for a split second, before the system hard-locks.
-> 
-> Most puzzling about that, I find, is that reverting to the known-as-having-worked setup (exactly the same) has not got the system back to working.
-> 
-> I have two theories: Either there is some evil, hidden hardware switch on the device that has been triggered and not been reset since and that is causing all this right now, or some very crucial part of the system has been damaged by the regular hard-reset (which I deem unlikely since it would not explain why all sorts of programs freeze for no apparent reason).
-> 
-> So far, the system is practically not usuable - at least not with the driver activated - I'm in desperate need for your help. I can reformat and resetup everything, but I need to know a solution to this in the long term and I really don't know what else to try.
-> 
-> 
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
+-- 
+Rafa?
