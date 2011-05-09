@@ -1,49 +1,38 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 10 May 2011 00:52:15 +0200
+From: Ben Greear <greearb@candelatech.com>
+Date: Mon, 09 May 2011 15:58:04 -0700
 Subject: Regression affecting b43 LP-PHY card
-Message-ID: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
+In-Reply-To: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
+References: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
+Message-ID: <4DC8717C.70405@candelatech.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Juan Carlos Romero <juancarlos.romero@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Juan Carlos Romero <juancarlos.romero@gmail.com>
 
-Juan owns Lenovo affected by well-known LP-PHY DMA errors. His testing
-procedure is following:
-modprobe wl; connect; download sth small; rmmod wl;
-modprobe b43; download 2GB
+On 05/09/2011 03:52 PM, Rafa? Mi?ecki wrote:
 
-When working on DMA errors we discovered that wireless-testing is not
-working well for him. Even after performing above procedure his
-machine disconnects quickly and he is not able to reconnect. We tested
-2.6.39-rc6 from tarball and it was working fine. I'd like to highlight
-here, that we were switching between mainline and wireless-testing few
-times. It is not a random issue.
+> Did anyone else experience any similar problems with latest wireless-testing?
 
-I suspected this regression could be caused by my recent ssb patches.
-So I reverted all of them but this didn't help.
+With the ath5k patch I posted, and the ath9k patches that Felix
+posted recently in response to my bug reports, I've had good
+luck with ath9k and ath5k.
 
-In this situation we decided to bisect. I was a little afraid of last
-merges so we took older 2.6.38 as GOOD (we tested this twice) and
-wireless-testing commit before my ssb changes as BAD. Today Juan
-finished bisecting kernel:
-http://pastebin.com/HSKbRzpB
+I also pulled in the slub cmpxcg fix that fixes fatal bugs
+for compiles for something earlier than Pentium-II processors.
 
-According to his bisection the first bad commit is
-e06383db9ec591696a06654257474b85bac1f8cb [0]:
-hrtimers: extend hrtimer base code to handle more then 2 clockids
+Hopefully -rc7 will be out shortly (which will contain the slub
+fix, and if we're lucky..the ath9k and ath5k fixes too).
 
-Does it make any sense to you? Could this be some timing issue?
+I don't test with any other wifi nics..just ath5k and ath9k.
 
-It was too late to test this today, we (Juan) will work on this
-tomorrow. It's impossible to revert this commit from HEAD of
-wireless-testing, so my idea is to checkout commit, test, revert,
-test.
+I've mostly been testing virtual stations...will crank up some
+ath9k APs shortly...
 
-Did anyone else experience any similar problems with latest wireless-testing?
-
-
-http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=e06383db9ec591696a06654257474b85bac1f8cb
+Thanks,
+Ben
 
 -- 
-Rafa?
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
