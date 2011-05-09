@@ -1,59 +1,33 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
-Date: Mon, 09 May 2011 11:40:16 +0200
-Subject: Many held and rejected messages
-In-Reply-To: <BANLkTimm0cLWMFcT8Qt2-57CUy8wWcr4ug@mail.gmail.com>
-References: <BANLkTimm0cLWMFcT8Qt2-57CUy8wWcr4ug@mail.gmail.com>
-Message-ID: <1304934016.23124.24.camel@maggie>
+From: Cedric Sodhi <manday@gmx.net>
+Date: Mon, 9 May 2011 15:44:16 +0200
+Subject: BCMSMAC freezes system on trivial oeprations
+Message-ID: <20110509134416.GA1932@engine>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, 2011-05-09 at 11:31 +0200, Rafa? Mi?ecki wrote: 
-> I've recently problems with posting to b43-dev:
-> 
-> 
-> Your mail to 'b43-dev' with the subject
->    Fwd: Interesting 14e4:4321
-> Is being held until the list moderator can review it for approval.
-> The reason it is being held:
->    Message has a suspicious header
-> 
-> Your mail to 'b43-dev' with the subject
->    [RFC ONLY 2/5] b43: add bus device abstraction later
-> Is being held until the list moderator can review it for approval.
-> The reason it is being held:
->    Message has a suspicious header
-> 
-> Your mail to 'b43-dev' with the subject
->    [RFC ONLY 3/5] b43: bus: abstract R/W operations
-> Is being held until the list moderator can review it for approval.
-> The reason it is being held:
->    Message has a suspicious header
-> 
-> Your mail to 'b43-dev' with the subject
->    [RFC ONLY 4/5] b43: bus: abstract 80211 core revision
-> Is being held until the list moderator can review it for approval.
-> The reason it is being held:
->    Message has a suspicious header
-> 
-> Your mail to 'b43-dev' with the subject
->    [RFC ONLY 5/5] b43: bus: abstract SPROM
-> Is being held until the list moderator can review it for approval.
-> The reason it is being held:
->    Message has a suspicious header
-> 
-> 
-> Moreover, owner seems to manually reject that messages.
-> 
-> What's wrong with them?
-> 
+I use an HP Touchsmart tm2 laptop which has an onboard BRCM 4727- I used to compile my kernel with BCMSMAC module.
 
-Well, I don't know. I was hoping the actual reason would be
-shown in the bounce, so the sender can fix his stuff.
-I just disabled all filters, because they just generate false positives
-anyway.
+At first, I got regular kernel panics that, according to the printed-out stack originated somewhere from the BRCM driver and for which I could not exactly tell the reason (I assume it had something to do with roaming between APs).
 
--- 
-Greetings Michael.
+Also, the laptop has a dedicated button to activating/deactivating the WLAN device, besides it has a BIOS wired funtion key, that does the same - at least that what it does in Windows and what HP says it should do.
+
+When pressing either of the buttons, the kernel would hard-lock without any further notice and the computer could only be brought down through a hard reset.
+
+This was awful enough, so I though I could try enabling the rfkill kernel compoenent as it seems related (layman at work, as you can tell). Recompiling that way (linux-next, by the way, *not* on wireless-testing yet) and also modifiying another few minor settings resulted in a desaster:
+
+Since then - *even after I have reerted all changes and gone back to the kernel which was known to have worked last!!!* - as soon as the BCMSMAC module is either ocmpiled in or loaded, trivial commands such as ifconfig, iwconfig or just exit (!!!) freeze in a State D (awaiting IO) and can not be killed by even kill -9 or -1.
+
+Shutting the system down is equally impossible without the help of SysReqs. Pushing the WLAN-Button still hardfreezes the system.
+
+You can safely assume that practically *any* operation that is remotely related to the device, such as echo'ing to the rfkill /sys device, too, plus many commands that appear not to be related at all, such as "exit" will freeze in state D and cannot be killed by any means possible.
+
+Pressing aforementioned "WLAN Button" will make these commands resume, just for a split second, before the system hard-locks.
+
+Most puzzling about that, I find, is that reverting to the known-as-having-worked setup (exactly the same) has not got the system back to working.
+
+I have two theories: Either there is some evil, hidden hardware switch on the device that has been triggered and not been reset since and that is causing all this right now, or some very crucial part of the system has been damaged by the regular hard-reset (which I deem unlikely since it would not explain why all sorts of programs freeze for no apparent reason).
+
+So far, the system is practically not usuable - at least not with the driver activated - I'm in desperate need for your help. I can reformat and resetup everything, but I need to know a solution to this in the long term and I really don't know what else to try.
