@@ -1,79 +1,31 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 10 May 2011 23:48:53 +0200
-Subject: [hrtimers] Re: Regression affecting b43 LP-PHY card
-In-Reply-To: <BANLkTinnVwQbz+K32pyzLVCdz-fXUVUQ3g@mail.gmail.com>
-References: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
-	<BANLkTi=Lo4jRWbHhMLkJmOfg09s+ebDjcw@mail.gmail.com>
-	<1305054401.2939.52.camel@work-vm>
-	<BANLkTinnVwQbz+K32pyzLVCdz-fXUVUQ3g@mail.gmail.com>
-Message-ID: <BANLkTinjcVjb-1wZahonmP5tjxOzQfMeFw@mail.gmail.com>
+Date: Wed, 11 May 2011 00:08:15 +0200
+Subject: [PATCH V2 0/3] ssb/b43(legacy): clean dangling cores workarounds
+In-Reply-To: <BANLkTimecZ0uB4V_b-8F784Tnbkqo71ORA@mail.gmail.com>
+References: <1304879433-7096-1-git-send-email-zajec5@gmail.com>
+	<BANLkTimecZ0uB4V_b-8F784Tnbkqo71ORA@mail.gmail.com>
+Message-ID: <BANLkTinfMbkyh9kB+hsmka-JcWXAYEPynw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John Stultz <john.stultz@linaro.org>
-Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Juan Carlos Romero <juancarlos.romero@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Ben Greear <greearb@candelatech.com>, Jamie Lokier <jamie@shareable.org>, Thomas Gleixner <tglx@linutronix.de>, Alexander Shishkin <virtuoso@slind.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 
-2011/5/10 Rafa? Mi?ecki <zajec5@gmail.com>:
-> 2011/5/10 John Stultz <john.stultz@linaro.org>:
->> On Tue, 2011-05-10 at 20:57 +0200, Rafa? Mi?ecki wrote:
->>> W dniu 10 maja 2011 00:52 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
->>> > In this situation we decided to bisect. I was a little afraid of last
->>> > merges so we took older 2.6.38 as GOOD (we tested this twice) and
->>> > wireless-testing commit before my ssb changes as BAD. Today Juan
->>> > finished bisecting kernel:
->>> > http://pastebin.com/HSKbRzpB
->>> >
->>> > According to his bisection the first bad commit is
->>> > e06383db9ec591696a06654257474b85bac1f8cb [0]:
->>> > hrtimers: extend hrtimer base code to handle more then 2 clockids
->>> >
->>> > Does it make any sense to you? Could this be some timing issue?
->>> >
->>> > It was too late to test this today, we (Juan) will work on this
->>> > tomorrow. It's impossible to revert this commit from HEAD of
->>> > wireless-testing, so my idea is to checkout commit, test, revert,
->>> > test.
->>> >
->>> > Did anyone else experience any similar problems with latest wireless-testing?
->>> >
->>> >
->>> > http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=e06383db9ec591696a06654257474b85bac1f8cb
->>>
->>> Today Juan checkouted commit e06383db9ec591696a06654257474b85bac1f8cb
->>> and tested it. He was disconnected really soon.
->>>
->>> Then he reverted e06383db9ec591696a06654257474b85bac1f8cb and tested
->>> again. Connection was stable, he downloaded 2GB file over network.
->>>
->>>
->>> John S.: your commit does not touch Broadcom card directly, but it
->>> seems it somehow affects it. I suspect there can be some timing issue.
->>> Do you have any idea what could it be, how can we debug this?
->>
->> Sorry for the trouble!
->>
->> My commit exposed a few spots where hrtimers were being initialized
->> before hrtimer_init is called, which caused problems. Thomas provided a
->> solution that makes such behavior still function ok:
->> http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=ce31332d3c77532d6ea97ddcb475a2b02dd358b4
->>
->> Let me know if the issue is still reproducible with Linus' latest git
->> tree.
+W dniu 8 maja 2011 19:54 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+> W dniu 8 maja 2011 20:30 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+>> There is no perfect place for this workarounds, but keeping it in ssb sounds
+>> more reasonable.
 >
-> We were using wireless-testing git tree, commit:
-> 1e664a777e5eb4b23e65e76fbeadd2376fe8d8d8
->
-> I can not see ce31332d3c77532d6ea97ddcb475a2b02dd358b4 it git log.
-> I'll apply and test, thanks!
+> Uups, I didn't save edition fixing this grammatical mistake. I'm lucky
+> it won't be visible anywhere in git log :)
 
-I can confirm updated wireless-testing resolves this issue!
+John: something went wrong there. You applied b43 and b43legacy
+patches, but they should applied *after* ssb patch I don't see in your
+tree.
 
-Too bad Juan spent 2-3 days on bisecting on his Atom... but at least
-we came and met ready fix. It could be pain to find a solution with
-out feedback only. I'm aware it was not very detailed.
-
-Thanks for your help :)
+I don't know how many people can be affected by this... Can not tell
+you if we should rebase or just commit ssb patch quickly.
 
 -- 
 Rafa?
