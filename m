@@ -1,38 +1,62 @@
-From: Ben Greear <greearb@candelatech.com>
-Date: Mon, 09 May 2011 15:58:04 -0700
-Subject: Regression affecting b43 LP-PHY card
-In-Reply-To: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
-References: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
-Message-ID: <4DC8717C.70405@candelatech.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 10 May 2011 07:08:20 +0200
+Subject: b43 error under heavy load
+In-Reply-To: <4CEAC095.7020706@lwfinger.net>
+References: <4CEAB969.20702@lwfinger.net> <1290451982.20888.2.camel@maggie>
+	<4CEAC095.7020706@lwfinger.net>
+Message-ID: <BANLkTimjRA5CsSDp_+LrGq8PNgaR4JFD=w@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Juan Carlos Romero <juancarlos.romero@gmail.com>
+To: Larry Finger <Larry.Finger@lwfinger.net>, Juan Carlos Romero <juancarlos.romero@gmail.com>
+Cc: =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-On 05/09/2011 03:52 PM, Rafa? Mi?ecki wrote:
+2010/11/22 Larry Finger <Larry.Finger@lwfinger.net>:
+> On 11/22/2010 12:53 PM, Michael B?sch wrote:
+>> On Mon, 2010-11-22 at 12:41 -0600, Larry Finger wrote:
+>>> Under heavy load with multiple streams, I'm getting errors from my BCM4312
+>>> (14e4:4315) device as follows:
+>>>
+>>> b43-phy0 debug: TX-status contains invalid cookie: 0x0D4D
+>>> b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 76
+>>> b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 78
+>>> (and continues).
+>>>
+>>> Clearly that cookie is garbage as it has a slot number of 0. Any suggestions on
+>>> diagnostic information that I could dump to help debug this?
+>>
+>> I think that probably is a firmware or hardware bug. The affected
+>> kernel code was not changed in years, as far as I know.
+>
+> Thanks. I'll see if I can figure out a way for the driver to recover more
+> gracefully. In the meantime, I will be dumping the entire TX status struct to
+> see if that helps in seeing what is wrong.
 
-> Did anyone else experience any similar problems with latest wireless-testing?
+Larry, did you try debugging this? Juan noticed this issue on his
+14e4:4315 as well.
+[  854.826369] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 54
+[  854.827348] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 56
+[  854.828080] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 58
+[  854.831431] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 60
+[  854.831453] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 62
+[  854.832440] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 64
+[  854.833836] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 66
+[  854.834567] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 68
+[  854.834588] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 70
+[  854.835378] b43-phy0 debug: Out of order TX status report on DMA
+ring 1. Expected 74, but got 72
 
-With the ath5k patch I posted, and the ath9k patches that Felix
-posted recently in response to my bug reports, I've had good
-luck with ath9k and ath5k.
-
-I also pulled in the slub cmpxcg fix that fixes fatal bugs
-for compiles for something earlier than Pentium-II processors.
-
-Hopefully -rc7 will be out shortly (which will contain the slub
-fix, and if we're lucky..the ath9k and ath5k fixes too).
-
-I don't test with any other wifi nics..just ath5k and ath9k.
-
-I've mostly been testing virtual stations...will crank up some
-ath9k APs shortly...
-
-Thanks,
-Ben
+Connection is lost, reloading of the driver is needer.
 
 -- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+Rafa?
