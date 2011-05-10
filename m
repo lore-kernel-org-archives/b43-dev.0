@@ -1,107 +1,61 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 10 May 2011 16:05:33 +0200
-Subject: [PATCH] b43: move MAC PHY clock controling function
-Message-ID: <1305036333-11246-1-git-send-email-zajec5@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 10 May 2011 13:31:12 -0500
+Subject: Regression affecting b43 LP-PHY card
+In-Reply-To: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
+References: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
+Message-ID: <4DC98470.10500@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Juan Carlos Romero <juancarlos.romero@gmail.com>
 
-This is not N-PHY specific function, we partially duplicate code.
+On 05/09/2011 05:52 PM, Rafa? Mi?ecki wrote:
+> Juan owns Lenovo affected by well-known LP-PHY DMA errors. His testing
+> procedure is following:
+> modprobe wl; connect; download sth small; rmmod wl;
+> modprobe b43; download 2GB
+>
+> When working on DMA errors we discovered that wireless-testing is not
+> working well for him. Even after performing above procedure his
+> machine disconnects quickly and he is not able to reconnect. We tested
+> 2.6.39-rc6 from tarball and it was working fine. I'd like to highlight
+> here, that we were switching between mainline and wireless-testing few
+> times. It is not a random issue.
+>
+> I suspected this regression could be caused by my recent ssb patches.
+> So I reverted all of them but this didn't help.
+>
+> In this situation we decided to bisect. I was a little afraid of last
+> merges so we took older 2.6.38 as GOOD (we tested this twice) and
+> wireless-testing commit before my ssb changes as BAD. Today Juan
+> finished bisecting kernel:
+> http://pastebin.com/HSKbRzpB
+>
+> According to his bisection the first bad commit is
+> e06383db9ec591696a06654257474b85bac1f8cb [0]:
+> hrtimers: extend hrtimer base code to handle more then 2 clockids
+>
+> Does it make any sense to you? Could this be some timing issue?
+>
+> It was too late to test this today, we (Juan) will work on this
+> tomorrow. It's impossible to revert this commit from HEAD of
+> wireless-testing, so my idea is to checkout commit, test, revert,
+> test.
+>
+> Did anyone else experience any similar problems with latest wireless-testing?
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/main.c  |   17 +++++++++++++----
- drivers/net/wireless/b43/main.h  |    1 +
- drivers/net/wireless/b43/phy_n.c |   13 +------------
- 3 files changed, 15 insertions(+), 16 deletions(-)
+I did some testing over the weekend using the LP-PHY device in my HP Mini 110 
+netbook. This one does not have any DMA issues, but b43 generates PHY 
+transmission errors and dies when I try to copy a file over my LAN. The source 
+material is contained on an NFS-mounted volume. The machine that exports the 
+volume is connected by wire to the router/switch. When I get a file from the 
+Internet, there are no problems. In the latter case, the transfer rate of the 
+download is up to 1.2 MB/s. I don't know what the peak rate is for the NFS copy 
+operation.
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index fd8bd98..53d109b 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2686,6 +2686,17 @@ out:
- 	dev->mac_suspended++;
- }
- 
-+/* http://bcm-v4.sipsolutions.net/802.11/PHY/N/MacPhyClkSet */
-+void b43_mac_phy_clock_set(struct b43_wldev *dev, bool on)
-+{
-+	u32 tmslow = ssb_read32(dev->dev, SSB_TMSLOW);
-+	if (on)
-+		tmslow |= B43_TMSLOW_MACPHYCLKEN;
-+	else
-+		tmslow &= ~B43_TMSLOW_MACPHYCLKEN;
-+	ssb_write32(dev->dev, SSB_TMSLOW, tmslow);
-+}
-+
- static void b43_adjust_opmode(struct b43_wldev *dev)
- {
- 	struct b43_wl *wl = dev->wl;
-@@ -2842,7 +2853,7 @@ static int b43_chip_init(struct b43_wldev *dev)
- {
- 	struct b43_phy *phy = &dev->phy;
- 	int err;
--	u32 value32, macctl;
-+	u32 macctl;
- 	u16 value16;
- 
- 	/* Initialize the MAC control */
-@@ -2920,9 +2931,7 @@ static int b43_chip_init(struct b43_wldev *dev)
- 	b43_write32(dev, B43_MMIO_DMA4_IRQ_MASK, 0x0000DC00);
- 	b43_write32(dev, B43_MMIO_DMA5_IRQ_MASK, 0x0000DC00);
- 
--	value32 = ssb_read32(dev->dev, SSB_TMSLOW);
--	value32 |= 0x00100000;
--	ssb_write32(dev->dev, SSB_TMSLOW, value32);
-+	b43_mac_phy_clock_set(dev, true);
- 
- 	b43_write16(dev, B43_MMIO_POWERUP_DELAY,
- 		    dev->dev->bus->chipco.fast_pwrup_delay);
-diff --git a/drivers/net/wireless/b43/main.h b/drivers/net/wireless/b43/main.h
-index 40db036..a0d327f 100644
---- a/drivers/net/wireless/b43/main.h
-+++ b/drivers/net/wireless/b43/main.h
-@@ -133,6 +133,7 @@ void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags);
- 
- void b43_mac_suspend(struct b43_wldev *dev);
- void b43_mac_enable(struct b43_wldev *dev);
-+void b43_mac_phy_clock_set(struct b43_wldev *dev, bool on);
- 
- 
- struct b43_request_fw_context;
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 6755063..b075a3f 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -3540,17 +3540,6 @@ static int b43_nphy_cal_rx_iq(struct b43_wldev *dev,
- 		return b43_nphy_rev2_cal_rx_iq(dev, target, type, debug);
- }
- 
--/* http://bcm-v4.sipsolutions.net/802.11/PHY/N/MacPhyClkSet */
--static void b43_nphy_mac_phy_clock_set(struct b43_wldev *dev, bool on)
--{
--	u32 tmslow = ssb_read32(dev->dev, SSB_TMSLOW);
--	if (on)
--		tmslow |= B43_TMSLOW_MACPHYCLKEN;
--	else
--		tmslow &= ~B43_TMSLOW_MACPHYCLKEN;
--	ssb_write32(dev->dev, SSB_TMSLOW, tmslow);
--}
--
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/RxCoreSetState */
- static void b43_nphy_set_rx_core_state(struct b43_wldev *dev, u8 mask)
- {
-@@ -3691,7 +3680,7 @@ int b43_phy_initn(struct b43_wldev *dev)
- 	b43_phy_write(dev, B43_NPHY_BBCFG, tmp & ~B43_NPHY_BBCFG_RSTCCA);
- 	b43_nphy_bmac_clock_fgc(dev, 0);
- 
--	b43_nphy_mac_phy_clock_set(dev, true);
-+	b43_mac_phy_clock_set(dev, true);
- 
- 	b43_nphy_pa_override(dev, false);
- 	b43_nphy_force_rf_sequence(dev, B43_RFSEQ_RX2TX);
--- 
-1.7.1
+I was able to test kernels from the wireless-testing tree back to v2.6.36. All 
+behaved the same, thus my problem is not a regression.
+
+Larry
