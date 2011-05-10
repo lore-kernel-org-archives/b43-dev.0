@@ -1,69 +1,63 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 10 May 2011 13:34:34 -0500
-Subject: b43 error under heavy load
-In-Reply-To: <BANLkTimjRA5CsSDp_+LrGq8PNgaR4JFD=w@mail.gmail.com>
-References: <4CEAB969.20702@lwfinger.net>	<1290451982.20888.2.camel@maggie>	<4CEAC095.7020706@lwfinger.net>
-	<BANLkTimjRA5CsSDp_+LrGq8PNgaR4JFD=w@mail.gmail.com>
-Message-ID: <4DC9853A.1090508@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 10 May 2011 20:57:28 +0200
+Subject: [hrtimers] Re: Regression affecting b43 LP-PHY card
+In-Reply-To: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
+References: <BANLkTin=cU_kCSFfznna69pkgTsSNVjJgw@mail.gmail.com>
+Message-ID: <BANLkTi=Lo4jRWbHhMLkJmOfg09s+ebDjcw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Juan Carlos Romero <juancarlos.romero@gmail.com>, =?UTF-8?B?TWljaGFlbA==?= =?UTF-8?B?IELDvHNjaA==?= <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
+To: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Juan Carlos Romero <juancarlos.romero@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Ben Greear <greearb@candelatech.com>, John Stultz <john.stultz@linaro.org>, Jamie Lokier <jamie@shareable.org>, Thomas Gleixner <tglx@linutronix.de>, Alexander Shishkin <virtuoso@slind.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 05/10/2011 12:08 AM, Rafa? Mi?ecki wrote:
-> 2010/11/22 Larry Finger<Larry.Finger@lwfinger.net>:
->> On 11/22/2010 12:53 PM, Michael B?sch wrote:
->>> On Mon, 2010-11-22 at 12:41 -0600, Larry Finger wrote:
->>>> Under heavy load with multiple streams, I'm getting errors from my BCM4312
->>>> (14e4:4315) device as follows:
->>>>
->>>> b43-phy0 debug: TX-status contains invalid cookie: 0x0D4D
->>>> b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 76
->>>> b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 78
->>>> (and continues).
->>>>
->>>> Clearly that cookie is garbage as it has a slot number of 0. Any suggestions on
->>>> diagnostic information that I could dump to help debug this?
->>>
->>> I think that probably is a firmware or hardware bug. The affected
->>> kernel code was not changed in years, as far as I know.
->>
->> Thanks. I'll see if I can figure out a way for the driver to recover more
->> gracefully. In the meantime, I will be dumping the entire TX status struct to
->> see if that helps in seeing what is wrong.
+W dniu 10 maja 2011 00:52 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+> Juan owns Lenovo affected by well-known LP-PHY DMA errors. His testing
+> procedure is following:
+> modprobe wl; connect; download sth small; rmmod wl;
+> modprobe b43; download 2GB
 >
-> Larry, did you try debugging this? Juan noticed this issue on his
-> 14e4:4315 as well.
-> [  854.826369] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 54
-> [  854.827348] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 56
-> [  854.828080] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 58
-> [  854.831431] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 60
-> [  854.831453] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 62
-> [  854.832440] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 64
-> [  854.833836] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 66
-> [  854.834567] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 68
-> [  854.834588] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 70
-> [  854.835378] b43-phy0 debug: Out of order TX status report on DMA
-> ring 1. Expected 74, but got 72
+> When working on DMA errors we discovered that wireless-testing is not
+> working well for him. Even after performing above procedure his
+> machine disconnects quickly and he is not able to reconnect. We tested
+> 2.6.39-rc6 from tarball and it was working fine. I'd like to highlight
+> here, that we were switching between mainline and wireless-testing few
+> times. It is not a random issue.
 >
-> Connection is lost, reloading of the driver is needer.
+> I suspected this regression could be caused by my recent ssb patches.
+> So I reverted all of them but this didn't help.
+>
+> In this situation we decided to bisect. I was a little afraid of last
+> merges so we took older 2.6.38 as GOOD (we tested this twice) and
+> wireless-testing commit before my ssb changes as BAD. Today Juan
+> finished bisecting kernel:
+> http://pastebin.com/HSKbRzpB
+>
+> According to his bisection the first bad commit is
+> e06383db9ec591696a06654257474b85bac1f8cb [0]:
+> hrtimers: extend hrtimer base code to handle more then 2 clockids
+>
+> Does it make any sense to you? Could this be some timing issue?
+>
+> It was too late to test this today, we (Juan) will work on this
+> tomorrow. It's impossible to revert this commit from HEAD of
+> wireless-testing, so my idea is to checkout commit, test, revert,
+> test.
+>
+> Did anyone else experience any similar problems with latest wireless-testing?
+>
+>
+> http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=e06383db9ec591696a06654257474b85bac1f8cb
 
-I have not gotten any further with this problem, but I just noticed a curious 
-"coincidence". The expected status number was 74 in both cases. I do not think 
-there is anything special about that particular slot. After all, there are 256 
-TX ring slots. As the comment says at line 1407 of dma.c, there might be a 
-firmware error. If so, it is common to several versions as I have seen it on a 
-BCM4318.
+Today Juan checkouted commit e06383db9ec591696a06654257474b85bac1f8cb
+and tested it. He was disconnected really soon.
 
-Larry
+Then he reverted e06383db9ec591696a06654257474b85bac1f8cb and tested
+again. Connection was stable, he downloaded 2GB file over network.
+
+
+John S.: your commit does not touch Broadcom card directly, but it
+seems it somehow affects it. I suspect there can be some timing issue.
+Do you have any idea what could it be, how can we debug this?
+
+-- 
+Rafa?
