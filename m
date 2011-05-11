@@ -1,63 +1,42 @@
-From: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
-Date: Wed, 11 May 2011 18:43:10 +0200
-Subject: Optimization: keeping pointer all the time, or defining getter?
-In-Reply-To: <BANLkTinR=+vdYNModL_yOKhAqKv3e0nQ4A@mail.gmail.com>
-References: <BANLkTi=xOtAaxh8Q7Nk84Rwz9jM-6EP1Ww@mail.gmail.com>
-	<1305131265.16850.6.camel@maggie>
-	<BANLkTinR=+vdYNModL_yOKhAqKv3e0nQ4A@mail.gmail.com>
-Message-ID: <1305132190.16850.7.camel@maggie>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Wed, 11 May 2011 13:12:17 -0400
+Subject: [PATCH V2 0/3] ssb/b43(legacy): clean dangling cores workarounds
+In-Reply-To: <4DC9BC6E.2090804@lwfinger.net>
+References: <1304879433-7096-1-git-send-email-zajec5@gmail.com>
+	<BANLkTimecZ0uB4V_b-8F784Tnbkqo71ORA@mail.gmail.com>
+	<BANLkTinfMbkyh9kB+hsmka-JcWXAYEPynw@mail.gmail.com>
+	<4DC9BC6E.2090804@lwfinger.net>
+Message-ID: <20110511171217.GF2490@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, Michael =?iso-8859-1?Q?B=FCsch?= <mb@bu3sch.de>, b43-dev@lists.infradead.org
 
-On Wed, 2011-05-11 at 18:34 +0200, Rafa? Mi?ecki wrote: 
-> W dniu 11 maja 2011 18:27 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
-> > On Wed, 2011-05-11 at 18:22 +0200, Rafa? Mi?ecki wrote:
-> >> I try to abstract bus in b43 driver. For frequently used fields
-> >> solution is obvious:
-> >> At init time I get info from bus-specific stuct and put it in generic field.
-> >> Example: core revision. We often refer to it, I put it in abstraction struct.
+On Tue, May 10, 2011 at 05:30:06PM -0500, Larry Finger wrote:
+> On 05/10/2011 05:08 PM, Rafa? Mi?ecki wrote:
+> >W dniu 8 maja 2011 19:54 u?ytkownik Rafa? Mi?ecki<zajec5@gmail.com>  napisa?:
+> >>W dniu 8 maja 2011 20:30 u?ytkownik Rafa? Mi?ecki<zajec5@gmail.com>  napisa?:
+> >>>There is no perfect place for this workarounds, but keeping it in ssb sounds
+> >>>more reasonable.
 > >>
-> >> My question: what is the policy for cases with less frequently used fields?
-> >> Example: I need to use "struct device" for registering some low lever stuff.
-> >>
-> >> I have two solutions:
-> >>
-> >> 1) Realtime:
-> >> struct device *get_device(...)
-> >> {
-> >> if (dev->bus_type = B43_BUS_SSB)
-> >> return dev->ssbdev->device;
-> >> else if (dev->bus_type = B43_BUS_BCMA)
-> >> return dev->bcmadev->device;
-> >> }
-> >>
-> >> 2) Init time:
-> >> void b43_ssb_init(struct ssb_device *ssbdev)
-> >> {
-> >> dev->struct = ssbdev->device;
-> >> }
-> >>
-> >> The first one is slower but we don't keep "struct device" pointer in
-> >> abstraction struct. Situation is opposite for the second one.
-> >>
-> >> Does anyone care? ;)
+> >>Uups, I didn't save edition fixing this grammatical mistake. I'm lucky
+> >>it won't be visible anywhere in git log :)
 > >
-> > Put a struct device pointer into b43_wldev.
-> > The pointer is needed on every DMA transaction several times, so this
-> > seems worth it.
+> >John: something went wrong there. You applied b43 and b43legacy
+> >patches, but they should applied *after* ssb patch I don't see in your
+> >tree.
+> >
+> >I don't know how many people can be affected by this... Can not tell
+> >you if we should rebase or just commit ssb patch quickly.
 > 
-> Oops, OK, that was example. I thought DMA uses "dma_dev" frequently, not "dev".
+> My BCM4306 card is probably one of the few affected. No rebase will
+> be needed as long as the ssb patch is available in 2.6.40-rc1.
+> Fortunately, kernel building is not impacted.
 
-Ah well. I don't know. Isn't dma_dev part of some SSB struct?
-
-> But if we assume there is some not frequently used struct. What
-> solution should be used then?
-
-Apply common sense. ;)
+Sorry, not sure what happened -- I'll go ahead and commit it.
 
 -- 
-Greetings Michael.
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
