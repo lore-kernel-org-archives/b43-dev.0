@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 13 May 2011 23:59:10 +0200
-Subject: [PATCH] b43: rename b43_wldev's field with ssb_device to sdev
-Message-ID: <1305323950-13021-1-git-send-email-zajec5@gmail.com>
+Date: Sat, 14 May 2011 00:04:38 +0200
+Subject: [PATCH V2] b43: rename b43_wldev's field with ssb_device to sdev
+Message-ID: <1305324278-15705-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,6 +13,8 @@ We free name "dev" for something generic (like dev abstraction layer).
 Additionaly code is cleaner now, especially magic dev->dev-dev chains.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+V2: update forgotten sdio.c
 ---
  drivers/net/wireless/b43/b43.h          |   10 +-
  drivers/net/wireless/b43/dma.c          |   36 +++++-----
@@ -26,11 +28,12 @@ Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
  drivers/net/wireless/b43/phy_n.c        |   24 +++---
  drivers/net/wireless/b43/pio.c          |   30 ++++----
  drivers/net/wireless/b43/rfkill.c       |    6 +-
+ drivers/net/wireless/b43/sdio.c         |    4 +-
  drivers/net/wireless/b43/sysfs.c        |    4 +-
  drivers/net/wireless/b43/tables_lpphy.c |    4 +-
  drivers/net/wireless/b43/wa.c           |    4 +-
  drivers/net/wireless/b43/xmit.c         |    2 +-
- 16 files changed, 173 insertions(+), 172 deletions(-)
+ 17 files changed, 175 insertions(+), 174 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
 index 229f438..1be9420 100644
@@ -1333,6 +1336,28 @@ index 86bc0a0..a617efe 100644
 +		ssb_device_disable(dev->sdev, 0);
  		ssb_bus_may_powerdown(bus);
  	}
+ 
+diff --git a/drivers/net/wireless/b43/sdio.c b/drivers/net/wireless/b43/sdio.c
+index 09e2dfd..808e25b 100644
+--- a/drivers/net/wireless/b43/sdio.c
++++ b/drivers/net/wireless/b43/sdio.c
+@@ -66,7 +66,7 @@ static void b43_sdio_interrupt_dispatcher(struct sdio_func *func)
+ int b43_sdio_request_irq(struct b43_wldev *dev,
+ 			 void (*handler)(struct b43_wldev *dev))
+ {
+-	struct ssb_bus *bus = dev->dev->bus;
++	struct ssb_bus *bus = dev->sdev->bus;
+ 	struct sdio_func *func = bus->host_sdio;
+ 	struct b43_sdio *sdio = sdio_get_drvdata(func);
+ 	int err;
+@@ -82,7 +82,7 @@ int b43_sdio_request_irq(struct b43_wldev *dev,
+ 
+ void b43_sdio_free_irq(struct b43_wldev *dev)
+ {
+-	struct ssb_bus *bus = dev->dev->bus;
++	struct ssb_bus *bus = dev->sdev->bus;
+ 	struct sdio_func *func = bus->host_sdio;
+ 	struct b43_sdio *sdio = sdio_get_drvdata(func);
  
 diff --git a/drivers/net/wireless/b43/sysfs.c b/drivers/net/wireless/b43/sysfs.c
 index f1ae4e0..57af619 100644
