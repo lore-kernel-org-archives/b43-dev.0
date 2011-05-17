@@ -1,49 +1,71 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 17 May 2011 19:19:39 +0200
-Subject: [PATCH] b43: read PHY info only when needed (for PHY-A)
-Message-ID: <1305652779-24293-1-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 17 May 2011 19:48:18 +0200
+Subject: [PATCH V7] bcma: add Broadcom specific AMBA bus driver
+In-Reply-To: <4DD2B178.3050907@broadcom.com>
+References: <1304960206-8832-1-git-send-email-zajec5@gmail.com>
+	<4DD2B178.3050907@broadcom.com>
+Message-ID: <BANLkTin7woaT5Uaxvh4x2jp-J10jnzSdmA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
 
-We risk reading TMSHIGH register twice, but PHY-A are really rare and we
-do not support them at the moment.
+2011/5/17 Arend van Spriel <arend@broadcom.com>:
+> On 05/09/2011 06:56 PM, Rafa? Mi?ecki wrote:
+>>
+>> Broadcom has released cards based on a new AMBA-based bus type. From a
+>> programming point of view, this new bus type differs from AMBA and does
+>> not use AMBA common registers. It also differs enough from SSB. We
+>> decided that a new bus driver is needed to keep the code clean.
+>>
+>> In its current form, the driver detects devices present on the bus and
+>> registers them in the system. It allows registering BCMA drivers for
+>> specified bus devices and provides them basic operations. The bus driver
+>> itself includes two important bus managing drivers: ChipCommon core
+>> driver and PCI(c) core driver. They are early used to allow correct
+>> initialization.
+>>
+>> Currently code is limited to supporting buses on PCI(e) devices, however
+>> the driver is designed to be used also on other hosts. The host
+>> abstraction layer is implemented and already used for PCI(e).
+>>
+>> Support for PCI(e) hosts is working and seems to be stable (access to
+>> 80211 core was tested successfully on a few devices). We can still
+>> optimize it by using some fixed windows, but this can be done later
+>> without affecting any external code. Windows are just ranges in MMIO
+>> used for accessing cores on the bus.
+>
+> Hi Rafa?,
+>
+> Just some minor feedback on coding style. I wanted to make a change in
+> host_pci.c to avoid changing the PCI BAR window and noticed following:
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/main.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+Sorry?
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 9380842..eb41596 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2119,7 +2119,6 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
- 	int err;
- 
- 	/* Get microcode */
--	tmshigh = ssb_read32(dev->sdev, SSB_TMSHIGH);
- 	if ((rev >= 5) && (rev <= 10))
- 		filename = "ucode5";
- 	else if ((rev >= 11) && (rev <= 12))
-@@ -2158,6 +2157,7 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
- 	switch (dev->phy.type) {
- 	case B43_PHYTYPE_A:
- 		if ((rev >= 5) && (rev <= 10)) {
-+			tmshigh = ssb_read32(dev->sdev, SSB_TMSHIGH);
- 			if (tmshigh & B43_TMSHIGH_HAVE_2GHZ_PHY)
- 				filename = "a0g1initvals5";
- 			else
-@@ -2202,6 +2202,7 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
- 	switch (dev->phy.type) {
- 	case B43_PHYTYPE_A:
- 		if ((rev >= 5) && (rev <= 10)) {
-+			tmshigh = ssb_read32(dev->sdev, SSB_TMSHIGH);
- 			if (tmshigh & B43_TMSHIGH_HAVE_2GHZ_PHY)
- 				filename = "a0g1bsinitvals5";
- 			else
+
+> 1. indentation is all spaces.
+
+You can find spaces only for aligning text in newline after breaking
+more-than-80-chars lines.
+
+
+> 2. initial indent is 7 spaces, and subsequent indents are 8 spaces.
+
+$ grep "        " ./*c | wc -l
+0
+
+
+> 3. pointer assignment: ptr =&var;
+
+$ grep "=&" ./*c | wc -l
+0
+
+
+> 4. output parameter: foo(bar,&yabar);
+
+$ grep ",&" ./*c | wc -l
+0
+
 -- 
-1.7.3.4
+Rafa?
