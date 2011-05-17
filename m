@@ -1,78 +1,45 @@
-From: Antonino La Mattina <ala_mattina@hotmail.com>
-Date: Sun, 15 May 2011 10:29:21 +0200
-Subject: power saving mode
-Message-ID: <DUB105-w637B41C7A566E1C75FB52E968A0@phx.gbl>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 17 May 2011 12:40:10 +0200
+Subject: ssb: how did we get special reject bit for SSB rev 2.3?
+Message-ID: <BANLkTik2Sc9aWi_cHVvLJzGv3esey=wPag@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Michael Buesch <mb@bu3sch.de>, Larry Finger <Larry.Finger@lwfinger.net>
 
+I've just received 14e4:4312 card which is G-PHY BCM4311.
 
-Hi, is supported power saving mode? I found this function in main.c but I dont' understand if this means that the power saving is implemented : 
-void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags)
-{
-    u32 macctl;
-    u16 ucstat;
-    bool hwps;
-    bool awake;
-    int i;
+I've checked for SSB rev in MMIO dump:
+read32 0xfaafcff8 -> 0x100422c5
 
-    B43_WARN_ON((ps_flags & B43_PS_ENABLED) &&
-            (ps_flags & B43_PS_DISABLED));
-    B43_WARN_ON((ps_flags & B43_PS_AWAKE) && (ps_flags & B43_PS_ASLEEP));
+0x100422c5 & (SSB_IDLOW_SSBREV == 0xF0000000) = 0x10000000
+So this is SSB rev 2.3:
+#define  SSB_IDLOW_SSBREV_23	0x10000000 /* 2.3 */
 
-    if (ps_flags & B43_PS_ENABLED) {
-        hwps = 1;
-    } else if (ps_flags & B43_PS_DISABLED) {
-        hwps = 0;
-    } else {
-        //TODO: If powersave is not off and FIXME is not set and we are not in adhoc
-        //      and thus is not an AP and we are associated, set bit 25
-    }
-    if (ps_flags & B43_PS_AWAKE) {
-        awake = 1;
-    } else if (ps_flags & B43_PS_ASLEEP) {
-        awake = 0;
-    } else {
-        //TODO: If the device is awake or this is an AP, or we are scanning, or FIXME,
-        //      or we are associated, or FIXME, or the latest PS-Poll packet sent was
-        //      successful, set bit26
-    }
+Currently we are using different REJECT bit for SSB rev 2.3:
+#define  SSB_TMSLOW_REJECT	0x00000002 /* Reject (Standard Backplane) */
+#define  SSB_TMSLOW_REJECT_23	0x00000004 /* Reject (Backplane rev 2.3) */
 
-/* FIXME: For now we force awake-on and hwps-off */
-    hwps = 0;
-    awake = 1;
+Does anyone know where did we get this from?
 
-    macctl = b43_read32(dev, B43_MMIO_MACCTL);
-    if (hwps)
-        macctl |= B43_MACCTL_HWPS;
-    else
-        macctl &= ~B43_MACCTL_HWPS;
-    if (awake)
-        macctl |= B43_MACCTL_AWAKE;
-    else
-        macctl &= ~B43_MACCTL_AWAKE;
-    b43_write32(dev, B43_MMIO_MACCTL, macctl);
-    /* Commit write */
-    b43_read32(dev, B43_MMIO_MACCTL);
-    if (awake && dev->dev->id.revision >= 5) {
-        /* Wait for the microcode to wake up. */
-        for (i = 0; i < 100; i++) {
-            ucstat = b43_shm_read16(dev, B43_SHM_SHARED,
-                        B43_SHM_SH_UCODESTAT);
-            if (ucstat != B43_SHM_SH_UCODESTAT_SLEEP)
-                break;
-            udelay(10);
-        }
-    }
-}
-This function can only be responsible for this mode of operation ? I'm studying this mode of operation (in b43) for my university, is very important for me, thanks.    
+wl does never use this bit:
 
+$ grep "ssb_write32(0xf98)" wl.4312.txt | sort | uniq
+ssb_write32(0xf98) <- 0x00000003
+ssb_write32(0xf98) <- 0x00010000
+ssb_write32(0xf98) <- 0x00010002
+ssb_write32(0xf98) <- 0x00030003
+ssb_write32(0xf98) <- 0x00040003
+ssb_write32(0xf98) <- 0x00070000
+ssb_write32(0xf98) <- 0x00070001
+ssb_write32(0xf98) <- 0x00070003
+ssb_write32(0xf98) <- 0x20010000
+ssb_write32(0xf98) <- 0x20010002
+ssb_write32(0xf98) <- 0x20040003
+ssb_write32(0xf98) <- 0x20070000
+ssb_write32(0xf98) <- 0x20070001
+ssb_write32(0xf98) <- 0x20070003
 
-
-
- 		 	   		  
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110515/5fd52123/attachment.html>
+-- 
+Rafa?
