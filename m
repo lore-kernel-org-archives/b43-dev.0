@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 17 May 2011 14:00:01 +0200
-Subject: [PATCH 2/3] b43: make b43_wireless_init less bus specific
+Date: Tue, 17 May 2011 14:00:02 +0200
+Subject: [PATCH 3/3] b43: dma: cache translation (routing bits)
 In-Reply-To: <1305633602-4590-1-git-send-email-zajec5@gmail.com>
 References: <1305633602-4590-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1305633602-4590-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1305633602-4590-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,67 +14,61 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/main.c |   23 ++++++++++-------------
- 1 files changed, 10 insertions(+), 13 deletions(-)
+ drivers/net/wireless/b43/b43.h |    2 ++
+ drivers/net/wireless/b43/dma.c |    7 ++++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 38b6578..f45db3f 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4926,19 +4926,16 @@ static void b43_wireless_exit(struct ssb_device *dev, struct b43_wl *wl)
- 	ieee80211_free_hw(hw);
- }
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index caba5c5..ee4d06f 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -567,6 +567,8 @@ struct b43_dma {
+ 	struct b43_dmaring *tx_ring_mcast; /* Multicast */
  
--static int b43_wireless_init(struct ssb_device *dev)
-+static struct b43_wl *b43_wireless_init(struct ssb_device *dev)
- {
- 	struct ssb_sprom *sprom = &dev->bus->sprom;
- 	struct ieee80211_hw *hw;
- 	struct b43_wl *wl;
--	int err = -ENOMEM;
--
--	b43_sprom_fixup(dev->bus);
+ 	struct b43_dmaring *rx_ring;
++
++	u32 translation; /* Routing bits */
+ };
  
- 	hw = ieee80211_alloc_hw(sizeof(*wl), &b43_hw_ops);
- 	if (!hw) {
- 		b43err(NULL, "Could not allocate ieee80211 device\n");
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 	}
- 	wl = hw_to_b43_wl(hw);
+ struct b43_pio_txqueue;
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index 10cfba3..47d44bc 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -80,7 +80,7 @@ static void op32_fill_descriptor(struct b43_dmaring *ring,
+ 	addr = (u32) (dmaaddr & ~SSB_DMA_TRANSLATION_MASK);
+ 	addrext = (u32) (dmaaddr & SSB_DMA_TRANSLATION_MASK)
+ 	    >> SSB_DMA_TRANSLATION_SHIFT;
+-	addr |= ssb_dma_translation(ring->dev->sdev);
++	addr |= ring->dev->dma.translation;
+ 	ctl = bufsize & B43_DMA32_DCTL_BYTECNT;
+ 	if (slot == ring->nr_slots - 1)
+ 		ctl |= B43_DMA32_DCTL_DTABLEEND;
+@@ -174,7 +174,7 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
+ 	addrhi = (((u64) dmaaddr >> 32) & ~SSB_DMA_TRANSLATION_MASK);
+ 	addrext = (((u64) dmaaddr >> 32) & SSB_DMA_TRANSLATION_MASK)
+ 	    >> SSB_DMA_TRANSLATION_SHIFT;
+-	addrhi |= (ssb_dma_translation(ring->dev->sdev) << 1);
++	addrhi |= (ring->dev->dma.translation << 1);
+ 	if (slot == ring->nr_slots - 1)
+ 		ctl0 |= B43_DMA64_DCTL0_DTABLEEND;
+ 	if (start)
+@@ -658,7 +658,7 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
+ 	int err = 0;
+ 	u32 value;
+ 	u32 addrext;
+-	u32 trans = ssb_dma_translation(ring->dev->sdev);
++	u32 trans = ring->dev->dma.translation;
  
-@@ -4972,12 +4969,9 @@ static int b43_wireless_init(struct ssb_device *dev)
- 	INIT_WORK(&wl->tx_work, b43_tx_work);
- 	skb_queue_head_init(&wl->tx_queue);
- 
--	ssb_set_devtypedata(dev, wl);
- 	b43info(wl, "Broadcom %04X WLAN found (core revision %u)\n",
- 		dev->bus->chip_id, dev->id.revision);
--	err = 0;
--out:
--	return err;
-+	return wl;
- }
- 
- static int b43_ssb_probe(struct ssb_device *dev, const struct ssb_device_id *id)
-@@ -4990,11 +4984,14 @@ static int b43_ssb_probe(struct ssb_device *dev, const struct ssb_device_id *id)
- 	if (!wl) {
- 		/* Probing the first core. Must setup common struct b43_wl */
- 		first = 1;
--		err = b43_wireless_init(dev);
--		if (err)
-+		b43_sprom_fixup(dev->bus);
-+		wl = b43_wireless_init(dev);
-+		if (IS_ERR(wl)) {
-+			err = PTR_ERR(wl);
- 			goto out;
--		wl = ssb_get_devtypedata(dev);
--		B43_WARN_ON(!wl);
-+		}
-+		ssb_set_devtypedata(dev, wl);
-+		B43_WARN_ON(ssb_get_devtypedata(dev) != wl);
- 	}
- 	err = b43_one_core_attach(dev, wl);
+ 	if (ring->tx) {
+ 		if (ring->type == B43_DMA_64BIT) {
+@@ -1055,6 +1055,7 @@ int b43_dma_init(struct b43_wldev *dev)
+ 	err = b43_dma_set_mask(dev, dmamask);
  	if (err)
+ 		return err;
++	dma->translation = ssb_dma_translation(dev->sdev);
+ 
+ 	err = -ENOMEM;
+ 	/* setup TX DMA channels. */
 -- 
 1.7.3.4
