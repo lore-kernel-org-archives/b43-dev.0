@@ -1,20 +1,35 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 17 May 2011 13:29:35 +0200
-Subject: [PATCH 1/3] b43: add helpers for block R/W ops
-In-Reply-To: <1305633602-4590-1-git-send-email-zajec5@gmail.com>
-References: <1305633602-4590-1-git-send-email-zajec5@gmail.com>
-Message-ID: <BANLkTikDakeK3KUWqrm1sHpDAJPPL9mw4A@mail.gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Tue, 17 May 2011 13:32:13 +0200
+Subject: ssb: how did we get special reject bit for SSB rev 2.3?
+In-Reply-To: <BANLkTik2Sc9aWi_cHVvLJzGv3esey=wPag@mail.gmail.com>
+References: <BANLkTik2Sc9aWi_cHVvLJzGv3esey=wPag@mail.gmail.com>
+Message-ID: <BANLkTimoju5LSrKcRe67c41mCkPU0PUOjg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org, Michael Buesch <mb@bu3sch.de>, Larry Finger <Larry.Finger@lwfinger.net>
 
-Maybe I should have post cover letter with following info.
+2011/5/17 Rafa? Mi?ecki <zajec5@gmail.com>:
+> Currently we are using different REJECT bit for SSB rev 2.3:
+> #define ?SSB_TMSLOW_REJECT ? ? ?0x00000002 /* Reject (Standard Backplane) */
+> #define ?SSB_TMSLOW_REJECT_23 ? 0x00000004 /* Reject (Backplane rev 2.3) */
+>
+> Does anyone know where did we get this from?
 
-I've tested that patches with my BCM4311 (14e4:4312). Both dma and pio
-still work :)
+Broadcom public sources define it as follows:
+#define SBTML_REJ_MASK          0x0006          /* reject field */
+#define SBTML_REJ               0x0002          /* reject */
+#define SBTML_TMPREJ            0x0004          /* temporary reject,
+for error recovery */
 
--- 
-Rafa?
+>
+> wl does never use this bit:
+
+It seems neither do the public ssb sources:
+# grep -r 'SBTML_TMPREJ' shared/ | wc -l
+0
+#
+
+Jonas
