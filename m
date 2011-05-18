@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 18 May 2011 02:06:36 +0200
-Subject: [PATCH 2/9] b43: add bus device abstraction layer
+Date: Wed, 18 May 2011 02:06:37 +0200
+Subject: [PATCH 3/9] b43: bus: abstract R/W operations
 In-Reply-To: <1305677203-16660-1-git-send-email-zajec5@gmail.com>
 References: <1305677203-16660-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1305677203-16660-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1305677203-16660-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,231 +14,130 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/Makefile |    1 +
- drivers/net/wireless/b43/b43.h    |    4 +++-
- drivers/net/wireless/b43/bus.c    |   36 ++++++++++++++++++++++++++++++++++++
- drivers/net/wireless/b43/bus.h    |   17 +++++++++++++++++
- drivers/net/wireless/b43/main.c   |   30 +++++++++++++++++-------------
- 5 files changed, 74 insertions(+), 14 deletions(-)
- create mode 100644 drivers/net/wireless/b43/bus.c
- create mode 100644 drivers/net/wireless/b43/bus.h
+ drivers/net/wireless/b43/b43.h |   12 ++++++------
+ drivers/net/wireless/b43/bus.c |   38 ++++++++++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/bus.h |    9 +++++++++
+ 3 files changed, 53 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/Makefile b/drivers/net/wireless/b43/Makefile
-index cef334a..95f7c00 100644
---- a/drivers/net/wireless/b43/Makefile
-+++ b/drivers/net/wireless/b43/Makefile
-@@ -1,4 +1,5 @@
- b43-y				+= main.o
-+b43-y				+= bus.o
- b43-y				+= tables.o
- b43-$(CONFIG_B43_PHY_N)		+= tables_nphy.o
- b43-$(CONFIG_B43_PHY_N)		+= radio_2055.o
 diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index ee4d06f..9e9b24b 100644
+index 9e9b24b..a6d4848 100644
 --- a/drivers/net/wireless/b43/b43.h
 +++ b/drivers/net/wireless/b43/b43.h
-@@ -11,6 +11,7 @@
- #include "debugfs.h"
- #include "leds.h"
- #include "rfkill.h"
-+#include "bus.h"
- #include "lo.h"
- #include "phy_common.h"
+@@ -883,34 +883,34 @@ static inline enum ieee80211_band b43_current_band(struct b43_wl *wl)
  
-@@ -707,7 +708,8 @@ enum {
+ static inline u16 b43_read16(struct b43_wldev *dev, u16 offset)
+ {
+-	return ssb_read16(dev->sdev, offset);
++	return dev->dev->read16(dev->dev, offset);
+ }
  
- /* Data structure for one wireless device (802.11 core) */
- struct b43_wldev {
--	struct ssb_device *sdev;
-+	struct ssb_device *sdev; /* TODO: remove when b43_bus_dev is ready */
-+	struct b43_bus_dev *dev;
- 	struct b43_wl *wl;
+ static inline void b43_write16(struct b43_wldev *dev, u16 offset, u16 value)
+ {
+-	ssb_write16(dev->sdev, offset, value);
++	dev->dev->write16(dev->dev, offset, value);
+ }
  
- 	/* The device initialization status.
+ static inline u32 b43_read32(struct b43_wldev *dev, u16 offset)
+ {
+-	return ssb_read32(dev->sdev, offset);
++	return dev->dev->read32(dev->dev, offset);
+ }
+ 
+ static inline void b43_write32(struct b43_wldev *dev, u16 offset, u32 value)
+ {
+-	ssb_write32(dev->sdev, offset, value);
++	dev->dev->write32(dev->dev, offset, value);
+ }
+ 
+ static inline void b43_block_read(struct b43_wldev *dev, void *buffer,
+ 				 size_t count, u16 offset, u8 reg_width)
+ {
+-	ssb_block_read(dev->sdev, buffer, count, offset, reg_width);
++	dev->dev->block_read(dev->dev, buffer, count, offset, reg_width);
+ }
+ 
+ static inline void b43_block_write(struct b43_wldev *dev, const void *buffer,
+ 				   size_t count, u16 offset, u8 reg_width)
+ {
+-	ssb_block_write(dev->sdev, buffer, count, offset, reg_width);
++	dev->dev->block_write(dev->dev, buffer, count, offset, reg_width);
+ }
+ 
+ static inline bool b43_using_pio_transfers(struct b43_wldev *dev)
 diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
-new file mode 100644
-index 0000000..f8ccd2c
---- /dev/null
+index f8ccd2c..fe5fa26 100644
+--- a/drivers/net/wireless/b43/bus.c
 +++ b/drivers/net/wireless/b43/bus.c
-@@ -0,0 +1,36 @@
-+/*
-+
-+  Broadcom B43 wireless driver
-+  Bus abstraction layer
-+
-+  This program is free software; you can redistribute it and/or modify
-+  it under the terms of the GNU General Public License as published by
-+  the Free Software Foundation; either version 2 of the License, or
-+  (at your option) any later version.
-+
-+  This program is distributed in the hope that it will be useful,
-+  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+  GNU General Public License for more details.
-+
-+  You should have received a copy of the GNU General Public License
-+  along with this program; see the file COPYING.  If not, write to
-+  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
-+  Boston, MA 02110-1301, USA.
-+
-+*/
-+
-+#include "b43.h"
-+#include "bus.h"
-+
-+
-+/* SSB */
-+struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
+@@ -25,6 +25,37 @@
+ 
+ 
+ /* SSB */
++static inline u16 b43_bus_ssb_read16(struct b43_bus_dev *dev, u16 offset)
 +{
-+	struct b43_bus_dev *dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+
-+	dev->bus_type = B43_BUS_SSB;
-+	dev->sdev = sdev;
-+
-+	return dev;
++	return ssb_read16(dev->sdev, offset);
 +}
++static inline u32 b43_bus_ssb_read32(struct b43_bus_dev *dev, u16 offset)
++{
++	return ssb_read32(dev->sdev, offset);
++}
++static inline
++void b43_bus_ssb_write16(struct b43_bus_dev *dev, u16 offset, u16 value)
++{
++	ssb_write16(dev->sdev, offset, value);
++}
++static inline
++void b43_bus_ssb_write32(struct b43_bus_dev *dev, u16 offset, u32 value)
++{
++	ssb_write32(dev->sdev, offset, value);
++}
++static inline
++void b43_bus_ssb_block_read(struct b43_bus_dev *dev, void *buffer,
++			    size_t count, u16 offset, u8 reg_width)
++{
++	ssb_block_read(dev->sdev, buffer, count, offset, reg_width);
++}
++static inline
++void b43_bus_ssb_block_write(struct b43_bus_dev *dev, const void *buffer,
++			     size_t count, u16 offset, u8 reg_width)
++{
++	ssb_block_write(dev->sdev, buffer, count, offset, reg_width);
++}
++
+ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
+ {
+ 	struct b43_bus_dev *dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+@@ -32,5 +63,12 @@ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
+ 	dev->bus_type = B43_BUS_SSB;
+ 	dev->sdev = sdev;
+ 
++	dev->read16 = b43_bus_ssb_read16;
++	dev->read32 = b43_bus_ssb_read32;
++	dev->write16 = b43_bus_ssb_write16;
++	dev->write32 = b43_bus_ssb_write32;
++	dev->block_read = b43_bus_ssb_block_read;
++	dev->block_write = b43_bus_ssb_block_write;
++
+ 	return dev;
+ }
 diff --git a/drivers/net/wireless/b43/bus.h b/drivers/net/wireless/b43/bus.h
-new file mode 100644
-index 0000000..68bc00a
---- /dev/null
+index 68bc00a..9b39002 100644
+--- a/drivers/net/wireless/b43/bus.h
 +++ b/drivers/net/wireless/b43/bus.h
-@@ -0,0 +1,17 @@
-+#ifndef B43_BUS_H_
-+#define B43_BUS_H_
+@@ -10,6 +10,15 @@ struct b43_bus_dev {
+ 	union {
+ 		struct ssb_device *sdev;
+ 	};
 +
-+enum b43_bus_type {
-+	B43_BUS_SSB,
-+};
-+
-+struct b43_bus_dev {
-+	enum b43_bus_type bus_type;
-+	union {
-+		struct ssb_device *sdev;
-+	};
-+};
-+
-+struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev);
-+
-+#endif /* B43_BUS_H_ */
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 1e81a0d..6356fbc 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4845,7 +4845,7 @@ err_powerdown:
- 	return err;
- }
++	u16 (*read16)(struct b43_bus_dev *dev, u16 offset);
++	u32 (*read32)(struct b43_bus_dev *dev, u16 offset);
++	void (*write16)(struct b43_bus_dev *dev, u16 offset, u16 value);
++	void (*write32)(struct b43_bus_dev *dev, u16 offset, u32 value);
++	void (*block_read)(struct b43_bus_dev *dev, void *buffer,
++			   size_t count, u16 offset, u8 reg_width);
++	void (*block_write)(struct b43_bus_dev *dev, const void *buffer,
++			    size_t count, u16 offset, u8 reg_width);
+ };
  
--static void b43_one_core_detach(struct ssb_device *dev)
-+static void b43_one_core_detach(struct b43_bus_dev *dev)
- {
- 	struct b43_wldev *wldev;
- 	struct b43_wl *wl;
-@@ -4853,17 +4853,17 @@ static void b43_one_core_detach(struct ssb_device *dev)
- 	/* Do not cancel ieee80211-workqueue based work here.
- 	 * See comment in b43_remove(). */
- 
--	wldev = ssb_get_drvdata(dev);
-+	wldev = ssb_get_drvdata(dev->sdev);
- 	wl = wldev->wl;
- 	b43_debugfs_remove_device(wldev);
- 	b43_wireless_core_detach(wldev);
- 	list_del(&wldev->list);
- 	wl->nr_devs--;
--	ssb_set_drvdata(dev, NULL);
-+	ssb_set_drvdata(dev->sdev, NULL);
- 	kfree(wldev);
- }
- 
--static int b43_one_core_attach(struct ssb_device *dev, struct b43_wl *wl)
-+static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
- {
- 	struct b43_wldev *wldev;
- 	int err = -ENOMEM;
-@@ -4873,7 +4873,8 @@ static int b43_one_core_attach(struct ssb_device *dev, struct b43_wl *wl)
- 		goto out;
- 
- 	wldev->use_pio = b43_modparam_pio;
--	wldev->sdev = dev;
-+	wldev->dev = dev;
-+	wldev->sdev = dev->sdev; /* TODO: Remove when not needed */
- 	wldev->wl = wl;
- 	b43_set_status(wldev, B43_STAT_UNINIT);
- 	wldev->bad_frames_preempt = modparam_bad_frames_preempt;
-@@ -4885,7 +4886,7 @@ static int b43_one_core_attach(struct ssb_device *dev, struct b43_wl *wl)
- 
- 	list_add(&wldev->list, &wl->devlist);
- 	wl->nr_devs++;
--	ssb_set_drvdata(dev, wldev);
-+	ssb_set_drvdata(dev->sdev, wldev);
- 	b43_debugfs_add_device(wldev);
- 
-       out:
-@@ -4926,11 +4927,11 @@ static void b43_sprom_fixup(struct ssb_bus *bus)
- 	}
- }
- 
--static void b43_wireless_exit(struct ssb_device *dev, struct b43_wl *wl)
-+static void b43_wireless_exit(struct b43_bus_dev *dev, struct b43_wl *wl)
- {
- 	struct ieee80211_hw *hw = wl->hw;
- 
--	ssb_set_devtypedata(dev, NULL);
-+	ssb_set_devtypedata(dev->sdev, NULL);
- 	ieee80211_free_hw(hw);
- }
- 
-@@ -4985,10 +4986,13 @@ static struct b43_wl *b43_wireless_init(struct ssb_device *dev)
- static
- int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
- {
-+	struct b43_bus_dev *dev;
- 	struct b43_wl *wl;
- 	int err;
- 	int first = 0;
- 
-+	dev = b43_bus_dev_ssb_init(sdev);
-+
- 	wl = ssb_get_devtypedata(sdev);
- 	if (!wl) {
- 		/* Probing the first core. Must setup common struct b43_wl */
-@@ -5002,7 +5006,7 @@ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
- 		ssb_set_devtypedata(sdev, wl);
- 		B43_WARN_ON(ssb_get_devtypedata(sdev) != wl);
- 	}
--	err = b43_one_core_attach(sdev, wl);
-+	err = b43_one_core_attach(dev, wl);
- 	if (err)
- 		goto err_wireless_exit;
- 
-@@ -5017,10 +5021,10 @@ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
- 	return err;
- 
-       err_one_core_detach:
--	b43_one_core_detach(sdev);
-+	b43_one_core_detach(dev);
-       err_wireless_exit:
- 	if (first)
--		b43_wireless_exit(sdev, wl);
-+		b43_wireless_exit(dev, wl);
- 	return err;
- }
- 
-@@ -5043,14 +5047,14 @@ static void b43_ssb_remove(struct ssb_device *sdev)
- 		ieee80211_unregister_hw(wl->hw);
- 	}
- 
--	b43_one_core_detach(sdev);
-+	b43_one_core_detach(wldev->dev);
- 
- 	if (list_empty(&wl->devlist)) {
- 		b43_leds_unregister(wl);
- 		/* Last core on the chip unregistered.
- 		 * We can destroy common struct b43_wl.
- 		 */
--		b43_wireless_exit(sdev, wl);
-+		b43_wireless_exit(wldev->dev, wl);
- 	}
- }
- 
+ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev);
 -- 
 1.7.3.4
