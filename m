@@ -1,71 +1,98 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 17 May 2011 19:48:18 +0200
-Subject: [PATCH V7] bcma: add Broadcom specific AMBA bus driver
-In-Reply-To: <4DD2B178.3050907@broadcom.com>
-References: <1304960206-8832-1-git-send-email-zajec5@gmail.com>
-	<4DD2B178.3050907@broadcom.com>
-Message-ID: <BANLkTin7woaT5Uaxvh4x2jp-J10jnzSdmA@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 18 May 2011 02:06:35 +0200
+Subject: [PATCH 1/9] b43: rename ssb_device variable in ssb specific functions
+Message-ID: <1305677203-16660-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
-
-2011/5/17 Arend van Spriel <arend@broadcom.com>:
-> On 05/09/2011 06:56 PM, Rafa? Mi?ecki wrote:
->>
->> Broadcom has released cards based on a new AMBA-based bus type. From a
->> programming point of view, this new bus type differs from AMBA and does
->> not use AMBA common registers. It also differs enough from SSB. We
->> decided that a new bus driver is needed to keep the code clean.
->>
->> In its current form, the driver detects devices present on the bus and
->> registers them in the system. It allows registering BCMA drivers for
->> specified bus devices and provides them basic operations. The bus driver
->> itself includes two important bus managing drivers: ChipCommon core
->> driver and PCI(c) core driver. They are early used to allow correct
->> initialization.
->>
->> Currently code is limited to supporting buses on PCI(e) devices, however
->> the driver is designed to be used also on other hosts. The host
->> abstraction layer is implemented and already used for PCI(e).
->>
->> Support for PCI(e) hosts is working and seems to be stable (access to
->> 80211 core was tested successfully on a few devices). We can still
->> optimize it by using some fixed windows, but this can be done later
->> without affecting any external code. Windows are just ranges in MMIO
->> used for accessing cores on the bus.
->
-> Hi Rafa?,
->
-> Just some minor feedback on coding style. I wanted to make a change in
-> host_pci.c to avoid changing the PCI BAR window and noticed following:
-
-Sorry?
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
 
-> 1. indentation is all spaces.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/main.c |   29 +++++++++++++++--------------
+ 1 files changed, 15 insertions(+), 14 deletions(-)
 
-You can find spaces only for aligning text in newline after breaking
-more-than-80-chars lines.
-
-
-> 2. initial indent is 7 spaces, and subsequent indents are 8 spaces.
-
-$ grep "        " ./*c | wc -l
-0
-
-
-> 3. pointer assignment: ptr =&var;
-
-$ grep "=&" ./*c | wc -l
-0
-
-
-> 4. output parameter: foo(bar,&yabar);
-
-$ grep ",&" ./*c | wc -l
-0
-
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index eb41596..1e81a0d 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4982,26 +4982,27 @@ static struct b43_wl *b43_wireless_init(struct ssb_device *dev)
+ 	return wl;
+ }
+ 
+-static int b43_ssb_probe(struct ssb_device *dev, const struct ssb_device_id *id)
++static
++int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
+ {
+ 	struct b43_wl *wl;
+ 	int err;
+ 	int first = 0;
+ 
+-	wl = ssb_get_devtypedata(dev);
++	wl = ssb_get_devtypedata(sdev);
+ 	if (!wl) {
+ 		/* Probing the first core. Must setup common struct b43_wl */
+ 		first = 1;
+-		b43_sprom_fixup(dev->bus);
+-		wl = b43_wireless_init(dev);
++		b43_sprom_fixup(sdev->bus);
++		wl = b43_wireless_init(sdev);
+ 		if (IS_ERR(wl)) {
+ 			err = PTR_ERR(wl);
+ 			goto out;
+ 		}
+-		ssb_set_devtypedata(dev, wl);
+-		B43_WARN_ON(ssb_get_devtypedata(dev) != wl);
++		ssb_set_devtypedata(sdev, wl);
++		B43_WARN_ON(ssb_get_devtypedata(sdev) != wl);
+ 	}
+-	err = b43_one_core_attach(dev, wl);
++	err = b43_one_core_attach(sdev, wl);
+ 	if (err)
+ 		goto err_wireless_exit;
+ 
+@@ -5016,17 +5017,17 @@ static int b43_ssb_probe(struct ssb_device *dev, const struct ssb_device_id *id)
+ 	return err;
+ 
+       err_one_core_detach:
+-	b43_one_core_detach(dev);
++	b43_one_core_detach(sdev);
+       err_wireless_exit:
+ 	if (first)
+-		b43_wireless_exit(dev, wl);
++		b43_wireless_exit(sdev, wl);
+ 	return err;
+ }
+ 
+-static void b43_ssb_remove(struct ssb_device *dev)
++static void b43_ssb_remove(struct ssb_device *sdev)
+ {
+-	struct b43_wl *wl = ssb_get_devtypedata(dev);
+-	struct b43_wldev *wldev = ssb_get_drvdata(dev);
++	struct b43_wl *wl = ssb_get_devtypedata(sdev);
++	struct b43_wldev *wldev = ssb_get_drvdata(sdev);
+ 
+ 	/* We must cancel any work here before unregistering from ieee80211,
+ 	 * as the ieee80211 unreg will destroy the workqueue. */
+@@ -5042,14 +5043,14 @@ static void b43_ssb_remove(struct ssb_device *dev)
+ 		ieee80211_unregister_hw(wl->hw);
+ 	}
+ 
+-	b43_one_core_detach(dev);
++	b43_one_core_detach(sdev);
+ 
+ 	if (list_empty(&wl->devlist)) {
+ 		b43_leds_unregister(wl);
+ 		/* Last core on the chip unregistered.
+ 		 * We can destroy common struct b43_wl.
+ 		 */
+-		b43_wireless_exit(dev, wl);
++		b43_wireless_exit(sdev, wl);
+ 	}
+ }
+ 
 -- 
-Rafa?
+1.7.3.4
