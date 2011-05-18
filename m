@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 18 May 2011 02:06:38 +0200
-Subject: [PATCH 4/9] b43: bus: abstract 80211 core info
+Date: Wed, 18 May 2011 02:06:39 +0200
+Subject: [PATCH 5/9] b43: bus: abstract SPROM
 In-Reply-To: <1305677203-16660-1-git-send-email-zajec5@gmail.com>
 References: <1305677203-16660-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1305677203-16660-4-git-send-email-zajec5@gmail.com>
+Message-ID: <1305677203-16660-5-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,288 +11,664 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+SPROM is another frequently used struct. We decided to share SPROM
+struct between ssb na bcma as long as we will not need any hacks.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/bus.c        |    3 +++
- drivers/net/wireless/b43/bus.h        |    3 +++
- drivers/net/wireless/b43/dma.c        |    2 +-
- drivers/net/wireless/b43/main.c       |   30 +++++++++++++++---------------
- drivers/net/wireless/b43/phy_common.c |    4 ++--
- drivers/net/wireless/b43/phy_n.c      |    4 ++--
- drivers/net/wireless/b43/pio.c        |   10 +++++-----
- 7 files changed, 31 insertions(+), 25 deletions(-)
+ drivers/net/wireless/b43/bus.c          |    2 +
+ drivers/net/wireless/b43/bus.h          |    2 +
+ drivers/net/wireless/b43/leds.c         |    8 +-
+ drivers/net/wireless/b43/lo.c           |    4 +-
+ drivers/net/wireless/b43/main.c         |   10 ++--
+ drivers/net/wireless/b43/phy_a.c        |   14 ++--
+ drivers/net/wireless/b43/phy_g.c        |   36 ++++++------
+ drivers/net/wireless/b43/phy_lp.c       |   93 ++++++++++++++++---------------
+ drivers/net/wireless/b43/phy_n.c        |   18 +++---
+ drivers/net/wireless/b43/tables_lpphy.c |   12 ++--
+ drivers/net/wireless/b43/wa.c           |    5 +-
+ drivers/net/wireless/b43/xmit.c         |    2 +-
+ 12 files changed, 107 insertions(+), 99 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
-index fe5fa26..be3d206 100644
+index be3d206..c116f12 100644
 --- a/drivers/net/wireless/b43/bus.c
 +++ b/drivers/net/wireless/b43/bus.c
-@@ -70,5 +70,8 @@ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
+@@ -70,6 +70,8 @@ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
  	dev->block_read = b43_bus_ssb_block_read;
  	dev->block_write = b43_bus_ssb_block_write;
  
-+	dev->core_id = sdev->id.coreid;
-+	dev->core_rev = sdev->id.revision;
++	dev->bus_sprom = &sdev->bus->sprom;
 +
- 	return dev;
- }
+ 	dev->core_id = sdev->id.coreid;
+ 	dev->core_rev = sdev->id.revision;
+ 
 diff --git a/drivers/net/wireless/b43/bus.h b/drivers/net/wireless/b43/bus.h
-index 9b39002..742f084 100644
+index 742f084..6d575d6 100644
 --- a/drivers/net/wireless/b43/bus.h
 +++ b/drivers/net/wireless/b43/bus.h
-@@ -19,6 +19,9 @@ struct b43_bus_dev {
- 			   size_t count, u16 offset, u8 reg_width);
+@@ -20,6 +20,8 @@ struct b43_bus_dev {
  	void (*block_write)(struct b43_bus_dev *dev, const void *buffer,
  			    size_t count, u16 offset, u8 reg_width);
+ 
++	struct ssb_sprom *bus_sprom;
 +
-+	u16 core_id;
-+	u8 core_rev;
+ 	u16 core_id;
+ 	u8 core_rev;
  };
+diff --git a/drivers/net/wireless/b43/leds.c b/drivers/net/wireless/b43/leds.c
+index 0cafafe..26d37ef 100644
+--- a/drivers/net/wireless/b43/leds.c
++++ b/drivers/net/wireless/b43/leds.c
+@@ -218,10 +218,10 @@ static void b43_led_get_sprominfo(struct b43_wldev *dev,
+ 	struct ssb_bus *bus = dev->sdev->bus;
+ 	u8 sprom[4];
  
- struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev);
-diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-index 47d44bc..ee45ab9 100644
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -1085,7 +1085,7 @@ int b43_dma_init(struct b43_wldev *dev)
- 		goto err_destroy_mcast;
+-	sprom[0] = bus->sprom.gpio0;
+-	sprom[1] = bus->sprom.gpio1;
+-	sprom[2] = bus->sprom.gpio2;
+-	sprom[3] = bus->sprom.gpio3;
++	sprom[0] = dev->dev->bus_sprom->gpio0;
++	sprom[1] = dev->dev->bus_sprom->gpio1;
++	sprom[2] = dev->dev->bus_sprom->gpio2;
++	sprom[3] = dev->dev->bus_sprom->gpio3;
  
- 	/* No support for the TX status DMA ring. */
--	B43_WARN_ON(dev->sdev->id.revision < 5);
-+	B43_WARN_ON(dev->dev->core_rev < 5);
+ 	if (sprom[led_index] == 0xFF) {
+ 		/* There is no LED information in the SPROM
+diff --git a/drivers/net/wireless/b43/lo.c b/drivers/net/wireless/b43/lo.c
+index 2ef7d4b..b32efd4 100644
+--- a/drivers/net/wireless/b43/lo.c
++++ b/drivers/net/wireless/b43/lo.c
+@@ -98,7 +98,7 @@ static u16 lo_measure_feedthrough(struct b43_wldev *dev,
+ 		rfover |= pga;
+ 		rfover |= lna;
+ 		rfover |= trsw_rx;
+-		if ((dev->sdev->bus->sprom.boardflags_lo & B43_BFL_EXTLNA)
++		if ((dev->dev->bus_sprom->boardflags_lo & B43_BFL_EXTLNA)
+ 		    && phy->rev > 6)
+ 			rfover |= B43_PHY_RFOVERVAL_EXTLNA;
  
- 	b43dbg(dev->wl, "%u-bit DMA initialized\n",
- 	       (unsigned int)type);
+@@ -387,7 +387,7 @@ struct lo_g_saved_values {
+ static void lo_measure_setup(struct b43_wldev *dev,
+ 			     struct lo_g_saved_values *sav)
+ {
+-	struct ssb_sprom *sprom = &dev->sdev->bus->sprom;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy *phy = &dev->phy;
+ 	struct b43_phy_g *gphy = phy->g;
+ 	struct b43_txpower_lo_control *lo = gphy->lo_control;
 diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 6356fbc..971ec1b 100644
+index 971ec1b..0f3a104 100644
 --- a/drivers/net/wireless/b43/main.c
 +++ b/drivers/net/wireless/b43/main.c
-@@ -548,7 +548,7 @@ void b43_tsf_read(struct b43_wldev *dev, u64 *tsf)
- {
- 	u32 low, high;
+@@ -1427,9 +1427,9 @@ u8 b43_ieee80211_antenna_sanitize(struct b43_wldev *dev,
  
--	B43_WARN_ON(dev->sdev->id.revision < 3);
-+	B43_WARN_ON(dev->dev->core_rev < 3);
- 
- 	/* The hardware guarantees us an atomic read, if we
- 	 * read the low register first. */
-@@ -586,7 +586,7 @@ static void b43_tsf_write_locked(struct b43_wldev *dev, u64 tsf)
- {
- 	u32 low, high;
- 
--	B43_WARN_ON(dev->sdev->id.revision < 3);
-+	B43_WARN_ON(dev->dev->core_rev < 3);
- 
- 	low = tsf;
- 	high = (tsf >> 32);
-@@ -714,7 +714,7 @@ void b43_dummy_transmission(struct b43_wldev *dev, bool ofdm, bool pa_on)
- 		b43_ram_write(dev, i * 4, buffer[i]);
- 
- 	b43_write16(dev, 0x0568, 0x0000);
--	if (dev->sdev->id.revision < 11)
-+	if (dev->dev->core_rev < 11)
- 		b43_write16(dev, 0x07C0, 0x0000);
+ 	/* Get the mask of available antennas. */
+ 	if (dev->phy.gmode)
+-		antenna_mask = dev->sdev->bus->sprom.ant_available_bg;
++		antenna_mask = dev->dev->bus_sprom->ant_available_bg;
  	else
- 		b43_write16(dev, 0x07C0, 0x0100);
-@@ -1132,7 +1132,7 @@ void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags)
- 	b43_write32(dev, B43_MMIO_MACCTL, macctl);
- 	/* Commit write */
- 	b43_read32(dev, B43_MMIO_MACCTL);
--	if (awake && dev->sdev->id.revision >= 5) {
-+	if (awake && dev->dev->core_rev >= 5) {
- 		/* Wait for the microcode to wake up. */
- 		for (i = 0; i < 100; i++) {
- 			ucstat = b43_shm_read16(dev, B43_SHM_SHARED,
-@@ -1221,7 +1221,7 @@ static void drain_txstatus_queue(struct b43_wldev *dev)
- {
- 	u32 dummy;
+-		antenna_mask = dev->sdev->bus->sprom.ant_available_a;
++		antenna_mask = dev->dev->bus_sprom->ant_available_a;
  
--	if (dev->sdev->id.revision < 5)
-+	if (dev->dev->core_rev < 5)
- 		return;
- 	/* Read all entries from the microcode TXstatus FIFO
- 	 * and throw them away.
-@@ -1689,7 +1689,7 @@ static void b43_update_templates(struct b43_wl *wl)
- static void b43_set_beacon_int(struct b43_wldev *dev, u16 beacon_int)
+ 	if (!(antenna_mask & (1 << (antenna_nr - 1)))) {
+ 		/* This antenna is not available. Fall back to default. */
+@@ -2599,7 +2599,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
+ 		mask |= 0x0180;
+ 		set |= 0x0180;
+ 	}
+-	if (dev->sdev->bus->sprom.boardflags_lo & B43_BFL_PACTRL) {
++	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_PACTRL) {
+ 		b43_write16(dev, B43_MMIO_GPIO_MASK,
+ 			    b43_read16(dev, B43_MMIO_GPIO_MASK)
+ 			    | 0x0200);
+@@ -4204,7 +4204,7 @@ static void setup_struct_wldev_for_init(struct b43_wldev *dev)
+ 
+ static void b43_bluetooth_coext_enable(struct b43_wldev *dev)
  {
- 	b43_time_lock(dev);
--	if (dev->sdev->id.revision >= 3) {
-+	if (dev->dev->core_rev >= 3) {
- 		b43_write32(dev, B43_MMIO_TSF_CFP_REP, (beacon_int << 16));
- 		b43_write32(dev, B43_MMIO_TSF_CFP_START, (beacon_int << 10));
- 	} else {
-@@ -2113,7 +2113,7 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+-	struct ssb_sprom *sprom = &dev->sdev->bus->sprom;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	u64 hf;
+ 
+ 	if (!modparam_btcoex)
+@@ -4318,7 +4318,7 @@ static void b43_wireless_core_exit(struct b43_wldev *dev)
+ static int b43_wireless_core_init(struct b43_wldev *dev)
  {
- 	struct b43_wldev *dev = ctx->dev;
- 	struct b43_firmware *fw = &ctx->dev->fw;
--	const u8 rev = ctx->dev->sdev->id.revision;
-+	const u8 rev = ctx->dev->dev->core_rev;
- 	const char *filename;
- 	u32 tmshigh;
+ 	struct ssb_bus *bus = dev->sdev->bus;
+-	struct ssb_sprom *sprom = &bus->sprom;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy *phy = &dev->phy;
  	int err;
-@@ -2448,7 +2448,7 @@ static int b43_upload_microcode(struct b43_wldev *dev)
- 
- 	snprintf(wiphy->fw_version, sizeof(wiphy->fw_version), "%u.%u",
- 			dev->fw.rev, dev->fw.patch);
--	wiphy->hw_version = dev->sdev->id.coreid;
-+	wiphy->hw_version = dev->dev->core_id;
- 
- 	if (b43_is_old_txhdr_format(dev)) {
- 		/* We're over the deadline, but we keep support for old fw
-@@ -2606,7 +2606,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
- 		mask |= 0x0200;
- 		set |= 0x0200;
+ 	u64 hf;
+diff --git a/drivers/net/wireless/b43/phy_a.c b/drivers/net/wireless/b43/phy_a.c
+index b01c8ce..821b516 100644
+--- a/drivers/net/wireless/b43/phy_a.c
++++ b/drivers/net/wireless/b43/phy_a.c
+@@ -311,7 +311,7 @@ void b43_phy_inita(struct b43_wldev *dev)
  	}
--	if (dev->sdev->id.revision >= 2)
-+	if (dev->dev->core_rev >= 2)
- 		mask |= 0x0010;	/* FIXME: This is redundant. */
  
- 	gpiodev = b43_ssb_gpio_dev(dev);
-@@ -2741,7 +2741,7 @@ static void b43_adjust_opmode(struct b43_wldev *dev)
- 	/* Workaround: On old hardware the HW-MAC-address-filter
- 	 * doesn't work properly, so always run promisc in filter
- 	 * it in software. */
--	if (dev->sdev->id.revision <= 4)
-+	if (dev->dev->core_rev <= 4)
- 		ctl |= B43_MACCTL_PROMISC;
- 
- 	b43_write32(dev, B43_MMIO_MACCTL, ctl);
-@@ -2907,7 +2907,7 @@ static int b43_chip_init(struct b43_wldev *dev)
- 		b43_write16(dev, 0x005E, value16);
+ 	if ((phy->type == B43_PHYTYPE_G) &&
+-	    (dev->sdev->bus->sprom.boardflags_lo & B43_BFL_PACTRL)) {
++	    (dev->dev->bus_sprom->boardflags_lo & B43_BFL_PACTRL)) {
+ 		b43_phy_maskset(dev, B43_PHY_OFDM(0x6E), 0xE000, 0x3CF);
  	}
- 	b43_write32(dev, 0x0100, 0x01000000);
--	if (dev->sdev->id.revision < 5)
-+	if (dev->dev->core_rev < 5)
- 		b43_write32(dev, 0x010C, 0x01000000);
+ }
+@@ -323,17 +323,17 @@ static int b43_aphy_init_tssi2dbm_table(struct b43_wldev *dev)
+ 	struct b43_phy_a *aphy = phy->a;
+ 	s16 pab0, pab1, pab2;
  
- 	b43_write32(dev, B43_MMIO_MACCTL, b43_read32(dev, B43_MMIO_MACCTL)
-@@ -2922,7 +2922,7 @@ static int b43_chip_init(struct b43_wldev *dev)
- 	/* Initially set the wireless operation mode. */
- 	b43_adjust_opmode(dev);
+-	pab0 = (s16) (dev->sdev->bus->sprom.pa1b0);
+-	pab1 = (s16) (dev->sdev->bus->sprom.pa1b1);
+-	pab2 = (s16) (dev->sdev->bus->sprom.pa1b2);
++	pab0 = (s16) (dev->dev->bus_sprom->pa1b0);
++	pab1 = (s16) (dev->dev->bus_sprom->pa1b1);
++	pab2 = (s16) (dev->dev->bus_sprom->pa1b2);
  
--	if (dev->sdev->id.revision < 3) {
-+	if (dev->dev->core_rev < 3) {
- 		b43_write16(dev, 0x060E, 0x0000);
- 		b43_write16(dev, 0x0610, 0x8000);
- 		b43_write16(dev, 0x0604, 0x0000);
-@@ -3105,7 +3105,7 @@ static int b43_validate_chipaccess(struct b43_wldev *dev)
- 	b43_shm_write32(dev, B43_SHM_SHARED, 0, backup0);
- 	b43_shm_write32(dev, B43_SHM_SHARED, 4, backup4);
+ 	if (pab0 != 0 && pab1 != 0 && pab2 != 0 &&
+ 	    pab0 != -1 && pab1 != -1 && pab2 != -1) {
+ 		/* The pabX values are set in SPROM. Use them. */
+-		if ((s8) dev->sdev->bus->sprom.itssi_a != 0 &&
+-		    (s8) dev->sdev->bus->sprom.itssi_a != -1)
++		if ((s8) dev->dev->bus_sprom->itssi_a != 0 &&
++		    (s8) dev->dev->bus_sprom->itssi_a != -1)
+ 			aphy->tgt_idle_tssi =
+-			    (s8) (dev->sdev->bus->sprom.itssi_a);
++			    (s8) (dev->dev->bus_sprom->itssi_a);
+ 		else
+ 			aphy->tgt_idle_tssi = 62;
+ 		aphy->tssi2dbm = b43_generate_dyn_tssi2dbm_tab(dev, pab0,
+diff --git a/drivers/net/wireless/b43/phy_g.c b/drivers/net/wireless/b43/phy_g.c
+index 1758a28..ccb02af 100644
+--- a/drivers/net/wireless/b43/phy_g.c
++++ b/drivers/net/wireless/b43/phy_g.c
+@@ -718,7 +718,7 @@ static void b43_calc_nrssi_threshold(struct b43_wldev *dev)
+ 	B43_WARN_ON(phy->type != B43_PHYTYPE_G);
  
--	if ((dev->sdev->id.revision >= 3) && (dev->sdev->id.revision <= 10)) {
-+	if ((dev->dev->core_rev >= 3) && (dev->dev->core_rev <= 10)) {
- 		/* The 32bit register shadows the two 16bit registers
- 		 * with update sideeffects. Validate this. */
- 		b43_write16(dev, B43_MMIO_TSF_CFP_START, 0xAAAA);
-@@ -4352,7 +4352,7 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
- 	if (err)
- 		goto err_busdown;
- 	b43_shm_write16(dev, B43_SHM_SHARED,
--			B43_SHM_SH_WLCOREREV, dev->sdev->id.revision);
-+			B43_SHM_SH_WLCOREREV, dev->dev->core_rev);
- 	hf = b43_hf_read(dev);
- 	if (phy->type == B43_PHYTYPE_G) {
- 		hf |= B43_HF_SYMW;
-@@ -4756,7 +4756,7 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
- 		goto out;
+ 	if (!phy->gmode ||
+-	    !(dev->sdev->bus->sprom.boardflags_lo & B43_BFL_RSSI)) {
++	    !(dev->dev->bus_sprom->boardflags_lo & B43_BFL_RSSI)) {
+ 		tmp16 = b43_nrssi_hw_read(dev, 0x20);
+ 		if (tmp16 >= 0x20)
+ 			tmp16 -= 0x40;
+@@ -1114,7 +1114,7 @@ static u16 radio2050_rfover_val(struct b43_wldev *dev,
+ {
+ 	struct b43_phy *phy = &dev->phy;
+ 	struct b43_phy_g *gphy = phy->g;
+-	struct ssb_sprom *sprom = &(dev->sdev->bus->sprom);
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 
+ 	if (!phy->gmode)
+ 		return 0;
+@@ -1620,7 +1620,7 @@ static void b43_phy_initb6(struct b43_wldev *dev)
+ 		b43_radio_write16(dev, 0x5A, 0x88);
+ 		b43_radio_write16(dev, 0x5B, 0x6B);
+ 		b43_radio_write16(dev, 0x5C, 0x0F);
+-		if (dev->sdev->bus->sprom.boardflags_lo & B43_BFL_ALTIQ) {
++		if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_ALTIQ) {
+ 			b43_radio_write16(dev, 0x5D, 0xFA);
+ 			b43_radio_write16(dev, 0x5E, 0xD8);
+ 		} else {
+@@ -1787,7 +1787,7 @@ static void b43_calc_loopback_gain(struct b43_wldev *dev)
+ 	b43_phy_set(dev, B43_PHY_RFOVER, 0x0100);
+ 	b43_phy_mask(dev, B43_PHY_RFOVERVAL, 0xCFFF);
+ 
+-	if (dev->sdev->bus->sprom.boardflags_lo & B43_BFL_EXTLNA) {
++	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_EXTLNA) {
+ 		if (phy->rev >= 7) {
+ 			b43_phy_set(dev, B43_PHY_RFOVER, 0x0800);
+ 			b43_phy_set(dev, B43_PHY_RFOVERVAL, 0x8000);
+@@ -2053,7 +2053,7 @@ static void b43_phy_initg(struct b43_wldev *dev)
+ 	if (phy->rev >= 6) {
+ 		b43_phy_maskset(dev, B43_PHY_CCK(0x36), 0x0FFF, (gphy->lo_control->tx_bias << 12));
  	}
- 	/* Get the PHY type. */
--	if (dev->sdev->id.revision >= 5) {
-+	if (dev->dev->core_rev >= 5) {
- 		u32 tmshigh;
+-	if (dev->sdev->bus->sprom.boardflags_lo & B43_BFL_PACTRL)
++	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_PACTRL)
+ 		b43_phy_write(dev, B43_PHY_CCK(0x2E), 0x8075);
+ 	else
+ 		b43_phy_write(dev, B43_PHY_CCK(0x2E), 0x807F);
+@@ -2066,7 +2066,7 @@ static void b43_phy_initg(struct b43_wldev *dev)
+ 		b43_phy_write(dev, B43_PHY_LO_MASK, 0x8078);
+ 	}
  
- 		tmshigh = ssb_read32(dev->sdev, SSB_TMSHIGH);
-diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index e46b2f4..3f7bdf8 100644
---- a/drivers/net/wireless/b43/phy_common.c
-+++ b/drivers/net/wireless/b43/phy_common.c
-@@ -168,7 +168,7 @@ void b43_phy_lock(struct b43_wldev *dev)
- 	B43_WARN_ON(dev->phy.phy_locked);
- 	dev->phy.phy_locked = 1;
- #endif
--	B43_WARN_ON(dev->sdev->id.revision < 3);
-+	B43_WARN_ON(dev->dev->core_rev < 3);
+-	if (!(dev->sdev->bus->sprom.boardflags_lo & B43_BFL_RSSI)) {
++	if (!(dev->dev->bus_sprom->boardflags_lo & B43_BFL_RSSI)) {
+ 		/* The specs state to update the NRSSI LT with
+ 		 * the value 0x7FFFFFFF here. I think that is some weird
+ 		 * compiler optimization in the original driver.
+@@ -2105,7 +2105,7 @@ void b43_gphy_channel_switch(struct b43_wldev *dev,
+ 	b43_write16(dev, B43_MMIO_CHANNEL, channel2freq_bg(channel));
  
- 	if (!b43_is_mode(dev->wl, NL80211_IFTYPE_AP))
- 		b43_power_saving_ctl_bits(dev, B43_PS_AWAKE);
-@@ -180,7 +180,7 @@ void b43_phy_unlock(struct b43_wldev *dev)
- 	B43_WARN_ON(!dev->phy.phy_locked);
- 	dev->phy.phy_locked = 0;
- #endif
--	B43_WARN_ON(dev->sdev->id.revision < 3);
-+	B43_WARN_ON(dev->dev->core_rev < 3);
+ 	if (channel == 14) {
+-		if (dev->sdev->bus->sprom.country_code ==
++		if (dev->dev->bus_sprom->country_code ==
+ 		    SSB_SPROM1CCODE_JAPAN)
+ 			b43_hf_write(dev,
+ 				     b43_hf_read(dev) & ~B43_HF_ACPR);
+@@ -2384,9 +2384,9 @@ static int b43_gphy_init_tssi2dbm_table(struct b43_wldev *dev)
+ 	struct b43_phy_g *gphy = phy->g;
+ 	s16 pab0, pab1, pab2;
  
- 	if (!b43_is_mode(dev->wl, NL80211_IFTYPE_AP))
- 		b43_power_saving_ctl_bits(dev, 0);
+-	pab0 = (s16) (dev->sdev->bus->sprom.pa0b0);
+-	pab1 = (s16) (dev->sdev->bus->sprom.pa0b1);
+-	pab2 = (s16) (dev->sdev->bus->sprom.pa0b2);
++	pab0 = (s16) (dev->dev->bus_sprom->pa0b0);
++	pab1 = (s16) (dev->dev->bus_sprom->pa0b1);
++	pab2 = (s16) (dev->dev->bus_sprom->pa0b2);
+ 
+ 	B43_WARN_ON((dev->sdev->bus->chip_id == 0x4301) &&
+ 		    (phy->radio_ver != 0x2050)); /* Not supported anymore */
+@@ -2396,10 +2396,10 @@ static int b43_gphy_init_tssi2dbm_table(struct b43_wldev *dev)
+ 	if (pab0 != 0 && pab1 != 0 && pab2 != 0 &&
+ 	    pab0 != -1 && pab1 != -1 && pab2 != -1) {
+ 		/* The pabX values are set in SPROM. Use them. */
+-		if ((s8) dev->sdev->bus->sprom.itssi_bg != 0 &&
+-		    (s8) dev->sdev->bus->sprom.itssi_bg != -1) {
++		if ((s8) dev->dev->bus_sprom->itssi_bg != 0 &&
++		    (s8) dev->dev->bus_sprom->itssi_bg != -1) {
+ 			gphy->tgt_idle_tssi =
+-				(s8) (dev->sdev->bus->sprom.itssi_bg);
++				(s8) (dev->dev->bus_sprom->itssi_bg);
+ 		} else
+ 			gphy->tgt_idle_tssi = 62;
+ 		gphy->tssi2dbm = b43_generate_dyn_tssi2dbm_tab(dev, pab0,
+@@ -2840,7 +2840,7 @@ static void b43_gphy_op_adjust_txpower(struct b43_wldev *dev)
+ 				    B43_TXCTL_TXMIX;
+ 				rfatt += 2;
+ 				bbatt += 2;
+-			} else if (dev->sdev->bus->sprom.
++			} else if (dev->dev->bus_sprom->
+ 				   boardflags_lo &
+ 				   B43_BFL_PACTRL) {
+ 				bbatt += 4 * (rfatt - 2);
+@@ -2914,14 +2914,14 @@ static enum b43_txpwr_result b43_gphy_op_recalc_txpower(struct b43_wldev *dev,
+ 	estimated_pwr = b43_gphy_estimate_power_out(dev, average_tssi);
+ 
+ 	B43_WARN_ON(phy->type != B43_PHYTYPE_G);
+-	max_pwr = dev->sdev->bus->sprom.maxpwr_bg;
+-	if (dev->sdev->bus->sprom.boardflags_lo & B43_BFL_PACTRL)
++	max_pwr = dev->dev->bus_sprom->maxpwr_bg;
++	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_PACTRL)
+ 		max_pwr -= 3; /* minus 0.75 */
+ 	if (unlikely(max_pwr >= INT_TO_Q52(30/*dBm*/))) {
+ 		b43warn(dev->wl,
+ 			"Invalid max-TX-power value in SPROM.\n");
+ 		max_pwr = INT_TO_Q52(20); /* fake it */
+-		dev->sdev->bus->sprom.maxpwr_bg = max_pwr;
++		dev->dev->bus_sprom->maxpwr_bg = max_pwr;
+ 	}
+ 
+ 	/* Get desired power (in Q5.2) */
+@@ -3014,7 +3014,7 @@ static void b43_gphy_op_pwork_60sec(struct b43_wldev *dev)
+ {
+ 	struct b43_phy *phy = &dev->phy;
+ 
+-	if (!(dev->sdev->bus->sprom.boardflags_lo & B43_BFL_RSSI))
++	if (!(dev->dev->bus_sprom->boardflags_lo & B43_BFL_RSSI))
+ 		return;
+ 
+ 	b43_mac_suspend(dev);
+diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
+index 012c8da..41d0281 100644
+--- a/drivers/net/wireless/b43/phy_lp.c
++++ b/drivers/net/wireless/b43/phy_lp.c
+@@ -85,39 +85,39 @@ static void b43_lpphy_op_free(struct b43_wldev *dev)
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/LP/ReadBandSrom */
+ static void lpphy_read_band_sprom(struct b43_wldev *dev)
+ {
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy_lp *lpphy = dev->phy.lp;
+-	struct ssb_bus *bus = dev->sdev->bus;
+ 	u16 cckpo, maxpwr;
+ 	u32 ofdmpo;
+ 	int i;
+ 
+ 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
+-		lpphy->tx_isolation_med_band = bus->sprom.tri2g;
+-		lpphy->bx_arch = bus->sprom.bxa2g;
+-		lpphy->rx_pwr_offset = bus->sprom.rxpo2g;
+-		lpphy->rssi_vf = bus->sprom.rssismf2g;
+-		lpphy->rssi_vc = bus->sprom.rssismc2g;
+-		lpphy->rssi_gs = bus->sprom.rssisav2g;
+-		lpphy->txpa[0] = bus->sprom.pa0b0;
+-		lpphy->txpa[1] = bus->sprom.pa0b1;
+-		lpphy->txpa[2] = bus->sprom.pa0b2;
+-		maxpwr = bus->sprom.maxpwr_bg;
++		lpphy->tx_isolation_med_band = sprom->tri2g;
++		lpphy->bx_arch = sprom->bxa2g;
++		lpphy->rx_pwr_offset = sprom->rxpo2g;
++		lpphy->rssi_vf = sprom->rssismf2g;
++		lpphy->rssi_vc = sprom->rssismc2g;
++		lpphy->rssi_gs = sprom->rssisav2g;
++		lpphy->txpa[0] = sprom->pa0b0;
++		lpphy->txpa[1] = sprom->pa0b1;
++		lpphy->txpa[2] = sprom->pa0b2;
++		maxpwr = sprom->maxpwr_bg;
+ 		lpphy->max_tx_pwr_med_band = maxpwr;
+-		cckpo = bus->sprom.cck2gpo;
++		cckpo = sprom->cck2gpo;
+ 		/*
+ 		 * We don't read SPROM's opo as specs say. On rev8 SPROMs
+ 		 * opo == ofdm2gpo and we don't know any SSB with LP-PHY
+ 		 * and SPROM rev below 8.
+ 		 */
+-		B43_WARN_ON(bus->sprom.revision < 8);
+-		ofdmpo = bus->sprom.ofdm2gpo;
++		B43_WARN_ON(sprom->revision < 8);
++		ofdmpo = sprom->ofdm2gpo;
+ 		if (cckpo) {
+ 			for (i = 0; i < 4; i++) {
+ 				lpphy->tx_max_rate[i] =
+ 					maxpwr - (ofdmpo & 0xF) * 2;
+ 				ofdmpo >>= 4;
+ 			}
+-			ofdmpo = bus->sprom.ofdm2gpo;
++			ofdmpo = sprom->ofdm2gpo;
+ 			for (i = 4; i < 15; i++) {
+ 				lpphy->tx_max_rate[i] =
+ 					maxpwr - (ofdmpo & 0xF) * 2;
+@@ -131,39 +131,39 @@ static void lpphy_read_band_sprom(struct b43_wldev *dev)
+ 				lpphy->tx_max_rate[i] = maxpwr - ofdmpo;
+ 		}
+ 	} else { /* 5GHz */
+-		lpphy->tx_isolation_low_band = bus->sprom.tri5gl;
+-		lpphy->tx_isolation_med_band = bus->sprom.tri5g;
+-		lpphy->tx_isolation_hi_band = bus->sprom.tri5gh;
+-		lpphy->bx_arch = bus->sprom.bxa5g;
+-		lpphy->rx_pwr_offset = bus->sprom.rxpo5g;
+-		lpphy->rssi_vf = bus->sprom.rssismf5g;
+-		lpphy->rssi_vc = bus->sprom.rssismc5g;
+-		lpphy->rssi_gs = bus->sprom.rssisav5g;
+-		lpphy->txpa[0] = bus->sprom.pa1b0;
+-		lpphy->txpa[1] = bus->sprom.pa1b1;
+-		lpphy->txpa[2] = bus->sprom.pa1b2;
+-		lpphy->txpal[0] = bus->sprom.pa1lob0;
+-		lpphy->txpal[1] = bus->sprom.pa1lob1;
+-		lpphy->txpal[2] = bus->sprom.pa1lob2;
+-		lpphy->txpah[0] = bus->sprom.pa1hib0;
+-		lpphy->txpah[1] = bus->sprom.pa1hib1;
+-		lpphy->txpah[2] = bus->sprom.pa1hib2;
+-		maxpwr = bus->sprom.maxpwr_al;
+-		ofdmpo = bus->sprom.ofdm5glpo;
++		lpphy->tx_isolation_low_band = sprom->tri5gl;
++		lpphy->tx_isolation_med_band = sprom->tri5g;
++		lpphy->tx_isolation_hi_band = sprom->tri5gh;
++		lpphy->bx_arch = sprom->bxa5g;
++		lpphy->rx_pwr_offset = sprom->rxpo5g;
++		lpphy->rssi_vf = sprom->rssismf5g;
++		lpphy->rssi_vc = sprom->rssismc5g;
++		lpphy->rssi_gs = sprom->rssisav5g;
++		lpphy->txpa[0] = sprom->pa1b0;
++		lpphy->txpa[1] = sprom->pa1b1;
++		lpphy->txpa[2] = sprom->pa1b2;
++		lpphy->txpal[0] = sprom->pa1lob0;
++		lpphy->txpal[1] = sprom->pa1lob1;
++		lpphy->txpal[2] = sprom->pa1lob2;
++		lpphy->txpah[0] = sprom->pa1hib0;
++		lpphy->txpah[1] = sprom->pa1hib1;
++		lpphy->txpah[2] = sprom->pa1hib2;
++		maxpwr = sprom->maxpwr_al;
++		ofdmpo = sprom->ofdm5glpo;
+ 		lpphy->max_tx_pwr_low_band = maxpwr;
+ 		for (i = 4; i < 12; i++) {
+ 			lpphy->tx_max_ratel[i] = maxpwr - (ofdmpo & 0xF) * 2;
+ 			ofdmpo >>= 4;
+ 		}
+-		maxpwr = bus->sprom.maxpwr_a;
+-		ofdmpo = bus->sprom.ofdm5gpo;
++		maxpwr = sprom->maxpwr_a;
++		ofdmpo = sprom->ofdm5gpo;
+ 		lpphy->max_tx_pwr_med_band = maxpwr;
+ 		for (i = 4; i < 12; i++) {
+ 			lpphy->tx_max_rate[i] = maxpwr - (ofdmpo & 0xF) * 2;
+ 			ofdmpo >>= 4;
+ 		}
+-		maxpwr = bus->sprom.maxpwr_ah;
+-		ofdmpo = bus->sprom.ofdm5ghpo;
++		maxpwr = sprom->maxpwr_ah;
++		ofdmpo = sprom->ofdm5ghpo;
+ 		lpphy->max_tx_pwr_hi_band = maxpwr;
+ 		for (i = 4; i < 12; i++) {
+ 			lpphy->tx_max_rateh[i] = maxpwr - (ofdmpo & 0xF) * 2;
+@@ -215,6 +215,7 @@ static void lpphy_table_init(struct b43_wldev *dev)
+ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ {
+ 	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy_lp *lpphy = dev->phy.lp;
+ 	u16 tmp, tmp2;
+ 
+@@ -242,9 +243,9 @@ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ 	b43_phy_maskset(dev, B43_LPPHY_CRS_ED_THRESH, 0x00FF, 0xAD00);
+ 	b43_phy_maskset(dev, B43_LPPHY_INPUT_PWRDB,
+ 			0xFF00, lpphy->rx_pwr_offset);
+-	if ((bus->sprom.boardflags_lo & B43_BFL_FEM) &&
++	if ((sprom->boardflags_lo & B43_BFL_FEM) &&
+ 	   ((b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) ||
+-	   (bus->sprom.boardflags_hi & B43_BFH_PAREF))) {
++	   (sprom->boardflags_hi & B43_BFH_PAREF))) {
+ 		ssb_pmu_set_ldo_voltage(&bus->chipco, LDO_PAREF, 0x28);
+ 		ssb_pmu_set_ldo_paref(&bus->chipco, true);
+ 		if (dev->phy.rev == 0) {
+@@ -260,7 +261,7 @@ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ 	}
+ 	tmp = lpphy->rssi_vf | lpphy->rssi_vc << 4 | 0xA000;
+ 	b43_phy_write(dev, B43_LPPHY_AFE_RSSI_CTL_0, tmp);
+-	if (bus->sprom.boardflags_hi & B43_BFH_RSSIINV)
++	if (sprom->boardflags_hi & B43_BFH_RSSIINV)
+ 		b43_phy_maskset(dev, B43_LPPHY_AFE_RSSI_CTL_1, 0xF000, 0x0AAA);
+ 	else
+ 		b43_phy_maskset(dev, B43_LPPHY_AFE_RSSI_CTL_1, 0xF000, 0x02AA);
+@@ -268,7 +269,7 @@ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ 	b43_phy_maskset(dev, B43_LPPHY_RX_RADIO_CTL,
+ 			0xFFF9, (lpphy->bx_arch << 1));
+ 	if (dev->phy.rev == 1 &&
+-	   (bus->sprom.boardflags_hi & B43_BFH_FEM_BT)) {
++	   (sprom->boardflags_hi & B43_BFH_FEM_BT)) {
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0xFFC0, 0x000A);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0x3F00, 0x0900);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_2, 0xFFC0, 0x000A);
+@@ -287,7 +288,7 @@ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_8, 0xC0FF, 0x0B00);
+ 	} else if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ ||
+ 		  (bus->boardinfo.type == 0x048A) || ((dev->phy.rev == 0) &&
+-		  (bus->sprom.boardflags_lo & B43_BFL_FEM))) {
++		  (sprom->boardflags_lo & B43_BFL_FEM))) {
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0xFFC0, 0x0001);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0xC0FF, 0x0400);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_2, 0xFFC0, 0x0001);
+@@ -297,7 +298,7 @@ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_4, 0xFFC0, 0x0002);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_4, 0xC0FF, 0x0A00);
+ 	} else if (dev->phy.rev == 1 ||
+-		  (bus->sprom.boardflags_lo & B43_BFL_FEM)) {
++		  (sprom->boardflags_lo & B43_BFL_FEM)) {
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0xFFC0, 0x0004);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0xC0FF, 0x0800);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_2, 0xFFC0, 0x0004);
+@@ -316,13 +317,13 @@ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_4, 0xFFC0, 0x0006);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_4, 0xC0FF, 0x0700);
+ 	}
+-	if (dev->phy.rev == 1 && (bus->sprom.boardflags_hi & B43_BFH_PAREF)) {
++	if (dev->phy.rev == 1 && (sprom->boardflags_hi & B43_BFH_PAREF)) {
+ 		b43_phy_copy(dev, B43_LPPHY_TR_LOOKUP_5, B43_LPPHY_TR_LOOKUP_1);
+ 		b43_phy_copy(dev, B43_LPPHY_TR_LOOKUP_6, B43_LPPHY_TR_LOOKUP_2);
+ 		b43_phy_copy(dev, B43_LPPHY_TR_LOOKUP_7, B43_LPPHY_TR_LOOKUP_3);
+ 		b43_phy_copy(dev, B43_LPPHY_TR_LOOKUP_8, B43_LPPHY_TR_LOOKUP_4);
+ 	}
+-	if ((bus->sprom.boardflags_hi & B43_BFH_FEM_BT) &&
++	if ((sprom->boardflags_hi & B43_BFH_FEM_BT) &&
+ 	    (bus->chip_id == 0x5354) &&
+ 	    (bus->chip_package == SSB_CHIPPACK_BCM4712S)) {
+ 		b43_phy_set(dev, B43_LPPHY_CRSGAIN_CTL, 0x0006);
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 9ed6515..40f1db7 100644
+index 40f1db7..99ea191 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -983,7 +983,7 @@ static u16 b43_nphy_classifier(struct b43_wldev *dev, u16 mask, u16 val)
+@@ -299,7 +299,7 @@ static void b43_nphy_tx_power_ctrl(struct b43_wldev *dev, bool enable)
+ static void b43_nphy_tx_power_fix(struct b43_wldev *dev)
  {
- 	u16 tmp;
+ 	struct b43_phy_n *nphy = dev->phy.n;
+-	struct ssb_sprom *sprom = &(dev->sdev->bus->sprom);
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
  
--	if (dev->sdev->id.revision == 16)
-+	if (dev->dev->core_rev == 16)
- 		b43_mac_suspend(dev);
+ 	u8 txpi[2], bbmult, i;
+ 	u16 tmp, radio_gain, dac_gain;
+@@ -423,7 +423,7 @@ static void b43_radio_init2055_pre(struct b43_wldev *dev)
+ static void b43_radio_init2055_post(struct b43_wldev *dev)
+ {
+ 	struct b43_phy_n *nphy = dev->phy.n;
+-	struct ssb_sprom *sprom = &(dev->sdev->bus->sprom);
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct ssb_boardinfo *binfo = &(dev->sdev->bus->boardinfo);
+ 	int i;
+ 	u16 val;
+@@ -1168,7 +1168,7 @@ static void b43_nphy_adjust_lna_gain_table(struct b43_wldev *dev)
+ static void b43_nphy_gain_ctrl_workarounds(struct b43_wldev *dev)
+ {
+ 	struct b43_phy_n *nphy = dev->phy.n;
+-	struct ssb_sprom *sprom = &(dev->sdev->bus->sprom);
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
  
- 	tmp = b43_phy_read(dev, B43_NPHY_CLASSCTL);
-@@ -993,7 +993,7 @@ static u16 b43_nphy_classifier(struct b43_wldev *dev, u16 mask, u16 val)
- 	tmp |= (val & mask);
- 	b43_phy_maskset(dev, B43_NPHY_CLASSCTL, 0xFFF8, tmp);
+ 	/* PHY rev 0, 1, 2 */
+ 	u8 i, j;
+@@ -1374,6 +1374,7 @@ static void b43_nphy_gain_ctrl_workarounds(struct b43_wldev *dev)
+ static void b43_nphy_workarounds(struct b43_wldev *dev)
+ {
+ 	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy *phy = &dev->phy;
+ 	struct b43_phy_n *nphy = phy->n;
  
--	if (dev->sdev->id.revision == 16)
-+	if (dev->dev->core_rev == 16)
- 		b43_mac_enable(dev);
+@@ -1443,9 +1444,9 @@ static void b43_nphy_workarounds(struct b43_wldev *dev)
  
- 	return tmp;
-diff --git a/drivers/net/wireless/b43/pio.c b/drivers/net/wireless/b43/pio.c
-index 72ab94d..44da620 100644
---- a/drivers/net/wireless/b43/pio.c
-+++ b/drivers/net/wireless/b43/pio.c
-@@ -111,7 +111,7 @@ static u16 index_to_pioqueue_base(struct b43_wldev *dev,
- 		B43_MMIO_PIO11_BASE5,
- 	};
+ 		/* N PHY WAR TX Chain Update with hw_phytxchain as argument */
  
--	if (dev->sdev->id.revision >= 11) {
-+	if (dev->dev->core_rev >= 11) {
- 		B43_WARN_ON(index >= ARRAY_SIZE(bases_rev11));
- 		return bases_rev11[index];
+-		if ((bus->sprom.boardflags2_lo & B43_BFL2_APLL_WAR &&
++		if ((sprom->boardflags2_lo & B43_BFL2_APLL_WAR &&
+ 		    b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) ||
+-		    (bus->sprom.boardflags2_lo & B43_BFL2_GPLL_WAR &&
++		    (sprom->boardflags2_lo & B43_BFL2_GPLL_WAR &&
+ 		    b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ))
+ 			tmp32 = 0x00088888;
+ 		else
+@@ -1503,7 +1504,7 @@ static void b43_nphy_workarounds(struct b43_wldev *dev)
+ 		b43_phy_write(dev, B43_NPHY_RFCTL_LUT_TRSW_LO2, 0x2D8);
+ 		b43_phy_write(dev, B43_NPHY_RFCTL_LUT_TRSW_UP2, 0x301);
+ 
+-		if (bus->sprom.boardflags2_lo & 0x100 &&
++		if (sprom->boardflags2_lo & 0x100 &&
+ 		    bus->boardinfo.type == 0x8B) {
+ 			delays1[0] = 0x1;
+ 			delays1[5] = 0x14;
+@@ -3587,6 +3588,7 @@ static void b43_nphy_set_rx_core_state(struct b43_wldev *dev, u8 mask)
+ int b43_phy_initn(struct b43_wldev *dev)
+ {
+ 	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy *phy = &dev->phy;
+ 	struct b43_phy_n *nphy = phy->n;
+ 	u8 tx_pwr_state;
+@@ -3599,7 +3601,7 @@ int b43_phy_initn(struct b43_wldev *dev)
+ 	bool do_cal = false;
+ 
+ 	if ((dev->phy.rev >= 3) &&
+-	   (bus->sprom.boardflags_lo & B43_BFL_EXTLNA) &&
++	   (sprom->boardflags_lo & B43_BFL_EXTLNA) &&
+ 	   (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)) {
+ 		chipco_set32(&dev->sdev->bus->chipco, SSB_CHIPCO_CHIPCTL, 0x40);
  	}
-@@ -121,14 +121,14 @@ static u16 index_to_pioqueue_base(struct b43_wldev *dev,
+@@ -3639,7 +3641,7 @@ int b43_phy_initn(struct b43_wldev *dev)
+ 	b43_phy_write(dev, B43_NPHY_AFESEQ_TX2RX_PUD_20M, 0x20);
+ 	b43_phy_write(dev, B43_NPHY_AFESEQ_TX2RX_PUD_40M, 0x20);
  
- static u16 pio_txqueue_offset(struct b43_wldev *dev)
+-	if (bus->sprom.boardflags2_lo & 0x100 ||
++	if (sprom->boardflags2_lo & 0x100 ||
+ 	    (bus->boardinfo.vendor == PCI_VENDOR_ID_APPLE &&
+ 	     bus->boardinfo.type == 0x8B))
+ 		b43_phy_write(dev, B43_NPHY_TXREALFD, 0xA0);
+diff --git a/drivers/net/wireless/b43/tables_lpphy.c b/drivers/net/wireless/b43/tables_lpphy.c
+index 59df3c6..aa11755 100644
+--- a/drivers/net/wireless/b43/tables_lpphy.c
++++ b/drivers/net/wireless/b43/tables_lpphy.c
+@@ -2416,12 +2416,12 @@ void lpphy_write_gain_table_bulk(struct b43_wldev *dev, int offset, int count,
+ 
+ void lpphy_init_tx_gain_table(struct b43_wldev *dev)
  {
--	if (dev->sdev->id.revision >= 11)
-+	if (dev->dev->core_rev >= 11)
- 		return 0x18;
- 	return 0;
- }
+-	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
  
- static u16 pio_rxqueue_offset(struct b43_wldev *dev)
+ 	switch (dev->phy.rev) {
+ 	case 0:
+-		if ((bus->sprom.boardflags_hi & B43_BFH_NOPA) ||
+-		    (bus->sprom.boardflags_lo & B43_BFL_HGPA))
++		if ((sprom->boardflags_hi & B43_BFH_NOPA) ||
++		    (sprom->boardflags_lo & B43_BFL_HGPA))
+ 			lpphy_write_gain_table_bulk(dev, 0, 128,
+ 					lpphy_rev0_nopa_tx_gain_table);
+ 		else if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+@@ -2432,8 +2432,8 @@ void lpphy_init_tx_gain_table(struct b43_wldev *dev)
+ 					lpphy_rev0_5ghz_tx_gain_table);
+ 		break;
+ 	case 1:
+-		if ((bus->sprom.boardflags_hi & B43_BFH_NOPA) ||
+-		    (bus->sprom.boardflags_lo & B43_BFL_HGPA))
++		if ((sprom->boardflags_hi & B43_BFH_NOPA) ||
++		    (sprom->boardflags_lo & B43_BFL_HGPA))
+ 			lpphy_write_gain_table_bulk(dev, 0, 128,
+ 					lpphy_rev1_nopa_tx_gain_table);
+ 		else if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+@@ -2444,7 +2444,7 @@ void lpphy_init_tx_gain_table(struct b43_wldev *dev)
+ 					lpphy_rev1_5ghz_tx_gain_table);
+ 		break;
+ 	default:
+-		if (bus->sprom.boardflags_hi & B43_BFH_NOPA)
++		if (sprom->boardflags_hi & B43_BFH_NOPA)
+ 			lpphy_write_gain_table_bulk(dev, 0, 128,
+ 					lpphy_rev2_nopa_tx_gain_table);
+ 		else if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+diff --git a/drivers/net/wireless/b43/wa.c b/drivers/net/wireless/b43/wa.c
+index 8f4db44..2829ee1 100644
+--- a/drivers/net/wireless/b43/wa.c
++++ b/drivers/net/wireless/b43/wa.c
+@@ -487,6 +487,7 @@ static void b43_wa_boards_a(struct b43_wldev *dev)
+ static void b43_wa_boards_g(struct b43_wldev *dev)
  {
--	if (dev->sdev->id.revision >= 11)
-+	if (dev->dev->core_rev >= 11)
- 		return 0x38;
- 	return 8;
- }
-@@ -144,7 +144,7 @@ static struct b43_pio_txqueue *b43_setup_pioqueue_tx(struct b43_wldev *dev,
- 	if (!q)
- 		return NULL;
- 	q->dev = dev;
--	q->rev = dev->sdev->id.revision;
-+	q->rev = dev->dev->core_rev;
- 	q->mmio_base = index_to_pioqueue_base(dev, index) +
- 		       pio_txqueue_offset(dev);
- 	q->index = index;
-@@ -178,7 +178,7 @@ static struct b43_pio_rxqueue *b43_setup_pioqueue_rx(struct b43_wldev *dev,
- 	if (!q)
- 		return NULL;
- 	q->dev = dev;
--	q->rev = dev->sdev->id.revision;
-+	q->rev = dev->dev->core_rev;
- 	q->mmio_base = index_to_pioqueue_base(dev, index) +
- 		       pio_rxqueue_offset(dev);
+ 	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy *phy = &dev->phy;
  
+ 	if (bus->boardinfo.vendor != SSB_BOARDVENDOR_BCM ||
+@@ -498,7 +499,7 @@ static void b43_wa_boards_g(struct b43_wldev *dev)
+ 		} else {
+ 			b43_ofdmtab_write16(dev, B43_OFDMTAB_GAINX, 1, 0x0002);
+ 			b43_ofdmtab_write16(dev, B43_OFDMTAB_GAINX, 2, 0x0001);
+-			if ((bus->sprom.boardflags_lo & B43_BFL_EXTLNA) &&
++			if ((sprom->boardflags_lo & B43_BFL_EXTLNA) &&
+ 			    (phy->rev >= 7)) {
+ 				b43_phy_mask(dev, B43_PHY_EXTG(0x11), 0xF7FF);
+ 				b43_ofdmtab_write16(dev, B43_OFDMTAB_GAINX, 0x0020, 0x0001);
+@@ -510,7 +511,7 @@ static void b43_wa_boards_g(struct b43_wldev *dev)
+ 			}
+ 		}
+ 	}
+-	if (bus->sprom.boardflags_lo & B43_BFL_FEM) {
++	if (sprom->boardflags_lo & B43_BFL_FEM) {
+ 		b43_phy_write(dev, B43_PHY_GTABCTL, 0x3120);
+ 		b43_phy_write(dev, B43_PHY_GTABDATA, 0xC480);
+ 	}
+diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
+index c8f99ae..488b898 100644
+--- a/drivers/net/wireless/b43/xmit.c
++++ b/drivers/net/wireless/b43/xmit.c
+@@ -547,7 +547,7 @@ static s8 b43_rssi_postprocess(struct b43_wldev *dev,
+ 			else
+ 				tmp -= 3;
+ 		} else {
+-			if (dev->sdev->bus->sprom.
++			if (dev->dev->bus_sprom->
+ 			    boardflags_lo & B43_BFL_RSSI) {
+ 				if (in_rssi > 63)
+ 					in_rssi = 63;
 -- 
 1.7.3.4
