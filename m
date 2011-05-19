@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 19 May 2011 15:11:24 +0200
-Subject: [PATCH 1/4] b43: LP-PHY: use new pointers path to access ssb_device
-Message-ID: <1305810687-4567-1-git-send-email-zajec5@gmail.com>
+Date: Thu, 19 May 2011 15:11:25 +0200
+Subject: [PATCH 2/4] b43: SDIO: use new pointers path to access ssb_device
+In-Reply-To: <1305810687-4567-1-git-send-email-zajec5@gmail.com>
+References: <1305810687-4567-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1305810687-4567-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,73 +11,34 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, Julian Calaby <julian.calaby@gmail.com>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-LP-PHY code is SSB specific, add check for bus type.
+SDIO code is SSB specific, we can safely just use "sdev"
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_lp.c |   15 ++++++++++-----
- 1 files changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/wireless/b43/sdio.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
-index 2606c25..daec1d9 100644
---- a/drivers/net/wireless/b43/phy_lp.c
-+++ b/drivers/net/wireless/b43/phy_lp.c
-@@ -214,7 +214,7 @@ static void lpphy_table_init(struct b43_wldev *dev)
- 
- static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+diff --git a/drivers/net/wireless/b43/sdio.c b/drivers/net/wireless/b43/sdio.c
+index 808e25b..e6c733d 100644
+--- a/drivers/net/wireless/b43/sdio.c
++++ b/drivers/net/wireless/b43/sdio.c
+@@ -66,7 +66,7 @@ static void b43_sdio_interrupt_dispatcher(struct sdio_func *func)
+ int b43_sdio_request_irq(struct b43_wldev *dev,
+ 			 void (*handler)(struct b43_wldev *dev))
  {
 -	struct ssb_bus *bus = dev->sdev->bus;
 +	struct ssb_bus *bus = dev->dev->sdev->bus;
- 	struct ssb_sprom *sprom = dev->dev->bus_sprom;
- 	struct b43_phy_lp *lpphy = dev->phy.lp;
- 	u16 tmp, tmp2;
-@@ -519,7 +519,7 @@ struct b2062_freqdata {
- static void lpphy_2062_init(struct b43_wldev *dev)
- {
- 	struct b43_phy_lp *lpphy = dev->phy.lp;
--	struct ssb_bus *bus = dev->sdev->bus;
-+	struct ssb_bus *bus = dev->dev->sdev->bus;
- 	u32 crystalfreq, tmp, ref;
- 	unsigned int i;
- 	const struct b2062_freqdata *fd = NULL;
-@@ -1289,7 +1289,7 @@ finish:
- 
- static void lpphy_rev2plus_rc_calib(struct b43_wldev *dev)
- {
--	struct ssb_bus *bus = dev->sdev->bus;
-+	struct ssb_bus *bus = dev->dev->sdev->bus;
- 	u32 crystal_freq = bus->chipco.pmu.crystalfreq * 1000;
- 	u8 tmp = b43_radio_read(dev, B2063_RX_BB_SP8) & 0xFF;
- 	int i;
-@@ -2428,7 +2428,7 @@ static int lpphy_b2062_tune(struct b43_wldev *dev,
- 			    unsigned int channel)
- {
- 	struct b43_phy_lp *lpphy = dev->phy.lp;
--	struct ssb_bus *bus = dev->sdev->bus;
-+	struct ssb_bus *bus = dev->dev->sdev->bus;
- 	const struct b206x_channel *chandata = NULL;
- 	u32 crystal_freq = bus->chipco.pmu.crystalfreq * 1000;
- 	u32 tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9;
-@@ -2518,7 +2518,7 @@ static void lpphy_b2063_vco_calib(struct b43_wldev *dev)
- static int lpphy_b2063_tune(struct b43_wldev *dev,
- 			    unsigned int channel)
- {
--	struct ssb_bus *bus = dev->sdev->bus;
-+	struct ssb_bus *bus = dev->dev->sdev->bus;
- 
- 	static const struct b206x_channel *chandata = NULL;
- 	u32 crystal_freq = bus->chipco.pmu.crystalfreq * 1000;
-@@ -2666,6 +2666,11 @@ static int b43_lpphy_op_init(struct b43_wldev *dev)
- {
+ 	struct sdio_func *func = bus->host_sdio;
+ 	struct b43_sdio *sdio = sdio_get_drvdata(func);
  	int err;
+@@ -82,7 +82,7 @@ int b43_sdio_request_irq(struct b43_wldev *dev,
  
-+	if (dev->dev->bus_type != B43_BUS_SSB) {
-+		b43err(dev->wl, "LP-PHY is supported only on SSB!\n");
-+		return -EOPNOTSUPP;
-+	}
-+
- 	lpphy_read_band_sprom(dev); //FIXME should this be in prepare_structs?
- 	lpphy_baseband_init(dev);
- 	lpphy_radio_init(dev);
+ void b43_sdio_free_irq(struct b43_wldev *dev)
+ {
+-	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_bus *bus = dev->dev->sdev->bus;
+ 	struct sdio_func *func = bus->host_sdio;
+ 	struct b43_sdio *sdio = sdio_get_drvdata(func);
+ 
 -- 
 1.7.3.4
