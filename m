@@ -1,76 +1,81 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 18 May 2011 09:49:10 +0200
-Subject: [PATCH 2/9] b43: add bus device abstraction layer
-In-Reply-To: <BANLkTinaPMr-owT31e5hbRVKBad_u9XbUw@mail.gmail.com>
-References: <1305677203-16660-1-git-send-email-zajec5@gmail.com>
-	<1305677203-16660-2-git-send-email-zajec5@gmail.com>
-	<BANLkTinh7VVGUtEUezk3mODqpQ9zPT022Q@mail.gmail.com>
-	<BANLkTinsK3f6Wqpf7ugJKBTMtRbErTdCuw@mail.gmail.com>
-	<BANLkTinaPMr-owT31e5hbRVKBad_u9XbUw@mail.gmail.com>
-Message-ID: <BANLkTinLFGzjFOtXZe1Zk2_jLjj2ZZVCrg@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 19 May 2011 15:11:24 +0200
+Subject: [PATCH 1/4] b43: LP-PHY: use new pointers path to access ssb_device
+Message-ID: <1305810687-4567-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, Julian Calaby <julian.calaby@gmail.com>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-W dniu 18 maja 2011 09:21 u?ytkownik Julian Calaby
-<julian.calaby@gmail.com> napisa?:
-> 2011/5/18 Rafa? Mi?ecki <zajec5@gmail.com>:
->> W dniu 18 maja 2011 02:28 u?ytkownik Julian Calaby
->> <julian.calaby@gmail.com> napisa?:
->>> Rafa?,
->>>
->>> A quick question:
->>>
->>> 2011/5/18 Rafa? Mi?ecki <zajec5@gmail.com>:
->>>>
->>>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->>>> ---
->>>> ?drivers/net/wireless/b43/Makefile | ? ?1 +
->>>> ?drivers/net/wireless/b43/b43.h ? ?| ? ?4 +++-
->>>> ?drivers/net/wireless/b43/bus.c ? ?| ? 36 ++++++++++++++++++++++++++++++++++++
->>>
->>> Would it make more sense to have this be called ssb.c as it contains
->>> all the ssb specific functions,
->>
->> It's only ssb specific for now. It will contain BCMA code later.
->>
->>
->>> that way you can then have an brcma.c
->>> file to contain the functions specific to that bus?
->>
->> I'll put BCMA specific code in bus.c.
->> Right now bus.c contains 100 LOC* and I believe its SSB part is
->> complete. All the ops functions are one liners. It's so small and
->> simple file I don't see sense to splitting it and having more mess in
->> list of files instead.
->
-> As I see it, having two sets of mostly identical ?wrapper functions in
-> a file seems incorrect to me. Especially as once the abstraction is
-> complete it would technically be correct to build b43 without SSB
-> support - it's much cleaner to not compile a file than have a massive
-> #ifdef block in a common file.
->
-> Anyway, it's only a minor thing.
+LP-PHY code is SSB specific, add check for bus type.
 
-Massive? It's *one* ifdef for one bus type in this file.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_lp.c |   15 ++++++++++-----
+ 1 files changed, 10 insertions(+), 5 deletions(-)
 
-
->> A one quick question:
->> Why didn't you respond in "[RFC][PATCH] b43: add bus abstraction
->> layer" on 2011-04-08? Or more recent "[RFC ONLY 2/5] b43: add bus
->> device abstraction later" posted on 2011-05-09?
->
-> While I try to read every patch that passes through the linux-wireless
-> mailing list, I only skim them, and tend to miss some details. The
-> thing that prompted this comment was the SSB comment at the start of
-> the SSB specific wrappers - something I probably didn't read the last
-> two times the patch came up on the list.
-
-OK, I ask because it's much easier to discuss such a things before you
-got 20 patches. That's why I posted very early RFC.
-
+diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
+index 2606c25..daec1d9 100644
+--- a/drivers/net/wireless/b43/phy_lp.c
++++ b/drivers/net/wireless/b43/phy_lp.c
+@@ -214,7 +214,7 @@ static void lpphy_table_init(struct b43_wldev *dev)
+ 
+ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ {
+-	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_bus *bus = dev->dev->sdev->bus;
+ 	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+ 	struct b43_phy_lp *lpphy = dev->phy.lp;
+ 	u16 tmp, tmp2;
+@@ -519,7 +519,7 @@ struct b2062_freqdata {
+ static void lpphy_2062_init(struct b43_wldev *dev)
+ {
+ 	struct b43_phy_lp *lpphy = dev->phy.lp;
+-	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_bus *bus = dev->dev->sdev->bus;
+ 	u32 crystalfreq, tmp, ref;
+ 	unsigned int i;
+ 	const struct b2062_freqdata *fd = NULL;
+@@ -1289,7 +1289,7 @@ finish:
+ 
+ static void lpphy_rev2plus_rc_calib(struct b43_wldev *dev)
+ {
+-	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_bus *bus = dev->dev->sdev->bus;
+ 	u32 crystal_freq = bus->chipco.pmu.crystalfreq * 1000;
+ 	u8 tmp = b43_radio_read(dev, B2063_RX_BB_SP8) & 0xFF;
+ 	int i;
+@@ -2428,7 +2428,7 @@ static int lpphy_b2062_tune(struct b43_wldev *dev,
+ 			    unsigned int channel)
+ {
+ 	struct b43_phy_lp *lpphy = dev->phy.lp;
+-	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_bus *bus = dev->dev->sdev->bus;
+ 	const struct b206x_channel *chandata = NULL;
+ 	u32 crystal_freq = bus->chipco.pmu.crystalfreq * 1000;
+ 	u32 tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9;
+@@ -2518,7 +2518,7 @@ static void lpphy_b2063_vco_calib(struct b43_wldev *dev)
+ static int lpphy_b2063_tune(struct b43_wldev *dev,
+ 			    unsigned int channel)
+ {
+-	struct ssb_bus *bus = dev->sdev->bus;
++	struct ssb_bus *bus = dev->dev->sdev->bus;
+ 
+ 	static const struct b206x_channel *chandata = NULL;
+ 	u32 crystal_freq = bus->chipco.pmu.crystalfreq * 1000;
+@@ -2666,6 +2666,11 @@ static int b43_lpphy_op_init(struct b43_wldev *dev)
+ {
+ 	int err;
+ 
++	if (dev->dev->bus_type != B43_BUS_SSB) {
++		b43err(dev->wl, "LP-PHY is supported only on SSB!\n");
++		return -EOPNOTSUPP;
++	}
++
+ 	lpphy_read_band_sprom(dev); //FIXME should this be in prepare_structs?
+ 	lpphy_baseband_init(dev);
+ 	lpphy_radio_init(dev);
 -- 
-Rafa?
+1.7.3.4
