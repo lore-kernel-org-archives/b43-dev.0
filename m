@@ -1,57 +1,144 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 30 Jun 2011 09:23:11 +0200
-Subject: [RFC v3 03/13] bcma: add functions to scan cores needed on SoCs
-In-Reply-To: <BANLkTimAE-xphUYeMMzzz6B531tedo6Vkw@mail.gmail.com>
-References: <1309385518-12097-1-git-send-email-hauke@hauke-m.de>	<1309385518-12097-4-git-send-email-hauke@hauke-m.de>
-	<BANLkTimAE-xphUYeMMzzz6B531tedo6Vkw@mail.gmail.com>
-Message-ID: <4E0C245F.5040107@hauke-m.de>
+From: Chris Vine <chris@cvine.freeserve.co.uk>
+Date: Wed, 1 Jun 2011 00:29:41 +0100
+Subject: Request for testing b43 & Broadcom 14e4:4315 cards for DMA
+	ERRORs (Linux 3.0)
+In-Reply-To: <BANLkTi=fgGTvjdQ0Ghd15CBoYzd9TLU2CQ@mail.gmail.com>
+References: <BANLkTi=fgGTvjdQ0Ghd15CBoYzd9TLU2CQ@mail.gmail.com>
+Message-ID: <20110601002941.1ab83b28@boulder.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
+To: b43-dev@lists.infradead.org
 
-On 06/30/2011 08:42 AM, Rafa? Mi?ecki wrote:
-> 2011/6/30 Hauke Mehrtens <hauke@hauke-m.de>:
--		err = bcma_get_next_core(bus, &eromptr, core);
--		if (err == -ENXIO)
-+		err = bcma_get_next_core(bus, &eromptr, NULL, core_num, core);
-+		if (err == -ENODEV) {
-+			core_num++;
-+			continue;
-+		} else if (err == -ENXIO)
- 			continue;
- 		else if (err == -ESPIPE)
- 			break;
- 		else if (err < 0)
- 			return err;
-
-+		core->core_index = core_num++;
-+		bus->nr_cores++;
-+
- 		pr_info("Core %d found: %s "
- 			"(manuf 0x%03X, id 0x%03X, rev 0x%02X, class 0x%X)\n",
--			bus->nr_cores, bcma_device_name(&core->id),
-+			core->core_index, bcma_device_name(&core->id),
- 			core->id.manuf, core->id.id, core->id.rev,
- 			core->id.class);
-
--		core->core_index = bus->nr_cores++;
+On Mon, 30 May 2011 09:22:32 +0200
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> Hello everybody,
 > 
-> Didn't you just change core indexes (0, 1, ...) to numbers (1, 2,
-> ...)? It would break enabling IRQs on PCI.
-No, the cores are getting the same indexes numbers as before. While
-scanning core_num is increased for every core found also for cores we
-are not searching for or we already found. Then core_num will be
-assigned to core->core_index. bus->nr_cores is no used any more so it
-could be removed or is it needed for something else?
-
-As you can see here [0] it finds core 0 and 3 at first and then the others.
+> I believe I've grabbed e-mails of all the people reporting DMA errors
+> on b43/bcm43xx mailing list.
 > 
-> Didn't test it however yet, I'll have access to my machines tomorrow.
+> Short remind of the problem. When using b43 and LP-PHY card on some
+> specific machines you got:
+> b43-phy0 ERROR: Fatal DMA error: 0x00000800, 0x00000000, 0x00000000,
+> 0x00000000, 0x00000000, 0x00000000
+> b43-phy0: Controller RESET (DMA error) ...
 > 
+> The workaround was to use PIO instead of DMA, or "modprobe wl &&
+> rmmod wl".
+> 
+> I believe we've fixed that errors in Linux 3.0-rc1. Can you give it a
+> chance and report back?
 
-Hauke
+This deals with the fatal DMA errors on my machine.  Well done.
 
-[0] http://permalink.gmane.org/gmane.linux.kernel.wireless.general/71851
+However, fixing this bug reveals something else.  After about 2 hours of
+streaming on MLB.TV I got this, apparently at random (but this is not a
+hard error: by disassociating from the AP and reassociating, the rest of
+the game played fine, and there was no need to load or unload modules):
+
+b43-phy0 debug: TX-status contains invalid cookie: 0x0DCE
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 76
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 78
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 80
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 82
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 84
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 86
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 88
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 90
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 92
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 94
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 96
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 98
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 100
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 102
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 104
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 106
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 108
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 110
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 112
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 114
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 116
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 118
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 120
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 122
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 124
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 126
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 128
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 130
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 132
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 134
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 136
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 138
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 140
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 142
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 144
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 146
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 148
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 150
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 152
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 154
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 156
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 158
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 160
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 162
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 164
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 166
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 168
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 170
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 172
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 174
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 176
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 178
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 180
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 182
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 184
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 186
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 188
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 190
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 192
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 194
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 196
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 198
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 200
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 202
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 204
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 206
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 208
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 210
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 212
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 214
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 216
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 218
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 220
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 222
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 224
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 226
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 228
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 230
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 232
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 234
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 236
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 238
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 240
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 242
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 244
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 246
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 248
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 250
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 252
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 254
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 0
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 2
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 4
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 6
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 8
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 10
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 12
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 14
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 16
+b43-phy0 debug: Out of order TX status report on DMA ring 1. Expected 74, but got 18
+
+... and so on ...
+
+Chris
