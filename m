@@ -1,52 +1,28 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 1 Jun 2011 20:10:44 +0200
-Subject: b43 error under heavy load
-In-Reply-To: <20110601190929.244c57ed@boulder.homenet>
-References: <4CEAB969.20702@lwfinger.net> <1290451982.20888.2.camel@maggie>
-	<4CEAC095.7020706@lwfinger.net>
-	<BANLkTimjRA5CsSDp_+LrGq8PNgaR4JFD=w@mail.gmail.com>
-	<4DC9853A.1090508@lwfinger.net>
-	<BANLkTimBpGRxfidpE4hYCVscmX-Hy5q5jw@mail.gmail.com>
-	<BANLkTi=TohOdjurvgqZT8=GXKbWfNe4v+w@mail.gmail.com>
-	<20110601114839.433ae42d@boulder.homenet>
-	<BANLkTin_RnMV3KnGS4qYPtMVxCuW=Vj7mg@mail.gmail.com>
-	<20110601130842.077da1c3@boulder.homenet>
-	<BANLkTi=2xYrrjEdHuYCKFKy4H2EXoUGQuQ@mail.gmail.com>
-	<20110601160101.75e30b3d@boulder.homenet>
-	<BANLkTim9pQc+yxdQLSL1-6VNiyM6_tvJ6g@mail.gmail.com>
-	<20110601184931.499557c6@boulder.homenet>
-	<BANLkTi=Cm1o8HVqugC6JNooP8h+HpJ=aRQ@mail.gmail.com>
-	<20110601190929.244c57ed@boulder.homenet>
-Message-ID: <BANLkTi=j7gZq2U8QOXBLAPzN4_9DQUm7=A@mail.gmail.com>
+Date: Wed, 1 Jun 2011 21:14:50 +0200
+Subject: [RFT][PATCH 3.0] ssb: fix PCI(e) driver regression causing oops
+	on PCI cards
+In-Reply-To: <1306918871-16965-1-git-send-email-zajec5@gmail.com>
+References: <1306918871-16965-1-git-send-email-zajec5@gmail.com>
+Message-ID: <BANLkTinSdDZv7gshYfi4mK5N9K-E7vk3Yw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Vine <chris@cvine.freeserve.co.uk>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, wireless <linux-wireless@vger.kernel.org>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>
+To: Andreas Schwab <schwab@linux-m68k.org>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, linuxppc-dev@ozlabs.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 
-2011/6/1 Chris Vine <chris@cvine.freeserve.co.uk>:
-> On Wed, 1 Jun 2011 20:03:56 +0200
-> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->> 2011/6/1 Chris Vine <chris@cvine.freeserve.co.uk>:
->> > The one which failed caused the cessation of
->> > wireless traffic, and was accompanied by the debug log reports of
->> > out of order TX status earlier referred to, and with only one
->> > single report
->>
->> As I said, I don't really suspect any relation between full TX ring
->> and out of order problems anymore.
->>
->> But it won't hurt to ask just in case:
->> Did you see relation between this single "Stopped TX ring 1" and
->> massive out of order messages? Did out of order messages starter right
->> after "Stopped TX ring 1" one?
->
-> The "Stopped TX ring 1" message was near the end (but not at the end)
-> of the out of order messages. It was definitely not at the beginning of
-> the out of order messages.
+2011/6/1 Rafa? Mi?ecki <zajec5@gmail.com>:
+> We were incorrectly executing PCIe specific workarounds on PCI cards.
+> This resulted in:
+> Machine check in kernel mode.
+> Caused by (from SRR1=149030): Transfer error ack signal
+> Oops: Machine check, sig: 7 [#1]
 
-Thanks. That confirmed for me, there is no relation.
+John, I've tested this patch myself on my PCI BCM4318, including
+checking for 0xFFFFFFFF reads in MMIO dumps.
+
+The patch is correct, please take it for 3.0.
 
 -- 
 Rafa?
