@@ -1,25 +1,47 @@
-From: chris at martin.cc <chris@martin.cc>
-Date: Tue, 31 May 2011 23:26:02 +1000
-Subject: BCM5354 (Asus WL500GPv2) DMA RX buffer too small and
-	skb_over_panic
-In-Reply-To: <BANLkTikNJKcUfXREYiYTx2E1Ba=E95=3VQ@mail.gmail.com>
-References: <4DE22C0E.1050902@hauke-m.de>
-	<BANLkTinZA=fOLGnoCQ-1-4ng1GKAv5_5gA@mail.gmail.com>
-	<4DE25A8F.6040606@lwfinger.net>
-	<BANLkTikVr+28ccfhWOc_kuTcygQLS47nDQ@mail.gmail.com>
-	<BANLkTimTpM6V+5huVz-EsfVD_KT0B_U1Qg@mail.gmail.com>
-	<BANLkTinjKFO6RkK_7H6aLkykK1tAMiKmgA@mail.gmail.com>
-	<BANLkTikNJKcUfXREYiYTx2E1Ba=E95=3VQ@mail.gmail.com>
-Message-ID: <BANLkTimTScfk6++ELaOzGyf4nc0pCk8MEA@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed,  1 Jun 2011 11:01:11 +0200
+Subject: [RFT][PATCH 3.0] ssb: fix PCI(e) driver regression causing oops on
+	PCI cards
+Message-ID: <1306918871-16965-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Andreas Schwab <schwab@linux-m68k.org>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>
+Cc: b43-dev@lists.infradead.org, linuxppc-dev@ozlabs.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Yes it is the same.  I will send you the info as soon as I can. Have busted
-my hand so it will take a couple of days
-On 31/05/2011 9:55 PM, "Rafa? Mi?ecki" <zajec5@gmail.com> wrote:
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110531/4ec2ad13/attachment.html>
+We were incorrectly executing PCIe specific workarounds on PCI cards.
+This resulted in:
+Machine check in kernel mode.
+Caused by (from SRR1=149030): Transfer error ack signal
+Oops: Machine check, sig: 7 [#1]
+
+Reported-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/driver_pcicore.c |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/ssb/driver_pcicore.c b/drivers/ssb/driver_pcicore.c
+index 82feb34..2a20dab 100644
+--- a/drivers/ssb/driver_pcicore.c
++++ b/drivers/ssb/driver_pcicore.c
+@@ -539,10 +539,12 @@ void ssb_pcicore_init(struct ssb_pcicore *pc)
+ 	if (!pc->hostmode)
+ 		ssb_pcicore_init_clientmode(pc);
+ 
+-	/* Additional always once-executed workarounds */
+-	ssb_pcicore_serdes_workaround(pc);
+-	/* TODO: ASPM */
+-	/* TODO: Clock Request Update */
++	/* Additional PCIe always once-executed workarounds */
++	if (dev->id.coreid == SSB_DEV_PCIE) {
++		ssb_pcicore_serdes_workaround(pc);
++		/* TODO: ASPM */
++		/* TODO: Clock Request Update */
++	}
+ }
+ 
+ static u32 ssb_pcie_read(struct ssb_pcicore *pc, u32 address)
+-- 
+1.7.1
