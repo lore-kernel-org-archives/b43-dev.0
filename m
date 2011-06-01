@@ -1,7 +1,7 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 1 Jun 2011 14:25:23 +0200
+From: Chris Vine <chris@cvine.freeserve.co.uk>
+Date: Wed, 1 Jun 2011 16:01:01 +0100
 Subject: b43 error under heavy load
-In-Reply-To: <20110601130842.077da1c3@boulder.homenet>
+In-Reply-To: <BANLkTi=2xYrrjEdHuYCKFKy4H2EXoUGQuQ@mail.gmail.com>
 References: <4CEAB969.20702@lwfinger.net> <1290451982.20888.2.camel@maggie>
 	<4CEAC095.7020706@lwfinger.net>
 	<BANLkTimjRA5CsSDp_+LrGq8PNgaR4JFD=w@mail.gmail.com>
@@ -11,51 +11,41 @@ References: <4CEAB969.20702@lwfinger.net> <1290451982.20888.2.camel@maggie>
 	<20110601114839.433ae42d@boulder.homenet>
 	<BANLkTin_RnMV3KnGS4qYPtMVxCuW=Vj7mg@mail.gmail.com>
 	<20110601130842.077da1c3@boulder.homenet>
-Message-ID: <BANLkTi=2xYrrjEdHuYCKFKy4H2EXoUGQuQ@mail.gmail.com>
+	<BANLkTi=2xYrrjEdHuYCKFKy4H2EXoUGQuQ@mail.gmail.com>
+Message-ID: <20110601160101.75e30b3d@boulder.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Vine <chris@cvine.freeserve.co.uk>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, wireless <linux-wireless@vger.kernel.org>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, wireless <linux-wireless@vger.kernel.org>, Michael =?ISO-8859-1?B?QvxzY2g=?= <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>
 
-2011/6/1 Chris Vine <chris@cvine.freeserve.co.uk>:
-> On Wed, 1 Jun 2011 12:56:22 +0200
-> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->> 2011/6/1 Chris Vine <chris@cvine.freeserve.co.uk>:
->> > On Wed, 1 Jun 2011 11:23:45 +0200
->> > Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->> >> AFAIK to enable this debugging you only need to:
->> >> echo 1 > /sys/kernel/debug/b43/phy0/debug_dmaverbose
->> >
->> > I don't have a /sys/kernel/debug directory with a running 3.0.0-rc1
->> > kernel, so it appears that b43 debugging (which I do have enabled)
->> > doesn't use it.
->>
->> mount -t debugfs none /sys/kernel/debug/
->
-> Ah, so I need to compile in debugfs. ?That isn't/wasn't necessary for
-> the DMA error debugging. ?I am surprised that debugfs enables you to
-> alter kernel debugging levels on the fly (I thought it was a
-> passive logging mechanism for kernel state), but you live and learn.
+On Wed, 1 Jun 2011 14:25:23 +0200
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> I think you should easily get this error by transmitting. Streaming
+> some video is mostly receiving. Just putting some random
+> (ftp/sftp/iperf) server in the network would make the trick.
 
-Removing following if () condition:
- if (b43_debug(dev, B43_DBG_DMAVERBOSE)) {
-will work fine as well ;)
-You can just leave:
-b43dbg(dev->wl, "Stopped TX ring %d\n", ring->index);
-without condition around it (and make sure to enable B43 debugging).
+OK rather than recompile the kernel with debugfs enabled, as you
+suggested I took the debugging call to b43dbg() out of the
+B43_DBG_DMAVERBOSE if block (so it is entered whether or not verbose
+debugging is set).
 
+I transferred a 268MB file across the LAN in a little over 5 minutes
+(so the transfer speed was a little under 10Mb/s).  During the course
+of the transfer I got about 500 "b43-phy0 debug: Stopped TX ring 1"
+statements logged.
 
-> I will compile in debugfs, but I don't expect to have any rapid results
-> for you. With 3 and a half hours of streaming yesterday it happened
-> once. ?I won't be able to do much testing by way of transferring files
-> over the LAN for a while either (I imagine that would provide greater
-> stress testing).
+However the interesting thing is that with this debugging statement
+included, I got no messages about any out of order TX status; instead,
+apart from the overrun messages to the debug log, the link performed
+normally. The file transfer did not fail (I have checked that the file
+received is identical to the file sent) nor was the link to the router
+lost. Probably writing to the debug log has changed some timing race
+somewhere to the benefit of link integrity.
 
-I think you should easily get this error by transmitting. Streaming
-some video is mostly receiving. Just putting some random
-(ftp/sftp/iperf) server in the network would make the trick.
+However, as I said, I am not going to be in a position to do much
+testing by way of transferring further files over the LAN for a period
+of time, for unrelated reasons.
 
--- 
-Rafa?
+Chris
