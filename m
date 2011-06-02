@@ -1,46 +1,40 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 2 Jun 2011 14:40:41 +0200
-Subject: [RFC][PATCH] b43: use condition for SSB specific ops
-In-Reply-To: <1307013080-10386-1-git-send-email-zajec5@gmail.com>
-References: <1307013080-10386-1-git-send-email-zajec5@gmail.com>
-Message-ID: <BANLkTim-ouepU2D7au3yH3dCt3S15cTamA@mail.gmail.com>
+Date: Thu, 2 Jun 2011 21:30:48 +0200
+Subject: [PATCH] bcma: read SPROM and extract MAC from it
+Message-ID: <BANLkTi=OPXYBHC-S1Zk2Qbfh6gOXTf-JrQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, Michael Buesch <mb@bu3sch.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-W dniu 2 czerwca 2011 13:11 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+On Jun 2, 2011 4:52 PM, "Arend van Spriel" <arend@broadcom.com> wrote:
 >
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> ---
-> Abstracting bus by b43_bus_dev works fine, but there are few places
-> where we calls SSB functions in uniq way. That calls happen only once
-> in the whole code and so there is not much sense in putting them in
-> bus abstraction.
+> On 06/02/2011 02:08 AM, Rafa? Mi?ecki wrote:
+>>
+>> In case of BCMA cards SPROM is located in the ChipCommon core, it is
+>> not mapped as separated host window. So far we have met only SPROMs rev
+>> 8.
+>> SPROM layout seems to be the same as for SSB buses, so we decided to
+>> share SPROM struct and some defines.
+>> For now we extract MAC address only, this can be improved of course.
+>>
+>> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+>>
+>> +/**************************************************
+>> + * Validation.
+>> + **************************************************/
+>> +
+>> +static inline u8 bcma_crc8(u8 crc, u8 data)
+>> +{
 >
-> In this situation I have decided to use simple switches. It does not
-> make code look lovely, but I do not have any better idea. If anyone
-> have - comments are really welcome.
+>
+> Somehow this crc8 looks quite familiar to me ;-) I send out a patch to
+John providing a crc8 as library module so you could consider using that. It
+will probably end up in wireless-testing before this patch (if accepted that
+is).
 
-This final code would need to be something like:
-
-switch (dev->dev->bus_type) {
-#ifdef CONFIG_B43_BCMA
-case B43_BUS_BCMA:
-	dma->translation = bcma_dma_translation(dev->dev->bdev);
-	break;
-#endif
-#ifdef CONFIG_B43_SSB
-case B43_BUS_SSB:
-	dma->translation = ssb_dma_translation(dev->dev->sdev);
-	break;
-#endif
-}
-
-So something nicer would be welcome. But what? :| Putting this in
-bus.c? Even if that are once-callers?
-
--- 
-Rafa?
+Absolutely! I've already said that in discussion about crc8.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110602/fa72d4f3/attachment.html>
