@@ -1,40 +1,33 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 2 Jun 2011 21:30:48 +0200
-Subject: [PATCH] bcma: read SPROM and extract MAC from it
-Message-ID: <BANLkTi=OPXYBHC-S1Zk2Qbfh6gOXTf-JrQ@mail.gmail.com>
+Date: Fri, 3 Jun 2011 23:24:54 +0200
+Subject: [RFT][PATCH 3.0] ssb: fix PCI(e) driver regression causing oops
+	on PCI cards
+In-Reply-To: <BANLkTinSdDZv7gshYfi4mK5N9K-E7vk3Yw@mail.gmail.com>
+References: <1306918871-16965-1-git-send-email-zajec5@gmail.com>
+	<BANLkTinSdDZv7gshYfi4mK5N9K-E7vk3Yw@mail.gmail.com>
+Message-ID: <BANLkTinq-Rn1zaS06ki4OD7DDV42bME-2Q@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, "John W. Linville" <linville@tuxdriver.com>, Andreas Schwab <schwab@linux-m68k.org>
+Cc: linuxppc-dev@ozlabs.org, b43-dev@lists.infradead.org
 
-On Jun 2, 2011 4:52 PM, "Arend van Spriel" <arend@broadcom.com> wrote:
+On Jun 1, 2011 9:14 PM, "Rafa? Mi?ecki" <zajec5@gmail.com> wrote:
 >
-> On 06/02/2011 02:08 AM, Rafa? Mi?ecki wrote:
->>
->> In case of BCMA cards SPROM is located in the ChipCommon core, it is
->> not mapped as separated host window. So far we have met only SPROMs rev
->> 8.
->> SPROM layout seems to be the same as for SSB buses, so we decided to
->> share SPROM struct and some defines.
->> For now we extract MAC address only, this can be improved of course.
->>
->> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
->>
->> +/**************************************************
->> + * Validation.
->> + **************************************************/
->> +
->> +static inline u8 bcma_crc8(u8 crc, u8 data)
->> +{
+> 2011/6/1 Rafa? Mi?ecki <zajec5@gmail.com>:
+> > We were incorrectly executing PCIe specific workarounds on PCI cards.
+> > This resulted in:
+> > Machine check in kernel mode.
+> > Caused by (from SRR1=149030): Transfer error ack signal
+> > Oops: Machine check, sig: 7 [#1]
 >
+> John, I've tested this patch myself on my PCI BCM4318, including
+> checking for 0xFFFFFFFF reads in MMIO dumps.
 >
-> Somehow this crc8 looks quite familiar to me ;-) I send out a patch to
-John providing a crc8 as library module so you could consider using that. It
-will probably end up in wireless-testing before this patch (if accepted that
-is).
+> The patch is correct, please take it for 3.0.
 
-Absolutely! I've already said that in discussion about crc8.
+Ping, ping, ping John.
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110602/fa72d4f3/attachment.html>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110603/8807efed/attachment.html>
