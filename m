@@ -1,45 +1,46 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Mon,  6 Jun 2011 00:07:38 +0200
-Subject: [RFC][PATCH 10/10] bcm47xx: fix irq assignment for new SoCs.
-In-Reply-To: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>
-References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1307311658-15853-11-git-send-email-hauke@hauke-m.de>
+From: Stuart Longland <redhatter@gentoo.org>
+Date: Mon, 06 Jun 2011 08:51:53 +1000
+Subject: b43 and late 2008 model Apple MacBook =?UTF-8?B?4oCUIExvb2sg?=
+	=?UTF-8?B?bWEsIG5vIHdpcmVzISA6LSk=?=
+In-Reply-To: <BANLkTikMNfWf+yATN8hutX_RySseO2CgHw@mail.gmail.com>
+References: <4DEAC8FE.5010502@gentoo.org>	<4DEACA37.4080905@gentoo.org>	<4DEACFD9.6020004@lwfinger.net>	<4DEAD567.2050608@gentoo.org>	<4DEADFBC.3000100@gentoo.org>
+	<BANLkTikMNfWf+yATN8hutX_RySseO2CgHw@mail.gmail.com>
+Message-ID: <4DEC0889.8040909@gentoo.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org
-Cc: zajec5@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, Hauke Mehrtens <hauke@hauke-m.de>
+To: b43-dev@lists.infradead.org
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- arch/mips/bcm47xx/irq.c |    8 ++++++++
- 1 files changed, 8 insertions(+), 0 deletions(-)
+On 06/05/11 23:10, Rafa? Mi?ecki wrote:
+> Status is quite nice described on our wiki page [0]. It really says
+> support for your chipset is experimental only in 2.6.38 :)
+> 
+> [0] http://wireless.kernel.org/en/users/Drivers/b43
 
-diff --git a/arch/mips/bcm47xx/irq.c b/arch/mips/bcm47xx/irq.c
-index 325757a..3642cee 100644
---- a/arch/mips/bcm47xx/irq.c
-+++ b/arch/mips/bcm47xx/irq.c
-@@ -26,6 +26,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <asm/irq_cpu.h>
-+#include <bcm47xx.h>
- 
- void plat_irq_dispatch(void)
- {
-@@ -51,5 +52,12 @@ void plat_irq_dispatch(void)
- 
- void __init arch_init_irq(void)
- {
-+	if (bcm47xx_active_bus_type == BCM47XX_BUS_TYPE_BCMA) {
-+		bcma_write32(bcm47xx_bus.bcma.drv_mips.core,
-+			     BCMA_MIPS_MIPS74K_INTMASK(5), 1 << 31);
-+		/* the kernel reads the timer irq from some register and thinks
-+		 * it's #5, but we offset it by 2 and route to #7 */
-+		cp0_compare_irq = 7;
-+	}
- 	mips_cpu_irq_init();
- }
+No problems, I've just updated that page... it already suggested 2.6.39,
+but I've just clarified this, linking to this thread.
+
+So far it seems to be more stable on wireless than MacOS X.  Under the
+latter I do get the bizzare problem where an ARP packet will get dropped
+due to some radio conditions here, then the MacBook disappears from the
+IPv4-visible network (despite being accessible via IPv6).  So evidently
+the b43 driver is working better than the Broadcom one.
+
+I just wish they'd stop playing their silly proprietary games and just
+contribute to the b43 driver instead of taking this lone ranger
+approach.  Surely any cats are out of the bag by now and that this is
+just a needless duplication of effort.
+
+Anyway, I'll get off the soap box before I get pushed. :-)
+
+Thanks for the assistance.
+Regards,
 -- 
-1.7.4.1
+Stuart Longland (aka Redhatter, VK4MSL)      .'''.
+Gentoo Linux/MIPS Cobalt and Docs Developer  '.'` :
+. . . . . . . . . . . . . . . . . . . . . .   .'.'
+http://dev.gentoo.org/~redhatter             :.'
+
+I haven't lost my mind...
+  ...it's backed up on a tape somewhere.
