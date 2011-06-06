@@ -1,65 +1,53 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 6 Jun 2011 13:00:29 +0200
-Subject: [RFC][PATCH 03/10] bcma: add embedded bus
-In-Reply-To: <4DECB232.70308@broadcom.com>
+Date: Mon, 6 Jun 2011 13:07:35 +0200
+Subject: [RFC][PATCH 09/10] bcm47xx: add support for bcma bus
+In-Reply-To: <1307311658-15853-10-git-send-email-hauke@hauke-m.de>
 References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>
-	<1307311658-15853-4-git-send-email-hauke@hauke-m.de>
-	<BANLkTi=T6xO9q+vOCk5Fu+2J_nUTwX3dcg@mail.gmail.com>
-	<1307356322.28734.11.camel@dev.znau.edu.ua>
-	<BANLkTimkKFAEfbKaWo81=uyuDS=gjESHAw@mail.gmail.com>
-	<4DECB232.70308@broadcom.com>
-Message-ID: <BANLkTimAtq+8EmTckqytL+WyaVigNYfQwA@mail.gmail.com>
+	<1307311658-15853-10-git-send-email-hauke@hauke-m.de>
+Message-ID: <BANLkTi=ybf59NR1NA3TOuamsWzey9zx19A@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
-Cc: George Kashperko <george@znau.edu.ua>, Hauke Mehrtens <hauke@hauke-m.de>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "mb@bu3sch.de" <mb@bu3sch.de>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "bernhardloos@googlemail.com" <bernhardloos@googlemail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com
 
-W dniu 6 czerwca 2011 12:55 u?ytkownik Arend van Spriel
-<arend@broadcom.com> napisa?:
-> On 06/06/2011 12:51 PM, Rafa? Mi?ecki wrote:
->>
->> W dniu 6 czerwca 2011 12:32 u?ytkownik George Kashperko
->> <george@znau.edu.ua> ?napisa?:
->>>
->>> Hi,
->>>
->>>> Hauke,
->>>>
->>>> My idea for naming schema was to use:
->>>> bcma_host_TYPE_*
->>>>
->>>> Like:
->>>> bcma_host_pci_*
->>>> bcma_host_sdio_*
->>>>
->>>> You are using:
->>>> bcma_host_bcma_*
->>>>
->>>> What do you think about changing this to:
->>>> bcma_host_embedded_*
->>>> or just some:
->>>> bcma_host_emb_*
->>>> ?
->>>>
->>>> Does it make more sense to you? I was trying to keep names in bcma
->>>> really clear, so every first-time-reader can see differences between
->>>> hosts, host and driver, etc.
->>>
->>> how about bcma_host_soc ?
->>
->> We get then inconsistency with "BCMA_HOSTTYPE_EMBEDDED". I'd like to
->> 1) See something like bcma_host_emb...
->> xor
->> 2) Use bcma_host_soc_* and BCMA_HOSTTYPE_SOC
->>
+2011/6/6 Hauke Mehrtens <hauke@hauke-m.de>:
+> This patch add support for the bcma bus. Broadcom uses only Mips 74K
+> CPUs on the new SoC and on the old ons using ssb bus there are no Mips
+> 74K CPUs.
 >
-> I would go for option 2). It more clearly says what it is. Embedded is a
-> broader term. As an example, a handset is an embedded device, but it may use
-> BCMA_HOSTTYPE_SDIO.
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+> ?arch/mips/Kconfig ? ? ? ? ? ? ? ? ? ? ? ? ? ?| ? ?4 +++
+> ?arch/mips/bcm47xx/gpio.c ? ? ? ? ? ? ? ? ? ? | ? ?9 ++++++++
+> ?arch/mips/bcm47xx/nvram.c ? ? ? ? ? ? ? ? ? ?| ? ?6 +++++
+> ?arch/mips/bcm47xx/serial.c ? ? ? ? ? ? ? ? ? | ? 24 +++++++++++++++++++++++
+> ?arch/mips/bcm47xx/setup.c ? ? ? ? ? ? ? ? ? ?| ? 27 ++++++++++++++++++++++++-
+> ?arch/mips/bcm47xx/time.c ? ? ? ? ? ? ? ? ? ? | ? ?3 ++
+> ?arch/mips/include/asm/mach-bcm47xx/bcm47xx.h | ? ?3 ++
+> ?arch/mips/include/asm/mach-bcm47xx/gpio.h ? ?| ? 18 +++++++++++++++++
+> ?drivers/watchdog/bcm47xx_wdt.c ? ? ? ? ? ? ? | ? ?6 +++++
+> ?9 files changed, 98 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 653da62..bdb0341 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -100,6 +100,10 @@ config BCM47XX
+> ? ? ? ?select SSB_EMBEDDED
+> ? ? ? ?select SSB_B43_PCI_BRIDGE if PCI
+> ? ? ? ?select SSB_PCICORE_HOSTMODE if PCI
+> + ? ? ? select BCMA
+> + ? ? ? select BCMA_HOST_EMBEDDED
+> + ? ? ? select BCMA_DRIVER_MIPS
+> + ? ? ? select BCMA_PCICORE_HOSTMODE
 
-Good point, agree.
+I'm not involved in development for embedded devices but I believe
+that space is quite important for them.
+
+You force compiling both: ssb and bcma for every device using bcm47xx.
+I think ppl may want to compile only one bus driver.
 
 -- 
 Rafa?
