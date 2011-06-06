@@ -1,10 +1,10 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 6 Jun 2011 13:07:35 +0200
-Subject: [RFC][PATCH 09/10] bcm47xx: add support for bcma bus
-In-Reply-To: <1307311658-15853-10-git-send-email-hauke@hauke-m.de>
+Date: Mon, 6 Jun 2011 13:23:42 +0200
+Subject: [RFC][PATCH 04/10] bcma: add mips driver
+In-Reply-To: <1307311658-15853-5-git-send-email-hauke@hauke-m.de>
 References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>
-	<1307311658-15853-10-git-send-email-hauke@hauke-m.de>
-Message-ID: <BANLkTi=ybf59NR1NA3TOuamsWzey9zx19A@mail.gmail.com>
+	<1307311658-15853-5-git-send-email-hauke@hauke-m.de>
+Message-ID: <BANLkTim_TtNVmmyH5J3G0pK-vrWNL1+24A@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,41 +13,61 @@ To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com
 
 2011/6/6 Hauke Mehrtens <hauke@hauke-m.de>:
-> This patch add support for the bcma bus. Broadcom uses only Mips 74K
-> CPUs on the new SoC and on the old ons using ssb bus there are no Mips
-> 74K CPUs.
->
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> ---
-> ?arch/mips/Kconfig ? ? ? ? ? ? ? ? ? ? ? ? ? ?| ? ?4 +++
-> ?arch/mips/bcm47xx/gpio.c ? ? ? ? ? ? ? ? ? ? | ? ?9 ++++++++
-> ?arch/mips/bcm47xx/nvram.c ? ? ? ? ? ? ? ? ? ?| ? ?6 +++++
-> ?arch/mips/bcm47xx/serial.c ? ? ? ? ? ? ? ? ? | ? 24 +++++++++++++++++++++++
-> ?arch/mips/bcm47xx/setup.c ? ? ? ? ? ? ? ? ? ?| ? 27 ++++++++++++++++++++++++-
-> ?arch/mips/bcm47xx/time.c ? ? ? ? ? ? ? ? ? ? | ? ?3 ++
-> ?arch/mips/include/asm/mach-bcm47xx/bcm47xx.h | ? ?3 ++
-> ?arch/mips/include/asm/mach-bcm47xx/gpio.h ? ?| ? 18 +++++++++++++++++
-> ?drivers/watchdog/bcm47xx_wdt.c ? ? ? ? ? ? ? | ? ?6 +++++
-> ?9 files changed, 98 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 653da62..bdb0341 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -100,6 +100,10 @@ config BCM47XX
-> ? ? ? ?select SSB_EMBEDDED
-> ? ? ? ?select SSB_B43_PCI_BRIDGE if PCI
-> ? ? ? ?select SSB_PCICORE_HOSTMODE if PCI
-> + ? ? ? select BCMA
-> + ? ? ? select BCMA_HOST_EMBEDDED
-> + ? ? ? select BCMA_DRIVER_MIPS
-> + ? ? ? select BCMA_PCICORE_HOSTMODE
+> +/* driver_mips.c */
+> +extern unsigned int bcma_core_mips_irq(struct bcma_device *dev);
 
-I'm not involved in development for embedded devices but I believe
-that space is quite important for them.
+Does it compile without CONFIG_BCMA_DRIVER_MIPS?
 
-You force compiling both: ssb and bcma for every device using bcm47xx.
-I think ppl may want to compile only one bus driver.
+
+> +/* Get the MIPS IRQ assignment for a specified device.
+> + * If unassigned, 0 is returned.
+> + * If disabled, 5 is returned.
+> + * If not supported, 6 is returned.
+> + */
+
+Does it ever return 6?
+
+
+> +unsigned int bcma_core_mips_irq(struct bcma_device *dev)
+> +{
+> + ? ? ? struct bcma_device *mdev = dev->bus->drv_mips.core;
+> + ? ? ? u32 irqflag;
+> + ? ? ? unsigned int irq;
+> +
+> + ? ? ? irqflag = bcma_core_mips_irqflag(dev);
+> +
+> + ? ? ? for (irq = 1; irq <= 4; irq++)
+> + ? ? ? ? ? ? ? if (bcma_read32(mdev, BCMA_MIPS_MIPS74K_INTMASK(irq)) & (1 << irqflag))
+> + ? ? ? ? ? ? ? ? ? ? ? break;
+
+Use scripts/checkpatch*. Braces around "for" and split line to match
+80 chars width.
+
+Why don't you just use "return irq;" instead of break?
+
+
+> +
+> + ? ? ? if (irq == 5)
+> + ? ? ? ? ? ? ? irq = 0;
+> +
+> + ? ? ? return irq;
+
+You can just make it "return 0;" after changing break to return.
+
+
+> + ? ? ? ? ? ? ? ? ? ? ? for (i = 0; i < bus->nr_cores; i++)
+> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? if ((1 << bcma_core_mips_irqflag(&bus->cores[i])) == oldirqflag) {
+> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? bcma_core_mips_set_irq(&bus->cores[i], 0);
+> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? break;
+> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? }
+
+Braces for "for".
+
+
+> + ? ? ? pr_info("after irq reconfiguration\n");
+
+Make first letter uppercase. I'm not English expert, but doesn't
+something like "IRQ reconfiguration done" sound better?
 
 -- 
 Rafa?
