@@ -1,10 +1,10 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue, 07 Jun 2011 00:11:03 +0200
-Subject: [RFC][PATCH 07/10] bcma: add pci(e) host mode
-In-Reply-To: <BANLkTik93+7ujHyv0_Zk2Ma9BPsHvJTttg@mail.gmail.com>
-References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<1307311658-15853-8-git-send-email-hauke@hauke-m.de>
-	<BANLkTik93+7ujHyv0_Zk2Ma9BPsHvJTttg@mail.gmail.com>
-Message-ID: <4DED5077.9040503@hauke-m.de>
+Date: Tue, 07 Jun 2011 00:13:00 +0200
+Subject: [RFC][PATCH 09/10] bcm47xx: add support for bcma bus
+In-Reply-To: <BANLkTi=ybf59NR1NA3TOuamsWzey9zx19A@mail.gmail.com>
+References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<1307311658-15853-10-git-send-email-hauke@hauke-m.de>
+	<BANLkTi=ybf59NR1NA3TOuamsWzey9zx19A@mail.gmail.com>
+Message-ID: <4DED50EC.3040401@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,53 +12,45 @@ Content-Transfer-Encoding: 7bit
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com
 
-On 06/06/2011 01:32 PM, Rafa? Mi?ecki wrote:
+On 06/06/2011 01:07 PM, Rafa? Mi?ecki wrote:
 > 2011/6/6 Hauke Mehrtens <hauke@hauke-m.de>:
->> +config BCMA_PCICORE_HOSTMODE
->> +       bool "Hostmode support for BCMA PCI core"
->> +       depends on BCMA_DRIVER_MIPS
->> +       help
->> +         PCIcore hostmode operation (external PCI bus).
+>> This patch add support for the bcma bus. Broadcom uses only Mips 74K
+>> CPUs on the new SoC and on the old ons using ssb bus there are no Mips
+>> 74K CPUs.
+>>
+>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+>> ---
+>>  arch/mips/Kconfig                            |    4 +++
+>>  arch/mips/bcm47xx/gpio.c                     |    9 ++++++++
+>>  arch/mips/bcm47xx/nvram.c                    |    6 +++++
+>>  arch/mips/bcm47xx/serial.c                   |   24 +++++++++++++++++++++++
+>>  arch/mips/bcm47xx/setup.c                    |   27 ++++++++++++++++++++++++-
+>>  arch/mips/bcm47xx/time.c                     |    3 ++
+>>  arch/mips/include/asm/mach-bcm47xx/bcm47xx.h |    3 ++
+>>  arch/mips/include/asm/mach-bcm47xx/gpio.h    |   18 +++++++++++++++++
+>>  drivers/watchdog/bcm47xx_wdt.c               |    6 +++++
+>>  9 files changed, 98 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+>> index 653da62..bdb0341 100644
+>> --- a/arch/mips/Kconfig
+>> +++ b/arch/mips/Kconfig
+>> @@ -100,6 +100,10 @@ config BCM47XX
+>>        select SSB_EMBEDDED
+>>        select SSB_B43_PCI_BRIDGE if PCI
+>>        select SSB_PCICORE_HOSTMODE if PCI
+>> +       select BCMA
+>> +       select BCMA_HOST_EMBEDDED
+>> +       select BCMA_DRIVER_MIPS
+>> +       select BCMA_PCICORE_HOSTMODE
 > 
-> I think you started to use BCMA_DRIVER_corename. Could you stick to it
-> (one schema), please? Maybe just
-> BCMA_DRIVER_PCI_HOSTMODE
-> ?
+> I'm not involved in development for embedded devices but I believe
+> that space is quite important for them.
 > 
-Yes sounds better.
+> You force compiling both: ssb and bcma for every device using bcm47xx.
+> I think ppl may want to compile only one bus driver.
 > 
->> +#ifdef CONFIG_BCMA_PCICORE_HOSTMODE
->> +       pc->hostmode = bcma_pcicore_is_in_hostmode(pc);
->> +       if (pc->hostmode)
->> +               bcma_pcicore_init_hostmode(pc);
->> +#endif /* CONFIG_BCMA_PCICORE_HOSTMODE */
->> +       if (!pc->hostmode)
->> +               bcma_pcicore_serdes_workaround(pc);
-> 
-> Does it make sense to init hostmode PCI like clientmode if we just
-> disable CONFIG_BCMA_PCICORE_HOSTMODE?
-> 
-> I think we should always check if core is host or client mode and use
-> correct initialization only. We should not init it as clientmode just
-> because we do not have driver for host mode.
-Yes we should not initialize a host mode pci core with client init code
-as it will break my device. ;-) I will place
-bcma_pcicore_is_in_hostmode() into the normal PCI driver code so it is
-available all the time.
-> 
-> 
->> diff --git a/drivers/bcma/driver_pci_host.c b/drivers/bcma/driver_pci_host.c
->> new file mode 100644
->> index 0000000..b52c6c9
->> --- /dev/null
->> +++ b/drivers/bcma/driver_pci_host.c
->> @@ -0,0 +1,44 @@
->> +/*
->> + * Broadcom specific AMBA
->> + * PCI Core
-> 
-> Please rename "PCI Core", add something about hostmode.
-> 
-Missed that while copy and past.
+Yes that has to be improved as there should also be an option to use the
+compiler optimazions for the new MIPS 74K CPU core.
 
 Hauke
