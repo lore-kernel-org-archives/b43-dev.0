@@ -1,56 +1,33 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue, 07 Jun 2011 00:13:00 +0200
-Subject: [RFC][PATCH 09/10] bcm47xx: add support for bcma bus
-In-Reply-To: <BANLkTi=ybf59NR1NA3TOuamsWzey9zx19A@mail.gmail.com>
-References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<1307311658-15853-10-git-send-email-hauke@hauke-m.de>
-	<BANLkTi=ybf59NR1NA3TOuamsWzey9zx19A@mail.gmail.com>
-Message-ID: <4DED50EC.3040401@hauke-m.de>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 7 Jun 2011 00:50:02 +0200
+Subject: [RFC][PATCH 04/10] bcma: add mips driver
+In-Reply-To: <4DED4F6C.5030902@hauke-m.de>
+References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>
+	<1307311658-15853-5-git-send-email-hauke@hauke-m.de>
+	<BANLkTim_TtNVmmyH5J3G0pK-vrWNL1+24A@mail.gmail.com>
+	<4DED4F6C.5030902@hauke-m.de>
+Message-ID: <BANLkTi=OAvaLei6v+qG4u=CDQznetiKsrA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com
 
-On 06/06/2011 01:07 PM, Rafa? Mi?ecki wrote:
-> 2011/6/6 Hauke Mehrtens <hauke@hauke-m.de>:
->> This patch add support for the bcma bus. Broadcom uses only Mips 74K
->> CPUs on the new SoC and on the old ons using ssb bus there are no Mips
->> 74K CPUs.
+W dniu 7 czerwca 2011 00:06 u?ytkownik Hauke Mehrtens
+<hauke@hauke-m.de> napisa?:
+> On 06/06/2011 01:23 PM, Rafa? Mi?ecki wrote:
+>>> + ? ? ? ? ? ? ? ? ? ? ? for (i = 0; i < bus->nr_cores; i++)
+>>> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? if ((1 << bcma_core_mips_irqflag(&bus->cores[i])) == oldirqflag) {
+>>> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? bcma_core_mips_set_irq(&bus->cores[i], 0);
+>>> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? break;
+>>> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? }
 >>
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
->>  arch/mips/Kconfig                            |    4 +++
->>  arch/mips/bcm47xx/gpio.c                     |    9 ++++++++
->>  arch/mips/bcm47xx/nvram.c                    |    6 +++++
->>  arch/mips/bcm47xx/serial.c                   |   24 +++++++++++++++++++++++
->>  arch/mips/bcm47xx/setup.c                    |   27 ++++++++++++++++++++++++-
->>  arch/mips/bcm47xx/time.c                     |    3 ++
->>  arch/mips/include/asm/mach-bcm47xx/bcm47xx.h |    3 ++
->>  arch/mips/include/asm/mach-bcm47xx/gpio.h    |   18 +++++++++++++++++
->>  drivers/watchdog/bcm47xx_wdt.c               |    6 +++++
->>  9 files changed, 98 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
->> index 653da62..bdb0341 100644
->> --- a/arch/mips/Kconfig
->> +++ b/arch/mips/Kconfig
->> @@ -100,6 +100,10 @@ config BCM47XX
->>        select SSB_EMBEDDED
->>        select SSB_B43_PCI_BRIDGE if PCI
->>        select SSB_PCICORE_HOSTMODE if PCI
->> +       select BCMA
->> +       select BCMA_HOST_EMBEDDED
->> +       select BCMA_DRIVER_MIPS
->> +       select BCMA_PCICORE_HOSTMODE
-> 
-> I'm not involved in development for embedded devices but I believe
-> that space is quite important for them.
-> 
-> You force compiling both: ssb and bcma for every device using bcm47xx.
-> I think ppl may want to compile only one bus driver.
-> 
-Yes that has to be improved as there should also be an option to use the
-compiler optimazions for the new MIPS 74K CPU core.
+>> Braces for "for".
+> Is this needed after the coding guildlines? Shouldn't they be removed if
+> they are not needed?
 
-Hauke
+Whoops, after re-checking coding style it seems I was wrong.
+
+-- 
+Rafa?
