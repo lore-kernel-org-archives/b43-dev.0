@@ -1,10 +1,10 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue, 07 Jun 2011 00:00:11 +0200
-Subject: [RFC][PATCH 03/10] bcma: add embedded bus
-In-Reply-To: <BANLkTi=T6xO9q+vOCk5Fu+2J_nUTwX3dcg@mail.gmail.com>
-References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<1307311658-15853-4-git-send-email-hauke@hauke-m.de>
-	<BANLkTi=T6xO9q+vOCk5Fu+2J_nUTwX3dcg@mail.gmail.com>
-Message-ID: <4DED4DEB.5030802@hauke-m.de>
+Date: Tue, 07 Jun 2011 00:06:36 +0200
+Subject: [RFC][PATCH 04/10] bcma: add mips driver
+In-Reply-To: <BANLkTim_TtNVmmyH5J3G0pK-vrWNL1+24A@mail.gmail.com>
+References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<1307311658-15853-5-git-send-email-hauke@hauke-m.de>
+	<BANLkTim_TtNVmmyH5J3G0pK-vrWNL1+24A@mail.gmail.com>
+Message-ID: <4DED4F6C.5030902@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,148 +12,68 @@ Content-Transfer-Encoding: 7bit
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com
 
-On 06/06/2011 12:22 PM, Rafa? Mi?ecki wrote:
-> Hauke,
-> 
-> My idea for naming schema was to use:
-> bcma_host_TYPE_*
-> 
-> Like:
-> bcma_host_pci_*
-> bcma_host_sdio_*
-> 
-> You are using:
-> bcma_host_bcma_*
-> 
-> What do you think about changing this to:
-> bcma_host_embedded_*
-> or just some:
-> bcma_host_emb_*
-> ?
-> 
-> Does it make more sense to you? I was trying to keep names in bcma
-> really clear, so every first-time-reader can see differences between
-> hosts, host and driver, etc.
-> 
-At first I named it bcma_host_bcma_ but then renamed the file name, but
-forgot the function names. I will rename it all to bcma_host_soc_*
-host_sco.c and so on.
-
+On 06/06/2011 01:23 PM, Rafa? Mi?ecki wrote:
 > 2011/6/6 Hauke Mehrtens <hauke@hauke-m.de>:
->> --- /dev/null
->> +++ b/drivers/bcma/host_embedded.c
->> @@ -0,0 +1,93 @@
->> +/*
->> + * Broadcom specific AMBA
->> + * PCI Host
+>> +/* driver_mips.c */
+>> +extern unsigned int bcma_core_mips_irq(struct bcma_device *dev);
 > 
-> s/PCI/Embedded/
+> Does it compile without CONFIG_BCMA_DRIVER_MIPS?
+No ;-) Thought about it after sending these patches, some other patches
+will have the same problem.
 > 
 > 
->> +int bcma_host_bcma_register(struct bcma_bus *bus)
+>> +/* Get the MIPS IRQ assignment for a specified device.
+>> + * If unassigned, 0 is returned.
+>> + * If disabled, 5 is returned.
+>> + * If not supported, 6 is returned.
+>> + */
+> 
+> Does it ever return 6?
+Some old comment, will fix this.
+> 
+>> +unsigned int bcma_core_mips_irq(struct bcma_device *dev)
 >> +{
->> +       u32 __iomem *mmio;
->> +       /* iomap only first core. We have to read some register on this core
->> +        * to get the number of cores. This is sone in bcma_scan()
->> +        */
->> +       mmio = ioremap(BCMA_ADDR_BASE, BCMA_CORE_SIZE * 1);
->> +       if (!mmio)
->> +               return -ENOMEM;
->> +       bus->mmio = mmio;
-> 
-> Maybe just:
-> bus->mmio = ioremap(...);
-> ? :)
-yes makes sens.
-> 
->> +       /* Host specific */
->> +       bus->hosttype = BCMA_HOSTTYPE_EMBEDDED;
->> +       bus->ops = &bcma_host_bcma_ops;
+>> +       struct bcma_device *mdev = dev->bus->drv_mips.core;
+>> +       u32 irqflag;
+>> +       unsigned int irq;
 >> +
->> +       /* Register */
->> +       return bcma_bus_register(bus);
->> +}
->> diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
->> index 1afa107..c5bcb5f 100644
->> --- a/drivers/bcma/main.c
->> +++ b/drivers/bcma/main.c
->> @@ -119,6 +119,7 @@ static int bcma_register_cores(struct bcma_bus *bus)
->>                        break;
->>                case BCMA_HOSTTYPE_NONE:
->>                case BCMA_HOSTTYPE_SDIO:
->> +               case BCMA_HOSTTYPE_EMBEDDED:
->>                        break;
->>                }
->>
->> diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
->> index 70b39f7..9229615 100644
->> --- a/drivers/bcma/scan.c
->> +++ b/drivers/bcma/scan.c
->> @@ -203,7 +203,7 @@ static s32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 **eromptr,
->>  int bcma_bus_scan(struct bcma_bus *bus)
->>  {
->>        u32 erombase;
->> -       u32 __iomem *eromptr, *eromend;
->> +       u32 __iomem *eromptr, *eromend, *mmio;
->>
->>        s32 cia, cib;
->>        u8 ports[2], wrappers[2];
->> @@ -219,9 +219,34 @@ int bcma_bus_scan(struct bcma_bus *bus)
->>        bus->chipinfo.id = (tmp & BCMA_CC_ID_ID) >> BCMA_CC_ID_ID_SHIFT;
->>        bus->chipinfo.rev = (tmp & BCMA_CC_ID_REV) >> BCMA_CC_ID_REV_SHIFT;
->>        bus->chipinfo.pkg = (tmp & BCMA_CC_ID_PKG) >> BCMA_CC_ID_PKG_SHIFT;
->> +       bus->nr_cores = (tmp & BCMA_CC_ID_NRCORES) >> BCMA_CC_ID_NRCORES_SHIFT;
+>> +       irqflag = bcma_core_mips_irqflag(dev);
+>> +
+>> +       for (irq = 1; irq <= 4; irq++)
+>> +               if (bcma_read32(mdev, BCMA_MIPS_MIPS74K_INTMASK(irq)) & (1 << irqflag))
+>> +                       break;
 > 
-> I'd use different variable as Julian suggested.
-yes
+> Use scripts/checkpatch*. Braces around "for" and split line to match
+> 80 chars width.
+Will check all patches with scripts/checkpatch.sh
+> 
+> Why don't you just use "return irq;" instead of break?
+yes this will be better.
 > 
 > 
 >> +
->> +       /* If we are an embedded device we now know the number of avaliable
->> +        * core and ioremap the correct space.
->> +        */
-> 
-> Typo: avaliable
-my favorite typo ;-)
-> 
-> 
->> +       if (bus->hosttype == BCMA_HOSTTYPE_EMBEDDED) {
->> +               iounmap(bus->mmio);
->> +               mmio = ioremap(BCMA_ADDR_BASE, BCMA_CORE_SIZE * bus->nr_cores);
->> +               if (!mmio)
->> +                       return -ENOMEM;
->> +               bus->mmio = mmio;
+>> +       if (irq == 5)
+>> +               irq = 0;
 >> +
->> +               mmio = ioremap(BCMA_WRAP_BASE, BCMA_CORE_SIZE * bus->nr_cores);
->> +               if (!mmio)
->> +                       return -ENOMEM;
->> +               bus->host_embedded = mmio;
+>> +       return irq;
 > 
-> Do we really need both? mmio and host_embedded? What about keeping
-> mmio only and using it in calculation for read/write[8,16,32]?
-These are two different memory regions, it should be possible to
-calculate the other address, but I do not like that. As host_embedded is
-in a union this does not waste any memory.
-
+> You can just make it "return 0;" after changing break to return.
+agree
 > 
->> +       }
->> +       /* reset it to 0 as we use it for counting */
->> +       bus->nr_cores = 0;
->>
->>        erombase = bcma_scan_read32(bus, 0, BCMA_CC_EROM);
->> -       eromptr = bus->mmio;
->> +       if (bus->hosttype == BCMA_HOSTTYPE_EMBEDDED) {
->> +               eromptr = ioremap(erombase, BCMA_CORE_SIZE);
->> +               if (!eromptr)
->> +                       return -ENOMEM;
->> +       } else
->> +               eromptr = bus->mmio;
 > 
-> I though eromptr = bus->mmio; will do the trick for embedded as well.
-> I think I need some time to read about IO mapping and understand that.
+>> +                       for (i = 0; i < bus->nr_cores; i++)
+>> +                               if ((1 << bcma_core_mips_irqflag(&bus->cores[i])) == oldirqflag) {
+>> +                                       bcma_core_mips_set_irq(&bus->cores[i], 0);
+>> +                                       break;
+>> +                               }
 > 
-No they are different eromptr is 0x1810e000 and bus->mmio is 0xb8000000
-for example on my device. I tried using eromptr = bus->mmio; on embedded
-and it did not work.
-
-Hauke
+> Braces for "for".
+Is this needed after the coding guildlines? Shouldn't they be removed if
+they are not needed?
+> 
+>> +       pr_info("after irq reconfiguration\n");
+> 
+> Make first letter uppercase. I'm not English expert, but doesn't
+> something like "IRQ reconfiguration done" sound better?
+> 
+Sounds better.
