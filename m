@@ -1,10 +1,10 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue, 07 Jun 2011 00:06:36 +0200
-Subject: [RFC][PATCH 04/10] bcma: add mips driver
-In-Reply-To: <BANLkTim_TtNVmmyH5J3G0pK-vrWNL1+24A@mail.gmail.com>
-References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<1307311658-15853-5-git-send-email-hauke@hauke-m.de>
-	<BANLkTim_TtNVmmyH5J3G0pK-vrWNL1+24A@mail.gmail.com>
-Message-ID: <4DED4F6C.5030902@hauke-m.de>
+Date: Tue, 07 Jun 2011 00:11:03 +0200
+Subject: [RFC][PATCH 07/10] bcma: add pci(e) host mode
+In-Reply-To: <BANLkTik93+7ujHyv0_Zk2Ma9BPsHvJTttg@mail.gmail.com>
+References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<1307311658-15853-8-git-send-email-hauke@hauke-m.de>
+	<BANLkTik93+7ujHyv0_Zk2Ma9BPsHvJTttg@mail.gmail.com>
+Message-ID: <4DED5077.9040503@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,68 +12,53 @@ Content-Transfer-Encoding: 7bit
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com
 
-On 06/06/2011 01:23 PM, Rafa? Mi?ecki wrote:
+On 06/06/2011 01:32 PM, Rafa? Mi?ecki wrote:
 > 2011/6/6 Hauke Mehrtens <hauke@hauke-m.de>:
->> +/* driver_mips.c */
->> +extern unsigned int bcma_core_mips_irq(struct bcma_device *dev);
+>> +config BCMA_PCICORE_HOSTMODE
+>> +       bool "Hostmode support for BCMA PCI core"
+>> +       depends on BCMA_DRIVER_MIPS
+>> +       help
+>> +         PCIcore hostmode operation (external PCI bus).
 > 
-> Does it compile without CONFIG_BCMA_DRIVER_MIPS?
-No ;-) Thought about it after sending these patches, some other patches
-will have the same problem.
+> I think you started to use BCMA_DRIVER_corename. Could you stick to it
+> (one schema), please? Maybe just
+> BCMA_DRIVER_PCI_HOSTMODE
+> ?
 > 
+Yes sounds better.
 > 
->> +/* Get the MIPS IRQ assignment for a specified device.
->> + * If unassigned, 0 is returned.
->> + * If disabled, 5 is returned.
->> + * If not supported, 6 is returned.
->> + */
+>> +#ifdef CONFIG_BCMA_PCICORE_HOSTMODE
+>> +       pc->hostmode = bcma_pcicore_is_in_hostmode(pc);
+>> +       if (pc->hostmode)
+>> +               bcma_pcicore_init_hostmode(pc);
+>> +#endif /* CONFIG_BCMA_PCICORE_HOSTMODE */
+>> +       if (!pc->hostmode)
+>> +               bcma_pcicore_serdes_workaround(pc);
 > 
-> Does it ever return 6?
-Some old comment, will fix this.
+> Does it make sense to init hostmode PCI like clientmode if we just
+> disable CONFIG_BCMA_PCICORE_HOSTMODE?
 > 
->> +unsigned int bcma_core_mips_irq(struct bcma_device *dev)
->> +{
->> +       struct bcma_device *mdev = dev->bus->drv_mips.core;
->> +       u32 irqflag;
->> +       unsigned int irq;
->> +
->> +       irqflag = bcma_core_mips_irqflag(dev);
->> +
->> +       for (irq = 1; irq <= 4; irq++)
->> +               if (bcma_read32(mdev, BCMA_MIPS_MIPS74K_INTMASK(irq)) & (1 << irqflag))
->> +                       break;
-> 
-> Use scripts/checkpatch*. Braces around "for" and split line to match
-> 80 chars width.
-Will check all patches with scripts/checkpatch.sh
-> 
-> Why don't you just use "return irq;" instead of break?
-yes this will be better.
+> I think we should always check if core is host or client mode and use
+> correct initialization only. We should not init it as clientmode just
+> because we do not have driver for host mode.
+Yes we should not initialize a host mode pci core with client init code
+as it will break my device. ;-) I will place
+bcma_pcicore_is_in_hostmode() into the normal PCI driver code so it is
+available all the time.
 > 
 > 
->> +
->> +       if (irq == 5)
->> +               irq = 0;
->> +
->> +       return irq;
+>> diff --git a/drivers/bcma/driver_pci_host.c b/drivers/bcma/driver_pci_host.c
+>> new file mode 100644
+>> index 0000000..b52c6c9
+>> --- /dev/null
+>> +++ b/drivers/bcma/driver_pci_host.c
+>> @@ -0,0 +1,44 @@
+>> +/*
+>> + * Broadcom specific AMBA
+>> + * PCI Core
 > 
-> You can just make it "return 0;" after changing break to return.
-agree
+> Please rename "PCI Core", add something about hostmode.
 > 
-> 
->> +                       for (i = 0; i < bus->nr_cores; i++)
->> +                               if ((1 << bcma_core_mips_irqflag(&bus->cores[i])) == oldirqflag) {
->> +                                       bcma_core_mips_set_irq(&bus->cores[i], 0);
->> +                                       break;
->> +                               }
-> 
-> Braces for "for".
-Is this needed after the coding guildlines? Shouldn't they be removed if
-they are not needed?
-> 
->> +       pr_info("after irq reconfiguration\n");
-> 
-> Make first letter uppercase. I'm not English expert, but doesn't
-> something like "IRQ reconfiguration done" sound better?
-> 
-Sounds better.
+Missed that while copy and past.
+
+Hauke
