@@ -1,24 +1,62 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Wed, 8 Jun 2011 10:20:01 +0200
-Subject: [RFC][PATCH 01/10] bcma: Use array to store cores.
-In-Reply-To: <BANLkTikUqj-R72XaOXnifhKv-n1ZSJMxDQ@mail.gmail.com>
-References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>
-	<201106061503.14852.arnd@arndb.de> <4DED48EA.7070001@hauke-m.de>
-	<201106062353.40470.arnd@arndb.de> <4DEDF98C.6020905@broadcom.com>
-	<4DEE9BCD.1030304@hauke-m.de>
-	<BANLkTikUqj-R72XaOXnifhKv-n1ZSJMxDQ@mail.gmail.com>
-Message-ID: <20110608102001.294a4ff2@maggie>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Wed, 8 Jun 2011 22:25:34 +0200
+Subject: Faulty 14e4:4315 (BCM4312)?
+Message-ID: <BANLkTin+sAHnQ3afDJH0KMSZEeUqzRDmYw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Arend van Spriel <arend@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, George Kashperko <george@znau.edu.ua>, Greg KH <greg@kroah.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "mb@bu3sch.de" <mb@bu3sch.de>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "bernhardloos@googlemail.com" <bernhardloos@googlemail.com>
+To: b43-dev@lists.infradead.org
 
-On Wed, 8 Jun 2011 02:06:11 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+Hey,
 
-> Because full scanning needs one of the following:
-> 1) Working alloc - not possible for SoCs
+I've just discovered I can not connect with my 14e4:4315 to my home network.
 
-Isn't there a bootmem allocator available on MIPS?
+dmesg:
+[  119.744050] b43-phy0: Loading firmware version 478.104 (2008-07-01 00:50:23)
+[  119.746744] b43-phy0 debug: b2062: Using crystal tab entry 19200 kHz.
+[  121.130067] b43-phy0 debug: Chip initialized
+[  121.130348] b43-phy0 debug: 64-bit DMA initialized
+[  121.130416] b43-phy0 debug: QoS enabled
+[  121.139857] b43-phy0 debug: Wireless interface started
+[  121.145095] b43-phy0 debug: Adding Interface type 2
+[  121.145605] ADDRCONF(NETDEV_UP): wlan0: link is not ready
+[  128.295371] wlan0: authenticate with 00:23:69:c2:65:06 (try 1)
+[  128.300285] wlan0: authenticated
+[  128.300319] wlan0: associate with 00:23:69:c2:65:06 (try 1)
+[  128.303709] wlan0: RX AssocResp from 00:23:69:c2:65:06 (capab=0x411
+status=0 aid=3)
+[  128.303715] wlan0: associated
+[  128.304711] ADDRCONF(NETDEV_CHANGE): wlan0: link becomes ready
+[  128.429557] b43-phy0 debug: Using hardware based encryption for
+keyidx: 0, mac: 00:23:69:c2:65:06
+[  128.429611] b43-phy0 debug: Using hardware based encryption for
+keyidx: 2, mac: ff:ff:ff:ff:ff:ff
+[  132.208036] ieee80211 phy0: wlan0: No probe response from AP
+00:23:69:c2:65:06 after 500ms, disconnecting.
+
+wpa_supplicant fills my console with:
+> ioctl[SIOCSIWENCODEEXT]: Invalid argument
+> ioctl[SIOCSIWENCODEEXT]: Invalid argument
+> Trying to associate with 00:23:69:c2:65:06 (SSID='zajec_poznan_160' freq=2427 MHz)
+> Associated with 00:23:69:c2:65:06
+> WPA: Key negotiation completed with 00:23:69:c2:65:06 [PTK=CCMP GTK=CCMP]
+> CTRL-EVENT-CONNECTED - Connection to 00:23:69:c2:65:06 completed (auth) [id=0 id_str=]
+> CTRL-EVENT-DISCONNECTED bssid=00:23:69:c2:65:06 reason=0
+
+It seems it was already reported, for example in:
+"No probe response from AP <address> after 500ms, disconnecting." by
+Miklos Vajna on Thu, 14 Jan 2010 17:29:20 -0800.
+http://www.mail-archive.com/bcm43xx-dev at lists.berlios.de/msg09481.html
+
+What's really surprising I can not connect to this network also when
+using wl 5.100.82.38!
+
+Did anyone of you already got some faulty BCM4312 hardware? Did it
+behave like this? I'm surprised than scanning works, but connection is
+quickly dropped. It does not really sound like a faulty hardware.
+
+Of course I'll experiment with this more, for now just early-asking.
+
+-- 
+Rafa?
