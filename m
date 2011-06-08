@@ -1,10 +1,10 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 8 Jun 2011 22:59:01 +0200
+Date: Wed, 8 Jun 2011 22:59:43 +0200
 Subject: Faulty 14e4:4315 (BCM4312)?
 In-Reply-To: <BANLkTi=RQe_jGFPEOYumPxxxmWM4M+BLcQ@mail.gmail.com>
 References: <BANLkTin+sAHnQ3afDJH0KMSZEeUqzRDmYw@mail.gmail.com>
 	<BANLkTi=RQe_jGFPEOYumPxxxmWM4M+BLcQ@mail.gmail.com>
-Message-ID: <BANLkTikGqxkDVyFvZPbUqtWL2cU62JCNdA@mail.gmail.com>
+Message-ID: <BANLkTikg5YSj=9Y+Bbv_8oJSG1OkG4GQBw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -66,8 +66,7 @@ W dniu 8 czerwca 2011 22:37 u?ytkownik G?bor Stefanik
 > but once it tries to do OFDM, it fails.
 > Is the AP close enough for OFDM communication?
 
-Interesting, thanks! I surely will experiment with forcing rate to
-1/2/5.5/11. I'll also try applying my old patch for TX ctl word1.
+My AP is about 2 meters from the card, antennas are attached OFC.
 
 -- 
 Rafa?
