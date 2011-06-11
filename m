@@ -1,21 +1,56 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sat, 11 Jun 2011 23:46:55 +0200
-Subject: problems with b43 and greedy traffic
-In-Reply-To: <BANLkTim920vWQJyLX1uvekjoP8UEs0u+ew@mail.gmail.com>
-References: <F77781A1-9992-4893-AA53-8D1FE37D772F@ing.unibs.it>
-	<BANLkTikBEK=+7HuU_AxYLfq+xvDBpP5b5w@mail.gmail.com>
-	<20110611223415.2f39adde@maggie>
-	<BANLkTinMbZGO_JNabgZAnqATA2g7i8mbMA@mail.gmail.com>
-	<BANLkTim920vWQJyLX1uvekjoP8UEs0u+ew@mail.gmail.com>
-Message-ID: <20110611234655.1825fe51@maggie>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 12 Jun 2011 00:33:33 +0200
+Subject: [RFC][PATCH 01/10] bcma: Use array to store cores.
+In-Reply-To: <20110608102001.294a4ff2@maggie>
+References: <1307311658-15853-1-git-send-email-hauke@hauke-m.de>	<201106061503.14852.arnd@arndb.de>	<4DED48EA.7070001@hauke-m.de>	<201106062353.40470.arnd@arndb.de>	<4DEDF98C.6020905@broadcom.com>	<4DEE9BCD.1030304@hauke-m.de>	<BANLkTikUqj-R72XaOXnifhKv-n1ZSJMxDQ@mail.gmail.com>
+	<20110608102001.294a4ff2@maggie>
+Message-ID: <4DF3ED3D.6060003@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <m@bues.ch>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Arend van Spriel <arend@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, George Kashperko <george@znau.edu.ua>, Greg KH <greg@kroah.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "mb@bu3sch.de" <mb@bu3sch.de>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "bernhardloos@googlemail.com" <bernhardloos@googlemail.com>
 
-On Sat, 11 Jun 2011 23:17:50 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> iperf says to send UDP stream with speed 34.4 Gb/s.
+On 06/08/2011 10:20 AM, Michael B?sch wrote:
+> On Wed, 8 Jun 2011 02:06:11 +0200
+> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> 
+>> Because full scanning needs one of the following:
+>> 1) Working alloc - not possible for SoCs
+> 
+> Isn't there a bootmem allocator available on MIPS?
 
-iperf in UDP mode did never really work for me on any hardware. What about TCP? Does that work?
+The bootmem allocator is working on mips, but it is initialized after
+plat_mem_setup() was called. To use it we have to move the start of bcma
+to some other place in the bcm47xx code.
+
+We need access to the common and mips core for different functions in
+the bcm47xx code and these functions are getting called by the mips
+code, so we can not store these struct bcma_devices on the stack.
+
+I would use this struct on the embedded device and use it in the text
+segment of the bcm47xx code.
+
+In include/linux/bcma/bcma.h:
+struct bcma_soc {
+	struct bcma_bus bus;
+	struct bcma_device core_cc;
+	struct bcma_device core_mips;
+};
+
+In arch/mips/bcm47xx/setup.c
+struct bcma_soc bus;
+
+The chipcommon and mips core can be initilized early without the need
+use of any alloc. The bcm47xx code will call
+bcma_bus_early_register(struct bcma_soc *soc) and this code will find
+these two cores, add then to the list of cores in bcma_bus and run the
+init code for them. After that we have all we need to boot up the
+device. After the kernel page allocator is fully set up we would search
+for all the other cores and add them to the list of cores and do the
+initialization for them. The two cores in struct bcma_soc will never be
+accessed directly but only through struct bcma_bus so that there is no
+difference from early boot and normal mode.
+
+Hauke
