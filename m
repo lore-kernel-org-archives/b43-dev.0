@@ -1,33 +1,57 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Fri, 10 Jun 2011 23:23:46 +0100
-Subject: New device in MacBook Pro, yet unsupported?
-In-Reply-To: <BANLkTi=GHKddWTfB1gkhbWvpaG9bsX3zRw@mail.gmail.com>
-References: <4D8F022C.2050606@rostlab.org>
-	<AANLkTikdg-ZQ2rDL901A_HZ9TnYiQHG2h-jmhOrM_t6D@mail.gmail.com>
-	<BANLkTimiCVU8JL-eMT0v1s1GswC+hwkLFQ@mail.gmail.com>
-	<4D9D8D4D.3030603@rostlab.org>
-	<BANLkTi=GHKddWTfB1gkhbWvpaG9bsX3zRw@mail.gmail.com>
-Message-ID: <1307744628.4771.109.camel@i7.infradead.org>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 11 Jun 2011 18:20:00 +0200
+Subject: Faulty 14e4:4315 (BCM4312)?
+In-Reply-To: <BANLkTikhTh7Vf=SQSPyE9u6C3XNANYGMZQ@mail.gmail.com>
+References: <BANLkTin+sAHnQ3afDJH0KMSZEeUqzRDmYw@mail.gmail.com>
+	<BANLkTi=RQe_jGFPEOYumPxxxmWM4M+BLcQ@mail.gmail.com>
+	<BANLkTikg5YSj=9Y+Bbv_8oJSG1OkG4GQBw@mail.gmail.com>
+	<BANLkTi=tSGzu57+-MovR2q0y2qLGZ=AwFA@mail.gmail.com>
+	<BANLkTincRK-fo+=dHoDQppsLwfMGmeiWJA@mail.gmail.com>
+	<BANLkTi=ezOxXVswSNsRqL06A6rozMiaNzQ@mail.gmail.com>
+	<4DF00043.1070304@lwfinger.net>
+	<BANLkTi=VDh7mECOvnCJRfoEDt6WBw2ZtjA@mail.gmail.com>
+	<4DF0062F.6030602@lwfinger.net>
+	<BANLkTikXnXR2f1TUrJ7bhC9KdBe0XevN7Q@mail.gmail.com>
+	<BANLkTikhTh7Vf=SQSPyE9u6C3XNANYGMZQ@mail.gmail.com>
+Message-ID: <BANLkTi=gG1+=mPmTmxNA6SVMdfbm8Nh7WQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Thu, 2011-04-07 at 12:32 +0200, Rafa? Mi?ecki wrote:
-> Not right now, but in future, I think I could support it this way. We
-> need to introduce support for AI first. Maybe before that 4331 cards
-> will appear on ebays? I'll ping you when support for AI is done :)
+W dniu 11 czerwca 2011 09:53 u?ytkownik Rafa? Mi?ecki
+<zajec5@gmail.com> napisa?:
+> In my parent's house I've the same router with the same OpenWRT
+> version. Freq is also the same:
+>
+> (...)
+>
+> It connected just fine here. Weird.
+>
+> Maybe G?bor is right? Maybe we miss some calibration needed for the
+> low distance with jamming?
 
-The brcm80211 driver seems to have lots of references to 4331, although
-it doesn't include 0x4331 in its PCI device table. Might be interesting
-just to load it and make it bind to the device.
+I wanted to make some iperf tests so I connected keyboard and monitor.
+I could not connect anymore after this. My reaction? What a Terrible
+Failure.
 
-I just bought a new MBP, and am stuck with one of these. Who wants it,
-if it isn't currently working?
+After experimenting, it appeared to be about direction of the antenna.
+Moving it by 90 degrees caused disconnection and reconnecting was not
+possible. Moving it back worked like a charm... well - kind of -
+because speed was still horrible. However at least connecting was
+working fine.
+So we may be lacking something important about calibration. But on the
+other hand, wl or ndiswrapper are not much better. Speed achieved with
+ndiswrapper can be 3Mb/s and 15Mb/s after 10 minutes (without touching
+anything).
 
-And what can I use in its place? I don't recognise the form factor at
-http://guide-images.ifixit.net/igi/MIYRQcks54DunO3k.huge
+To make it even more ugly, PIO mode is almost not working for me. I
+can connect to the network (with antenna in the correct direction),
+but getting IP (dhcp) causes loosing authentication. Every time. After
+loosing connection taking interface down & up is required.
+
+I'm leaving this for now. Hope noone will ever meet card like mine.
 
 -- 
-dwmw2
+Rafa?
