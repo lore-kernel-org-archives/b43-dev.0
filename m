@@ -1,27 +1,47 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sat, 11 Jun 2011 19:57:21 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 11 Jun 2011 20:05:58 +0200
 Subject: Can iperf work with no qos? (TCP mode)
-In-Reply-To: <BANLkTimaUBe6kszbvSeSPTXR6m1t8C8O-A@mail.gmail.com>
+In-Reply-To: <20110611195721.735dcf4c@maggie>
 References: <BANLkTimaUBe6kszbvSeSPTXR6m1t8C8O-A@mail.gmail.com>
-Message-ID: <20110611195721.735dcf4c@maggie>
+	<20110611195721.735dcf4c@maggie>
+Message-ID: <BANLkTi=Wr=HmveLN9VOQmUNFAP7ygWAwkA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
 Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org
 
-On Sat, 11 Jun 2011 19:47:31 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+W dniu 11 czerwca 2011 19:57 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
+> On Sat, 11 Jun 2011 19:47:31 +0200
+> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>
+>> I can not get any results when trying to use iperf in TCP mode with
+>> driver not supporting qos.
+>>
+>> Is this expected? Does iperf fill connection with so many packets,
+>> it's not possible to get response from the iperf receiver? Should not
+>> Linux somehow schedule packet to allow bi-direction communication,
+>> even on really filled connection?
+>
+> iperf will only fill the best effort queue. At least that's what it did
+> last time when I looked into the code.
+> You can verify that with b43's ring statistics.
 
-> I can not get any results when trying to use iperf in TCP mode with
-> driver not supporting qos.
-> 
-> Is this expected? Does iperf fill connection with so many packets,
-> it's not possible to get response from the iperf receiver? Should not
-> Linux somehow schedule packet to allow bi-direction communication,
-> even on really filled connection?
+It's BE queue we create for qos=0 in b43:
+else
+	q = dev->pio.tx_queue_AC_BE;
+so this should not limit iperf
 
-iperf will only fill the best effort queue. At least that's what it did
-last time when I looked into the code.
-You can verify that with b43's ring statistics.
+As another test, I've just tried dma mode with qos=0. iperf was fine.
+
+So now we know iperf does not need multiple queues. It seems that:
+GOOD: b43 & dma & no qos
+BAD: b43 & pio & no qos
+
+In the second case connection is started (I can see that from "iperf
+-s" on my receiving machine), but it seems sender does not receive any
+confirmations.
+
+-- 
+Rafa?
