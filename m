@@ -1,62 +1,40 @@
-From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
-Date: Sun, 12 Jun 2011 17:33:35 +0200
-Subject: problems with b43 and greedy traffic
-In-Reply-To: <20110612101944.4b6b55c5@maggie>
-References: <F77781A1-9992-4893-AA53-8D1FE37D772F@ing.unibs.it>
-	<BANLkTikBEK=+7HuU_AxYLfq+xvDBpP5b5w@mail.gmail.com>
-	<20110611223415.2f39adde@maggie>
-	<BANLkTinMbZGO_JNabgZAnqATA2g7i8mbMA@mail.gmail.com>
-	<BANLkTim920vWQJyLX1uvekjoP8UEs0u+ew@mail.gmail.com>
-	<20110611234655.1825fe51@maggie>
-	<4167DD4F-0350-4EA1-98A6-CAC427989FED@ing.unibs.it>
-	<20110612011935.486868ff@maggie>
-	<5E9810AB-73AC-4A86-99BC-93771C7DE655@ing.unibs.it>
-	<20110612101944.4b6b55c5@maggie>
-Message-ID: <7B7C0541-060D-409C-8BE1-9CDE37CC8517@ing.unibs.it>
+From: Darren <dmbtech@gmail.com>
+Date: Sun, 12 Jun 2011 11:40:00 -0400
+Subject: New device in MacBook Pro, yet unsupported?
+In-Reply-To: <1307786973.4771.114.camel@i7.infradead.org>
+References: <4D8F022C.2050606@rostlab.org>	<AANLkTikdg-ZQ2rDL901A_HZ9TnYiQHG2h-jmhOrM_t6D@mail.gmail.com>	<BANLkTimiCVU8JL-eMT0v1s1GswC+hwkLFQ@mail.gmail.com>	<4D9D8D4D.3030603@rostlab.org>	<BANLkTi=GHKddWTfB1gkhbWvpaG9bsX3zRw@mail.gmail.com>	<1307744628.4771.109.camel@i7.infradead.org>	<BANLkTik4MFG6xwPH3ETbc1sxmh8xbzE+rw@mail.gmail.com>	<BANLkTikDxQtkp814KMPVCTXPmGbO4=12mA@mail.gmail.com>
+	<1307786973.4771.114.camel@i7.infradead.org>
+Message-ID: <4DF4DDD0.4000908@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Jun 12, 2011, at 10:19 AM, Michael B?sch wrote:
+On 06/11/2011 06:09 AM, David Woodhouse wrote:
+> On Sat, 2011-06-11 at 11:36 +0200, Rafa? Mi?ecki wrote:
+>> I've asked for tests of mmiotracer and ndiswrapper on Ubuntu forum [1] [2].
+> I can do that but it will probably take a while; I may just use the box
+> with wired and Bluetooth networking for now, or not use it at all until
+> I'm not quite so snowed under with other things.
+>
+> If you send me a SSH public key I can give you root access on the box
+> over the wired connection and you can play with it yourself, which might
+> be a lot faster all round?
+>
+If you are using Ubuntu David, you can get the mmio trace without
+recompiling the kernel.
+Just do
 
-> On Sun, 12 Jun 2011 07:28:10 +0200
-> francesco.gringoli at ing.unibs.it wrote:
-> 
->> On Jun 12, 2011, at 1:19 AM, Michael B?sch wrote:
->> 
->>> On Sun, 12 Jun 2011 00:55:58 +0200
->>> francesco.gringoli at ing.unibs.it wrote:
->>> 
->>>> Anyway if you put some printk in b43_tx_work you will see that some TCP segments are discarded by it trying to send packets to the dma even if the rings are full. This prevents packets to queue up correctly in the qdisc, so shaping traffic through a b43 interface becomes really difficult.
->>> 
->>> So this doesn't sound like a b43 problem to me.
->>> The driver disables the software queues, if the hardware queue is full.
->>> If the stack continues to push packets to the driver while queues are stopped,
->>> the only thing the driver can do is discard them.
->> I agree with you, and this was perfectly implemented up to 2.6.31. After the introduction of the asynchronous worker, the behavior you are talking about has been almost broken: if b43_dma_tx stops the queue, the stack does not send any more packet to the driver. It is b43_tx_work that keeps sending packets to the hardware (b43_dma_tx). Rather weird :-)
->> 
->> Try to explain better: imagine the worker finished its previous run and gave up because the mac queue was empty. No problem up to now, but suppose the dma ring has only one more descriptor free and that hundreds of stations are competing for the channel so that the firmware is not dequeuing packets for a long time. Now a bunch of packets is injected by the stack: b43_op_tx pushes them to the mac queue and finally it add works to the work queue.
->> 
->> Now b43_tx_work is run again by the kernel, it pops the first packet, send it to the hardware (b43_dma_tx) that ultimately stops the queues because, as I said before, only one more position was free in the queue. From here on the stack stops sending packets to b43_op_tx (maybe one more packet can pass?), it is b43_tx_work that continues to send all the remaining packets in the mac queue to the hardware that can only drop them.
->> 
->> Take a look at b43_dma_tx, and focus on the comment 
->> 
->> /* We get here only because of a bug in mac80211.
->> * Because of a race, one packet may be queued after
->> * the queue is stopped, thus we got called when we shouldn't.
->> * For now, just refuse the transmit. */
->> 
->> It's not true anymore after 2.6.32 but the code has been left as if it were. It is not "one packet may be queued" because of the mac80211, several instead can be passed here, but only by b43_tx_work, not the mac.
-> 
-> Ok, thanks. I see the bug now.
-> This should be pretty easy to fix, though. Just don't unqueue the packet
-> from the b43_tx_work queue, if b43_dma_tx failed to transmit it, due to full ring.
-> And then poke the TX work again, if the queues are unblocked.
-Hi Michael,
+echo mmiotrace > /sys/kernel/debug/tracing/current_tracer
+cat /sys/kernel/debug/tracing/trace_pipe > /tmp/dump.txt &
 
-thanks, I see. I can work on it. I think also Rafa? comment is right and we should move the ring check code directly in b43_tx_work which is now the only piece of code to trigger the dma (or pio) engine for transmission.
+echo "Modprobe start" > /sys/kernel/debug/tracing/trace_marker
+modprobe ndiswrapper
+echo "Modprobe end" > /sys/kernel/debug/tracing/trace_marker
 
-BR,
--Francesco
+echo "ifconfig wlan1 up start" > /sys/kernel/debug/tracing/trace_marker
+ifconfig wlan1 up
+echo "ifconfig wlan1 up end" > /sys/kernel/debug/tracing/trace_marker
+
+killall cat
