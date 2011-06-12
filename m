@@ -1,86 +1,29 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 12 Jun 2011 17:11:53 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 12 Jun 2011 16:36:00 +0200
 Subject: [RFC][PATCH] b43: do not try sending packets when ring can be full
-Message-ID: <1307891513-6812-1-git-send-email-zajec5@gmail.com>
+In-Reply-To: <1307891513-6812-1-git-send-email-zajec5@gmail.com>
+References: <1307891513-6812-1-git-send-email-zajec5@gmail.com>
+Message-ID: <BANLkTin0H=c1ekTWbPHvA_O6CqGPVr=TYg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
-Cc: francesco.gringoli@ing.unibs.it, =?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bu3sch.de>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: francesco.gringoli@ing.unibs.it, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 
----
-This prevents us from hitting "Packet after queue stopped", but still
-is not an optimal solution. We stop sending packets from queue to
-hardware if just a one ring is full. It may happen there are packets on
-the queue that want to be send to different ring (qos).
----
- drivers/net/wireless/b43/b43.h  |    2 ++
- drivers/net/wireless/b43/dma.c  |    5 +++++
- drivers/net/wireless/b43/main.c |    5 +++++
- 3 files changed, 12 insertions(+), 0 deletions(-)
+2011/6/12 Rafa? Mi?ecki <zajec5@gmail.com>:
+> ---
+> This prevents us from hitting "Packet after queue stopped", but still
+> is not an optimal solution. We stop sending packets from queue to
+> hardware if just a one ring is full. It may happen there are packets on
+> the queue that want to be send to different ring (qos).
+> ---
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index 1cb2dde..8d4bb28 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -582,6 +582,8 @@ struct b43_dma {
- 	struct b43_dmaring *rx_ring;
- 
- 	u32 translation; /* Routing bits */
-+
-+	u8 stopped_rings; /* Amount of stopped rings */
- };
- 
- struct b43_pio_txqueue;
-diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-index d02cf83..a501992 100644
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -1056,6 +1056,7 @@ int b43_dma_init(struct b43_wldev *dev)
- 	if (err)
- 		return err;
- 	dma->translation = ssb_dma_translation(dev->sdev);
-+	dma->stopped_rings = 0;
- 
- 	err = -ENOMEM;
- 	/* setup TX DMA channels. */
-@@ -1374,6 +1375,8 @@ int b43_dma_tx(struct b43_wldev *dev, struct sk_buff *skb)
- 		/* This TX ring is full. */
- 		ieee80211_stop_queue(dev->wl->hw, skb_get_queue_mapping(skb));
- 		ring->stopped = 1;
-+		dev->dma.stopped_rings++;
-+
- 		if (b43_debug(dev, B43_DBG_DMAVERBOSE)) {
- 			b43dbg(dev->wl, "Stopped TX ring %d\n", ring->index);
- 		}
-@@ -1493,9 +1496,11 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
- 		B43_WARN_ON(free_slots(ring) < TX_SLOTS_PER_FRAME);
- 		ieee80211_wake_queue(dev->wl->hw, ring->queue_prio);
- 		ring->stopped = 0;
-+		dev->dma.stopped_rings--;
- 		if (b43_debug(dev, B43_DBG_DMAVERBOSE)) {
- 			b43dbg(dev->wl, "Woke up TX ring %d\n", ring->index);
- 		}
-+		ieee80211_queue_work(dev->wl->hw, &dev->wl->tx_work);
- 	}
- }
- 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 1d8d983..2260b36 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -3219,6 +3219,11 @@ static void b43_tx_work(struct work_struct *work)
- 	}
- 
- 	while (skb_queue_len(&wl->tx_queue)) {
-+		if (!b43_using_pio_transfers(dev) && dev->dma.stopped_rings) {
-+			mutex_unlock(&wl->mutex);
-+			return;
-+		}
-+
- 		skb = skb_dequeue(&wl->tx_queue);
- 
- 		if (b43_using_pio_transfers(dev))
+Does anyone have a better (real?) solution? Should we use multiple skb
+queues, one for each ring?
+
+We could do correct queuing in b43_op_tx then and b43_tx_work would
+just check every ring (qos), one by one.
+
 -- 
-1.7.3.4
+Rafa?
