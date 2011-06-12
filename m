@@ -1,29 +1,31 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 12 Jun 2011 16:36:00 +0200
-Subject: [RFC][PATCH] b43: do not try sending packets when ring can be full
-In-Reply-To: <1307891513-6812-1-git-send-email-zajec5@gmail.com>
-References: <1307891513-6812-1-git-send-email-zajec5@gmail.com>
-Message-ID: <BANLkTin0H=c1ekTWbPHvA_O6CqGPVr=TYg@mail.gmail.com>
+Date: Sun, 12 Jun 2011 16:45:04 +0200
+Subject: problems with b43 and greedy traffic
+In-Reply-To: <20110611234655.1825fe51@maggie>
+References: <F77781A1-9992-4893-AA53-8D1FE37D772F@ing.unibs.it>
+	<BANLkTikBEK=+7HuU_AxYLfq+xvDBpP5b5w@mail.gmail.com>
+	<20110611223415.2f39adde@maggie>
+	<BANLkTinMbZGO_JNabgZAnqATA2g7i8mbMA@mail.gmail.com>
+	<BANLkTim920vWQJyLX1uvekjoP8UEs0u+ew@mail.gmail.com>
+	<20110611234655.1825fe51@maggie>
+Message-ID: <BANLkTikBkO5cYk3xG6-ps5-VGjmBUji2ew@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
-Cc: francesco.gringoli@ing.unibs.it, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-2011/6/12 Rafa? Mi?ecki <zajec5@gmail.com>:
-> ---
-> This prevents us from hitting "Packet after queue stopped", but still
-> is not an optimal solution. We stop sending packets from queue to
-> hardware if just a one ring is full. It may happen there are packets on
-> the queue that want to be send to different ring (qos).
-> ---
+W dniu 11 czerwca 2011 23:46 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
+> On Sat, 11 Jun 2011 23:17:50 +0200
+> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>> iperf says to send UDP stream with speed 34.4 Gb/s.
+>
+> iperf in UDP mode did never really work for me on any hardware. What about TCP? Does that work?
 
-Does anyone have a better (real?) solution? Should we use multiple skb
-queues, one for each ring?
-
-We could do correct queuing in b43_op_tx then and b43_tx_work would
-just check every ring (qos), one by one.
+Generally, yes, it works. However when using pio=1 I've to use qos=0.
+That's the only way to don't get disconnected on the first
+communication (after authentication). And iperf on TCP does not wok in
+pio=1 qos=0 configuration. That's why I started playing with UDP.
 
 -- 
 Rafa?
