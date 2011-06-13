@@ -1,20 +1,23 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 13 Jun 2011 17:57:03 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Mon, 13 Jun 2011 18:27:21 +0200
 Subject: Question about hosts drivers split between ssb and b43
-Message-ID: <BANLkTin2cmA1RH5uDSmGOm4nAvicqiiQ6A@mail.gmail.com>
+In-Reply-To: <BANLkTin2cmA1RH5uDSmGOm4nAvicqiiQ6A@mail.gmail.com>
+References: <BANLkTin2cmA1RH5uDSmGOm4nAvicqiiQ6A@mail.gmail.com>
+Message-ID: <20110613182721.6cadccaf@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
-Cc: b43-dev <b43-dev@lists.infradead.org>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-What is the reason of splitting few hosts drivers (sdio and pcmcia)
-into two pieces: one in the ssb and second in b43?
+On Mon, 13 Jun 2011 17:57:03 +0200
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 
-Why we didn't put everything in ssb? If sounds more reasonable (just)
-*for me* and it looks like less messing since we try to add support
-for BCMA in b43.
+> What is the reason of splitting few hosts drivers (sdio and pcmcia)
+> into two pieces: one in the ssb and second in b43?
 
--- 
-Rafa?
+This stuff should actually be a standalone module.
+However, because they are so tiny, we put it somewhere else into
+and existing module.
+Where to put it was decided on dependency.
