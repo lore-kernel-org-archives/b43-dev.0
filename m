@@ -1,23 +1,145 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 13 Jun 2011 18:27:21 +0200
-Subject: Question about hosts drivers split between ssb and b43
-In-Reply-To: <BANLkTin2cmA1RH5uDSmGOm4nAvicqiiQ6A@mail.gmail.com>
-References: <BANLkTin2cmA1RH5uDSmGOm4nAvicqiiQ6A@mail.gmail.com>
-Message-ID: <20110613182721.6cadccaf@maggie>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 14 Jun 2011 08:18:59 +0200
+Subject: [PATCH] b43: add Kconfig option for compiling SSB driver
+Message-ID: <1308032339-2844-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Mon, 13 Jun 2011 17:57:03 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+It is always "y" for now, b43 will not compile without CONFIG_SSB yet.
+This is just a first step of dropping SSB dependency.
 
-> What is the reason of splitting few hosts drivers (sdio and pcmcia)
-> into two pieces: one in the ssb and second in b43?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/Kconfig |    5 +++++
+ drivers/net/wireless/b43/bus.c   |    3 ++-
+ drivers/net/wireless/b43/main.c  |   25 +++++++++++++++++--------
+ 3 files changed, 24 insertions(+), 9 deletions(-)
 
-This stuff should actually be a standalone module.
-However, because they are so tiny, we put it somewhere else into
-and existing module.
-Where to put it was decided on dependency.
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index e02db1b..f302eb0 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -31,6 +31,11 @@ config B43_BCMA
+ 	depends on B43 && BCMA && BROKEN
+ 	default y
+ 
++config B43_SSB
++	bool
++	depends on B43 && SSB
++	default y
++
+ # Auto-select SSB PCI-HOST support, if possible
+ config B43_PCI_AUTOSELECT
+ 	bool
+diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
+index 6c63aec..1511789 100644
+--- a/drivers/net/wireless/b43/bus.c
++++ b/drivers/net/wireless/b43/bus.c
+@@ -25,7 +25,7 @@
+ 
+ 
+ /* SSB */
+-
++#ifdef CONFIG_B43_SSB
+ static inline int b43_bus_ssb_bus_may_powerdown(struct b43_bus_dev *dev)
+ {
+ 	return ssb_bus_may_powerdown(dev->sdev->bus);
+@@ -120,3 +120,4 @@ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
+ 
+ 	return dev;
+ }
++#endif /* CONFIG_B43_SSB */
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index ea9e737..891083b 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -123,6 +123,7 @@ static const struct bcma_device_id b43_bcma_tbl[] = {
+ MODULE_DEVICE_TABLE(bcma, b43_bcma_tbl);
+ #endif
+ 
++#ifdef CONFIG_B43_SSB
+ static const struct ssb_device_id b43_ssb_tbl[] = {
+ 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 5),
+ 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 6),
+@@ -136,8 +137,8 @@ static const struct ssb_device_id b43_ssb_tbl[] = {
+ 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 16),
+ 	SSB_DEVTABLE_END
+ };
+-
+ MODULE_DEVICE_TABLE(ssb, b43_ssb_tbl);
++#endif
+ 
+ /* Channel and ratetables are shared for all devices.
+  * They can't be const, because ieee80211 puts some precalculated
+@@ -5031,6 +5032,7 @@ static struct bcma_driver b43_bcma_driver = {
+ };
+ #endif
+ 
++#ifdef CONFIG_B43_SSB
+ static
+ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
+ {
+@@ -5106,6 +5108,14 @@ static void b43_ssb_remove(struct ssb_device *sdev)
+ 	}
+ }
+ 
++static struct ssb_driver b43_ssb_driver = {
++	.name		= KBUILD_MODNAME,
++	.id_table	= b43_ssb_tbl,
++	.probe		= b43_ssb_probe,
++	.remove		= b43_ssb_remove,
++};
++#endif /* CONFIG_B43_SSB */
++
+ /* Perform a hardware reset. This can be called from any context. */
+ void b43_controller_restart(struct b43_wldev *dev, const char *reason)
+ {
+@@ -5116,13 +5126,6 @@ void b43_controller_restart(struct b43_wldev *dev, const char *reason)
+ 	ieee80211_queue_work(dev->wl->hw, &dev->restart_work);
+ }
+ 
+-static struct ssb_driver b43_ssb_driver = {
+-	.name		= KBUILD_MODNAME,
+-	.id_table	= b43_ssb_tbl,
+-	.probe		= b43_ssb_probe,
+-	.remove		= b43_ssb_remove,
+-};
+-
+ static void b43_print_driverinfo(void)
+ {
+ 	const char *feat_pci = "", *feat_pcmcia = "", *feat_nphy = "",
+@@ -5166,14 +5169,18 @@ static int __init b43_init(void)
+ 	if (err)
+ 		goto err_sdio_exit;
+ #endif
++#ifdef CONFIG_B43_SSB
+ 	err = ssb_driver_register(&b43_ssb_driver);
+ 	if (err)
+ 		goto err_bcma_driver_exit;
++#endif
+ 	b43_print_driverinfo();
+ 
+ 	return err;
+ 
++#ifdef CONFIG_B43_SSB
+ err_bcma_driver_exit:
++#endif
+ #ifdef CONFIG_B43_BCMA
+ 	bcma_driver_unregister(&b43_bcma_driver);
+ err_sdio_exit:
+@@ -5188,7 +5195,9 @@ err_dfs_exit:
+ 
+ static void __exit b43_exit(void)
+ {
++#ifdef CONFIG_B43_SSB
+ 	ssb_driver_unregister(&b43_ssb_driver);
++#endif
+ #ifdef CONFIG_B43_BCMA
+ 	bcma_driver_unregister(&b43_bcma_driver);
+ #endif
+-- 
+1.7.3.4
