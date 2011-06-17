@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 17 Jun 2011 13:15:24 +0200
-Subject: [PATCH 2/2] bcma: fix BCM43224 rev 0 workaround
-In-Reply-To: <1308309324-8680-1-git-send-email-zajec5@gmail.com>
-References: <1308309324-8680-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1308309324-8680-2-git-send-email-zajec5@gmail.com>
+Date: Sat, 18 Jun 2011 01:01:59 +0200
+Subject: [PATCH V2] bcma: clean exports of functions
+Message-ID: <1308351719-6215-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,24 +9,77 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Function managing IRQs is needed for external drivers like b43.
+On the other side we do not expect writing any hosts drivers outside of
+bcma, so this is safe to do not export functions related to this.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/bcma/driver_chipcommon_pmu.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+V2: John, I asked you to take my V1 instead of "bcma: export
+bcma_core_disable() function", however today I can see you took the
+patch in question anyway.
+So I prepared V2 which is V1 - CHANGES_FROM_ARENDS_PATCH.
+You can take it on top of applied Arend's patch, without reverting etc.
+---
+ drivers/bcma/bcma_private.h          |    4 ++--
+ drivers/bcma/driver_pci.c            |    1 +
+ drivers/bcma/main.c                  |    2 --
+ include/linux/bcma/bcma_driver_pci.h |    2 ++
+ 4 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index 934b7ed..dd5846b 100644
---- a/drivers/bcma/driver_chipcommon_pmu.c
-+++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -98,7 +98,7 @@ void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
- 		if (bus->chipinfo.rev == 0) {
- 			pr_err("Workarounds for 43224 rev 0 not fully "
- 				"implemented\n");
--			bcma_chipco_chipctl_maskset(cc, 0, ~0, 0xF0);
-+			bcma_chipco_chipctl_maskset(cc, 0, ~0, 0x00F000F0);
- 		} else {
- 			bcma_chipco_chipctl_maskset(cc, 0, ~0, 0xF0);
- 		}
+diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
+index 12a75ab..4228736 100644
+--- a/drivers/bcma/bcma_private.h
++++ b/drivers/bcma/bcma_private.h
+@@ -13,8 +13,8 @@
+ struct bcma_bus;
+ 
+ /* main.c */
+-extern int bcma_bus_register(struct bcma_bus *bus);
+-extern void bcma_bus_unregister(struct bcma_bus *bus);
++int bcma_bus_register(struct bcma_bus *bus);
++void bcma_bus_unregister(struct bcma_bus *bus);
+ 
+ /* scan.c */
+ int bcma_bus_scan(struct bcma_bus *bus);
+diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
+index 789d68b..b0c19ed 100644
+--- a/drivers/bcma/driver_pci.c
++++ b/drivers/bcma/driver_pci.c
+@@ -184,3 +184,4 @@ int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
+ out:
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(bcma_core_pci_irq_ctl);
+diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
+index 11e96dc..ba15105 100644
+--- a/drivers/bcma/main.c
++++ b/drivers/bcma/main.c
+@@ -160,13 +160,11 @@ int bcma_bus_register(struct bcma_bus *bus)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(bcma_bus_register);
+ 
+ void bcma_bus_unregister(struct bcma_bus *bus)
+ {
+ 	bcma_unregister_cores(bus);
+ }
+-EXPORT_SYMBOL_GPL(bcma_bus_unregister);
+ 
+ int __bcma_driver_register(struct bcma_driver *drv, struct module *owner)
+ {
+diff --git a/include/linux/bcma/bcma_driver_pci.h b/include/linux/bcma/bcma_driver_pci.h
+index b7e191c..3871b66 100644
+--- a/include/linux/bcma/bcma_driver_pci.h
++++ b/include/linux/bcma/bcma_driver_pci.h
+@@ -85,5 +85,7 @@ struct bcma_drv_pci {
+ #define pcicore_write32(pc, offset, val)	bcma_write32((pc)->core, offset, val)
+ 
+ extern void bcma_core_pci_init(struct bcma_drv_pci *pc);
++extern int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc,
++				 struct bcma_device *core, bool enable);
+ 
+ #endif /* LINUX_BCMA_DRIVER_PCI_H_ */
 -- 
 1.7.3.4
