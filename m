@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 19 Jun 2011 12:17:19 +0200
-Subject: [PATCH 1/3] b43: HT-PHY: define standard structs for channel switching
-Message-ID: <1308478641-6207-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 19 Jun 2011 12:17:20 +0200
+Subject: [PATCH 2/3] b43: HT-PHY: add place for implementing channel switching
+In-Reply-To: <1308478641-6207-1-git-send-email-zajec5@gmail.com>
+References: <1308478641-6207-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1308478641-6207-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,118 +14,95 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/Makefile     |    1 +
- drivers/net/wireless/b43/phy_ht.c     |    1 +
- drivers/net/wireless/b43/phy_ht.h     |    6 ++++++
- drivers/net/wireless/b43/radio_2059.c |   30 ++++++++++++++++++++++++++++++
- drivers/net/wireless/b43/radio_2059.h |   21 +++++++++++++++++++++
- 5 files changed, 59 insertions(+), 0 deletions(-)
- create mode 100644 drivers/net/wireless/b43/radio_2059.c
- create mode 100644 drivers/net/wireless/b43/radio_2059.h
+ drivers/net/wireless/b43/phy_ht.c |   61 +++++++++++++++++++++++++++++++++++-
+ 1 files changed, 59 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/Makefile b/drivers/net/wireless/b43/Makefile
-index 58d614a..900dc9c 100644
---- a/drivers/net/wireless/b43/Makefile
-+++ b/drivers/net/wireless/b43/Makefile
-@@ -11,6 +11,7 @@ b43-$(CONFIG_B43_PHY_N)		+= phy_n.o
- b43-$(CONFIG_B43_PHY_LP)	+= phy_lp.o
- b43-$(CONFIG_B43_PHY_LP)	+= tables_lpphy.o
- b43-$(CONFIG_B43_PHY_HT)	+= phy_ht.o
-+b43-$(CONFIG_B43_PHY_HT)	+= radio_2059.o
- b43-y				+= sysfs.o
- b43-y				+= xmit.o
- b43-y				+= lo.o
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 008c1a9..763dbb0 100644
+index 763dbb0..12ad47f 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -24,6 +24,7 @@
- 
- #include "b43.h"
- #include "phy_ht.h"
-+#include "radio_2059.h"
+@@ -27,6 +27,49 @@
+ #include "radio_2059.h"
  #include "main.h"
  
- /**************************************************
-diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
-index e16d4bb..afa448d 100644
---- a/drivers/net/wireless/b43/phy_ht.h
-+++ b/drivers/net/wireless/b43/phy_ht.h
-@@ -18,6 +18,12 @@
- #define B43_PHY_HT_AFE_CTL6			B43_PHY_EXTG(0x119)
- 
- 
-+/* Values for PHY registers used on channel switching */
-+struct b43_phy_ht_channeltab_e_phy {
-+	/* TODO */
-+};
-+
-+
- struct b43_phy_ht {
- };
- 
-diff --git a/drivers/net/wireless/b43/radio_2059.c b/drivers/net/wireless/b43/radio_2059.c
-new file mode 100644
-index 0000000..55d7da7
---- /dev/null
-+++ b/drivers/net/wireless/b43/radio_2059.c
-@@ -0,0 +1,30 @@
-+/*
-+
-+  Broadcom B43 wireless driver
-+  IEEE 802.11n 2059 radio device data tables
-+
-+  This program is free software; you can redistribute it and/or modify
-+  it under the terms of the GNU General Public License as published by
-+  the Free Software Foundation; either version 2 of the License, or
-+  (at your option) any later version.
-+
-+  This program is distributed in the hope that it will be useful,
-+  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+  GNU General Public License for more details.
-+
-+  You should have received a copy of the GNU General Public License
-+  along with this program; see the file COPYING.  If not, write to
-+  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
-+  Boston, MA 02110-1301, USA.
-+
-+*/
-+
-+#include "b43.h"
-+#include "radio_2059.h"
-+
-+const struct b43_phy_ht_channeltab_e_radio2059
-+*b43_phy_ht_get_channeltab_e_r2059(struct b43_wldev *dev, u16 freq)
++static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
++			const struct b43_phy_ht_channeltab_e_radio2059 *e)
 +{
-+	return NULL;
-+}
-diff --git a/drivers/net/wireless/b43/radio_2059.h b/drivers/net/wireless/b43/radio_2059.h
-new file mode 100644
-index 0000000..69eb46e
---- /dev/null
-+++ b/drivers/net/wireless/b43/radio_2059.h
-@@ -0,0 +1,21 @@
-+#ifndef B43_RADIO_2059_H_
-+#define B43_RADIO_2059_H_
-+
-+#include <linux/types.h>
-+
-+#include "phy_ht.h"
-+
-+/* Values for various registers uploaded on channel switching */
-+struct b43_phy_ht_channeltab_e_radio2059 {
-+	/* The channel frequency in MHz */
-+	u16 freq;
-+	/* Values for radio registers */
 +	/* TODO */
-+	/* Values for PHY registers */
-+	struct b43_phy_ht_channeltab_e_phy phy_regs;
-+};
++}
 +
-+const struct b43_phy_ht_channeltab_e_radio2059
-+*b43_phy_ht_get_channeltab_e_r2059(struct b43_wldev *dev, u16 freq);
++static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
++				const struct b43_phy_ht_channeltab_e_phy *e,
++				struct ieee80211_channel *new_channel)
++{
++	/* TODO */
++}
 +
-+#endif /* B43_RADIO_2059_H_ */
++static int b43_phy_ht_set_channel(struct b43_wldev *dev,
++				  struct ieee80211_channel *channel,
++				  enum nl80211_channel_type channel_type)
++{
++	struct b43_phy *phy = &dev->phy;
++
++	const struct b43_phy_ht_channeltab_e_radio2059 *chent_r2059 = NULL;
++
++	if (phy->radio_ver == 0x2059) {
++		chent_r2059 = b43_phy_ht_get_channeltab_e_r2059(dev,
++							channel->center_freq);
++		if (!chent_r2059)
++			return -ESRCH;
++	} else {
++		return -ESRCH;
++	}
++
++	/* TODO: In case of N-PHY some bandwidth switching goes here */
++
++	if (phy->radio_ver == 0x2059) {
++		b43_radio_2059_channel_setup(dev, chent_r2059);
++		b43_phy_ht_channel_setup(dev, &(chent_r2059->phy_regs),
++					 channel);
++	} else {
++		return -ESRCH;
++	}
++
++	return 0;
++}
++
+ /**************************************************
+  * Basic PHY ops.
+  **************************************************/
+@@ -96,6 +139,22 @@ static void b43_phy_ht_op_switch_analog(struct b43_wldev *dev, bool on)
+ 	}
+ }
+ 
++static int b43_phy_ht_op_switch_channel(struct b43_wldev *dev,
++					unsigned int new_channel)
++{
++	struct ieee80211_channel *channel = dev->wl->hw->conf.channel;
++	enum nl80211_channel_type channel_type = dev->wl->hw->conf.channel_type;
++
++	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
++		if ((new_channel < 1) || (new_channel > 14))
++			return -EINVAL;
++	} else {
++		return -EINVAL;
++	}
++
++	return b43_phy_ht_set_channel(dev, channel, channel_type);
++}
++
+ static unsigned int b43_phy_ht_op_get_default_chan(struct b43_wldev *dev)
+ {
+ 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+@@ -161,9 +220,7 @@ const struct b43_phy_operations b43_phyops_ht = {
+ 	.radio_write		= b43_phy_ht_op_radio_write,
+ 	.software_rfkill	= b43_phy_ht_op_software_rfkill,
+ 	.switch_analog		= b43_phy_ht_op_switch_analog,
+-	/*
+ 	.switch_channel		= b43_phy_ht_op_switch_channel,
+-	*/
+ 	.get_default_chan	= b43_phy_ht_op_get_default_chan,
+ 	/*
+ 	.recalc_txpower		= b43_phy_ht_op_recalc_txpower,
 -- 
 1.7.3.4
