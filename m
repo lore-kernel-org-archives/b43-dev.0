@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 19 Jun 2011 02:18:11 +0200
-Subject: [PATCH 1/2] b43: HT-PHY: implement killing radio
-Message-ID: <1308442692-4205-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 19 Jun 2011 02:18:12 +0200
+Subject: [PATCH 2/2] b43: HT-PHY: enable radio
+In-Reply-To: <1308442692-4205-1-git-send-email-zajec5@gmail.com>
+References: <1308442692-4205-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1308442692-4205-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,75 +11,52 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Closed drivers kill radio right after reading radio version and MACCTL,
-so it was easy to find related PHY ops:
- phy_read(0x0810) -> 0x0000
-phy_write(0x0810) <- 0x0000
-To find out the mask of above OP, MMIO hack was used to fake read val:
- phy_read(0x0810) -> 0xffff
-phy_write(0x0810) <- 0x0000
+The trick was to find 0x810 PHY reg ops close to analog enabling code.
+To find out proper masks and sets, MMIO hacks were used.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-The bigger part of MMIO dump from BCM4331 driven by ndiswrapper:
- radio_read(0x0000) -> 0x0010 <-- RADIO READ WITHOUT 0x200 SET!
- radio_read(0x0001) -> 0x0059 <-- RADIO READ WITHOUT 0x200 SET!
- radio_read(0x0002) -> 0x0020 <-- RADIO READ WITHOUT 0x200 SET!
- read32 0xb0600120 -> 0x04000400
+Bigger part of MMIO dump, showing where implemented OPS were found:
+>>> analog(ON) start
+phy_write(0x0911) <- 0x00cd
+phy_write(0x0910) <- 0x0000
+phy_write(0x0915) <- 0x00cd
+phy_write(0x0914) <- 0x0000
+phy_write(0x0919) <- 0x00cd
+phy_write(0x0918) <- 0x0000
+>>> analog(ON) end
+
+ read16 0xb06003e0 -> 0x9701
+ read32 0xb0600120 -> 0xc4020402
+
  phy_read(0x0810) -> 0x0000
 phy_write(0x0810) <- 0x0000
- read32 0xb0601500 -> 0x0000100c
+ phy_read(0x0810) -> 0x0000
+phy_write(0x0810) <- 0x0001
+ phy_read(0x0810) -> 0x0001
+phy_write(0x0810) <- 0x0000
+ phy_read(0x0810) -> 0x0000
+phy_write(0x0810) <- 0x0002
+
+radio_write(0x0c51) <- 0x0070
 ---
- drivers/net/wireless/b43/phy_ht.c |   15 +++++++++++++--
- drivers/net/wireless/b43/phy_ht.h |    2 ++
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 5777cdb..e84d4c1 100644
+index e84d4c1..008c1a9 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -59,6 +59,19 @@ static void b43_phy_ht_op_free(struct b43_wldev *dev)
- 	phy->ht = NULL;
+@@ -69,6 +69,10 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
+ 	if (blocked) {
+ 		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
+ 	} else {
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
++		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x1);
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
++		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x2);
+ 	}
  }
  
-+/* http://bcm-v4.sipsolutions.net/802.11/Radio/Switch%20Radio */
-+static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
-+					bool blocked)
-+{
-+	if (b43_read32(dev, B43_MMIO_MACCTL) & B43_MACCTL_ENABLED)
-+		b43err(dev->wl, "MAC not suspended\n");
-+
-+	if (blocked) {
-+		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
-+	} else {
-+	}
-+}
-+
- static void b43_phy_ht_op_switch_analog(struct b43_wldev *dev, bool on)
- {
- 	if (on) {
-@@ -141,9 +154,7 @@ const struct b43_phy_operations b43_phyops_ht = {
- 	.phy_maskset		= b43_phy_ht_op_maskset,
- 	.radio_read		= b43_phy_ht_op_radio_read,
- 	.radio_write		= b43_phy_ht_op_radio_write,
--	/*
- 	.software_rfkill	= b43_phy_ht_op_software_rfkill,
--	*/
- 	.switch_analog		= b43_phy_ht_op_switch_analog,
- 	/*
- 	.switch_channel		= b43_phy_ht_op_switch_channel,
-diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
-index 84ac47c..e16d4bb 100644
---- a/drivers/net/wireless/b43/phy_ht.h
-+++ b/drivers/net/wireless/b43/phy_ht.h
-@@ -8,6 +8,8 @@
- #define B43_PHY_HT_TABLE_DATALO			0x073 /* Table data low */
- #define B43_PHY_HT_TABLE_DATAHI			0x074 /* Table data high */
- 
-+#define B43_PHY_HT_RF_CTL1			B43_PHY_EXTG(0x010)
-+
- #define B43_PHY_HT_AFE_CTL1			B43_PHY_EXTG(0x110)
- #define B43_PHY_HT_AFE_CTL2			B43_PHY_EXTG(0x111)
- #define B43_PHY_HT_AFE_CTL3			B43_PHY_EXTG(0x114)
 -- 
 1.7.3.4
