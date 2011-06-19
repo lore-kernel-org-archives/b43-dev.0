@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 19 Jun 2011 12:17:20 +0200
-Subject: [PATCH 2/3] b43: HT-PHY: add place for implementing channel switching
+Date: Sun, 19 Jun 2011 12:17:21 +0200
+Subject: [PATCH 3/3] b43: HT-PHY: switch radio to requested channel
 In-Reply-To: <1308478641-6207-1-git-send-email-zajec5@gmail.com>
 References: <1308478641-6207-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1308478641-6207-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1308478641-6207-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,98 +11,159 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Switching channel happens after specific SHM write to B43_SHM_SH_CHAN.
+This is the way we found it in BCM4331 MMIO dumps. By comparing with
+N-PHY code we noticed there is routing used for SYN and TX/RX.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_ht.c |   61 +++++++++++++++++++++++++++++++++++-
- 1 files changed, 59 insertions(+), 2 deletions(-)
+For curious ones, there goes dump from BCM4331, that was used to write
+the code.
+
+>>> SHM write start
+write32 0xb0600160 <- 0x00010028
+ read32 0xb0600160 -> 0x00010028
+write16 0xb0600164 <- 0x000b
+>>> SHM write end
+
+radio_write(0x0016) <- 0x0069
+radio_write(0x0017) <- 0x0016
+radio_write(0x0022) <- 0x0030
+radio_write(0x0025) <- 0x001b
+radio_write(0x0027) <- 0x000a
+radio_write(0x0028) <- 0x000a
+radio_write(0x0029) <- 0x0030
+radio_write(0x002c) <- 0x009e
+radio_write(0x002d) <- 0x0009
+radio_write(0x0037) <- 0x000f
+radio_write(0x0041) <- 0x0006
+radio_write(0x0043) <- 0x0000
+radio_write(0x0047) <- 0x0006
+radio_write(0x004a) <- 0x0000
+radio_write(0x0058) <- 0x0061
+radio_write(0x005a) <- 0x0003
+radio_write(0x006a) <- 0x0000
+radio_write(0x006d) <- 0x0000
+radio_write(0x006e) <- 0x0000
+radio_write(0x0092) <- 0x00f0
+radio_write(0x0098) <- 0x0000
+
+radio_write(0x044a) <- 0x0000
+radio_write(0x0458) <- 0x0061
+radio_write(0x045a) <- 0x0003
+radio_write(0x046a) <- 0x0000
+radio_write(0x046d) <- 0x0000
+radio_write(0x046e) <- 0x0000
+radio_write(0x0492) <- 0x00f0
+radio_write(0x0498) <- 0x0000
+
+radio_write(0x084a) <- 0x0000
+radio_write(0x0858) <- 0x0061
+radio_write(0x085a) <- 0x0003
+radio_write(0x086a) <- 0x0000
+radio_write(0x086d) <- 0x0000
+radio_write(0x086e) <- 0x0000
+radio_write(0x0892) <- 0x00f0
+radio_write(0x0898) <- 0x0000
+
+>>> Something different happening with udelay 30
+ radio_read(0x002b) -> 0x0008
+radio_write(0x002b) <- 0x0008
+---
+ drivers/net/wireless/b43/phy_ht.c     |   39 +++++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/radio_2059.h |   30 ++++++++++++++++++++++++-
+ 2 files changed, 68 insertions(+), 1 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 763dbb0..12ad47f 100644
+index 12ad47f..0b13f6f 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -27,6 +27,49 @@
- #include "radio_2059.h"
- #include "main.h"
- 
-+static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
-+			const struct b43_phy_ht_channeltab_e_radio2059 *e)
-+{
-+	/* TODO */
-+}
+@@ -30,6 +30,45 @@
+ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
+ 			const struct b43_phy_ht_channeltab_e_radio2059 *e)
+ {
++	u8 i;
++	u16 routing;
 +
-+static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
-+				const struct b43_phy_ht_channeltab_e_phy *e,
-+				struct ieee80211_channel *new_channel)
-+{
-+	/* TODO */
-+}
++	b43_radio_write(dev, 0x16, e->radio_syn16);
++	b43_radio_write(dev, 0x17, e->radio_syn17);
++	b43_radio_write(dev, 0x22, e->radio_syn22);
++	b43_radio_write(dev, 0x25, e->radio_syn25);
++	b43_radio_write(dev, 0x27, e->radio_syn27);
++	b43_radio_write(dev, 0x28, e->radio_syn28);
++	b43_radio_write(dev, 0x29, e->radio_syn29);
++	b43_radio_write(dev, 0x2c, e->radio_syn2c);
++	b43_radio_write(dev, 0x2d, e->radio_syn2d);
++	b43_radio_write(dev, 0x37, e->radio_syn37);
++	b43_radio_write(dev, 0x41, e->radio_syn41);
++	b43_radio_write(dev, 0x43, e->radio_syn43);
++	b43_radio_write(dev, 0x47, e->radio_syn47);
++	b43_radio_write(dev, 0x4a, e->radio_syn4a);
++	b43_radio_write(dev, 0x58, e->radio_syn58);
++	b43_radio_write(dev, 0x5a, e->radio_syn5a);
++	b43_radio_write(dev, 0x6a, e->radio_syn6a);
++	b43_radio_write(dev, 0x6d, e->radio_syn6d);
++	b43_radio_write(dev, 0x6e, e->radio_syn6e);
++	b43_radio_write(dev, 0x92, e->radio_syn92);
++	b43_radio_write(dev, 0x98, e->radio_syn98);
 +
-+static int b43_phy_ht_set_channel(struct b43_wldev *dev,
-+				  struct ieee80211_channel *channel,
-+				  enum nl80211_channel_type channel_type)
-+{
-+	struct b43_phy *phy = &dev->phy;
-+
-+	const struct b43_phy_ht_channeltab_e_radio2059 *chent_r2059 = NULL;
-+
-+	if (phy->radio_ver == 0x2059) {
-+		chent_r2059 = b43_phy_ht_get_channeltab_e_r2059(dev,
-+							channel->center_freq);
-+		if (!chent_r2059)
-+			return -ESRCH;
-+	} else {
-+		return -ESRCH;
++	for (i = 0; i < 2; i++) {
++		routing = i ? 0x800 : 0x400;
++		b43_radio_write(dev, routing | 0x4a, e->radio_rxtx4a);
++		b43_radio_write(dev, routing | 0x58, e->radio_rxtx58);
++		b43_radio_write(dev, routing | 0x5a, e->radio_rxtx5a);
++		b43_radio_write(dev, routing | 0x6a, e->radio_rxtx6a);
++		b43_radio_write(dev, routing | 0x6d, e->radio_rxtx6d);
++		b43_radio_write(dev, routing | 0x6e, e->radio_rxtx6e);
++		b43_radio_write(dev, routing | 0x92, e->radio_rxtx92);
++		b43_radio_write(dev, routing | 0x98, e->radio_rxtx98);
 +	}
 +
-+	/* TODO: In case of N-PHY some bandwidth switching goes here */
++	udelay(50);
 +
-+	if (phy->radio_ver == 0x2059) {
-+		b43_radio_2059_channel_setup(dev, chent_r2059);
-+		b43_phy_ht_channel_setup(dev, &(chent_r2059->phy_regs),
-+					 channel);
-+	} else {
-+		return -ESRCH;
-+	}
-+
-+	return 0;
-+}
-+
- /**************************************************
-  * Basic PHY ops.
-  **************************************************/
-@@ -96,6 +139,22 @@ static void b43_phy_ht_op_switch_analog(struct b43_wldev *dev, bool on)
- 	}
+ 	/* TODO */
  }
  
-+static int b43_phy_ht_op_switch_channel(struct b43_wldev *dev,
-+					unsigned int new_channel)
-+{
-+	struct ieee80211_channel *channel = dev->wl->hw->conf.channel;
-+	enum nl80211_channel_type channel_type = dev->wl->hw->conf.channel_type;
-+
-+	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
-+		if ((new_channel < 1) || (new_channel > 14))
-+			return -EINVAL;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return b43_phy_ht_set_channel(dev, channel, channel_type);
-+}
-+
- static unsigned int b43_phy_ht_op_get_default_chan(struct b43_wldev *dev)
- {
- 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-@@ -161,9 +220,7 @@ const struct b43_phy_operations b43_phyops_ht = {
- 	.radio_write		= b43_phy_ht_op_radio_write,
- 	.software_rfkill	= b43_phy_ht_op_software_rfkill,
- 	.switch_analog		= b43_phy_ht_op_switch_analog,
--	/*
- 	.switch_channel		= b43_phy_ht_op_switch_channel,
--	*/
- 	.get_default_chan	= b43_phy_ht_op_get_default_chan,
- 	/*
- 	.recalc_txpower		= b43_phy_ht_op_recalc_txpower,
+diff --git a/drivers/net/wireless/b43/radio_2059.h b/drivers/net/wireless/b43/radio_2059.h
+index 69eb46e..c2874b1 100644
+--- a/drivers/net/wireless/b43/radio_2059.h
++++ b/drivers/net/wireless/b43/radio_2059.h
+@@ -10,7 +10,35 @@ struct b43_phy_ht_channeltab_e_radio2059 {
+ 	/* The channel frequency in MHz */
+ 	u16 freq;
+ 	/* Values for radio registers */
+-	/* TODO */
++	u8 radio_syn16;
++	u8 radio_syn17;
++	u8 radio_syn22;
++	u8 radio_syn25;
++	u8 radio_syn27;
++	u8 radio_syn28;
++	u8 radio_syn29;
++	u8 radio_syn2c;
++	u8 radio_syn2d;
++	u8 radio_syn37;
++	u8 radio_syn41;
++	u8 radio_syn43;
++	u8 radio_syn47;
++	u8 radio_syn4a;
++	u8 radio_syn58;
++	u8 radio_syn5a;
++	u8 radio_syn6a;
++	u8 radio_syn6d;
++	u8 radio_syn6e;
++	u8 radio_syn92;
++	u8 radio_syn98;
++	u8 radio_rxtx4a;
++	u8 radio_rxtx58;
++	u8 radio_rxtx5a;
++	u8 radio_rxtx6a;
++	u8 radio_rxtx6d;
++	u8 radio_rxtx6e;
++	u8 radio_rxtx92;
++	u8 radio_rxtx98;
+ 	/* Values for PHY registers */
+ 	struct b43_phy_ht_channeltab_e_phy phy_regs;
+ };
 -- 
 1.7.3.4
