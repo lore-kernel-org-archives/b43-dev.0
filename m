@@ -1,47 +1,50 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sun, 19 Jun 2011 23:50:09 +0200
-Subject: [RFC v2 12/12] bcm47xx: fix irq assignment for new SoCs.
-In-Reply-To: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
-References: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1308520209-668-13-git-send-email-hauke@hauke-m.de>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 20 Jun 2011 01:17:53 +0200
+Subject: Comments to b43's wiki page plus recent changes
+Message-ID: <BANLkTikVTntr2b0=X7gAYtpsSbpU4GTakw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org
-Cc: mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com, Hauke Mehrtens <hauke@hauke-m.de>
+To: b43-dev@lists.infradead.org
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- arch/mips/bcm47xx/irq.c |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+I'm getting uncomfortable with recent changes made to b43 wiki page
+http://wireless.kernel.org/en/users/Drivers/b43
 
-diff --git a/arch/mips/bcm47xx/irq.c b/arch/mips/bcm47xx/irq.c
-index 325757a..856c94c 100644
---- a/arch/mips/bcm47xx/irq.c
-+++ b/arch/mips/bcm47xx/irq.c
-@@ -26,6 +26,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <asm/irq_cpu.h>
-+#include <bcm47xx.h>
- 
- void plat_irq_dispatch(void)
- {
-@@ -51,5 +52,14 @@ void plat_irq_dispatch(void)
- 
- void __init arch_init_irq(void)
- {
-+	if (bcm47xx_active_bus_type == BCM47XX_BUS_TYPE_BCMA) {
-+		bcma_write32(bcm47xx_bus.bcma.bus.drv_mips.core,
-+			     BCMA_MIPS_MIPS74K_INTMASK(5), 1 << 31);
-+		/*
-+		 * the kernel reads the timer irq from some register and thinks
-+		 * it's #5, but we offset it by 2 and route to #7
-+		 */
-+		cp0_compare_irq = 7;
-+	}
- 	mips_cpu_irq_init();
- }
+First we got Stuart who felt it's necessary to explain that "partially
+supported" on b43's page means it's "partially supported by b43". It
+was so obvious to me I just reverted that change. He also linked to
+some discussion with random BCM4322 issue on 2.6.38 kernel. Well,
+support in 2.6.38 was highly experimental, it got many more issues, I
+don't think it makes any sense to display all of them. 2.6.39 is
+suggested, that's all.
+
+Today we got David Wang's modification. He wrote instruction how to
+check if firmware was installed. I've no idea what's unclear with
+messages like:
+"Cannot open input file broadcom-wl-5.10.56.27.3/driver/wl_apsta/wl_prebuilt.o"
+"failed to create output directory: Permission denied"
+?
+
+Plus I found the following checks quite silly:
+ls -1 "$FIRMWARE_INSTALL_DIR"| grep b43| wc -1
+ls -1 "$FIRMWARE_INSTALL_DIR"/b43| wc -l
+"An output of >5 is good"
+
+It also adds twice info about LP-PHY which is already duplicated:
+> Those of you who has bcm4315 (bcm4312 LP-PHY) and bcm4321 chipset, you will need to make sure you enable PIO mode as DMA mode does not work with your chipset. So instead of following the guide above you will need to do a few more extra steps:
+(We inform about LP-PHY and DMA problems in known issues).
+
+Additionally it provides not working right-away instruction about
+switching to pio:
+> modprobe -r b43
+> modprobe b43 pio=1
+> echo "options b43 pio=1" >> /etc/modprobe.d/options.conf
+
+
+Is it just me, or are that changes quite silly?
+
+Does anyone have contact to David Wang? He does not have his page on wiki.
+
 -- 
-1.7.4.1
+Rafa?
