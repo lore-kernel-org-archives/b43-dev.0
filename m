@@ -1,73 +1,286 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 19 Jun 2011 13:30:21 +0200
-Subject: [PATCH 2/2] b43: N-PHY: move declarations of chantables functions to
-	correct files
-In-Reply-To: <1308483021-7149-1-git-send-email-zajec5@gmail.com>
-References: <1308483021-7149-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1308483021-7149-2-git-send-email-zajec5@gmail.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 19 Jun 2011 23:49:58 +0200
+Subject: [RFC v2 01/12] bcma: move parsing of EEPROM into own function.
+In-Reply-To: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
+References: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <1308520209-668-2-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org
+Cc: mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com, Hauke Mehrtens <hauke@hauke-m.de>
 
+Move the parsing of the EEPROM data in scan function for one core into
+an own function. Now we are able to use it in some other scan function
+as well.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/net/wireless/b43/radio_2055.h  |    5 +++++
- drivers/net/wireless/b43/radio_2056.h  |    5 +++++
- drivers/net/wireless/b43/tables_nphy.h |    8 --------
- 3 files changed, 10 insertions(+), 8 deletions(-)
+ drivers/bcma/scan.c |  230 ++++++++++++++++++++++++++-------------------------
+ 1 files changed, 118 insertions(+), 112 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/radio_2055.h b/drivers/net/wireless/b43/radio_2055.h
-index d9bfa0f..67f9612 100644
---- a/drivers/net/wireless/b43/radio_2055.h
-+++ b/drivers/net/wireless/b43/radio_2055.h
-@@ -251,4 +251,9 @@ struct b43_nphy_channeltab_entry_rev2 {
- void b2055_upload_inittab(struct b43_wldev *dev,
- 			  bool ghz5, bool ignore_uploadflag);
+diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
+index 40d7dcc..4012d8d 100644
+--- a/drivers/bcma/scan.c
++++ b/drivers/bcma/scan.c
+@@ -200,16 +200,124 @@ static s32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 **eromptr,
+ 	return addrl;
+ }
  
-+/* Get the NPHY Channel Switch Table entry for a channel.
-+ * Returns NULL on failure to find an entry. */
-+const struct b43_nphy_channeltab_entry_rev2 *
-+b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel);
++static int bcma_get_next_core(struct bcma_bus *bus, u32 __iomem **eromptr,
++			      struct bcma_device *core)
++{
++	s32 tmp;
++	u8 i, j;
++	s32 cia, cib;
++	u8 ports[2], wrappers[2];
 +
- #endif /* B43_RADIO_2055_H_ */
-diff --git a/drivers/net/wireless/b43/radio_2056.h b/drivers/net/wireless/b43/radio_2056.h
-index d601f6e..d52df6b 100644
---- a/drivers/net/wireless/b43/radio_2056.h
-+++ b/drivers/net/wireless/b43/radio_2056.h
-@@ -1117,4 +1117,9 @@ struct b43_nphy_channeltab_entry_rev3 {
- void b2056_upload_inittabs(struct b43_wldev *dev,
- 			   bool ghz5, bool ignore_uploadflag);
- 
-+/* Get the NPHY Channel Switch Table entry for a channel.
-+ * Returns NULL on failure to find an entry. */
-+const struct b43_nphy_channeltab_entry_rev3 *
-+b43_nphy_get_chantabent_rev3(struct b43_wldev *dev, u16 freq);
++	/* get CIs */
++	cia = bcma_erom_get_ci(bus, eromptr);
++	if (cia < 0) {
++		bcma_erom_push_ent(eromptr);
++		if (bcma_erom_is_end(bus, eromptr))
++			return -ESPIPE;
++		return -EILSEQ;
++	}
++	cib = bcma_erom_get_ci(bus, eromptr);
++	if (cib < 0)
++		return -EILSEQ;
 +
- #endif /* B43_RADIO_2056_H_ */
-diff --git a/drivers/net/wireless/b43/tables_nphy.h b/drivers/net/wireless/b43/tables_nphy.h
-index 1856936..a81696b 100644
---- a/drivers/net/wireless/b43/tables_nphy.h
-+++ b/drivers/net/wireless/b43/tables_nphy.h
-@@ -60,16 +60,8 @@ struct nphy_gain_ctl_workaround_entry {
- struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
- 	struct b43_wldev *dev, bool ghz5, bool ext_lna);
++	/* parse CIs */
++	core->id.class = (cia & SCAN_CIA_CLASS) >> SCAN_CIA_CLASS_SHIFT;
++	core->id.id = (cia & SCAN_CIA_ID) >> SCAN_CIA_ID_SHIFT;
++	core->id.manuf = (cia & SCAN_CIA_MANUF) >> SCAN_CIA_MANUF_SHIFT;
++	ports[0] = (cib & SCAN_CIB_NMP) >> SCAN_CIB_NMP_SHIFT;
++	ports[1] = (cib & SCAN_CIB_NSP) >> SCAN_CIB_NSP_SHIFT;
++	wrappers[0] = (cib & SCAN_CIB_NMW) >> SCAN_CIB_NMW_SHIFT;
++	wrappers[1] = (cib & SCAN_CIB_NSW) >> SCAN_CIB_NSW_SHIFT;
++	core->id.rev = (cib & SCAN_CIB_REV) >> SCAN_CIB_REV_SHIFT;
++
++	if (((core->id.manuf == BCMA_MANUF_ARM) &&
++	     (core->id.id == 0xFFF)) ||
++	    (ports[1] == 0)) {
++		bcma_erom_skip_component(bus, eromptr);
++		return -ENXIO;
++	}
++
++	/* check if component is a core at all */
++	if (wrappers[0] + wrappers[1] == 0) {
++		/* we could save addrl of the router
++		if (cid == BCMA_CORE_OOB_ROUTER)
++		 */
++		bcma_erom_skip_component(bus, eromptr);
++		return -ENXIO;
++	}
++
++	if (bcma_erom_is_bridge(bus, eromptr)) {
++		bcma_erom_skip_component(bus, eromptr);
++		return -ENXIO;
++	}
++
++	/* get & parse master ports */
++	for (i = 0; i < ports[0]; i++) {
++		u32 mst_port_d = bcma_erom_get_mst_port(bus, eromptr);
++		if (mst_port_d < 0)
++			return -EILSEQ;
++	}
++
++	/* get & parse slave ports */
++	for (i = 0; i < ports[1]; i++) {
++		for (j = 0; ; j++) {
++			tmp = bcma_erom_get_addr_desc(bus, eromptr,
++				SCAN_ADDR_TYPE_SLAVE, i);
++			if (tmp < 0) {
++				/* no more entries for port _i_ */
++				/* pr_debug("erom: slave port %d "
++				 * "has %d descriptors\n", i, j); */
++				break;
++			} else {
++				if (i == 0 && j == 0)
++					core->addr = tmp;
++			}
++		}
++	}
++
++	/* get & parse master wrappers */
++	for (i = 0; i < wrappers[0]; i++) {
++		for (j = 0; ; j++) {
++			tmp = bcma_erom_get_addr_desc(bus, eromptr,
++				SCAN_ADDR_TYPE_MWRAP, i);
++			if (tmp < 0) {
++				/* no more entries for port _i_ */
++				/* pr_debug("erom: master wrapper %d "
++				 * "has %d descriptors\n", i, j); */
++				break;
++			} else {
++				if (i == 0 && j == 0)
++					core->wrap = tmp;
++			}
++		}
++	}
++
++	/* get & parse slave wrappers */
++	for (i = 0; i < wrappers[1]; i++) {
++		u8 hack = (ports[1] == 1) ? 0 : 1;
++		for (j = 0; ; j++) {
++			tmp = bcma_erom_get_addr_desc(bus, eromptr,
++				SCAN_ADDR_TYPE_SWRAP, i + hack);
++			if (tmp < 0) {
++				/* no more entries for port _i_ */
++				/* pr_debug("erom: master wrapper %d "
++				 * has %d descriptors\n", i, j); */
++				break;
++			} else {
++				if (wrappers[0] == 0 && !i && !j)
++					core->wrap = tmp;
++			}
++		}
++	}
++	return 0;
++}
++
+ int bcma_bus_scan(struct bcma_bus *bus)
+ {
+ 	u32 erombase;
+ 	u32 __iomem *eromptr, *eromend;
  
--/* Get the NPHY Channel Switch Table entry for a channel.
-- * Returns NULL on failure to find an entry. */
--const struct b43_nphy_channeltab_entry_rev2 *
--b43_nphy_get_chantabent_rev2(struct b43_wldev *dev, u8 channel);
--const struct b43_nphy_channeltab_entry_rev3 *
--b43_nphy_get_chantabent_rev3(struct b43_wldev *dev, u16 freq);
+-	s32 cia, cib;
+-	u8 ports[2], wrappers[2];
 -
+ 	s32 tmp;
+-	u8 i, j;
  
- /* The N-PHY tables. */
+ 	int err;
+ 
+@@ -236,112 +344,13 @@ int bcma_bus_scan(struct bcma_bus *bus)
+ 		INIT_LIST_HEAD(&core->list);
+ 		core->bus = bus;
+ 
+-		/* get CIs */
+-		cia = bcma_erom_get_ci(bus, &eromptr);
+-		if (cia < 0) {
+-			bcma_erom_push_ent(&eromptr);
+-			if (bcma_erom_is_end(bus, &eromptr))
+-				break;
+-			err= -EILSEQ;
+-			goto out;
+-		}
+-		cib = bcma_erom_get_ci(bus, &eromptr);
+-		if (cib < 0) {
+-			err= -EILSEQ;
+-			goto out;
+-		}
 -
- #define B43_NTAB_TYPEMASK		0xF0000000
- #define B43_NTAB_8BIT			0x10000000
- #define B43_NTAB_16BIT			0x20000000
+-		/* parse CIs */
+-		core->id.class = (cia & SCAN_CIA_CLASS) >> SCAN_CIA_CLASS_SHIFT;
+-		core->id.id = (cia & SCAN_CIA_ID) >> SCAN_CIA_ID_SHIFT;
+-		core->id.manuf = (cia & SCAN_CIA_MANUF) >> SCAN_CIA_MANUF_SHIFT;
+-		ports[0] = (cib & SCAN_CIB_NMP) >> SCAN_CIB_NMP_SHIFT;
+-		ports[1] = (cib & SCAN_CIB_NSP) >> SCAN_CIB_NSP_SHIFT;
+-		wrappers[0] = (cib & SCAN_CIB_NMW) >> SCAN_CIB_NMW_SHIFT;
+-		wrappers[1] = (cib & SCAN_CIB_NSW) >> SCAN_CIB_NSW_SHIFT;
+-		core->id.rev = (cib & SCAN_CIB_REV) >> SCAN_CIB_REV_SHIFT;
+-
+-		if (((core->id.manuf == BCMA_MANUF_ARM) &&
+-		     (core->id.id == 0xFFF)) ||
+-		    (ports[1] == 0)) {
+-			bcma_erom_skip_component(bus, &eromptr);
+-			continue;
+-		}
+-
+-		/* check if component is a core at all */
+-		if (wrappers[0] + wrappers[1] == 0) {
+-			/* we could save addrl of the router
+-			if (cid == BCMA_CORE_OOB_ROUTER)
+-			 */
+-			bcma_erom_skip_component(bus, &eromptr);
+-			continue;
+-		}
+-
+-		if (bcma_erom_is_bridge(bus, &eromptr)) {
+-			bcma_erom_skip_component(bus, &eromptr);
++		err = bcma_get_next_core(bus, &eromptr, core);
++		if (err == -ENXIO)
+ 			continue;
+-		}
+-
+-		/* get & parse master ports */
+-		for (i = 0; i < ports[0]; i++) {
+-			u32 mst_port_d = bcma_erom_get_mst_port(bus, &eromptr);
+-			if (mst_port_d < 0) {
+-				err= -EILSEQ;
+-				goto out;
+-			}
+-		}
+-
+-		/* get & parse slave ports */
+-		for (i = 0; i < ports[1]; i++) {
+-			for (j = 0; ; j++) {
+-				tmp = bcma_erom_get_addr_desc(bus, &eromptr,
+-					SCAN_ADDR_TYPE_SLAVE, i);
+-				if (tmp < 0) {
+-					/* no more entries for port _i_ */
+-					/* pr_debug("erom: slave port %d "
+-					 * "has %d descriptors\n", i, j); */
+-					break;
+-				} else {
+-					if (i == 0 && j == 0)
+-						core->addr = tmp;
+-				}
+-			}
+-		}
+-
+-		/* get & parse master wrappers */
+-		for (i = 0; i < wrappers[0]; i++) {
+-			for (j = 0; ; j++) {
+-				tmp = bcma_erom_get_addr_desc(bus, &eromptr,
+-					SCAN_ADDR_TYPE_MWRAP, i);
+-				if (tmp < 0) {
+-					/* no more entries for port _i_ */
+-					/* pr_debug("erom: master wrapper %d "
+-					 * "has %d descriptors\n", i, j); */
+-					break;
+-				} else {
+-					if (i == 0 && j == 0)
+-						core->wrap = tmp;
+-				}
+-			}
+-		}
+-
+-		/* get & parse slave wrappers */
+-		for (i = 0; i < wrappers[1]; i++) {
+-			u8 hack = (ports[1] == 1) ? 0 : 1;
+-			for (j = 0; ; j++) {
+-				tmp = bcma_erom_get_addr_desc(bus, &eromptr,
+-					SCAN_ADDR_TYPE_SWRAP, i + hack);
+-				if (tmp < 0) {
+-					/* no more entries for port _i_ */
+-					/* pr_debug("erom: master wrapper %d "
+-					 * has %d descriptors\n", i, j); */
+-					break;
+-				} else {
+-					if (wrappers[0] == 0 && !i && !j)
+-						core->wrap = tmp;
+-				}
+-			}
+-		}
++		else if (err == -ESPIPE)
++			break;
++		else if (err < 0)
++			return err;
+ 
+ 		pr_info("Core %d found: %s "
+ 			"(manuf 0x%03X, id 0x%03X, rev 0x%02X, class 0x%X)\n",
+@@ -351,9 +360,6 @@ int bcma_bus_scan(struct bcma_bus *bus)
+ 
+ 		core->core_index = bus->nr_cores++;
+ 		list_add(&core->list, &bus->cores);
+-		continue;
+-out:
+-		return err;
+ 	}
+ 
+ 	return 0;
 -- 
-1.7.3.4
+1.7.4.1
