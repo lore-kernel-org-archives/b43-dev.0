@@ -1,11 +1,11 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Mon, 20 Jun 2011 23:13:25 +0200
-Subject: [RFC v2 03/12] bcma: add functions to scan cores needed on SoCs
-In-Reply-To: <BANLkTinfFHwd++rxb0wn266dQhF=7ANmhQ@mail.gmail.com>
+Date: Mon, 20 Jun 2011 23:15:17 +0200
+Subject: [RFC v2 05/12] bcma: add mips driver
+In-Reply-To: <BANLkTinCrAMa3bmTsKpu4y7QGbSiU9jMXQ@mail.gmail.com>
 References: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
-	<1308520209-668-4-git-send-email-hauke@hauke-m.de>
-	<BANLkTinfFHwd++rxb0wn266dQhF=7ANmhQ@mail.gmail.com>
-Message-ID: <4DFFB7F5.1070705@hauke-m.de>
+	<1308520209-668-6-git-send-email-hauke@hauke-m.de>
+	<BANLkTinCrAMa3bmTsKpu4y7QGbSiU9jMXQ@mail.gmail.com>
+Message-ID: <4DFFB865.6060105@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,66 +13,29 @@ Content-Transfer-Encoding: 7bit
 To: Julian Calaby <julian.calaby@gmail.com>
 Cc: linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, sshtylyov@mvista.com
 
-Hi Julian,
-
-Thank you for your review. The issues you pointed out will be fixed in
-the next round.
-
-On 06/20/2011 12:52 AM, Julian Calaby wrote:
+On 06/20/2011 01:44 AM, Julian Calaby wrote:
 > Hauke,
 > 
-> Couple of minor points
+> One minor comment
 > 
 > On Mon, Jun 20, 2011 at 07:50, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->> The chip common and mips core have to be setup early in the boot
->> process to get the cpu clock.
->> bcma_bus_earyl_register() gets pointers to some space to store the core
+>> diff --git a/drivers/bcma/driver_mips.c b/drivers/bcma/driver_mips.c
+>> new file mode 100644
+>> index 0000000..d49f9af
+>> --- /dev/null
+>> +++ b/drivers/bcma/driver_mips.c
+>> @@ -0,0 +1,232 @@
+>> +/*
+>> + * Sonics Silicon Backplane
 > 
-> Spelling: s/earyl/early/
-Fixed
-> 
->> data and searches for the chip common and mips core and initializes
->> chip common. After that was done and the kernel is out of early boot we
->> just have to run bcma_bus_register() and it will search for the other
->> cores, initialize and register them.
->>
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
->> diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
->> index 12a75ab..6416bbc 100644
->> --- a/drivers/bcma/bcma_private.h
->> +++ b/drivers/bcma/bcma_private.h
->> @@ -15,9 +15,16 @@ struct bcma_bus;
->>  /* main.c */
->>  extern int bcma_bus_register(struct bcma_bus *bus);
->>  extern void bcma_bus_unregister(struct bcma_bus *bus);
->> +int __init bcma_bus_earyl_register(struct bcma_bus *bus,
->> +                                  struct bcma_device *core_cc,
->> +                                  struct bcma_device *core_mips);
-> 
-> Here too.
-Also fixed now.
-> 
->> diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
->> index 7970553..4ebb186 100644
->> --- a/drivers/bcma/scan.c
->> +++ b/drivers/bcma/scan.c
->> @@ -332,9 +361,10 @@ int bcma_bus_scan(struct bcma_bus *bus)
->>        u32 erombase;
->>        u32 __iomem *eromptr, *eromend;
->>
->> -       int err;
->> +       int err, core_num = 0;
->>
->> -       bcma_init_bus(bus);
->> +       if (!bus->init_done)
->> +               bcma_init_bus(bus);
-> 
-> For consistency with the core init functions, should this test go in
-> bcma_init_bus()?
-Fixed: Yes it is better to do this only in one function.
+> Err, this is for BCMA, not SSB =)
 > 
 > Thanks,
 > 
+Hi Julian,
+
+Oh bad, I copied this file from ssb and modified it, but missed the
+header. This is fixed now, but I should have a closer look at the
+comments in general.
 
 Hauke
