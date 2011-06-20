@@ -1,55 +1,78 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 20 Jun 2011 02:41:34 +0200
-Subject: [RFC v2 00/12] bcma: add support for embedded devices like bcm4716
-In-Reply-To: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Mon, 20 Jun 2011 23:13:25 +0200
+Subject: [RFC v2 03/12] bcma: add functions to scan cores needed on SoCs
+In-Reply-To: <BANLkTinfFHwd++rxb0wn266dQhF=7ANmhQ@mail.gmail.com>
 References: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <BANLkTim5R1ukc5OJQRRpF6EsmzeoL=SUoA@mail.gmail.com>
+	<1308520209-668-4-git-send-email-hauke@hauke-m.de>
+	<BANLkTinfFHwd++rxb0wn266dQhF=7ANmhQ@mail.gmail.com>
+Message-ID: <4DFFB7F5.1070705@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, sshtylyov@mvista.com
 
-Hey Hauke,
+Hi Julian,
 
-2011/6/19 Hauke Mehrtens <hauke@hauke-m.de>:
-> This patch series adds support for embedded devices like bcm47xx to
-> bcma. Bcma is used on bcm4716 and bcm4718 SoCs. With these patches my
-> bcm4716 device boots up till it tries to access the flash, because the
-> serial flash chip is unsupported for now, this will be my next task.
-> This adds support for MIPS cores, interrupt configuration and the
-> serial console.
->
-> These patches are based on ssb code, some patches by George Kashperko
-> and Bernhard Loos and parts of the source code release by ASUS and
-> Netgear for their devices.
->
-> This was tested on a Netgear WNDR3400, but did not work fully because
-> of serial flash.
->
-> This is bases on linux-next next-20110616, to which subsystem
-> maintainer should I send these patches later, as it is based on the
-> most recent version of bcma and bcm47xx?
-> I do not have any normal PCIe based wireless device using this bus, so
-> I have not tested it with such a device, it will be nice to hear if it
-> is still working on them.
-> The parallel flash should work so it could be that it will boot on an
-> Asus rt-n16, I have not tested that.
+Thank you for your review. The issues you pointed out will be fixed in
+the next round.
 
-I'm glad you are still working on it!
-Unfortunately it's really late right now and I'm leaving tomorrow
-(well, today as we passed midnight) for the whole week :( I'm not sure
-if I'll get a chance to review this, not to mention testing against
-any of my PCIe card.
+On 06/20/2011 12:52 AM, Julian Calaby wrote:
+> Hauke,
+> 
+> Couple of minor points
+> 
+> On Mon, Jun 20, 2011 at 07:50, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+>> The chip common and mips core have to be setup early in the boot
+>> process to get the cpu clock.
+>> bcma_bus_earyl_register() gets pointers to some space to store the core
+> 
+> Spelling: s/earyl/early/
+Fixed
+> 
+>> data and searches for the chip common and mips core and initializes
+>> chip common. After that was done and the kernel is out of early boot we
+>> just have to run bcma_bus_register() and it will search for the other
+>> cores, initialize and register them.
+>>
+>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+>> ---
+>> diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
+>> index 12a75ab..6416bbc 100644
+>> --- a/drivers/bcma/bcma_private.h
+>> +++ b/drivers/bcma/bcma_private.h
+>> @@ -15,9 +15,16 @@ struct bcma_bus;
+>>  /* main.c */
+>>  extern int bcma_bus_register(struct bcma_bus *bus);
+>>  extern void bcma_bus_unregister(struct bcma_bus *bus);
+>> +int __init bcma_bus_earyl_register(struct bcma_bus *bus,
+>> +                                  struct bcma_device *core_cc,
+>> +                                  struct bcma_device *core_mips);
+> 
+> Here too.
+Also fixed now.
+> 
+>> diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
+>> index 7970553..4ebb186 100644
+>> --- a/drivers/bcma/scan.c
+>> +++ b/drivers/bcma/scan.c
+>> @@ -332,9 +361,10 @@ int bcma_bus_scan(struct bcma_bus *bus)
+>>        u32 erombase;
+>>        u32 __iomem *eromptr, *eromend;
+>>
+>> -       int err;
+>> +       int err, core_num = 0;
+>>
+>> -       bcma_init_bus(bus);
+>> +       if (!bus->init_done)
+>> +               bcma_init_bus(bus);
+> 
+> For consistency with the core init functions, should this test go in
+> bcma_init_bus()?
+Fixed: Yes it is better to do this only in one function.
+> 
+> Thanks,
+> 
 
-
-> An Ethernet driver is not included because the Braodcom source code
-> available is not licensed under a GPL compatible license and building a
-> new driver on that based is not possible.
-
-I wonder if you could write specs for that core, so I could write
-GPL/any driver for it? Is that driver really big?
-
--- 
-Rafa?
+Hauke
