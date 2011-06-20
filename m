@@ -1,70 +1,55 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 20 Jun 2011 03:12:19 +0200
-Subject: [PATCH] b43: HT-PHY: calibrate radio after switching channel
-Message-ID: <1308532339-3643-1-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 20 Jun 2011 02:41:34 +0200
+Subject: [RFC v2 00/12] bcma: add support for embedded devices like bcm4716
+In-Reply-To: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
+References: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <BANLkTim5R1ukc5OJQRRpF6EsmzeoL=SUoA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-After uploading radio values calibration goes in. In MMIO dump it is:
- radio_read(0x002b) -> 0x0008
-radio_write(0x002b) <- 0x0008
- radio_read(0x002e) -> 0x0004
-radio_write(0x002e) <- 0x0000
- radio_read(0x002e) -> 0x0000
-radio_write(0x002e) <- 0x0004
- radio_read(0x002b) -> 0x0008
-radio_write(0x002b) <- 0x0009
-To find masks and sets, MMIO hacks were used to fool closed driver.
+Hey Hauke,
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-First I fooled ndiswrapper to get all reads 0xFFFF:
- radio_read(0x002b) -> 0xffff
-radio_write(0x002b) <- 0xfffe
- radio_read(0x002e) -> 0xffff
-radio_write(0x002e) <- 0xfffb
- radio_read(0x002e) -> 0xffff
-radio_write(0x002e) <- 0xffff
- radio_read(0x002b) -> 0xffff
-radio_write(0x002b) <- 0xffff
-This has shown two first ops are pure masking ones.
+2011/6/19 Hauke Mehrtens <hauke@hauke-m.de>:
+> This patch series adds support for embedded devices like bcm47xx to
+> bcma. Bcma is used on bcm4716 and bcm4718 SoCs. With these patches my
+> bcm4716 device boots up till it tries to access the flash, because the
+> serial flash chip is unsupported for now, this will be my next task.
+> This adds support for MIPS cores, interrupt configuration and the
+> serial console.
+>
+> These patches are based on ssb code, some patches by George Kashperko
+> and Bernhard Loos and parts of the source code release by ASUS and
+> Netgear for their devices.
+>
+> This was tested on a Netgear WNDR3400, but did not work fully because
+> of serial flash.
+>
+> This is bases on linux-next next-20110616, to which subsystem
+> maintainer should I send these patches later, as it is based on the
+> most recent version of bcma and bcm47xx?
+> I do not have any normal PCIe based wireless device using this bus, so
+> I have not tested it with such a device, it will be nice to hear if it
+> is still working on them.
+> The parallel flash should work so it could be that it will boot on an
+> Asus rt-n16, I have not tested that.
 
-Next I fooled ndis to get 0x0000:
- radio_read(0x002b) -> 0x0000
-radio_write(0x002b) <- 0x0000
- radio_read(0x002e) -> 0x0000
-radio_write(0x002e) <- 0x0000
- radio_read(0x002e) -> 0x0000
-radio_write(0x002e) <- 0x0004
- radio_read(0x002b) -> 0x0000
-radio_write(0x002b) <- 0x0001
-Which has discovered bits setting by 2 later ops.
----
- drivers/net/wireless/b43/phy_ht.c |    8 +++++++-
- 1 files changed, 7 insertions(+), 1 deletions(-)
+I'm glad you are still working on it!
+Unfortunately it's really late right now and I'm leaving tomorrow
+(well, today as we passed midnight) for the whole week :( I'm not sure
+if I'll get a chance to review this, not to mention testing against
+any of my PCIe card.
 
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 0b13f6f..72f01ce 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -69,7 +69,13 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
- 
- 	udelay(50);
- 
--	/* TODO */
-+	/* Calibration */
-+	b43_radio_mask(dev, 0x2b, ~0x1);
-+	b43_radio_mask(dev, 0x2e, ~0x4);
-+	b43_radio_set(dev, 0x2e, 0x4);
-+	b43_radio_set(dev, 0x2b, 0x1);
-+
-+	udelay(300);
- }
- 
- static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+
+> An Ethernet driver is not included because the Braodcom source code
+> available is not licensed under a GPL compatible license and building a
+> new driver on that based is not possible.
+
+I wonder if you could write specs for that core, so I could write
+GPL/any driver for it? Is that driver really big?
+
 -- 
-1.7.3.4
+Rafa?
