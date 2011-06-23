@@ -1,73 +1,44 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 21 Jun 2011 13:27:38 +0200
-Subject: [RFC v2 00/12] bcma: add support for embedded devices like bcm4716
-In-Reply-To: <4DFFBB6D.4030607@hauke-m.de>
-References: <1308520209-668-1-git-send-email-hauke@hauke-m.de>
-	<BANLkTim5R1ukc5OJQRRpF6EsmzeoL=SUoA@mail.gmail.com>
-	<4DFFBB6D.4030607@hauke-m.de>
-Message-ID: <BANLkTimaSJB6a2Y5DxHiLm3QLWSfsXJiNQ@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 23 Jun 2011 15:30:23 -0500
+Subject: Improvement in b43 on BCM4312 (14e4:4315)
+Message-ID: <4E03A25F.7080103@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, John Linville <linville@tuxdriver.com>
+Cc: wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-W dniu 20 czerwca 2011 23:28 u?ytkownik Hauke Mehrtens
-<hauke@hauke-m.de> napisa?:
-> On 06/20/2011 02:41 AM, Rafa? Mi?ecki wrote:
->> Hey Hauke,
->>
->> 2011/6/19 Hauke Mehrtens <hauke@hauke-m.de>:
->>> This patch series adds support for embedded devices like bcm47xx to
->>> bcma. Bcma is used on bcm4716 and bcm4718 SoCs. With these patches my
->>> bcm4716 device boots up till it tries to access the flash, because the
->>> serial flash chip is unsupported for now, this will be my next task.
->>> This adds support for MIPS cores, interrupt configuration and the
->>> serial console.
->>>
->>> These patches are based on ssb code, some patches by George Kashperko
->>> and Bernhard Loos and parts of the source code release by ASUS and
->>> Netgear for their devices.
->>>
->>> This was tested on a Netgear WNDR3400, but did not work fully because
->>> of serial flash.
->>>
->>> This is bases on linux-next next-20110616, to which subsystem
->>> maintainer should I send these patches later, as it is based on the
->>> most recent version of bcma and bcm47xx?
->>> I do not have any normal PCIe based wireless device using this bus, so
->>> I have not tested it with such a device, it will be nice to hear if it
->>> is still working on them.
->>> The parallel flash should work so it could be that it will boot on an
->>> Asus rt-n16, I have not tested that.
->>
->> I'm glad you are still working on it!
->> Unfortunately it's really late right now and I'm leaving tomorrow
->> (well, today as we passed midnight) for the whole week :( I'm not sure
->> if I'll get a chance to review this, not to mention testing against
->> any of my PCIe card.
->
-> No problem have a look at it when you find some time for it. There are
-> still some todos and the serial flash chip is also on my list, so I will
-> not run out of stuff to do. ;-)
->
->>
->>> An Ethernet driver is not included because the Braodcom source code
->>> available is not licensed under a GPL compatible license and building a
->>> new driver on that based is not possible.
->>
->> I wonder if you could write specs for that core, so I could write
->> GPL/any driver for it? Is that driver really big?
->>
-> Now I think this will be the fastest solution. Henry Ptasinski from
-> Broadcom wanted to make it possible for us to use the Braodcom driver
-> directly as a base, but talking to all the lawyers and managers at
-> Braodcom to make this possible takes a lot of time and is not promising.
-> After this and flash support is in the kernel I will work on the
-> Ethernet driver.
+Rafa? and John,
 
-They are looking for releasing firmware for other PHYs for months now, so... ;)
+I was doing routine testing today on 3.0-rc4 kernels built from wireless-testing 
+and Linus's mainline git tree. To my surprise, I noticed an important difference 
+on the netbook with a 14e4:4315 BCM4312 802.11b/g LP PHY device. Although b43 
+would work OK with light loads, it would always fail at heavy loads. Sometimes, 
+it would get the "Out of order TX status" failure, and sometimes it would just 
+lose the connection. As that machine is quite slow, I maintain its kernel source 
+on an NFS volume exported by an x86_64 machine with fast CPUs and relatively 
+fast disks.
 
--- 
-Rafa?
+Until today, the BCM4312 had never been able to complete the "make 
+modules_install" step needed to get a new kernel on the netbook, and would fail 
+in the middle of copying the modules from the NFS volume to the local 
+/lib/modules tree. After installing the wireless-testing 3.0-rc4 kernel using 
+rtl8187 as the network driver, I was quite surprised to find that the new kernel 
+could use b43 to install the new kernel from Linus's tree. After booting that 
+kernel, the failure returned.
+
+I then made other load tests on the w-t kernel without failures.
+
+There are no real differences between the b43 sources in the two kernels. There 
+are lots of changes associated with the bus reorganization; however these do not 
+seem to cause the problem.
+
+Only one of the patches to ssb seems to be the "fix", namely commit eb40e3e8 
+entitled "drivers/ssb/driver_chipcommon_pmu.c: uninitilized warning" by Connor 
+Hansen. I need to do more tests on this patch, but the kernel from Linus's tree 
+could reinstall itself when I added this patch. I see no indication in the 
+commit message regarding pushing this one to stable, but I think it should go 
+upstream to mainline and the stable trees.
+
+Larry
