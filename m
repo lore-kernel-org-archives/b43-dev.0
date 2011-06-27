@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 27 Jun 2011 14:58:53 +0200
-Subject: [PATCH 4/5] b43: HT-PHY: implement lacking 0x908 PHY reg op
-In-Reply-To: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
-References: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1309179534-8081-4-git-send-email-zajec5@gmail.com>
+Date: Mon, 27 Jun 2011 14:58:50 +0200
+Subject: [PATCH 1/5] b43: HT-PHY: prepare place for HT-PHY tables
+Message-ID: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,50 +9,222 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+They are big arrays uploaded to the hardware on init, calibration, etc.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-As always, I've hacked MMIO ops to return 0xFFFF for 0x908 PHY reg.
-This allowed finding masks used by closed source driver.
+ drivers/net/wireless/b43/Makefile        |    1 +
+ drivers/net/wireless/b43/tables_phy_ht.c |  162 ++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/tables_phy_ht.h |   20 ++++
+ 3 files changed, 183 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/net/wireless/b43/tables_phy_ht.c
+ create mode 100644 drivers/net/wireless/b43/tables_phy_ht.h
 
-At the beginning 0x908 PHY reg ops are following:
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0002
-(...)
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0020
-(...)
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0200
-
-Later this is always like this:
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0000
-
-We do not know the proper condition yet, let's use FIXME for it.
----
- drivers/net/wireless/b43/phy_ht.c |    7 ++++++-
- 1 files changed, 6 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 42bea30..3bc1fe7 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -104,9 +104,14 @@ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
- 
- 	/* TODO: separated function? */
- 	for (i = 0; i < 3; i++) {
-+		u16 mask;
- 		u32 tmp = b43_httab_read(dev, B43_HTTAB32(26, 0xE8));
- 
--		/* TODO: some op on PHY reg 0x908 */
-+		if (0) /* FIXME */
-+			mask = ~(0x2 << (i * 4));
-+		else
-+			mask = ~0;
-+		b43_phy_mask(dev, B43_PHY_EXTG(0x108), mask);
- 
- 		b43_httab_write(dev, B43_HTTAB16(7, 0x110 + i), tmp >> 16);
- 		b43_httab_write(dev, B43_HTTAB8(13, 0x63 + (i * 4)),
+diff --git a/drivers/net/wireless/b43/Makefile b/drivers/net/wireless/b43/Makefile
+index 900dc9c..1b25604 100644
+--- a/drivers/net/wireless/b43/Makefile
++++ b/drivers/net/wireless/b43/Makefile
+@@ -11,6 +11,7 @@ b43-$(CONFIG_B43_PHY_N)		+= phy_n.o
+ b43-$(CONFIG_B43_PHY_LP)	+= phy_lp.o
+ b43-$(CONFIG_B43_PHY_LP)	+= tables_lpphy.o
+ b43-$(CONFIG_B43_PHY_HT)	+= phy_ht.o
++b43-$(CONFIG_B43_PHY_HT)	+= tables_phy_ht.o
+ b43-$(CONFIG_B43_PHY_HT)	+= radio_2059.o
+ b43-y				+= sysfs.o
+ b43-y				+= xmit.o
+diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
+new file mode 100644
+index 0000000..df08be2
+--- /dev/null
++++ b/drivers/net/wireless/b43/tables_phy_ht.c
+@@ -0,0 +1,162 @@
++/*
++
++  Broadcom B43 wireless driver
++  IEEE 802.11n HT-PHY data tables
++
++  This program is free software; you can redistribute it and/or modify
++  it under the terms of the GNU General Public License as published by
++  the Free Software Foundation; either version 2 of the License, or
++  (at your option) any later version.
++
++  This program is distributed in the hope that it will be useful,
++  but WITHOUT ANY WARRANTY; without even the implied warranty of
++  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++  GNU General Public License for more details.
++
++  You should have received a copy of the GNU General Public License
++  along with this program; see the file COPYING.  If not, write to
++  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
++  Boston, MA 02110-1301, USA.
++
++*/
++
++#include "b43.h"
++#include "tables_phy_ht.h"
++#include "phy_common.h"
++#include "phy_ht.h"
++
++u32 b43_httab_read(struct b43_wldev *dev, u32 offset)
++{
++	u32 type, value;
++
++	type = offset & B43_HTTAB_TYPEMASK;
++	offset &= ~B43_HTTAB_TYPEMASK;
++	B43_WARN_ON(offset > 0xFFFF);
++
++	switch (type) {
++	case B43_HTTAB_8BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		value = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO) & 0xFF;
++		break;
++	case B43_HTTAB_16BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		value = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
++		break;
++	case B43_HTTAB_32BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		value = b43_phy_read(dev, B43_PHY_HT_TABLE_DATAHI);
++		value <<= 16;
++		value |= b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
++		break;
++	default:
++		B43_WARN_ON(1);
++		value = 0;
++	}
++
++	return value;
++}
++
++void b43_httab_read_bulk(struct b43_wldev *dev, u32 offset,
++			 unsigned int nr_elements, void *_data)
++{
++	u32 type;
++	u8 *data = _data;
++	unsigned int i;
++
++	type = offset & B43_HTTAB_TYPEMASK;
++	offset &= ~B43_HTTAB_TYPEMASK;
++	B43_WARN_ON(offset > 0xFFFF);
++
++	b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++
++	for (i = 0; i < nr_elements; i++) {
++		switch (type) {
++		case B43_HTTAB_8BIT:
++			*data = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO) & 0xFF;
++			data++;
++			break;
++		case B43_HTTAB_16BIT:
++			*((u16 *)data) = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
++			data += 2;
++			break;
++		case B43_HTTAB_32BIT:
++			*((u32 *)data) = b43_phy_read(dev, B43_PHY_HT_TABLE_DATAHI);
++			*((u32 *)data) <<= 16;
++			*((u32 *)data) |= b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
++			data += 4;
++			break;
++		default:
++			B43_WARN_ON(1);
++		}
++	}
++}
++
++void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value)
++{
++	u32 type;
++
++	type = offset & B43_HTTAB_TYPEMASK;
++	offset &= 0xFFFF;
++
++	switch (type) {
++	case B43_HTTAB_8BIT:
++		B43_WARN_ON(value & ~0xFF);
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++		break;
++	case B43_HTTAB_16BIT:
++		B43_WARN_ON(value & ~0xFFFF);
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++		break;
++	case B43_HTTAB_32BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI, value >> 16);
++		b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value & 0xFFFF);
++		break;
++	default:
++		B43_WARN_ON(1);
++	}
++
++	return;
++}
++
++void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
++			  unsigned int nr_elements, const void *_data)
++{
++	u32 type, value;
++	const u8 *data = _data;
++	unsigned int i;
++
++	type = offset & B43_HTTAB_TYPEMASK;
++	offset &= ~B43_HTTAB_TYPEMASK;
++	B43_WARN_ON(offset > 0xFFFF);
++
++	b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++
++	for (i = 0; i < nr_elements; i++) {
++		switch (type) {
++		case B43_HTTAB_8BIT:
++			value = *data;
++			data++;
++			B43_WARN_ON(value & ~0xFF);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++			break;
++		case B43_HTTAB_16BIT:
++			value = *((u16 *)data);
++			data += 2;
++			B43_WARN_ON(value & ~0xFFFF);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++			break;
++		case B43_HTTAB_32BIT:
++			value = *((u32 *)data);
++			data += 4;
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI, value >> 16);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO,
++					value & 0xFFFF);
++			break;
++		default:
++			B43_WARN_ON(1);
++		}
++	}
++}
+diff --git a/drivers/net/wireless/b43/tables_phy_ht.h b/drivers/net/wireless/b43/tables_phy_ht.h
+new file mode 100644
+index 0000000..6a13614
+--- /dev/null
++++ b/drivers/net/wireless/b43/tables_phy_ht.h
+@@ -0,0 +1,20 @@
++#ifndef B43_TABLES_PHY_HT_H_
++#define B43_TABLES_PHY_HT_H_
++
++/* The HT-PHY tables. */
++#define B43_HTTAB_TYPEMASK		0xF0000000
++#define B43_HTTAB_8BIT			0x10000000
++#define B43_HTTAB_16BIT			0x20000000
++#define B43_HTTAB_32BIT			0x30000000
++#define B43_HTTAB8(table, offset)	(((table) << 10) | (offset) | B43_HTTAB_8BIT)
++#define B43_HTTAB16(table, offset)	(((table) << 10) | (offset) | B43_HTTAB_16BIT)
++#define B43_HTTAB32(table, offset)	(((table) << 10) | (offset) | B43_HTTAB_32BIT)
++
++u32 b43_httab_read(struct b43_wldev *dev, u32 offset);
++void b43_httab_read_bulk(struct b43_wldev *dev, u32 offset,
++			 unsigned int nr_elements, void *_data);
++void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value);
++void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
++			  unsigned int nr_elements, const void *_data);
++
++#endif /* B43_TABLES_PHY_HT_H_ */
 -- 
 1.7.1
