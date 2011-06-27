@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 27 Jun 2011 14:58:50 +0200
-Subject: [PATCH 1/5] b43: HT-PHY: prepare place for HT-PHY tables
-Message-ID: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
+Date: Mon, 27 Jun 2011 14:58:54 +0200
+Subject: [PATCH 5/5] b43: HT-PHY: add channel switching tables for 2 GHz band
+In-Reply-To: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
+References: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1309179534-8081-5-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,222 +11,222 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-They are big arrays uploaded to the hardware on init, calibration, etc.
+Tables were taken from observing writes in MMIO dumps.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/Makefile        |    1 +
- drivers/net/wireless/b43/tables_phy_ht.c |  162 ++++++++++++++++++++++++++++++
- drivers/net/wireless/b43/tables_phy_ht.h |   20 ++++
- 3 files changed, 183 insertions(+), 0 deletions(-)
- create mode 100644 drivers/net/wireless/b43/tables_phy_ht.c
- create mode 100644 drivers/net/wireless/b43/tables_phy_ht.h
+Example of interesting part of the dump for 0x1 channel:
 
-diff --git a/drivers/net/wireless/b43/Makefile b/drivers/net/wireless/b43/Makefile
-index 900dc9c..1b25604 100644
---- a/drivers/net/wireless/b43/Makefile
-+++ b/drivers/net/wireless/b43/Makefile
-@@ -11,6 +11,7 @@ b43-$(CONFIG_B43_PHY_N)		+= phy_n.o
- b43-$(CONFIG_B43_PHY_LP)	+= phy_lp.o
- b43-$(CONFIG_B43_PHY_LP)	+= tables_lpphy.o
- b43-$(CONFIG_B43_PHY_HT)	+= phy_ht.o
-+b43-$(CONFIG_B43_PHY_HT)	+= tables_phy_ht.o
- b43-$(CONFIG_B43_PHY_HT)	+= radio_2059.o
- b43-y				+= sysfs.o
- b43-y				+= xmit.o
-diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
-new file mode 100644
-index 0000000..df08be2
---- /dev/null
-+++ b/drivers/net/wireless/b43/tables_phy_ht.c
-@@ -0,0 +1,162 @@
-+/*
+>>> Switch Channel(0x0001) start
+write32 0xb0600160 <- 0x00010028
+ read32 0xb0600160 -> 0x00010028
+write16 0xb0600164 <- 0x0001
+
+>>> Radio Channel Setup start
+radio_write(0x0016) <- 0x0048
+radio_write(0x0017) <- 0x0016
+radio_write(0x0022) <- 0x0030
+radio_write(0x0025) <- 0x001b
+radio_write(0x0027) <- 0x000a
+radio_write(0x0028) <- 0x000a
+radio_write(0x0029) <- 0x0030
+radio_write(0x002c) <- 0x006c
+radio_write(0x002d) <- 0x0009
+radio_write(0x0037) <- 0x000f
+radio_write(0x0041) <- 0x000a
+radio_write(0x0043) <- 0x0000
+radio_write(0x0047) <- 0x000a
+radio_write(0x004a) <- 0x0000
+radio_write(0x0058) <- 0x0061
+radio_write(0x005a) <- 0x0003
+radio_write(0x006a) <- 0x0000
+ read32 0xb0600120 -> 0xc4120402
+radio_write(0x006d) <- 0x0000
+radio_write(0x006e) <- 0x0000
+radio_write(0x0092) <- 0x00f0
+radio_write(0x0098) <- 0x0000
+radio_write(0x044a) <- 0x0000
+radio_write(0x0458) <- 0x0061
+radio_write(0x045a) <- 0x0003
+radio_write(0x046a) <- 0x0000
+radio_write(0x046d) <- 0x0000
+radio_write(0x046e) <- 0x0000
+radio_write(0x0492) <- 0x00f0
+radio_write(0x0498) <- 0x0000
+radio_write(0x084a) <- 0x0000
+radio_write(0x0858) <- 0x0061
+radio_write(0x085a) <- 0x0003
+radio_write(0x086a) <- 0x0000
+radio_write(0x086d) <- 0x0000
+radio_write(0x086e) <- 0x0000
+radio_write(0x0892) <- 0x00f0
+radio_write(0x0898) <- 0x0000
+ radio_read(0x002b) -> 0x0009
+radio_write(0x002b) <- 0x0008
+ radio_read(0x002e) -> 0x0004
+radio_write(0x002e) <- 0x0000
+ radio_read(0x002e) -> 0x0000
+radio_write(0x002e) <- 0x0004
+ radio_read(0x002b) -> 0x0008
+radio_write(0x002b) <- 0x0009
+>>> Radio Channel Setup end
+
+ phy_read(0x0009) -> 0x0000
+phy_write(0x01ce) <- 0x03c9
+phy_write(0x01cf) <- 0x03c5
+phy_write(0x01d0) <- 0x03c1
+phy_write(0x01d1) <- 0x043a
+phy_write(0x01d2) <- 0x043f
+phy_write(0x01d3) <- 0x0443
+---
+ drivers/net/wireless/b43/radio_2059.c |  135 +++++++++++++++++++++++++++++++++
+ 1 files changed, 135 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/radio_2059.c b/drivers/net/wireless/b43/radio_2059.c
+index 55d7da7..23dea4b 100644
+--- a/drivers/net/wireless/b43/radio_2059.c
++++ b/drivers/net/wireless/b43/radio_2059.c
+@@ -23,6 +23,141 @@
+ #include "b43.h"
+ #include "radio_2059.h"
+ 
++#define RADIOREGS(r00, r01, r02, r03, r04, r05, r06, r07, r08, r09, \
++		  r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, \
++		  r20, r21, r22, r23, r24, r25, r26, r27, r28) \
++	.radio_syn16			= r00,	\
++	.radio_syn17			= r01,	\
++	.radio_syn22			= r02,	\
++	.radio_syn25			= r03,	\
++	.radio_syn27			= r04,	\
++	.radio_syn28			= r05,	\
++	.radio_syn29			= r06,	\
++	.radio_syn2c			= r07,	\
++	.radio_syn2d			= r08,	\
++	.radio_syn37			= r09,	\
++	.radio_syn41			= r10,	\
++	.radio_syn43			= r11,	\
++	.radio_syn47			= r12,	\
++	.radio_syn4a			= r13,	\
++	.radio_syn58			= r14,	\
++	.radio_syn5a			= r15,	\
++	.radio_syn6a			= r16,	\
++	.radio_syn6d			= r17,	\
++	.radio_syn6e			= r18,	\
++	.radio_syn92			= r19,	\
++	.radio_syn98			= r20,	\
++	.radio_rxtx4a			= r21,	\
++	.radio_rxtx58			= r22,	\
++	.radio_rxtx5a			= r23,	\
++	.radio_rxtx6a			= r24,	\
++	.radio_rxtx6d			= r25,	\
++	.radio_rxtx6e			= r26,	\
++	.radio_rxtx92			= r27,	\
++	.radio_rxtx98			= r28
 +
-+  Broadcom B43 wireless driver
-+  IEEE 802.11n HT-PHY data tables
++#define PHYREGS(r0, r1, r2, r3, r4, r5)	\
++	.phy_regs.bw1	= r0,	\
++	.phy_regs.bw2	= r1,	\
++	.phy_regs.bw3	= r2,	\
++	.phy_regs.bw4	= r3,	\
++	.phy_regs.bw5	= r4,	\
++	.phy_regs.bw6	= r5
 +
-+  This program is free software; you can redistribute it and/or modify
-+  it under the terms of the GNU General Public License as published by
-+  the Free Software Foundation; either version 2 of the License, or
-+  (at your option) any later version.
++static const struct b43_phy_ht_channeltab_e_radio2059 b43_phy_ht_channeltab_radio2059[] = {
++  {	.freq			= 2412,
++	RADIOREGS(0x48, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x6c,
++		  0x09, 0x0f, 0x0a, 0x00, 0x0a, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03c9, 0x03c5, 0x03c1, 0x043a, 0x043f, 0x0443),
++  },
++  {	.freq			= 2417,
++	RADIOREGS(0x4b, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x71,
++		  0x09, 0x0f, 0x0a, 0x00, 0x0a, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03cb, 0x03c7, 0x03c3, 0x0438, 0x043d, 0x0441),
++  },
++  {	.freq			= 2422,
++	RADIOREGS(0x4e, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x76,
++		  0x09, 0x0f, 0x09, 0x00, 0x09, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03cd, 0x03c9, 0x03c5, 0x0436, 0x043a, 0x043f),
++  },
++  {	.freq			= 2427,
++	RADIOREGS(0x52, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x7b,
++		  0x09, 0x0f, 0x09, 0x00, 0x09, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03cf, 0x03cb, 0x03c7, 0x0434, 0x0438, 0x043d),
++  },
++  {	.freq			= 2432,
++	RADIOREGS(0x55, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x80,
++		  0x09, 0x0f, 0x08, 0x00, 0x08, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03d1, 0x03cd, 0x03c9, 0x0431, 0x0436, 0x043a),
++  },
++  {	.freq			= 2437,
++	RADIOREGS(0x58, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x85,
++		  0x09, 0x0f, 0x08, 0x00, 0x08, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03d3, 0x03cf, 0x03cb, 0x042f, 0x0434, 0x0438),
++  },
++  {	.freq			= 2442,
++	RADIOREGS(0x5c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8a,
++		  0x09, 0x0f, 0x07, 0x00, 0x07, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03d5, 0x03d1, 0x03cd, 0x042d, 0x0431, 0x0436),
++  },
++  {	.freq			= 2447,
++	RADIOREGS(0x5f, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8f,
++		  0x09, 0x0f, 0x07, 0x00, 0x07, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03d7, 0x03d3, 0x03cf, 0x042b, 0x042f, 0x0434),
++  },
++  {	.freq			= 2452,
++	RADIOREGS(0x62, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x94,
++		  0x09, 0x0f, 0x07, 0x00, 0x07, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03d9, 0x03d5, 0x03d1, 0x0429, 0x042d, 0x0431),
++  },
++  {	.freq			= 2457,
++	RADIOREGS(0x66, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x99,
++		  0x09, 0x0f, 0x06, 0x00, 0x06, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03db, 0x03d7, 0x03d3, 0x0427, 0x042b, 0x042f),
++  },
++  {	.freq			= 2462,
++	RADIOREGS(0x69, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x9e,
++		  0x09, 0x0f, 0x06, 0x00, 0x06, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03dd, 0x03d9, 0x03d5, 0x0424, 0x0429, 0x042d),
++  },
++  {	.freq			= 2467,
++	RADIOREGS(0x6c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa3,
++		  0x09, 0x0f, 0x05, 0x00, 0x05, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03df, 0x03db, 0x03d7, 0x0422, 0x0427, 0x042b),
++  },
++  {	.freq			= 2472,
++	RADIOREGS(0x70, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa8,
++		  0x09, 0x0f, 0x05, 0x00, 0x05, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
++		  0x00, 0x00, 0x00, 0xf0, 0x00),
++	PHYREGS(0x03e1, 0x03dd, 0x03d9, 0x0420, 0x0424, 0x0429),
++  },
++};
 +
-+  This program is distributed in the hope that it will be useful,
-+  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+  GNU General Public License for more details.
-+
-+  You should have received a copy of the GNU General Public License
-+  along with this program; see the file COPYING.  If not, write to
-+  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
-+  Boston, MA 02110-1301, USA.
-+
-+*/
-+
-+#include "b43.h"
-+#include "tables_phy_ht.h"
-+#include "phy_common.h"
-+#include "phy_ht.h"
-+
-+u32 b43_httab_read(struct b43_wldev *dev, u32 offset)
-+{
-+	u32 type, value;
-+
-+	type = offset & B43_HTTAB_TYPEMASK;
-+	offset &= ~B43_HTTAB_TYPEMASK;
-+	B43_WARN_ON(offset > 0xFFFF);
-+
-+	switch (type) {
-+	case B43_HTTAB_8BIT:
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+		value = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO) & 0xFF;
-+		break;
-+	case B43_HTTAB_16BIT:
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+		value = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
-+		break;
-+	case B43_HTTAB_32BIT:
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+		value = b43_phy_read(dev, B43_PHY_HT_TABLE_DATAHI);
-+		value <<= 16;
-+		value |= b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
-+		break;
-+	default:
-+		B43_WARN_ON(1);
-+		value = 0;
-+	}
-+
-+	return value;
-+}
-+
-+void b43_httab_read_bulk(struct b43_wldev *dev, u32 offset,
-+			 unsigned int nr_elements, void *_data)
-+{
-+	u32 type;
-+	u8 *data = _data;
-+	unsigned int i;
-+
-+	type = offset & B43_HTTAB_TYPEMASK;
-+	offset &= ~B43_HTTAB_TYPEMASK;
-+	B43_WARN_ON(offset > 0xFFFF);
-+
-+	b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+
-+	for (i = 0; i < nr_elements; i++) {
-+		switch (type) {
-+		case B43_HTTAB_8BIT:
-+			*data = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO) & 0xFF;
-+			data++;
-+			break;
-+		case B43_HTTAB_16BIT:
-+			*((u16 *)data) = b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
-+			data += 2;
-+			break;
-+		case B43_HTTAB_32BIT:
-+			*((u32 *)data) = b43_phy_read(dev, B43_PHY_HT_TABLE_DATAHI);
-+			*((u32 *)data) <<= 16;
-+			*((u32 *)data) |= b43_phy_read(dev, B43_PHY_HT_TABLE_DATALO);
-+			data += 4;
-+			break;
-+		default:
-+			B43_WARN_ON(1);
-+		}
-+	}
-+}
-+
-+void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value)
-+{
-+	u32 type;
-+
-+	type = offset & B43_HTTAB_TYPEMASK;
-+	offset &= 0xFFFF;
-+
-+	switch (type) {
-+	case B43_HTTAB_8BIT:
-+		B43_WARN_ON(value & ~0xFF);
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
-+		break;
-+	case B43_HTTAB_16BIT:
-+		B43_WARN_ON(value & ~0xFFFF);
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
-+		break;
-+	case B43_HTTAB_32BIT:
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI, value >> 16);
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value & 0xFFFF);
-+		break;
-+	default:
-+		B43_WARN_ON(1);
-+	}
-+
-+	return;
-+}
-+
-+void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
-+			  unsigned int nr_elements, const void *_data)
-+{
-+	u32 type, value;
-+	const u8 *data = _data;
-+	unsigned int i;
-+
-+	type = offset & B43_HTTAB_TYPEMASK;
-+	offset &= ~B43_HTTAB_TYPEMASK;
-+	B43_WARN_ON(offset > 0xFFFF);
-+
-+	b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-+
-+	for (i = 0; i < nr_elements; i++) {
-+		switch (type) {
-+		case B43_HTTAB_8BIT:
-+			value = *data;
-+			data++;
-+			B43_WARN_ON(value & ~0xFF);
-+			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
-+			break;
-+		case B43_HTTAB_16BIT:
-+			value = *((u16 *)data);
-+			data += 2;
-+			B43_WARN_ON(value & ~0xFFFF);
-+			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
-+			break;
-+		case B43_HTTAB_32BIT:
-+			value = *((u32 *)data);
-+			data += 4;
-+			b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI, value >> 16);
-+			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO,
-+					value & 0xFFFF);
-+			break;
-+		default:
-+			B43_WARN_ON(1);
-+		}
-+	}
-+}
-diff --git a/drivers/net/wireless/b43/tables_phy_ht.h b/drivers/net/wireless/b43/tables_phy_ht.h
-new file mode 100644
-index 0000000..6a13614
---- /dev/null
-+++ b/drivers/net/wireless/b43/tables_phy_ht.h
-@@ -0,0 +1,20 @@
-+#ifndef B43_TABLES_PHY_HT_H_
-+#define B43_TABLES_PHY_HT_H_
-+
-+/* The HT-PHY tables. */
-+#define B43_HTTAB_TYPEMASK		0xF0000000
-+#define B43_HTTAB_8BIT			0x10000000
-+#define B43_HTTAB_16BIT			0x20000000
-+#define B43_HTTAB_32BIT			0x30000000
-+#define B43_HTTAB8(table, offset)	(((table) << 10) | (offset) | B43_HTTAB_8BIT)
-+#define B43_HTTAB16(table, offset)	(((table) << 10) | (offset) | B43_HTTAB_16BIT)
-+#define B43_HTTAB32(table, offset)	(((table) << 10) | (offset) | B43_HTTAB_32BIT)
-+
-+u32 b43_httab_read(struct b43_wldev *dev, u32 offset);
-+void b43_httab_read_bulk(struct b43_wldev *dev, u32 offset,
-+			 unsigned int nr_elements, void *_data);
-+void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value);
-+void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
-+			  unsigned int nr_elements, const void *_data);
-+
-+#endif /* B43_TABLES_PHY_HT_H_ */
+ const struct b43_phy_ht_channeltab_e_radio2059
+ *b43_phy_ht_get_channeltab_e_r2059(struct b43_wldev *dev, u16 freq)
+ {
 -- 
 1.7.1
