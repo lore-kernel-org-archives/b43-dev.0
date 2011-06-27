@@ -1,90 +1,94 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Mon, 27 Jun 2011 00:29:06 +0200
-Subject: Regression in ssb pcicore with SoC
-Message-ID: <4E07B2B2.4060204@hauke-m.de>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Mon, 27 Jun 2011 14:58:51 +0200
+Subject: [PATCH 2/5] b43: HT-PHY: upload PHY values when switching channel
+In-Reply-To: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
+References: <1309179534-8081-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1309179534-8081-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Hi Rafa?,
+After calibrating radio you can find few PHY writes in MMIO dumps:
+ phy_read(0x0009) -> 0x0000
+phy_write(0x01ce) <- 0x03dd
+phy_write(0x01cf) <- 0x03d9
+phy_write(0x01d0) <- 0x03d5
+phy_write(0x01d1) <- 0x0424
+phy_write(0x01d2) <- 0x0429
+phy_write(0x01d3) <- 0x042d
+By comparing to N-PHY code we found out that they are PHY tables for
+channel switching plus band info read at the beginning.
 
-I tried linux-3.0-rc4 on my Asus WL-500GP and got a kernel panic because
-of a data bus error. This was caused by this commit you made:
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_ht.c |   16 +++++++++++++++-
+ drivers/net/wireless/b43/phy_ht.h |   14 +++++++++++++-
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
-commit af335a6cbc3dfcba64ad31561c0da563d1c43a2d
-Author: Rafa? Mi?ecki <zajec5@gmail.com>
-Date:   Wed Apr 27 18:21:34 2011 +0200
-
-    ssb: pci: early fix for SPROM core index
-
-    Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-    Signed-off-by: John W. Linville <linville@tuxdriver.com>
-
-My device has an PCI controller, in host mode and this device does not
-have a sprom in its address space, so ssb_pcicore_fix_sprom_core_index()
-should be be called. I tried to find the same function in Broadcom
-source, but did not had success.
-
-In the Broadcom open source code the pci init is done in
-./driver/nicpci.c and all calls to sporm are done through
-pcie_war_pci_setup() which is our ssb_pcicore_pcie_setup_workarounds()
-in ssb. I think ssb_pcicore_fix_sprom_core_index() should be called from
-somewhere in ssb_pcicore_pcie_setup_workarounds().
-
-Could you please explain what you want to fix in
-ssb_pcicore_fix_sprom_core_index() ?.
-
-I will have a closer look at it tomorrow evening.
-
-Hauke
-
-Switched to NOHz mode on CPU #0
-Data bus error, epc == 8017ed58, ra == 80225838
-Oops[#1]:
-Cpu 0
-$ 0   : 00000000 10008000 b8000000 00000001
-$ 4   : 80293b5c 00000caa ffffffff 00000000
-$ 8   : 0000000a 00000003 00000001 696d6d20
-$12   : ffffffff 00000000 00000000 ffffffff
-$16   : 802d0140 b8004800 802c0000 00000000
-$20   : 00000000 802c0000 00000000 802d04d4
-$24   : 00000018 80151a00
-$28   : 81816000 81817df8 8029bda0 80225838
-Hi    : 00000000
-Lo    : 00000000
-epc   : 8017ed58 ssb_ssb_read16+0x48/0x60
-    Not tainted
-ra    : 80225838 ssb_pcicore_init+0x54/0x3b4
-Status: 10008003    KERNEL EXL IE
-Cause : 0080001c
-PrId  : 00029006 (Broadcom BMIPS3300)
-Modules linked in:
-Process swapper (pid: 1, threadinfo=81816000, task=81814888, tls=00000000)
-Stack : 8029b214 802d0140 b8000000 00004800 81863244 802d03d4 802d0204
-80225838
-        00000000 80117294 00000000 81862388 00000000 802d0140 00000000
-8017f1cc
-        8029b214 8029c0f4 81862388 802d0140 802a0000 802c0000 00000000
-802251c4
-        8029c0f4 00000000 802a0000 8015b4bc 00000000 00000000 00000000
-802a0000
-        802c0000 00000000 00000000 802c0000 00000000 00000000 00000000
-802b0eb8
-        ...
-Call Trace:
-[<8017ed58>] ssb_ssb_read16+0x48/0x60
-[<80225838>] ssb_pcicore_init+0x54/0x3b4
-[<802251c4>] ssb_attach_queued_buses+0xa0/0x2f4
-[<802b0eb8>] ssb_modinit+0x3c/0xb0
-[<800019b0>] do_one_initcall+0xf0/0x1e0
-[<802a09d0>] kernel_init+0x94/0x12c
-[<80006d00>] kernel_thread_helper+0x10/0x18
-
-
-Code: 8e020000  8fbf001c  00518821
- 8fb00014  3042ffff  8fb10018  03e00008  27bd0020
-Disabling lock debugging due to kernel taint
-Kernel panic - not syncing: Attempted to kill init!
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 72f01ce..c48bcf6 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -82,7 +82,21 @@ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+ 				const struct b43_phy_ht_channeltab_e_phy *e,
+ 				struct ieee80211_channel *new_channel)
+ {
+-	/* TODO */
++	bool old_band_5ghz;
++
++	old_band_5ghz = b43_phy_read(dev, B43_PHY_HT_BANDCTL) & 0; /* FIXME */
++	if (new_channel->band == IEEE80211_BAND_5GHZ && !old_band_5ghz) {
++		/* TODO */
++	} else if (new_channel->band == IEEE80211_BAND_2GHZ && old_band_5ghz) {
++		/* TODO */
++	}
++
++	b43_phy_write(dev, B43_PHY_HT_BW1, e->bw1);
++	b43_phy_write(dev, B43_PHY_HT_BW2, e->bw2);
++	b43_phy_write(dev, B43_PHY_HT_BW3, e->bw3);
++	b43_phy_write(dev, B43_PHY_HT_BW4, e->bw4);
++	b43_phy_write(dev, B43_PHY_HT_BW5, e->bw5);
++	b43_phy_write(dev, B43_PHY_HT_BW6, e->bw6);
+ }
+ 
+ static int b43_phy_ht_set_channel(struct b43_wldev *dev,
+diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
+index afa448d..7ad7aff 100644
+--- a/drivers/net/wireless/b43/phy_ht.h
++++ b/drivers/net/wireless/b43/phy_ht.h
+@@ -4,9 +4,16 @@
+ #include "phy_common.h"
+ 
+ 
++#define B43_PHY_HT_BANDCTL			0x009 /* Band control */
+ #define B43_PHY_HT_TABLE_ADDR			0x072 /* Table address */
+ #define B43_PHY_HT_TABLE_DATALO			0x073 /* Table data low */
+ #define B43_PHY_HT_TABLE_DATAHI			0x074 /* Table data high */
++#define B43_PHY_HT_BW1				0x1CE
++#define B43_PHY_HT_BW2				0x1CF
++#define B43_PHY_HT_BW3				0x1D0
++#define B43_PHY_HT_BW4				0x1D1
++#define B43_PHY_HT_BW5				0x1D2
++#define B43_PHY_HT_BW6				0x1D3
+ 
+ #define B43_PHY_HT_RF_CTL1			B43_PHY_EXTG(0x010)
+ 
+@@ -20,7 +27,12 @@
+ 
+ /* Values for PHY registers used on channel switching */
+ struct b43_phy_ht_channeltab_e_phy {
+-	/* TODO */
++	u16 bw1;
++	u16 bw2;
++	u16 bw3;
++	u16 bw4;
++	u16 bw5;
++	u16 bw6;
+ };
+ 
+ 
+-- 
+1.7.1
