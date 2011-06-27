@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 27 Jun 2011 15:04:47 +0200
-Subject: [PATCH 4/5 V2] b43: HT-PHY: implement lacking 0x908 PHY reg op
-Message-ID: <1309179888-8410-4-git-send-email-zajec5@gmail.com>
+Date: Tue, 28 Jun 2011 00:08:53 +0200
+Subject: [PATCH 2/2] b43: HT-PHY: init radio when enabling it
+In-Reply-To: <1309212533-4473-1-git-send-email-zajec5@gmail.com>
+References: <1309212533-4473-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1309212533-4473-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,52 +11,128 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Masks and sets were found in MMIO dumps by using MMIO hacks. Shortly:
+radio_write(0x0c51) <- 0x0070
+radio_write(0x0c5a) <- 0x0003
+radio_write(0x0146) <- 0x0003
+radio_write(0x0546) <- 0x0003
+radio_write(0x0946) <- 0x0003
+radio_write(0x002e) <- 0x0078
+radio_write(0x00c0) <- 0x0080
+radio_write(0x002e) <- 0xff87
+radio_write(0x00c0) <- 0xff7f
+radio_write(0x0011) <- 0xfff7
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-V2: do not negate masks
+The long versions of the dumps that were used to write it:
 
-As always, I've hacked MMIO ops to return 0xFFFF for 0x908 PHY reg.
-This allowed finding masks used by closed source driver.
+radio_write(0x0c51) <- 0x0070
+radio_write(0x0c5a) <- 0x0003
 
-At the beginning 0x908 PHY reg ops are following:
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0002
-(...)
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0020
-(...)
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0200
+ radio_read(0x0146) -> 0x0000
+radio_write(0x0146) <- 0x0003
+ radio_read(0x0546) -> 0x0000
+radio_write(0x0546) <- 0x0003
+ radio_read(0x0946) -> 0x0000
+radio_write(0x0946) <- 0x0003
 
-Later this is always like this:
- phy_read(0x0908) -> 0xffff
-phy_write(0x0908) <- 0x0000
+ radio_read(0x002e) -> 0x0000
+radio_write(0x002e) <- 0x0078
+ radio_read(0x00c0) -> 0x0000
+radio_write(0x00c0) <- 0x0080
+ radio_read(0x002e) -> 0x0000
+radio_write(0x002e) <- 0x0000
+ radio_read(0x00c0) -> 0x0000
+radio_write(0x00c0) <- 0x0000
 
-We do not know the proper condition yet, let's use FIXME for it.
+ radio_read(0x0011) -> 0x0000
+radio_write(0x0011) <- 0x0000
+
+*****
+
+radio_write(0x0c51) <- 0x0070
+radio_write(0x0c5a) <- 0x0003
+
+ radio_read(0x0146) -> 0xffff
+radio_write(0x0146) <- 0xffff
+ radio_read(0x0546) -> 0xffff
+radio_write(0x0546) <- 0xffff
+ radio_read(0x0946) -> 0xffff
+radio_write(0x0946) <- 0xffff
+
+ radio_read(0x002e) -> 0xffff
+radio_write(0x002e) <- 0xffff
+ radio_read(0x00c0) -> 0xffff
+radio_write(0x00c0) <- 0xffff
+ radio_read(0x002e) -> 0xffff
+radio_write(0x002e) <- 0xff87
+ radio_read(0x00c0) -> 0xffff
+radio_write(0x00c0) <- 0xff7f
+
+ radio_read(0x0011) -> 0xffff
+radio_write(0x0011) <- 0xfff7
 ---
- drivers/net/wireless/b43/phy_ht.c |    7 ++++++-
- 1 files changed, 6 insertions(+), 1 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c |   33 +++++++++++++++++++++++++++++++++
+ 1 files changed, 33 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 42bea30..f09bb6e 100644
+index 8df92e1..28fb746 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -104,9 +104,14 @@ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+@@ -28,6 +28,10 @@
+ #include "radio_2059.h"
+ #include "main.h"
  
- 	/* TODO: separated function? */
- 	for (i = 0; i < 3; i++) {
-+		u16 mask;
- 		u32 tmp = b43_httab_read(dev, B43_HTTAB32(26, 0xE8));
++/**************************************************
++ * Radio 2059.
++ **************************************************/
++
+ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
+ 			const struct b43_phy_ht_channeltab_e_radio2059 *e)
+ {
+@@ -79,6 +83,30 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
+ 	udelay(300);
+ }
  
--		/* TODO: some op on PHY reg 0x908 */
-+		if (0) /* FIXME */
-+			mask = 0x2 << (i * 4);
++static void b43_radio_2059_init(struct b43_wldev *dev)
++{
++	const u16 routing[] = { R2059_SYN, R2059_TXRX0, R2059_RXRX1 };
++	u8 i;
++
++	b43_radio_write(dev, R2059_ALL | 0x51, 0x0070);
++	b43_radio_write(dev, R2059_ALL | 0x5a, 0x0003);
++
++	for (i = 0; i < ARRAY_SIZE(routing); i++)
++		b43_radio_set(dev, routing[i] | 0x146, 0x3);
++
++	b43_radio_set(dev, 0x2e, 0x0078);
++	b43_radio_set(dev, 0xc0, 0x0080);
++	msleep(2);
++	b43_radio_mask(dev, 0x2e, ~0x0078);
++	b43_radio_mask(dev, 0xc0, ~0x0080);
++
++	b43_radio_mask(dev, 0x11, 0x0008);
++}
++
++/**************************************************
++ * Channel switching ops.
++ **************************************************/
++
+ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+ 				const struct b43_phy_ht_channeltab_e_phy *e,
+ 				struct ieee80211_channel *new_channel)
+@@ -200,6 +228,11 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
+ 		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x1);
+ 		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
+ 		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x2);
++
++		if (dev->phy.radio_ver == 0x2059)
++			b43_radio_2059_init(dev);
 +		else
-+			mask = 0;
-+		b43_phy_mask(dev, B43_PHY_EXTG(0x108), mask);
++			B43_WARN_ON(1);
+ 	}
+ }
  
- 		b43_httab_write(dev, B43_HTTAB16(7, 0x110 + i), tmp >> 16);
- 		b43_httab_write(dev, B43_HTTAB8(13, 0x63 + (i * 4)),
 -- 
 1.7.1
