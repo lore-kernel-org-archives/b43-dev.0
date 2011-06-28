@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 28 Jun 2011 09:28:39 +0200
-Subject: [PATCH 2/2] b43: HT-PHY: basic PHY init
-In-Reply-To: <1309246119-6878-1-git-send-email-zajec5@gmail.com>
-References: <1309246119-6878-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1309246119-6878-2-git-send-email-zajec5@gmail.com>
+Date: Wed, 29 Jun 2011 00:56:49 +0200
+Subject: [PATCH] b43: HT-PHY: correct 0x2059 radio init
+Message-ID: <1309301809-22931-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,51 +9,176 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Sometimes additional steps are performed while initializing 2059 radio.
+We did not find the condition yet, so make it always true for now.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_ht.c        |    9 +++++++--
- drivers/net/wireless/b43/tables_phy_ht.h |    2 ++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+As always, ops were found by fooling closed driver with MMIO ops:
+
+1) Faking 0x0000 reads to find bits for SET ops:
+ radio_read(0x0804) -> 0x0000
+radio_write(0x0804) <- 0x0001
+udelay(10)
+ radio_read(0x08bf) -> 0x0000
+radio_write(0x08bf) <- 0x0001
+ radio_read(0x099b) -> 0x0000
+radio_write(0x099b) <- 0x0002
+ radio_read(0x0804) -> 0x0000
+radio_write(0x0804) <- 0x0002
+udelay(100);
+ radio_read(0x0804) -> 0x0000
+radio_write(0x0804) <- 0x0000
+ radio_read(0x0945) -> 0x0018
+(...)
+ radio_read(0x0945) -> 0x0018
+ radio_read(0x0804) -> 0x0000
+radio_write(0x0804) <- 0x0000
+ radio_read(0x000a) -> 0x0000
+radio_write(0x000a) <- 0x0060
+
+radio_write(0x017f) <- 0x0061
+radio_write(0x013d) <- 0x006e
+radio_write(0x013e) <- 0x00e9
+radio_write(0x013c) <- 0x0055
+ radio_read(0x0140) -> 0x0000
+ radio_read(0x0140) -> 0x0001
+ radio_read(0x0140) -> 0x0002
+radio_write(0x013c) <- 0x0015
+
+radio_write(0x017f) <- 0x0069
+radio_write(0x013d) <- 0x006e
+radio_write(0x013e) <- 0x00d5
+radio_write(0x013c) <- 0x0055
+ radio_read(0x0140) -> 0x0002
+radio_write(0x013c) <- 0x0015
+
+radio_write(0x017f) <- 0x0073
+radio_write(0x013d) <- 0x006e
+radio_write(0x013e) <- 0x0099
+radio_write(0x013c) <- 0x0055
+ radio_read(0x0140) -> 0x0002
+radio_write(0x013c) <- 0x0015
+
+ radio_read(0x017f) -> 0x0000
+radio_write(0x017f) <- 0x0000
+
+2) Faking 0xFFFF reads to find bits for MASK ops:
+ radio_read(0x0804) -> 0xffff
+radio_write(0x0804) <- 0xffff
+udelay(10)
+ radio_read(0x08bf) -> 0xffff
+radio_write(0x08bf) <- 0xffff
+ radio_read(0x099b) -> 0xffff
+radio_write(0x099b) <- 0xfffe
+ radio_read(0x0804) -> 0xffff
+radio_write(0x0804) <- 0xffff
+ radio_read(0x0804) -> 0xffff
+radio_write(0x0804) <- 0xfffd
+ radio_read(0x0945) -> 0x001e
+(...)
+ radio_read(0x0945) -> 0x003d
+ radio_read(0x0804) -> 0xffff
+radio_write(0x0804) <- 0xfffe
+ radio_read(0x000a) -> 0xffff
+radio_write(0x000a) <- 0xffff
+
+radio_write(0x017f) <- 0x0061
+radio_write(0x013d) <- 0x006e
+radio_write(0x013e) <- 0x00e9
+radio_write(0x013c) <- 0x0055
+ radio_read(0x0140) -> 0x0000
+ radio_read(0x0140) -> 0x0001
+ radio_read(0x0140) -> 0x0002
+radio_write(0x013c) <- 0x0015
+
+radio_write(0x017f) <- 0x0069
+radio_write(0x013d) <- 0x006e
+radio_write(0x013e) <- 0x00d5
+radio_write(0x013c) <- 0x0055
+ radio_read(0x0140) -> 0x0002
+radio_write(0x013c) <- 0x0015
+
+radio_write(0x017f) <- 0x0073
+radio_write(0x013d) <- 0x006e
+radio_write(0x013e) <- 0x0099
+radio_write(0x013c) <- 0x0055
+ radio_read(0x0140) -> 0x0002
+radio_write(0x013c) <- 0x0015
+
+ radio_read(0x017f) -> 0xffff
+radio_write(0x017f) <- 0xfffe
+---
+ drivers/net/wireless/b43/phy_ht.c |   50 ++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 49 insertions(+), 1 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 28fb746..69412d1 100644
+index 69412d1..30b19c6 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -205,6 +205,13 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
- 	memset(phy_ht, 0, sizeof(*phy_ht));
+@@ -86,7 +86,10 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
+ static void b43_radio_2059_init(struct b43_wldev *dev)
+ {
+ 	const u16 routing[] = { R2059_SYN, R2059_TXRX0, R2059_RXRX1 };
+-	u8 i;
++	const u16 radio_values[3][2] = {
++		{ 0x61, 0xE9 }, { 0x69, 0xD5 }, { 0x73, 0x99 },
++	};
++	u16 i, j;
+ 
+ 	b43_radio_write(dev, R2059_ALL | 0x51, 0x0070);
+ 	b43_radio_write(dev, R2059_ALL | 0x5a, 0x0003);
+@@ -100,6 +103,51 @@ static void b43_radio_2059_init(struct b43_wldev *dev)
+ 	b43_radio_mask(dev, 0x2e, ~0x0078);
+ 	b43_radio_mask(dev, 0xc0, ~0x0080);
+ 
++	if (1) { /* FIXME */
++		b43_radio_set(dev, R2059_RXRX1 | 0x4, 0x1);
++		udelay(10);
++		b43_radio_set(dev, R2059_RXRX1 | 0x0BF, 0x1);
++		b43_radio_maskset(dev, R2059_RXRX1 | 0x19B, 0x3, 0x2);
++
++		b43_radio_set(dev, R2059_RXRX1 | 0x4, 0x2);
++		udelay(100);
++		b43_radio_mask(dev, R2059_RXRX1 | 0x4, ~0x2);
++
++		for (i = 0; i < 10000; i++) {
++			if (b43_radio_read(dev, R2059_RXRX1 | 0x145) & 1) {
++				i = 0;
++				break;
++			}
++			udelay(100);
++		}
++		if (i)
++			b43err(dev->wl, "radio 0x945 timeout\n");
++
++		b43_radio_mask(dev, R2059_RXRX1 | 0x4, ~0x1);
++		b43_radio_set(dev, 0xa, 0x60);
++
++		for (i = 0; i < 3; i++) {
++			b43_radio_write(dev, 0x17F, radio_values[i][0]);
++			b43_radio_write(dev, 0x13D, 0x6E);
++			b43_radio_write(dev, 0x13E, radio_values[i][1]);
++			b43_radio_write(dev, 0x13C, 0x55);
++
++			for (j = 0; j < 10000; j++) {
++				if (b43_radio_read(dev, 0x140) & 2) {
++					j = 0;
++					break;
++				}
++				udelay(500);
++			}
++			if (j)
++				b43err(dev->wl, "radio 0x140 timeout\n");
++
++			b43_radio_write(dev, 0x13C, 0x15);
++		}
++
++		b43_radio_mask(dev, 0x17F, ~0x1);
++	}
++
+ 	b43_radio_mask(dev, 0x11, 0x0008);
  }
  
-+static int b43_phy_ht_op_init(struct b43_wldev *dev)
-+{
-+	b43_phy_ht_tables_init(dev);
-+
-+	return 0;
-+}
-+
- static void b43_phy_ht_op_free(struct b43_wldev *dev)
- {
- 	struct b43_phy *phy = &dev->phy;
-@@ -326,9 +333,7 @@ const struct b43_phy_operations b43_phyops_ht = {
- 	.allocate		= b43_phy_ht_op_allocate,
- 	.free			= b43_phy_ht_op_free,
- 	.prepare_structs	= b43_phy_ht_op_prepare_structs,
--	/*
- 	.init			= b43_phy_ht_op_init,
--	*/
- 	.phy_read		= b43_phy_ht_op_read,
- 	.phy_write		= b43_phy_ht_op_write,
- 	.phy_maskset		= b43_phy_ht_op_maskset,
-diff --git a/drivers/net/wireless/b43/tables_phy_ht.h b/drivers/net/wireless/b43/tables_phy_ht.h
-index 6a13614..ea3be38 100644
---- a/drivers/net/wireless/b43/tables_phy_ht.h
-+++ b/drivers/net/wireless/b43/tables_phy_ht.h
-@@ -17,4 +17,6 @@ void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value);
- void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
- 			  unsigned int nr_elements, const void *_data);
- 
-+void b43_phy_ht_tables_init(struct b43_wldev *dev);
-+
- #endif /* B43_TABLES_PHY_HT_H_ */
 -- 
 1.7.1
