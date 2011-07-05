@@ -1,147 +1,180 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue,  5 Jul 2011 19:48:26 +0200
-Subject: [PATCH] bcma: detect PCI core working in hostmode
-Message-ID: <1309888106-30232-1-git-send-email-zajec5@gmail.com>
+Date: Tue,  5 Jul 2011 23:54:08 +0200
+Subject: [PATCH 2/2] b43: implement BCMA bus ops
+In-Reply-To: <1309902848-3141-1-git-send-email-zajec5@gmail.com>
+References: <1309902848-3141-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1309902848-3141-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>, "John W. Linville" <linville@tuxdriver.com>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-We must not init it like clientmode one, it would break device (tested
-by Hauke on BCM4718). Add stub hostmode driver for now.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-Hauke: will you add your Signed-off-by?
+ drivers/net/wireless/b43/bus.c  |  100 +++++++++++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/bus.h  |    3 +
+ drivers/net/wireless/b43/main.c |    7 +++
+ 3 files changed, 110 insertions(+), 0 deletions(-)
 
-In comparison to your patch for seriee, I have:
-1) Disabled MIPS check for now (commented in code)
-2) Enabled mode check even for driver without hostmode enabled
----
- drivers/bcma/Kconfig           |    6 ++++++
- drivers/bcma/Makefile          |    1 +
- drivers/bcma/bcma_private.h    |    4 ++++
- drivers/bcma/driver_pci.c      |   38 +++++++++++++++++++++++++++++++++++++-
- drivers/bcma/driver_pci_host.c |   14 ++++++++++++++
- 5 files changed, 62 insertions(+), 1 deletions(-)
- create mode 100644 drivers/bcma/driver_pci_host.c
-
-diff --git a/drivers/bcma/Kconfig b/drivers/bcma/Kconfig
-index 83e9adf..ae0a02e 100644
---- a/drivers/bcma/Kconfig
-+++ b/drivers/bcma/Kconfig
-@@ -27,6 +27,12 @@ config BCMA_HOST_PCI
- 	bool "Support for BCMA on PCI-host bus"
- 	depends on BCMA_HOST_PCI_POSSIBLE
+diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
+index 4200713..f56604f 100644
+--- a/drivers/net/wireless/b43/bus.c
++++ b/drivers/net/wireless/b43/bus.c
+@@ -23,6 +23,106 @@
+ #include "b43.h"
+ #include "bus.h"
  
-+config BCMA_DRIVER_PCI_HOSTMODE
-+	bool "Driver for PCI core working in hostmode"
-+	depends on BCMA && MIPS
-+	help
-+	  PCI core hostmode operation (external PCI bus).
++/* BCMA */
++#ifdef CONFIG_B43_BCMA
++static inline int b43_bus_bcma_bus_may_powerdown(struct b43_bus_dev *dev)
++{
++	return 0; /* bcma_bus_may_powerdown(dev->bdev->bus); */
++}
++static inline int b43_bus_bcma_bus_powerup(struct b43_bus_dev *dev,
++					  bool dynamic_pctl)
++{
++	return 0; /* bcma_bus_powerup(dev->sdev->bus, dynamic_pctl); */
++}
++static inline int b43_bus_bcma_device_is_enabled(struct b43_bus_dev *dev)
++{
++	return bcma_core_is_enabled(dev->bdev);
++}
++static inline void b43_bus_bcma_device_enable(struct b43_bus_dev *dev,
++					     u32 core_specific_flags)
++{
++	bcma_core_enable(dev->bdev, core_specific_flags);
++}
++static inline void b43_bus_bcma_device_disable(struct b43_bus_dev *dev,
++					      u32 core_specific_flags)
++{
++	bcma_core_disable(dev->bdev, core_specific_flags);
++}
++static inline u16 b43_bus_bcma_read16(struct b43_bus_dev *dev, u16 offset)
++{
++	return bcma_read16(dev->bdev, offset);
++}
++static inline u32 b43_bus_bcma_read32(struct b43_bus_dev *dev, u16 offset)
++{
++	return bcma_read32(dev->bdev, offset);
++}
++static inline
++void b43_bus_bcma_write16(struct b43_bus_dev *dev, u16 offset, u16 value)
++{
++	bcma_write16(dev->bdev, offset, value);
++}
++static inline
++void b43_bus_bcma_write32(struct b43_bus_dev *dev, u16 offset, u32 value)
++{
++	bcma_write32(dev->bdev, offset, value);
++}
++static inline
++void b43_bus_bcma_block_read(struct b43_bus_dev *dev, void *buffer,
++			    size_t count, u16 offset, u8 reg_width)
++{
++	bcma_block_read(dev->bdev, buffer, count, offset, reg_width);
++}
++static inline
++void b43_bus_bcma_block_write(struct b43_bus_dev *dev, const void *buffer,
++			     size_t count, u16 offset, u8 reg_width)
++{
++	bcma_block_write(dev->bdev, buffer, count, offset, reg_width);
++}
 +
- config BCMA_DEBUG
- 	bool "BCMA debugging"
- 	depends on BCMA
-diff --git a/drivers/bcma/Makefile b/drivers/bcma/Makefile
-index cde0182..a2161cc 100644
---- a/drivers/bcma/Makefile
-+++ b/drivers/bcma/Makefile
-@@ -1,6 +1,7 @@
- bcma-y					+= main.o scan.o core.o sprom.o
- bcma-y					+= driver_chipcommon.o driver_chipcommon_pmu.o
- bcma-y					+= driver_pci.o
-+bcma-$(CONFIG_BCMA_DRIVER_PCI_HOSTMODE)	+= driver_pci_host.o
- bcma-$(CONFIG_BCMA_HOST_PCI)		+= host_pci.o
- obj-$(CONFIG_BCMA)			+= bcma.o
- 
-diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
-index 4228736..e02ff21 100644
---- a/drivers/bcma/bcma_private.h
-+++ b/drivers/bcma/bcma_private.h
-@@ -28,4 +28,8 @@ extern int __init bcma_host_pci_init(void);
- extern void __exit bcma_host_pci_exit(void);
- #endif /* CONFIG_BCMA_HOST_PCI */
- 
-+#ifdef CONFIG_BCMA_DRIVER_PCI_HOSTMODE
-+void bcma_core_pci_hostmode_init(struct bcma_drv_pci *pc);
-+#endif /* CONFIG_BCMA_DRIVER_PCI_HOSTMODE */
++struct b43_bus_dev *b43_bus_dev_bcma_init(struct bcma_device *core)
++{
++	struct b43_bus_dev *dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return NULL;
 +
- #endif
-diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
-index b0c19ed..dc6f34a 100644
---- a/drivers/bcma/driver_pci.c
-+++ b/drivers/bcma/driver_pci.c
-@@ -157,11 +157,47 @@ static void bcma_pcicore_serdes_workaround(struct bcma_drv_pci *pc)
-  * Init.
-  **************************************************/
++	dev->bus_type = B43_BUS_BCMA;
++	dev->bdev = core;
++
++	dev->bus_may_powerdown = b43_bus_bcma_bus_may_powerdown;
++	dev->bus_powerup = b43_bus_bcma_bus_powerup;
++	dev->device_is_enabled = b43_bus_bcma_device_is_enabled;
++	dev->device_enable = b43_bus_bcma_device_enable;
++	dev->device_disable = b43_bus_bcma_device_disable;
++
++	dev->read16 = b43_bus_bcma_read16;
++	dev->read32 = b43_bus_bcma_read32;
++	dev->write16 = b43_bus_bcma_write16;
++	dev->write32 = b43_bus_bcma_write32;
++	dev->block_read = b43_bus_bcma_block_read;
++	dev->block_write = b43_bus_bcma_block_write;
++
++	dev->dev = &core->dev;
++	dev->dma_dev = core->dma_dev;
++	dev->irq = core->irq;
++
++	/*
++	dev->board_vendor = core->bus->boardinfo.vendor;
++	dev->board_type = core->bus->boardinfo.type;
++	dev->board_rev = core->bus->boardinfo.rev;
++	*/
++
++	dev->chip_id = core->bus->chipinfo.id;
++	dev->chip_rev = core->bus->chipinfo.rev;
++	dev->chip_pkg = core->bus->chipinfo.pkg;
++
++	dev->bus_sprom = &core->bus->sprom;
++
++	dev->core_id = core->id.id;
++	dev->core_rev = core->id.rev;
++
++	return dev;
++}
++#endif /* CONFIG_B43_BCMA */
  
--void bcma_core_pci_init(struct bcma_drv_pci *pc)
-+static void bcma_core_pci_clientmode_init(struct bcma_drv_pci *pc)
- {
- 	bcma_pcicore_serdes_workaround(pc);
+ /* SSB */
+ #ifdef CONFIG_B43_SSB
+diff --git a/drivers/net/wireless/b43/bus.h b/drivers/net/wireless/b43/bus.h
+index 79a5ab4..a70b7b9 100644
+--- a/drivers/net/wireless/b43/bus.h
++++ b/drivers/net/wireless/b43/bus.h
+@@ -2,12 +2,14 @@
+ #define B43_BUS_H_
+ 
+ enum b43_bus_type {
++	B43_BUS_BCMA,
+ 	B43_BUS_SSB,
+ };
+ 
+ struct b43_bus_dev {
+ 	enum b43_bus_type bus_type;
+ 	union {
++		struct bcma_device *bdev;
+ 		struct ssb_device *sdev;
+ 	};
+ 
+@@ -57,6 +59,7 @@ static inline bool b43_bus_host_is_sdio(struct b43_bus_dev *dev)
+ 		dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO);
  }
  
-+static bool bcma_core_pci_is_in_hostmode(struct bcma_drv_pci *pc)
-+{
-+	struct bcma_bus *bus = pc->core->bus;
-+	u16 chipid_top;
-+
-+	chipid_top = (bus->chipinfo.id & 0xFF00);
-+	if (chipid_top != 0x4700 &&
-+	    chipid_top != 0x5300)
-+		return false;
-+
-+	if (bus->sprom.boardflags_lo & SSB_PCICORE_BFL_NOPCI)
-+		return false;
-+
-+#if 0
-+	/* TODO: on BCMA we use address from EROM instead of magic formula */
-+	u32 tmp;
-+	return !mips_busprobe32(tmp, (bus->mmio +
-+		(pc->core->core_index * BCMA_CORE_SIZE)));
-+#endif
-+
-+	return true;
-+}
-+
-+void bcma_core_pci_init(struct bcma_drv_pci *pc)
-+{
-+	if (bcma_core_pci_is_in_hostmode(pc)) {
-+#ifdef CONFIG_BCMA_DRIVER_PCI_HOSTMODE
-+		bcma_core_pci_hostmode_init(pc);
-+#else
-+		pr_err("Driver compiled without support for hostmode PCI\n");
-+#endif /* CONFIG_BCMA_DRIVER_PCI_HOSTMODE */
-+	} else {
-+		bcma_core_pci_clientmode_init(pc);
-+	}
-+}
-+
- int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
- 			  bool enable)
++struct b43_bus_dev *b43_bus_dev_bcma_init(struct bcma_device *core);
+ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev);
+ 
+ #endif /* B43_BUS_H_ */
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 410b77f..b85a973 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -5010,7 +5010,14 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ #ifdef CONFIG_B43_BCMA
+ static int b43_bcma_probe(struct bcma_device *core)
  {
-diff --git a/drivers/bcma/driver_pci_host.c b/drivers/bcma/driver_pci_host.c
-new file mode 100644
-index 0000000..eb332b7
---- /dev/null
-+++ b/drivers/bcma/driver_pci_host.c
-@@ -0,0 +1,14 @@
-+/*
-+ * Broadcom specific AMBA
-+ * PCI Core in hostmode
-+ *
-+ * Licensed under the GNU/GPL. See COPYING for details.
-+ */
++	struct b43_bus_dev *dev;
 +
-+#include "bcma_private.h"
-+#include <linux/bcma/bcma.h>
++	dev = b43_bus_dev_bcma_init(core);
++	if (!dev)
++		return -ENODEV;
 +
-+void bcma_core_pci_hostmode_init(struct bcma_drv_pci *pc)
-+{
-+	pr_err("No support for PCI core in hostmode yet\n");
-+}
+ 	b43err(NULL, "BCMA is not supported yet!");
++	kfree(dev);
+ 	return -EOPNOTSUPP;
+ }
+ 
 -- 
 1.7.3.4
