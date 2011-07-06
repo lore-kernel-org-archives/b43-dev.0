@@ -1,46 +1,49 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed,  6 Jul 2011 20:27:25 +0200
-Subject: [PATCH 2/2] b43: read radio ID on new cores
-In-Reply-To: <1309976845-19588-1-git-send-email-zajec5@gmail.com>
-References: <1309976845-19588-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1309976845-19588-2-git-send-email-zajec5@gmail.com>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Wed, 6 Jul 2011 14:37:42 -0400
+Subject: [PATCH 3.0] ssb: fix init regression of hostmode PCI core
+In-Reply-To: <1309879532-8704-1-git-send-email-zajec5@gmail.com>
+References: <1309879532-8704-1-git-send-email-zajec5@gmail.com>
+Message-ID: <20110706183742.GB2553@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org
 
+On Tue, Jul 05, 2011 at 05:25:32PM +0200, Rafa? Mi?ecki wrote:
+> Our workarounds seem to be clientmode PCI specific. Using SPROM
+> workaround on SoC resulted in Oops:
+> 
+> Data bus error, epc == 8017ed58, ra == 80225838
+>  Oops[#1]:
+>  Cpu 0
+>  $ 0   : 00000000 10008000 b8000000 00000001
+>  $ 4   : 80293b5c 00000caa ffffffff 00000000
+>  $ 8   : 0000000a 00000003 00000001 696d6d20
+>  $12   : ffffffff 00000000 00000000 ffffffff
+>  $16   : 802d0140 b8004800 802c0000 00000000
+>  $20   : 00000000 802c0000 00000000 802d04d4
+>  $24   : 00000018 80151a00
+>  $28   : 81816000 81817df8 8029bda0 80225838
+>  Hi    : 00000000
+>  Lo    : 00000000
+>  epc   : 8017ed58 ssb_ssb_read16+0x48/0x60
+>    Not tainted
+>  ra    : 80225838 ssb_pcicore_init+0x54/0x3b4
+> 
+> Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> Hauke: could you give it a try?
+> 
+> John: this regression was introduced in 3.0
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/main.c |   14 +++++++++++++-
- 1 files changed, 13 insertions(+), 1 deletions(-)
+Hauke, I'd like to see your reply before I merge this.
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 074765a..bff0870 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4219,7 +4219,19 @@ static int b43_phy_versioning(struct b43_wldev *dev)
- 
- 	/* Get RADIO versioning */
- 	if (dev->dev->core_rev >= 24) {
--		/* TODO */
-+		u16 radio24[3];
-+
-+		for (tmp = 0; tmp < 3; tmp++) {
-+			b43_write16(dev, B43_MMIO_RADIO24_CONTROL, tmp);
-+			radio24[tmp] = b43_read16(dev, B43_MMIO_RADIO24_DATA);
-+		}
-+
-+		/* Broadcom uses "id" for our "ver" and has separated "ver" */
-+		/* radio_ver = (radio24[0] & 0xF0) >> 4; */
-+
-+		radio_manuf = 0x17F;
-+		radio_ver = (radio24[2] << 8) | radio24[1];
-+		radio_rev = (radio24[0] & 0xF);
- 	} else {
- 		if (dev->dev->chip_id == 0x4317) {
- 			if (dev->dev->chip_rev == 0)
+Thanks,
+
+John
 -- 
-1.7.3.4
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
