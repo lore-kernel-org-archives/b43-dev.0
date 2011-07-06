@@ -1,9 +1,9 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed, 06 Jul 2011 20:53:43 +0200
-Subject: [PATCH 3.0] ssb: fix init regression of hostmode PCI core
-In-Reply-To: <1309879532-8704-1-git-send-email-zajec5@gmail.com>
-References: <1309879532-8704-1-git-send-email-zajec5@gmail.com>
-Message-ID: <4E14AF37.8050000@hauke-m.de>
+Date: Wed, 06 Jul 2011 21:01:57 +0200
+Subject: [PATCH] bcma: detect PCI core working in hostmode
+In-Reply-To: <1309888106-30232-1-git-send-email-zajec5@gmail.com>
+References: <1309888106-30232-1-git-send-email-zajec5@gmail.com>
+Message-ID: <4E14B125.8020203@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,83 +11,141 @@ Content-Transfer-Encoding: 7bit
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On 07/05/2011 05:25 PM, Rafa? Mi?ecki wrote:
-> Our workarounds seem to be clientmode PCI specific. Using SPROM
-> workaround on SoC resulted in Oops:
+On 07/05/2011 07:48 PM, Rafa? Mi?ecki wrote:
+> We must not init it like clientmode one, it would break device (tested
+> by Hauke on BCM4718). Add stub hostmode driver for now.
 > 
-> Data bus error, epc == 8017ed58, ra == 80225838
->  Oops[#1]:
->  Cpu 0
->  $ 0   : 00000000 10008000 b8000000 00000001
->  $ 4   : 80293b5c 00000caa ffffffff 00000000
->  $ 8   : 0000000a 00000003 00000001 696d6d20
->  $12   : ffffffff 00000000 00000000 ffffffff
->  $16   : 802d0140 b8004800 802c0000 00000000
->  $20   : 00000000 802c0000 00000000 802d04d4
->  $24   : 00000018 80151a00
->  $28   : 81816000 81817df8 8029bda0 80225838
->  Hi    : 00000000
->  Lo    : 00000000
->  epc   : 8017ed58 ssb_ssb_read16+0x48/0x60
->    Not tainted
->  ra    : 80225838 ssb_pcicore_init+0x54/0x3b4
-> 
-> Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
 > Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-Tested-by: Hauke Mehrtens <hauke@hauke-m.de>
-> ---
-> Hauke: could you give it a try?
 
-After applying this patch I do not get this Data bus error any more.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-> 
-> John: this regression was introduced in 3.0
 > ---
->  drivers/ssb/driver_pcicore.c |   18 +++++++++---------
->  1 files changed, 9 insertions(+), 9 deletions(-)
+> Hauke: will you add your Signed-off-by?
 > 
-> diff --git a/drivers/ssb/driver_pcicore.c b/drivers/ssb/driver_pcicore.c
-> index 21b9465..11d85bf 100644
-> --- a/drivers/ssb/driver_pcicore.c
-> +++ b/drivers/ssb/driver_pcicore.c
-> @@ -516,8 +516,17 @@ static void ssb_pcicore_pcie_setup_workarounds(struct ssb_pcicore *pc)
+> In comparison to your patch for seriee, I have:
+> 1) Disabled MIPS check for now (commented in code)
+> 2) Enabled mode check even for driver without hostmode enabled
+> ---
+>  drivers/bcma/Kconfig           |    6 ++++++
+>  drivers/bcma/Makefile          |    1 +
+>  drivers/bcma/bcma_private.h    |    4 ++++
+>  drivers/bcma/driver_pci.c      |   38 +++++++++++++++++++++++++++++++++++++-
+>  drivers/bcma/driver_pci_host.c |   14 ++++++++++++++
+>  5 files changed, 62 insertions(+), 1 deletions(-)
+>  create mode 100644 drivers/bcma/driver_pci_host.c
+> 
+> diff --git a/drivers/bcma/Kconfig b/drivers/bcma/Kconfig
+> index 83e9adf..ae0a02e 100644
+> --- a/drivers/bcma/Kconfig
+> +++ b/drivers/bcma/Kconfig
+> @@ -27,6 +27,12 @@ config BCMA_HOST_PCI
+>  	bool "Support for BCMA on PCI-host bus"
+>  	depends on BCMA_HOST_PCI_POSSIBLE
 >  
->  static void __devinit ssb_pcicore_init_clientmode(struct ssb_pcicore *pc)
+> +config BCMA_DRIVER_PCI_HOSTMODE
+> +	bool "Driver for PCI core working in hostmode"
+> +	depends on BCMA && MIPS
+> +	help
+> +	  PCI core hostmode operation (external PCI bus).
+> +
+>  config BCMA_DEBUG
+>  	bool "BCMA debugging"
+>  	depends on BCMA
+> diff --git a/drivers/bcma/Makefile b/drivers/bcma/Makefile
+> index cde0182..a2161cc 100644
+> --- a/drivers/bcma/Makefile
+> +++ b/drivers/bcma/Makefile
+> @@ -1,6 +1,7 @@
+>  bcma-y					+= main.o scan.o core.o sprom.o
+>  bcma-y					+= driver_chipcommon.o driver_chipcommon_pmu.o
+>  bcma-y					+= driver_pci.o
+> +bcma-$(CONFIG_BCMA_DRIVER_PCI_HOSTMODE)	+= driver_pci_host.o
+>  bcma-$(CONFIG_BCMA_HOST_PCI)		+= host_pci.o
+>  obj-$(CONFIG_BCMA)			+= bcma.o
+>  
+> diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
+> index 4228736..e02ff21 100644
+> --- a/drivers/bcma/bcma_private.h
+> +++ b/drivers/bcma/bcma_private.h
+> @@ -28,4 +28,8 @@ extern int __init bcma_host_pci_init(void);
+>  extern void __exit bcma_host_pci_exit(void);
+>  #endif /* CONFIG_BCMA_HOST_PCI */
+>  
+> +#ifdef CONFIG_BCMA_DRIVER_PCI_HOSTMODE
+> +void bcma_core_pci_hostmode_init(struct bcma_drv_pci *pc);
+> +#endif /* CONFIG_BCMA_DRIVER_PCI_HOSTMODE */
+> +
+>  #endif
+> diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
+> index b0c19ed..dc6f34a 100644
+> --- a/drivers/bcma/driver_pci.c
+> +++ b/drivers/bcma/driver_pci.c
+> @@ -157,11 +157,47 @@ static void bcma_pcicore_serdes_workaround(struct bcma_drv_pci *pc)
+>   * Init.
+>   **************************************************/
+>  
+> -void bcma_core_pci_init(struct bcma_drv_pci *pc)
+> +static void bcma_core_pci_clientmode_init(struct bcma_drv_pci *pc)
 >  {
-> +	ssb_pcicore_fix_sprom_core_index(pc);
+>  	bcma_pcicore_serdes_workaround(pc);
+>  }
+>  
+> +static bool bcma_core_pci_is_in_hostmode(struct bcma_drv_pci *pc)
+> +{
+> +	struct bcma_bus *bus = pc->core->bus;
+> +	u16 chipid_top;
 > +
->  	/* Disable PCI interrupts. */
->  	ssb_write32(pc->dev, SSB_INTVEC, 0);
+> +	chipid_top = (bus->chipinfo.id & 0xFF00);
+> +	if (chipid_top != 0x4700 &&
+> +	    chipid_top != 0x5300)
+> +		return false;
 > +
-> +	/* Additional PCIe always once-executed workarounds */
-> +	if (pc->dev->id.coreid == SSB_DEV_PCIE) {
-> +		ssb_pcicore_serdes_workaround(pc);
-> +		/* TODO: ASPM */
-> +		/* TODO: Clock Request Update */
+> +	if (bus->sprom.boardflags_lo & SSB_PCICORE_BFL_NOPCI)
+> +		return false;
+> +
+> +#if 0
+> +	/* TODO: on BCMA we use address from EROM instead of magic formula */
+> +	u32 tmp;
+> +	return !mips_busprobe32(tmp, (bus->mmio +
+> +		(pc->core->core_index * BCMA_CORE_SIZE)));
+> +#endif
+> +
+> +	return true;
+> +}
+> +
+> +void bcma_core_pci_init(struct bcma_drv_pci *pc)
+> +{
+> +	if (bcma_core_pci_is_in_hostmode(pc)) {
+> +#ifdef CONFIG_BCMA_DRIVER_PCI_HOSTMODE
+> +		bcma_core_pci_hostmode_init(pc);
+> +#else
+> +		pr_err("Driver compiled without support for hostmode PCI\n");
+> +#endif /* CONFIG_BCMA_DRIVER_PCI_HOSTMODE */
+> +	} else {
+> +		bcma_core_pci_clientmode_init(pc);
 > +	}
->  }
->  
->  void __devinit ssb_pcicore_init(struct ssb_pcicore *pc)
-> @@ -529,8 +538,6 @@ void __devinit ssb_pcicore_init(struct ssb_pcicore *pc)
->  	if (!ssb_device_is_enabled(dev))
->  		ssb_device_enable(dev, 0);
->  
-> -	ssb_pcicore_fix_sprom_core_index(pc);
-> -
->  #ifdef CONFIG_SSB_PCICORE_HOSTMODE
->  	pc->hostmode = pcicore_is_in_hostmode(pc);
->  	if (pc->hostmode)
-> @@ -538,13 +545,6 @@ void __devinit ssb_pcicore_init(struct ssb_pcicore *pc)
->  #endif /* CONFIG_SSB_PCICORE_HOSTMODE */
->  	if (!pc->hostmode)
->  		ssb_pcicore_init_clientmode(pc);
-> -
-> -	/* Additional PCIe always once-executed workarounds */
-> -	if (dev->id.coreid == SSB_DEV_PCIE) {
-> -		ssb_pcicore_serdes_workaround(pc);
-> -		/* TODO: ASPM */
-> -		/* TODO: Clock Request Update */
-> -	}
->  }
->  
->  static u32 ssb_pcie_read(struct ssb_pcicore *pc, u32 address)
+> +}
+> +
+>  int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
+>  			  bool enable)
+>  {
+> diff --git a/drivers/bcma/driver_pci_host.c b/drivers/bcma/driver_pci_host.c
+> new file mode 100644
+> index 0000000..eb332b7
+> --- /dev/null
+> +++ b/drivers/bcma/driver_pci_host.c
+> @@ -0,0 +1,14 @@
+> +/*
+> + * Broadcom specific AMBA
+> + * PCI Core in hostmode
+> + *
+> + * Licensed under the GNU/GPL. See COPYING for details.
+> + */
+> +
+> +#include "bcma_private.h"
+> +#include <linux/bcma/bcma.h>
+> +
+> +void bcma_core_pci_hostmode_init(struct bcma_drv_pci *pc)
+> +{
+> +	pr_err("No support for PCI core in hostmode yet\n");
+> +}
