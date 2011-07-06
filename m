@@ -1,17 +1,17 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Wed, 6 Jul 2011 14:37:42 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Wed, 06 Jul 2011 20:53:43 +0200
 Subject: [PATCH 3.0] ssb: fix init regression of hostmode PCI core
 In-Reply-To: <1309879532-8704-1-git-send-email-zajec5@gmail.com>
 References: <1309879532-8704-1-git-send-email-zajec5@gmail.com>
-Message-ID: <20110706183742.GB2553@tuxdriver.com>
+Message-ID: <4E14AF37.8050000@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Tue, Jul 05, 2011 at 05:25:32PM +0200, Rafa? Mi?ecki wrote:
+On 07/05/2011 05:25 PM, Rafa? Mi?ecki wrote:
 > Our workarounds seem to be clientmode PCI specific. Using SPROM
 > workaround on SoC resulted in Oops:
 > 
@@ -34,16 +34,60 @@ On Tue, Jul 05, 2011 at 05:25:32PM +0200, Rafa? Mi?ecki wrote:
 > 
 > Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
 > Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Tested-by: Hauke Mehrtens <hauke@hauke-m.de>
 > ---
 > Hauke: could you give it a try?
+
+After applying this patch I do not get this Data bus error any more.
+
 > 
 > John: this regression was introduced in 3.0
-
-Hauke, I'd like to see your reply before I merge this.
-
-Thanks,
-
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+> ---
+>  drivers/ssb/driver_pcicore.c |   18 +++++++++---------
+>  1 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/ssb/driver_pcicore.c b/drivers/ssb/driver_pcicore.c
+> index 21b9465..11d85bf 100644
+> --- a/drivers/ssb/driver_pcicore.c
+> +++ b/drivers/ssb/driver_pcicore.c
+> @@ -516,8 +516,17 @@ static void ssb_pcicore_pcie_setup_workarounds(struct ssb_pcicore *pc)
+>  
+>  static void __devinit ssb_pcicore_init_clientmode(struct ssb_pcicore *pc)
+>  {
+> +	ssb_pcicore_fix_sprom_core_index(pc);
+> +
+>  	/* Disable PCI interrupts. */
+>  	ssb_write32(pc->dev, SSB_INTVEC, 0);
+> +
+> +	/* Additional PCIe always once-executed workarounds */
+> +	if (pc->dev->id.coreid == SSB_DEV_PCIE) {
+> +		ssb_pcicore_serdes_workaround(pc);
+> +		/* TODO: ASPM */
+> +		/* TODO: Clock Request Update */
+> +	}
+>  }
+>  
+>  void __devinit ssb_pcicore_init(struct ssb_pcicore *pc)
+> @@ -529,8 +538,6 @@ void __devinit ssb_pcicore_init(struct ssb_pcicore *pc)
+>  	if (!ssb_device_is_enabled(dev))
+>  		ssb_device_enable(dev, 0);
+>  
+> -	ssb_pcicore_fix_sprom_core_index(pc);
+> -
+>  #ifdef CONFIG_SSB_PCICORE_HOSTMODE
+>  	pc->hostmode = pcicore_is_in_hostmode(pc);
+>  	if (pc->hostmode)
+> @@ -538,13 +545,6 @@ void __devinit ssb_pcicore_init(struct ssb_pcicore *pc)
+>  #endif /* CONFIG_SSB_PCICORE_HOSTMODE */
+>  	if (!pc->hostmode)
+>  		ssb_pcicore_init_clientmode(pc);
+> -
+> -	/* Additional PCIe always once-executed workarounds */
+> -	if (dev->id.coreid == SSB_DEV_PCIE) {
+> -		ssb_pcicore_serdes_workaround(pc);
+> -		/* TODO: ASPM */
+> -		/* TODO: Clock Request Update */
+> -	}
+>  }
+>  
+>  static u32 ssb_pcie_read(struct ssb_pcicore *pc, u32 address)
