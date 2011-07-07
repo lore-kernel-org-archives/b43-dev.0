@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  7 Jul 2011 18:58:24 +0200
-Subject: [PATCH 1/2] b43: define firmwares for HT and LCN PHYs
-Message-ID: <1310057906-4088-1-git-send-email-zajec5@gmail.com>
+Date: Thu,  7 Jul 2011 18:58:25 +0200
+Subject: [PATCH 2/2] b43: LCN-PHY: include new PHY in common code
+In-Reply-To: <1310057906-4088-1-git-send-email-zajec5@gmail.com>
+References: <1310057906-4088-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1310057906-4088-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,92 +11,57 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-We were uploading different firmwares to the hardware until finding
-responding one.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/main.c |   40 +++++++++++++++++++++++++++++++++++++++
- 1 files changed, 40 insertions(+), 0 deletions(-)
+ drivers/net/wireless/b43/phy_common.c |    6 ++++++
+ drivers/net/wireless/b43/phy_common.h |    3 +++
+ 2 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index ef64628..52136a4 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2159,6 +2159,8 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
- 	u32 tmshigh;
- 	int err;
+diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
+index 9705950..1019575 100644
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -32,6 +32,7 @@
+ #include "phy_n.h"
+ #include "phy_lp.h"
+ #include "phy_ht.h"
++#include "phy_lcn.h"
+ #include "b43.h"
+ #include "main.h"
  
-+	/* Files for HT and LCN were found by trying one by one */
-+
- 	/* Get microcode */
- 	if ((rev >= 5) && (rev <= 10)) {
- 		filename = "ucode5";
-@@ -2178,6 +2180,18 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
- 			else
- 				goto err_no_ucode;
- 			break;
-+		case B43_PHYTYPE_HT:
-+			if (rev == 29)
-+				filename = "ucode29_mimo";
-+			else
-+				goto err_no_ucode;
-+			break;
-+		case B43_PHYTYPE_LCN:
-+			if (rev == 24)
-+				filename = "ucode24_mimo";
-+			else
-+				goto err_no_ucode;
-+			break;
- 		default:
- 			goto err_no_ucode;
- 		}
-@@ -2240,6 +2254,18 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
- 		else
- 			goto err_no_initvals;
- 		break;
-+	case B43_PHYTYPE_HT:
-+		if (rev == 29)
-+			filename = "ht0initvals29";
-+		else
-+			goto err_no_initvals;
-+		break;
-+	case B43_PHYTYPE_LCN:
-+		if (rev == 24)
-+			filename = "lcn0initvals24";
-+		else
-+			goto err_no_initvals;
-+		break;
- 	default:
- 		goto err_no_initvals;
- 	}
-@@ -2287,6 +2313,18 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
- 		else
- 			goto err_no_initvals;
- 		break;
-+	case B43_PHYTYPE_HT:
-+		if (rev == 29)
-+			filename = "ht0bsinitvals29";
-+		else
-+			goto err_no_initvals;
-+		break;
-+	case B43_PHYTYPE_LCN:
-+		if (rev == 24)
-+			filename = "lcn0bsinitvals24";
-+		else
-+			goto err_no_initvals;
-+		break;
- 	default:
- 		goto err_no_initvals;
- 	}
-@@ -4976,6 +5014,8 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
+@@ -65,6 +66,11 @@ int b43_phy_allocate(struct b43_wldev *dev)
+ 		phy->ops = &b43_phyops_ht;
  #endif
- 		case B43_PHYTYPE_G:
- 		case B43_PHYTYPE_N:
-+		case B43_PHYTYPE_HT:
-+		case B43_PHYTYPE_LCN:
- 			have_2ghz_phy = 1;
- 			break;
- 		default:
+ 		break;
++	case B43_PHYTYPE_LCN:
++#ifdef CONFIG_B43_PHY_LCN
++		phy->ops = &b43_phyops_lcn;
++#endif
++		break;
+ 	}
+ 	if (B43_WARN_ON(!phy->ops))
+ 		return -ENODEV;
+diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
+index 47dcb80..aa77ba6 100644
+--- a/drivers/net/wireless/b43/phy_common.h
++++ b/drivers/net/wireless/b43/phy_common.h
+@@ -195,6 +195,7 @@ struct b43_phy_g;
+ struct b43_phy_n;
+ struct b43_phy_lp;
+ struct b43_phy_ht;
++struct b43_phy_lcn;
+ 
+ struct b43_phy {
+ 	/* Hardware operation callbacks. */
+@@ -219,6 +220,8 @@ struct b43_phy {
+ 		struct b43_phy_lp *lp;
+ 		/* HT-PHY specific information */
+ 		struct b43_phy_ht *ht;
++		/* LCN-PHY specific information */
++		struct b43_phy_lcn *lcn;
+ 	};
+ 
+ 	/* Band support flags. */
 -- 
 1.7.3.4
