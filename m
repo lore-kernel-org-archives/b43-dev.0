@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 08 Jul 2011 14:57:19 -0000
-Subject: [RFC][PATCH] axi: add AXI bus driver
-Message-ID: <1302566227-23788-1-git-send-email-zajec5@gmail.com>
+Date: Fri, 08 Jul 2011 16:01:24 -0000
+Subject: [RFC][WAS:bcmai][PATCH V2] axi: add AXI bus driver
+Message-ID: <1302291900-1902-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,14 +12,14 @@ Cc: Michael B?sch <mb@bu3sch.de>
 Cc: Larry Finger <Larry.Finger@lwfinger.net>
 Cc: George Kashperko <george@znau.edu.ua>
 Cc: Arend van Spriel <arend@broadcom.com>
-Cc: linux-arm-kernel at lists.infradead.org
+Cc: linux-arm-kernel at lists.infradead.org <linux-arm-kernel@lists.infradead.org>
 Cc: Russell King <rmk@arm.linux.org.uk>
 Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Andy Botting <andy@andybotting.com>
 Cc: linuxdriverproject <devel@linuxdriverproject.org>
 Cc: linux-kernel at vger.kernel.org <linux-kernel@vger.kernel.org>
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
+This is second try for introducing new bus driver.
 V2: Rename to axi
     Use DEFINE_PCI_DEVICE_TABLE in bridge
     Make use of pr_fmt and pr_*
@@ -29,39 +29,33 @@ V2: Rename to axi
     Remove some old "ssb" names and defines
     Move BCMAI_ADDR_BASE def
     Add drvdata field
-V3: Fix reloading (kfree issue)
-    Add 14e4:0x4331
-    Fix non-initialized struct issue
-    Drop useless inline functions wrappers for pci core drv
-    Proper pr_* usage
-V3.1: Include forgotten changes (pr_* and include related)
-    Explain why we dare to implement empty release function
+TODO:
+- Interrupts
+- Reloading driver
 ---
  drivers/Kconfig                           |    2 +
  drivers/Makefile                          |    1 +
- drivers/axi/Kconfig                       |   33 +++
- drivers/axi/Makefile                      |    7 +
- drivers/axi/TODO                          |    3 +
+ drivers/axi/Kconfig                       |   30 +++
+ drivers/axi/Makefile                      |    5 +
  drivers/axi/axi_pci_bridge.c              |   33 +++
- drivers/axi/axi_private.h                 |   37 +++
+ drivers/axi/axi_private.h                 |   45 ++++
  drivers/axi/core.c                        |   52 ++++
  drivers/axi/driver_chipcommon.c           |   87 +++++++
  drivers/axi/driver_chipcommon_pmu.c       |  134 ++++++++++
- drivers/axi/driver_pci.c                  |  163 ++++++++++++
- drivers/axi/host_pci.c                    |  175 +++++++++++++
- drivers/axi/main.c                        |  253 +++++++++++++++++++
- drivers/axi/scan.c                        |  391 +++++++++++++++++++++++++++++
+ drivers/axi/driver_pci.c                  |  191 ++++++++++++++
+ drivers/axi/host_pci.c                    |  177 +++++++++++++
+ drivers/axi/main.c                        |  256 +++++++++++++++++++
+ drivers/axi/scan.c                        |  393 +++++++++++++++++++++++++++++
  drivers/axi/scan.h                        |   56 ++++
- include/linux/axi/axi.h                   |  207 +++++++++++++++
- include/linux/axi/axi_driver_chipcommon.h |  308 +++++++++++++++++++++++
- include/linux/axi/axi_driver_pci.h        |   89 +++++++
+ include/linux/axi/axi.h                   |  221 ++++++++++++++++
+ include/linux/axi/axi_driver_chipcommon.h |  308 ++++++++++++++++++++++
+ include/linux/axi/axi_driver_pci.h        |   85 +++++++
  include/linux/axi/axi_regs.h              |   34 +++
  include/linux/mod_devicetable.h           |   17 ++
  scripts/mod/file2alias.c                  |   21 ++
- 21 files changed, 2103 insertions(+), 0 deletions(-)
+ 20 files changed, 2148 insertions(+), 0 deletions(-)
  create mode 100644 drivers/axi/Kconfig
  create mode 100644 drivers/axi/Makefile
- create mode 100644 drivers/axi/TODO
  create mode 100644 drivers/axi/axi_pci_bridge.c
  create mode 100644 drivers/axi/axi_private.h
  create mode 100644 drivers/axi/core.c
@@ -104,10 +98,10 @@ index 3f135b6..6e1979b 100644
  obj-$(CONFIG_STAGING)		+= staging/
 diff --git a/drivers/axi/Kconfig b/drivers/axi/Kconfig
 new file mode 100644
-index 0000000..6221af0
+index 0000000..f4f58f5
 --- /dev/null
 +++ b/drivers/axi/Kconfig
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,30 @@
 +config AXI_POSSIBLE
 +	bool
 +	depends on HAS_IOMEM && HAS_DMA
@@ -119,9 +113,6 @@ index 0000000..6221af0
 +config AXI
 +	tristate "AXI support"
 +	depends on AXI_POSSIBLE
-+	help
-+	  Bus driver for one of the Advanced Microcontroller Bus Architecture
-+	  interfaces: Advanced eXtensible Interface.
 +
 +config AXI_HOST_PCI_POSSIBLE
 +	bool
@@ -129,7 +120,7 @@ index 0000000..6221af0
 +	default y
 +
 +config AXI_HOST_PCI
-+	bool "Support for AXI on PCI-host bus"
++	bool "Support for AI on PCI-host bus"
 +	depends on AXI_HOST_PCI_POSSIBLE
 +
 +config AXI_DEBUG
@@ -143,30 +134,18 @@ index 0000000..6221af0
 +endmenu
 diff --git a/drivers/axi/Makefile b/drivers/axi/Makefile
 new file mode 100644
-index 0000000..5e1628d
+index 0000000..e649c51
 --- /dev/null
 +++ b/drivers/axi/Makefile
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,5 @@
 +axi-y					+= main.o scan.o core.o
 +axi-y					+= driver_chipcommon.o driver_chipcommon_pmu.o
 +axi-y					+= driver_pci.o
 +axi-$(CONFIG_AXI_HOST_PCI)		+= host_pci.o axi_pci_bridge.o
 +obj-$(CONFIG_AXI)			+= axi.o
-+
-+ccflags-$(CONFIG_AXI_DEBUG)		:= -DDEBUG
-\ No newline at end of file
-diff --git a/drivers/axi/TODO b/drivers/axi/TODO
-new file mode 100644
-index 0000000..5190336
---- /dev/null
-+++ b/drivers/axi/TODO
-@@ -0,0 +1,3 @@
-+- Interrupts
-+- Defines for PCI core driver
-+- Convert axi_bus->cores into linked list
 diff --git a/drivers/axi/axi_pci_bridge.c b/drivers/axi/axi_pci_bridge.c
 new file mode 100644
-index 0000000..17e882c
+index 0000000..7ecc59f
 --- /dev/null
 +++ b/drivers/axi/axi_pci_bridge.c
 @@ -0,0 +1,33 @@
@@ -179,10 +158,10 @@ index 0000000..17e882c
 +#include "axi_private.h"
 +
 +#include <linux/axi/axi.h>
++#include <linux/axi/axi_regs.h>
 +#include <linux/pci.h>
 +
 +static DEFINE_PCI_DEVICE_TABLE(axi_pci_bridge_tbl) = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4331) },
 +	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4353) },
 +	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4727) },
 +	{ 0, },
@@ -205,18 +184,26 @@ index 0000000..17e882c
 +}
 diff --git a/drivers/axi/axi_private.h b/drivers/axi/axi_private.h
 new file mode 100644
-index 0000000..756efb6
+index 0000000..1c995f5
 --- /dev/null
 +++ b/drivers/axi/axi_private.h
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,45 @@
 +#ifndef LINUX_AXI_PRIVATE_H_
 +#define LINUX_AXI_PRIVATE_H_
 +
-+#ifndef pr_fmt
-+#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
-+#endif
-+
 +#include <linux/axi/axi.h>
++#include <linux/device.h>
++#include <linux/list.h>
++#include <linux/types.h>
++#include <linux/spinlock.h>
++#include <linux/pci.h>
++#include <linux/mod_devicetable.h>
++#include <linux/dma-mapping.h>
++#include <linux/types.h>
++
++#ifndef pr_fmt
++#define pr_fmt(fmt)		"axi: " fmt
++#endif
 +
 +#define AXI_ADDR_BASE		0x18000000
 +#define AXI_WRAP_BASE		0x18100000
@@ -248,7 +235,7 @@ index 0000000..756efb6
 +#endif
 diff --git a/drivers/axi/core.c b/drivers/axi/core.c
 new file mode 100644
-index 0000000..1d7f3a9
+index 0000000..378a615
 --- /dev/null
 +++ b/drivers/axi/core.c
 @@ -0,0 +1,52 @@
@@ -260,9 +247,9 @@ index 0000000..1d7f3a9
 + */
 +
 +#include "axi_private.h"
++
 +#include <linux/axi/axi.h>
-+
-+
++#include <linux/axi/axi_regs.h>
 +
 +bool axi_core_is_enabled(struct axi_device *core)
 +{
@@ -306,7 +293,7 @@ index 0000000..1d7f3a9
 +EXPORT_SYMBOL(axi_core_enable);
 diff --git a/drivers/axi/driver_chipcommon.c b/drivers/axi/driver_chipcommon.c
 new file mode 100644
-index 0000000..b3087df
+index 0000000..e1896bc
 --- /dev/null
 +++ b/drivers/axi/driver_chipcommon.c
 @@ -0,0 +1,87 @@
@@ -320,8 +307,8 @@ index 0000000..b3087df
 + * Licensed under the GNU/GPL. See COPYING for details.
 + */
 +
-+#include "axi_private.h"
 +#include <linux/axi/axi.h>
++#include <linux/axi/axi_regs.h>
 +
 +static inline u32 axi_cc_write32_masked(struct axi_drv_cc *cc, u16 offset,
 +					u32 mask, u32 value)
@@ -347,7 +334,7 @@ index 0000000..b3087df
 +	if (cc->capabilities & AXI_CC_CAP_PMU)
 +		axi_pmu_init(cc);
 +	if (cc->capabilities & AXI_CC_CAP_PCTL)
-+		pr_err("Power control not implemented!\n");
++		axi_err("Power control not implemented!\n");
 +}
 +
 +/* Set chip watchdog reset timer to fire in 'ticks' backplane cycles */
@@ -399,7 +386,7 @@ index 0000000..b3087df
 +}
 diff --git a/drivers/axi/driver_chipcommon_pmu.c b/drivers/axi/driver_chipcommon_pmu.c
 new file mode 100644
-index 0000000..b57a9d0
+index 0000000..cfc55aa
 --- /dev/null
 +++ b/drivers/axi/driver_chipcommon_pmu.c
 @@ -0,0 +1,134 @@
@@ -413,8 +400,8 @@ index 0000000..b57a9d0
 + * Licensed under the GNU/GPL. See COPYING for details.
 + */
 +
-+#include "axi_private.h"
 +#include <linux/axi/axi.h>
++#include <linux/axi/axi_regs.h>
 +
 +static void axi_chipco_chipctl_maskset(struct axi_drv_cc *cc,
 +					 u32 offset, u32 mask, u32 set)
@@ -442,8 +429,8 @@ index 0000000..b57a9d0
 +	case 43225:
 +		break;
 +	default:
-+		pr_err("PLL init unknown for device 0x%04X\n",
-+			bus->chipinfo.id);
++		axi_err("PLL init unknown for device 0x%04X\n",
++			  bus->chipinfo.id);
 +	}
 +}
 +
@@ -460,8 +447,8 @@ index 0000000..b57a9d0
 +	case 43224:
 +		break;
 +	default:
-+		pr_err("PMU resource config unknown for device 0x%04X\n",
-+			bus->chipinfo.id);
++		axi_err("PMU resource config unknown for device 0x%04X\n",
++			  bus->chipinfo.id);
 +	}
 +
 +	/* Set the resource masks. */
@@ -481,8 +468,8 @@ index 0000000..b57a9d0
 +	case 43224:
 +		break;
 +	default:
-+		pr_err("PMU switch/regulators init unknown for device "
-+			"0x%04X\n", bus->chipinfo.id);
++		axi_err("PMU switch/regulators init unknown for device "
++			  "0x%04X\n", bus->chipinfo.id);
 +	}
 +}
 +
@@ -495,20 +482,20 @@ index 0000000..b57a9d0
 +		axi_chipco_chipctl_maskset(cc, 0, ~0, 0x7);
 +		break;
 +	case 0x4331:
-+		pr_err("Enabling Ext PA lines not implemented\n");
++		axi_err("Enabling Ext PA lines not implemented\n");
 +		break;
 +	case 43224:
 +		if (bus->chipinfo.rev == 0) {
-+			pr_err("Workarounds for 43224 rev 0 not fully "
-+				"implemented\n");
++			axi_err("Workarounds for 43224 rev 0 not fully "
++					"implemented\n");
 +			axi_chipco_chipctl_maskset(cc, 0, ~0, 0xF0);
 +		} else {
 +			axi_chipco_chipctl_maskset(cc, 0, ~0, 0xF0);
 +		}
 +		break;
 +	default:
-+		pr_err("Workarounds unknown for device 0x%04X\n",
-+			bus->chipinfo.id);
++		axi_err("Workarounds unknown for device 0x%04X\n",
++			  bus->chipinfo.id);
 +	}
 +}
 +
@@ -519,8 +506,8 @@ index 0000000..b57a9d0
 +	pmucap = axi_cc_read32(cc, AXI_CC_PMU_CAP);
 +	cc->pmu.rev = (pmucap & AXI_CC_PMU_CAP_REVISION);
 +
-+	pr_debug("Found rev %u PMU (capabilities 0x%08X)\n", cc->pmu.rev,
-+		 pmucap);
++	axi_debug("Found rev %u PMU (capabilities 0x%08X)\n", cc->pmu.rev,
++		  pmucap);
 +
 +	if (cc->pmu.rev == 1)
 +		axi_cc_mask32(cc, AXI_CC_PMU_CTL,
@@ -530,7 +517,7 @@ index 0000000..b57a9d0
 +			     AXI_CC_PMU_CTL_NOILPONW);
 +
 +	if (cc->core->id.id == 0x4329 && cc->core->id.rev == 2)
-+		pr_err("Fix for 4329b0 bad LPOM state not implemented!\n");
++		axi_err("Fix for 4329b0 bad LPOM state not implemented!\n");
 +
 +	axi_pmu_pll_init(cc);
 +	axi_pmu_resources_init(cc);
@@ -539,10 +526,10 @@ index 0000000..b57a9d0
 +}
 diff --git a/drivers/axi/driver_pci.c b/drivers/axi/driver_pci.c
 new file mode 100644
-index 0000000..fc4ab25
+index 0000000..8b4d6ba
 --- /dev/null
 +++ b/drivers/axi/driver_pci.c
-@@ -0,0 +1,163 @@
+@@ -0,0 +1,191 @@
 +/*
 + * AMBA AXI
 + * PCI Core
@@ -553,12 +540,40 @@ index 0000000..fc4ab25
 + * Licensed under the GNU/GPL. See COPYING for details.
 + */
 +
++#include <linux/axi/axi_driver_pci.h>
 +#include "axi_private.h"
++
 +#include <linux/axi/axi.h>
++#include <linux/pci.h>
++#include <linux/delay.h>
 +
 +/**************************************************
 + * R/W ops.
 + **************************************************/
++
++static inline
++u32 pcicore_read32(struct axi_drv_pci *pc, u16 offset)
++{
++	return axi_read32(pc->core, offset);
++}
++
++static inline
++void pcicore_write32(struct axi_drv_pci *pc, u16 offset, u32 value)
++{
++	axi_write32(pc->core, offset, value);
++}
++
++static inline
++u16 pcicore_read16(struct axi_drv_pci *pc, u16 offset)
++{
++	return axi_read16(pc->core, offset);
++}
++
++static inline
++void pcicore_write16(struct axi_drv_pci *pc, u16 offset, u16 value)
++{
++	axi_write16(pc->core, offset, value);
++}
 +
 +static u32 axi_pcie_read(struct axi_drv_pci *pc, u32 address)
 +{
@@ -708,10 +723,10 @@ index 0000000..fc4ab25
 +}
 diff --git a/drivers/axi/host_pci.c b/drivers/axi/host_pci.c
 new file mode 100644
-index 0000000..904ac2c
+index 0000000..51b1376
 --- /dev/null
 +++ b/drivers/axi/host_pci.c
-@@ -0,0 +1,175 @@
+@@ -0,0 +1,177 @@
 +/*
 + * AMBA AXI
 + * PCI Host
@@ -720,7 +735,9 @@ index 0000000..904ac2c
 + */
 +
 +#include "axi_private.h"
++
 +#include <linux/axi/axi.h>
++#include <linux/axi/axi_regs.h>
 +
 +static void axi_host_pci_switch_core(struct axi_device *core)
 +{
@@ -729,7 +746,7 @@ index 0000000..904ac2c
 +	pci_write_config_dword(core->bus->host_pci, AXI_PCI_BAR0_WIN2,
 +			       core->wrap);
 +	core->bus->mapped_core = core;
-+	pr_debug("Switched to core: 0x%X\n", core->id.id);
++	axi_debug("Switched to core: 0x%X\n", core->id.id);
 +}
 +
 +static u8 axi_host_pci_read8(struct axi_device *core, u16 offset)
@@ -833,7 +850,7 @@ index 0000000..904ac2c
 +
 +	/* SSB needed additional powering up, do we have any AI PCI cards? */
 +	if (!pci_is_pcie(dev))
-+		pr_err("PCI card detected, report problems.\n");
++		axi_err("PCI card detected, report problems.\n");
 +
 +	/* Map MMIO */
 +	err = -ENOMEM;
@@ -889,10 +906,10 @@ index 0000000..904ac2c
 +EXPORT_SYMBOL(axi_host_pci_register);
 diff --git a/drivers/axi/main.c b/drivers/axi/main.c
 new file mode 100644
-index 0000000..a9904ae
+index 0000000..1392652
 --- /dev/null
 +++ b/drivers/axi/main.c
-@@ -0,0 +1,253 @@
+@@ -0,0 +1,256 @@
 +/*
 + * AMBA AXI
 + * Bus subsystem
@@ -901,7 +918,14 @@ index 0000000..a9904ae
 + */
 +
 +#include "axi_private.h"
++
 +#include <linux/axi/axi.h>
++#include <linux/axi/axi_regs.h>
++#include <linux/pci.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/dma-mapping.h>
++#include <linux/slab.h>
 +
 +MODULE_DESCRIPTION("AMBA AXI driver");
 +MODULE_LICENSE("GPL");
@@ -958,11 +982,7 @@ index 0000000..a9904ae
 +
 +static void axi_release_core_dev(struct device *dev)
 +{
-+	/* Just silent lack-of-release warning for now.
-+	 * 
-+	 * Put kfree of struct axi_device here, after converting bus->cores to
-+	 * to linked list.
-+	 */
++	kfree(dev);
 +}
 +
 +static int axi_register_cores(struct axi_bus *bus)
@@ -996,7 +1016,7 @@ index 0000000..a9904ae
 +
 +		err = device_register(&core->dev);
 +		if (err) {
-+			pr_err("Could not register dev for core 0x%03X\n",
++			axi_err("Could not register dev for core 0x%03X\n",
 +				  core->id.id);
 +			core->dev.release = NULL;
 +			core->dev.bus = NULL;
@@ -1029,7 +1049,7 @@ index 0000000..a9904ae
 +	/* Scan for devices (cores) */
 +	err = axi_bus_scan(bus);
 +	if (err) {
-+		pr_err("Failed to scan: %d\n", err);
++		axi_err("Failed to scan: %d\n", err);
 +		return -1;
 +	}
 +
@@ -1050,7 +1070,7 @@ index 0000000..a9904ae
 +	/* Register found cores */
 +	axi_register_cores(bus);
 +
-+	pr_info("AXI registered\n");
++	axi_info("AXI registered");
 +
 +	return 0;
 +}
@@ -1129,7 +1149,7 @@ index 0000000..a9904ae
 +#ifdef CONFIG_AXI_HOST_PCI
 +	err = axi_pci_bridge_init();
 +	if (err) {
-+		pr_err("AXI PCI bridge initialization failed\n");
++		axi_err("AXI PCI bridge initialization failed\n");
 +		err = 0;
 +	}
 +#endif
@@ -1148,10 +1168,10 @@ index 0000000..a9904ae
 +module_exit(axi_modexit)
 diff --git a/drivers/axi/scan.c b/drivers/axi/scan.c
 new file mode 100644
-index 0000000..dfba88d
+index 0000000..7dd742c
 --- /dev/null
 +++ b/drivers/axi/scan.c
-@@ -0,0 +1,391 @@
+@@ -0,0 +1,393 @@
 +/*
 + * AMBA AXI
 + * Bus scanning
@@ -1161,10 +1181,12 @@ index 0000000..dfba88d
 +
 +#include "scan.h"
 +#include "axi_private.h"
++#include <linux/axi/axi_driver_chipcommon.h>
 +
 +#include <linux/axi/axi.h>
 +#include <linux/axi/axi_regs.h>
 +#include <linux/pci.h>
++#include <linux/delay.h>
 +#include <linux/io.h>
 +#include <linux/dma-mapping.h>
 +#include <linux/slab.h>
@@ -1426,7 +1448,7 @@ index 0000000..dfba88d
 +	axi_scan_switch_core(bus, erombase);
 +
 +	while (eromptr < eromend) {
-+		struct axi_device core = { };
++		struct axi_device core;
 +		core.bus = bus;
 +
 +		/* get CIs */
@@ -1531,11 +1553,11 @@ index 0000000..dfba88d
 +			}
 +		}
 +
-+		pr_info("Core %d found: %s "
-+			"(manuf 0x%03X, id 0x%03X, rev 0x%02X, class 0x%X)\n",
-+			bus->nr_cores, axi_device_name(core.id.id),
-+			core.id.manuf, core.id.id, core.id.rev,
-+			core.id.class);
++		axi_info("Core %d found: %s "
++			 "(manuf 0x%03X, id 0x%03X, rev 0x%02X, class 0x%X)\n",
++			 bus->nr_cores, axi_device_name(core.id.id),
++			 core.id.manuf, core.id.id, core.id.rev,
++			 core.id.class);
 +
 +		core.core_index = bus->nr_cores;
 +		bus->cores[bus->nr_cores++] = core;
@@ -1607,18 +1629,32 @@ index 0000000..91056f6
 +#endif /* AXI_SCAN_H_ */
 diff --git a/include/linux/axi/axi.h b/include/linux/axi/axi.h
 new file mode 100644
-index 0000000..35f9e52
+index 0000000..4baa92e
 --- /dev/null
 +++ b/include/linux/axi/axi.h
-@@ -0,0 +1,207 @@
+@@ -0,0 +1,221 @@
 +#ifndef LINUX_AXI_H_
 +#define LINUX_AXI_H_
 +
-+#include <linux/pci.h>
-+#include <linux/mod_devicetable.h>
-+
++#include <linux/types.h>
 +#include <linux/axi/axi_driver_chipcommon.h>
 +#include <linux/axi/axi_driver_pci.h>
++
++#define axi_info	pr_info
++#ifdef CONFIG_AXI_DEBUG
++#define axi_debug	pr_debug
++#else
++#define axi_debug	do { } while (0)
++#endif
++#define axi_err		pr_err
++
++#include <linux/device.h>
++#include <linux/list.h>
++#include <linux/types.h>
++#include <linux/spinlock.h>
++#include <linux/pci.h>
++#include <linux/mod_devicetable.h>
++#include <linux/dma-mapping.h>
 +
 +#include "axi_regs.h"
 +
@@ -2134,10 +2170,10 @@ index 0000000..b5faa60
 +#endif /* LINUX_AXI_DRIVER_CC_H_ */
 diff --git a/include/linux/axi/axi_driver_pci.h b/include/linux/axi/axi_driver_pci.h
 new file mode 100644
-index 0000000..f2c637e
+index 0000000..0661176
 --- /dev/null
 +++ b/include/linux/axi/axi_driver_pci.h
-@@ -0,0 +1,89 @@
+@@ -0,0 +1,85 @@
 +#ifndef LINUX_AXI_DRIVER_PCI_H_
 +#define LINUX_AXI_DRIVER_PCI_H_
 +
@@ -2219,10 +2255,6 @@ index 0000000..f2c637e
 +	struct axi_device *core;
 +	u8 setup_done:1;
 +};
-+
-+/* Register access */
-+#define pcicore_read32(pc, offset)		axi_read32((pc)->core, offset)
-+#define pcicore_write32(pc, offset, val)	axi_write32((pc)->core, offset, val)
 +
 +extern void axi_core_pci_init(struct axi_drv_pci *pc);
 +
