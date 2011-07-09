@@ -1,49 +1,54 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sat,  9 Jul 2011 13:06:03 +0200
-Subject: [PATCH 11/11] bcm47xx: fix irq assignment for new SoCs.
-In-Reply-To: <1310209563-6405-1-git-send-email-hauke@hauke-m.de>
-References: <1310209563-6405-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1310209563-6405-12-git-send-email-hauke@hauke-m.de>
+Date: Sat,  9 Jul 2011 13:22:03 +0200
+Subject: [PATCH] bcma: add check if sprom is available before accessing it.
+Message-ID: <1310210523-13431-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ralf@linux-mips.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org
-Cc: mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com, Hauke Mehrtens <hauke@hauke-m.de>
+To: linville@tuxdriver.com, zajec5@gmail.com
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
+
+The SoCs like the bcm4716 do not have a sprom on the bcma bus like a
+pcie device. It stores the values in some partition on flash memory.
+For ssb this informations are read out in the bcm47xx arch code,
+something like that should also be implemented for bcma. Without this
+patch bcma panics on SoCs.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- arch/mips/bcm47xx/irq.c |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+ drivers/bcma/main.c  |    4 +++-
+ drivers/bcma/sprom.c |    3 +++
+ 2 files changed, 6 insertions(+), 1 deletions(-)
 
-diff --git a/arch/mips/bcm47xx/irq.c b/arch/mips/bcm47xx/irq.c
-index 325757a..70bdcf0 100644
---- a/arch/mips/bcm47xx/irq.c
-+++ b/arch/mips/bcm47xx/irq.c
-@@ -26,6 +26,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <asm/irq_cpu.h>
-+#include <bcm47xx.h>
+diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
+index 08a14a3..873e2e4 100644
+--- a/drivers/bcma/main.c
++++ b/drivers/bcma/main.c
+@@ -149,7 +149,9 @@ int bcma_bus_register(struct bcma_bus *bus)
  
- void plat_irq_dispatch(void)
- {
-@@ -51,5 +52,16 @@ void plat_irq_dispatch(void)
+ 	/* Try to get SPROM */
+ 	err = bcma_sprom_get(bus);
+-	if (err) {
++	if (err == -ENOENT) {
++		pr_err("No SPROM available\n");
++	} else if (err) {
+ 		pr_err("Failed to get SPROM: %d\n", err);
+ 		return -ENOENT;
+ 	}
+diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
+index ffbb0e3..8e8d5cf 100644
+--- a/drivers/bcma/sprom.c
++++ b/drivers/bcma/sprom.c
+@@ -143,6 +143,9 @@ int bcma_sprom_get(struct bcma_bus *bus)
+ 	if (!bus->drv_cc.core)
+ 		return -EOPNOTSUPP;
  
- void __init arch_init_irq(void)
- {
-+#ifdef CONFIG_BCM47XX_BCMA
-+	if (bcm47xx_active_bus_type == BCM47XX_BUS_TYPE_BCMA) {
-+		bcma_write32(bcm47xx_bus.bcma.bus.drv_mips.core,
-+			     BCMA_MIPS_MIPS74K_INTMASK(5), 1 << 31);
-+		/*
-+		 * the kernel reads the timer irq from some register and thinks
-+		 * it's #5, but we offset it by 2 and route to #7
-+		 */
-+		cp0_compare_irq = 7;
-+	}
-+#endif
- 	mips_cpu_irq_init();
- }
++	if (!(bus->drv_cc.capabilities & BCMA_CC_CAP_SPROM))
++		return -ENOENT;
++
+ 	sprom = kcalloc(SSB_SPROMSIZE_WORDS_R4, sizeof(u16),
+ 			GFP_KERNEL);
+ 	if (!sprom)
 -- 
 1.7.4.1
