@@ -1,54 +1,38 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sat,  9 Jul 2011 13:22:03 +0200
-Subject: [PATCH] bcma: add check if sprom is available before accessing it.
-Message-ID: <1310210523-13431-1-git-send-email-hauke@hauke-m.de>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Wed, 13 Jul 2011 14:33:27 -0400
+Subject: [PATCH 00/11] bcma: add support for embedded devices like bcm4716
+In-Reply-To: <1310209563-6405-1-git-send-email-hauke@hauke-m.de>
+References: <1310209563-6405-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <20110713183327.GD27827@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com, zajec5@gmail.com
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: ralf@linux-mips.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-The SoCs like the bcm4716 do not have a sprom on the bcma bus like a
-pcie device. It stores the values in some partition on flash memory.
-For ssb this informations are read out in the bcm47xx arch code,
-something like that should also be implemented for bcma. Without this
-patch bcma panics on SoCs.
+On Sat, Jul 09, 2011 at 01:05:52PM +0200, Hauke Mehrtens wrote:
+> This patch series adds support for embedded devices like bcm47xx to 
+> bcma. Bcma is used on bcm4716 and bcm4718 SoCs as the system bus and
+> replaced ssb used on older devices. With these patches my bcm4716 
+> device boots up till it tries to access the flash, because the serial 
+> flash chip is unsupported for now, this will be my next task. This adds 
+> support for MIPS cores, interrupt configuration and the serial console.
+> 
+> These patches are not containing all functions needed to get the SoC to 
+> fully work and support every feature, but it is a good start.
+> These patches are now integrated in OpenWrt for everyone how wants to
+> test them.
+> 
+> This was tested with a BCM4704 device (SoC with ssb bus), a BCM4716 
+> device and a pcie wireless card supported by bcma.
+> 
+> 
+> @Rafa?: If you are fine with the bcma patches could you please give
+> your Signed-off on them.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/bcma/main.c  |    4 +++-
- drivers/bcma/sprom.c |    3 +++
- 2 files changed, 6 insertions(+), 1 deletions(-)
+Rafa?, ping?
 
-diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
-index 08a14a3..873e2e4 100644
---- a/drivers/bcma/main.c
-+++ b/drivers/bcma/main.c
-@@ -149,7 +149,9 @@ int bcma_bus_register(struct bcma_bus *bus)
- 
- 	/* Try to get SPROM */
- 	err = bcma_sprom_get(bus);
--	if (err) {
-+	if (err == -ENOENT) {
-+		pr_err("No SPROM available\n");
-+	} else if (err) {
- 		pr_err("Failed to get SPROM: %d\n", err);
- 		return -ENOENT;
- 	}
-diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
-index ffbb0e3..8e8d5cf 100644
---- a/drivers/bcma/sprom.c
-+++ b/drivers/bcma/sprom.c
-@@ -143,6 +143,9 @@ int bcma_sprom_get(struct bcma_bus *bus)
- 	if (!bus->drv_cc.core)
- 		return -EOPNOTSUPP;
- 
-+	if (!(bus->drv_cc.capabilities & BCMA_CC_CAP_SPROM))
-+		return -ENOENT;
-+
- 	sprom = kcalloc(SSB_SPROMSIZE_WORDS_R4, sizeof(u16),
- 			GFP_KERNEL);
- 	if (!sprom)
 -- 
-1.7.4.1
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
