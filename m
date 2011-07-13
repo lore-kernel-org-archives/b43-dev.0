@@ -1,105 +1,73 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed, 13 Jul 2011 22:05:54 +0200
-Subject: [PATCH 10/11] bcm47xx: add support for bcma bus
-In-Reply-To: <CAOiHx=myVVQYJumwhy7FwoSp5-mebhryDs1xnKMLCZpn=NP-7Q@mail.gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Wed, 13 Jul 2011 22:39:29 +0200
+Subject: [PATCH 05/11] bcma: add mips driver
+In-Reply-To: <1310209563-6405-6-git-send-email-hauke@hauke-m.de>
 References: <1310209563-6405-1-git-send-email-hauke@hauke-m.de>
-	<1310209563-6405-11-git-send-email-hauke@hauke-m.de>
-	<CAOiHx=myVVQYJumwhy7FwoSp5-mebhryDs1xnKMLCZpn=NP-7Q@mail.gmail.com>
-Message-ID: <4E1DFAA2.8060800@hauke-m.de>
+	<1310209563-6405-6-git-send-email-hauke@hauke-m.de>
+Message-ID: <CAOiHx=mpRNUtmLHFBw4n9XC4-cf4agc1tn4_twYFvz7=TQStzQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonas Gorski <jonas.gorski@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: ralf@linux-mips.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-Hi  Jonas,
+On 9 July 2011 13:05, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
+> index 2ca5eeb..ba9a357 100644
+> --- a/drivers/bcma/main.c
+> +++ b/drivers/bcma/main.c
+> @@ -79,6 +79,7 @@ static int bcma_register_cores(struct bcma_bus *bus)
+> ? ? ? ? ? ? ? ?case BCMA_CORE_CHIPCOMMON:
+> ? ? ? ? ? ? ? ?case BCMA_CORE_PCI:
+> ? ? ? ? ? ? ? ?case BCMA_CORE_PCIE:
+> + ? ? ? ? ? ? ? case BCMA_CORE_MIPS_74K:
+> ? ? ? ? ? ? ? ? ? ? ? ?continue;
+> ? ? ? ? ? ? ? ?}
+>
+> @@ -138,6 +139,15 @@ int bcma_bus_register(struct bcma_bus *bus)
+> ? ? ? ? ? ? ? ?bcma_core_chipcommon_init(&bus->drv_cc);
+> ? ? ? ?}
+>
+> +#ifdef CONFIG_BCMA_DRIVER_MIPS
+> + ? ? ? /* Init MIPS core */
+> + ? ? ? core = bcma_find_core(bus, BCMA_CORE_MIPS_74K);
+> + ? ? ? if (core) {
+> + ? ? ? ? ? ? ? bus->drv_mips.core = core;
+> + ? ? ? ? ? ? ? bcma_core_mips_init(&bus->drv_mips);
+> + ? ? ? }
+> +#endif
 
-Thank you for the review.
+You could avoid the ugly ifdefs here by moving it to
+bcma_driver_mips.h and change
 
-On 07/13/2011 09:52 PM, Jonas Gorski wrote:
-> On 9 July 2011 13:06, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->> This patch add support for the bcma bus. Broadcom uses only Mips 74K
->> CPUs on the new SoC and on the old ons using ssb bus there are no Mips
->> 74K CPUs.
->>
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
->>  arch/mips/bcm47xx/Kconfig                    |   13 ++++++
->>  arch/mips/bcm47xx/gpio.c                     |   22 +++++++++++
->>  arch/mips/bcm47xx/nvram.c                    |   10 +++++
->>  arch/mips/bcm47xx/serial.c                   |   29 ++++++++++++++
->>  arch/mips/bcm47xx/setup.c                    |   53 +++++++++++++++++++++++++-
->>  arch/mips/bcm47xx/time.c                     |    5 ++
->>  arch/mips/include/asm/mach-bcm47xx/bcm47xx.h |    8 ++++
->>  arch/mips/include/asm/mach-bcm47xx/gpio.h    |   41 ++++++++++++++++++++
->>  drivers/watchdog/bcm47xx_wdt.c               |   11 +++++
->>  9 files changed, 190 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/mips/bcm47xx/Kconfig b/arch/mips/bcm47xx/Kconfig
->> index 0346f92..6210b8d 100644
->> --- a/arch/mips/bcm47xx/Kconfig
->> +++ b/arch/mips/bcm47xx/Kconfig
->> @@ -15,4 +15,17 @@ config BCM47XX_SSB
->>
->>         This will generate an image with support for SSB and MIPS32 R1 instruction set.
->>
->> +config BCM47XX_BCMA
->> +       bool "BCMA Support for Broadcom BCM47XX"
->> +       select SYS_HAS_CPU_MIPS32_R2
->> +       select BCMA
->> +       select BCMA_HOST_SOC
->> +       select BCMA_DRIVER_MIPS
->> +       select BCMA_DRIVER_PCI_HOSTMODE if PCI
->> +       default y
->> +       help
->> +        Add support for new Broadcom BCM47xx boards with Broadcom specific Advanced Microcontroller Bus.
->> +
->> +        This will generate an image with support for BCMA and MIPS32 R2 instruction set.
->> +
-> 
-> BCM47XX_SSB and BCM47XX_BCMA should either exclude each other, or
-> SYS_HAS_CPU_MIPS32_R2 should only be selected when BCM47XX_SSB isn't
-> selected.
-> I would expect an image built when having both selected to also
-> support both systems, but selecting MIPS32_R2 as the CPU this will
-> make it actually not work on SSB systems.
-It should be possible to build a kernel capable of running with both
-versions. I would change "select SYS_HAS_CPU_MIPS32_R2" to "select
-SYS_HAS_CPU_MIPS32_R2 if !BCM47XX_SSB" that should make the image mips
-r1 compatible if it was build for older cpus.
-> 
->> diff --git a/arch/mips/bcm47xx/gpio.c b/arch/mips/bcm47xx/gpio.c
->> index 3320e91..9d5bafe 100644
->> --- a/arch/mips/bcm47xx/gpio.c
->> +++ b/arch/mips/bcm47xx/gpio.c
->> @@ -36,6 +36,16 @@ int gpio_request(unsigned gpio, const char *tag)
->>
->>                return 0;
->>  #endif
->> +#ifdef CONFIG_BCM47XX_BCMA
->> +       case BCM47XX_BUS_TYPE_BCMA:
->> +               if ((unsigned)gpio >= BCM47XX_CHIPCO_GPIO_LINES)
-> 
-> gpio is already unsigned, you shouldn't need to cast it.
-Will do that.
-> 
->> +                       return -EINVAL;
->> +
->> +               if (test_and_set_bit(gpio, gpio_in_use))
->> +                       return -EBUSY;
->> +
->> +               return 0;
->> +#endif
->>        }
->>        return -EINVAL;
->>  }
->> @@ -57,6 +67,14 @@ void gpio_free(unsigned gpio)
->>                clear_bit(gpio, gpio_in_use);
->>                return;
->>  #endif
->> +#ifdef CONFIG_BCM47XX_BCMA
->> +       case BCM47XX_BUS_TYPE_BCMA:
->> +               if ((unsigned)gpio >= BCM47XX_CHIPCO_GPIO_LINES)
-> 
-> Ditto.
+extern void bcma_core_mips_init(struct bcma_drv_mips *mcore);
+
+to
+#ifdef CONFIG_BCMA_DRIVER_MIPS
+extern void bcma_core_mips_init(struct bcma_drv_mips *mcore);
+#else
+static inline void bcma_core_mips_init(struct bcma_drv_mips *mcore) { }
+#endif
+
+assuming the bus->drv_mips.core being set doesn't have any side
+effects in the no mips core driver case.
+
+> +
+> ? ? ? ?/* Init PCIE core */
+> ? ? ? ?core = bcma_find_core(bus, BCMA_CORE_PCIE);
+> ? ? ? ?if (core) {
+> @@ -200,6 +210,15 @@ int __init bcma_bus_early_register(struct bcma_bus *bus,
+> ? ? ? ? ? ? ? ?bcma_core_chipcommon_init(&bus->drv_cc);
+> ? ? ? ?}
+>
+> +#ifdef CONFIG_BCMA_DRIVER_MIPS
+> + ? ? ? /* Init MIPS core */
+> + ? ? ? core = bcma_find_core(bus, BCMA_CORE_MIPS_74K);
+> + ? ? ? if (core) {
+> + ? ? ? ? ? ? ? bus->drv_mips.core = core;
+> + ? ? ? ? ? ? ? bcma_core_mips_init(&bus->drv_mips);
+> + ? ? ? }
+> +#endif
+
+Ditto.
