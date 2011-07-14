@@ -1,27 +1,32 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 14 Jul 2011 20:43:38 +0200
-Subject: [PATCH] bcma: add check if sprom is available before accessing it.
-In-Reply-To: <1310210523-13431-1-git-send-email-hauke@hauke-m.de>
-References: <1310210523-13431-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <CACna6rzJg1cY76J8C8tNbmYECVFwdZgk_=iMSDg2x844VeHB3A@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 14 Jul 2011 21:49:18 +0200
+Subject: [PATCH 1/4] ssb: SPROM: add LED duty cycle fields
+Message-ID: <1310672961-5311-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2011/7/9 Hauke Mehrtens <hauke@hauke-m.de>:
-> The SoCs like the bcm4716 do not have a sprom on the bcma bus like a
-> pcie device. It stores the values in some partition on flash memory.
-> For ssb this informations are read out in the bcm47xx arch code,
-> something like that should also be implemented for bcma. Without this
-> patch bcma panics on SoCs.
 
-Didn't regress my BCM43224 or BCM4313, seems this flag is safe to use,
-Broadcom really cares to set it.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ include/linux/ssb/ssb.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Thanks Hauke.
-
+diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+index 252e4482..f793dfd 100644
+--- a/include/linux/ssb/ssb.h
++++ b/include/linux/ssb/ssb.h
+@@ -27,6 +27,8 @@ struct ssb_sprom {
+ 	u8 et1mdcport;		/* MDIO for enet1 */
+ 	u8 board_rev;		/* Board revision number from SPROM. */
+ 	u8 country_code;	/* Country Code */
++	u16 leddc_on_time;	/* LED Powersave Duty Cycle On Count */
++	u16 leddc_off_time;	/* LED Powersave Duty Cycle Off Count */
+ 	u8 ant_available_a;	/* 2GHz antenna available bits (up to 4) */
+ 	u8 ant_available_bg;	/* 5GHz antenna available bits (up to 4) */
+ 	u16 pa0b0;
 -- 
-Rafa?
+1.7.3.4
