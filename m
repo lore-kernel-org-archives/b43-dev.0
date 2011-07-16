@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 16 Jul 2011 18:27:55 +0200
-Subject: [PATCH] b43: use agent R/W ops for BCMA_IOCTL
-Message-ID: <1310833675-3103-1-git-send-email-zajec5@gmail.com>
+Date: Sat, 16 Jul 2011 18:43:36 +0200
+Subject: [RFC][PATCH] bcma: move define of BCMA_CLKCTLST register
+Message-ID: <1310834616-3314-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,52 +9,69 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-BCMA_IOCTL is register in agent (AKA wrapper) core, we need to use
-special R/W ops for it.
+Recent experiments have shown many cores share 0x1E0 register used for
+clock management.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/main.c  |    4 ++--
- drivers/net/wireless/b43/phy_n.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Is this OK to move it this way? I prefer this over defining same names
+for 3 different cores.
+Do you have any better ideas?
+---
+ include/linux/bcma/bcma_driver_chipcommon.h |   10 +---------
+ include/linux/bcma/bcma_regs.h              |   19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index b7c7b85..22f20e1 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2814,12 +2814,12 @@ void b43_mac_phy_clock_set(struct b43_wldev *dev, bool on)
- 	switch (dev->dev->bus_type) {
- #ifdef CONFIG_B43_BCMA
- 	case B43_BUS_BCMA:
--		tmp = bcma_read32(dev->dev->bdev, BCMA_IOCTL);
-+		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
- 		if (on)
- 			tmp |= B43_BCMA_IOCTL_MACPHYCLKEN;
- 		else
- 			tmp &= ~B43_BCMA_IOCTL_MACPHYCLKEN;
--		bcma_write32(dev->dev->bdev, BCMA_IOCTL, tmp);
-+		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
- 		break;
- #endif
- #ifdef CONFIG_B43_SSB
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 95c28f5..1ae1e84 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -611,12 +611,12 @@ static void b43_nphy_bmac_clock_fgc(struct b43_wldev *dev, bool force)
- 	switch (dev->dev->bus_type) {
- #ifdef CONFIG_B43_BCMA
- 	case B43_BUS_BCMA:
--		tmp = bcma_read32(dev->dev->bdev, BCMA_IOCTL);
-+		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
- 		if (force)
- 			tmp |= BCMA_IOCTL_FGC;
- 		else
- 			tmp &= ~BCMA_IOCTL_FGC;
--		bcma_write32(dev->dev->bdev, BCMA_IOCTL, tmp);
-+		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
- 		break;
- #endif
- #ifdef CONFIG_B43_SSB
+diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
+index 9c5b69f..6e7b8b5 100644
+--- a/include/linux/bcma/bcma_driver_chipcommon.h
++++ b/include/linux/bcma/bcma_driver_chipcommon.h
+@@ -179,15 +179,7 @@
+ #define BCMA_CC_PROG_WAITCNT		0x0124
+ #define BCMA_CC_FLASH_CFG		0x0128
+ #define BCMA_CC_FLASH_WAITCNT		0x012C
+-#define BCMA_CC_CLKCTLST		0x01E0 /* Clock control and status (rev >= 20) */
+-#define  BCMA_CC_CLKCTLST_FORCEALP	0x00000001 /* Force ALP request */
+-#define  BCMA_CC_CLKCTLST_FORCEHT	0x00000002 /* Force HT request */
+-#define  BCMA_CC_CLKCTLST_FORCEILP	0x00000004 /* Force ILP request */
+-#define  BCMA_CC_CLKCTLST_HAVEALPREQ	0x00000008 /* ALP available request */
+-#define  BCMA_CC_CLKCTLST_HAVEHTREQ	0x00000010 /* HT available request */
+-#define  BCMA_CC_CLKCTLST_HWCROFF	0x00000020 /* Force HW clock request off */
+-#define  BCMA_CC_CLKCTLST_HAVEHT	0x00010000 /* HT available */
+-#define  BCMA_CC_CLKCTLST_HAVEALP	0x00020000 /* APL available */
++/* 0x1E0 is defined as shared BCMA_CLKCTLST */
+ #define BCMA_CC_HW_WORKAROUND		0x01E4 /* Hardware workaround (rev >= 20) */
+ #define BCMA_CC_UART0_DATA		0x0300
+ #define BCMA_CC_UART0_IMR		0x0304
+diff --git a/include/linux/bcma/bcma_regs.h b/include/linux/bcma/bcma_regs.h
+index f82d88a..3e0a27f 100644
+--- a/include/linux/bcma/bcma_regs.h
++++ b/include/linux/bcma/bcma_regs.h
+@@ -1,6 +1,25 @@
+ #ifndef LINUX_BCMA_REGS_H_
+ #define LINUX_BCMA_REGS_H_
+ 
++/* Some single registers are shared between many cores */
++/* BCMA_CLKCTLST: ChipCommon (rev >= 20), PCIe, 80211 */
++#define BCMA_CLKCTLST			0x01E0 /* Clock control and status */
++#define  BCMA_CLKCTLST_FORCEALP		0x00000001 /* Force ALP request */
++#define  BCMA_CLKCTLST_FORCEHT		0x00000002 /* Force HT request */
++#define  BCMA_CLKCTLST_FORCEILP		0x00000004 /* Force ILP request */
++#define  BCMA_CLKCTLST_HAVEALPREQ	0x00000008 /* ALP available request */
++#define  BCMA_CLKCTLST_HAVEHTREQ	0x00000010 /* HT available request */
++#define  BCMA_CLKCTLST_HWCROFF		0x00000020 /* Force HW clock request off */
++#define  BCMA_CLKCTLST_EXTRESREQ	0x00000700 /* Mask of external resource requests */
++#define  BCMA_CLKCTLST_HAVEALP		0x00010000 /* ALP available */
++#define  BCMA_CLKCTLST_HAVEHT		0x00020000 /* HT available */
++#define  BCMA_CLKCTLST_BP_ON_ALP	0x00040000 /* RO: running on ALP clock */
++#define  BCMA_CLKCTLST_BP_ON_HT		0x00080000 /* RO: running on HT clock */
++#define  BCMA_CLKCTLST_EXTRESST		0x07000000 /* Mask of external resource status */
++/* Is there any BCM4328 on BCMA bus? */
++#define  BCMA_CLKCTLST_4328A0_HAVEHT	0x00010000 /* 4328a0 has reversed bits */
++#define  BCMA_CLKCTLST_4328A0_HAVEALP	0x00020000 /* 4328a0 has reversed bits */
++
+ /* Agent registers (common for every core) */
+ #define BCMA_IOCTL			0x0408
+ #define  BCMA_IOCTL_CLK			0x0001
 -- 
 1.7.3.4
