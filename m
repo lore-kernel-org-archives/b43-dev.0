@@ -1,77 +1,114 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 16 Jul 2011 18:43:36 +0200
-Subject: [RFC][PATCH] bcma: move define of BCMA_CLKCTLST register
-Message-ID: <1310834616-3314-1-git-send-email-zajec5@gmail.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 16 Jul 2011 18:55:31 +0200
+Subject: =?UTF-8?q?=5BPATCH=20v2=2000/11=5D=20bcma=3A=20add=20support=20for=20embedded=20devices=20like=20bcm4716?=
+Message-ID: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: ralf@linux-mips.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org
+Cc: jonas.gorski@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com, Hauke Mehrtens <hauke@hauke-m.de>
 
-Recent experiments have shown many cores share 0x1E0 register used for
-clock management.
+This patch series adds support for embedded devices like bcm47xx to 
+bcma. Bcma is used on bcm4716 and bcm4718 SoCs as the system bus and
+replaced ssb used on older devices. With these patches my bcm4716 
+device boots up till it tries to access the flash, because the serial 
+flash chip is unsupported for now, this will be my next task. This adds 
+support for MIPS cores, interrupt configuration and the serial console.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-Is this OK to move it this way? I prefer this over defining same names
-for 3 different cores.
-Do you have any better ideas?
----
- include/linux/bcma/bcma_driver_chipcommon.h |   10 +---------
- include/linux/bcma/bcma_regs.h              |   19 +++++++++++++++++++
- 2 files changed, 20 insertions(+), 9 deletions(-)
+These patches are not containing all functions needed to get the SoC to 
+fully work and support every feature, but it is a good start.
+These patches are now integrated in OpenWrt for everyone how wants to
+test them.
 
-diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
-index 9c5b69f..6e7b8b5 100644
---- a/include/linux/bcma/bcma_driver_chipcommon.h
-+++ b/include/linux/bcma/bcma_driver_chipcommon.h
-@@ -179,15 +179,7 @@
- #define BCMA_CC_PROG_WAITCNT		0x0124
- #define BCMA_CC_FLASH_CFG		0x0128
- #define BCMA_CC_FLASH_WAITCNT		0x012C
--#define BCMA_CC_CLKCTLST		0x01E0 /* Clock control and status (rev >= 20) */
--#define  BCMA_CC_CLKCTLST_FORCEALP	0x00000001 /* Force ALP request */
--#define  BCMA_CC_CLKCTLST_FORCEHT	0x00000002 /* Force HT request */
--#define  BCMA_CC_CLKCTLST_FORCEILP	0x00000004 /* Force ILP request */
--#define  BCMA_CC_CLKCTLST_HAVEALPREQ	0x00000008 /* ALP available request */
--#define  BCMA_CC_CLKCTLST_HAVEHTREQ	0x00000010 /* HT available request */
--#define  BCMA_CC_CLKCTLST_HWCROFF	0x00000020 /* Force HW clock request off */
--#define  BCMA_CC_CLKCTLST_HAVEHT	0x00010000 /* HT available */
--#define  BCMA_CC_CLKCTLST_HAVEALP	0x00020000 /* APL available */
-+/* 0x1E0 is defined as shared BCMA_CLKCTLST */
- #define BCMA_CC_HW_WORKAROUND		0x01E4 /* Hardware workaround (rev >= 20) */
- #define BCMA_CC_UART0_DATA		0x0300
- #define BCMA_CC_UART0_IMR		0x0304
-diff --git a/include/linux/bcma/bcma_regs.h b/include/linux/bcma/bcma_regs.h
-index f82d88a..3e0a27f 100644
---- a/include/linux/bcma/bcma_regs.h
-+++ b/include/linux/bcma/bcma_regs.h
-@@ -1,6 +1,25 @@
- #ifndef LINUX_BCMA_REGS_H_
- #define LINUX_BCMA_REGS_H_
- 
-+/* Some single registers are shared between many cores */
-+/* BCMA_CLKCTLST: ChipCommon (rev >= 20), PCIe, 80211 */
-+#define BCMA_CLKCTLST			0x01E0 /* Clock control and status */
-+#define  BCMA_CLKCTLST_FORCEALP		0x00000001 /* Force ALP request */
-+#define  BCMA_CLKCTLST_FORCEHT		0x00000002 /* Force HT request */
-+#define  BCMA_CLKCTLST_FORCEILP		0x00000004 /* Force ILP request */
-+#define  BCMA_CLKCTLST_HAVEALPREQ	0x00000008 /* ALP available request */
-+#define  BCMA_CLKCTLST_HAVEHTREQ	0x00000010 /* HT available request */
-+#define  BCMA_CLKCTLST_HWCROFF		0x00000020 /* Force HW clock request off */
-+#define  BCMA_CLKCTLST_EXTRESREQ	0x00000700 /* Mask of external resource requests */
-+#define  BCMA_CLKCTLST_HAVEALP		0x00010000 /* ALP available */
-+#define  BCMA_CLKCTLST_HAVEHT		0x00020000 /* HT available */
-+#define  BCMA_CLKCTLST_BP_ON_ALP	0x00040000 /* RO: running on ALP clock */
-+#define  BCMA_CLKCTLST_BP_ON_HT		0x00080000 /* RO: running on HT clock */
-+#define  BCMA_CLKCTLST_EXTRESST		0x07000000 /* Mask of external resource status */
-+/* Is there any BCM4328 on BCMA bus? */
-+#define  BCMA_CLKCTLST_4328A0_HAVEHT	0x00010000 /* 4328a0 has reversed bits */
-+#define  BCMA_CLKCTLST_4328A0_HAVEALP	0x00020000 /* 4328a0 has reversed bits */
-+
- /* Agent registers (common for every core) */
- #define BCMA_IOCTL			0x0408
- #define  BCMA_IOCTL_CLK			0x0001
+This was tested with a BCM4704 device (SoC with ssb bus), a BCM4716 
+device and a pcie wireless card supported by bcma.
+
+
+@Rafa?: If you are fine with the bcma patches could you please give
+your Signed-off on them.
+
+@Ralf: Could you please merger this into the mips tree so that it will be in linux-3.1.
+
+PATCH v2:
+ * define inline function bcma_core_mips_init() if mips driver is not build
+ * iounmap core->io_wrap and core->io_addr after it was used.
+ * update bcma based on new braodcom driver code
+   * add workaround for 5357b0
+ * move flash informations into own struct and store it in chipcommon.
+   When adding serial flash support it will be in chipcommon and then all flash structs should be there.
+ * some changes to bcma_chipco_serial_init()
+  * some changes are done after looking into a more recent version of broadcom driver.
+  * changes suggested by Jonas
+  * serial struct is in chipcommon as it is accessed through chipcommon.
+  * use bcma_pmu_alp_clock() to get the clock.
+ * cpu clock: add detection support for some newer SoCs.
+
+PATCH v1:
+ * rebased on mips tree (mips/queue)
+ * drop pcie hostmode patch as Rafa? sent a better patch to wireless mailing list
+ * drop sprom patch because sprom is not supported in bcma version from mips tree,
+     I will send a separate patch to wireless mailing list.
+ * fix compilation of arch/mips/bcm47xx/wgt634u.c
+ * fix texts in arch/mips/bcm47xx/Kconfig
+RFC v3:
+ * make bcm47xx built either with bcma, ssb or both and use mips MIPS 74K optimizations if possible
+ * add block io support
+ * some minor fixes for code and doku
+RFC v2:
+ * use list and no arry to store cores
+ * rename bcma_host_bcma_ to bcma_host_soc_
+ * use core->io_addr and core->io_wrap to access cores
+ * checkpatch fixes
+ * some minor fixes
+
+Hauke Mehrtens (11):
+  bcma: move parsing of EEPROM into own function.
+  bcma: move initializing of struct bcma_bus to own function.
+  bcma: add functions to scan cores needed on SoCs
+  bcma: add SOC bus
+  bcma: add mips driver
+  bcma: add serial console support
+  bcma: get CPU clock
+  bcm47xx: prepare to support different buses
+  bcm47xx: make it possible to build bcm47xx without ssb.
+  bcm47xx: add support for bcma bus
+  bcm47xx: fix irq assignment for new SoCs.
+
+ arch/mips/Kconfig                            |    8 +-
+ arch/mips/bcm47xx/Kconfig                    |   31 +++
+ arch/mips/bcm47xx/Makefile                   |    3 +-
+ arch/mips/bcm47xx/gpio.c                     |   82 +++++--
+ arch/mips/bcm47xx/irq.c                      |   12 +
+ arch/mips/bcm47xx/nvram.c                    |   29 ++-
+ arch/mips/bcm47xx/serial.c                   |   46 ++++-
+ arch/mips/bcm47xx/setup.c                    |   90 ++++++-
+ arch/mips/bcm47xx/time.c                     |   16 +-
+ arch/mips/bcm47xx/wgt634u.c                  |   14 +-
+ arch/mips/include/asm/mach-bcm47xx/bcm47xx.h |   26 ++-
+ arch/mips/include/asm/mach-bcm47xx/gpio.h    |  108 +++++++--
+ arch/mips/pci/pci-bcm47xx.c                  |    6 +
+ drivers/bcma/Kconfig                         |   13 +
+ drivers/bcma/Makefile                        |    2 +
+ drivers/bcma/bcma_private.h                  |   18 ++
+ drivers/bcma/driver_chipcommon.c             |   53 ++++
+ drivers/bcma/driver_chipcommon_pmu.c         |  133 ++++++++++
+ drivers/bcma/driver_mips.c                   |  256 +++++++++++++++++++
+ drivers/bcma/driver_pci.c                    |    3 +
+ drivers/bcma/host_soc.c                      |  183 ++++++++++++++
+ drivers/bcma/main.c                          |   65 +++++
+ drivers/bcma/scan.c                          |  348 ++++++++++++++++++--------
+ drivers/watchdog/bcm47xx_wdt.c               |   27 ++-
+ include/linux/bcma/bcma.h                    |    8 +
+ include/linux/bcma/bcma_driver_chipcommon.h  |   67 +++++
+ include/linux/bcma/bcma_driver_mips.h        |   51 ++++
+ include/linux/bcma/bcma_soc.h                |   16 ++
+ 28 files changed, 1535 insertions(+), 179 deletions(-)
+ create mode 100644 arch/mips/bcm47xx/Kconfig
+ create mode 100644 drivers/bcma/driver_mips.c
+ create mode 100644 drivers/bcma/host_soc.c
+ create mode 100644 include/linux/bcma/bcma_driver_mips.h
+ create mode 100644 include/linux/bcma/bcma_soc.h
+
 -- 
-1.7.3.4
+1.7.4.1
