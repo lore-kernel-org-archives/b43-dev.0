@@ -1,29 +1,60 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 16 Jul 2011 11:51:52 +0200
-Subject: Enabling PLL timeout on BCMA bus
-In-Reply-To: <CACna6rxrwLTrph6gh8HAPziTWCQ2yX7zNpr-dunAWKAhHw-VSA@mail.gmail.com>
-References: <CACna6rwX55Vrj2RdxsPKrCZhS=m9ZjnN10Rom1g6sU7Y4uypyA@mail.gmail.com>
-	<CACna6rxHbAM-q85sGePr29y4ccPaUidL+N0XEjkLt5HhbtXuAw@mail.gmail.com>
-	<CACna6rxrwLTrph6gh8HAPziTWCQ2yX7zNpr-dunAWKAhHw-VSA@mail.gmail.com>
-Message-ID: <CACna6rwtv2noEAEg8O4sOy5sUY_rLJWfdk3EDpkTkkEMu3ADag@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sat, 16 Jul 2011 18:27:55 +0200
+Subject: [PATCH] b43: use agent R/W ops for BCMA_IOCTL
+Message-ID: <1310833675-3103-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-W dniu 16 lipca 2011 03:14 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
-> My last hope is to find some magic in PCI config space.
+BCMA_IOCTL is register in agent (AKA wrapper) core, we need to use
+special R/W ops for it.
 
-After dumping PCI config space ops, I've noticed there are writes to 4
-uniq registers:
-0x0D ? latency timer (setting to 64)
-0x40 ? Disabling RETRY_TIMEOUT register (0x41)
-0x80 ? PCI_BAR0_WIN
-0xAC ? PCI_BAR0_WIN2
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/main.c  |    4 ++--
+ drivers/net/wireless/b43/phy_n.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-No magic here :( I've no idea what now. I don't see a single
-difference between b43 and wl.
-
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index b7c7b85..22f20e1 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -2814,12 +2814,12 @@ void b43_mac_phy_clock_set(struct b43_wldev *dev, bool on)
+ 	switch (dev->dev->bus_type) {
+ #ifdef CONFIG_B43_BCMA
+ 	case B43_BUS_BCMA:
+-		tmp = bcma_read32(dev->dev->bdev, BCMA_IOCTL);
++		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
+ 		if (on)
+ 			tmp |= B43_BCMA_IOCTL_MACPHYCLKEN;
+ 		else
+ 			tmp &= ~B43_BCMA_IOCTL_MACPHYCLKEN;
+-		bcma_write32(dev->dev->bdev, BCMA_IOCTL, tmp);
++		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
+ 		break;
+ #endif
+ #ifdef CONFIG_B43_SSB
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 95c28f5..1ae1e84 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -611,12 +611,12 @@ static void b43_nphy_bmac_clock_fgc(struct b43_wldev *dev, bool force)
+ 	switch (dev->dev->bus_type) {
+ #ifdef CONFIG_B43_BCMA
+ 	case B43_BUS_BCMA:
+-		tmp = bcma_read32(dev->dev->bdev, BCMA_IOCTL);
++		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
+ 		if (force)
+ 			tmp |= BCMA_IOCTL_FGC;
+ 		else
+ 			tmp &= ~BCMA_IOCTL_FGC;
+-		bcma_write32(dev->dev->bdev, BCMA_IOCTL, tmp);
++		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
+ 		break;
+ #endif
+ #ifdef CONFIG_B43_SSB
 -- 
-Rafa?
+1.7.3.4
