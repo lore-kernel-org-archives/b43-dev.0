@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 17 Jul 2011 01:06:06 +0200
-Subject: [PATCH 4/4] b43: bcma: implement full core reset
-In-Reply-To: <1310857566-2876-1-git-send-email-zajec5@gmail.com>
-References: <1310857566-2876-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1310857566-2876-4-git-send-email-zajec5@gmail.com>
+Date: Sun, 17 Jul 2011 01:15:18 +0200
+Subject: [PATCH] b43: bus: drop inline from SSB functions
+Message-ID: <1310858118-3948-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,60 +9,86 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+We use all that functions by pointers only. This forces compiler to
+create additional duplicated functions that are not inline.
+Noticed by Michael in similar bcma code.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/main.c |   34 +++++++++++++++++++++++++++-------
- 1 files changed, 27 insertions(+), 7 deletions(-)
+ drivers/net/wireless/b43/bus.c |   27 ++++++++++++---------------
+ 1 files changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 22f20e1..46a0f92 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -1156,17 +1156,37 @@ void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags)
- }
+diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
+index a5e61a9..64c3f65 100644
+--- a/drivers/net/wireless/b43/bus.c
++++ b/drivers/net/wireless/b43/bus.c
+@@ -126,55 +126,52 @@ struct b43_bus_dev *b43_bus_dev_bcma_init(struct bcma_device *core)
  
- #ifdef CONFIG_B43_BCMA
--static void b43_bcma_wireless_core_reset(struct b43_wldev *dev, bool gmode)
-+static void b43_bcma_phy_reset(struct b43_wldev *dev)
+ /* SSB */
+ #ifdef CONFIG_B43_SSB
+-static inline int b43_bus_ssb_bus_may_powerdown(struct b43_bus_dev *dev)
++static int b43_bus_ssb_bus_may_powerdown(struct b43_bus_dev *dev)
  {
--	u32 flags = 0;
-+	u32 flags;
- 
--	if (gmode)
--		flags = B43_BCMA_IOCTL_GMODE;
--	flags |= B43_BCMA_IOCTL_PHY_CLKEN;
-+	/* Put PHY into reset */
-+	flags = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
-+	flags |= B43_BCMA_IOCTL_PHY_RESET;
- 	flags |= B43_BCMA_IOCTL_PHY_BW_20MHZ; /* Make 20 MHz def */
--	b43_device_enable(dev, flags);
-+	bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, flags);
-+	udelay(2);
-+
-+	/* Take PHY out of reset */
-+	flags = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
-+	flags &= ~B43_BCMA_IOCTL_PHY_RESET;
-+	flags |= BCMA_IOCTL_FGC;
-+	bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, flags);
-+	udelay(1);
- 
--	/* TODO: reset PHY */
-+	/* Do not force clock anymore */
-+	flags = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
-+	flags &= ~BCMA_IOCTL_FGC;
-+	bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, flags);
-+	udelay(1);
-+}
-+
-+static void b43_bcma_wireless_core_reset(struct b43_wldev *dev, bool gmode)
-+{
-+	b43_device_enable(dev, B43_BCMA_IOCTL_PHY_CLKEN);
-+	bcma_core_set_clockmode(dev->dev->bdev, BCMA_CLKMODE_FAST);
-+	b43_bcma_phy_reset(dev);
-+	bcma_core_pll_ctl(dev->dev->bdev, 0x300, 0x3000000, true);
+ 	return ssb_bus_may_powerdown(dev->sdev->bus);
  }
- #endif
+-static inline int b43_bus_ssb_bus_powerup(struct b43_bus_dev *dev,
++static int b43_bus_ssb_bus_powerup(struct b43_bus_dev *dev,
+ 					  bool dynamic_pctl)
+ {
+ 	return ssb_bus_powerup(dev->sdev->bus, dynamic_pctl);
+ }
+-static inline int b43_bus_ssb_device_is_enabled(struct b43_bus_dev *dev)
++static int b43_bus_ssb_device_is_enabled(struct b43_bus_dev *dev)
+ {
+ 	return ssb_device_is_enabled(dev->sdev);
+ }
+-static inline void b43_bus_ssb_device_enable(struct b43_bus_dev *dev,
++static void b43_bus_ssb_device_enable(struct b43_bus_dev *dev,
+ 					     u32 core_specific_flags)
+ {
+ 	ssb_device_enable(dev->sdev, core_specific_flags);
+ }
+-static inline void b43_bus_ssb_device_disable(struct b43_bus_dev *dev,
++static void b43_bus_ssb_device_disable(struct b43_bus_dev *dev,
+ 					      u32 core_specific_flags)
+ {
+ 	ssb_device_disable(dev->sdev, core_specific_flags);
+ }
  
+-static inline u16 b43_bus_ssb_read16(struct b43_bus_dev *dev, u16 offset)
++static u16 b43_bus_ssb_read16(struct b43_bus_dev *dev, u16 offset)
+ {
+ 	return ssb_read16(dev->sdev, offset);
+ }
+-static inline u32 b43_bus_ssb_read32(struct b43_bus_dev *dev, u16 offset)
++static u32 b43_bus_ssb_read32(struct b43_bus_dev *dev, u16 offset)
+ {
+ 	return ssb_read32(dev->sdev, offset);
+ }
+-static inline
+-void b43_bus_ssb_write16(struct b43_bus_dev *dev, u16 offset, u16 value)
++static void b43_bus_ssb_write16(struct b43_bus_dev *dev, u16 offset, u16 value)
+ {
+ 	ssb_write16(dev->sdev, offset, value);
+ }
+-static inline
+-void b43_bus_ssb_write32(struct b43_bus_dev *dev, u16 offset, u32 value)
++static void b43_bus_ssb_write32(struct b43_bus_dev *dev, u16 offset, u32 value)
+ {
+ 	ssb_write32(dev->sdev, offset, value);
+ }
+-static inline
+-void b43_bus_ssb_block_read(struct b43_bus_dev *dev, void *buffer,
+-			    size_t count, u16 offset, u8 reg_width)
++static void b43_bus_ssb_block_read(struct b43_bus_dev *dev, void *buffer,
++				   size_t count, u16 offset, u8 reg_width)
+ {
+ 	ssb_block_read(dev->sdev, buffer, count, offset, reg_width);
+ }
+-static inline
++static
+ void b43_bus_ssb_block_write(struct b43_bus_dev *dev, const void *buffer,
+ 			     size_t count, u16 offset, u8 reg_width)
+ {
 -- 
 1.7.3.4
