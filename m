@@ -1,94 +1,40 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 17 Jul 2011 01:15:18 +0200
-Subject: [PATCH] b43: bus: drop inline from SSB functions
-Message-ID: <1310858118-3948-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 17 Jul 2011 01:52:09 +0200
+Subject: [RFC][PATCH] b43: correctly display longer chipsets ids
+Message-ID: <1310860329-6855-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-We use all that functions by pointers only. This forces compiler to
-create additional duplicated functions that are not inline.
-Noticed by Michael in similar bcma code.
-
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Some of the newer Broadcom chipsets have longe names like BCM43224,
+BCM43225, etc. However Broadcom decided to keep using u16 for storing
+them. Use %X or %d depending on chip_id value to avoid BCMA8D8, etc.
 ---
- drivers/net/wireless/b43/bus.c |   27 ++++++++++++---------------
- 1 files changed, 12 insertions(+), 15 deletions(-)
+Is there any nicer way of doing that? Currently I have whole string
+duplicated. Can we define part of the format using condition? Like
+(chip_id > 0x9999) ? "%d" : "%04X"
+?
+---
+ drivers/net/wireless/b43/main.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
-index a5e61a9..64c3f65 100644
---- a/drivers/net/wireless/b43/bus.c
-+++ b/drivers/net/wireless/b43/bus.c
-@@ -126,55 +126,52 @@ struct b43_bus_dev *b43_bus_dev_bcma_init(struct bcma_device *core)
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 22f20e1..549555e 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -5202,7 +5202,9 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ 	INIT_WORK(&wl->tx_work, b43_tx_work);
+ 	skb_queue_head_init(&wl->tx_queue);
  
- /* SSB */
- #ifdef CONFIG_B43_SSB
--static inline int b43_bus_ssb_bus_may_powerdown(struct b43_bus_dev *dev)
-+static int b43_bus_ssb_bus_may_powerdown(struct b43_bus_dev *dev)
- {
- 	return ssb_bus_may_powerdown(dev->sdev->bus);
+-	b43info(wl, "Broadcom %04X WLAN found (core revision %u)\n",
++	b43info(wl, (dev->chip_id > 0x9999) ?
++		"Broadcom %d WLAN found (core revision %u)\n" :
++		"Broadcom %04X WLAN found (core revision %u)\n",
+ 		dev->chip_id, dev->core_rev);
+ 	return wl;
  }
--static inline int b43_bus_ssb_bus_powerup(struct b43_bus_dev *dev,
-+static int b43_bus_ssb_bus_powerup(struct b43_bus_dev *dev,
- 					  bool dynamic_pctl)
- {
- 	return ssb_bus_powerup(dev->sdev->bus, dynamic_pctl);
- }
--static inline int b43_bus_ssb_device_is_enabled(struct b43_bus_dev *dev)
-+static int b43_bus_ssb_device_is_enabled(struct b43_bus_dev *dev)
- {
- 	return ssb_device_is_enabled(dev->sdev);
- }
--static inline void b43_bus_ssb_device_enable(struct b43_bus_dev *dev,
-+static void b43_bus_ssb_device_enable(struct b43_bus_dev *dev,
- 					     u32 core_specific_flags)
- {
- 	ssb_device_enable(dev->sdev, core_specific_flags);
- }
--static inline void b43_bus_ssb_device_disable(struct b43_bus_dev *dev,
-+static void b43_bus_ssb_device_disable(struct b43_bus_dev *dev,
- 					      u32 core_specific_flags)
- {
- 	ssb_device_disable(dev->sdev, core_specific_flags);
- }
- 
--static inline u16 b43_bus_ssb_read16(struct b43_bus_dev *dev, u16 offset)
-+static u16 b43_bus_ssb_read16(struct b43_bus_dev *dev, u16 offset)
- {
- 	return ssb_read16(dev->sdev, offset);
- }
--static inline u32 b43_bus_ssb_read32(struct b43_bus_dev *dev, u16 offset)
-+static u32 b43_bus_ssb_read32(struct b43_bus_dev *dev, u16 offset)
- {
- 	return ssb_read32(dev->sdev, offset);
- }
--static inline
--void b43_bus_ssb_write16(struct b43_bus_dev *dev, u16 offset, u16 value)
-+static void b43_bus_ssb_write16(struct b43_bus_dev *dev, u16 offset, u16 value)
- {
- 	ssb_write16(dev->sdev, offset, value);
- }
--static inline
--void b43_bus_ssb_write32(struct b43_bus_dev *dev, u16 offset, u32 value)
-+static void b43_bus_ssb_write32(struct b43_bus_dev *dev, u16 offset, u32 value)
- {
- 	ssb_write32(dev->sdev, offset, value);
- }
--static inline
--void b43_bus_ssb_block_read(struct b43_bus_dev *dev, void *buffer,
--			    size_t count, u16 offset, u8 reg_width)
-+static void b43_bus_ssb_block_read(struct b43_bus_dev *dev, void *buffer,
-+				   size_t count, u16 offset, u8 reg_width)
- {
- 	ssb_block_read(dev->sdev, buffer, count, offset, reg_width);
- }
--static inline
-+static
- void b43_bus_ssb_block_write(struct b43_bus_dev *dev, const void *buffer,
- 			     size_t count, u16 offset, u8 reg_width)
- {
 -- 
 1.7.3.4
