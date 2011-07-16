@@ -1,49 +1,40 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sat, 16 Jul 2011 18:55:42 +0200
-Subject: [PATCH v2 11/11] bcm47xx: fix irq assignment for new SoCs.
-In-Reply-To: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
-References: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1310835342-18877-12-git-send-email-hauke@hauke-m.de>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 17 Jul 2011 01:06:03 +0200
+Subject: [PATCH 1/4] bcma: trivial: add helpers for masking/setting
+Message-ID: <1310857566-2876-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ralf@linux-mips.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, linux-mips@linux-mips.org
-Cc: jonas.gorski@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com, Hauke Mehrtens <hauke@hauke-m.de>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- arch/mips/bcm47xx/irq.c |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+ include/linux/bcma/bcma.h |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-diff --git a/arch/mips/bcm47xx/irq.c b/arch/mips/bcm47xx/irq.c
-index 325757a..70bdcf0 100644
---- a/arch/mips/bcm47xx/irq.c
-+++ b/arch/mips/bcm47xx/irq.c
-@@ -26,6 +26,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <asm/irq_cpu.h>
-+#include <bcm47xx.h>
- 
- void plat_irq_dispatch(void)
- {
-@@ -51,5 +52,16 @@ void plat_irq_dispatch(void)
- 
- void __init arch_init_irq(void)
- {
-+#ifdef CONFIG_BCM47XX_BCMA
-+	if (bcm47xx_active_bus_type == BCM47XX_BUS_TYPE_BCMA) {
-+		bcma_write32(bcm47xx_bus.bcma.bus.drv_mips.core,
-+			     BCMA_MIPS_MIPS74K_INTMASK(5), 1 << 31);
-+		/*
-+		 * the kernel reads the timer irq from some register and thinks
-+		 * it's #5, but we offset it by 2 and route to #7
-+		 */
-+		cp0_compare_irq = 7;
-+	}
-+#endif
- 	mips_cpu_irq_init();
+diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
+index 3895aeb..6e5dc7b 100644
+--- a/include/linux/bcma/bcma.h
++++ b/include/linux/bcma/bcma.h
+@@ -243,8 +243,16 @@ void bcma_awrite32(struct bcma_device *core, u16 offset, u32 value)
+ 	core->bus->ops->awrite32(core, offset, value);
  }
+ 
++#define bcma_mask32(cc, offset, mask) \
++	bcma_write32(cc, offset, bcma_read32(cc, offset) & (mask))
++#define bcma_set32(cc, offset, set) \
++	bcma_write32(cc, offset, bcma_read32(cc, offset) | (set))
++#define bcma_maskset32(cc, offset, mask, set) \
++	bcma_write32(cc, offset, (bcma_read32(cc, offset) & (mask)) | (set))
++
+ extern bool bcma_core_is_enabled(struct bcma_device *core);
+ extern void bcma_core_disable(struct bcma_device *core, u32 flags);
+ extern int bcma_core_enable(struct bcma_device *core, u32 flags);
+ 
++
+ #endif /* LINUX_BCMA_H_ */
 -- 
-1.7.4.1
+1.7.3.4
