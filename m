@@ -1,40 +1,42 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 17 Jul 2011 01:52:09 +0200
-Subject: [RFC][PATCH] b43: correctly display longer chipsets ids
-Message-ID: <1310860329-6855-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 17 Jul 2011 10:30:31 +0200
+Subject: [PATCH 1/4] b43: HT-PHY: fix masks in radio ctl
+Message-ID: <1310891434-3537-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
-Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Some of the newer Broadcom chipsets have longe names like BCM43224,
-BCM43225, etc. However Broadcom decided to keep using u16 for storing
-them. Use %X or %d depending on chip_id value to avoid BCMA8D8, etc.
----
-Is there any nicer way of doing that? Currently I have whole string
-duplicated. Can we define part of the format using condition? Like
-(chip_id > 0x9999) ? "%d" : "%04X"
-?
----
- drivers/net/wireless/b43/main.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+Old masks were causing ugly, delayed lock ups.
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 22f20e1..549555e 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -5202,7 +5202,9 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
- 	INIT_WORK(&wl->tx_work, b43_tx_work);
- 	skb_queue_head_init(&wl->tx_queue);
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_ht.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 2982103..0cc293a 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -277,12 +277,12 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
+ 		b43err(dev->wl, "MAC not suspended\n");
  
--	b43info(wl, "Broadcom %04X WLAN found (core revision %u)\n",
-+	b43info(wl, (dev->chip_id > 0x9999) ?
-+		"Broadcom %d WLAN found (core revision %u)\n" :
-+		"Broadcom %04X WLAN found (core revision %u)\n",
- 		dev->chip_id, dev->core_rev);
- 	return wl;
- }
+ 	if (blocked) {
+-		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
+ 	} else {
+-		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
+-		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x1);
+-		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
+-		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x2);
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
++		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x1);
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
++		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x2);
+ 
+ 		if (dev->phy.radio_ver == 0x2059)
+ 			b43_radio_2059_init(dev);
 -- 
 1.7.3.4
