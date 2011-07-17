@@ -1,10 +1,10 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 17 Jul 2011 18:42:50 +0200
+Date: Sun, 17 Jul 2011 18:56:50 +0200
 Subject: [PATCH 1/4] b43: HT-PHY: fix masks in radio ctl
 In-Reply-To: <20110717104359.72a27182@maggie>
 References: <1310891434-3537-1-git-send-email-zajec5@gmail.com>
 	<20110717104359.72a27182@maggie>
-Message-ID: <CACna6rxUDaaRmEfF86=wCZ50iN7LFT_jh0u7U34otg6ovbWe=A@mail.gmail.com>
+Message-ID: <CACna6ry9Vet9mCkmUZKgTxAiZjSEhb2svNSPAQDVpiV+8JZ0Kg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -52,8 +52,15 @@ W dniu 17 lipca 2011 10:43 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
 > (And mask() with ~0 should always ring a bell anyway, because it does
 > nothing except for possible side effects of the register read/write).
 
-Yeah, I implemented it this way as the result of my rush in writing HT
-code. We can ignore wl's ops and be smarter in such a cases.
+Well, after re-thinking it, I've some doubts.
+
+Thanks to using maskset we got read after every write. We have no idea
+it this is needed or no. What we are really sure is that this part of
+code is really sensitive. Writing 0x3 cause horrible lock ups, really
+ugly to track.
+
+Should we use read-after-write then? Or maybe just keep wl's dummy way
+of operating on this register?
 
 -- 
 Rafa?
