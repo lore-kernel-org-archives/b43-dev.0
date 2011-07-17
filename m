@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 17 Jul 2011 10:43:05 +0200
-Subject: [PATCH] bcma: handle alternative SPROM location
-Message-ID: <1310892185-4225-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 17 Jul 2011 11:00:59 +0200
+Subject: [PATCH V2] bcma: handle alternative SPROM location
+Message-ID: <1310893259-4307-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,11 +9,13 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Some cards do not use additional 0x30 offset for SPROM locations. We do
-not know the real condition for it yet, make it BCM4331 specific now
+Some cards do not use additional 0x30 offset for SPROM location. We do
+not know the real condition for it yet, make it BCM4331 specific for
 now.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+V2: commit message typos
 ---
  drivers/bcma/sprom.c                        |   12 +++++++++---
  include/linux/bcma/bcma_driver_chipcommon.h |    3 ++-
