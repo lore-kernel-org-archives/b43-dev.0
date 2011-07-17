@@ -1,58 +1,45 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 17 Jul 2011 10:05:04 -0500
-Subject: [PATCH 1/4] b43: HT-PHY: fix masks in radio ctl
-In-Reply-To: <20110717104359.72a27182@maggie>
-References: <1310891434-3537-1-git-send-email-zajec5@gmail.com>
-	<20110717104359.72a27182@maggie>
-Message-ID: <4E22FA20.3090503@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 17 Jul 2011 18:40:44 +0200
+Subject: Enabling PLL timeout on BCMA bus
+In-Reply-To: <87ipr1urym.fsf@purkki.adurom.net>
+References: <CACna6rwX55Vrj2RdxsPKrCZhS=m9ZjnN10Rom1g6sU7Y4uypyA@mail.gmail.com>
+	<CACna6rxHbAM-q85sGePr29y4ccPaUidL+N0XEjkLt5HhbtXuAw@mail.gmail.com>
+	<CACna6rxrwLTrph6gh8HAPziTWCQ2yX7zNpr-dunAWKAhHw-VSA@mail.gmail.com>
+	<CACna6rwtv2noEAEg8O4sOy5sUY_rLJWfdk3EDpkTkkEMu3ADag@mail.gmail.com>
+	<87ipr1urym.fsf@purkki.adurom.net>
+Message-ID: <CACna6rwDcgA4DnwjBJXqaXWbC1vNwMe5vtxOTFtiwVkyy0U3Yg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <m@bues.ch>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On 07/17/2011 03:43 AM, Michael B?sch wrote:
-> On Sun, 17 Jul 2011 10:30:31 +0200
-> Rafa? Mi?ecki<zajec5@gmail.com>  wrote:
+W dniu 17 lipca 2011 12:22 u?ytkownik Kalle Valo <kvalo@adurom.com> napisa?:
+> Rafa? Mi?ecki <zajec5@gmail.com> writes:
 >
->> Old masks were causing ugly, delayed lock ups.
+>> W dniu 16 lipca 2011 03:14 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+>>> My last hope is to find some magic in PCI config space.
 >>
->> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
->> ---
->>   drivers/net/wireless/b43/phy_ht.c |   10 +++++-----
->>   1 files changed, 5 insertions(+), 5 deletions(-)
+>> After dumping PCI config space ops, I've noticed there are writes to 4
+>> uniq registers:
+>> 0x0D ? latency timer (setting to 64)
+>> 0x40 ? Disabling RETRY_TIMEOUT register (0x41)
+>> 0x80 ? PCI_BAR0_WIN
+>> 0xAC ? PCI_BAR0_WIN2
 >>
->> diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
->> index 2982103..0cc293a 100644
->> --- a/drivers/net/wireless/b43/phy_ht.c
->> +++ b/drivers/net/wireless/b43/phy_ht.c
->> @@ -277,12 +277,12 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
->>   		b43err(dev->wl, "MAC not suspended\n");
->>
->>   	if (blocked) {
->> -		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
->> +		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
->>   	} else {
->> -		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
->> -		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x1);
->> -		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
->> -		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x2);
->> +		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
->> +		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x1);
->> +		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
->> +		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x2);
->>
->>   		if (dev->phy.radio_ver == 0x2059)
->>   			b43_radio_2059_init(dev);
+>> No magic here :( I've no idea what now. I don't see a single
+>> difference between b43 and wl.
 >
-> Why are we using mask/maskset here at all, if the mask is zero?
-> You could just use phy_write.
->
-> (And mask() with ~0 should always ring a bell anyway, because it does
-> nothing except for possible side effects of the register read/write).
+> What about timing? Maybe wl is slower in some cases?
 
-All of the Broadcom mask and maskset routines are called with the complement of 
-the mask. It has been a constant battle during the RE work to keep that straight.
+I've hacked bcma putting mdelay(1) after ever R/W op. It didn't help.
 
-Larry
+I've discovered different interesting thing however. Register 0x1E0 is
+not ChipCommon specific. It is valid for every core on my boards:
+ChipCommon, 80211 and PCIE.
+
+I've already sent patch implementing correct core reset, including PLL.
+
+
+-- 
+Rafa?
