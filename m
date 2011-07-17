@@ -1,51 +1,36 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 17 Jul 2011 10:43:59 +0200
-Subject: [PATCH 1/4] b43: HT-PHY: fix masks in radio ctl
-In-Reply-To: <1310891434-3537-1-git-send-email-zajec5@gmail.com>
-References: <1310891434-3537-1-git-send-email-zajec5@gmail.com>
-Message-ID: <20110717104359.72a27182@maggie>
+From: Kalle Valo <kvalo@adurom.com>
+Date: Sun, 17 Jul 2011 13:22:41 +0300
+Subject: Enabling PLL timeout on BCMA bus
+In-Reply-To: <CACna6rwtv2noEAEg8O4sOy5sUY_rLJWfdk3EDpkTkkEMu3ADag@mail.gmail.com>
+	(=?utf-8?Q?=22Rafa=C5=82_Mi=C5=82ecki=22's?= message of "Sat\,
+	16 Jul 2011 11\:51\:52 +0200")
+References: <CACna6rwX55Vrj2RdxsPKrCZhS=m9ZjnN10Rom1g6sU7Y4uypyA@mail.gmail.com>
+	<CACna6rxHbAM-q85sGePr29y4ccPaUidL+N0XEjkLt5HhbtXuAw@mail.gmail.com>
+	<CACna6rxrwLTrph6gh8HAPziTWCQ2yX7zNpr-dunAWKAhHw-VSA@mail.gmail.com>
+	<CACna6rwtv2noEAEg8O4sOy5sUY_rLJWfdk3EDpkTkkEMu3ADag@mail.gmail.com>
+Message-ID: <87ipr1urym.fsf@purkki.adurom.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Sun, 17 Jul 2011 10:30:31 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+Rafa? Mi?ecki <zajec5@gmail.com> writes:
 
-> Old masks were causing ugly, delayed lock ups.
-> 
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> ---
->  drivers/net/wireless/b43/phy_ht.c |   10 +++++-----
->  1 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-> index 2982103..0cc293a 100644
-> --- a/drivers/net/wireless/b43/phy_ht.c
-> +++ b/drivers/net/wireless/b43/phy_ht.c
-> @@ -277,12 +277,12 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
->  		b43err(dev->wl, "MAC not suspended\n");
->  
->  	if (blocked) {
-> -		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
-> +		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
->  	} else {
-> -		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
-> -		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x1);
-> -		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
-> -		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x2);
-> +		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
-> +		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x1);
-> +		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
-> +		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x2);
->  
->  		if (dev->phy.radio_ver == 0x2059)
->  			b43_radio_2059_init(dev);
+> W dniu 16 lipca 2011 03:14 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+>> My last hope is to find some magic in PCI config space.
+>
+> After dumping PCI config space ops, I've noticed there are writes to 4
+> uniq registers:
+> 0x0D ? latency timer (setting to 64)
+> 0x40 ? Disabling RETRY_TIMEOUT register (0x41)
+> 0x80 ? PCI_BAR0_WIN
+> 0xAC ? PCI_BAR0_WIN2
+>
+> No magic here :( I've no idea what now. I don't see a single
+> difference between b43 and wl.
 
-Why are we using mask/maskset here at all, if the mask is zero?
-You could just use phy_write.
+What about timing? Maybe wl is slower in some cases?
 
-(And mask() with ~0 should always ring a bell anyway, because it does
-nothing except for possible side effects of the register read/write).
+-- 
+Kalle Valo
