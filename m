@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 18 Jul 2011 02:01:30 +0200
-Subject: [PATCH 3/3] b43: bcma: read info about supported bands
-In-Reply-To: <1310947290-3099-1-git-send-email-zajec5@gmail.com>
-References: <1310947290-3099-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1310947290-3099-3-git-send-email-zajec5@gmail.com>
+Date: Mon, 18 Jul 2011 02:13:23 +0200
+Subject: [PATCH 1/4] b43: HT-PHY: fix masks in radio ctl
+Message-ID: <1310948006-3365-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,47 +9,44 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Old masks were causing ugly, delayed lock ups.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/main.c |   13 +++++++------
- 1 files changed, 7 insertions(+), 6 deletions(-)
+V2: Explain why we do such a dummy operations like: write(read() & 0).
+Put cleaning this as TODO. We should wait with cleaning until having BCM4331
+working at all.
+---
+ drivers/net/wireless/b43/phy_ht.c |   15 ++++++++++-----
+ 1 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 549555e..9afb4eb 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4948,6 +4948,7 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
- 	struct b43_wl *wl = dev->wl;
- 	struct pci_dev *pdev = NULL;
- 	int err;
-+	u32 tmp;
- 	bool have_2ghz_phy = 0, have_5ghz_phy = 0;
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 2982103..85a30af 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -276,13 +276,18 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
+ 	if (b43_read32(dev, B43_MMIO_MACCTL) & B43_MACCTL_ENABLED)
+ 		b43err(dev->wl, "MAC not suspended\n");
  
- 	/* Do NOT do any device initialization here.
-@@ -4973,17 +4974,17 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
- 	switch (dev->dev->bus_type) {
- #ifdef CONFIG_B43_BCMA
- 	case B43_BUS_BCMA:
--		/* FIXME */
--		have_2ghz_phy = 1;
--		have_5ghz_phy = 0;
-+		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOST);
-+		have_2ghz_phy = !!(tmp & B43_BCMA_IOST_2G_PHY);
-+		have_5ghz_phy = !!(tmp & B43_BCMA_IOST_5G_PHY);
- 		break;
- #endif
- #ifdef CONFIG_B43_SSB
- 	case B43_BUS_SSB:
- 		if (dev->dev->core_rev >= 5) {
--			u32 tmshigh = ssb_read32(dev->dev->sdev, SSB_TMSHIGH);
--			have_2ghz_phy = !!(tmshigh & B43_TMSHIGH_HAVE_2GHZ_PHY);
--			have_5ghz_phy = !!(tmshigh & B43_TMSHIGH_HAVE_5GHZ_PHY);
-+			tmp = ssb_read32(dev->dev->sdev, SSB_TMSHIGH);
-+			have_2ghz_phy = !!(tmp & B43_TMSHIGH_HAVE_2GHZ_PHY);
-+			have_5ghz_phy = !!(tmp & B43_TMSHIGH_HAVE_5GHZ_PHY);
- 		} else
- 			B43_WARN_ON(1);
- 		break;
++	/* In the following PHY ops we copy wl's dummy behaviour.
++	 * TODO: Find out if reads (currently hidden in masks/masksets) are
++	 * needed and replace following ops with just writes or w&r.
++	 * Note: B43_PHY_HT_RF_CTL1 register is tricky, wrong operation can
++	 * cause delayed (!) machine lock up. */
+ 	if (blocked) {
+-		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
+ 	} else {
+-		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
+-		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x1);
+-		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
+-		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x2);
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
++		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x1);
++		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
++		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x2);
+ 
+ 		if (dev->phy.radio_ver == 0x2059)
+ 			b43_radio_2059_init(dev);
 -- 
 1.7.3.4
