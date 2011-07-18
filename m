@@ -1,50 +1,28 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 18 Jul 2011 22:45:58 +0200
-Subject: [PATCH] b43: correctly display longer chipsets ids
-Message-ID: <1311021958-6758-1-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 18 Jul 2011 22:14:50 +0200
+Subject: No DMA RX on some BCM4321, on BCM43224 and BCM43225
+Message-ID: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, Pavel Roskin <proski@gnu.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-Some of the newer Broadcom chipsets have longe names like BCM43224,
-BCM43225, etc. However Broadcom decided to keep using u16 for storing
-them. Use %X or %d depending on chip_id value to avoid BCMA8D8, etc.
+When using DMA on one of my BCM4321s and BCM43224 or BCM43225 I don't
+get a single RX IRQ.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-V final: Use snprintf instead of duplicating whole string with %d vs. %X.
-Thanks Pavel.
----
- drivers/net/wireless/b43/main.c |    7 +++++--
- 1 files changed, 5 insertions(+), 2 deletions(-)
+Doing scanning requests sends TX packets to the hardware, and the
+ucode generates IRQs for confirming transmitted packets. RX does not
+seem to work however. I expected to see "native" beacons, or response
+to the scanning request.
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 22f20e1..08cd8db 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -5164,6 +5164,7 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
- 	struct ssb_sprom *sprom = dev->bus_sprom;
- 	struct ieee80211_hw *hw;
- 	struct b43_wl *wl;
-+	char chip_name[6];
- 
- 	hw = ieee80211_alloc_hw(sizeof(*wl), &b43_hw_ops);
- 	if (!hw) {
-@@ -5202,8 +5203,10 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
- 	INIT_WORK(&wl->tx_work, b43_tx_work);
- 	skb_queue_head_init(&wl->tx_queue);
- 
--	b43info(wl, "Broadcom %04X WLAN found (core revision %u)\n",
--		dev->chip_id, dev->core_rev);
-+	snprintf(chip_name, ARRAY_SIZE(chip_name),
-+		 (dev->chip_id > 0x9999) ? "%d" : "%04X", dev->chip_id);
-+	b43info(wl, "Broadcom %s WLAN found (core revision %u)\n", chip_name,
-+		dev->core_rev);
- 	return wl;
- }
- 
+Do you have idea what may be wrong, where should I look at? So far
+I've discovered (from looking at MMIO dumps) that:
+1) wl uses 38 as B43_DMA0_RX_FRAMEOFFSET (instead of our 30)
+2) wl enables channel with 0x801, not just 0x1 (specs say 0x800 is
+Parity Disable - Not on all units)
+
+I've implemented both changes in b43, it didn't help.
+
 -- 
-1.7.3.4
+Rafa?
