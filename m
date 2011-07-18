@@ -1,55 +1,73 @@
 From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 19 Jul 2011 00:59:17 +0200
+Date: Tue, 19 Jul 2011 01:08:57 +0200
 Subject: No DMA RX on some BCM4321, on BCM43224 and BCM43225
-In-Reply-To: <CACna6rxYEuOMT1EZP6D46c+YAHBhhTXdDmaum+HMwtPT0ZYCfQ@mail.gmail.com>
+In-Reply-To: <CACna6ryKAusP55N-WoAFjhwPfJ5H7NMVta32bGzr4CD=KZ5SkA@mail.gmail.com>
 References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 	<20110718204146.706dc5b2@Nokia-N900>
 	<CACna6rxYEuOMT1EZP6D46c+YAHBhhTXdDmaum+HMwtPT0ZYCfQ@mail.gmail.com>
-Message-ID: <20110719005917.66e168d4@maggie>
+	<20110719005917.66e168d4@maggie>
+	<CACna6ryKAusP55N-WoAFjhwPfJ5H7NMVta32bGzr4CD=KZ5SkA@mail.gmail.com>
+Message-ID: <20110719010857.53d596cf@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Tue, 19 Jul 2011 00:39:10 +0200
+On Tue, 19 Jul 2011 01:07:20 +0200
 Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 
-> W dniu 18 lipca 2011 22:41 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
-> > On Mon, 18 Jul 2011 22:14:50 +0200
+> W dniu 19 lipca 2011 00:59 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
+> > On Tue, 19 Jul 2011 00:39:10 +0200
 > > Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 > >
-> >> When using DMA on one of my BCM4321s and BCM43224 or BCM43225 I don't
-> >> get a single RX IRQ.
+> >> W dniu 18 lipca 2011 22:41 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
+> >> > On Mon, 18 Jul 2011 22:14:50 +0200
+> >> > Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> >> >
+> >> >> When using DMA on one of my BCM4321s and BCM43224 or BCM43225 I don't
+> >> >> get a single RX IRQ.
+> >> >>
+> >> >> Doing scanning requests sends TX packets to the hardware, and the
+> >> >> ucode generates IRQs for confirming transmitted packets. RX does not
+> >> >> seem to work however. I expected to see "native" beacons, or response
+> >> >> to the scanning request.
+> >> >>
+> >> >> Do you have idea what may be wrong, where should I look at?
+> >> >
+> >> > Is wl still using the same dma engine for
+> >> > RX as older versions did? (what was it? the first?)
 > >>
-> >> Doing scanning requests sends TX packets to the hardware, and the
-> >> ucode generates IRQs for confirming transmitted packets. RX does not
-> >> seem to work however. I expected to see "native" beacons, or response
-> >> to the scanning request.
+> >> Yes. That's what wl does:
 > >>
-> >> Do you have idea what may be wrong, where should I look at?
+> >> 1) Disabling DMA engines (RX part)
+> >> write32 0xfaafc220 <- 0x00000000
+> >> ?read32 0xfaafc230 -> 0x00000000
+> >>
+> >> 2) Enabling DMA engines (RX part)
+> >> ?read32 0xfaafc220 -> 0x00000040
+> >> write32 0xfaafc220 <- 0x0000084d CTL: [38 << 1 (OFFSET) | 0x1 (EN) |
+> >> 0x800 (PARITY)]
+> >> write32 0xfaafc228 <- 0x18948000 LO: [lo addr & ~routing_bits]
+> >> write32 0xfaafc22c <- 0x80000000 HI: [routing & ~ROUT_MASK | routing]
+> >>
+> >> (improved) b43 does:
+> >>
+> >> write32 0xfaafc220 <- 0x0000084d CTL
+> >> write32 0xfaafc228 <- 0x17b70000 LO
+> >> write32 0xfaafc22c <- 0x80000000 HI
+> >> write32 0xfaafc224 <- 0x00000400 STOP IDX
 > >
-> > Is wl still using the same dma engine for
-> > RX as older versions did? (what was it? the first?)
+> > What about the DMA interrupt masks?
 > 
-> Yes. That's what wl does:
+> Well, in b43 we ask for all IRQs:
+> b43_write32(dev, B43_MMIO_GEN_IRQ_REASON, B43_IRQ_ALL);
+> write32 0xfaafc128 <- 0xffffffff
 > 
-> 1) Disabling DMA engines (RX part)
-> write32 0xfaafc220 <- 0x00000000
->  read32 0xfaafc230 -> 0x00000000
+> wl also does:
+> write32 0xfaafc128 <- 0xffffffff
 > 
-> 2) Enabling DMA engines (RX part)
->  read32 0xfaafc220 -> 0x00000040
-> write32 0xfaafc220 <- 0x0000084d CTL: [38 << 1 (OFFSET) | 0x1 (EN) |
-> 0x800 (PARITY)]
-> write32 0xfaafc228 <- 0x18948000 LO: [lo addr & ~routing_bits]
-> write32 0xfaafc22c <- 0x80000000 HI: [routing & ~ROUT_MASK | routing]
+> (All the dumps I provide in this thread come from BCM43224)
 > 
-> (improved) b43 does:
-> 
-> write32 0xfaafc220 <- 0x0000084d CTL
-> write32 0xfaafc228 <- 0x17b70000 LO
-> write32 0xfaafc22c <- 0x80000000 HI
-> write32 0xfaafc224 <- 0x00000400 STOP IDX
 
-What about the DMA interrupt masks?
+No. The _DMA_ interrupt masks. Each DMA engine has its interrupt mask register.
