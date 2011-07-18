@@ -1,52 +1,50 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 18 Jul 2011 02:13:23 +0200
-Subject: [PATCH 1/4] b43: HT-PHY: fix masks in radio ctl
-Message-ID: <1310948006-3365-1-git-send-email-zajec5@gmail.com>
+Date: Mon, 18 Jul 2011 22:45:58 +0200
+Subject: [PATCH] b43: correctly display longer chipsets ids
+Message-ID: <1311021958-6758-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: b43-dev@lists.infradead.org, Pavel Roskin <proski@gnu.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Old masks were causing ugly, delayed lock ups.
+Some of the newer Broadcom chipsets have longe names like BCM43224,
+BCM43225, etc. However Broadcom decided to keep using u16 for storing
+them. Use %X or %d depending on chip_id value to avoid BCMA8D8, etc.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-V2: Explain why we do such a dummy operations like: write(read() & 0).
-Put cleaning this as TODO. We should wait with cleaning until having BCM4331
-working at all.
+V final: Use snprintf instead of duplicating whole string with %d vs. %X.
+Thanks Pavel.
 ---
- drivers/net/wireless/b43/phy_ht.c |   15 ++++++++++-----
- 1 files changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/wireless/b43/main.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 2982103..85a30af 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -276,13 +276,18 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
- 	if (b43_read32(dev, B43_MMIO_MACCTL) & B43_MACCTL_ENABLED)
- 		b43err(dev->wl, "MAC not suspended\n");
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 22f20e1..08cd8db 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -5164,6 +5164,7 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ 	struct ssb_sprom *sprom = dev->bus_sprom;
+ 	struct ieee80211_hw *hw;
+ 	struct b43_wl *wl;
++	char chip_name[6];
  
-+	/* In the following PHY ops we copy wl's dummy behaviour.
-+	 * TODO: Find out if reads (currently hidden in masks/masksets) are
-+	 * needed and replace following ops with just writes or w&r.
-+	 * Note: B43_PHY_HT_RF_CTL1 register is tricky, wrong operation can
-+	 * cause delayed (!) machine lock up. */
- 	if (blocked) {
--		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
-+		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
- 	} else {
--		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
--		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x1);
--		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, ~0);
--		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, ~0, 0x2);
-+		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
-+		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x1);
-+		b43_phy_mask(dev, B43_PHY_HT_RF_CTL1, 0);
-+		b43_phy_maskset(dev, B43_PHY_HT_RF_CTL1, 0, 0x2);
+ 	hw = ieee80211_alloc_hw(sizeof(*wl), &b43_hw_ops);
+ 	if (!hw) {
+@@ -5202,8 +5203,10 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ 	INIT_WORK(&wl->tx_work, b43_tx_work);
+ 	skb_queue_head_init(&wl->tx_queue);
  
- 		if (dev->phy.radio_ver == 0x2059)
- 			b43_radio_2059_init(dev);
+-	b43info(wl, "Broadcom %04X WLAN found (core revision %u)\n",
+-		dev->chip_id, dev->core_rev);
++	snprintf(chip_name, ARRAY_SIZE(chip_name),
++		 (dev->chip_id > 0x9999) ? "%d" : "%04X", dev->chip_id);
++	b43info(wl, "Broadcom %s WLAN found (core revision %u)\n", chip_name,
++		dev->core_rev);
+ 	return wl;
+ }
+ 
 -- 
 1.7.3.4
