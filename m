@@ -1,10 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 20 Jul 2011 00:12:21 +0200
-Subject: [PATCH 2/3] bcma: inform drivers about translation bits needed for
-	the core
+Date: Wed, 20 Jul 2011 00:12:22 +0200
+Subject: [PATCH 3/3] b43: bcma: get DMA translation bits
 In-Reply-To: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
 References: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1311113542-2540-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1311113542-2540-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,53 +11,65 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, Pavel Roskin <proski@gnu.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-When using DMA, drivers need to pass special translation info to the
-hardware.
+Add some missing defines by the way.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/bcma/core.c       |   16 ++++++++++++++++
- include/linux/bcma/bcma.h |    5 +++++
- 2 files changed, 21 insertions(+), 0 deletions(-)
+ drivers/net/wireless/b43/dma.c |    5 +++++
+ drivers/net/wireless/b43/dma.h |    4 ++++
+ 2 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/bcma/core.c b/drivers/bcma/core.c
-index 2d8506d..4a04a49 100644
---- a/drivers/bcma/core.c
-+++ b/drivers/bcma/core.c
-@@ -106,3 +106,19 @@ void bcma_core_pll_ctl(struct bcma_device *core, u32 req, u32 status, bool on)
- 	}
- }
- EXPORT_SYMBOL_GPL(bcma_core_pll_ctl);
-+
-+u32 bcma_core_dma_translation(struct bcma_device *core)
-+{
-+	switch (core->bus->hosttype) {
-+	case BCMA_HOSTTYPE_PCI:
-+		if (bcma_aread32(core, BCMA_IOST) & BCMA_IOST_DMA64)
-+			return BCMA_DMA_TRANSLATION_DMA64_CMT;
-+		else
-+			return BCMA_DMA_TRANSLATION_DMA32_CMT;
-+	default:
-+		pr_err("DMA translation unknown for host %d\n",
-+		       core->bus->hosttype);
-+	}
-+	return BCMA_DMA_TRANSLATION_NONE;
-+}
-+EXPORT_SYMBOL(bcma_core_dma_translation);
-diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
-index cc1582d..8c96654 100644
---- a/include/linux/bcma/bcma.h
-+++ b/include/linux/bcma/bcma.h
-@@ -262,5 +262,10 @@ extern void bcma_core_set_clockmode(struct bcma_device *core,
- 				    enum bcma_clkmode clkmode);
- extern void bcma_core_pll_ctl(struct bcma_device *core, u32 req, u32 status,
- 			      bool on);
-+#define BCMA_DMA_TRANSLATION_MASK	0xC0000000
-+#define  BCMA_DMA_TRANSLATION_NONE	0x00000000
-+#define  BCMA_DMA_TRANSLATION_DMA32_CMT	0x40000000 /* Client Mode Translation for 32-bit DMA */
-+#define  BCMA_DMA_TRANSLATION_DMA64_CMT	0x80000000 /* Client Mode Translation for 64-bit DMA */
-+extern u32 bcma_core_dma_translation(struct bcma_device *core);
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index 530a153..0a5004b 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -1057,6 +1057,11 @@ int b43_dma_init(struct b43_wldev *dev)
+ 		return err;
  
- #endif /* LINUX_BCMA_H_ */
+ 	switch (dev->dev->bus_type) {
++#ifdef CONFIG_B43_BCMA
++	case B43_BUS_BCMA:
++		dma->translation = bcma_core_dma_translation(dev->dev->bdev);
++		break;
++#endif
+ #ifdef CONFIG_B43_SSB
+ 	case B43_BUS_SSB:
+ 		dma->translation = ssb_dma_translation(dev->dev->sdev);
+diff --git a/drivers/net/wireless/b43/dma.h b/drivers/net/wireless/b43/dma.h
+index e8a80a1..cdf8709 100644
+--- a/drivers/net/wireless/b43/dma.h
++++ b/drivers/net/wireless/b43/dma.h
+@@ -20,6 +20,7 @@
+ #define		B43_DMA32_TXSUSPEND			0x00000002
+ #define		B43_DMA32_TXLOOPBACK		0x00000004
+ #define		B43_DMA32_TXFLUSH			0x00000010
++#define		B43_DMA32_TXPARITYDISABLE		0x00000800
+ #define		B43_DMA32_TXADDREXT_MASK		0x00030000
+ #define		B43_DMA32_TXADDREXT_SHIFT		16
+ #define B43_DMA32_TXRING				0x04
+@@ -44,6 +45,7 @@
+ #define		B43_DMA32_RXFROFF_MASK		0x000000FE
+ #define		B43_DMA32_RXFROFF_SHIFT		1
+ #define		B43_DMA32_RXDIRECTFIFO		0x00000100
++#define		B43_DMA32_RXPARITYDISABLE		0x00000800
+ #define		B43_DMA32_RXADDREXT_MASK		0x00030000
+ #define		B43_DMA32_RXADDREXT_SHIFT		16
+ #define B43_DMA32_RXRING				0x14
+@@ -84,6 +86,7 @@ struct b43_dmadesc32 {
+ #define		B43_DMA64_TXSUSPEND			0x00000002
+ #define		B43_DMA64_TXLOOPBACK		0x00000004
+ #define		B43_DMA64_TXFLUSH			0x00000010
++#define		B43_DMA64_TXPARITYDISABLE		0x00000800
+ #define		B43_DMA64_TXADDREXT_MASK		0x00030000
+ #define		B43_DMA64_TXADDREXT_SHIFT		16
+ #define B43_DMA64_TXINDEX				0x04
+@@ -111,6 +114,7 @@ struct b43_dmadesc32 {
+ #define		B43_DMA64_RXFROFF_MASK		0x000000FE
+ #define		B43_DMA64_RXFROFF_SHIFT		1
+ #define		B43_DMA64_RXDIRECTFIFO		0x00000100
++#define		B43_DMA64_RXPARITYDISABLE		0x00000800
+ #define		B43_DMA64_RXADDREXT_MASK		0x00030000
+ #define		B43_DMA64_RXADDREXT_SHIFT		16
+ #define B43_DMA64_RXINDEX				0x24
 -- 
 1.7.3.4
