@@ -1,57 +1,39 @@
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Tue, 19 Jul 2011 17:12:33 +0200
-Subject: No DMA RX on some BCM4321, on BCM43224 and BCM43225
-In-Reply-To: <4E2598DE.1030604@lwfinger.net>
-References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
-	<4E2497B6.9030105@lwfinger.net>
-	<CACna6rw-0OpJ9fZdDjPsaJGibvZDXMYpDCVeKV00P_5y+YpS1A@mail.gmail.com>
-	<CACna6rwEoNuSJxrQ+62FgTJnMN3CwYBBakXOMKRt0DKy_QXAEg@mail.gmail.com>
-	<4E2598DE.1030604@lwfinger.net>
-Message-ID: <CAOiHx==i+C--L+wcqHUh0UeVTK7JbJe5Jtz5OJb8QNstyiQi_w@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 19 Jul 2011 19:14:01 +0200
+Subject: [PATCH 1/2] bcma: inform drivers about translation bits needed
+	for the board
+In-Reply-To: <4E2596FB.5030105@gnu.org>
+References: <1311062701-3455-1-git-send-email-zajec5@gmail.com>
+	<4E2596FB.5030105@gnu.org>
+Message-ID: <CACna6ry+tSdBJOr8RimHusWJw+cKZuxwdhoi0CHmE-TKJo5PtA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Pavel Roskin <proski@gnu.org>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-2011/7/19 Larry Finger <Larry.Finger@lwfinger.net>:
-> On 07/19/2011 01:56 AM, Rafa? Mi?ecki wrote:
+W dniu 19 lipca 2011 16:38 u?ytkownik Pavel Roskin <proski@gnu.org> napisa?:
+> On 07/19/2011 04:05 AM, Rafa? Mi?ecki wrote:
 >>
->> W dniu 19 lipca 2011 01:32 u?ytkownik Rafa? Mi?ecki<zajec5@gmail.com>
->> ?napisa?:
->>>
->>> Larry, for now, can you check:
->>>
->>> 1) When wl does set parity (0x800) bit
->>> 2) Does newer wl always use 38 offset for RX header?
+>> When using DMA, drivers need to pass special translation info to the
+>> hardware.
 >>
->> After adding routing (translation) address, using parity bit (0x800)
->> and cold booting, DMA seems to work =)
+>> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
 >
-> Good to hear. I have not found anything about the offset of 38, but I have
-> some confusing stuff on the parity enable bit.
->
-> One routine in the reference driver does the following:
->
-> 1. If bit 1 is set in the DMA control flags (this bit was set to 1 in the
-> init)
-> ?a. Read DMA control
-> ?a. OR result with 0x800 and write to control
-> ?a. Read DMA control
-> ?a. If bit 0x800 is set
-> ?1. Write original contents back to control
-> ?a. Otherwise
-> ?1. Clear bit 1 in DMA control flags
->
-> The above routine makes it look as if they have tested whether the device
-> implements the parity bit. The funny part is that I cannot find any other
-> place where they test the DMA control flags for bit 1 set. There is a spot
-> where they unconditionally set bit 0x800 in the DMA control, which seems to
-> match what you see.
+> I'm not sure why you are copying it to me.
 
-The brcm80211 sources agree:
-<http://git.kernel.org/?p=linux/kernel/git/gregkh/staging-2.6.git;a=blob;f=drivers/staging/brcm80211/brcmsmac/dma.c;h=ea17671efb63aa0c9556c8e46c842734ba398f86;hb=refs/heads/staging-next#l1147>
+Upd, I've used bash history and the last send-email was with --cc to you.
 
 
-Regards,
-Jonas
+>> + ? ? ? switch (bus->hosttype) {
+>> + ? ? ? case BCMA_HOSTTYPE_PCI:
+>> + ? ? ? ? ? ? ? return 0x40000000;
+>
+> This is already implemented in ssb_dma_translation(), and the constant is
+> called SSB_PCI_DMA. ?I think we need a named constant here as well, either
+> SSB_PCI_DMA or a new constant BCMA_PCI_DMA.
+
+
+-- 
+Rafa?
