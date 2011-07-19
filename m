@@ -1,98 +1,53 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 20 Jul 2011 01:01:13 +0200
-Subject: [PATCH] b43: disable parity check on BCMA devices
-Message-ID: <1311116473-3850-1-git-send-email-zajec5@gmail.com>
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Tue, 19 Jul 2011 15:33:14 -0700
+Subject: No DMA RX on some BCM4321, on BCM43224 and BCM43225
+In-Reply-To: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
+References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
+Message-ID: <1311114796.3062.9.camel@shinybook.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-Analyze of MMIO dumps from BCM43224, BCM43225, BCM4313 and BCM4331 has
-shown that wl disables parity check for all that cards. This is required
-for receiving any packets from the hardware.
+On Mon, 2011-07-18 at 22:14 +0200, Rafa? Mi?ecki wrote:
+> When using DMA on one of my BCM4321s and BCM43224 or BCM43225 I don't
+> get a single RX IRQ.
+> 
+> Doing scanning requests sends TX packets to the hardware, and the
+> ucode generates IRQs for confirming transmitted packets. RX does not
+> seem to work however. I expected to see "native" beacons, or response
+> to the scanning request.
+> 
+> Do you have idea what may be wrong, where should I look at? So far
+> I've discovered (from looking at MMIO dumps) that:
+> 1) wl uses 38 as B43_DMA0_RX_FRAMEOFFSET (instead of our 30)
+> 2) wl enables channel with 0x801, not just 0x1 (specs say 0x800 is
+> Parity Disable - Not on all units)
+> 
+> I've implemented both changes in b43, it didn't help.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-This patch requires:
-[PATCH 3/3] b43: bcma: get DMA translation bits
----
- drivers/net/wireless/b43/b43.h |    1 +
- drivers/net/wireless/b43/dma.c |   14 ++++++++++++++
- 2 files changed, 15 insertions(+), 0 deletions(-)
+The other thing I observed that under ndiswrapper, the Windows driver
+(for BCM4331) was writing the full physical address to the TX_INDEX
+register, not an index at all.
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index 8cf0459..c818b0b 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -594,6 +594,7 @@ struct b43_dma {
- 	struct b43_dmaring *rx_ring;
- 
- 	u32 translation; /* Routing bits */
-+	bool parity; /* Check for parity */
- };
- 
- struct b43_pio_txqueue;
-diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-index 0a5004b..755bd39 100644
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -659,6 +659,7 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
- 	u32 value;
- 	u32 addrext;
- 	u32 trans = ring->dev->dma.translation;
-+	bool parity = ring->dev->dma.parity;
- 
- 	if (ring->tx) {
- 		if (ring->type == B43_DMA_64BIT) {
-@@ -669,6 +670,8 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
- 			value = B43_DMA64_TXENABLE;
- 			value |= (addrext << B43_DMA64_TXADDREXT_SHIFT)
- 			    & B43_DMA64_TXADDREXT_MASK;
-+			if (!parity)
-+				value |= B43_DMA64_TXPARITYDISABLE;
- 			b43_dma_write(ring, B43_DMA64_TXCTL, value);
- 			b43_dma_write(ring, B43_DMA64_TXRINGLO,
- 				      (ringbase & 0xFFFFFFFF));
-@@ -684,6 +687,8 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
- 			value = B43_DMA32_TXENABLE;
- 			value |= (addrext << B43_DMA32_TXADDREXT_SHIFT)
- 			    & B43_DMA32_TXADDREXT_MASK;
-+			if (!parity)
-+				value |= B43_DMA32_TXPARITYDISABLE;
- 			b43_dma_write(ring, B43_DMA32_TXCTL, value);
- 			b43_dma_write(ring, B43_DMA32_TXRING,
- 				      (ringbase & ~SSB_DMA_TRANSLATION_MASK)
-@@ -702,6 +707,8 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
- 			value |= B43_DMA64_RXENABLE;
- 			value |= (addrext << B43_DMA64_RXADDREXT_SHIFT)
- 			    & B43_DMA64_RXADDREXT_MASK;
-+			if (!parity)
-+				value |= B43_DMA64_RXPARITYDISABLE;
- 			b43_dma_write(ring, B43_DMA64_RXCTL, value);
- 			b43_dma_write(ring, B43_DMA64_RXRINGLO,
- 				      (ringbase & 0xFFFFFFFF));
-@@ -720,6 +727,8 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
- 			value |= B43_DMA32_RXENABLE;
- 			value |= (addrext << B43_DMA32_RXADDREXT_SHIFT)
- 			    & B43_DMA32_RXADDREXT_MASK;
-+			if (!parity)
-+				value |= B43_DMA32_RXPARITYDISABLE;
- 			b43_dma_write(ring, B43_DMA32_RXCTL, value);
- 			b43_dma_write(ring, B43_DMA32_RXRING,
- 				      (ringbase & ~SSB_DMA_TRANSLATION_MASK)
-@@ -1075,6 +1084,11 @@ int b43_dma_init(struct b43_wldev *dev)
- #endif
- 	}
- 
-+	dma->parity = true;
-+	/* TODO: find out which SSB devices need disabling parity */
-+	if (dev->dev->bus_type == B43_BUS_BCMA)
-+		dma->parity = false;
-+
- 	err = -ENOMEM;
- 	/* setup TX DMA channels. */
- 	dma->tx_ring_AC_BK = b43_setup_dmaring(dev, 0, 1, type);
+Setup...
+W 4 159.866820 1 0xb06002c8 0x1f86c000 0x0 0
+W 4 159.866822 1 0xb06002cc 0x80000000 0x0 0
+R 4 159.866827 1 0xb06002c0 0x0 0x0 0
+W 4 159.866829 1 0xb06002c0 0x801 0x0 0
+
+... and use:
+W 4 197.207151 1 0xb06002c4 0x1f86c010 0x0 0
+
+... and again later:
+W 4 197.228596 1 0xb06002c4 0x1f86c020 0x0 0
+
+Is that behaviour understood?
+
+Btw, Rafa?, if you want to publish a git tree on git.infradead.org I can
+give you an account there). Do you prefer username 'rafal' or 'zajec'...
+or something different?
+
 -- 
-1.7.3.4
+dwmw2
