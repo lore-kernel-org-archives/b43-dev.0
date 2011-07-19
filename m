@@ -1,7 +1,10 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 20 Jul 2011 00:12:19 +0200
-Subject: [PATCH 0/3] b43 & bcma: DMA special (translation) bits
-Message-ID: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
+Date: Wed, 20 Jul 2011 00:12:20 +0200
+Subject: [PATCH 1/3] b43: replace DMA translation workarounds with just a one,
+	commented
+In-Reply-To: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
+References: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1311113542-2540-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,40 +12,59 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, Pavel Roskin <proski@gnu.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Thanks to Pavel's comments I digged into translation bits and found out
-the hackish way we currently use to handle 32-bit and 64-bit DMA.
+Routing bits are always placed in 0xC0000000, there is no any special
+bit shifting for 64-bit DMA. We just workaround wrong value (passed by
+ssb) in this way. Replace that with just a one workaround and comment
+it. Real fix for this requires testing with all ssb drivers.
 
-I've replaced out bit shifting hacks with just a one, documented in the
-comment. This workaround ideally should be just fixed, but I'm not going
-to blidly change the current behaviour of ssb_dma_translation without
-testing that with b43legacy and b44. As I don't have such a hardware,
-we will need to find some testers.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/dma.c |   12 +++++++++---
+ 1 files changed, 9 insertions(+), 3 deletions(-)
 
-In any case, the way we changed the code should be correct. When ssb
-function will be fixed, b43 will only require deletion of 2 code lines.
-
-I've tested this code for regressions on my following cards:
-1) 14e4:432b (64-bit DMA)
-2) 14e4:4315 (64-bit DMA)
-3) 14e4:4312 (32-bit DMA)
-Transmission is still possible on all of them, no errors were noticed.
-
-
-Pavel: sorry for CC-ing you with my previous serie. Fortunately this
-lead to the much nicer solution, thanks for your help.
-I let myself yo CC you once more, as this patch serie tries to fix
-issues you pointed to me.
-
-Rafa? Mi?ecki (3):
-  b43: replace DMA translation workarounds with just a one, commented
-  bcma: inform drivers about translation bits needed for the core
-  b43: bcma: get DMA translation bits
-
- drivers/bcma/core.c            |   16 ++++++++++++++++
- drivers/net/wireless/b43/dma.c |   17 ++++++++++++++---
- drivers/net/wireless/b43/dma.h |    4 ++++
- include/linux/bcma/bcma.h      |    5 +++++
- 4 files changed, 39 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index ce572ae..530a153 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -174,7 +174,7 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
+ 	addrhi = (((u64) dmaaddr >> 32) & ~SSB_DMA_TRANSLATION_MASK);
+ 	addrext = (((u64) dmaaddr >> 32) & SSB_DMA_TRANSLATION_MASK)
+ 	    >> SSB_DMA_TRANSLATION_SHIFT;
+-	addrhi |= (ring->dev->dma.translation << 1);
++	addrhi |= ring->dev->dma.translation;
+ 	if (slot == ring->nr_slots - 1)
+ 		ctl0 |= B43_DMA64_DCTL0_DTABLEEND;
+ 	if (start)
+@@ -675,7 +675,7 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
+ 			b43_dma_write(ring, B43_DMA64_TXRINGHI,
+ 				      ((ringbase >> 32) &
+ 				       ~SSB_DMA_TRANSLATION_MASK)
+-				      | (trans << 1));
++				      | trans);
+ 		} else {
+ 			u32 ringbase = (u32) (ring->dmabase);
+ 
+@@ -708,7 +708,7 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
+ 			b43_dma_write(ring, B43_DMA64_RXRINGHI,
+ 				      ((ringbase >> 32) &
+ 				       ~SSB_DMA_TRANSLATION_MASK)
+-				      | (trans << 1));
++				      | trans);
+ 			b43_dma_write(ring, B43_DMA64_RXINDEX, ring->nr_slots *
+ 				      sizeof(struct b43_dmadesc64));
+ 		} else {
+@@ -1060,6 +1060,12 @@ int b43_dma_init(struct b43_wldev *dev)
+ #ifdef CONFIG_B43_SSB
+ 	case B43_BUS_SSB:
+ 		dma->translation = ssb_dma_translation(dev->dev->sdev);
++		/* ssb does not handle 64-bit DMA case, where Client Mode
++		 * Translation is set with value 0x2 instead of 0x1. This should
++		 * be fixed on ssb side, but requires testing with b43,
++		 * b43legacy and b44. */
++		if (b43_read32(dev, SSB_TMSHIGH) & SSB_TMSHIGH_DMA64)
++			dma->translation <<= 1;
+ 		break;
+ #endif
+ 	}
 -- 
 1.7.3.4
