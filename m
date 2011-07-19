@@ -1,75 +1,46 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 19 Jul 2011 10:05:01 +0200
-Subject: [PATCH 2/2] b43: bcma: get DMA translation bits
-In-Reply-To: <1311062701-3455-1-git-send-email-zajec5@gmail.com>
-References: <1311062701-3455-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1311062701-3455-2-git-send-email-zajec5@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 19 Jul 2011 09:46:54 -0500
+Subject: No DMA RX on some BCM4321, on BCM43224 and BCM43225
+In-Reply-To: <CACna6rwEoNuSJxrQ+62FgTJnMN3CwYBBakXOMKRt0DKy_QXAEg@mail.gmail.com>
+References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>	<4E2497B6.9030105@lwfinger.net>	<CACna6rw-0OpJ9fZdDjPsaJGibvZDXMYpDCVeKV00P_5y+YpS1A@mail.gmail.com>
+	<CACna6rwEoNuSJxrQ+62FgTJnMN3CwYBBakXOMKRt0DKy_QXAEg@mail.gmail.com>
+Message-ID: <4E2598DE.1030604@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, Pavel Roskin <proski@gnu.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-Add some missing defines by the way.
+On 07/19/2011 01:56 AM, Rafa? Mi?ecki wrote:
+> W dniu 19 lipca 2011 01:32 u?ytkownik Rafa? Mi?ecki<zajec5@gmail.com>  napisa?:
+>> Larry, for now, can you check:
+>>
+>> 1) When wl does set parity (0x800) bit
+>> 2) Does newer wl always use 38 offset for RX header?
+>
+> After adding routing (translation) address, using parity bit (0x800)
+> and cold booting, DMA seems to work =)
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/dma.c |    5 +++++
- drivers/net/wireless/b43/dma.h |    4 ++++
- 2 files changed, 9 insertions(+), 0 deletions(-)
+Good to hear. I have not found anything about the offset of 38, but I have some 
+confusing stuff on the parity enable bit.
 
-diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-index ce572ae..0bedc30 100644
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -1057,6 +1057,11 @@ int b43_dma_init(struct b43_wldev *dev)
- 		return err;
- 
- 	switch (dev->dev->bus_type) {
-+#ifdef CONFIG_B43_BCMA
-+	case B43_BUS_BCMA:
-+		dma->translation = bcma_dma_translation(dev->dev->bdev->bus);
-+		break;
-+#endif
- #ifdef CONFIG_B43_SSB
- 	case B43_BUS_SSB:
- 		dma->translation = ssb_dma_translation(dev->dev->sdev);
-diff --git a/drivers/net/wireless/b43/dma.h b/drivers/net/wireless/b43/dma.h
-index e8a80a1..cdf8709 100644
---- a/drivers/net/wireless/b43/dma.h
-+++ b/drivers/net/wireless/b43/dma.h
-@@ -20,6 +20,7 @@
- #define		B43_DMA32_TXSUSPEND			0x00000002
- #define		B43_DMA32_TXLOOPBACK		0x00000004
- #define		B43_DMA32_TXFLUSH			0x00000010
-+#define		B43_DMA32_TXPARITYDISABLE		0x00000800
- #define		B43_DMA32_TXADDREXT_MASK		0x00030000
- #define		B43_DMA32_TXADDREXT_SHIFT		16
- #define B43_DMA32_TXRING				0x04
-@@ -44,6 +45,7 @@
- #define		B43_DMA32_RXFROFF_MASK		0x000000FE
- #define		B43_DMA32_RXFROFF_SHIFT		1
- #define		B43_DMA32_RXDIRECTFIFO		0x00000100
-+#define		B43_DMA32_RXPARITYDISABLE		0x00000800
- #define		B43_DMA32_RXADDREXT_MASK		0x00030000
- #define		B43_DMA32_RXADDREXT_SHIFT		16
- #define B43_DMA32_RXRING				0x14
-@@ -84,6 +86,7 @@ struct b43_dmadesc32 {
- #define		B43_DMA64_TXSUSPEND			0x00000002
- #define		B43_DMA64_TXLOOPBACK		0x00000004
- #define		B43_DMA64_TXFLUSH			0x00000010
-+#define		B43_DMA64_TXPARITYDISABLE		0x00000800
- #define		B43_DMA64_TXADDREXT_MASK		0x00030000
- #define		B43_DMA64_TXADDREXT_SHIFT		16
- #define B43_DMA64_TXINDEX				0x04
-@@ -111,6 +114,7 @@ struct b43_dmadesc32 {
- #define		B43_DMA64_RXFROFF_MASK		0x000000FE
- #define		B43_DMA64_RXFROFF_SHIFT		1
- #define		B43_DMA64_RXDIRECTFIFO		0x00000100
-+#define		B43_DMA64_RXPARITYDISABLE		0x00000800
- #define		B43_DMA64_RXADDREXT_MASK		0x00030000
- #define		B43_DMA64_RXADDREXT_SHIFT		16
- #define B43_DMA64_RXINDEX				0x24
--- 
-1.7.3.4
+One routine in the reference driver does the following:
+
+1. If bit 1 is set in the DMA control flags (this bit was set to 1 in the init)
+  a. Read DMA control
+  a. OR result with 0x800 and write to control
+  a. Read DMA control
+  a. If bit 0x800 is set
+   1. Write original contents back to control
+  a. Otherwise
+   1. Clear bit 1 in DMA control flags
+
+The above routine makes it look as if they have tested whether the device 
+implements the parity bit. The funny part is that I cannot find any other place 
+where they test the DMA control flags for bit 1 set. There is a spot where they 
+unconditionally set bit 0x800 in the DMA control, which seems to match what you see.
+
+I guess it will be OK to unconditionally set bit 0x800. Any device that does not 
+implement the parity enable bit will not care, and those that have it work with wl.
+
+Larry
