@@ -1,56 +1,48 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Tue, 19 Jul 2011 17:09:14 -0400
-Subject: [PATCH 2/4] bcma: allow setting FAST clockmode for a core
-In-Reply-To: <CACna6rwCNyOKN+gHESX6Qt7uKQNuPWBrsyTJ1rWzjXMULV5y6Q@mail.gmail.com>
-References: <1310857566-2876-1-git-send-email-zajec5@gmail.com>
-	<1310857566-2876-2-git-send-email-zajec5@gmail.com>
-	<20110719204246.GB2477@tuxdriver.com>
-	<CACna6rxZMFnFiYFkrW9xTkL_eXTXH91sEO-W=HZqoiUYLMNumQ@mail.gmail.com>
-	<CACna6rwCNyOKN+gHESX6Qt7uKQNuPWBrsyTJ1rWzjXMULV5y6Q@mail.gmail.com>
-Message-ID: <20110719210913.GD2477@tuxdriver.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 20 Jul 2011 00:12:19 +0200
+Subject: [PATCH 0/3] b43 & bcma: DMA special (translation) bits
+Message-ID: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, Pavel Roskin <proski@gnu.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Tue, Jul 19, 2011 at 10:54:32PM +0200, Rafa? Mi?ecki wrote:
-> W dniu 19 lipca 2011 22:50 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
-> > W dniu 19 lipca 2011 22:42 u?ytkownik John W. Linville
-> > <linville@tuxdriver.com> napisa?:
-> >> ?CC [M] ?drivers/bcma/core.o
-> >> drivers/bcma/core.c: In function ?bcma_core_set_clockmode?:
-> >> drivers/bcma/core.c:65:22: error: ?BCMA_CLKCTLST? undeclared (first use in this function)
-> >> drivers/bcma/core.c:65:22: note: each undeclared identifier is reported only once for each function it appears in
-> >> drivers/bcma/core.c:65:73: error: ?BCMA_CLKCTLST_FORCEHT? undeclared (first use in this function)
-> >> drivers/bcma/core.c:69:8: error: ?BCMA_CLKCTLST_HAVEHT? undeclared (first use in this function)
-> >> drivers/bcma/core.c: In function ?bcma_core_pll_ctl?:
-> >> drivers/bcma/core.c:89:35: error: ?BCMA_CLKCTLST_EXTRESREQ? undeclared (first use in this function)
-> >> drivers/bcma/core.c:90:38: error: ?BCMA_CLKCTLST_EXTRESST? undeclared (first use in this function)
-> >> drivers/bcma/core.c:93:22: error: ?BCMA_CLKCTLST? undeclared (first use in this function)
-> >> make[2]: *** [drivers/bcma/core.o] Error 1
-> >> make[1]: *** [drivers/bcma] Error 2
-> >> make: *** [drivers] Error 2
-> >
-> > I'm sorry, that's quite normal you could lost order&dependency with
-> > the amount of patches I've sent.
-> >
-> > As nobody objected, please apply
-> > [RFC][PATCH] bcma: move define of BCMA_CLKCTLST register
-> > It should be applied before this one.
-> 
-> Could I do something to avoid such a problems in the future?
-> 
-> Should I put info about dependency in cover-letter? Should I create
-> own git tree? Should I slow down with sending patches (doing more of
-> them before sending)?
+Thanks to Pavel's comments I digged into translation bits and found out
+the hackish way we currently use to handle 32-bit and 64-bit DMA.
 
-It is always good to indicate dependencies, especially on patches
-posted in a different series or when the dependency is on a patch
-posted as RFC.
+I've replaced out bit shifting hacks with just a one, documented in the
+comment. This workaround ideally should be just fixed, but I'm not going
+to blidly change the current behaviour of ssb_dma_translation without
+testing that with b43legacy and b44. As I don't have such a hardware,
+we will need to find some testers.
 
-John
+In any case, the way we changed the code should be correct. When ssb
+function will be fixed, b43 will only require deletion of 2 code lines.
+
+I've tested this code for regressions on my following cards:
+1) 14e4:432b (64-bit DMA)
+2) 14e4:4315 (64-bit DMA)
+3) 14e4:4312 (32-bit DMA)
+Transmission is still possible on all of them, no errors were noticed.
+
+
+Pavel: sorry for CC-ing you with my previous serie. Fortunately this
+lead to the much nicer solution, thanks for your help.
+I let myself yo CC you once more, as this patch serie tries to fix
+issues you pointed to me.
+
+Rafa? Mi?ecki (3):
+  b43: replace DMA translation workarounds with just a one, commented
+  bcma: inform drivers about translation bits needed for the core
+  b43: bcma: get DMA translation bits
+
+ drivers/bcma/core.c            |   16 ++++++++++++++++
+ drivers/net/wireless/b43/dma.c |   17 ++++++++++++++---
+ drivers/net/wireless/b43/dma.h |    4 ++++
+ include/linux/bcma/bcma.h      |    5 +++++
+ 4 files changed, 39 insertions(+), 3 deletions(-)
+
 -- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+1.7.3.4
