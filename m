@@ -1,24 +1,22 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 19 Jul 2011 17:53:14 -0500
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Wed, 20 Jul 2011 01:15:09 +0200
 Subject: [PATCH 1/3] b43: replace DMA translation workarounds with just
 	a one, commented
 In-Reply-To: <1311113542-2540-2-git-send-email-zajec5@gmail.com>
 References: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
 	<1311113542-2540-2-git-send-email-zajec5@gmail.com>
-Message-ID: <4E260ADA.6060408@lwfinger.net>
+Message-ID: <20110720011509.504022f8@maggie>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, Pavel Roskin <proski@gnu.org>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Pavel Roskin <proski@gnu.org>, b43-dev@lists.infradead.org
 
-On 07/19/2011 05:12 PM, Rafa? Mi?ecki wrote:
-> Routing bits are always placed in 0xC0000000, there is no any special
-> bit shifting for 64-bit DMA. We just workaround wrong value (passed by
-> ssb) in this way. Replace that with just a one workaround and comment
-> it. Real fix for this requires testing with all ssb drivers.
+On Wed, 20 Jul 2011 00:12:20 +0200
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> +		 * be fixed on ssb side, but requires testing with b43,
+> +		 * b43legacy and b44. */
 
-If you wish to supply the real patch, I can test b43legacy.
-
-Larry
+No it doesn't. b44 and b43legacy don't use 64bit DMA.
+Just fix it in ssb, please.
