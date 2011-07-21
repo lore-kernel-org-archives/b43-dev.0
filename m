@@ -1,44 +1,36 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 22 Jul 2011 00:30:11 +0200
-Subject: [PATCH v2 00/11] bcma: add support for embedded devices like
-	bcm4716
-In-Reply-To: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
-References: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <CACna6ryjYGuLc5c88eke=gjgwQyVD+A9afM6zCRhqV1THHgWvA@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 21 Jul 2011 17:31:00 -0500
+Subject: [PATCH] b43legacy: dma: cache translation (routing bits)
+In-Reply-To: <1311287100-3888-1-git-send-email-zajec5@gmail.com>
+References: <1311287100-3888-1-git-send-email-zajec5@gmail.com>
+Message-ID: <4E28A8A4.3080509@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: ralf@linux-mips.org, linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org
 
-2011/7/16 Hauke Mehrtens <hauke@hauke-m.de>:
-> This patch series adds support for embedded devices like bcm47xx to
-> bcma. Bcma is used on bcm4716 and bcm4718 SoCs as the system bus and
-> replaced ssb used on older devices. With these patches my bcm4716
-> device boots up till it tries to access the flash, because the serial
-> flash chip is unsupported for now, this will be my next task. This adds
-> support for MIPS cores, interrupt configuration and the serial console.
+On 07/21/2011 05:25 PM, Rafa? Mi?ecki wrote:
 >
-> These patches are not containing all functions needed to get the SoC to
-> fully work and support every feature, but it is a good start.
-> These patches are now integrated in OpenWrt for everyone how wants to
-> test them.
+> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+> ---
+> Ideally this should have been applied before:
+> ssb: return correct translation bit for 64-bit DMA
 >
-> This was tested with a BCM4704 device (SoC with ssb bus), a BCM4716
-> device and a pcie wireless card supported by bcma.
+> This is because mentioned patch added TMSHIGH register read on every
+> ssb_dma_translation call which affected performance.
 >
+> If we can live with affected performance between that 2 commits, please
+> just apply this ASAP.
 >
-> @Rafa?: If you are fine with the bcma patches could you please give
-> your Signed-off on them.
->
-> @Ralf: Could you please merger this into the mips tree so that it will be in linux-3.1.
+> It affected performance (however I don't expect anything like making it
+> 90% slower) is not acceptable, please revert mentioned patch, apply this
+> one and then re-apply reverted patches.
 
-ML for bcma is linux-wireless. Should we pass that patches "via" Ralf
-or John? Using linux-wireless (and John's tree) makes more sense to
-me, as we will work on the same tree and will get less merge
-conflicts. However don't take me as Linux development style guru, just
-my POV.
+I will be testing this patch ASAP. Unfortunately, my test box with a b43legacy 
+device crashes on boot with wireless-testing with a fresh pull this afternoon. 
+It does boot with commit d36a160 with only 70 commits between. It shouldn't take 
+too long to sort out.
 
--- 
-Rafa?
+Larry
