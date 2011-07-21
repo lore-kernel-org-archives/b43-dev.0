@@ -1,30 +1,44 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 21 Jul 2011 16:49:30 -0500
-Subject: [PATCH 1/3] b43: replace DMA translation workarounds with just
-	a one, commented
-In-Reply-To: <20110721234027.29ba1be2@maggie>
-References: <1311113542-2540-1-git-send-email-zajec5@gmail.com>	<1311113542-2540-2-git-send-email-zajec5@gmail.com>	<20110720011509.504022f8@maggie>	<CACna6rwMe9-dHANpDLko5yy5wu521YTGXmqBr1JYh18tYt+Z4A@mail.gmail.com>	<20110720105540.1c9d072c@maggie>	<CACna6rxNyZquGMVz5RUWs58ty+KTeFkv5wcccBQyw2n2A7XLMA@mail.gmail.com>	<20110720153542.69edd601@Nokia-N900>	<4E28422C.60209@gnu.org>	<CACna6rz+t=ZOSiK+7weN7onZh3z44QeZSiuwY2L3oSxRneFV8A@mail.gmail.com>	<20110721193440.2baeaae3@Nokia-N900>	<20110721232225.1b0e1f15@maggie>	<CACna6rwe9qU05yyCBvoCt8t6Ty=Vz8=_0JCDaAgmOE3da=VUcA@mail.gmail.com>
-	<20110721234027.29ba1be2@maggie>
-Message-ID: <4E289EEA.7000806@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 22 Jul 2011 00:30:11 +0200
+Subject: [PATCH v2 00/11] bcma: add support for embedded devices like
+	bcm4716
+In-Reply-To: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
+References: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <CACna6ryjYGuLc5c88eke=gjgwQyVD+A9afM6zCRhqV1THHgWvA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: ralf@linux-mips.org, linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-On 07/21/2011 04:40 PM, Michael B?sch wrote:
-> On Thu, 21 Jul 2011 23:31:24 +0200
-> Rafa? Mi?ecki<zajec5@gmail.com>  wrote:
->> Don't you mind if I prepare improvement (AKA fix) for b43legacy and
->> just post it today?
+2011/7/16 Hauke Mehrtens <hauke@hauke-m.de>:
+> This patch series adds support for embedded devices like bcm47xx to
+> bcma. Bcma is used on bcm4716 and bcm4718 SoCs as the system bus and
+> replaced ssb used on older devices. With these patches my bcm4716
+> device boots up till it tries to access the flash, because the serial
+> flash chip is unsupported for now, this will be my next task. This adds
+> support for MIPS cores, interrupt configuration and the serial console.
 >
-> Yeah that's OK, of course. It just needs to go in before it hits lots
-> of users.
+> These patches are not containing all functions needed to get the SoC to
+> fully work and support every feature, but it is a good start.
+> These patches are now integrated in OpenWrt for everyone how wants to
+> test them.
+>
+> This was tested with a BCM4704 device (SoC with ssb bus), a BCM4716
+> device and a pcie wireless card supported by bcma.
+>
+>
+> @Rafa?: If you are fine with the bcma patches could you please give
+> your Signed-off on them.
+>
+> @Ralf: Could you please merger this into the mips tree so that it will be in linux-3.1.
 
-I agree that you should fix b43leagacy and leave the ssb patch alone.
+ML for bcma is linux-wireless. Should we pass that patches "via" Ralf
+or John? Using linux-wireless (and John's tree) makes more sense to
+me, as we will work on the same tree and will get less merge
+conflicts. However don't take me as Linux development style guru, just
+my POV.
 
-Sorry that I did not get a chance to test the code, even though I promised I 
-would. I've been busy figuring out what firmware is needed for 802.11 core 
-revisions > 16.
-
-Larry
+-- 
+Rafa?
