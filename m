@@ -1,46 +1,67 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 21 Jul 2011 17:33:51 +0200
-Subject: [PATCH 1/3] b43: replace DMA translation workarounds with just a
-	one, commented
-In-Reply-To: <4E28422C.60209@gnu.org>
-References: <1311113542-2540-1-git-send-email-zajec5@gmail.com>
-	<1311113542-2540-2-git-send-email-zajec5@gmail.com>
-	<20110720011509.504022f8@maggie>
-	<CACna6rwMe9-dHANpDLko5yy5wu521YTGXmqBr1JYh18tYt+Z4A@mail.gmail.com>
-	<20110720105540.1c9d072c@maggie>
-	<CACna6rxNyZquGMVz5RUWs58ty+KTeFkv5wcccBQyw2n2A7XLMA@mail.gmail.com>
-	<20110720153542.69edd601@Nokia-N900> <4E28422C.60209@gnu.org>
-Message-ID: <CACna6rz+t=ZOSiK+7weN7onZh3z44QeZSiuwY2L3oSxRneFV8A@mail.gmail.com>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Thu, 21 Jul 2011 15:06:48 -0400
+Subject: [PATCH V2] b43: disable parity check on BCMA devices
+In-Reply-To: <1311184027-3497-1-git-send-email-zajec5@gmail.com>
+References: <1311184027-3497-1-git-send-email-zajec5@gmail.com>
+Message-ID: <20110721190648.GC2468@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-2011/7/21 Pavel Roskin <proski@gnu.org>:
-> On 07/20/2011 11:35 AM, Michael B?sch wrote:
->>
->> On Wed, 20 Jul 2011 13:10:55 +0200
->> Rafa? Mi?ecki<zajec5@gmail.com> ?wrote:
->>
->>> Sorry, for not explaining this well eno
->>> ugh. I'm afraid of situation where b44 driver supports 64-bit DMA
->>> device *without* handling this as such a device.
->>
->> A b44 or b43legacy device with 64bit DMA engine does not exist.
->
-> There are many references to "B43legacy_DMA_64BIT" and "dma64_ops" in
-> b43legacy. ?I guess they all are unneeded, and so is struct
-> b43legacy_dma_ops.
->
-> b44 doesn't seem to have DMA64 support. ?By the way, the result of
-> ssb_dma_translation() is placed into bp->dma_offset. ?I think the word
-> "offset" is misleading.
+On Wed, Jul 20, 2011 at 07:47:07PM +0200, Rafa? Mi?ecki wrote:
+> Analyze of MMIO dumps from BCM43224, BCM43225, BCM4313 and BCM4331 has
+> shown that wl disables parity check for all that cards. This is required
+> for receiving any packets from the hardware.
+> 
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+> ---
+> V2: drop dependency on other patches, can be applied right away
 
-Thanks for comment. I didn't have any time to review (&clean?)
-b43legacy, not to mention b44. Unfortunately I'm too busy with b43
-stuff for now. If you have some free time, you're input to the drivers
-is welcome :)
+> @@ -1069,6 +1078,11 @@ int b43_dma_init(struct b43_wldev *dev)
+>  #endif
+>  	}
+>  
+> +	dma->parity = true;
+> +	/* TODO: find out which SSB devices need disabling parity */
+> +	if (dev->dev->bus_type == B43_BUS_BCMA)
+> +		dma->parity = false;
+> +
+>  	err = -ENOMEM;
+>  	/* setup TX DMA channels. */
+>  	dma->tx_ring_AC_BK = b43_setup_dmaring(dev, 0, 1, type);
 
+drivers/net/wireless/b43/dma.c: In function ?b43_dma_init?:
+drivers/net/wireless/b43/dma.c:1083:28: error: ?B43_BUS_BCMA? undeclared (first use in this function)
+drivers/net/wireless/b43/dma.c:1083:28: note: each undeclared identifier is reported only once for each function it appears in
+make[2]: *** [drivers/net/wireless/b43/dma.o] Error 1
+make[1]: *** [drivers/net/wireless/b43] Error 2
+make: *** [drivers/net/wireless/] Error 2
+
+I fixed it up with a change like this:
+
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index 2e072f6..0953ce1 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -1079,9 +1079,11 @@ int b43_dma_init(struct b43_wldev *dev)
+ 	}
+ 
+ 	dma->parity = true;
++#ifdef CONFIG_B43_BCMA
+ 	/* TODO: find out which SSB devices need disabling parity */
+ 	if (dev->dev->bus_type == B43_BUS_BCMA)
+ 		dma->parity = false;
++#endif
+ 
+ 	err = -ENOMEM;
+ 	/* setup TX DMA channels. */
+
+Please do be careful...
+
+John
 -- 
-Rafa?
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
