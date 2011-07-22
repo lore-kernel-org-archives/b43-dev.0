@@ -1,54 +1,40 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 22 Jul 2011 12:58:37 +0200
-Subject: [ANNOUNCEMENT] BCM43224 and BCM43225 support thanks to Poznan
-	University of Technology
-In-Reply-To: <CA+icZUXXxQN1wSiwbNwDc5npFpB4AVVzawM=ssgkAvRbhhPp2Q@mail.gmail.com>
-References: <CACna6rxbwQUQXOn_11WyXG0zjLq107oJZv7aHoZ3B8sF-4HuHA@mail.gmail.com>
-	<CA+icZUXXxQN1wSiwbNwDc5npFpB4AVVzawM=ssgkAvRbhhPp2Q@mail.gmail.com>
-Message-ID: <CACna6rw7+KvLv_gcsx_fZhy4aaFBSFVedqnH5337JhFg7BQkrg@mail.gmail.com>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Fri, 22 Jul 2011 09:39:25 -0400
+Subject: [PATCH v2 00/11] bcma: add support for embedded devices like
+	bcm4716
+In-Reply-To: <4E2933A0.40200@hauke-m.de>
+References: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
+	<CACna6ryjYGuLc5c88eke=gjgwQyVD+A9afM6zCRhqV1THHgWvA@mail.gmail.com>
+	<4E2933A0.40200@hauke-m.de>
+Message-ID: <20110722133925.GA10938@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sedat.dilek@gmail.com
-Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, ralf@linux-mips.org, linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-W dniu 22 lipca 2011 12:56 u?ytkownik Sedat Dilek
-<sedat.dilek@googlemail.com> napisa?:
-> 2011/7/22 Rafa? Mi?ecki <zajec5@gmail.com>:
->> Hi guys,
->>
->> As you hopefully noticed, I've spent a lot of time on Broadcom's cards
->> in the last few months. Adding bcma, modifying b43, fixing some bugs,
->> and so on... Today I've finally proposed enabling BCM43224 and
->> BCM43225 support, with a little of luck, still for 3.1 kernel.
->>
->> I've time for all of that thanks to Poznan University of Technology
->> (the one I study at). After my first success with BCM4321 they
->> proposed me to continue this project as part of my MSc work. Thanks to
->> that I could fully focus on b43 and related projects. Focusing on
->> another MSc work woudn't give me so much time and wouldn't result in
->> so fast development.
->>
->> I would like to say big "Thank You" to the University. It was one of
->> the most enjoyable projects during my studies!
->>
->>
->> Now, get the latest code and give me feedback for your BCM43224 or BCM43225! :)
->>
->> --
->> Rafa?
->> --
->
-> First of all, a big thank you for all the work and to your University
-> which supported you.
-> From where shall people test? Does a GIT repository exist?
-> Or you simply forgot to mention in your euphoria (I know it's end of semester)?
+On Fri, Jul 22, 2011 at 10:24:00AM +0200, Hauke Mehrtens wrote:
+> On 07/22/2011 12:30 AM, Rafa? Mi?ecki wrote:
+> > 2011/7/16 Hauke Mehrtens <hauke@hauke-m.de>:
 
-All the needed stuff is almost in witeless-testing git tree. The only
-two patches you need to apply manually are recently sent:
-[PATCH 1/2 3.1] b43: bus: fix memory corruption when setting driver's data
-[PATCH 2/2 3.1???] b43: bcma: drop BROKEN
+> >> @Ralf: Could you please merger this into the mips tree so that it will be in linux-3.1.
+> > 
+> > ML for bcma is linux-wireless. Should we pass that patches "via" Ralf
+> > or John? Using linux-wireless (and John's tree) makes more sense to
+> > me, as we will work on the same tree and will get less merge
+> > conflicts. However don't take me as Linux development style guru, just
+> > my POV.
 
+> I talked about this with Florian Fainelli and he said that the patches
+> should rather pass Ralf then John, but merging would be easier when they
+> are passing John. I do not have a problem with both solutions and
+> rebasing it to an other tree is no problem for me.
+> John and Ralf, who wants to take these patches? ;-)
+
+I don't really care -- I figured Ralf was taking them due to the MIPS arch bits.
+
+John
 -- 
-Rafa?
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
