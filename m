@@ -1,8 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 22 Jul 2011 13:11:04 +0200
-Subject: [PATCH 1/2 3.1] b43: bus: fix memory corruption when setting driver's
-	data
-Message-ID: <1311333065-12561-1-git-send-email-zajec5@gmail.com>
+Date: Fri, 22 Jul 2011 13:11:05 +0200
+Subject: [PATCH 2/2 3.1???] b43: bcma: drop BROKEN
+In-Reply-To: <1311333065-12561-1-git-send-email-zajec5@gmail.com>
+References: <1311333065-12561-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1311333065-12561-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,33 +11,35 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Fixes bug described in:
-https://bugzilla.kernel.org/show_bug.cgi?id=39172
+We've fixed the last issue with BCMA support which caused memory
+corruption on loading and unloading b43. Support for BCMA in b43 was
+tested with 14e4:4353, 14e4:4357, 14e4:4727 and 14e4:4331. First two
+cards (BCM43224 and BCM43225) are supported.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-John: this is trivial and fixes quite ugly memory (linked list exactly)
-corruption. I believe this fix should be taken for 3.1.
----
- drivers/net/wireless/b43/bus.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+John: after fixing memory corruption we have finally stable driver for
+BCMA. It works with my BCM43224 and BCM43225 cards, all the problems
+seem to be resolved.
 
-diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
-index 64c3f65..05f6c7b 100644
---- a/drivers/net/wireless/b43/bus.c
-+++ b/drivers/net/wireless/b43/bus.c
-@@ -244,10 +244,12 @@ void b43_bus_set_wldev(struct b43_bus_dev *dev, void *wldev)
- #ifdef CONFIG_B43_BCMA
- 	case B43_BUS_BCMA:
- 		bcma_set_drvdata(dev->bdev, wldev);
-+		break;
- #endif
- #ifdef CONFIG_B43_SSB
- 	case B43_BUS_SSB:
- 		ssb_set_drvdata(dev->sdev, wldev);
-+		break;
- #endif
- 	}
- }
+I know it's few hours after opening merge window, but maybe you could
+make an exception for this patch and take it for 3.1?
+---
+ drivers/net/wireless/b43/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index d2293dc..3cab843 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -28,7 +28,7 @@ config B43
+ 
+ config B43_BCMA
+ 	bool "Support for BCMA bus"
+-	depends on B43 && BCMA && BROKEN
++	depends on B43 && BCMA
+ 	default y
+ 
+ config B43_SSB
 -- 
 1.7.3.4
