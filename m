@@ -1,45 +1,54 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 22 Jul 2011 13:11:05 +0200
-Subject: [PATCH 2/2 3.1???] b43: bcma: drop BROKEN
-In-Reply-To: <1311333065-12561-1-git-send-email-zajec5@gmail.com>
-References: <1311333065-12561-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1311333065-12561-2-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 22 Jul 2011 12:58:37 +0200
+Subject: [ANNOUNCEMENT] BCM43224 and BCM43225 support thanks to Poznan
+	University of Technology
+In-Reply-To: <CA+icZUXXxQN1wSiwbNwDc5npFpB4AVVzawM=ssgkAvRbhhPp2Q@mail.gmail.com>
+References: <CACna6rxbwQUQXOn_11WyXG0zjLq107oJZv7aHoZ3B8sF-4HuHA@mail.gmail.com>
+	<CA+icZUXXxQN1wSiwbNwDc5npFpB4AVVzawM=ssgkAvRbhhPp2Q@mail.gmail.com>
+Message-ID: <CACna6rw7+KvLv_gcsx_fZhy4aaFBSFVedqnH5337JhFg7BQkrg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: sedat.dilek@gmail.com
+Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless@vger.kernel.org
 
-We've fixed the last issue with BCMA support which caused memory
-corruption on loading and unloading b43. Support for BCMA in b43 was
-tested with 14e4:4353, 14e4:4357, 14e4:4727 and 14e4:4331. First two
-cards (BCM43224 and BCM43225) are supported.
+W dniu 22 lipca 2011 12:56 u?ytkownik Sedat Dilek
+<sedat.dilek@googlemail.com> napisa?:
+> 2011/7/22 Rafa? Mi?ecki <zajec5@gmail.com>:
+>> Hi guys,
+>>
+>> As you hopefully noticed, I've spent a lot of time on Broadcom's cards
+>> in the last few months. Adding bcma, modifying b43, fixing some bugs,
+>> and so on... Today I've finally proposed enabling BCM43224 and
+>> BCM43225 support, with a little of luck, still for 3.1 kernel.
+>>
+>> I've time for all of that thanks to Poznan University of Technology
+>> (the one I study at). After my first success with BCM4321 they
+>> proposed me to continue this project as part of my MSc work. Thanks to
+>> that I could fully focus on b43 and related projects. Focusing on
+>> another MSc work woudn't give me so much time and wouldn't result in
+>> so fast development.
+>>
+>> I would like to say big "Thank You" to the University. It was one of
+>> the most enjoyable projects during my studies!
+>>
+>>
+>> Now, get the latest code and give me feedback for your BCM43224 or BCM43225! :)
+>>
+>> --
+>> Rafa?
+>> --
+>
+> First of all, a big thank you for all the work and to your University
+> which supported you.
+> From where shall people test? Does a GIT repository exist?
+> Or you simply forgot to mention in your euphoria (I know it's end of semester)?
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-John: after fixing memory corruption we have finally stable driver for
-BCMA. It works with my BCM43224 and BCM43225 cards, all the problems
-seem to be resolved.
+All the needed stuff is almost in witeless-testing git tree. The only
+two patches you need to apply manually are recently sent:
+[PATCH 1/2 3.1] b43: bus: fix memory corruption when setting driver's data
+[PATCH 2/2 3.1???] b43: bcma: drop BROKEN
 
-I know it's few hours after opening merge window, but maybe you could
-make an exception for this patch and take it for 3.1?
----
- drivers/net/wireless/b43/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
-index d2293dc..3cab843 100644
---- a/drivers/net/wireless/b43/Kconfig
-+++ b/drivers/net/wireless/b43/Kconfig
-@@ -28,7 +28,7 @@ config B43
- 
- config B43_BCMA
- 	bool "Support for BCMA bus"
--	depends on B43 && BCMA && BROKEN
-+	depends on B43 && BCMA
- 	default y
- 
- config B43_SSB
 -- 
-1.7.3.4
+Rafa?
