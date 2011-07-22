@@ -1,42 +1,47 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 22 Jul 2011 09:38:15 -0500
-Subject: [PATCH] b43legacy: dma: cache translation (routing bits)
-In-Reply-To: <1311287100-3888-1-git-send-email-zajec5@gmail.com>
-References: <1311287100-3888-1-git-send-email-zajec5@gmail.com>
-Message-ID: <4E298B57.6070808@lwfinger.net>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Fri, 22 Jul 2011 17:04:41 +0200
+Subject: [PATCH v2 00/11] bcma: add support for embedded devices like
+	bcm4716
+In-Reply-To: <20110722133925.GA10938@tuxdriver.com>
+References: <1310835342-18877-1-git-send-email-hauke@hauke-m.de>
+	<CACna6ryjYGuLc5c88eke=gjgwQyVD+A9afM6zCRhqV1THHgWvA@mail.gmail.com>
+	<4E2933A0.40200@hauke-m.de> <20110722133925.GA10938@tuxdriver.com>
+Message-ID: <4E299189.7080700@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, ralf@linux-mips.org, linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-On 07/21/2011 05:25 PM, Rafa? Mi?ecki wrote:
->
-> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
-> ---
-> Ideally this should have been applied before:
-> ssb: return correct translation bit for 64-bit DMA
->
-> This is because mentioned patch added TMSHIGH register read on every
-> ssb_dma_translation call which affected performance.
->
-> If we can live with affected performance between that 2 commits, please
-> just apply this ASAP.
->
-> It affected performance (however I don't expect anything like making it
-> 90% slower) is not acceptable, please revert mentioned patch, apply this
-> one and then re-apply reverted patches.
-> ---
+On 07/22/2011 03:39 PM, John W. Linville wrote:
+> On Fri, Jul 22, 2011 at 10:24:00AM +0200, Hauke Mehrtens wrote:
+>> On 07/22/2011 12:30 AM, Rafa? Mi?ecki wrote:
+>>> 2011/7/16 Hauke Mehrtens <hauke@hauke-m.de>:
+> 
+>>>> @Ralf: Could you please merger this into the mips tree so that it will be in linux-3.1.
+>>>
+>>> ML for bcma is linux-wireless. Should we pass that patches "via" Ralf
+>>> or John? Using linux-wireless (and John's tree) makes more sense to
+>>> me, as we will work on the same tree and will get less merge
+>>> conflicts. However don't take me as Linux development style guru, just
+>>> my POV.
+> 
+>> I talked about this with Florian Fainelli and he said that the patches
+>> should rather pass Ralf then John, but merging would be easier when they
+>> are passing John. I do not have a problem with both solutions and
+>> rebasing it to an other tree is no problem for me.
+>> John and Ralf, who wants to take these patches? ;-)
+> 
+> I don't really care -- I figured Ralf was taking them due to the MIPS arch bits.
+> 
+> John
 
-Tested-by: Larry Finger <Larry.Finger@lwfinger.net>
+Hi John,
 
-The patch is fine. In fact, I didn't notice much difference in CPU usage in the 
-before/after tests; however, my b43legacy device only handles 802.11b, thus 
-there are not a lot of packets per second.
+yes because of the MIPS arch bits it should go through Ralf, but there
+are many changes for bcma in wireless-testing and adding my changes to
+mips tree will cause some problems when wireless-testing and mips are
+merged together by Linus.
 
-The failure to boot with the latest pull is more problematic. My bisection try 
-led to the nonsensical result of a branch commit. I will pull mainline 3.0 to 
-see if it has the same problem.
-
-Larry
+Hauke
