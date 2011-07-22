@@ -1,34 +1,42 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 22 Jul 2011 12:32:24 +0200
-Subject: [ANNOUNCEMENT] BCM43224 and BCM43225 support thanks to Poznan
-	University of Technology
-Message-ID: <CACna6rxbwQUQXOn_11WyXG0zjLq107oJZv7aHoZ3B8sF-4HuHA@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Fri, 22 Jul 2011 13:11:04 +0200
+Subject: [PATCH 1/2 3.1] b43: bus: fix memory corruption when setting driver's
+	data
+Message-ID: <1311333065-12561-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev <b43-dev@lists.infradead.org>
-Cc: linux-wireless@vger.kernel.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Hi guys,
+Fixes bug described in:
+https://bugzilla.kernel.org/show_bug.cgi?id=39172
 
-As you hopefully noticed, I've spent a lot of time on Broadcom's cards
-in the last few months. Adding bcma, modifying b43, fixing some bugs,
-and so on... Today I've finally proposed enabling BCM43224 and
-BCM43225 support, with a little of luck, still for 3.1 kernel.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+John: this is trivial and fixes quite ugly memory (linked list exactly)
+corruption. I believe this fix should be taken for 3.1.
+---
+ drivers/net/wireless/b43/bus.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-I've time for all of that thanks to Poznan University of Technology
-(the one I study at). After my first success with BCM4321 they
-proposed me to continue this project as part of my MSc work. Thanks to
-that I could fully focus on b43 and related projects. Focusing on
-another MSc work woudn't give me so much time and wouldn't result in
-so fast development.
-
-I would like to say big "Thank You" to the University. It was one of
-the most enjoyable projects during my studies!
-
-
-Now, get the latest code and give me feedback for your BCM43224 or BCM43225! :)
-
+diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
+index 64c3f65..05f6c7b 100644
+--- a/drivers/net/wireless/b43/bus.c
++++ b/drivers/net/wireless/b43/bus.c
+@@ -244,10 +244,12 @@ void b43_bus_set_wldev(struct b43_bus_dev *dev, void *wldev)
+ #ifdef CONFIG_B43_BCMA
+ 	case B43_BUS_BCMA:
+ 		bcma_set_drvdata(dev->bdev, wldev);
++		break;
+ #endif
+ #ifdef CONFIG_B43_SSB
+ 	case B43_BUS_SSB:
+ 		ssb_set_drvdata(dev->sdev, wldev);
++		break;
+ #endif
+ 	}
+ }
 -- 
-Rafa?
+1.7.3.4
