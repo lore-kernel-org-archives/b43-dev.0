@@ -1,42 +1,64 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Mon, 25 Jul 2011 14:42:31 -0400
-Subject: [PATCH v3 00/11] bcma: add support for embedded devices like
-	bcm4716
-In-Reply-To: <1311376815-15755-1-git-send-email-hauke@hauke-m.de>
-References: <1311376815-15755-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <20110725184231.GB6380@tuxdriver.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 25 Jul 2011 23:54:00 +0200
+Subject: Problem with understanding DMA on some machines (known solution!),
+	specs needed?
+Message-ID: <CACna6ryCsYicWCmNj5tWZ=w53K9qA8qoFHmNT4bQSSVG+sB-xQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, ralf@linux-mips.org, zajec5@gmail.com, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
+To: b43-dev@lists.infradead.org
 
-On Sat, Jul 23, 2011 at 01:20:04AM +0200, Hauke Mehrtens wrote:
-> This patch series adds support for embedded devices like bcm47xx to 
-> bcma. Bcma is used on bcm4716 and bcm4718 SoCs as the system bus and
-> replaced ssb used on older devices. With these patches my bcm4716 
-> device boots up till it tries to access the flash, because the serial 
-> flash chip is unsupported for now, this will be my next task. This adds 
-> support for MIPS cores, interrupt configuration and the serial console.
-> 
-> These patches are not containing all functions needed to get the SoC to 
-> fully work and support every feature, but it is a good start.
-> These patches are now integrated in OpenWrt for everyone how wants to
-> test them.
-> 
-> This was tested with a BCM4704 device (SoC with ssb bus), a BCM4716 
-> device and a pcie wireless card supported by bcma.
-> 
-> @John could you please merge this into wireless-testing. I hope Ralf is 
-> fine with it when some MIPS bits will go through wireless. This will 
-> make it much easier for Linus to merge wireless-testing and the mips 
-> tree together as there are many other changes for bcma in wireless-
-> testing.
+Hey, I've finally came back to my 14e4:4329 with not working DMA. I
+hoped disabling parity will make my DMA work, but this didn't do the
+trick.
 
-Any chance we could see an ACK from Ralf?
+The card is PCI one with following params:
+SSB 2.4
+BCM4321
+SPROM: 4
+PMU: ?
+Core rev: 11
+PHY: N / 1
+Radio: 0x2055 / 4
 
-John
+I've dumped wl and b43 ops and compare them. Noticed something
+interesting in DMA setup.
+
+wl:
+ read32 0xc0200200 -> 0x00000000
+write32 0xc0200200 <- 0x00000801
+write32 0xc0200208 <- 0x5f310000
+write32 0xc020020c <- 0x00000000
+
+b43:
+write32 0xc0200200 <- 0x00000801
+write32 0xc0200208 <- 0x198b2000
+write32 0xc020020c <- 0x80000000
+
+Can you see the difference? wl does not put routing (translation) bits
+in 0x20c@all. 0x208 on the other hand is suspicious.
+
+It looks that wl is:
+1) Using 0x40000000 routing instead of 0x80000000 routing
+2) wl puts routing bits in addrlo instead of addrhi
+
+According to the specs, routing goes always to the addrhi:
+
+> The address 2 field is as follows (address 1 contains all address bits):
+> Mask 	Function
+> 0x3FFFFFFF 	Address
+> 0xC0000000 	Routing
+
+So I've hacked b43 to use 0x40000000 as translation and to put routing
+in addrlo. Wohoo, this helped! For the first time I saw packets using
+DMA engine.
+
+
+Now, the question: when for real we should use such a solution?
+
+Larry, could you check your driver? Can you see anything about this?
+Is this maybe PCI (not PCIe!) specific?
+
 -- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+Rafa?
