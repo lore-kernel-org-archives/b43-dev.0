@@ -1,9 +1,9 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 25 Jul 2011 11:21:44 +0200
+Date: Mon, 25 Jul 2011 12:00:35 +0200
 Subject: Malformed RX header on new (rev 6xx) firmware
 In-Reply-To: <CACna6ryEOqeQ9+UGCxWd=A8JFsPuGjJxJGj28=iYvhVNWk-y6A@mail.gmail.com>
 References: <CACna6ryEOqeQ9+UGCxWd=A8JFsPuGjJxJGj28=iYvhVNWk-y6A@mail.gmail.com>
-Message-ID: <CACna6rwtmHZMTtK9Fp6BrJ3S0yiVd=amm0Nv7Jb0+7E6-aaaHA@mail.gmail.com>
+Message-ID: <CACna6rz7kKuwzg8JSeXqDhdvSzptNQnYYE0eZpESNZd5R2XVew@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -62,49 +62,49 @@ W dniu 24 lipca 2011 22:56 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
 >
 > So when using 604.1001 firmware I don't get mac_status, mac_time is
 > sth random, and chanstat is always 0x106.
+>
+> Interesting is that RX data seem to be usable (didn't check if 100%
+> valid). If I comment out dropping package, I get scanning results.
+>
+> Do you have idea what can be causing it?
+>
+> 1) I've tried changing B43_DMA0_RX_FRAMEOFFSET to 38 (to match wl) but
+> this didn't help.
+> +#define B43_DMA0_RX_FRAMEOFFSET ? ? ? ? ? ? ? ?38
+>
+> 2) Dumping RXSTATUS and RXERRRO doesn't show anything interesting, the
+> result is the same for older and newer firmware
+> pr_info("RXSTATUS: 0x%X\n", b43_dma_read(ring, B43_DMA64_RXSTATUS));
+> pr_info("RXERROR: 0x%X\n", b43_dma_read(ring, B43_DMA64_RXERROR));
+>
+> 3) In the TX header we have two differences:
+> a) Cookie is quite different, but I'm not sure if it's processed by
+> ucode at all. I think it's just copied by firmware when giving us
+> feedback about TX we submitted to the hardware.
+> b) Field mac_ctl differs. We (b43) set B43_TXH_MAC_HWSEQ |
+> B43_TXH_MAC_STMSDU | B43_TXH_MAC_LONGFRAME. brcm80211 sets
+> B43_TXH_MAC_STMSDU
+>
+> 4) dwmw2 noticed that wl (in ndiswrapper) does use full address
+> instead of index for "Descriptor Stop". According to brcm80211
+> comments it's for allowing sending unaligned packets to the hardware.
+>
+> --
+> Rafa?
+>
 
-I decided to dump 4 more bytes. At the end of struct b43_rxhdr_fw4 I've added:
-__le16 hack1;
-__le16 hack2;
+How it happened, I didn't notice relation between:
+> mac_status: 0x01060000
+and:
+> mac_time: 0x0000
+> channel: 0x0106
 
-[  953.587835] frame_len: 0x008F
-[  953.587837] phy_status0: 0x2000
-[  953.587839] phy_status2: 0x0028
-[  953.587841] phy_status3: 0x0000
-[  953.587843] mac_status: 0x00000000
-[  953.587845] mac_time: 0x0000
-[  953.587847] channel: 0x0106
-[  953.587849] hack1: 0x8C88
-[  953.587850] hack2: 0x0024
+Now that's obvious, 4 more bytes between phy_status3 and mac_status :)
 
-My hack2 looks like the real "channel" field.
-0x0024 & B43_RX_CHAN_PHYTYPE ? PHY type 4
-0x0024 & B43_RX_CHAN_ID >> 3 ? Channel id 4
-
-To make sure, I've set up new AP on channel 6 and performed scanning.
-[ 1479.679678] frame_len: 0x00CF
-[ 1479.679680] phy_status0: 0x2004
-[ 1479.679682] phy_status2: 0x0045
-[ 1479.679684] phy_status3: 0x0000
-[ 1479.679686] mac_status: 0x00000000
-[ 1479.679688] mac_time: 0x0002
-[ 1479.679690] channel: 0x0106
-[ 1479.679691] hack1: 0xDD3E
-[ 1479.679693] hack2: 0x0034
-
-[ 1479.682615] frame_len: 0x00D5
-[ 1479.682617] phy_status0: 0x2004
-[ 1479.682619] phy_status2: 0x003F
-[ 1479.682621] phy_status3: 0x0000
-[ 1479.682623] mac_status: 0x00000000
-[ 1479.682625] mac_time: 0x0000
-[ 1479.682627] channel: 0x0106
-[ 1479.682629] hack1: 0xE892
-[ 1479.682631] hack2: 0x0034
-
-Field hack2 looks sane again
-0x0034 & B43_RX_CHAN_PHYTYPE ? PHY type 4
-0x0034 & B43_RX_CHAN_ID >> 3 ? Channel id 6
+The ugly part is that Broadcom changes that at some random firmware
+updates. For example: take a look at brcm80211. It uses 610 firmware.
+brcm80211 uses new TX header, but old rx header. Well, few more "if"s
+to implement.
 
 -- 
 Rafa?
