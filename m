@@ -1,37 +1,40 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 26 Jul 2011 10:57:55 -0500
-Subject: [PATCH 1/2] b43legacy: report core number
-In-Reply-To: <20110726153648.24611.49190.stgit@mj.roinet.com>
-References: <20110726153648.24611.49190.stgit@mj.roinet.com>
-Message-ID: <4E2EE403.5090207@lwfinger.net>
+From: Hamilton Vera <hamilton.listas@gmail.com>
+Date: Tue, 26 Jul 2011 13:03:42 -0300
+Subject: BCM4329 running ok in Android and fails in debian
+In-Reply-To: <BANLkTi=P_ZF38DXMMR=kbE7jL3JgBRj3JA@mail.gmail.com>
+References: <BANLkTi=P_ZF38DXMMR=kbE7jL3JgBRj3JA@mail.gmail.com>
+Message-ID: <CAJ7S3qbDB+p75XRHwwCWxBPkAVqqFu8MxMMDmdbXwD3GEabtvw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Roskin <proski@gnu.org>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>
+To: b43-dev@lists.infradead.org
 
-On 07/26/2011 10:36 AM, Pavel Roskin wrote:
-> Signed-off-by: Pavel Roskin<proski@gnu.org>
-> ---
->   0 files changed, 0 insertions(+), 0 deletions(-)
+Greetings masters
 
-Very informative diffstat! :)
+Actually we are working on an Android tablet (ARM iMX51 ) running
+kernel 2.6.35.3 and froyo. BCM4329 works just fine in Android.
 
->
-> diff --git a/drivers/net/wireless/b43legacy/main.c b/drivers/net/wireless/b43legacy/main.c
-> index ffa4671..224991a 100644
-> --- a/drivers/net/wireless/b43legacy/main.c
-> +++ b/drivers/net/wireless/b43legacy/main.c
-> @@ -3785,7 +3785,8 @@ static int b43legacy_wireless_init(struct ssb_device *dev)
->   	INIT_WORK(&wl->beacon_update_trigger, b43legacy_beacon_update_trigger_work);
->
->   	ssb_set_devtypedata(dev, wl);
-> -	b43legacyinfo(wl, "Broadcom %04X WLAN found\n", dev->bus->chip_id);
-> +	b43legacyinfo(wl, "Broadcom %04X WLAN found (core revision %u)\n",
-> +		      dev->bus->chip_id, dev->id.revision);
->   	err = 0;
->   out:
->   	return err;
+I am trying to port a Debian  to this board  and for some unknown
+reason the same BCM4329 does not work properly in Debian.
 
-ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
+I am using the same module bcm4329.ko and firmware that used to work in Android.
+
+In Debian I am able to connect to the AP but when I start more than
+one download/upload process the wifi hangs. ?Using a USB-Wifi dongle I
+have no problems at all (just to check if all libs and applications
+iwlist/wpa_supplicant are working fine ).
+
+If anyone had faced the same issue please let me know, I will start to
+debug the module right now.
+
+
+Thanks in advance.
+
+
+
+
+--
+Hamilton Vera
+int Administrator (char Network[],char ComputationalSystems[])
+http://hvera.wordpress.com
