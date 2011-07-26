@@ -1,58 +1,53 @@
-From: Chris Vine <chris@cvine.freeserve.co.uk>
-Date: Tue, 26 Jul 2011 10:28:50 +0100
-Subject: b43 error under heavy load
-In-Reply-To: <BANLkTi=j7gZq2U8QOXBLAPzN4_9DQUm7=A@mail.gmail.com>
-References: <4CEAB969.20702@lwfinger.net> <1290451982.20888.2.camel@maggie>
-	<4CEAC095.7020706@lwfinger.net>
-	<BANLkTimjRA5CsSDp_+LrGq8PNgaR4JFD=w@mail.gmail.com>
-	<4DC9853A.1090508@lwfinger.net>
-	<BANLkTimBpGRxfidpE4hYCVscmX-Hy5q5jw@mail.gmail.com>
-	<BANLkTi=TohOdjurvgqZT8=GXKbWfNe4v+w@mail.gmail.com>
-	<20110601114839.433ae42d@boulder.homenet>
-	<BANLkTin_RnMV3KnGS4qYPtMVxCuW=Vj7mg@mail.gmail.com>
-	<20110601130842.077da1c3@boulder.homenet>
-	<BANLkTi=2xYrrjEdHuYCKFKy4H2EXoUGQuQ@mail.gmail.com>
-	<20110601160101.75e30b3d@boulder.homenet>
-	<BANLkTim9pQc+yxdQLSL1-6VNiyM6_tvJ6g@mail.gmail.com>
-	<20110601184931.499557c6@boulder.homenet>
-	<BANLkTi=Cm1o8HVqugC6JNooP8h+HpJ=aRQ@mail.gmail.com>
-	<20110601190929.244c57ed@boulder.homenet>
-	<BANLkTi=j7gZq2U8QOXBLAPzN4_9DQUm7=A@mail.gmail.com>
-Message-ID: <20110726102850.07e851b2@boulder.homenet>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 26 Jul 2011 10:33:30 -0500
+Subject: Problem with understanding DMA on some machines (known solution!),
+	specs needed?
+In-Reply-To: <CACna6rxk3oZLh+BzXWKq7BZ=8M55-OCRk86-Xw6Eo6PXXaVw0A@mail.gmail.com>
+References: <CACna6ryCsYicWCmNj5tWZ=w53K9qA8qoFHmNT4bQSSVG+sB-xQ@mail.gmail.com>
+	<CACna6rxk3oZLh+BzXWKq7BZ=8M55-OCRk86-Xw6Eo6PXXaVw0A@mail.gmail.com>
+Message-ID: <4E2EDE4A.8000805@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, wireless <linux-wireless@vger.kernel.org>, Michael =?ISO-8859-1?B?QvxzY2g=?= <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On Wed, 1 Jun 2011 20:10:44 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> 2011/6/1 Chris Vine <chris@cvine.freeserve.co.uk>:
-> > On Wed, 1 Jun 2011 20:03:56 +0200
-> > Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> >> 2011/6/1 Chris Vine <chris@cvine.freeserve.co.uk>:
-> >> > The one which failed caused the cessation of
-> >> > wireless traffic, and was accompanied by the debug log reports of
-> >> > out of order TX status earlier referred to, and with only one
-> >> > single report
-> >>
-> >> As I said, I don't really suspect any relation between full TX ring
-> >> and out of order problems anymore.
-> >>
-> >> But it won't hurt to ask just in case:
-> >> Did you see relation between this single "Stopped TX ring 1" and
-> >> massive out of order messages? Did out of order messages starter
-> >> right after "Stopped TX ring 1" one?
-> >
-> > The "Stopped TX ring 1" message was near the end (but not at the
-> > end) of the out of order messages. It was definitely not at the
-> > beginning of the out of order messages.
-> 
-> Thanks. That confirmed for me, there is no relation.
+On 07/26/2011 03:24 AM, Rafa? Mi?ecki wrote:
+> W dniu 25 lipca 2011 23:54 u?ytkownik Rafa? Mi?ecki<zajec5@gmail.com>  napisa?:
+>> Now, the question: when for real we should use such a solution?
+>>
+>> Larry, could you check your driver? Can you see anything about this?
+>> Is this maybe PCI (not PCIe!) specific?
+>
+> I've checked thread "Interesting 14e4:4321". It seems both: 14e4:4321
+> and 14e4:4322 are using PCI slot and both are not working in DMA mode.
+> I start believing it's PCI specific.
+>
+> If you take a look at current ssb code and defines:
+>> if (ssb_read32(dev, SSB_TMSHIGH)&  SSB_TMSHIGH_DMA64)
+>> 	return SSB_PCIE_DMA_H32;
+>> else
+>> 	return SSB_PCI_DMA;
+> You can see 0x80000000 (SSB_PCIE_DMA_H32) has actually "PCIE" in it's
+> name. This can be true that 0x80000000 is *only* for *64-bit DMA* on
+> *PCIe*.
 
-I have tested with the newer firmware (from broadcom-wl-5.10.56.27.3),
-and I get the same failure with "Out of order TX status report on DMA
-ring 1" after transferring about 380MB of data at full speed.
+That is almost correct. This time I found it. The pseudo code is:
 
-Chris
+dma_addr_lo = 0
+dma_addr_hi = 0
+if PCI || PCIe
+	if PCIe && 64-bit DMA
+		dma_addr_hi = 0x80000000
+	else
+		if chipID is 0x4322, 43221, 43231, or 43222
+			dma_addr_lo = 0x80000000
+		else
+			dma_addr_lo = 0x40000000    <== your case
+
+Thus it is just a little more complicated than a PCI/PCIe split, as it also 
+depends on the chip ID.
+
+I'll add this to the specs.
+
+Larry
