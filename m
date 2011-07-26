@@ -1,96 +1,324 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 26 Jul 2011 12:10:02 -0500
-Subject: Problem with understanding DMA on some machines (known solution!),
-	specs needed?
-In-Reply-To: <CACna6rzWzLh8g5XwZTC6FsY2W2_+fxRFQ3jpxQCHT0prUhapzQ@mail.gmail.com>
-References: <CACna6ryCsYicWCmNj5tWZ=w53K9qA8qoFHmNT4bQSSVG+sB-xQ@mail.gmail.com>	<CACna6rxk3oZLh+BzXWKq7BZ=8M55-OCRk86-Xw6Eo6PXXaVw0A@mail.gmail.com>	<4E2EDE4A.8000805@lwfinger.net>
-	<CACna6rzWzLh8g5XwZTC6FsY2W2_+fxRFQ3jpxQCHT0prUhapzQ@mail.gmail.com>
-Message-ID: <4E2EF4EA.6050300@lwfinger.net>
+Date: Tue, 26 Jul 2011 12:47:56 -0500
+Subject: [PATCH] b43legacy: remove 64-bit DMA support
+In-Reply-To: <20110725213832.32510.3753.stgit@mj.roinet.com>
+References: <20110725213832.32510.3753.stgit@mj.roinet.com>
+Message-ID: <4E2EFDCC.3060604@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Pavel Roskin <proski@gnu.org>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>
 
-On 07/26/2011 11:32 AM, Rafa? Mi?ecki wrote:
-> W dniu 26 lipca 2011 17:33 u?ytkownik Larry Finger
-> <Larry.Finger@lwfinger.net>  napisa?:
->> On 07/26/2011 03:24 AM, Rafa? Mi?ecki wrote:
->>>
->>> W dniu 25 lipca 2011 23:54 u?ytkownik Rafa? Mi?ecki<zajec5@gmail.com>
->>>   napisa?:
->>>>
->>>> Now, the question: when for real we should use such a solution?
->>>>
->>>> Larry, could you check your driver? Can you see anything about this?
->>>> Is this maybe PCI (not PCIe!) specific?
->>>
->>> I've checked thread "Interesting 14e4:4321". It seems both: 14e4:4321
->>> and 14e4:4322 are using PCI slot and both are not working in DMA mode.
->>> I start believing it's PCI specific.
->>>
->>> If you take a look at current ssb code and defines:
->>>>
->>>> if (ssb_read32(dev, SSB_TMSHIGH)&    SSB_TMSHIGH_DMA64)
->>>>         return SSB_PCIE_DMA_H32;
->>>> else
->>>>         return SSB_PCI_DMA;
->>>
->>> You can see 0x80000000 (SSB_PCIE_DMA_H32) has actually "PCIE" in it's
->>> name. This can be true that 0x80000000 is *only* for *64-bit DMA* on
->>> *PCIe*.
->>
->> That is almost correct. This time I found it. The pseudo code is:
->>
->> dma_addr_lo = 0
->> dma_addr_hi = 0
->> if PCI || PCIe
->>         if PCIe&&  64-bit DMA
->>                 dma_addr_hi = 0x80000000
->>         else
->>                 if chipID is 0x4322, 43221, 43231, or 43222
->>                         dma_addr_lo = 0x80000000
->>                 else
->>                         dma_addr_lo = 0x40000000<== your case
->>
->> Thus it is just a little more complicated than a PCI/PCIe split, as it also
->> depends on the chip ID.
->>
->> I'll add this to the specs.
+On 07/25/2011 04:40 PM, Pavel Roskin wrote:
+> Devices supported by b43legacy don't support 64-bit DMA.
 >
-> Can you (anyone, not just Larry ;) ) give me some tip, how to
-> implement this correctly? From programming POV.
+> Signed-off-by: Pavel Roskin<proski@gnu.org>
+> ---
+> The patch was tested on Broadcom 4306.
 >
-> We should return two infos from ssb code now:
-> 1) Routing bit
-> 2) Address which should be used
->
-> Should I add new function for this? Or create struct
-> dma_translation_info with 2 fields? Or return array? Or...?
+>   drivers/net/wireless/b43legacy/dma.c |  374 ++++++----------------------------
+>   drivers/net/wireless/b43legacy/dma.h |  107 ----------
+>   2 files changed, 71 insertions(+), 410 deletions(-)
 
-How about more pseudo code? Broadcom sets those dma_addr_hi/lo words in a struct 
-when they are setting up the TX/RX rings. Then they do the following when 
-actually setting up the 64-bit DMA operation:
+Tested on BCM4303.
 
-dmaaddr_t phys
+ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-if !dma_addr_lo || !(phys.loaddr & 0xc0000000)
-	ring.address_lo = phys.loaddr + dma_addr_lo
-	ring.address_hi = phys.hiaddr + dma_addr_hi
-	ring.ctrl1 = ...
-else
-	u32 addr_ext = phys.loaddr & 0xc0000000
-	phys.loaddr &= ~0xc0000000
-	ring.address_lo = phys.loaddr + dma_addr_lo
-	ring.address_hi = dma_addr_hi
-	ring.ctrl1 = ....
-
-On second thought, what I call dma_addr_{lo,hi} might be called 
-dma_offset_{lo,hi}, or even dma_mask_{lo,hi}.
-
-As to the programming question, setting up these offsets can easily be done the 
-way they do.
+See some minor comments below.
 
 Larry
 
-	
+
+> diff --git a/drivers/net/wireless/b43legacy/dma.c b/drivers/net/wireless/b43legacy/dma.c
+> index 704ee62..a23b998 100644
+> --- a/drivers/net/wireless/b43legacy/dma.c
+> +++ b/drivers/net/wireless/b43legacy/dma.c
+> @@ -42,10 +42,9 @@
+>
+>   /* 32bit DMA ops. */
+>   static
+> -struct b43legacy_dmadesc_generic *op32_idx2desc(
+> -					struct b43legacy_dmaring *ring,
+> -					int slot,
+> -					struct b43legacy_dmadesc_meta **meta)
+> +struct b43legacy_dmadesc32 *op32_idx2desc(struct b43legacy_dmaring *ring,
+> +					  int slot,
+> +					  struct b43legacy_dmadesc_meta **meta)
+>   {
+>   	struct b43legacy_dmadesc32 *desc;
+>
+> @@ -53,11 +52,11 @@ struct b43legacy_dmadesc_generic *op32_idx2desc(
+>   	desc = ring->descbase;
+>   	desc =&(desc[slot]);
+>
+> -	return (struct b43legacy_dmadesc_generic *)desc;
+> +	return (struct b43legacy_dmadesc32 *)desc;
+>   }
+>
+>   static void op32_fill_descriptor(struct b43legacy_dmaring *ring,
+> -				 struct b43legacy_dmadesc_generic *desc,
+> +				 struct b43legacy_dmadesc32 *desc,
+>   				 dma_addr_t dmaaddr, u16 bufsize,
+>   				 int start, int end, int irq)
+>   {
+> @@ -67,7 +66,7 @@ static void op32_fill_descriptor(struct b43legacy_dmaring *ring,
+>   	u32 addr;
+>   	u32 addrext;
+>
+> -	slot = (int)(&(desc->dma32) - descbase);
+> +	slot = (int)(desc - descbase);
+>   	B43legacy_WARN_ON(!(slot>= 0&&  slot<  ring->nr_slots));
+>
+>   	addr = (u32)(dmaaddr&  ~SSB_DMA_TRANSLATION_MASK);
+> @@ -87,8 +86,8 @@ static void op32_fill_descriptor(struct b43legacy_dmaring *ring,
+>   	ctl |= (addrext<<  B43legacy_DMA32_DCTL_ADDREXT_SHIFT)
+>   	&  B43legacy_DMA32_DCTL_ADDREXT_MASK;
+>
+> -	desc->dma32.control = cpu_to_le32(ctl);
+> -	desc->dma32.address = cpu_to_le32(addr);
+> +	desc->control = cpu_to_le32(ctl);
+> +	desc->address = cpu_to_le32(addr);
+>   }
+>
+>   static void op32_poke_tx(struct b43legacy_dmaring *ring, int slot)
+> @@ -128,121 +127,6 @@ static void op32_set_current_rxslot(struct b43legacy_dmaring *ring,
+>   			    (u32)(slot * sizeof(struct b43legacy_dmadesc32)));
+>   }
+>
+> -static const struct b43legacy_dma_ops dma32_ops = {
+> -	.idx2desc		= op32_idx2desc,
+> -	.fill_descriptor	= op32_fill_descriptor,
+> -	.poke_tx		= op32_poke_tx,
+> -	.tx_suspend		= op32_tx_suspend,
+> -	.tx_resume		= op32_tx_resume,
+> -	.get_current_rxslot	= op32_get_current_rxslot,
+> -	.set_current_rxslot	= op32_set_current_rxslot,
+> -};
+> -
+> -/* 64bit DMA ops. */
+> -static
+> -struct b43legacy_dmadesc_generic *op64_idx2desc(
+> -					struct b43legacy_dmaring *ring,
+> -					int slot,
+> -					struct b43legacy_dmadesc_meta
+> -					**meta)
+> -{
+> -	struct b43legacy_dmadesc64 *desc;
+> -
+> -	*meta =&(ring->meta[slot]);
+> -	desc = ring->descbase;
+> -	desc =&(desc[slot]);
+> -
+> -	return (struct b43legacy_dmadesc_generic *)desc;
+> -}
+> -
+> -static void op64_fill_descriptor(struct b43legacy_dmaring *ring,
+> -				 struct b43legacy_dmadesc_generic *desc,
+> -				 dma_addr_t dmaaddr, u16 bufsize,
+> -				 int start, int end, int irq)
+> -{
+> -	struct b43legacy_dmadesc64 *descbase = ring->descbase;
+> -	int slot;
+> -	u32 ctl0 = 0;
+> -	u32 ctl1 = 0;
+> -	u32 addrlo;
+> -	u32 addrhi;
+> -	u32 addrext;
+> -
+> -	slot = (int)(&(desc->dma64) - descbase);
+> -	B43legacy_WARN_ON(!(slot>= 0&&  slot<  ring->nr_slots));
+> -
+> -	addrlo = (u32)(dmaaddr&  0xFFFFFFFF);
+> -	addrhi = (((u64)dmaaddr>>  32)&  ~SSB_DMA_TRANSLATION_MASK);
+> -	addrext = (((u64)dmaaddr>>  32)&  SSB_DMA_TRANSLATION_MASK)
+> -		>>  SSB_DMA_TRANSLATION_SHIFT;
+> -	addrhi |= ring->dev->dma.translation;
+> -	if (slot == ring->nr_slots - 1)
+> -		ctl0 |= B43legacy_DMA64_DCTL0_DTABLEEND;
+> -	if (start)
+> -		ctl0 |= B43legacy_DMA64_DCTL0_FRAMESTART;
+> -	if (end)
+> -		ctl0 |= B43legacy_DMA64_DCTL0_FRAMEEND;
+> -	if (irq)
+> -		ctl0 |= B43legacy_DMA64_DCTL0_IRQ;
+> -	ctl1 |= (bufsize - ring->frameoffset)
+> -		&  B43legacy_DMA64_DCTL1_BYTECNT;
+> -	ctl1 |= (addrext<<  B43legacy_DMA64_DCTL1_ADDREXT_SHIFT)
+> -		&  B43legacy_DMA64_DCTL1_ADDREXT_MASK;
+> -
+> -	desc->dma64.control0 = cpu_to_le32(ctl0);
+> -	desc->dma64.control1 = cpu_to_le32(ctl1);
+> -	desc->dma64.address_low = cpu_to_le32(addrlo);
+> -	desc->dma64.address_high = cpu_to_le32(addrhi);
+> -}
+> -
+> -static void op64_poke_tx(struct b43legacy_dmaring *ring, int slot)
+> -{
+> -	b43legacy_dma_write(ring, B43legacy_DMA64_TXINDEX,
+> -			    (u32)(slot * sizeof(struct b43legacy_dmadesc64)));
+> -}
+> -
+> -static void op64_tx_suspend(struct b43legacy_dmaring *ring)
+> -{
+> -	b43legacy_dma_write(ring, B43legacy_DMA64_TXCTL,
+> -			    b43legacy_dma_read(ring, B43legacy_DMA64_TXCTL)
+> -			    | B43legacy_DMA64_TXSUSPEND);
+> -}
+> -
+> -static void op64_tx_resume(struct b43legacy_dmaring *ring)
+> -{
+> -	b43legacy_dma_write(ring, B43legacy_DMA64_TXCTL,
+> -			    b43legacy_dma_read(ring, B43legacy_DMA64_TXCTL)
+> -			&  ~B43legacy_DMA64_TXSUSPEND);
+> -}
+> -
+> -static int op64_get_current_rxslot(struct b43legacy_dmaring *ring)
+> -{
+> -	u32 val;
+> -
+> -	val = b43legacy_dma_read(ring, B43legacy_DMA64_RXSTATUS);
+> -	val&= B43legacy_DMA64_RXSTATDPTR;
+> -
+> -	return (val / sizeof(struct b43legacy_dmadesc64));
+> -}
+> -
+> -static void op64_set_current_rxslot(struct b43legacy_dmaring *ring,
+> -				    int slot)
+> -{
+> -	b43legacy_dma_write(ring, B43legacy_DMA64_RXINDEX,
+> -			    (u32)(slot * sizeof(struct b43legacy_dmadesc64)));
+> -}
+> -
+> -static const struct b43legacy_dma_ops dma64_ops = {
+> -	.idx2desc		= op64_idx2desc,
+> -	.fill_descriptor	= op64_fill_descriptor,
+> -	.poke_tx		= op64_poke_tx,
+> -	.tx_suspend		= op64_tx_suspend,
+> -	.tx_resume		= op64_tx_resume,
+> -	.get_current_rxslot	= op64_get_current_rxslot,
+> -	.set_current_rxslot	= op64_set_current_rxslot,
+> -};
+> -
+> -
+>   static inline int free_slots(struct b43legacy_dmaring *ring)
+>   {
+>   	return (ring->nr_slots - ring->used_slots);
+> @@ -358,14 +242,6 @@ return 0;
+>   static u16 b43legacy_dmacontroller_base(enum b43legacy_dmatype type,
+>   					int controller_idx)
+>   {
+> -	static const u16 map64[] = {
+> -		B43legacy_MMIO_DMA64_BASE0,
+> -		B43legacy_MMIO_DMA64_BASE1,
+> -		B43legacy_MMIO_DMA64_BASE2,
+> -		B43legacy_MMIO_DMA64_BASE3,
+> -		B43legacy_MMIO_DMA64_BASE4,
+> -		B43legacy_MMIO_DMA64_BASE5,
+> -	};
+>   	static const u16 map32[] = {
+>   		B43legacy_MMIO_DMA32_BASE0,
+>   		B43legacy_MMIO_DMA32_BASE1,
+> @@ -375,11 +251,6 @@ static u16 b43legacy_dmacontroller_base(enum b43legacy_dmatype type,
+>   		B43legacy_MMIO_DMA32_BASE5,
+>   	};
+>
+> -	if (type == B43legacy_DMA_64BIT) {
+> -		B43legacy_WARN_ON(!(controller_idx>= 0&&
+> -				  controller_idx<  ARRAY_SIZE(map64)));
+> -		return map64[controller_idx];
+> -	}
+>   	B43legacy_WARN_ON(!(controller_idx>= 0&&
+>   			controller_idx<  ARRAY_SIZE(map32)));
+>   	return map32[controller_idx];
+> @@ -491,25 +362,15 @@ static int b43legacy_dmacontroller_rx_reset(struct b43legacy_wldev *dev,
+>
+>   	might_sleep();
+>
+> -	offset = (type == B43legacy_DMA_64BIT) ?
+> -		 B43legacy_DMA64_RXCTL : B43legacy_DMA32_RXCTL;
+> +	offset = B43legacy_DMA32_RXCTL;
+>   	b43legacy_write32(dev, mmio_base + offset, 0);
+>   	for (i = 0; i<  10; i++) {
+> -		offset = (type == B43legacy_DMA_64BIT) ?
+> -			 B43legacy_DMA64_RXSTATUS : B43legacy_DMA32_RXSTATUS;
+> +		offset = B43legacy_DMA32_RXSTATUS;
+>   		value = b43legacy_read32(dev, mmio_base + offset);
+> -		if (type == B43legacy_DMA_64BIT) {
+> -			value&= B43legacy_DMA64_RXSTAT;
+> -			if (value == B43legacy_DMA64_RXSTAT_DISABLED) {
+> -				i = -1;
+> -				break;
+> -			}
+> -		} else {
+> -			value&= B43legacy_DMA32_RXSTATE;
+> -			if (value == B43legacy_DMA32_RXSTAT_DISABLED) {
+> -				i = -1;
+> -				break;
+> -			}
+> +		value&= B43legacy_DMA32_RXSTATE;
+
+I am surprised that checkpatch doesn't see the spacing around the &= as an error.
+
+> +		if (value == B43legacy_DMA32_RXSTAT_DISABLED) {
+> +			i = -1;
+> +			break;
+>   		}
+>   		msleep(1);
+>   	}
+> @@ -533,43 +394,24 @@ static int b43legacy_dmacontroller_tx_reset(struct b43legacy_wldev *dev,
+>   	might_sleep();
+>
+>   	for (i = 0; i<  10; i++) {
+> -		offset = (type == B43legacy_DMA_64BIT) ?
+> -			 B43legacy_DMA64_TXSTATUS : B43legacy_DMA32_TXSTATUS;
+> +		offset = B43legacy_DMA32_TXSTATUS;
+>   		value = b43legacy_read32(dev, mmio_base + offset);
+> -		if (type == B43legacy_DMA_64BIT) {
+> -			value&= B43legacy_DMA64_TXSTAT;
+> -			if (value == B43legacy_DMA64_TXSTAT_DISABLED ||
+> -			    value == B43legacy_DMA64_TXSTAT_IDLEWAIT ||
+> -			    value == B43legacy_DMA64_TXSTAT_STOPPED)
+> -				break;
+> -		} else {
+> -			value&= B43legacy_DMA32_TXSTATE;
+> -			if (value == B43legacy_DMA32_TXSTAT_DISABLED ||
+> -			    value == B43legacy_DMA32_TXSTAT_IDLEWAIT ||
+> -			    value == B43legacy_DMA32_TXSTAT_STOPPED)
+> -				break;
+> -		}
+> +		value&= B43legacy_DMA32_TXSTATE;
+
+Ditto.
+
+> +		if (value == B43legacy_DMA32_TXSTAT_DISABLED ||
+> +		    value == B43legacy_DMA32_TXSTAT_IDLEWAIT ||
+> +		    value == B43legacy_DMA32_TXSTAT_STOPPED)
+> +			break;
+>   		msleep(1);
+>   	}
+> -	offset = (type == B43legacy_DMA_64BIT) ? B43legacy_DMA64_TXCTL :
+> -						 B43legacy_DMA32_TXCTL;
+> +	offset = B43legacy_DMA32_TXCTL;
+>   	b43legacy_write32(dev, mmio_base + offset, 0);
+>   	for (i = 0; i<  10; i++) {
+> -		offset = (type == B43legacy_DMA_64BIT) ?
+> -			 B43legacy_DMA64_TXSTATUS : B43legacy_DMA32_TXSTATUS;
+> +		offset = B43legacy_DMA32_TXSTATUS;
+>   		value = b43legacy_read32(dev, mmio_base + offset);
+> -		if (type == B43legacy_DMA_64BIT) {
+> -			value&= B43legacy_DMA64_TXSTAT;
+> -			if (value == B43legacy_DMA64_TXSTAT_DISABLED) {
+> -				i = -1;
+> -				break;
+> -			}
+> -		} else {
+> -			value&= B43legacy_DMA32_TXSTATE;
+> -			if (value == B43legacy_DMA32_TXSTAT_DISABLED) {
+> -				i = -1;
+> -				break;
+> -			}
+> +		value&= B43legacy_DMA32_TXSTATE;
+
+Ditto.
