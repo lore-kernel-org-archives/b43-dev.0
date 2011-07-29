@@ -1,41 +1,60 @@
-From: Hamilton Vera <hamilton.listas@gmail.com>
-Date: Wed, 27 Jul 2011 18:39:32 -0300
-Subject: BCM4329 running ok in Android and fails in debian
-In-Reply-To: <CACna6ryaVQJTcOXxQ9Hj0j3-FmZt+Dc9mZQ6=qw3S1hnP5RsQA@mail.gmail.com>
-References: <BANLkTi=P_ZF38DXMMR=kbE7jL3JgBRj3JA@mail.gmail.com>
-	<CAJ7S3qbDB+p75XRHwwCWxBPkAVqqFu8MxMMDmdbXwD3GEabtvw@mail.gmail.com>
-	<CACna6rxqA3Wi-C0rT4gNnG6NWRtyddShCeOnK_LsbH0+_Bc1XQ@mail.gmail.com>
-	<CAJ7S3qaxUzcN_4NPW_frb6x5List6zMRQk8_DQ_jv2-tsMKHqQ@mail.gmail.com>
-	<CACna6ryaVQJTcOXxQ9Hj0j3-FmZt+Dc9mZQ6=qw3S1hnP5RsQA@mail.gmail.com>
-Message-ID: <CAJ7S3qYunjD0J0o46PF-N+Xj4fs8JN9xFFzUF6g17ekoZR9Kog@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 29 Jul 2011 23:04:37 +0200
+Subject: [PATCH 06/11] bcma: add serial console support
+In-Reply-To: <1311376815-15755-7-git-send-email-hauke@hauke-m.de>
+References: <1311376815-15755-1-git-send-email-hauke@hauke-m.de>
+	<1311376815-15755-7-git-send-email-hauke@hauke-m.de>
+Message-ID: <CACna6rxMA9KDuWSPLmdNsS=zNJawkbX5-KYrRWq3Jn25gWhX7A@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, ralf@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-By the way, I told you that we were using a ULPI interface but that is
-not true! Actually we are using MII bus.
-
-Sorry about that.
-
-2011/7/26 Rafa? Mi?ecki <zajec5@gmail.com>:
-> 2011/7/26 Hamilton Vera <hamilton.listas@gmail.com>:
->> Dear Rafal, I am using debian (armel) in our board, the board is
->> connected using a ULPI interface. I wonder we have any plugable PC
->> device based on the same chipset :), it would help a lot.
+2011/7/23 Hauke Mehrtens <hauke@hauke-m.de>:
+> This adds support for serial console to bcma, when operating on an SoC.
 >
-> Yeah, I'd like to see PC-attachable card using BCM4329 some day.
-> Without that I can not really work on brcmfmac :/ Please let us know
-> if you ever discover anything interesting about this.
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+> ?drivers/bcma/bcma_private.h ? ? ? ? ? ? ? ? | ? ?8 ++++
+> ?drivers/bcma/driver_chipcommon.c ? ? ? ? ? ?| ? 48 +++++++++++++++++++++++++++
+> ?drivers/bcma/driver_chipcommon_pmu.c ? ? ? ?| ? 26 ++++++++++++++
+> ?drivers/bcma/driver_mips.c ? ? ? ? ? ? ? ? ?| ? ?1 +
+> ?include/linux/bcma/bcma_driver_chipcommon.h | ? 14 ++++++++
+> ?5 files changed, 97 insertions(+), 0 deletions(-)
 >
-> --
-> Rafa?
+> diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
+> index b97633d..22d3052 100644
+> --- a/drivers/bcma/bcma_private.h
+> +++ b/drivers/bcma/bcma_private.h
+> @@ -29,6 +29,14 @@ void bcma_init_bus(struct bcma_bus *bus);
+> ?/* sprom.c */
+> ?int bcma_sprom_get(struct bcma_bus *bus);
 >
+> +/* driver_chipcommon.c */
+> +#ifdef CONFIG_BCMA_DRIVER_MIPS
+> +void bcma_chipco_serial_init(struct bcma_drv_cc *cc);
+> +#endif /* CONFIG_BCMA_DRIVER_MIPS */
+> +
+> +/* driver_chipcommon_pmu.c */
+> +u32 bcma_pmu_alp_clock(struct bcma_drv_cc *cc);
+> +
+> ?#ifdef CONFIG_BCMA_HOST_PCI
+> ?/* host_pci.c */
+> ?extern int __init bcma_host_pci_init(void);
 
+Not sure, what do you think about this, feel free to comment.
 
+My idea was to use bcma_private.h for bcma-internal functions. For
+example, support for PCI host or SoC host, is something "internal" (as
+I call it) for bcma. Drivers in theory could be separated modules and
+I use include/linux/bcma/driver_*.h for them.
+
+If following this schema, declarations of
+bcma_pmu_alp_clock
+bcma_host_pci_init
+should be in include/linux/bcma/bcma_driver_chipcommon.h
 
 -- 
-Hamilton Vera
-int Administrator (char Network[],char ComputationalSystems[])
-http://hvera.wordpress.com
+Rafa?
