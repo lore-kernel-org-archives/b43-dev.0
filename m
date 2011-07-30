@@ -1,30 +1,51 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 31 Jul 2011 00:09:32 +0200
+Date: Sun, 31 Jul 2011 01:44:38 +0200
 Subject: [PATCH] b43: Remove EXPERIMENTAL designation from LP PHY selection
 In-Reply-To: <4e3431a3.okCWfww1KPoiQhgM%Larry.Finger@lwfinger.net>
 References: <4e3431a3.okCWfww1KPoiQhgM%Larry.Finger@lwfinger.net>
-Message-ID: <CACna6rxHuNtWDMpcztmdeBWH1=6khWbcyuxvVUJH8KGyUr+NRw@mail.gmail.com>
+Message-ID: <CACna6rxA=UxT68Nmp1GOUmgVXiFeEhK0uw1taFk3YBqv9=t82g@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: John W Linville <linville@tuxdriver.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-W dniu sobota, 30 lipca 2011 u?ytkownik Larry Finger <
-Larry.Finger@lwfinger.net> napisa?:
+2011/7/30 Larry Finger <Larry.Finger@lwfinger.net>:
 > Since kernel 3.0, the problems with controlling b43 devices that have
 > low-power (LP) PHYs have been fixed and the EXPERIMENTAL designation
 > can be fixed.
 >
-> This patch also fixes a typo as the device supports 802.11b
-communications.
+> This patch also fixes a typo as the device supports 802.11b communications.
 >
 > Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+> ---
+>
+> Index: wireless-testing-new/drivers/net/wireless/b43/Kconfig
+> ===================================================================
+> --- wireless-testing-new.orig/drivers/net/wireless/b43/Kconfig
+> +++ wireless-testing-new/drivers/net/wireless/b43/Kconfig
+> @@ -114,13 +114,13 @@ config B43_PHY_N
+> ? ? ? ? ?affect other devices support and may provide support for basic needs.
+>
+> ?config B43_PHY_LP
+> - ? ? ? bool "Support for low-power (LP-PHY) devices (EXPERIMENTAL)"
+> - ? ? ? depends on B43 && EXPERIMENTAL
+> + ? ? ? bool "Support for low-power (LP-PHY) devices"
+> + ? ? ? depends on B43
+> ? ? ? ?default y
+> ? ? ? ?---help---
+> ? ? ? ? ?Support for the LP-PHY.
+> ? ? ? ? ?The LP-PHY is a low-power PHY built into some notebooks
+> - ? ? ? ? and embedded devices. It supports 802.11a/g
+> + ? ? ? ? and embedded devices. It supports 802.11a/b/g
+> ? ? ? ? ?(802.11a support is optional, and currently disabled).
+>
+> ?config B43_PHY_HT
 
-Ack
+Acked-by: Rafa? Mi?ecki <zajec5@gmail.com>
+
+(using text/plain this time)
 
 -- 
 Rafa?
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110731/b50c8310/attachment.html>
