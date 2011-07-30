@@ -1,33 +1,42 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 30 Jul 2011 10:19:05 -0500
-Subject: Report on bcma with 14e4:4353 (BCM43224)
-Message-ID: <4E3420E9.6080603@lwfinger.net>
+Date: Sat, 30 Jul 2011 11:30:27 -0500
+Subject: [PATCH] b43: Remove EXPERIMENTAL designation from LP PHY
+ selection
+Message-ID: <4e3431a3.okCWfww1KPoiQhgM%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
+To: John W Linville <linville@tuxdriver.com>
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-Rafa?,
+Since kernel 3.0, the problems with controlling b43 devices that have
+low-power (LP) PHYs have been fixed and the EXPERIMENTAL designation
+can be fixed.
 
-I'm using a recent pull from wireless-testing - 'git describe' results in 
-master-2011-07-26-150-g4ea94a9.
+This patch also fixes a typo as the device supports 802.11b communications.
 
-The driver is working well with reasonable performance. Using tcpperf, I get 
-8-10 Mb/s upload on an 802.11g connection. The connection has been up for 17 
-hours with no disconnects.
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
 
-A minor annoyance is that the driver does not autoload on boot and had to be 
-manually modprobed. AFAIK, I don't have any blacklisting or other configuration 
-parameters that would cause this. Furthermore, I don't see anything in the 
-driver code that would cause this. Does autoload work on your system?
-
-A more serious problem is that the driver does not work on my 802.11n AP that is 
-set for "up to 270 Mbps at 2.4 GHz". It will authenticate and associate, but the 
-throughput is minimal. It also gets the "PHY transmission error" messages. None 
-occur with 802.11g. I would guess some kind of error in the HT40 settings.
-
-Thanks for your hard work on this device.
-
-Larry
+Index: wireless-testing-new/drivers/net/wireless/b43/Kconfig
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/b43/Kconfig
++++ wireless-testing-new/drivers/net/wireless/b43/Kconfig
+@@ -114,13 +114,13 @@ config B43_PHY_N
+ 	  affect other devices support and may provide support for basic needs.
+ 
+ config B43_PHY_LP
+-	bool "Support for low-power (LP-PHY) devices (EXPERIMENTAL)"
+-	depends on B43 && EXPERIMENTAL
++	bool "Support for low-power (LP-PHY) devices"
++	depends on B43
+ 	default y
+ 	---help---
+ 	  Support for the LP-PHY.
+ 	  The LP-PHY is a low-power PHY built into some notebooks
+-	  and embedded devices. It supports 802.11a/g
++	  and embedded devices. It supports 802.11a/b/g
+ 	  (802.11a support is optional, and currently disabled).
+ 
+ config B43_PHY_HT
