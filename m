@@ -1,73 +1,59 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed, 10 Aug 2011 09:14:24 +0200
-Subject: [PATCH 06/11] bcma: add serial console support
-In-Reply-To: <CACna6rzqm=NhsrUWZr8Mun5fNaz3x1Qa6Fv_-TMKw8iOsK=u-w@mail.gmail.com>
-References: <1311376815-15755-1-git-send-email-hauke@hauke-m.de>	<1311376815-15755-7-git-send-email-hauke@hauke-m.de>	<CACna6rxMA9KDuWSPLmdNsS=zNJawkbX5-KYrRWq3Jn25gWhX7A@mail.gmail.com>
-	<CACna6rzqm=NhsrUWZr8Mun5fNaz3x1Qa6Fv_-TMKw8iOsK=u-w@mail.gmail.com>
-Message-ID: <4E422FD0.5050600@hauke-m.de>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 10 Aug 2011 18:11:27 +0200
+Subject: [PATCH 1/2] ssb: fix DMA translation for some specific boards
+Message-ID: <1312992688-6976-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, ralf@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Michael Buesch <m@bues.ch>
 
-On 07/29/2011 11:06 PM, Rafa? Mi?ecki wrote:
-> W dniu 29 lipca 2011 23:04 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
->> 2011/7/23 Hauke Mehrtens <hauke@hauke-m.de>:
->>> This adds support for serial console to bcma, when operating on an SoC.
->>>
->>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->>> ---
->>>  drivers/bcma/bcma_private.h                 |    8 ++++
->>>  drivers/bcma/driver_chipcommon.c            |   48 +++++++++++++++++++++++++++
->>>  drivers/bcma/driver_chipcommon_pmu.c        |   26 ++++++++++++++
->>>  drivers/bcma/driver_mips.c                  |    1 +
->>>  include/linux/bcma/bcma_driver_chipcommon.h |   14 ++++++++
->>>  5 files changed, 97 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
->>> index b97633d..22d3052 100644
->>> --- a/drivers/bcma/bcma_private.h
->>> +++ b/drivers/bcma/bcma_private.h
->>> @@ -29,6 +29,14 @@ void bcma_init_bus(struct bcma_bus *bus);
->>>  /* sprom.c */
->>>  int bcma_sprom_get(struct bcma_bus *bus);
->>>
->>> +/* driver_chipcommon.c */
->>> +#ifdef CONFIG_BCMA_DRIVER_MIPS
->>> +void bcma_chipco_serial_init(struct bcma_drv_cc *cc);
->>> +#endif /* CONFIG_BCMA_DRIVER_MIPS */
->>> +
->>> +/* driver_chipcommon_pmu.c */
->>> +u32 bcma_pmu_alp_clock(struct bcma_drv_cc *cc);
->>> +
->>>  #ifdef CONFIG_BCMA_HOST_PCI
->>>  /* host_pci.c */
->>>  extern int __init bcma_host_pci_init(void);
->>
->> Not sure, what do you think about this, feel free to comment.
->>
->> My idea was to use bcma_private.h for bcma-internal functions. For
->> example, support for PCI host or SoC host, is something "internal" (as
->> I call it) for bcma. Drivers in theory could be separated modules and
->> I use include/linux/bcma/driver_*.h for them.
->>
->> If following this schema, declarations of
->> bcma_pmu_alp_clock
->> bcma_host_pci_init
->> should be in include/linux/bcma/bcma_driver_chipcommon.h
-> 
-> Same goes to the
-> bcma_pmu_get_clockcpu
-> from patch 07/11.
-> 
-> Sorry for late-noticing this.
-> 
-> I don't have more comments against your patch set :) Hope John will
-> take it soon :)
-> 
-This sounds good. I will send a new patch moving the method declaration
-to bcma_driver_chipcommon.h for these 3 functions.
+Signed-off-by: Michael Buesch <m@bues.ch>
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/main.c |   22 +++++++++++++++++++---
+ 1 files changed, 19 insertions(+), 3 deletions(-)
 
-Hauke
+diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+index 6ec6e09..dac2c0b 100644
+--- a/drivers/ssb/main.c
++++ b/drivers/ssb/main.c
+@@ -1260,16 +1260,32 @@ void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
+ }
+ EXPORT_SYMBOL(ssb_device_disable);
+ 
++/* Some chipsets need routing known for PCIe and 64-bit DMA */
++static bool ssb_dma_translation_special_bit(struct ssb_device *dev)
++{
++	u16 chip_id = dev->bus->chip_id;
++
++	if (dev->id.coreid == SSB_DEV_80211)
++		return (chip_id == 0x4322 || chip_id == 43221 ||
++			chip_id == 43231 || chip_id == 43222);
++	return 0;
++}
++
+ u32 ssb_dma_translation(struct ssb_device *dev)
+ {
+ 	switch (dev->bus->bustype) {
+ 	case SSB_BUSTYPE_SSB:
+ 		return 0;
+ 	case SSB_BUSTYPE_PCI:
+-		if (ssb_read32(dev, SSB_TMSHIGH) & SSB_TMSHIGH_DMA64)
++		if (pci_is_pcie(dev->bus->host_pci) &&
++		    ssb_read32(dev, SSB_TMSHIGH) & SSB_TMSHIGH_DMA64) {
+ 			return SSB_PCIE_DMA_H32;
+-		else
+-			return SSB_PCI_DMA;
++		} else {
++			if (ssb_dma_translation_special_bit(dev))
++				return SSB_PCIE_DMA_H32;
++			else
++				return SSB_PCI_DMA;
++		}
+ 	default:
+ 		__ssb_dma_not_implemented(dev);
+ 	}
+-- 
+1.7.1
