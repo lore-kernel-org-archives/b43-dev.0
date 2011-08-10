@@ -1,28 +1,73 @@
-From: Kalle Valo <kvalo@adurom.com>
-Date: Wed, 03 Aug 2011 18:55:07 +0300
-Subject: [PATCH 1/2] b43legacy: report core number
-In-Reply-To: <4E2EE66C.8030308@gnu.org> (Pavel Roskin's message of "Tue\,
-	26 Jul 2011 12\:08\:12 -0400")
-References: <20110726153648.24611.49190.stgit@mj.roinet.com>
-	<4E2EE403.5090207@lwfinger.net> <4E2EE66C.8030308@gnu.org>
-Message-ID: <87d3gmsd5w.fsf@purkki.adurom.net>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Wed, 10 Aug 2011 09:14:24 +0200
+Subject: [PATCH 06/11] bcma: add serial console support
+In-Reply-To: <CACna6rzqm=NhsrUWZr8Mun5fNaz3x1Qa6Fv_-TMKw8iOsK=u-w@mail.gmail.com>
+References: <1311376815-15755-1-git-send-email-hauke@hauke-m.de>	<1311376815-15755-7-git-send-email-hauke@hauke-m.de>	<CACna6rxMA9KDuWSPLmdNsS=zNJawkbX5-KYrRWq3Jn25gWhX7A@mail.gmail.com>
+	<CACna6rzqm=NhsrUWZr8Mun5fNaz3x1Qa6Fv_-TMKw8iOsK=u-w@mail.gmail.com>
+Message-ID: <4E422FD0.5050600@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Roskin <proski@gnu.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, linux-mips@linux-mips.org, jonas.gorski@gmail.com, ralf@linux-mips.org, mb@bu3sch.de, george@znau.edu.ua, arend@broadcom.com, b43-dev@lists.infradead.org, bernhardloos@googlemail.com, arnd@arndb.de, julian.calaby@gmail.com, sshtylyov@mvista.com
 
-Pavel Roskin <proski@gnu.org> writes:
-
->>> 0 files changed, 0 insertions(+), 0 deletions(-)
+On 07/29/2011 11:06 PM, Rafa? Mi?ecki wrote:
+> W dniu 29 lipca 2011 23:04 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+>> 2011/7/23 Hauke Mehrtens <hauke@hauke-m.de>:
+>>> This adds support for serial console to bcma, when operating on an SoC.
+>>>
+>>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+>>> ---
+>>>  drivers/bcma/bcma_private.h                 |    8 ++++
+>>>  drivers/bcma/driver_chipcommon.c            |   48 +++++++++++++++++++++++++++
+>>>  drivers/bcma/driver_chipcommon_pmu.c        |   26 ++++++++++++++
+>>>  drivers/bcma/driver_mips.c                  |    1 +
+>>>  include/linux/bcma/bcma_driver_chipcommon.h |   14 ++++++++
+>>>  5 files changed, 97 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
+>>> index b97633d..22d3052 100644
+>>> --- a/drivers/bcma/bcma_private.h
+>>> +++ b/drivers/bcma/bcma_private.h
+>>> @@ -29,6 +29,14 @@ void bcma_init_bus(struct bcma_bus *bus);
+>>>  /* sprom.c */
+>>>  int bcma_sprom_get(struct bcma_bus *bus);
+>>>
+>>> +/* driver_chipcommon.c */
+>>> +#ifdef CONFIG_BCMA_DRIVER_MIPS
+>>> +void bcma_chipco_serial_init(struct bcma_drv_cc *cc);
+>>> +#endif /* CONFIG_BCMA_DRIVER_MIPS */
+>>> +
+>>> +/* driver_chipcommon_pmu.c */
+>>> +u32 bcma_pmu_alp_clock(struct bcma_drv_cc *cc);
+>>> +
+>>>  #ifdef CONFIG_BCMA_HOST_PCI
+>>>  /* host_pci.c */
+>>>  extern int __init bcma_host_pci_init(void);
 >>
->> Very informative diffstat! :)
->
-> That happens if "stg mail" is run from a directory that is not above
-> the changed files.  I'll try to get it fixed.
+>> Not sure, what do you think about this, feel free to comment.
+>>
+>> My idea was to use bcma_private.h for bcma-internal functions. For
+>> example, support for PCI host or SoC host, is something "internal" (as
+>> I call it) for bcma. Drivers in theory could be separated modules and
+>> I use include/linux/bcma/driver_*.h for them.
+>>
+>> If following this schema, declarations of
+>> bcma_pmu_alp_clock
+>> bcma_host_pci_init
+>> should be in include/linux/bcma/bcma_driver_chipcommon.h
+> 
+> Same goes to the
+> bcma_pmu_get_clockcpu
+> from patch 07/11.
+> 
+> Sorry for late-noticing this.
+> 
+> I don't have more comments against your patch set :) Hope John will
+> take it soon :)
+> 
+This sounds good. I will send a new patch moving the method declaration
+to bcma_driver_chipcommon.h for these 3 functions.
 
-Is stgit still alive? I haven't seen a release for a long time.
-
--- 
-Kalle Valo
+Hauke
