@@ -1,27 +1,47 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Wed, 10 Aug 2011 19:15:15 +0200
-Subject: [PATCH 2/2] b43: fix DMA on some bugged hardware
-In-Reply-To: <CACna6rz0m7SDT=gn26yGQYa6w4KghabCcK8QfM_NmJmpgN2gcg@mail.gmail.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Wed, 10 Aug 2011 19:27:03 +0200
+Subject: [PATCH 1/2] ssb: fix DMA translation for some specific boards
+In-Reply-To: <20110810184406.6cad6d17@milhouse>
+	(sfid-20110810_184423_775264_26C1F383)
 References: <1312992688-6976-1-git-send-email-zajec5@gmail.com>
-	<1312992688-6976-2-git-send-email-zajec5@gmail.com>
-	<20110810183339.7259d936@milhouse>
-	<CACna6rxNV-d_YNrCOqFCz8cbmbiXh-OqOYkvYmXacJCHsJ74-g@mail.gmail.com>
-	<20110810185534.5f4b9db9@milhouse>
-	<CACna6rz0m7SDT=gn26yGQYa6w4KghabCcK8QfM_NmJmpgN2gcg@mail.gmail.com>
-Message-ID: <20110810191515.1cb11eb1@milhouse>
+	<20110810184028.3cb9c532@milhouse>
+	<CACna6rxBof9T+vaZ=wHZJcXY12XVrYvFbHEdXk1+=_LAwjmtig@mail.gmail.com>
+	<20110810184406.6cad6d17@milhouse>
+	(sfid-20110810_184423_775264_26C1F383)
+Message-ID: <1312997223.4325.24.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
+Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
+On Wed, 2011-08-10 at 18:44 +0200, Michael B?sch wrote:
 
-> kernel offers me addresses like:
-> 0x000000001f310000
+> > >> +     if (dev->id.coreid == SSB_DEV_80211)
+> > >> +             return (chip_id == 0x4322 || chip_id == 43221 ||
+> > >> +                     chip_id == 43231 || chip_id == 43222);
+> > >> +     return 0;
+> > >> +}
+> > >
+> > > ACK, apart from this coding style violation (missing curly braces).
+> > 
+> > From kernel CodingStyle:
+> > > Do not unnecessarily use braces where a single statement will do.
+> > >
+> > > if (condition)
+> > > 	action();
+> > 
+> > I guess simple "return" (even when using line break) is still like
+> > single statement...
+> > Am I wrong?
+> > 
+> 
+> Last time I checked this only applied to single-line-statements.
+> Maybe it changed, though.
 
-Yeah and that's why you didn't trigger the bug in the patch.
-Extension is zero for both cases (low and high).
+Just sidestep the issue and invert the test ;-)
+(However, CodingStyle says nothing about single lines, only statements,
+and I tend to agree)
 
--- 
-Greetings, Michael.
+johannes
