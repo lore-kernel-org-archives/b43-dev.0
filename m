@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 11 Aug 2011 11:34:15 +0200
-Subject: [PATCH] bcma: implement BCM4331 workaround for external PA lines
-Message-ID: <1313055255-3088-1-git-send-email-zajec5@gmail.com>
+Date: Thu, 11 Aug 2011 15:07:14 +0200
+Subject: [PATCH 1/3] b43: rename TX header formats
+Message-ID: <1313068036-13608-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,114 +9,128 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-We need to disable ext. PA lines for reading SPROM. It's disabled by
-default, but this patch allows using bcma after loading wl, which leaves
-workaround enabled.
+Replace "old" and "new" with number of the first firmware known to use
+the given format.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/bcma/driver_chipcommon_pmu.c        |   20 +++++++++++++++++++-
- drivers/bcma/sprom.c                        |    6 ++++++
- include/linux/bcma/bcma_driver_chipcommon.h |   18 ++++++++++++++++++
- 3 files changed, 43 insertions(+), 1 deletions(-)
+ drivers/net/wireless/b43/xmit.c |   24 ++++++++++++------------
+ drivers/net/wireless/b43/xmit.h |    8 ++++----
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index 5940c81..a3854ff 100644
---- a/drivers/bcma/driver_chipcommon_pmu.c
-+++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -90,6 +90,24 @@ void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
+diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
+index b74f25e..36c7243 100644
+--- a/drivers/net/wireless/b43/xmit.c
++++ b/drivers/net/wireless/b43/xmit.c
+@@ -338,10 +338,10 @@ int b43_generate_txhdr(struct b43_wldev *dev,
+ 		}
  	}
- }
+ 	if (b43_is_old_txhdr_format(dev)) {
+-		b43_generate_plcp_hdr((struct b43_plcp_hdr4 *)(&txhdr->old_format.plcp),
++		b43_generate_plcp_hdr((struct b43_plcp_hdr4 *)(&txhdr->format_351.plcp),
+ 				      plcp_fragment_len, rate);
+ 	} else {
+-		b43_generate_plcp_hdr((struct b43_plcp_hdr4 *)(&txhdr->new_format.plcp),
++		b43_generate_plcp_hdr((struct b43_plcp_hdr4 *)(&txhdr->format_410.plcp),
+ 				      plcp_fragment_len, rate);
+ 	}
+ 	b43_generate_plcp_hdr((struct b43_plcp_hdr4 *)(&txhdr->plcp_fb),
+@@ -433,10 +433,10 @@ int b43_generate_txhdr(struct b43_wldev *dev,
  
-+/* Disable to allow reading SPROM. Don't know the adventages of enabling it. */
-+void bcma_chipco_bcm4331_exp_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
-+{
-+	struct bcma_bus *bus = cc->core->bus;
-+	u32 val;
-+
-+	val = bcma_cc_read32(cc, BCMA_CC_CHIPCTL);
-+	if (enable) {
-+		val |= BCMA_CHIPCTL_4331_EXTPA_EN;
-+		if (bus->chipinfo.pkg == 9 || bus->chipinfo.pkg == 11)
-+			val |= BCMA_CHIPCTL_4331_EXTPA_ON_GPIO2_5;
-+	} else {
-+		val &= ~BCMA_CHIPCTL_4331_EXTPA_EN;
-+		val &= ~BCMA_CHIPCTL_4331_EXTPA_ON_GPIO2_5;
-+	}
-+	bcma_cc_write32(cc, BCMA_CC_CHIPCTL, val);
-+}
-+
- void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
- {
- 	struct bcma_bus *bus = cc->core->bus;
-@@ -99,7 +117,7 @@ void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
- 		bcma_chipco_chipctl_maskset(cc, 0, ~0, 0x7);
- 		break;
- 	case 0x4331:
--		pr_err("Enabling Ext PA lines not implemented\n");
-+		/* BCM4331 workaround is SPROM-related, we put it in sprom.c */
- 		break;
- 	case 43224:
- 		if (bus->chipinfo.rev == 0) {
-diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
-index 8b5b785..94c6b3f 100644
---- a/drivers/bcma/sprom.c
-+++ b/drivers/bcma/sprom.c
-@@ -152,6 +152,9 @@ int bcma_sprom_get(struct bcma_bus *bus)
- 	if (!sprom)
- 		return -ENOMEM;
+ 			if (b43_is_old_txhdr_format(dev)) {
+ 				cts = (struct ieee80211_cts *)
+-					(txhdr->old_format.rts_frame);
++					(txhdr->format_351.rts_frame);
+ 			} else {
+ 				cts = (struct ieee80211_cts *)
+-					(txhdr->new_format.rts_frame);
++					(txhdr->format_410.rts_frame);
+ 			}
+ 			ieee80211_ctstoself_get(dev->wl->hw, info->control.vif,
+ 						fragment_data, fragment_len,
+@@ -448,10 +448,10 @@ int b43_generate_txhdr(struct b43_wldev *dev,
  
-+	if (bus->chipinfo.id == 0x4331)
-+		bcma_chipco_bcm4331_exp_pa_lines_ctl(&bus->drv_cc, false);
-+
- 	/* Most cards have SPROM moved by additional offset 0x30 (48 dwords).
- 	 * According to brcm80211 this applies to cards with PCIe rev >= 6
- 	 * TODO: understand this condition and use it */
-@@ -159,6 +162,9 @@ int bcma_sprom_get(struct bcma_bus *bus)
- 		BCMA_CC_SPROM_PCIE6;
- 	bcma_sprom_read(bus, offset, sprom);
+ 			if (b43_is_old_txhdr_format(dev)) {
+ 				rts = (struct ieee80211_rts *)
+-					(txhdr->old_format.rts_frame);
++					(txhdr->format_351.rts_frame);
+ 			} else {
+ 				rts = (struct ieee80211_rts *)
+-					(txhdr->new_format.rts_frame);
++					(txhdr->format_410.rts_frame);
+ 			}
+ 			ieee80211_rts_get(dev->wl->hw, info->control.vif,
+ 					  fragment_data, fragment_len,
+@@ -463,9 +463,9 @@ int b43_generate_txhdr(struct b43_wldev *dev,
  
-+	if (bus->chipinfo.id == 0x4331)
-+		bcma_chipco_bcm4331_exp_pa_lines_ctl(&bus->drv_cc, true);
-+
- 	err = bcma_sprom_valid(sprom);
- 	if (err)
- 		goto out;
-diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
-index 6083725..18efb6c 100644
---- a/include/linux/bcma/bcma_driver_chipcommon.h
-+++ b/include/linux/bcma/bcma_driver_chipcommon.h
-@@ -283,6 +283,22 @@
- #define BCMA_CC_PPL_PCHI_OFF		5
- #define BCMA_CC_PPL_PCHI_MASK		0x0000003f
+ 		/* Generate the PLCP headers for the RTS/CTS frame */
+ 		if (b43_is_old_txhdr_format(dev))
+-			plcp = &txhdr->old_format.rts_plcp;
++			plcp = &txhdr->format_351.rts_plcp;
+ 		else
+-			plcp = &txhdr->new_format.rts_plcp;
++			plcp = &txhdr->format_410.rts_plcp;
+ 		b43_generate_plcp_hdr((struct b43_plcp_hdr4 *)plcp,
+ 				      len, rts_rate);
+ 		plcp = &txhdr->rts_plcp_fb;
+@@ -474,10 +474,10 @@ int b43_generate_txhdr(struct b43_wldev *dev,
  
-+/* BCM4331 ChipControl numbers. */
-+#define BCMA_CHIPCTL_4331_BT_COEXIST		BIT(0)	/* 0 disable */
-+#define BCMA_CHIPCTL_4331_SECI			BIT(1)	/* 0 SECI is disabled (JATG functional) */
-+#define BCMA_CHIPCTL_4331_EXT_LNA		BIT(2)	/* 0 disable */
-+#define BCMA_CHIPCTL_4331_SPROM_GPIO13_15	BIT(3)	/* sprom/gpio13-15 mux */
-+#define BCMA_CHIPCTL_4331_EXTPA_EN		BIT(4)	/* 0 ext pa disable, 1 ext pa enabled */
-+#define BCMA_CHIPCTL_4331_GPIOCLK_ON_SPROMCS	BIT(5)	/* set drive out GPIO_CLK on sprom_cs pin */
-+#define BCMA_CHIPCTL_4331_PCIE_MDIO_ON_SPROMCS	BIT(6)	/* use sprom_cs pin as PCIE mdio interface */
-+#define BCMA_CHIPCTL_4331_EXTPA_ON_GPIO2_5	BIT(7)	/* aband extpa will be at gpio2/5 and sprom_dout */
-+#define BCMA_CHIPCTL_4331_OVR_PIPEAUXCLKEN	BIT(8)	/* override core control on pipe_AuxClkEnable */
-+#define BCMA_CHIPCTL_4331_OVR_PIPEAUXPWRDOWN	BIT(9)	/* override core control on pipe_AuxPowerDown */
-+#define BCMA_CHIPCTL_4331_PCIE_AUXCLKEN		BIT(10)	/* pcie_auxclkenable */
-+#define BCMA_CHIPCTL_4331_PCIE_PIPE_PLLDOWN	BIT(11)	/* pcie_pipe_pllpowerdown */
-+#define BCMA_CHIPCTL_4331_BT_SHD0_ON_GPIO4	BIT(16)	/* enable bt_shd0 at gpio4 */
-+#define BCMA_CHIPCTL_4331_BT_SHD1_ON_GPIO5	BIT(17)	/* enable bt_shd1 at gpio5 */
-+
- /* Data for the PMU, if available.
-  * Check availability with ((struct bcma_chipcommon)->capabilities & BCMA_CC_CAP_PMU)
-  */
-@@ -342,6 +358,8 @@ extern void bcma_core_chipcommon_init(struct bcma_drv_cc *cc);
- extern void bcma_chipco_suspend(struct bcma_drv_cc *cc);
- extern void bcma_chipco_resume(struct bcma_drv_cc *cc);
+ 		if (b43_is_old_txhdr_format(dev)) {
+ 			hdr = (struct ieee80211_hdr *)
+-				(&txhdr->old_format.rts_frame);
++				(&txhdr->format_351.rts_frame);
+ 		} else {
+ 			hdr = (struct ieee80211_hdr *)
+-				(&txhdr->new_format.rts_frame);
++				(&txhdr->format_410.rts_frame);
+ 		}
+ 		txhdr->rts_dur_fb = hdr->duration_id;
  
-+void bcma_chipco_bcm4331_exp_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable);
-+
- extern void bcma_chipco_watchdog_timer_set(struct bcma_drv_cc *cc,
- 					  u32 ticks);
+@@ -506,9 +506,9 @@ int b43_generate_txhdr(struct b43_wldev *dev,
  
+ 	/* Magic cookie */
+ 	if (b43_is_old_txhdr_format(dev))
+-		txhdr->old_format.cookie = cpu_to_le16(cookie);
++		txhdr->format_351.cookie = cpu_to_le16(cookie);
+ 	else
+-		txhdr->new_format.cookie = cpu_to_le16(cookie);
++		txhdr->format_410.cookie = cpu_to_le16(cookie);
+ 
+ 	if (phy->type == B43_PHYTYPE_N) {
+ 		txhdr->phy_ctl1 =
+diff --git a/drivers/net/wireless/b43/xmit.h b/drivers/net/wireless/b43/xmit.h
+index 42debb5..79fc162 100644
+--- a/drivers/net/wireless/b43/xmit.h
++++ b/drivers/net/wireless/b43/xmit.h
+@@ -46,7 +46,7 @@ struct b43_txhdr {
+ 	__le32 timeout;			/* Timeout */
+ 
+ 	union {
+-		/* The new r410 format. */
++		/* Tested with 410.2160, 478.104 and 508.* */
+ 		struct {
+ 			__le16 mimo_antenna;		/* MIMO antenna select */
+ 			__le16 preload_size;		/* Preload size */
+@@ -57,9 +57,9 @@ struct b43_txhdr {
+ 			__u8 rts_frame[16];		/* The RTS frame (if used) */
+ 			PAD_BYTES(2);
+ 			struct b43_plcp_hdr6 plcp;	/* Main PLCP header */
+-		} new_format __packed;
++		} format_410 __packed;
+ 
+-		/* The old r351 format. */
++		/* Tested with 351.126 */
+ 		struct {
+ 			PAD_BYTES(2);
+ 			__le16 cookie;			/* TX frame cookie */
+@@ -68,7 +68,7 @@ struct b43_txhdr {
+ 			__u8 rts_frame[16];		/* The RTS frame (if used) */
+ 			PAD_BYTES(2);
+ 			struct b43_plcp_hdr6 plcp;	/* Main PLCP header */
+-		} old_format __packed;
++		} format_351 __packed;
+ 
+ 	} __packed;
+ } __packed;
 -- 
 1.7.3.4
