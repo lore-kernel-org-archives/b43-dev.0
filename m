@@ -1,9 +1,8 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 12 Aug 2011 00:03:26 +0200
-Subject: [PATCH 2/2] b43: make forcing clock common (HT-PHY also uses that)
-In-Reply-To: <1313100206-25922-1-git-send-email-zajec5@gmail.com>
-References: <1313100206-25922-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1313100206-25922-2-git-send-email-zajec5@gmail.com>
+Date: Fri, 12 Aug 2011 00:10:27 +0200
+Subject: [RFC][PATCH] b43: HT-PHY: allow writing longer tables with a single
+	call
+Message-ID: <1313100627-26186-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,139 +10,82 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Sometime we need to write table which is 2-10 elements long. It's easier
+to create such a function instead of defining array every time.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_common.c |   32 ++++++++++++++++++++++++++
- drivers/net/wireless/b43/phy_common.h |    2 +
- drivers/net/wireless/b43/phy_n.c      |   40 +++-----------------------------
- 3 files changed, 38 insertions(+), 36 deletions(-)
+ drivers/net/wireless/b43/tables_phy_ht.c |   45 ++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/tables_phy_ht.h |    1 +
+ 2 files changed, 46 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index 07f009f..3ea44bb 100644
---- a/drivers/net/wireless/b43/phy_common.c
-+++ b/drivers/net/wireless/b43/phy_common.c
-@@ -448,6 +448,38 @@ bool b43_channel_type_is_40mhz(enum nl80211_channel_type channel_type)
- 		channel_type == NL80211_CHAN_HT40PLUS);
+diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
+index 6039386..9681af5 100644
+--- a/drivers/net/wireless/b43/tables_phy_ht.c
++++ b/drivers/net/wireless/b43/tables_phy_ht.c
+@@ -674,6 +674,51 @@ void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value)
+ 	return;
  }
  
-+/* http://bcm-v4.sipsolutions.net/802.11/PHY/N/BmacPhyClkFgc */
-+void b43_phy_force_clock(struct b43_wldev *dev, bool force)
++void b43_httab_write_few(struct b43_wldev *dev, u32 offset, size_t num, ...)
 +{
-+	u32 tmp;
++	va_list args;
++	u32 type, value;
++	unsigned int i;
 +
-+	WARN_ON(dev->phy.type != B43_PHYTYPE_N &&
-+		dev->phy.type != B43_PHYTYPE_HT);
++	type = offset & B43_HTTAB_TYPEMASK;
++	offset &= 0xFFFF;
 +
-+	switch (dev->dev->bus_type) {
-+#ifdef CONFIG_B43_BCMA
-+	case B43_BUS_BCMA:
-+		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
-+		if (force)
-+			tmp |= BCMA_IOCTL_FGC;
-+		else
-+			tmp &= ~BCMA_IOCTL_FGC;
-+		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
++	va_start(args, num);
++	switch (type) {
++	case B43_HTTAB_8BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		for (i = 0; i < num; i++) {
++			value = va_arg(args, int);
++			B43_WARN_ON(value & ~0xFF);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++		}
 +		break;
-+#endif
-+#ifdef CONFIG_B43_SSB
-+	case B43_BUS_SSB:
-+		tmp = ssb_read32(dev->dev->sdev, SSB_TMSLOW);
-+		if (force)
-+			tmp |= SSB_TMSLOW_FGC;
-+		else
-+			tmp &= ~SSB_TMSLOW_FGC;
-+		ssb_write32(dev->dev->sdev, SSB_TMSLOW, tmp);
++	case B43_HTTAB_16BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		for (i = 0; i < num; i++) {
++			value = va_arg(args, int);
++			B43_WARN_ON(value & ~0xFFFF);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++		}
 +		break;
-+#endif
++	case B43_HTTAB_32BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		for (i = 0; i < num; i++) {
++			value = va_arg(args, int);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI,
++				      value >> 16);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO,
++				      value & 0xFFFF);
++		}
++		break;
++	default:
++		B43_WARN_ON(1);
 +	}
++	va_end(args);
++
++	return;
 +}
 +
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/Cordic */
- struct b43_c32 b43_cordic(int theta)
+ void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
+ 			  unsigned int nr_elements, const void *_data)
  {
-diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
-index aa77ba6..9233b13 100644
---- a/drivers/net/wireless/b43/phy_common.h
-+++ b/drivers/net/wireless/b43/phy_common.h
-@@ -444,6 +444,8 @@ void b43_phyop_switch_analog_generic(struct b43_wldev *dev, bool on);
- 
- bool b43_channel_type_is_40mhz(enum nl80211_channel_type channel_type);
- 
-+void b43_phy_force_clock(struct b43_wldev *dev, bool force);
-+
- struct b43_c32 b43_cordic(int theta);
- 
- #endif /* LINUX_B43_PHY_COMMON_H_ */
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 3b46360..2eadadf 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -600,49 +600,17 @@ static void b43_nphy_tx_lp_fbw(struct b43_wldev *dev)
- 	}
- }
- 
--/* http://bcm-v4.sipsolutions.net/802.11/PHY/N/BmacPhyClkFgc */
--static void b43_nphy_bmac_clock_fgc(struct b43_wldev *dev, bool force)
--{
--	u32 tmp;
--
--	if (dev->phy.type != B43_PHYTYPE_N)
--		return;
--
--	switch (dev->dev->bus_type) {
--#ifdef CONFIG_B43_BCMA
--	case B43_BUS_BCMA:
--		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
--		if (force)
--			tmp |= BCMA_IOCTL_FGC;
--		else
--			tmp &= ~BCMA_IOCTL_FGC;
--		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
--		break;
--#endif
--#ifdef CONFIG_B43_SSB
--	case B43_BUS_SSB:
--		tmp = ssb_read32(dev->dev->sdev, SSB_TMSLOW);
--		if (force)
--			tmp |= SSB_TMSLOW_FGC;
--		else
--			tmp &= ~SSB_TMSLOW_FGC;
--		ssb_write32(dev->dev->sdev, SSB_TMSLOW, tmp);
--		break;
--#endif
--	}
--}
--
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/CCA */
- static void b43_nphy_reset_cca(struct b43_wldev *dev)
- {
- 	u16 bbcfg;
- 
--	b43_nphy_bmac_clock_fgc(dev, 1);
-+	b43_phy_force_clock(dev, 1);
- 	bbcfg = b43_phy_read(dev, B43_NPHY_BBCFG);
- 	b43_phy_write(dev, B43_NPHY_BBCFG, bbcfg | B43_NPHY_BBCFG_RSTCCA);
- 	udelay(1);
- 	b43_phy_write(dev, B43_NPHY_BBCFG, bbcfg & ~B43_NPHY_BBCFG_RSTCCA);
--	b43_nphy_bmac_clock_fgc(dev, 0);
-+	b43_phy_force_clock(dev, 0);
- 	b43_nphy_force_rf_sequence(dev, B43_RFSEQ_RESET2RX);
- }
- 
-@@ -3715,11 +3683,11 @@ int b43_phy_initn(struct b43_wldev *dev)
- 	b43_nphy_workarounds(dev);
- 
- 	/* Reset CCA, in init code it differs a little from standard way */
--	b43_nphy_bmac_clock_fgc(dev, 1);
-+	b43_phy_force_clock(dev, 1);
- 	tmp = b43_phy_read(dev, B43_NPHY_BBCFG);
- 	b43_phy_write(dev, B43_NPHY_BBCFG, tmp | B43_NPHY_BBCFG_RSTCCA);
- 	b43_phy_write(dev, B43_NPHY_BBCFG, tmp & ~B43_NPHY_BBCFG_RSTCCA);
--	b43_nphy_bmac_clock_fgc(dev, 0);
-+	b43_phy_force_clock(dev, 0);
- 
- 	b43_mac_phy_clock_set(dev, true);
+diff --git a/drivers/net/wireless/b43/tables_phy_ht.h b/drivers/net/wireless/b43/tables_phy_ht.h
+index ea3be38..c68b0fa 100644
+--- a/drivers/net/wireless/b43/tables_phy_ht.h
++++ b/drivers/net/wireless/b43/tables_phy_ht.h
+@@ -14,6 +14,7 @@ u32 b43_httab_read(struct b43_wldev *dev, u32 offset);
+ void b43_httab_read_bulk(struct b43_wldev *dev, u32 offset,
+ 			 unsigned int nr_elements, void *_data);
+ void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value);
++void b43_httab_write_few(struct b43_wldev *dev, u32 offset, size_t num, ...);
+ void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
+ 			  unsigned int nr_elements, const void *_data);
  
 -- 
 1.7.3.4
