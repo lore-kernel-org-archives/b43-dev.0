@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 12 Aug 2011 13:13:47 +0200
-Subject: [PATCH 4/4] b43: HT-PHY: init: init BPHY and upload 0x1a table
-In-Reply-To: <1313147627-8713-1-git-send-email-zajec5@gmail.com>
-References: <1313147627-8713-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1313147627-8713-4-git-send-email-zajec5@gmail.com>
+Date: Fri, 12 Aug 2011 15:27:34 +0200
+Subject: [PATCH V2 4/4] b43: HT-PHY: init: init BPHY and upload 0x1a table
+Message-ID: <1313155654-8988-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,11 +17,13 @@ BPHY is something partially known from N-PHY.
 This 0x1a table with 0xc0 offset is a little tricky. We already upload
 something like that earlier, but this is needed to stop radio going crazy
 and transmissint crap.
+
+V2: limit line to 80 chars
 ---
  drivers/net/wireless/b43/phy_ht.c        |   26 ++++++++++++++++++++
- drivers/net/wireless/b43/tables_phy_ht.c |   38 ++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/tables_phy_ht.c |   39 ++++++++++++++++++++++++++++++
  drivers/net/wireless/b43/tables_phy_ht.h |    3 ++
- 3 files changed, 67 insertions(+), 0 deletions(-)
+ 3 files changed, 68 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
 index 2ea7b08..84811b0 100644
@@ -70,7 +70,7 @@ index 2ea7b08..84811b0 100644
  }
  
 diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
-index 9681af5..6c45e61 100644
+index 9681af5..677d217 100644
 --- a/drivers/net/wireless/b43/tables_phy_ht.c
 +++ b/drivers/net/wireless/b43/tables_phy_ht.c
 @@ -574,6 +574,42 @@ static const u32 b43_httab_0x24[] = {
@@ -116,11 +116,12 @@ index 9681af5..6c45e61 100644
  /**************************************************
   * R/W ops.
   **************************************************/
-@@ -768,6 +804,8 @@ void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
+@@ -768,6 +804,9 @@ void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
  	} while (0)
  void b43_phy_ht_tables_init(struct b43_wldev *dev)
  {
-+	BUILD_BUG_ON(ARRAY_SIZE(b43_httab_0x1a_0xc0_late) != B43_HTTAB_1A_C0_LATE_SIZE);
++	BUILD_BUG_ON(ARRAY_SIZE(b43_httab_0x1a_0xc0_late) !=
++			B43_HTTAB_1A_C0_LATE_SIZE);
 +
  	httab_upload(dev, B43_HTTAB16(0x12, 0), b43_httab_0x12);
  	httab_upload(dev, B43_HTTAB16(0x27, 0), b43_httab_0x27);
