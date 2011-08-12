@@ -1,93 +1,88 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Fri, 12 Aug 2011 11:27:43 +0100
-Subject: [PATCH] Fix alignment issues with DMA TX on BCM4331
-In-Reply-To: <1313113295.27274.53.camel@i7.infradead.org>
-References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
-	<1311114796.3062.9.camel@shinybook.infradead.org>
-	<1313113295.27274.53.camel@i7.infradead.org>
-Message-ID: <1313144864.27274.81.camel@i7.infradead.org>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Fri, 12 Aug 2011 13:13:44 +0200
+Subject: [PATCH 1/4] b43: HT-PHY: init: zero EXTG registers
+Message-ID: <1313147627-8713-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-When the TX descriptor ring is not aligned to 8KiB on BCM4331, we have
-to write the full address to the TXINDEX register or the DMA engine gets
-confused after the first time we wrap round to slot zero.
 
-[ 7438.538945] Poked TX with address fe0 for slot 254
-[ 7438.539077] Acking gen reason 20000000
-[ 7438.539177] irq xmitstat 20fc1001 0000007f
-[ 7438.607861] Poked TX with address 0 for slot 0
-[ 7438.608567] Acking gen reason 20000000
-[ 7438.608668] irq xmitstat 20fe1001 00000080
-[ 7438.608709] irq xmitstat 20000011 00000080
-[ 7438.608724] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 0
-[ 7438.608739] irq xmitstat 20020011 00000080
-[ 7438.608750] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 2
-[ 7438.608765] irq xmitstat 20040011 00000080
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+I've simply chcked what ndis does after uploading PHY tables:
+ phy_read(0x00be) -> 0x0002
+phy_write(0x00be) <- 0x0000
+ phy_read(0x023f) -> 0x0000
+phy_write(0x023f) <- 0x07ff
+ phy_read(0x0240) -> 0x0000
+phy_write(0x0240) <- 0x07ff
+ phy_read(0x0241) -> 0x0000
+phy_write(0x0241) <- 0x07ff
 
-We write 0xff0 to the TXADDRLO register to see if the DMA engine is
-capable of unaligned operation. If it *is*, then it'll have this problem
-and we have to write the full address to TXINDEX. Comments in brcmsmac
-indicate that the low 13 bits are required.
+phy_write(0x0840) <- 0x0000
+phy_write(0x0841) <- 0x0000
+phy_write(0x0842) <- 0x0000
+phy_write(0x0843) <- 0x0000
 
-If we're doing this, we *also* have to write to TXCTL to enable the DMA
-engine *after* setting up the ring address.
+phy_write(0x0860) <- 0x0000
+phy_write(0x0861) <- 0x0000
+phy_write(0x0862) <- 0x0000
+phy_write(0x0863) <- 0x0000
 
-Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
---
-I've made that change to the initialisation order of TXCTL vs.
-TXADDR{HI,LO} unconditional; is there a reason not to?
+phy_write(0x0880) <- 0x0000
+phy_write(0x0881) <- 0x0000
+phy_write(0x0882) <- 0x0000
+phy_write(0x0883) <- 0x0000
 
-diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-index 82168f8..92dd6d9 100644
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -225,8 +225,10 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
- 
- static void op64_poke_tx(struct b43_dmaring *ring, int slot)
- {
--	b43_dma_write(ring, B43_DMA64_TXINDEX,
--		      (u32) (slot * sizeof(struct b43_dmadesc64)));
-+	u32 indexval = slot * sizeof(struct b43_dmadesc64);
-+	if (ring->unaligned)
-+		indexval |= (u32)ring->dmabase;
-+	b43_dma_write(ring, B43_DMA64_TXINDEX, indexval);
+phy_write(0x084c) <- 0x0000
+phy_write(0x086c) <- 0x0000
+phy_write(0x088c) <- 0x0000
+---
+ drivers/net/wireless/b43/phy_ht.c |   22 ++++++++++++++++++++++
+ 1 files changed, 22 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 7c40919..99b3035 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -152,6 +152,24 @@ static void b43_radio_2059_init(struct b43_wldev *dev)
  }
  
- static void op64_tx_suspend(struct b43_dmaring *ring)
-@@ -704,9 +710,14 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
- 			    & B43_DMA64_TXADDREXT_MASK;
- 			if (!parity)
- 				value |= B43_DMA64_TXPARITYDISABLE;
--			b43_dma_write(ring, B43_DMA64_TXCTL, value);
+ /**************************************************
++ * Various PHY ops
++ **************************************************/
 +
-+			b43_dma_write(ring, B43_DMA64_TXRINGLO, 0xff0);
-+			if (b43_dma_read(ring, B43_DMA64_TXRINGLO))
-+				ring->unaligned = 1;
++static void b43_phy_ht_zero_extg(struct b43_wldev *dev)
++{
++	u8 i, j;
++	u16 base[] = { 0x40, 0x60, 0x80 };
 +
- 			b43_dma_write(ring, B43_DMA64_TXRINGLO, addrlo);
- 			b43_dma_write(ring, B43_DMA64_TXRINGHI, addrhi);
-+			b43_dma_write(ring, B43_DMA64_TXCTL, value);
- 		} else {
- 			u32 ringbase = (u32) (ring->dmabase);
- 			addrext = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_EXT);
-diff --git a/drivers/net/wireless/b43/dma.h b/drivers/net/wireless/b43/dma.h
-index 7e20b04f..16dc565 100644
---- a/drivers/net/wireless/b43/dma.h
-+++ b/drivers/net/wireless/b43/dma.h
-@@ -251,6 +251,8 @@ struct b43_dmaring {
- 	int index;
- 	/* Boolean. Is this a TX ring? */
- 	bool tx;
-+	/* Boolean. Is this ring capable of 16-byte alignment? */
-+	bool unaligned;
- 	/* The type of DMA engine used. */
- 	enum b43_dmatype type;
- 	/* Boolean. Is this ring stopped at ieee80211 level? */
-
++	for (i = 0; i < ARRAY_SIZE(base); i++) {
++		for (j = 0; j < 4; j++)
++			b43_phy_write(dev, B43_PHY_EXTG(base[i] + j), 0);
++	}
++
++	for (i = 0; i < ARRAY_SIZE(base); i++)
++		b43_phy_write(dev, B43_PHY_EXTG(base[i] + 0xc), 0);
++}
++
++/**************************************************
+  * Channel switching ops.
+  **************************************************/
+ 
+@@ -257,6 +275,10 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ {
+ 	b43_phy_ht_tables_init(dev);
+ 
++	/* TODO: PHY ops on regs 0x0be, 0x23f 0x240 0x241 */
++
++	b43_phy_ht_zero_extg(dev);
++
+ 	return 0;
+ }
+ 
 -- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse at intel.com                              Intel Corporation
+1.7.3.4
