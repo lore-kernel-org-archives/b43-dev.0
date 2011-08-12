@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 12 Aug 2011 13:13:45 +0200
-Subject: [PATCH 2/4] b43: HT-PHY: init: implement few simple PHY writes
+Date: Fri, 12 Aug 2011 13:13:46 +0200
+Subject: [PATCH 3/4] b43: HT-PHY: init: copy tables and reset CCA
 In-Reply-To: <1313147627-8713-1-git-send-email-zajec5@gmail.com>
 References: <1313147627-8713-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1313147627-8713-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1313147627-8713-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,56 +14,96 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-Not much magic, after zeroing EXTG regs, ndis does:
+Copying comes from following part of the dump:
+phy_write(0x0072) <- 0x1d44
+ phy_read(0x0073) -> 0x0002
+phy_write(0x0072) <- 0x1d4a
+phy_write(0x0073) <- 0x0002
 
- phy_read(0x0800) -> 0x0003
-phy_write(0x0800) <- 0x0000
+phy_write(0x0072) <- 0x1d54
+ phy_read(0x0073) -> 0x0002
+phy_write(0x0072) <- 0x1d5a
+phy_write(0x0073) <- 0x0002
 
-phy_write(0x0910) <- 0x0000
-phy_write(0x0914) <- 0x0000
-phy_write(0x0918) <- 0x0000
-phy_write(0x0903) <- 0x0020
-phy_write(0x0901) <- 0x0020
-phy_write(0x020d) <- 0x00b8
-phy_write(0x094f) <- 0x00c8
-phy_write(0x0070) <- 0x0050
-phy_write(0x01ff) <- 0x0030
+phy_write(0x0072) <- 0x1d64
+ phy_read(0x0073) -> 0x0002
+phy_write(0x0072) <- 0x1d6a
+phy_write(0x0073) <- 0x0002
+
+CCA reset from dump (known from N-PHY):
+ read32 0xb0601408 -> 0x00002055
+write32 0xb0601408 <- 0x00002057
+ read32 0xb0601408 -> 0x00002057
+ phy_read(0x0001) -> 0x0000
+phy_write(0x0001) <- 0x4000
+phy_write(0x0001) <- 0x0000
+ read32 0xb0601408 -> 0x00002057
+write32 0xb0601408 <- 0x00002055
+ read32 0xb0601408 -> 0x00002055
+
+Finally well-known MAC PHY clock en:
+ read32 0xb0601408 -> 0x00002055
+write32 0xb0601408 <- 0x00002055
+ read32 0xb0601408 -> 0x00002055
 ---
- drivers/net/wireless/b43/phy_ht.c |   22 ++++++++++++++++++++++
- 1 files changed, 22 insertions(+), 0 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c |   21 +++++++++++++++++++++
+ drivers/net/wireless/b43/phy_ht.h |    4 ++++
+ 2 files changed, 25 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 99b3035..969e86e 100644
+index 969e86e..2ea7b08 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -279,6 +279,28 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+@@ -273,6 +273,8 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
  
- 	b43_phy_ht_zero_extg(dev);
+ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ {
++	u16 tmp;
++
+ 	b43_phy_ht_tables_init(dev);
  
-+	/* TODO: PHY op on reg B43_PHY_EXTG(0) */
+ 	/* TODO: PHY ops on regs 0x0be, 0x23f 0x240 0x241 */
+@@ -301,6 +303,25 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 
+ 	b43_phy_write(dev, 0x0b9, 0x0072);
+ 
++	/* TODO: Some ops here */
 +
-+	b43_phy_write(dev, B43_PHY_HT_AFE_CTL1, 0);
-+	b43_phy_write(dev, B43_PHY_HT_AFE_CTL3, 0);
-+	b43_phy_write(dev, B43_PHY_HT_AFE_CTL5, 0);
++	/* Copy some tables entries */
++	tmp = b43_httab_read(dev, B43_HTTAB16(7, 0x144));
++	b43_httab_write(dev, B43_HTTAB16(7, 0x14a), tmp);
++	tmp = b43_httab_read(dev, B43_HTTAB16(7, 0x154));
++	b43_httab_write(dev, B43_HTTAB16(7, 0x15a), tmp);
++	tmp = b43_httab_read(dev, B43_HTTAB16(7, 0x164));
++	b43_httab_write(dev, B43_HTTAB16(7, 0x16a), tmp);
 +
-+	b43_phy_write(dev, B43_PHY_EXTG(0x103), 0x20);
-+	b43_phy_write(dev, B43_PHY_EXTG(0x101), 0x20);
-+	b43_phy_write(dev, 0x20d, 0xb8);
-+	b43_phy_write(dev, B43_PHY_EXTG(0x14f), 0xc8);
-+	b43_phy_write(dev, 0x70, 0x50);
-+	b43_phy_write(dev, 0x1ff, 0x30);
++	/* Reset CCA */
++	b43_phy_force_clock(dev, true);
++	tmp = b43_phy_read(dev, B43_PHY_HT_BBCFG);
++	b43_phy_write(dev, B43_PHY_HT_BBCFG, tmp | B43_PHY_HT_BBCFG_RSTCCA);
++	b43_phy_write(dev, B43_PHY_HT_BBCFG, tmp & ~B43_PHY_HT_BBCFG_RSTCCA);
++	b43_phy_force_clock(dev, false);
 +
-+	if (0) /* TODO: condition */
-+		; /* TODO: PHY op on reg 0x217 */
-+
-+	; /* TODO: PHY op on reg 0xb0 */
-+
-+	; /* TODO: PHY ops on regs 0xb1, 0x32f, 0x077, 0x0b4, 0x17e */
-+
-+	b43_phy_write(dev, 0x0b9, 0x0072);
++	b43_mac_phy_clock_set(dev, true);
 +
  	return 0;
  }
  
+diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
+index 7ad7aff..f70af0c 100644
+--- a/drivers/net/wireless/b43/phy_ht.h
++++ b/drivers/net/wireless/b43/phy_ht.h
+@@ -4,7 +4,11 @@
+ #include "phy_common.h"
+ 
+ 
++#define B43_PHY_HT_BBCFG			0x001 /* BB config */
++#define  B43_PHY_HT_BBCFG_RSTCCA		0x4000 /* Reset CCA */
++#define  B43_PHY_HT_BBCFG_RSTRX			0x8000 /* Reset RX */
+ #define B43_PHY_HT_BANDCTL			0x009 /* Band control */
++#define  B43_PHY_HT_BANDCTL_5GHZ		0x0001 /* Use the 5GHz band */
+ #define B43_PHY_HT_TABLE_ADDR			0x072 /* Table address */
+ #define B43_PHY_HT_TABLE_DATALO			0x073 /* Table data low */
+ #define B43_PHY_HT_TABLE_DATAHI			0x074 /* Table data high */
 -- 
 1.7.3.4
