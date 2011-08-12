@@ -1,53 +1,51 @@
 From: David Woodhouse <dwmw2@infradead.org>
-Date: Fri, 12 Aug 2011 02:41:33 +0100
-Subject: No DMA RX on some BCM4321, on BCM43224 and BCM43225
-In-Reply-To: <1311114796.3062.9.camel@shinybook.infradead.org>
+Date: Fri, 12 Aug 2011 11:15:08 +0100
+Subject: [PATCH] b43: Mask out unwanted bits of RX slot address
+In-Reply-To: <1313113295.27274.53.camel@i7.infradead.org>
 References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 	<1311114796.3062.9.camel@shinybook.infradead.org>
-Message-ID: <1313113295.27274.53.camel@i7.infradead.org>
+	<1313113295.27274.53.camel@i7.infradead.org>
+Message-ID: <1313144109.27274.71.camel@i7.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Tue, 2011-07-19 at 15:33 -0700, David Woodhouse wrote:
-> The other thing I observed that under ndiswrapper, the Windows driver
-> (for BCM4331) was writing the full physical address to the TX_INDEX
-> register, not an index at all.
-> 
-> Setup...
-> W 4 159.866820 1 0xb06002c8 0x1f86c000 0x0 0
-> W 4 159.866822 1 0xb06002cc 0x80000000 0x0 0
-> R 4 159.866827 1 0xb06002c0 0x0 0x0 0
-> W 4 159.866829 1 0xb06002c0 0x801 0x0 0
-> 
-> ... and use:
-> W 4 197.207151 1 0xb06002c4 0x1f86c010 0x0 0
-> 
-> ... and again later:
-> W 4 197.228596 1 0xb06002c4 0x1f86c020 0x0 0
-> 
-> Is that behaviour understood?
+On some 64-bit DMA engines (my BCM4331, at least) with a ring buffer
+that is not aligned to 8KiB, we often see bit 12 spuriously being set in
+the B43_DMA64_RXSTATUS register. This will happen the first time the
+ring fills and loops back to zero:
 
-Having fixed b43 to do the same (and thanks to all of Rafa?'s work), I
-now have my BCM4331 working with b43.
+[35755.186080] Read RXSTATUS 3f0 (makes offs 3f0, divided by 10 gives slot 3f
+[35755.288366] Read RXSTATUS 1000 (makes offs 1000, divided by 10 gives slot 100
+[35755.291007] ------------[ cut here ]------------
+[35755.291041] WARNING: at drivers/net/wireless/b43/dma.c:1700 b43_dma_rx+0x5e/0x2df [b43]()
+ ...
+[35766.745374] b43-phy41 debug: DMA RX: Dropping poisoned buffer.
 
-Without this change, if the TX descriptor ring was not aligned to 8KiB,
-the hardware would get confused when we send the 256th DMA frame and
-wrap back to slot zero.
+All we need to do is mask the offending bit out. The packets *are* where
+they should be; it's just the high bit of the reported offset which is
+weird.
 
-I have to include the higher bits of the address in what I write to the
-TXINDEX register, *and* I have to enable the DMA engine by writing to
-TXCTL *after* setting the TXRING{HI,LO} registers when setting it up.
+Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
 
-The brcmsmac driver seems to do this only if the TXRINGLO register
-actually latches the low bits (write 0xff0, read back and see if you get
-zero).
-
-I also changed the values of B43_DMA64_[RT]XSTATDPTR to 0xfff, for
-similar reasons ? sometimes bit 12 is set when it arguably shouldn't be,
-because the hardware works strangely if the table isn't aligned.
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index 82168f8..92dd6d9 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -247,6 +249,10 @@ static int op64_get_current_rxslot(struct b43_dmaring *ring)
+ 
+ 	val = b43_dma_read(ring, B43_DMA64_RXSTATUS);
+ 	val &= B43_DMA64_RXSTATDPTR;
++	/* When the ring is not aligned to 8KiB, we sometimes get
++	   bit 12 (0x1000) set in the address. Mask it out; we
++	   only use a 4KiB ring. */
++	val &= B43_DMA_RINGMEMSIZE-1;
+ 
+ 	return (val / sizeof(struct b43_dmadesc64));
+ }
 
 -- 
-dwmw2
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse at intel.com                              Intel Corporation
