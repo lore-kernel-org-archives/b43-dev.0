@@ -1,27 +1,86 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 13 Aug 2011 17:20:18 +0200
-Subject: Hosting wl driver, part of GPL package
-Message-ID: <CACna6rwvjRm+yLyz-sbQjmot8ErhfLN5E0NgtW3kbgjPy+JwLA@mail.gmail.com>
+Date: Sat, 13 Aug 2011 21:06:13 +0200
+Subject: [PATCH] Fix alignment issues with DMA TX on BCM4331
+In-Reply-To: <1313144864.27274.81.camel@i7.infradead.org>
+References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
+	<1311114796.3062.9.camel@shinybook.infradead.org>
+	<1313113295.27274.53.camel@i7.infradead.org>
+	<1313144864.27274.81.camel@i7.infradead.org>
+Message-ID: <CACna6ryM+QZ=x5sN8WjoZcZLFo6DiodWgq4Y8Dbm9Pm+Z64nsA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org
-Cc: b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-I need some hosting for broadcom-wl-5.100.138.tar.bz2 extracted from
-GPL sources.
+W dniu 12 sierpnia 2011 12:27 u?ytkownik David Woodhouse
+<dwmw2@infradead.org> napisa?:
+> When the TX descriptor ring is not aligned to 8KiB on BCM4331, we have
+> to write the full address to the TXINDEX register or the DMA engine gets
+> confused after the first time we wrap round to slot zero.
+>
+> [ 7438.538945] Poked TX with address fe0 for slot 254
+> [ 7438.539077] Acking gen reason 20000000
+> [ 7438.539177] irq xmitstat 20fc1001 0000007f
+> [ 7438.607861] Poked TX with address 0 for slot 0
+> [ 7438.608567] Acking gen reason 20000000
+> [ 7438.608668] irq xmitstat 20fe1001 00000080
+> [ 7438.608709] irq xmitstat 20000011 00000080
+> [ 7438.608724] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 0
+> [ 7438.608739] irq xmitstat 20020011 00000080
+> [ 7438.608750] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 2
+> [ 7438.608765] irq xmitstat 20040011 00000080
+>
+> We write 0xff0 to the TXADDRLO register to see if the DMA engine is
+> capable of unaligned operation. If it *is*, then it'll have this problem
+> and we have to write the full address to TXINDEX. Comments in brcmsmac
+> indicate that the low 13 bits are required.
+>
+> If we're doing this, we *also* have to write to TXCTL to enable the DMA
+> engine *after* setting up the ring address.
+>
+> Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
+> --
+> I've made that change to the initialisation order of TXCTL vs.
+> TXADDR{HI,LO} unconditional; is there a reason not to?
+>
+> diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+> index 82168f8..92dd6d9 100644
+> --- a/drivers/net/wireless/b43/dma.c
+> +++ b/drivers/net/wireless/b43/dma.c
+> @@ -225,8 +225,10 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
+>
+> ?static void op64_poke_tx(struct b43_dmaring *ring, int slot)
+> ?{
+> - ? ? ? b43_dma_write(ring, B43_DMA64_TXINDEX,
+> - ? ? ? ? ? ? ? ? ? ? (u32) (slot * sizeof(struct b43_dmadesc64)));
+> + ? ? ? u32 indexval = slot * sizeof(struct b43_dmadesc64);
+> + ? ? ? if (ring->unaligned)
+> + ? ? ? ? ? ? ? indexval |= (u32)ring->dmabase;
+> + ? ? ? b43_dma_write(ring, B43_DMA64_TXINDEX, indexval);
 
-Currently all the interesting drivers I've found are placed on:
-http://broadcom.zajec.net/
-but I can not guarantee 100% uptime or high bandwidth limit.
+Shouldn't this bit or be a numerical sum? I mean: +=
+Imagine you get dmabase like 0x1f310123 instead of some nice 0x1f310000
 
-Can someone offer b43 a place to host that drivers? We need them to
-extract firmware required for various Broadcom cards.
 
-Up to now we were using openwrt's ftp but they don't host the newest
-drivers. We need 5.100 or newer to have firmware for the newest cards
-included (like HT-PHY).
+> @@ -704,9 +710,14 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
+> ? ? ? ? ? ? ? ? ? ? ? ? ? ?& B43_DMA64_TXADDREXT_MASK;
+> ? ? ? ? ? ? ? ? ? ? ? ?if (!parity)
+> ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?value |= B43_DMA64_TXPARITYDISABLE;
+> - ? ? ? ? ? ? ? ? ? ? ? b43_dma_write(ring, B43_DMA64_TXCTL, value);
+> +
+> + ? ? ? ? ? ? ? ? ? ? ? b43_dma_write(ring, B43_DMA64_TXRINGLO, 0xff0);
+> + ? ? ? ? ? ? ? ? ? ? ? if (b43_dma_read(ring, B43_DMA64_TXRINGLO))
+> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ring->unaligned = 1;
+> +
+> ? ? ? ? ? ? ? ? ? ? ? ?b43_dma_write(ring, B43_DMA64_TXRINGLO, addrlo);
+> ? ? ? ? ? ? ? ? ? ? ? ?b43_dma_write(ring, B43_DMA64_TXRINGHI, addrhi);
+> + ? ? ? ? ? ? ? ? ? ? ? b43_dma_write(ring, B43_DMA64_TXCTL, value);
+
+This needs testing on all the old hardware. Not sure if it's OK on
+older cards to change the order.
+
+John: please give this patch some more time for testing & discussion.
 
 -- 
 Rafa?
