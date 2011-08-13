@@ -1,28 +1,88 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Sat, 13 Aug 2011 23:17:54 +0100
-Subject: [PATCH] Fix alignment issues with DMA TX on BCM4331
-In-Reply-To: <4E46F75D.2060604@lwfinger.net>
-References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
-	<1311114796.3062.9.camel@shinybook.infradead.org>
-	<1313113295.27274.53.camel@i7.infradead.org>
-	<1313144864.27274.81.camel@i7.infradead.org>
-	<4E46F35F.1060900@lwfinger.net>
-	<CACna6rxbCnMnxqhKY4ztVdNpxY8p8FzdfShS=8w+mkQ538hiJA@mail.gmail.com>
-	<4E46F75D.2060604@lwfinger.net>
-Message-ID: <1313273875.18116.2.camel@i7.infradead.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sat, 13 Aug 2011 17:26:41 -0500
+Subject: [RFC][RFT][PATCH V2 2/2] b43: fix DMA on some bugged hardware
+In-Reply-To: <1313001339-11211-2-git-send-email-zajec5@gmail.com>
+References: <1313001339-11211-1-git-send-email-zajec5@gmail.com>
+	<1313001339-11211-2-git-send-email-zajec5@gmail.com>
+Message-ID: <4E46FA21.9060207@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Sat, 2011-08-13 at 17:14 -0500, Larry Finger wrote:
-> I should have made it clearer. My card does 32-bit DMA, thus this code does not 
-> change anything in its code. What I tested is that the patch did not break 
-> operations on my card due to some unforeseen complication. 
+On 08/10/2011 01:35 PM, Rafa? Mi?ecki wrote:
+> Some hardware with 64-bit DMA uses lower address word for setting
+> routing (translation) bit. Add workaround for such boards.
+>
+> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+> ---
+> This requires testing on at least 1 normal 64-bit DMA card and 1 32-bit
+> DMA card. So far it was tested only on my 14e4:4329 where it fixed DMA.
+> ---
+>   drivers/net/wireless/b43/b43.h |    1 +
+>   drivers/net/wireless/b43/dma.c |  113 +++++++++++++++++++++++++++-------------
+>   drivers/net/wireless/b43/dma.h |    6 ++
+>   3 files changed, 84 insertions(+), 36 deletions(-)
+>
+> diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+> index c818b0b..3aee322 100644
+> --- a/drivers/net/wireless/b43/b43.h
+> +++ b/drivers/net/wireless/b43/b43.h
+> @@ -594,6 +594,7 @@ struct b43_dma {
+>   	struct b43_dmaring *rx_ring;
+>
+>   	u32 translation; /* Routing bits */
+> +	bool translation_in_low; /* Should translation bit go into low addr? */
+>   	bool parity; /* Check for parity */
+>   };
+>
+> diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+> index 0953ce1..547851c 100644
+> --- a/drivers/net/wireless/b43/dma.c
+> +++ b/drivers/net/wireless/b43/dma.c
+> @@ -47,6 +47,38 @@
+>    * into separate slots. */
+>   #define TX_SLOTS_PER_FRAME	2
+>
+> +static u32 b43_dma_address(struct b43_dma *dma, dma_addr_t dmaaddr,
+> +			   enum b43_addrtype addrtype)
+> +{
+> +	u32 uninitialized_var(addr);
+> +
+> +	switch (addrtype) {
+> +	case B43_DMA_ADDR_LOW:
+> +		addr = dmaaddr&  0xFFFFFFFF;
+> +		if (dma->translation_in_low) {
+> +			addr&= ~SSB_DMA_TRANSLATION_MASK;
+> +			addr |= dma->translation;
+> +		}
+> +		break;
+> +	case B43_DMA_ADDR_HIGH:
+> +		addr = dmaaddr>>  32;
+> +		if (!dma->translation_in_low) {
+> +			addr&= ~SSB_DMA_TRANSLATION_MASK;
+> +			addr |= dma->translation;
+> +		}
+> +		break;
+> +	case B43_DMA_ADDR_EXT:
+> +		if (dma->translation_in_low)
+> +			addr = dmaaddr&  0xFFFFFFFF;
+> +		else
+> +			addr = dmaaddr>>  32;
+> +		addr&= SSB_DMA_TRANSLATION_MASK;
+> +		addr>>= SSB_DMA_TRANSLATION_SHIFT;
+> +		break;
 
-Oh, OK. I thought BCM4318 was new enough to do 64-bit DMA. Which devices
-do we need to test on, then?
+Sorry I missed this earlier, but when this code is compiled on a 32-bit system, 
+the compiler spits out
 
--- 
-dwmw2
+   CC [M]  drivers/net/wireless/b43/dma.o
+drivers/net/wireless/b43/dma.c: In function ?b43_dma_address?:
+drivers/net/wireless/b43/dma.c:64: warning: right shift count >= width of type
+drivers/net/wireless/b43/dma.c:74: warning: right shift count >= width of type
+
+This is reasonable as dma_addr_t is 32 bits.
+
+Larry
