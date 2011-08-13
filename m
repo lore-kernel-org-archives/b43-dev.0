@@ -1,76 +1,27 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 13 Aug 2011 17:54:04 +0200
-Subject: [PATCH] b43: HT-PHY: init: add missing small-tables writes
-Message-ID: <1313250844-4526-1-git-send-email-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 13 Aug 2011 17:20:18 +0200
+Subject: Hosting wl driver, part of GPL package
+Message-ID: <CACna6rwvjRm+yLyz-sbQjmot8ErhfLN5E0NgtW3kbgjPy+JwLA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: b43-dev <b43-dev@lists.infradead.org>
 
+I need some hosting for broadcom-wl-5.100.138.tar.bz2 extracted from
+GPL sources.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-John: this one depends on
-[RFC][PATCH] b43: HT-PHY: allow writing longer tables with a single call
-, please apply the one above.
----
- drivers/net/wireless/b43/phy_ht.c |   33 ++++++++++++++++++++++++++++++---
- 1 files changed, 30 insertions(+), 3 deletions(-)
+Currently all the interesting drivers I've found are placed on:
+http://broadcom.zajec.net/
+but I can not guarantee 100% uptime or high bandwidth limit.
 
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 80c448d..81c8656 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -352,18 +352,45 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 
- 	b43_phy_write(dev, 0x0b9, 0x0072);
- 
--	/* TODO: Some ops here */
-+	b43_httab_write_few(dev, B43_HTTAB16(7, 0x14e), 2, 0x010f, 0x010f);
-+	b43_httab_write_few(dev, B43_HTTAB16(7, 0x15e), 2, 0x010f, 0x010f);
-+	b43_httab_write_few(dev, B43_HTTAB16(7, 0x16e), 2, 0x010f, 0x010f);
- 
- 	b43_phy_ht_afe_unk1(dev);
- 
--	/* TODO: Some ops here */
-+	b43_httab_write_few(dev, B43_HTTAB16(7, 0x130), 9, 0x777, 0x111, 0x111,
-+			    0x777, 0x111, 0x111, 0x777, 0x111, 0x111);
-+
-+	b43_httab_write(dev, B43_HTTAB16(7, 0x120), 0x0777);
-+	b43_httab_write(dev, B43_HTTAB16(7, 0x124), 0x0777);
-+
-+	b43_httab_write(dev, B43_HTTAB16(8, 0x00), 0x02);
-+	b43_httab_write(dev, B43_HTTAB16(8, 0x10), 0x02);
-+	b43_httab_write(dev, B43_HTTAB16(8, 0x20), 0x02);
-+
-+	b43_httab_write_few(dev, B43_HTTAB16(8, 0x08), 4,
-+			    0x8e, 0x96, 0x96, 0x96);
-+	b43_httab_write_few(dev, B43_HTTAB16(8, 0x18), 4,
-+			    0x8f, 0x9f, 0x9f, 0x9f);
-+	b43_httab_write_few(dev, B43_HTTAB16(8, 0x28), 4,
-+			    0x8f, 0x9f, 0x9f, 0x9f);
-+
-+	b43_httab_write_few(dev, B43_HTTAB16(8, 0x0c), 4, 0x2, 0x2, 0x2, 0x2);
-+	b43_httab_write_few(dev, B43_HTTAB16(8, 0x1c), 4, 0x2, 0x2, 0x2, 0x2);
-+	b43_httab_write_few(dev, B43_HTTAB16(8, 0x2c), 4, 0x2, 0x2, 0x2, 0x2);
- 
- 	b43_phy_maskset(dev, 0x0280, 0xff00, 0x3e);
- 	b43_phy_maskset(dev, 0x0283, 0xff00, 0x3e);
- 	b43_phy_maskset(dev, B43_PHY_OFDM(0x0141), 0xff00, 0x46);
- 	b43_phy_maskset(dev, 0x0283, 0xff00, 0x40);
- 
--	/* TODO: Some ops here */
-+	b43_httab_write_few(dev, B43_HTTAB16(00, 0x8), 4,
-+			    0x09, 0x0e, 0x13, 0x18);
-+	b43_httab_write_few(dev, B43_HTTAB16(01, 0x8), 4,
-+			    0x09, 0x0e, 0x13, 0x18);
-+	/* TODO: Did wl mean 2 instead of 40? */
-+	b43_httab_write_few(dev, B43_HTTAB16(40, 0x8), 4,
-+			    0x09, 0x0e, 0x13, 0x18);
- 
- 	b43_phy_maskset(dev, B43_PHY_OFDM(0x24), 0x3f, 0xd);
- 	b43_phy_maskset(dev, B43_PHY_OFDM(0x64), 0x3f, 0xd);
+Can someone offer b43 a place to host that drivers? We need them to
+extract firmware required for various Broadcom cards.
+
+Up to now we were using openwrt's ftp but they don't host the newest
+drivers. We need 5.100 or newer to have firmware for the newest cards
+included (like HT-PHY).
+
 -- 
-1.7.3.4
+Rafa?
