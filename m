@@ -1,86 +1,55 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 13 Aug 2011 21:06:13 +0200
-Subject: [PATCH] Fix alignment issues with DMA TX on BCM4331
-In-Reply-To: <1313144864.27274.81.camel@i7.infradead.org>
+Date: Sat, 13 Aug 2011 21:10:34 +0200
+Subject: [PATCH] b43: Mask out unwanted bits of RX slot address
+In-Reply-To: <1313144109.27274.71.camel@i7.infradead.org>
 References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 	<1311114796.3062.9.camel@shinybook.infradead.org>
 	<1313113295.27274.53.camel@i7.infradead.org>
-	<1313144864.27274.81.camel@i7.infradead.org>
-Message-ID: <CACna6ryM+QZ=x5sN8WjoZcZLFo6DiodWgq4Y8Dbm9Pm+Z64nsA@mail.gmail.com>
+	<1313144109.27274.71.camel@i7.infradead.org>
+Message-ID: <CACna6ry9=gFOGO7gkotxxgd9CxeoU-ENsJRk0NLpaj4Rh4EnEg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 12 sierpnia 2011 12:27 u?ytkownik David Woodhouse
+W dniu 12 sierpnia 2011 12:15 u?ytkownik David Woodhouse
 <dwmw2@infradead.org> napisa?:
-> When the TX descriptor ring is not aligned to 8KiB on BCM4331, we have
-> to write the full address to the TXINDEX register or the DMA engine gets
-> confused after the first time we wrap round to slot zero.
+> On some 64-bit DMA engines (my BCM4331, at least) with a ring buffer
+> that is not aligned to 8KiB, we often see bit 12 spuriously being set in
+> the B43_DMA64_RXSTATUS register. This will happen the first time the
+> ring fills and loops back to zero:
 >
-> [ 7438.538945] Poked TX with address fe0 for slot 254
-> [ 7438.539077] Acking gen reason 20000000
-> [ 7438.539177] irq xmitstat 20fc1001 0000007f
-> [ 7438.607861] Poked TX with address 0 for slot 0
-> [ 7438.608567] Acking gen reason 20000000
-> [ 7438.608668] irq xmitstat 20fe1001 00000080
-> [ 7438.608709] irq xmitstat 20000011 00000080
-> [ 7438.608724] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 0
-> [ 7438.608739] irq xmitstat 20020011 00000080
-> [ 7438.608750] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 2
-> [ 7438.608765] irq xmitstat 20040011 00000080
+> [35755.186080] Read RXSTATUS 3f0 (makes offs 3f0, divided by 10 gives slot 3f
+> [35755.288366] Read RXSTATUS 1000 (makes offs 1000, divided by 10 gives slot 100
+> [35755.291007] ------------[ cut here ]------------
+> [35755.291041] WARNING: at drivers/net/wireless/b43/dma.c:1700 b43_dma_rx+0x5e/0x2df [b43]()
+> ?...
+> [35766.745374] b43-phy41 debug: DMA RX: Dropping poisoned buffer.
 >
-> We write 0xff0 to the TXADDRLO register to see if the DMA engine is
-> capable of unaligned operation. If it *is*, then it'll have this problem
-> and we have to write the full address to TXINDEX. Comments in brcmsmac
-> indicate that the low 13 bits are required.
->
-> If we're doing this, we *also* have to write to TXCTL to enable the DMA
-> engine *after* setting up the ring address.
+> All we need to do is mask the offending bit out. The packets *are* where
+> they should be; it's just the high bit of the reported offset which is
+> weird.
 >
 > Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
-> --
-> I've made that change to the initialisation order of TXCTL vs.
-> TXADDR{HI,LO} unconditional; is there a reason not to?
 >
 > diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
 > index 82168f8..92dd6d9 100644
 > --- a/drivers/net/wireless/b43/dma.c
 > +++ b/drivers/net/wireless/b43/dma.c
-> @@ -225,8 +225,10 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
+> @@ -247,6 +249,10 @@ static int op64_get_current_rxslot(struct b43_dmaring *ring)
 >
-> ?static void op64_poke_tx(struct b43_dmaring *ring, int slot)
-> ?{
-> - ? ? ? b43_dma_write(ring, B43_DMA64_TXINDEX,
-> - ? ? ? ? ? ? ? ? ? ? (u32) (slot * sizeof(struct b43_dmadesc64)));
-> + ? ? ? u32 indexval = slot * sizeof(struct b43_dmadesc64);
-> + ? ? ? if (ring->unaligned)
-> + ? ? ? ? ? ? ? indexval |= (u32)ring->dmabase;
-> + ? ? ? b43_dma_write(ring, B43_DMA64_TXINDEX, indexval);
+> ? ? ? ?val = b43_dma_read(ring, B43_DMA64_RXSTATUS);
+> ? ? ? ?val &= B43_DMA64_RXSTATDPTR;
+> + ? ? ? /* When the ring is not aligned to 8KiB, we sometimes get
+> + ? ? ? ? ?bit 12 (0x1000) set in the address. Mask it out; we
+> + ? ? ? ? ?only use a 4KiB ring. */
+> + ? ? ? val &= B43_DMA_RINGMEMSIZE-1;
 
-Shouldn't this bit or be a numerical sum? I mean: +=
-Imagine you get dmabase like 0x1f310123 instead of some nice 0x1f310000
+I still have to understand that B43_DMA_RINGMEMSIZE (it's equal to
+PAGE_SIZE, which is calculated in some magic way).
 
-
-> @@ -704,9 +710,14 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
-> ? ? ? ? ? ? ? ? ? ? ? ? ? ?& B43_DMA64_TXADDREXT_MASK;
-> ? ? ? ? ? ? ? ? ? ? ? ?if (!parity)
-> ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?value |= B43_DMA64_TXPARITYDISABLE;
-> - ? ? ? ? ? ? ? ? ? ? ? b43_dma_write(ring, B43_DMA64_TXCTL, value);
-> +
-> + ? ? ? ? ? ? ? ? ? ? ? b43_dma_write(ring, B43_DMA64_TXRINGLO, 0xff0);
-> + ? ? ? ? ? ? ? ? ? ? ? if (b43_dma_read(ring, B43_DMA64_TXRINGLO))
-> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ring->unaligned = 1;
-> +
-> ? ? ? ? ? ? ? ? ? ? ? ?b43_dma_write(ring, B43_DMA64_TXRINGLO, addrlo);
-> ? ? ? ? ? ? ? ? ? ? ? ?b43_dma_write(ring, B43_DMA64_TXRINGHI, addrhi);
-> + ? ? ? ? ? ? ? ? ? ? ? b43_dma_write(ring, B43_DMA64_TXCTL, value);
-
-This needs testing on all the old hardware. Not sure if it's OK on
-older cards to change the order.
-
-John: please give this patch some more time for testing & discussion.
+However there should be spaces around minus.
 
 -- 
 Rafa?
