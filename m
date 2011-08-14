@@ -1,5 +1,5 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 14 Aug 2011 13:22:56 +0200
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Sun, 14 Aug 2011 12:35:52 +0100
 Subject: [PATCH] b43: Mask out unwanted bits of RX slot address
 In-Reply-To: <CACna6rzim3t-k5AcRmcyaaU=OcAkiTsL0arAd6ffSSy4VBHJ0Q@mail.gmail.com>
 References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
@@ -11,55 +11,23 @@ References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 	<CACna6rwjpeF-hjZ3+1zz_=fuhm-HkNTd3rcCv+-Vb2t_1BUgTQ@mail.gmail.com>
 	<CACna6ryZMW4+H7nT2Sf8FThYNngC6jgsURR0+N-jm2NZyiqikg@mail.gmail.com>
 	<CACna6rzim3t-k5AcRmcyaaU=OcAkiTsL0arAd6ffSSy4VBHJ0Q@mail.gmail.com>
-Message-ID: <CACna6rxnNsppS7gS2pvk_A-VkRGZFVhXF_yiPuH9JkRGSv08XQ@mail.gmail.com>
+Message-ID: <1313321754.28740.2.camel@i7.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-W dniu 14 sierpnia 2011 13:17 u?ytkownik Rafa? Mi?ecki
-<zajec5@gmail.com> napisa?:
-> W dniu 14 sierpnia 2011 11:24 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com> napisa?:
->> W dniu 14 sierpnia 2011 11:07 u?ytkownik Rafa? Mi?ecki
->> <zajec5@gmail.com> napisa?:
->>> I guess we should just increase RX ring size instead hacking
->>> (stripping) 0x1000 bit. We just need to check ?on which hardware wl
->>> uses 256 ring size.
->>
->> Ignore that. I just got 8 KiB aligned ring when testing 256 ring size.
->>
->> I agree with David, that 0x1000 comes from ring address. Depending on
->> address alignment it's 0 or 1.
->
+On Sun, 2011-08-14 at 13:17 +0200, Rafa? Mi?ecki wrote:
 > I wanted to check if firmware ever uses 0x1000 for addressing
 > purposes. To test that I've increased RX ring size to 257 and waited
 > for 8 KiB aligned ring address (to avoid copying 0x1000 bit from
-> address).
->
-> [ 3963.448699] RX ring at 24661e000
-> (...)
-> [ 4041.766608] Read RXSTATUS 0x10000fc0 (makes offs 0xfc0, divided by
-> 0x10 gives slot 0xfc
-> [ 4042.066683] Read RXSTATUS 0x10000fd0 (makes offs 0xfd0, divided by
-> 0x10 gives slot 0xfd
-> [ 4042.070585] Read RXSTATUS 0x10000fe0 (makes offs 0xfe0, divided by
-> 0x10 gives slot 0xfe
-> [ 4042.141030] Read RXSTATUS 0x10000ff0 (makes offs 0xff0, divided by
-> 0x10 gives slot 0xff
-> [ 4042.206599] b43-phy0 ERROR: Fatal DMA error: 0x00011000,
-> 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-> [ 4042.208438] b43-phy0 ERROR: This device does not support DMA on
-> your system. It will now be switched to PIO.
-> [ 4042.210463] b43-phy0: Controller RESET (DMA error) ...
->
-> Maybe we should just change:
-> #define ? ? ? ? B43_DMA64_TXSTATDPTR ? ? ? ? ? ?0x00001FFF
+> address). 
 
-I meant
-#define		B43_DMA64_RXSTATDPTR		0x00001FFF
-ofc
+Erm, if you increase the ring size to 257, don't you have to allocate
+8KiB for the ring buffer? If you're still allocating only 4KiB you'll be
+scribbling off the end of it. And if you allocate 8KiB there'll be no
+waiting; it'll *always* be aligned to 8KiB.
 
 -- 
-Rafa?
+dwmw2
