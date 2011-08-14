@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 14 Aug 2011 23:27:29 +0200
-Subject: [PATCH 2/3] b43: LCN-PHY: implement disabling radio
+Date: Sun, 14 Aug 2011 23:27:30 +0200
+Subject: [PATCH 3/3] b43: LCN-PHY: switch analog
 In-Reply-To: <1313357250-8292-1-git-send-email-zajec5@gmail.com>
 References: <1313357250-8292-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1313357250-8292-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1313357250-8292-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,130 +11,89 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-wl reads radio version, then disables it. That's how we found it in MMIO
-dump:
- radio_read(0x0000) -> 0x0031 <-- RADIO READ WITHOUT 0x200 SET!
- radio_read(0x0001) -> 0x0064 <-- RADIO READ WITHOUT 0x200 SET!
- radio_read(0x0002) -> 0x0020 <-- RADIO READ WITHOUT 0x200 SET!
- read32 0xfaafc120 -> 0x04000400
- phy_read(0x044d) -> 0x0000
-phy_write(0x044d) <- 0x0000
- phy_read(0x044c) -> 0x1fff
-phy_write(0x044c) <- 0x1fff
- phy_read(0x04b7) -> 0x0000
-phy_write(0x04b7) <- 0x0000
- phy_read(0x04b1) -> 0x0000
-phy_write(0x04b1) <- 0x0000
- phy_read(0x04b0) -> 0x7dff
-phy_write(0x04b0) <- 0x7dff
- phy_read(0x04fa) -> 0x0000
-phy_write(0x04fa) <- 0x0000
- phy_read(0x04f9) -> 0x007f
-phy_write(0x04f9) <- 0x007f
+Analog is switched on right after reading PHY version:
+ read16 0xfaafc3e0 -> 0xa801
+ phy_read(0x043b) -> 0x0000
+phy_write(0x043b) <- 0x0000
+Switched off after after killing radio:
+>>> Switch Radio(OFF) end
+ phy_read(0x043c) -> 0x0000
+phy_write(0x043c) <- 0x0007
+ phy_read(0x043b) -> 0x0000
+phy_write(0x043b) <- 0x0007
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-OFC, MMIO hacks were used to find masks & sets.
+Again, MMIO hacks to find masks & sets.
 
-Sets were taken from:
->>> Switch Radio(OFF) start
- phy_read(0x044d) -> 0x0000
-phy_write(0x044d) <- 0x0000
- phy_read(0x044c) -> 0x0000
-phy_write(0x044c) <- 0x1f00
- phy_read(0x04b7) -> 0x0000
-phy_write(0x04b7) <- 0x0000
- phy_read(0x04b1) -> 0x0000
-phy_write(0x04b1) <- 0x0000
- phy_read(0x04b0) -> 0x0000
-phy_write(0x04b0) <- 0x0808
- phy_read(0x04fa) -> 0x0000
-phy_write(0x04fa) <- 0x0000
- phy_read(0x04f9) -> 0x0000
-phy_write(0x04f9) <- 0x0008
->>> Switch Radio(OFF) end
+Sets came from:
+>>> analog(OFF) start
+ phy_read(0x043c) -> 0x0000
+phy_write(0x043c) <- 0x0007
+ phy_read(0x043b) -> 0x0000
+phy_write(0x043b) <- 0x0007
+>>> analog(OFF) end
 
-Masks were taken from:
- phy_read(0x044d) -> 0xffff
-phy_write(0x044d) <- 0x83ff
- phy_read(0x044c) -> 0xffff
-phy_write(0x044c) <- 0xffff
- phy_read(0x04b7) -> 0xffff
-phy_write(0x04b7) <- 0x80ff
- phy_read(0x04b1) -> 0xffff
-phy_write(0x04b1) <- 0xdfff
- phy_read(0x04b0) -> 0xffff
-phy_write(0x04b0) <- 0xffff
- phy_read(0x04fa) -> 0xffff
-phy_write(0x04fa) <- 0xfff7
- phy_read(0x04f9) -> 0xffff
-phy_write(0x04f9) <- 0xffff
+There is no masking for OFF:
+>>> analog(OFF) start
+ phy_read(0x043c) -> 0xffff
+phy_write(0x043c) <- 0xffff
+ phy_read(0x043b) -> 0xffff
+phy_write(0x043b) <- 0xffff
+>>> analog(OFF) end
+
+Mask for ON came from
+ phy_read(0x043b) -> 0xffff
+phy_write(0x043b) <- 0xfff8
+(there was not masking for ON).
 ---
- drivers/net/wireless/b43/phy_lcn.c |   23 +++++++++++++++++++++++
- drivers/net/wireless/b43/phy_lcn.h |    9 +++++++++
- 2 files changed, 32 insertions(+), 0 deletions(-)
+ drivers/net/wireless/b43/phy_lcn.c |   12 +++++++++++-
+ drivers/net/wireless/b43/phy_lcn.h |    2 ++
+ 2 files changed, 13 insertions(+), 1 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
-index 03944ad..69a93b5 100644
+index 69a93b5..0fd72c1 100644
 --- a/drivers/net/wireless/b43/phy_lcn.c
 +++ b/drivers/net/wireless/b43/phy_lcn.c
-@@ -60,6 +60,27 @@ static void b43_phy_lcn_op_prepare_structs(struct b43_wldev *dev)
- 	memset(phy_lcn, 0, sizeof(*phy_lcn));
+@@ -81,6 +81,16 @@ static void b43_phy_lcn_op_software_rfkill(struct b43_wldev *dev,
+ 	}
  }
  
-+static void b43_phy_lcn_op_software_rfkill(struct b43_wldev *dev,
-+					bool blocked)
++static void b43_phy_lcn_op_switch_analog(struct b43_wldev *dev, bool on)
 +{
-+	if (b43_read32(dev, B43_MMIO_MACCTL) & B43_MACCTL_ENABLED)
-+		b43err(dev->wl, "MAC not suspended\n");
-+
-+	if (blocked) {
-+		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL2, ~0x7c00);
-+		b43_phy_set(dev, B43_PHY_LCN_RF_CTL1, 0x1f00);
-+
-+		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL5, ~0x7f00);
-+		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL4, ~0x2);
-+		b43_phy_set(dev, B43_PHY_LCN_RF_CTL3, 0x808);
-+
-+		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL7, ~0x8);
-+		b43_phy_set(dev, B43_PHY_LCN_RF_CTL6, 0x8);
++	if (on) {
++		b43_phy_mask(dev, B43_PHY_LCN_AFE_CTL1, ~0x7);
 +	} else {
-+		/* TODO */
++		b43_phy_set(dev, B43_PHY_LCN_AFE_CTL2, 0x7);
++		b43_phy_set(dev, B43_PHY_LCN_AFE_CTL1, 0x7);
 +	}
 +}
 +
  static unsigned int b43_phy_lcn_op_get_default_chan(struct b43_wldev *dev)
  {
  	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-@@ -92,7 +113,9 @@ const struct b43_phy_operations b43_phyops_lcn = {
- 	.phy_maskset		= b43_phy_lcn_op_maskset,
- 	.radio_read		= b43_phy_lcn_op_radio_read,
+@@ -115,8 +125,8 @@ const struct b43_phy_operations b43_phyops_lcn = {
  	.radio_write		= b43_phy_lcn_op_radio_write,
-+	*/
+ 	*/
  	.software_rfkill	= b43_phy_lcn_op_software_rfkill,
-+	/*
+-	/*
  	.switch_analog		= b43_phy_lcn_op_switch_analog,
++	/*
  	.switch_channel		= b43_phy_lcn_op_switch_channel,
  	*/
+ 	.get_default_chan	= b43_phy_lcn_op_get_default_chan,
 diff --git a/drivers/net/wireless/b43/phy_lcn.h b/drivers/net/wireless/b43/phy_lcn.h
-index 9e1b291..89f13b2 100644
+index 89f13b2..371e07d 100644
 --- a/drivers/net/wireless/b43/phy_lcn.h
 +++ b/drivers/net/wireless/b43/phy_lcn.h
-@@ -4,6 +4,15 @@
+@@ -4,6 +4,8 @@
  #include "phy_common.h"
  
  
-+#define B43_PHY_LCN_RF_CTL1			B43_PHY_OFDM(0x04C)
-+#define B43_PHY_LCN_RF_CTL2			B43_PHY_OFDM(0x04D)
-+#define B43_PHY_LCN_RF_CTL3			B43_PHY_OFDM(0x0B0)
-+#define B43_PHY_LCN_RF_CTL4			B43_PHY_OFDM(0x0B1)
-+#define B43_PHY_LCN_RF_CTL5			B43_PHY_OFDM(0x0B7)
-+#define B43_PHY_LCN_RF_CTL6			B43_PHY_OFDM(0x0F9)
-+#define B43_PHY_LCN_RF_CTL7			B43_PHY_OFDM(0x0FA)
-+
-+
- struct b43_phy_lcn {
- };
- 
++#define B43_PHY_LCN_AFE_CTL1			B43_PHY_OFDM(0x03B)
++#define B43_PHY_LCN_AFE_CTL2			B43_PHY_OFDM(0x03C)
+ #define B43_PHY_LCN_RF_CTL1			B43_PHY_OFDM(0x04C)
+ #define B43_PHY_LCN_RF_CTL2			B43_PHY_OFDM(0x04D)
+ #define B43_PHY_LCN_RF_CTL3			B43_PHY_OFDM(0x0B0)
 -- 
 1.7.3.4
