@@ -1,33 +1,62 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 14 Aug 2011 17:10:40 +0200
-Subject: [PATCH] b43: Mask out unwanted bits of RX slot address
-In-Reply-To: <CACna6ryX+Rj3s92hvzRkN-S+dn+pKCSRFqL2vLNzsdnrxk_1pg@mail.gmail.com>
-References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
-	<1311114796.3062.9.camel@shinybook.infradead.org>
-	<1313113295.27274.53.camel@i7.infradead.org>
-	<1313144109.27274.71.camel@i7.infradead.org>
-	<CACna6rx4ZUhwbYcL7ukRkne0EnT3H2MbicM5nVbi=BpNtgCoAg@mail.gmail.com>
-	<CACna6rz2GkzazGyY7UnX0nEMM4mPUrW9wTcryu_xLuP==8aPRA@mail.gmail.com>
-	<CACna6rwjpeF-hjZ3+1zz_=fuhm-HkNTd3rcCv+-Vb2t_1BUgTQ@mail.gmail.com>
-	<CACna6ryZMW4+H7nT2Sf8FThYNngC6jgsURR0+N-jm2NZyiqikg@mail.gmail.com>
-	<CACna6rzim3t-k5AcRmcyaaU=OcAkiTsL0arAd6ffSSy4VBHJ0Q@mail.gmail.com>
-	<1313321754.28740.2.camel@i7.infradead.org>
-	<CACna6ryX+Rj3s92hvzRkN-S+dn+pKCSRFqL2vLNzsdnrxk_1pg@mail.gmail.com>
-Message-ID: <20110814171040.0a09ebf0@milhouse>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 14 Aug 2011 19:39:40 +0200
+Subject: [PATCH RESEND 3.2 1/2] ssb: fix DMA translation for some specific
+	boards
+Message-ID: <1313343581-4395-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Michael Buesch <m@bues.ch>
 
-On Sun, 14 Aug 2011 17:02:27 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> That's right. I've now modified B43_DMA_RINGMEMSIZE to be 8 KiB and I
-> don't get DMA errors anymore. Tested with 5 b43 reloads, the last time
-> I even used 384 slots in RX ring. Seems to work stable.
+Signed-off-by: Michael Buesch <m@bues.ch>
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/main.c |   24 +++++++++++++++++++++---
+ 1 files changed, 21 insertions(+), 3 deletions(-)
 
-I'm OK with changing the ringsize to a hardcoded 8kiB, btw.
-As I said, the current PAGE_SIZE dependency is mere legacy.
-
+diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+index 29c7d4f..d0cbdb0 100644
+--- a/drivers/ssb/main.c
++++ b/drivers/ssb/main.c
+@@ -1260,16 +1260,34 @@ void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
+ }
+ EXPORT_SYMBOL(ssb_device_disable);
+ 
++/* Some chipsets need routing known for PCIe and 64-bit DMA */
++static bool ssb_dma_translation_special_bit(struct ssb_device *dev)
++{
++	u16 chip_id = dev->bus->chip_id;
++
++	if (dev->id.coreid == SSB_DEV_80211) {
++		return (chip_id == 0x4322 || chip_id == 43221 ||
++			chip_id == 43231 || chip_id == 43222);
++	}
++
++	return 0;
++}
++
+ u32 ssb_dma_translation(struct ssb_device *dev)
+ {
+ 	switch (dev->bus->bustype) {
+ 	case SSB_BUSTYPE_SSB:
+ 		return 0;
+ 	case SSB_BUSTYPE_PCI:
+-		if (ssb_read32(dev, SSB_TMSHIGH) & SSB_TMSHIGH_DMA64)
++		if (pci_is_pcie(dev->bus->host_pci) &&
++		    ssb_read32(dev, SSB_TMSHIGH) & SSB_TMSHIGH_DMA64) {
+ 			return SSB_PCIE_DMA_H32;
+-		else
+-			return SSB_PCI_DMA;
++		} else {
++			if (ssb_dma_translation_special_bit(dev))
++				return SSB_PCIE_DMA_H32;
++			else
++				return SSB_PCI_DMA;
++		}
+ 	default:
+ 		__ssb_dma_not_implemented(dev);
+ 	}
 -- 
-Greetings, Michael.
+1.7.3.4
