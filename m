@@ -1,44 +1,84 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Sun, 14 Aug 2011 09:04:04 +0100
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 14 Aug 2011 10:09:08 +0200
 Subject: [PATCH] Fix alignment issues with DMA TX on BCM4331
-In-Reply-To: <CACna6rzteiUVPQ0mfoCZhVFmVh4A+kOmf08pUB3P-H+u7Xyu_w@mail.gmail.com>
+In-Reply-To: <1313266735.25907.4.camel@i7.infradead.org>
 References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 	<1311114796.3062.9.camel@shinybook.infradead.org>
 	<1313113295.27274.53.camel@i7.infradead.org>
 	<1313144864.27274.81.camel@i7.infradead.org>
-	<4E46F35F.1060900@lwfinger.net>
-	<CACna6rxbCnMnxqhKY4ztVdNpxY8p8FzdfShS=8w+mkQ538hiJA@mail.gmail.com>
-	<1313273267.16730.3.camel@i7.infradead.org>
-	<CACna6rzmG2QerzFkqyG_pbM5qRvFA0aNrp0cHnx1NHoZ+6q_FQ@mail.gmail.com>
-	<1313273835.18116.1.camel@i7.infradead.org>
-	<CACna6rzteiUVPQ0mfoCZhVFmVh4A+kOmf08pUB3P-H+u7Xyu_w@mail.gmail.com>
-Message-ID: <1313309045.28740.0.camel@i7.infradead.org>
+	<CACna6ryM+QZ=x5sN8WjoZcZLFo6DiodWgq4Y8Dbm9Pm+Z64nsA@mail.gmail.com>
+	<1313266735.25907.4.camel@i7.infradead.org>
+Message-ID: <CACna6rzWL0C9N3h+eCCyzyt3_ROgiM=pa=z3ECWdYZCwocwP2w@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Sun, 2011-08-14 at 09:35 +0200, Rafa? Mi?ecki wrote:
-> 
-> > The brcm80211 driver doesn't; it writes TXCTL last, unconditionally.
-> 
-> Uh, you mead me read that code... OK:
-> 
-> if (!di->aligndesc_4k)
->         _dma_ddtable_init(di, DMA_TX, di->txdpa);
-> 
-> if ((di->dma.dmactrlflags & DMA_CTRL_PEN) == 0)
->         control |= D64_XC_PD;
-> OR_REG(&di->d64txregs->control, control);
-> 
-> if (di->aligndesc_4k)
->         _dma_ddtable_init(di, DMA_TX, di->txdpa); 
+W dniu 13 sierpnia 2011 22:18 u?ytkownik David Woodhouse
+<dwmw2@infradead.org> napisa?:
+> On Sat, 2011-08-13 at 21:06 +0200, Rafa? Mi?ecki wrote:
+>> W dniu 12 sierpnia 2011 12:27 u?ytkownik David Woodhouse
+>> <dwmw2@infradead.org> napisa?:
+>> > When the TX descriptor ring is not aligned to 8KiB on BCM4331, we have
+>> > to write the full address to the TXINDEX register or the DMA engine gets
+>> > confused after the first time we wrap round to slot zero.
+>> >
+>> > [ 7438.538945] Poked TX with address fe0 for slot 254
+>> > [ 7438.539077] Acking gen reason 20000000
+>> > [ 7438.539177] irq xmitstat 20fc1001 0000007f
+>> > [ 7438.607861] Poked TX with address 0 for slot 0
+>> > [ 7438.608567] Acking gen reason 20000000
+>> > [ 7438.608668] irq xmitstat 20fe1001 00000080
+>> > [ 7438.608709] irq xmitstat 20000011 00000080
+>> > [ 7438.608724] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 0
+>> > [ 7438.608739] irq xmitstat 20020011 00000080
+>> > [ 7438.608750] b43-phy2 debug: Out of order TX status report on DMA ring 1. Expected 256, but got 2
+>> > [ 7438.608765] irq xmitstat 20040011 00000080
+>> >
+>> > We write 0xff0 to the TXADDRLO register to see if the DMA engine is
+>> > capable of unaligned operation. If it *is*, then it'll have this problem
+>> > and we have to write the full address to TXINDEX. Comments in brcmsmac
+>> > indicate that the low 13 bits are required.
+>> >
+>> > If we're doing this, we *also* have to write to TXCTL to enable the DMA
+>> > engine *after* setting up the ring address.
+>> >
+>> > Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
+>> > --
+>> > I've made that change to the initialisation order of TXCTL vs.
+>> > TXADDR{HI,LO} unconditional; is there a reason not to?
+>> >
+>> > diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+>> > index 82168f8..92dd6d9 100644
+>> > --- a/drivers/net/wireless/b43/dma.c
+>> > +++ b/drivers/net/wireless/b43/dma.c
+>> > @@ -225,8 +225,10 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
+>> >
+>> > ?static void op64_poke_tx(struct b43_dmaring *ring, int slot)
+>> > ?{
+>> > - ? ? ? b43_dma_write(ring, B43_DMA64_TXINDEX,
+>> > - ? ? ? ? ? ? ? ? ? ? (u32) (slot * sizeof(struct b43_dmadesc64)));
+>> > + ? ? ? u32 indexval = slot * sizeof(struct b43_dmadesc64);
+>> > + ? ? ? if (ring->unaligned)
+>> > + ? ? ? ? ? ? ? indexval |= (u32)ring->dmabase;
+>> > + ? ? ? b43_dma_write(ring, B43_DMA64_TXINDEX, indexval);
+>>
+>> Shouldn't this bit or be a numerical sum? I mean: +=
+>> Imagine you get dmabase like 0x1f310123 instead of some nice 0x1f310000
+>
+> You won't. The ring is always going to be aligned to its own size, so a
+> simple mask is perfectly sufficient. Even if we go to an 8KiB ring
+> that'll still be true.
+>
+> If we ever tried to use a ring that *wasn't* so aligned, I strongly
+> suspect we'd get other hardware problems like the ones that this patch
+> addresses.
 
-Hm, so I lied. Sorry about that. Will send a new patch.
-
-I'll also have another look at the RX path. I had tried enabling RX
-after setting the addresses, but that had failed.
+I didn't know about such aligning. Of course my example 0x1f310123 was
+silly, it was more realistic to take for ex. 0x1f310100. But if you
+say kernel will always nicely align rings, OK then. Thanks for
+teaching me sth new.
 
 -- 
-dwmw2
+Rafa?
