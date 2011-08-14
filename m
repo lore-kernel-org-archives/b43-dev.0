@@ -1,5 +1,5 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 14 Aug 2011 09:10:53 +0200
+Date: Sun, 14 Aug 2011 09:35:50 +0200
 Subject: [PATCH] Fix alignment issues with DMA TX on BCM4331
 In-Reply-To: <1313273835.18116.1.camel@i7.infradead.org>
 References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
@@ -11,7 +11,7 @@ References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 	<1313273267.16730.3.camel@i7.infradead.org>
 	<CACna6rzmG2QerzFkqyG_pbM5qRvFA0aNrp0cHnx1NHoZ+6q_FQ@mail.gmail.com>
 	<1313273835.18116.1.camel@i7.infradead.org>
-Message-ID: <CACna6ryXxQDRHDbEBOsxbEQsV1mFbkRpktFOmbBWSnFdqQygSg@mail.gmail.com>
+Message-ID: <CACna6rzteiUVPQ0mfoCZhVFmVh4A+kOmf08pUB3P-H+u7Xyu_w@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -28,23 +28,33 @@ W dniu 14 sierpnia 2011 00:17 u?ytkownik David Woodhouse
 > unaligned descriptors?
 >
 > The brcm80211 driver doesn't; it writes TXCTL last, unconditionally.
->
-> Do you want me to send another patch which makes it conditional? It
-> complicates the code with something that might be unnecessary legacy
-> baggage... but means we don't have to be worried about regressions on
-> older hardware.
 
-Here you have a log from wl from 14e4:432b:
+Uh, you mead me read that code... OK:
 
-write32 0xfaafc208 <- 0x00000ff0
- read32 0xfaafc208 -> 0x00000000
-[that means no unaligned support]
-...
- read32 0xfaafc200 -> 0x00000000
-write32 0xfaafc200 <- 0x00000801
-write32 0xfaafc208 <- 0x1b550000
-write32 0xfaafc20c <- 0x80000000
-[when no unaligned, first enable, then set addresses]
+if (!di->aligndesc_4k)
+	_dma_ddtable_init(di, DMA_TX, di->txdpa);
+
+if ((di->dma.dmactrlflags & DMA_CTRL_PEN) == 0)
+	control |= D64_XC_PD;
+OR_REG(&di->d64txregs->control, control);
+
+if (di->aligndesc_4k)
+	_dma_ddtable_init(di, DMA_TX, di->txdpa);
+
+I stripped the comments, which are simply wrong (copy&paste gone too fast).
+
+Following is RX part, with the sane comment this time:
+
+/* DMA engine with out alignment requirement requires table to be inited
+ * before enabling the engine
+ */
+if (!di->aligndesc_4k)
+	_dma_ddtable_init(di, DMA_RX, di->rxdpa);
+
+_dma_rxenable(di);
+
+if (di->aligndesc_4k)
+	_dma_ddtable_init(di, DMA_RX, di->rxdpa);
 
 -- 
 Rafa?
