@@ -1,39 +1,49 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 14 Aug 2011 11:31:10 +0200
-Subject: [PATCH] b43: Mask out unwanted bits of RX slot address
-In-Reply-To: <CACna6ryZMW4+H7nT2Sf8FThYNngC6jgsURR0+N-jm2NZyiqikg@mail.gmail.com>
-References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
-	<1311114796.3062.9.camel@shinybook.infradead.org>
-	<1313113295.27274.53.camel@i7.infradead.org>
-	<1313144109.27274.71.camel@i7.infradead.org>
-	<CACna6rx4ZUhwbYcL7ukRkne0EnT3H2MbicM5nVbi=BpNtgCoAg@mail.gmail.com>
-	<CACna6rz2GkzazGyY7UnX0nEMM4mPUrW9wTcryu_xLuP==8aPRA@mail.gmail.com>
-	<CACna6rwjpeF-hjZ3+1zz_=fuhm-HkNTd3rcCv+-Vb2t_1BUgTQ@mail.gmail.com>
-	<CACna6ryZMW4+H7nT2Sf8FThYNngC6jgsURR0+N-jm2NZyiqikg@mail.gmail.com>
-Message-ID: <CACna6rxZgfRV1ArcDQiw1hs+ehArRsqyqu=A=GZ4y=rCjF0nHQ@mail.gmail.com>
+Date: Sun, 14 Aug 2011 13:10:39 +0200
+Subject: b43 error under heavy load
+In-Reply-To: <20110601184931.499557c6@boulder.homenet>
+References: <4CEAB969.20702@lwfinger.net> <1290451982.20888.2.camel@maggie>
+	<4CEAC095.7020706@lwfinger.net>
+	<BANLkTimjRA5CsSDp_+LrGq8PNgaR4JFD=w@mail.gmail.com>
+	<4DC9853A.1090508@lwfinger.net>
+	<BANLkTimBpGRxfidpE4hYCVscmX-Hy5q5jw@mail.gmail.com>
+	<BANLkTi=TohOdjurvgqZT8=GXKbWfNe4v+w@mail.gmail.com>
+	<20110601114839.433ae42d@boulder.homenet>
+	<BANLkTin_RnMV3KnGS4qYPtMVxCuW=Vj7mg@mail.gmail.com>
+	<20110601130842.077da1c3@boulder.homenet>
+	<BANLkTi=2xYrrjEdHuYCKFKy4H2EXoUGQuQ@mail.gmail.com>
+	<20110601160101.75e30b3d@boulder.homenet>
+	<BANLkTim9pQc+yxdQLSL1-6VNiyM6_tvJ6g@mail.gmail.com>
+	<20110601184931.499557c6@boulder.homenet>
+Message-ID: <CACna6rxH8_9pc+vZizLyAkNCLK7-CmK6GZP-E2FKUfwR9uD8Xg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Chris Vine <chris@cvine.freeserve.co.uk>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, wireless <linux-wireless@vger.kernel.org>, =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bu3sch.de>, b43-dev <b43-dev@lists.infradead.org>
 
-W dniu 14 sierpnia 2011 11:24 u?ytkownik Rafa? Mi?ecki
-<zajec5@gmail.com> napisa?:
-> W dniu 14 sierpnia 2011 11:07 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com> napisa?:
->> I guess we should just increase RX ring size instead hacking
->> (stripping) 0x1000 bit. We just need to check ?on which hardware wl
->> uses 256 ring size.
->
-> Ignore that. I just got 8 KiB aligned ring when testing 256 ring size.
->
-> I agree with David, that 0x1000 comes from ring address. Depending on
-> address alignment it's 0 or 1.
+Hey Chris,
 
-The question I now have is:
+2011/6/1 Chris Vine <chris@cvine.freeserve.co.uk>:
+> Summary: Traffic sent up from the broadcom wireless device generates
+> copious reports of "Stopped TX ring 1" but always carries on with its
+> job and stays up, although its traffic is slower than on received
+> packets. ?Received traffic on the other hand reports no errors until
+> the spate of "Out of order TX status report on DMA ring 1" errors
+> occurs, which seems to happen at random (albeit accompanied on my
+> failed transfer by a single "Stopped TX ring 1" log entry), and when it
+> does happen brings the wireless link to a halt. Wireless traffic can be
+> restarted simply by reassociating with the AP.
 
-1) Should be keep using 4 KiB aligned rings (sometimes, depending on
-the luck, 8 KiB) with ignoring 0x1000 bit
-2) Switch to 8 KiB aligned rings
+So it seems heavy load of RX can cause problems with TX. I just though
+of one another reason, could you test one more thing for me?
 
-Broadcom seems to use second method, it never uses just 4 KiB aligned ring.
+Edit drivers/net/wireless/b43/dma.h and change define from value 64 to
+in the line:
+#define B43_RXRING_SLOTS		64
+
+Can you get "Out of order TX" much more easily after such a change?
+
+-- 
+Rafa?
