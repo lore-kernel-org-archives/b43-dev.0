@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 14 Aug 2011 23:27:28 +0200
-Subject: [PATCH 1/3] b43: LCN-PHY: add very basic PHY ops
-Message-ID: <1313357250-8292-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 14 Aug 2011 23:27:29 +0200
+Subject: [PATCH 2/3] b43: LCN-PHY: implement disabling radio
+In-Reply-To: <1313357250-8292-1-git-send-email-zajec5@gmail.com>
+References: <1313357250-8292-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1313357250-8292-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,103 +11,130 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+wl reads radio version, then disables it. That's how we found it in MMIO
+dump:
+ radio_read(0x0000) -> 0x0031 <-- RADIO READ WITHOUT 0x200 SET!
+ radio_read(0x0001) -> 0x0064 <-- RADIO READ WITHOUT 0x200 SET!
+ radio_read(0x0002) -> 0x0020 <-- RADIO READ WITHOUT 0x200 SET!
+ read32 0xfaafc120 -> 0x04000400
+ phy_read(0x044d) -> 0x0000
+phy_write(0x044d) <- 0x0000
+ phy_read(0x044c) -> 0x1fff
+phy_write(0x044c) <- 0x1fff
+ phy_read(0x04b7) -> 0x0000
+phy_write(0x04b7) <- 0x0000
+ phy_read(0x04b1) -> 0x0000
+phy_write(0x04b1) <- 0x0000
+ phy_read(0x04b0) -> 0x7dff
+phy_write(0x04b0) <- 0x7dff
+ phy_read(0x04fa) -> 0x0000
+phy_write(0x04fa) <- 0x0000
+ phy_read(0x04f9) -> 0x007f
+phy_write(0x04f9) <- 0x007f
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_lcn.c |   54 ++++++++++++++++++++++++++++++++++-
- drivers/net/wireless/b43/phy_lcn.h |    2 +-
- 2 files changed, 53 insertions(+), 3 deletions(-)
+OFC, MMIO hacks were used to find masks & sets.
+
+Sets were taken from:
+>>> Switch Radio(OFF) start
+ phy_read(0x044d) -> 0x0000
+phy_write(0x044d) <- 0x0000
+ phy_read(0x044c) -> 0x0000
+phy_write(0x044c) <- 0x1f00
+ phy_read(0x04b7) -> 0x0000
+phy_write(0x04b7) <- 0x0000
+ phy_read(0x04b1) -> 0x0000
+phy_write(0x04b1) <- 0x0000
+ phy_read(0x04b0) -> 0x0000
+phy_write(0x04b0) <- 0x0808
+ phy_read(0x04fa) -> 0x0000
+phy_write(0x04fa) <- 0x0000
+ phy_read(0x04f9) -> 0x0000
+phy_write(0x04f9) <- 0x0008
+>>> Switch Radio(OFF) end
+
+Masks were taken from:
+ phy_read(0x044d) -> 0xffff
+phy_write(0x044d) <- 0x83ff
+ phy_read(0x044c) -> 0xffff
+phy_write(0x044c) <- 0xffff
+ phy_read(0x04b7) -> 0xffff
+phy_write(0x04b7) <- 0x80ff
+ phy_read(0x04b1) -> 0xffff
+phy_write(0x04b1) <- 0xdfff
+ phy_read(0x04b0) -> 0xffff
+phy_write(0x04b0) <- 0xffff
+ phy_read(0x04fa) -> 0xffff
+phy_write(0x04fa) <- 0xfff7
+ phy_read(0x04f9) -> 0xffff
+phy_write(0x04f9) <- 0xffff
+---
+ drivers/net/wireless/b43/phy_lcn.c |   23 +++++++++++++++++++++++
+ drivers/net/wireless/b43/phy_lcn.h |    9 +++++++++
+ 2 files changed, 32 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
-index 9f7dbbd..03944ad 100644
+index 03944ad..69a93b5 100644
 --- a/drivers/net/wireless/b43/phy_lcn.c
 +++ b/drivers/net/wireless/b43/phy_lcn.c
-@@ -28,14 +28,64 @@
- #include "main.h"
+@@ -60,6 +60,27 @@ static void b43_phy_lcn_op_prepare_structs(struct b43_wldev *dev)
+ 	memset(phy_lcn, 0, sizeof(*phy_lcn));
+ }
  
- /**************************************************
-+ * Basic PHY ops.
-+ **************************************************/
-+
-+static int b43_phy_lcn_op_allocate(struct b43_wldev *dev)
++static void b43_phy_lcn_op_software_rfkill(struct b43_wldev *dev,
++					bool blocked)
 +{
-+	struct b43_phy_lcn *phy_lcn;
++	if (b43_read32(dev, B43_MMIO_MACCTL) & B43_MACCTL_ENABLED)
++		b43err(dev->wl, "MAC not suspended\n");
 +
-+	phy_lcn = kzalloc(sizeof(*phy_lcn), GFP_KERNEL);
-+	if (!phy_lcn)
-+		return -ENOMEM;
-+	dev->phy.lcn = phy_lcn;
++	if (blocked) {
++		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL2, ~0x7c00);
++		b43_phy_set(dev, B43_PHY_LCN_RF_CTL1, 0x1f00);
 +
-+	return 0;
++		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL5, ~0x7f00);
++		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL4, ~0x2);
++		b43_phy_set(dev, B43_PHY_LCN_RF_CTL3, 0x808);
++
++		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL7, ~0x8);
++		b43_phy_set(dev, B43_PHY_LCN_RF_CTL6, 0x8);
++	} else {
++		/* TODO */
++	}
 +}
 +
-+static void b43_phy_lcn_op_free(struct b43_wldev *dev)
-+{
-+	struct b43_phy *phy = &dev->phy;
-+	struct b43_phy_lcn *phy_lcn = phy->lcn;
-+
-+	kfree(phy_lcn);
-+	phy->lcn = NULL;
-+}
-+
-+static void b43_phy_lcn_op_prepare_structs(struct b43_wldev *dev)
-+{
-+	struct b43_phy *phy = &dev->phy;
-+	struct b43_phy_lcn *phy_lcn = phy->lcn;
-+
-+	memset(phy_lcn, 0, sizeof(*phy_lcn));
-+}
-+
-+static unsigned int b43_phy_lcn_op_get_default_chan(struct b43_wldev *dev)
-+{
-+	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-+		return 1;
-+	return 36;
-+}
-+
-+static enum b43_txpwr_result
-+b43_phy_lcn_op_recalc_txpower(struct b43_wldev *dev, bool ignore_tssi)
-+{
-+	return B43_TXPWR_RES_DONE;
-+}
-+
-+static void b43_phy_lcn_op_adjust_txpower(struct b43_wldev *dev)
-+{
-+}
-+
-+/**************************************************
-  * PHY ops struct.
-  **************************************************/
- 
- const struct b43_phy_operations b43_phyops_lcn = {
--	/*
- 	.allocate		= b43_phy_lcn_op_allocate,
- 	.free			= b43_phy_lcn_op_free,
- 	.prepare_structs	= b43_phy_lcn_op_prepare_structs,
-+	/*
- 	.init			= b43_phy_lcn_op_init,
- 	.phy_read		= b43_phy_lcn_op_read,
- 	.phy_write		= b43_phy_lcn_op_write,
-@@ -45,8 +95,8 @@ const struct b43_phy_operations b43_phyops_lcn = {
+ static unsigned int b43_phy_lcn_op_get_default_chan(struct b43_wldev *dev)
+ {
+ 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+@@ -92,7 +113,9 @@ const struct b43_phy_operations b43_phyops_lcn = {
+ 	.phy_maskset		= b43_phy_lcn_op_maskset,
+ 	.radio_read		= b43_phy_lcn_op_radio_read,
+ 	.radio_write		= b43_phy_lcn_op_radio_write,
++	*/
  	.software_rfkill	= b43_phy_lcn_op_software_rfkill,
++	/*
  	.switch_analog		= b43_phy_lcn_op_switch_analog,
  	.switch_channel		= b43_phy_lcn_op_switch_channel,
-+	*/
- 	.get_default_chan	= b43_phy_lcn_op_get_default_chan,
- 	.recalc_txpower		= b43_phy_lcn_op_recalc_txpower,
- 	.adjust_txpower		= b43_phy_lcn_op_adjust_txpower,
--	*/
- };
+ 	*/
 diff --git a/drivers/net/wireless/b43/phy_lcn.h b/drivers/net/wireless/b43/phy_lcn.h
-index c046c2a..9e1b291 100644
+index 9e1b291..89f13b2 100644
 --- a/drivers/net/wireless/b43/phy_lcn.h
 +++ b/drivers/net/wireless/b43/phy_lcn.h
-@@ -11,4 +11,4 @@ struct b43_phy_lcn {
- struct b43_phy_operations;
- extern const struct b43_phy_operations b43_phyops_lcn;
+@@ -4,6 +4,15 @@
+ #include "phy_common.h"
  
--#endif /* B43_PHY_LCN_H_ */
-\ No newline at end of file
-+#endif /* B43_PHY_LCN_H_ */
+ 
++#define B43_PHY_LCN_RF_CTL1			B43_PHY_OFDM(0x04C)
++#define B43_PHY_LCN_RF_CTL2			B43_PHY_OFDM(0x04D)
++#define B43_PHY_LCN_RF_CTL3			B43_PHY_OFDM(0x0B0)
++#define B43_PHY_LCN_RF_CTL4			B43_PHY_OFDM(0x0B1)
++#define B43_PHY_LCN_RF_CTL5			B43_PHY_OFDM(0x0B7)
++#define B43_PHY_LCN_RF_CTL6			B43_PHY_OFDM(0x0F9)
++#define B43_PHY_LCN_RF_CTL7			B43_PHY_OFDM(0x0FA)
++
++
+ struct b43_phy_lcn {
+ };
+ 
 -- 
 1.7.3.4
