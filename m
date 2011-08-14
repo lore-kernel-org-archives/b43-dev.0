@@ -1,5 +1,5 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 14 Aug 2011 13:52:26 +0200
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Sun, 14 Aug 2011 13:06:09 +0100
 Subject: [PATCH] b43: Mask out unwanted bits of RX slot address
 In-Reply-To: <CACna6ryRqJm_XAtZBvGuvye+T3ts3sbkNtYsMA+00mdjUO3sPw@mail.gmail.com>
 References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
@@ -12,21 +12,20 @@ References: <CACna6rxEJ1TuoGsZF=4dy0ezNZjjZFkaASbbyrgurwa_mYzEVw@mail.gmail.com>
 	<CACna6ryZMW4+H7nT2Sf8FThYNngC6jgsURR0+N-jm2NZyiqikg@mail.gmail.com>
 	<CACna6rzim3t-k5AcRmcyaaU=OcAkiTsL0arAd6ffSSy4VBHJ0Q@mail.gmail.com>
 	<CACna6ryRqJm_XAtZBvGuvye+T3ts3sbkNtYsMA+00mdjUO3sPw@mail.gmail.com>
-Message-ID: <20110814135226.72e1b97e@milhouse>
+Message-ID: <1313323570.28740.5.camel@i7.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Sun, 14 Aug 2011 13:38:59 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> In any case we see it can happen firmware is using that 0x1000 for indexing.
-> 
-> We just need to keep the original mask and start making rings 8 KiB
-> aligned to workaround firmware bug.
+On Sun, 2011-08-14 at 13:38 +0200, Rafa? Mi?ecki wrote:
+> In any case we see it can happen firmware is using that 0x1000 for
+> indexing. 
 
-The firmware does not control DMA. This is pure hardware feature.
+Well yes, but that won't happen if we limit ourselves to 4KiB of ring.
+
+So continuing to use 4KiB and masking out the 'top' bit works too.
 
 -- 
-Greetings, Michael.
+dwmw2
