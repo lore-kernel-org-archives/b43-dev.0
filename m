@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 15 Aug 2011 18:50:55 +0200
-Subject: [PATCH 1/2] b43: LCN-PHY: basic PHY init
-Message-ID: <1313427056-3755-1-git-send-email-zajec5@gmail.com>
+Date: Mon, 15 Aug 2011 18:50:56 +0200
+Subject: [PATCH 2/2] b43: LCN-PHY: init 0x2064 radio
+In-Reply-To: <1313427056-3755-1-git-send-email-zajec5@gmail.com>
+References: <1313427056-3755-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1313427056-3755-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,145 +14,144 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-Sets were taken from:
- phy_read(0x044c) -> 0x0000
-phy_write(0x044c) <- 0x0000
- phy_read(0x04b0) -> 0x0000
-phy_write(0x04b0) <- 0x0000
- phy_read(0x04f9) -> 0x0000
-phy_write(0x04f9) <- 0x0000
+I'm slowly going to the end of translating my RE dumps into code.
 
- phy_read(0x044a) -> 0x0000
-phy_write(0x044a) <- 0x0080
- phy_read(0x044a) -> 0x0000
-phy_write(0x044a) <- 0x0000
- phy_read(0x06d1) -> 0x0000
-phy_write(0x06d1) <- 0x0080
+Sets come from:
+ phy_read(0x04eb) -> 0x0000
+phy_write(0x04eb) <- 0x0002
+ phy_read(0x04eb) -> 0x0000
+phy_write(0x04eb) <- 0x0000
+ phy_read(0x046a) -> 0x0000
+phy_write(0x046a) <- 0x0019
 
-Masks were taken from:
- phy_read(0x044c) -> 0xffff
-phy_write(0x044c) <- 0xe0ff
- phy_read(0x04b0) -> 0xffff
-phy_write(0x04b0) <- 0xf7f7
- phy_read(0x04f9) -> 0xffff
-phy_write(0x04f9) <- 0xfff7
+ radio_read(0x005b) -> 0x0000
+radio_write(0x005b) <- 0x0000
+ radio_read(0x0004) -> 0x0000
+radio_write(0x0004) <- 0x0040
+ radio_read(0x0120) -> 0x0000
+radio_write(0x0120) <- 0x0010
+ radio_read(0x0078) -> 0x0000
+radio_write(0x0078) <- 0x0080
+ radio_read(0x0129) -> 0x0000
+radio_write(0x0129) <- 0x0002
+ radio_read(0x0057) -> 0x0000
+radio_write(0x0057) <- 0x0001
+ radio_read(0x005b) -> 0x0000
+radio_write(0x005b) <- 0x0002
 
- phy_read(0x044a) -> 0xffff
-phy_write(0x044a) <- 0xffff
- phy_read(0x044a) -> 0xffff
-phy_write(0x044a) <- 0x007f
- phy_read(0x06d1) -> 0xffff
-phy_write(0x06d1) <- 0xffff
+ radio_read(0x005b) -> 0x0000
+radio_write(0x005b) <- 0x0000
+ radio_read(0x0057) -> 0x0000
+radio_write(0x0057) <- 0x0000
+
+ radio_read(0x0057) -> 0x0000
+radio_write(0x0057) <- 0x0000
+
+Masks from:
+ phy_read(0x04eb) -> 0xffff
+phy_write(0x04eb) <- 0xfffa
+ phy_read(0x04eb) -> 0xffff
+phy_write(0x04eb) <- 0xfe3f
+ phy_read(0x046a) -> 0xffff
+phy_write(0x046a) <- 0x0019
+
+ radio_read(0x005b) -> 0xffff
+radio_write(0x005b) <- 0x00fd
+ radio_read(0x0004) -> 0xffff
+radio_write(0x0004) <- 0xffff
+ radio_read(0x0120) -> 0xffff
+radio_write(0x0120) <- 0xffff
+ radio_read(0x0078) -> 0xffff
+radio_write(0x0078) <- 0xffff
+ radio_read(0x0129) -> 0xffff
+radio_write(0x0129) <- 0xffff
+ radio_read(0x0057) -> 0xffff
+radio_write(0x0057) <- 0xffff
+ radio_read(0x005b) -> 0xffff
+radio_write(0x005b) <- 0xffff
+
+ radio_read(0x005b) -> 0xffff
+radio_write(0x005b) <- 0x00fd
+ radio_read(0x0057) -> 0xffff
+radio_write(0x0057) <- 0x00fe
+
+ radio_read(0x0057) -> 0xffff
+radio_write(0x0057) <- 0x00fd
 ---
- drivers/net/wireless/b43/phy_lcn.c |   74 +++++++++++++++++++++++++++++++++++-
- 1 files changed, 72 insertions(+), 2 deletions(-)
+ drivers/net/wireless/b43/phy_lcn.c |   54 ++++++++++++++++++++++++++++++++++++
+ 1 files changed, 54 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
-index 0fd72c1..604a3a6 100644
+index 604a3a6..4b2cd6d 100644
 --- a/drivers/net/wireless/b43/phy_lcn.c
 +++ b/drivers/net/wireless/b43/phy_lcn.c
-@@ -28,6 +28,50 @@
+@@ -28,6 +28,55 @@
  #include "main.h"
  
  /**************************************************
-+ * Various PHY ops
++ * Radio 2064.
 + **************************************************/
 +
-+static void b43_phy_lcn_afe_set_unset(struct b43_wldev *dev)
++static void b43_radio_2064_init(struct b43_wldev *dev)
 +{
-+	u16 afe_ctl2 = b43_phy_read(dev, B43_PHY_LCN_AFE_CTL2);
-+	u16 afe_ctl1 = b43_phy_read(dev, B43_PHY_LCN_AFE_CTL1);
++	b43_radio_write(dev, 0x09c, 0x0020);
++	b43_radio_write(dev, 0x105, 0x0008);
++	b43_radio_write(dev, 0x032, 0x0062);
++	b43_radio_write(dev, 0x033, 0x0019);
++	b43_radio_write(dev, 0x090, 0x0010);
++	b43_radio_write(dev, 0x010, 0x0000);
++	b43_radio_write(dev, 0x060, 0x007f);
++	b43_radio_write(dev, 0x061, 0x0072);
++	b43_radio_write(dev, 0x062, 0x007f);
++	b43_radio_write(dev, 0x01d, 0x0002);
++	b43_radio_write(dev, 0x01e, 0x0006);
 +
-+	b43_phy_write(dev, B43_PHY_LCN_AFE_CTL2, afe_ctl2 | 0x1);
-+	b43_phy_write(dev, B43_PHY_LCN_AFE_CTL1, afe_ctl1 | 0x1);
++	b43_phy_write(dev, 0x4ea, 0x4688);
++	b43_phy_maskset(dev, 0x4eb, ~0x7, 0x2);
++	b43_phy_mask(dev, 0x4eb, ~0x01c0);
++	b43_phy_maskset(dev, 0x4eb, 0xff00, 0x19);
 +
-+	b43_phy_write(dev, B43_PHY_LCN_AFE_CTL2, afe_ctl2 & ~0x1);
-+	b43_phy_write(dev, B43_PHY_LCN_AFE_CTL1, afe_ctl1 & ~0x1);
++	b43_lcntab_write(dev, B43_LCNTAB16(0x00, 0x55), 0);
 +
-+	b43_phy_write(dev, B43_PHY_LCN_AFE_CTL2, afe_ctl2);
-+	b43_phy_write(dev, B43_PHY_LCN_AFE_CTL1, afe_ctl1);
-+}
++	b43_radio_mask(dev, 0x05b, (u16) ~0xff02);
++	b43_radio_set(dev, 0x004, 0x40);
++	b43_radio_set(dev, 0x120, 0x10);
++	b43_radio_set(dev, 0x078, 0x80);
++	b43_radio_set(dev, 0x129, 0x2);
++	b43_radio_set(dev, 0x057, 0x1);
++	b43_radio_set(dev, 0x05b, 0x2);
 +
-+static void b43_phy_lcn_clean_0x18_table(struct b43_wldev *dev)
-+{
-+	u8 i;
++	/* TODO: wait for some bit to be set */
++	b43_radio_read(dev, 0x05c);
 +
-+	for (i = 0; i < 0x80; i++)
-+		b43_lcntab_write(dev, B43_LCNTAB32(0x18, i), 0x80000);
-+}
++	b43_radio_mask(dev, 0x05b, (u16) ~0xff02);
++	b43_radio_mask(dev, 0x057, (u16) ~0xff01);
 +
-+static void b43_phy_lcn_clear_0x07_table(struct b43_wldev *dev)
-+{
-+	u8 i;
++	b43_phy_write(dev, 0x933, 0x2d6b);
++	b43_phy_write(dev, 0x934, 0x2d6b);
++	b43_phy_write(dev, 0x935, 0x2d6b);
++	b43_phy_write(dev, 0x936, 0x2d6b);
++	b43_phy_write(dev, 0x937, 0x016b);
 +
-+	b43_phy_write(dev, B43_PHY_LCN_TABLE_ADDR, (0x7 << 10) | 0x340);
-+	for (i = 0; i < 30; i++) {
-+		b43_phy_write(dev, B43_PHY_LCN_TABLE_DATAHI, 0);
-+		b43_phy_write(dev, B43_PHY_LCN_TABLE_DATALO, 0);
-+	}
-+
-+	b43_phy_write(dev, B43_PHY_LCN_TABLE_ADDR, (0x7 << 10) | 0x80);
-+	for (i = 0; i < 64; i++) {
-+		b43_phy_write(dev, B43_PHY_LCN_TABLE_DATAHI, 0);
-+		b43_phy_write(dev, B43_PHY_LCN_TABLE_DATALO, 0);
-+	}
++	b43_radio_mask(dev, 0x057, (u16) ~0xff02);
++	b43_radio_write(dev, 0x0c2, 0x006f);
 +}
 +
 +/**************************************************
-  * Basic PHY ops.
+  * Various PHY ops
   **************************************************/
  
-@@ -60,6 +104,30 @@ static void b43_phy_lcn_op_prepare_structs(struct b43_wldev *dev)
- 	memset(phy_lcn, 0, sizeof(*phy_lcn));
+@@ -125,6 +174,11 @@ static int b43_phy_lcn_op_init(struct b43_wldev *dev)
+ 
+ 	b43_phy_lcn_clear_0x07_table(dev);
+ 
++	if (dev->phy.radio_ver == 0x2064)
++		b43_radio_2064_init(dev);
++	else
++		B43_WARN_ON(1);
++
+ 	return 0;
  }
  
-+static int b43_phy_lcn_op_init(struct b43_wldev *dev)
-+{
-+	b43_phy_set(dev, 0x44a, 0x80);
-+	b43_phy_mask(dev, 0x44a, 0x7f);
-+	b43_phy_set(dev, 0x6d1, 0x80);
-+	b43_phy_write(dev, 0x6d0, 0x7);
-+
-+	b43_phy_lcn_afe_set_unset(dev);
-+
-+	b43_phy_write(dev, 0x60a, 0xa0);
-+	b43_phy_write(dev, 0x46a, 0x19);
-+	b43_phy_maskset(dev, 0x663, 0xFF00, 0x64);
-+
-+	b43_phy_lcn_tables_init(dev);
-+	/* TODO: various tables ops here */
-+	b43_phy_lcn_clean_0x18_table(dev);
-+
-+	/* TODO: some ops here */
-+
-+	b43_phy_lcn_clear_0x07_table(dev);
-+
-+	return 0;
-+}
-+
- static void b43_phy_lcn_op_software_rfkill(struct b43_wldev *dev,
- 					bool blocked)
- {
-@@ -77,7 +145,9 @@ static void b43_phy_lcn_op_software_rfkill(struct b43_wldev *dev,
- 		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL7, ~0x8);
- 		b43_phy_set(dev, B43_PHY_LCN_RF_CTL6, 0x8);
- 	} else {
--		/* TODO */
-+		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL1, ~0x1f00);
-+		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL3, ~0x808);
-+		b43_phy_mask(dev, B43_PHY_LCN_RF_CTL6, ~0x8);
- 	}
- }
- 
-@@ -116,8 +186,8 @@ const struct b43_phy_operations b43_phyops_lcn = {
- 	.allocate		= b43_phy_lcn_op_allocate,
- 	.free			= b43_phy_lcn_op_free,
- 	.prepare_structs	= b43_phy_lcn_op_prepare_structs,
--	/*
- 	.init			= b43_phy_lcn_op_init,
-+	/*
- 	.phy_read		= b43_phy_lcn_op_read,
- 	.phy_write		= b43_phy_lcn_op_write,
- 	.phy_maskset		= b43_phy_lcn_op_maskset,
 -- 
 1.7.3.4
