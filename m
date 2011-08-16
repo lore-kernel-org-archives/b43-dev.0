@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 16 Aug 2011 12:11:12 +0200
-Subject: [RFC][PATCH] b43: drop Kconfig option of forcing PIO mode
-Message-ID: <1313489472-8876-1-git-send-email-zajec5@gmail.com>
+Date: Tue, 16 Aug 2011 12:14:07 +0200
+Subject: [RFC][PATCH V2] b43: drop Kconfig option of forcing PIO mode
+Message-ID: <1313489647-8979-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,14 +14,17 @@ We have module param called use_pio which is much easier to use.
 Cc: Larry Finger <larry.finger@lwfinger.net>
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
+V2: include b43.h change
+
 Larry introduced use_pio with:
     b43: Allow PIO mode to be selected at module load
 I believe we can leave this simple module param and drop
 CONFIG_B43_FORCE_PIO instead.
 ---
  drivers/net/wireless/b43/Kconfig |   10 ----------
+ drivers/net/wireless/b43/b43.h   |    6 ------
  drivers/net/wireless/b43/main.c  |    2 +-
- 2 files changed, 1 insertions(+), 11 deletions(-)
+ 3 files changed, 1 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
 index 3c5e571..bfc1cb4 100644
@@ -41,6 +44,23 @@ index 3c5e571..bfc1cb4 100644
 -	  Say N!
 -	  This is only for debugging the PIO engine code. You do
 -	  _NOT_ want to enable this.
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 9e5974b..2597062 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -975,12 +975,6 @@ static inline bool b43_using_pio_transfers(struct b43_wldev *dev)
+ 	return dev->__using_pio_transfers;
+ }
+ 
+-#ifdef CONFIG_B43_FORCE_PIO
+-# define B43_PIO_DEFAULT 1
+-#else
+-# define B43_PIO_DEFAULT 0
+-#endif
+-
+ /* Message printing */
+ void b43info(struct b43_wl *wl, const char *fmt, ...)
+     __attribute__ ((format(printf, 2, 3)));
 diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
 index e0b1156..7c4cab0 100644
 --- a/drivers/net/wireless/b43/main.c
