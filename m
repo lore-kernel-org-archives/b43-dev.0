@@ -1,27 +1,42 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Mon, 15 Aug 2011 17:58:49 -0600
-Subject: Hosting wl driver, part of GPL package
-In-Reply-To: <CACna6ry50NY0V=OtLapFubwaYObu0okbD41eoh6dYrE9cLF8bw@mail.gmail.com>
-References: <CACna6rwvjRm+yLyz-sbQjmot8ErhfLN5E0NgtW3kbgjPy+JwLA@mail.gmail.com>
-	<CAFtRNNzb9c_PskJ+9SJKpM2VryzHthii2SsiMc4Pp8ifn6u19A@mail.gmail.com>
-	<4E497D17.3040305@lwfinger.net>
-	<1313448125.3990.47.camel@shinybook.infradead.org>
-	<CACna6ry50NY0V=OtLapFubwaYObu0okbD41eoh6dYrE9cLF8bw@mail.gmail.com>
-Message-ID: <1313452730.3990.55.camel@shinybook.infradead.org>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 16 Aug 2011 12:10:58 +0200
+Subject: [PATCH] b43: warn when forcing PIO mode
+Message-ID: <1313489458-8843-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, Nick Kossifidis <mickflemm@gmail.com>, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Tue, 2011-08-16 at 00:52 +0200, Rafa? Mi?ecki wrote:
-> Sorry, I didn't have an idea it's a space for broadcom-wls. I though
-> it's for sharing patches before John take them ;)
+We have resolved all the known issues with DMA mode, however some users
+(or distros) are still forcing PIO mode by config files. Without
+debugging enabled it's not noticable at all. Add the warning for them.
 
-If you want somewhere to share patches, that's better done as a git tree
-? I can give you an account on git.infradead.org instead. Or you can get
-an account on kernel.org for that if you prefer.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/main.c |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 1adadc8..e0b1156 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4636,8 +4636,13 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
+ 	b43_shm_write16(dev, B43_SHM_SCRATCH, B43_SHM_SC_MAXCONT, 0x3FF);
+ 
+ 	if (b43_bus_host_is_pcmcia(dev->dev) ||
+-	    b43_bus_host_is_sdio(dev->dev) ||
+-	    dev->use_pio) {
++	    b43_bus_host_is_sdio(dev->dev)) {
++		dev->__using_pio_transfers = 1;
++		err = b43_pio_init(dev);
++	} else if (dev->use_pio) {
++		b43warn(dev->wl, "Forced PIO by use_pio module paramater. "
++			"This should not be needed and will result in lower "
++			"performance.\n");
+ 		dev->__using_pio_transfers = 1;
+ 		err = b43_pio_init(dev);
+ 	} else {
 -- 
-dwmw2
+1.7.3.4
