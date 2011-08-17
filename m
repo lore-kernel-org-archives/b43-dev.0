@@ -1,51 +1,27 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 16 Aug 2011 16:47:56 -0500
-Subject: [PATCH V2] b43: warn when forcing PIO mode
-In-Reply-To: <1313523861-2526-1-git-send-email-zajec5@gmail.com>
-References: <1313523861-2526-1-git-send-email-zajec5@gmail.com>
-Message-ID: <4E4AE58C.3030008@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Wed, 17 Aug 2011 13:34:16 +0200
+Subject: Question about versions: wl vs. brcmsmac
+Message-ID: <CACna6rzdgENO-fCmm8tTVpuk_M7A88C7HgSGmTsjF3U8ZxDbYQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, Gregory Bellier <gregory.bellier@gmail.com>
+To: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, arend@broadcom.com, frankyl@broadcom.com, kanyan@broadcom.com
+Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-On 08/16/2011 02:44 PM, Rafa? Mi?ecki wrote:
-> We have resolved all the known issues with DMA mode, however some users
-> (or distros) are still forcing PIO mode by config files. Without
-> debugging enabled it's not noticable at all. Add the warning for them.
->
-> Cc: Gregory Bellier<gregory.bellier@gmail.com>
-> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+Hey Broadcom,
 
-ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
+I've compare dump from wl with dump from brcmsmac and noticed some differences.
 
+Some random ones for LCN PHY:
+1) brcmsmac doesn't touch 0x663 register in PHY init
+2) wl uses 0xfedb, brcmsmac uses 0xfe4b as some value for 0xb table
+3) brcmsmac uses 0x3 instead 0x0 for radio reg 0x38
+and so on...
 
-> ---
-> V2: typo in "parameter". I have to install spell checker for vim ;)
-> Thx Gregory.
-> ---
->   drivers/net/wireless/b43/main.c |    9 +++++++--
->   1 files changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-> index 1adadc8..e0b1156 100644
-> --- a/drivers/net/wireless/b43/main.c
-> +++ b/drivers/net/wireless/b43/main.c
-> @@ -4636,8 +4636,13 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
->   	b43_shm_write16(dev, B43_SHM_SCRATCH, B43_SHM_SC_MAXCONT, 0x3FF);
->
->   	if (b43_bus_host_is_pcmcia(dev->dev) ||
-> -	    b43_bus_host_is_sdio(dev->dev) ||
-> -	    dev->use_pio) {
-> +	    b43_bus_host_is_sdio(dev->dev)) {
-> +		dev->__using_pio_transfers = 1;
-> +		err = b43_pio_init(dev);
-> +	} else if (dev->use_pio) {
-> +		b43warn(dev->wl, "Forced PIO by use_pio module parameter. "
-> +			"This should not be needed and will result in lower "
-> +			"performance.\n");
->   		dev->__using_pio_transfers = 1;
->   		err = b43_pio_init(dev);
->   	} else {
+My question is, which driver includes newer (more correct I hope) code?
+
+I'm comparing brcmsmac from git with wl 5.100.82.38.
+
+-- 
+Rafa?
