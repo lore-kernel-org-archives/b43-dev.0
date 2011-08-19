@@ -1,50 +1,64 @@
-From: Stuart Longland <redhatter@gentoo.org>
-Date: Fri, 19 Aug 2011 12:12:06 +1000
-Subject: bcm4312
-In-Reply-To: <CACeRjpz1xPoVZgBM7qbt2yWeVg_UNsdeQjG70On=bZrCzr5aRw@mail.gmail.com>
-References: <CACeRjpz1xPoVZgBM7qbt2yWeVg_UNsdeQjG70On=bZrCzr5aRw@mail.gmail.com>
-Message-ID: <4E4DC676.6070502@gentoo.org>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Fri, 19 Aug 2011 22:14:47 +0200
+Subject: [PATCH 3.1] bcma: add uevent to the bus, to autoload drivers
+Message-ID: <1313784887-29860-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, David Woodhouse <David.Woodhouse@intel.com>
 
-On 08/19/11 11:26, bendney wrote:
-> hello .im installing gentoo ,but the bcm4312 drivers can't work, i m a
-> newbie, i follow the documentation         
-> 
-> emerge ...firmware    ...fwcutter         emerge ...sta  (wl)
->  but there has another guide  say  dont  use  firmware   fwcutter , just
-> use sta   what the relationship above ?     how can i do ?
+From: David Woodhouse <David.Woodhouse@intel.com>
 
-Okay, understood you're a "newbie", but I'm afraid I lost my crystal
-ball back in the Brisbane floods.  I can certainly attest that the
-drivers do work.
+Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
+Acked-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+David: thanks for your help.
 
-The 'sta' driver IIRC is Broadcom's proprietary driver.  Nothing we can
-do to help you with that.  (<rant>Ohh why can't Broadcom just join in
-with b43 instead of going the lone ranger approach?</rant>)
+John: I believe (and David agrees) this should go as fix for 3.1.
+Having (for example) b43 auto-loaded and interface created it a really
+good tip for a user.
+---
+ drivers/bcma/main.c |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
 
-What we'll need to know:
-- What kernel version are you using?  (`uname -r`, or at the very least
-the ebuild you used.  Have a squiz at /var/db/pkg/sys-kernel and see
-what directories are present.)
-- What Broadcom chip you are using (`lspci -nn`)
-- What version of firmware you used?
-
-I found that kernel 3.0 worked best for me with the 802.11N "Airport" in
-my 2008-model MacBook using the bleeding edge (not-yet-in-kernel)
-fwcutter and firmware.  See:
-
-http://thread.gmane.org/gmane.linux.drivers.bcm54xx.devel/12038/focus=12141
-
-Regards,
+diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
+index 873e2e4..73b7b1a 100644
+--- a/drivers/bcma/main.c
++++ b/drivers/bcma/main.c
+@@ -15,6 +15,7 @@ MODULE_LICENSE("GPL");
+ static int bcma_bus_match(struct device *dev, struct device_driver *drv);
+ static int bcma_device_probe(struct device *dev);
+ static int bcma_device_remove(struct device *dev);
++static int bcma_device_uevent(struct device *dev, struct kobj_uevent_env *env);
+ 
+ static ssize_t manuf_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+@@ -49,6 +50,7 @@ static struct bus_type bcma_bus_type = {
+ 	.match		= bcma_bus_match,
+ 	.probe		= bcma_device_probe,
+ 	.remove		= bcma_device_remove,
++	.uevent		= bcma_device_uevent,
+ 	.dev_attrs	= bcma_device_attrs,
+ };
+ 
+@@ -227,6 +229,16 @@ static int bcma_device_remove(struct device *dev)
+ 	return 0;
+ }
+ 
++static int bcma_device_uevent(struct device *dev, struct kobj_uevent_env *env)
++{
++	struct bcma_device *core = container_of(dev, struct bcma_device, dev);
++
++	return add_uevent_var(env,
++			      "MODALIAS=bcma:m%04Xid%04Xrev%02Xcl%02X",
++			      core->id.manuf, core->id.id,
++			      core->id.rev, core->id.class);
++}
++
+ static int __init bcma_modinit(void)
+ {
+ 	int err;
 -- 
-Stuart Longland (aka Redhatter, VK4MSL)      .'''.
-Gentoo Linux/MIPS Cobalt and Docs Developer  '.'` :
-. . . . . . . . . . . . . . . . . . . . . .   .'.'
-http://dev.gentoo.org/~redhatter             :.'
-
-I haven't lost my mind...
-  ...it's backed up on a tape somewhere.
+1.7.1
