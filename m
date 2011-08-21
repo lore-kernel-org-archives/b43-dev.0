@@ -1,38 +1,101 @@
 From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 21 Aug 2011 13:45:48 +0200
-Subject: [[PATCH V3] b43-fwcutter: Add 5 new drivers to cut list
-In-Reply-To: <4e508757.pJnRosCnB3soGLZC%Larry.Finger@lwfinger.net>
-References: <4e508757.pJnRosCnB3soGLZC%Larry.Finger@lwfinger.net>
-Message-ID: <20110821134548.5d3ba650@milhouse>
+Date: Sun, 21 Aug 2011 17:24:47 +0200
+Subject: [PATCH] b43/legacy: Remove firmware IDs
+Message-ID: <20110821172447.4d8725da@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Sat, 20 Aug 2011 23:19:35 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+This removes the "FWxx" ID strings from the b43 and b43legacy
+drivers. They were once used to match a specific driver revision
+to a set of firmware files. However, this is hardly useful today.
+Additionally, the IDs are not updated and maintained properly, so
+they might mislead users.
 
-> The following changes are made to fwcutter:
-> 
-> 1. The two drivers whose donload is greater than 300 MB are eliminated.
-> 2. Five new sources now posted at www.lwfinger.com are added.
-> 3. The version is upgraded from 14 to 15.
-> 
-> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-> ---
-> 
-> V2 - The FWxx entity is now sequential.
-> V3 - Fix compilation error - patch was not refreshed.
+Signed-off-by: Michael Buesch <m@bues.ch>
 
-Ok, thanks. I'll apply that.
-However, I thought about all that and I think I will
-remove the firmware-id. It's not really useful today anymore,
-due to the vast amount of different firmware types that could
-even be installed in parallel to work on different PHYs.
-The ID was supposed to match a particular driver version to its
-correct set of firmware files. However, the driver side ID doesn't
-seem to be updated and maintained anymore, so I'll just remove it.
+---
+
+This is stuff for -next.
+
+Index: wireless-testing/drivers/net/wireless/b43/b43.h
+===================================================================
+--- wireless-testing.orig/drivers/net/wireless/b43/b43.h	2011-08-21 14:11:32.230841828 +0200
++++ wireless-testing/drivers/net/wireless/b43/b43.h	2011-08-21 14:12:03.778998292 +0200
+@@ -17,11 +17,6 @@
+ #include "phy_common.h"
+ 
+ 
+-/* The unique identifier of the firmware that's officially supported by
+- * this driver version. */
+-#define B43_SUPPORTED_FIRMWARE_ID	"FW13"
+-
+-
+ #ifdef CONFIG_B43_DEBUG
+ # define B43_DEBUG	1
+ #else
+Index: wireless-testing/drivers/net/wireless/b43/main.c
+===================================================================
+--- wireless-testing.orig/drivers/net/wireless/b43/main.c	2011-08-21 14:12:08.859023457 +0200
++++ wireless-testing/drivers/net/wireless/b43/main.c	2011-08-21 14:13:27.587413841 +0200
+@@ -66,7 +66,6 @@
+ MODULE_AUTHOR("G?bor Stefanik");
+ MODULE_LICENSE("GPL");
+ 
+-MODULE_FIRMWARE(B43_SUPPORTED_FIRMWARE_ID);
+ MODULE_FIRMWARE("b43/ucode11.fw");
+ MODULE_FIRMWARE("b43/ucode13.fw");
+ MODULE_FIRMWARE("b43/ucode14.fw");
+@@ -5416,8 +5415,7 @@
+ 	feat_sdio = "S";
+ #endif
+ 	printk(KERN_INFO "Broadcom 43xx driver loaded "
+-	       "[ Features: %s%s%s%s%s, Firmware-ID: "
+-	       B43_SUPPORTED_FIRMWARE_ID " ]\n",
++	       "[ Features: %s%s%s%s%s ]\n",
+ 	       feat_pci, feat_pcmcia, feat_nphy,
+ 	       feat_leds, feat_sdio);
+ }
+Index: wireless-testing/drivers/net/wireless/b43legacy/b43legacy.h
+===================================================================
+--- wireless-testing.orig/drivers/net/wireless/b43legacy/b43legacy.h	2011-08-21 14:14:36.575755946 +0200
++++ wireless-testing/drivers/net/wireless/b43legacy/b43legacy.h	2011-08-21 14:14:44.627795873 +0200
+@@ -22,10 +22,6 @@
+ #include "phy.h"
+ 
+ 
+-/* The unique identifier of the firmware that's officially supported by this
+- * driver version. */
+-#define B43legacy_SUPPORTED_FIRMWARE_ID	"FW10"
+-
+ #define B43legacy_IRQWAIT_MAX_RETRIES	20
+ 
+ /* MMIO offsets */
+Index: wireless-testing/drivers/net/wireless/b43legacy/main.c
+===================================================================
+--- wireless-testing.orig/drivers/net/wireless/b43legacy/main.c	2011-08-21 14:14:47.879811994 +0200
++++ wireless-testing/drivers/net/wireless/b43legacy/main.c	2011-08-21 14:15:27.028006541 +0200
+@@ -60,7 +60,6 @@
+ MODULE_AUTHOR("Michael Buesch");
+ MODULE_LICENSE("GPL");
+ 
+-MODULE_FIRMWARE(B43legacy_SUPPORTED_FIRMWARE_ID);
+ MODULE_FIRMWARE("b43legacy/ucode2.fw");
+ MODULE_FIRMWARE("b43legacy/ucode4.fw");
+ 
+@@ -3947,8 +3946,7 @@
+ 	feat_dma = "D";
+ #endif
+ 	printk(KERN_INFO "Broadcom 43xx-legacy driver loaded "
+-	       "[ Features: %s%s%s%s, Firmware-ID: "
+-	       B43legacy_SUPPORTED_FIRMWARE_ID " ]\n",
++	       "[ Features: %s%s%s%s ]\n",
+ 	       feat_pci, feat_leds, feat_pio, feat_dma);
+ }
+ 
+
 
 -- 
 Greetings, Michael.
