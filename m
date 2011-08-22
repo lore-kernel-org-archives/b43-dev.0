@@ -1,41 +1,33 @@
-From: Maxime Vincent <maxime.vince@gmail.com>
-Date: Mon, 22 Aug 2011 13:16:32 +0200
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Mon, 22 Aug 2011 15:33:22 +0100
 Subject: [QUESTION] 4331 support
-Message-ID: <CACBz148HiqaUWqxNOddxhTH5qYUKTg6Gk6gk7W2Mb_t7jRX=nQ@mail.gmail.com>
+In-Reply-To: <CACBz148HiqaUWqxNOddxhTH5qYUKTg6Gk6gk7W2Mb_t7jRX=nQ@mail.gmail.com>
+References: <CACBz148HiqaUWqxNOddxhTH5qYUKTg6Gk6gk7W2Mb_t7jRX=nQ@mail.gmail.com>
+Message-ID: <1314023603.21805.75.camel@shinybook.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Dear b43-list,
+On Mon, 2011-08-22 at 13:16 +0200, Maxime Vincent wrote:
+> I was wondering what the status of support for the 4331 wifi chipset was?
+> As I can see there's already quite some code for the 4331 chipset, but I
+> can't really make up from that if it's supposed to work or not, or maybe
+> partially?
 
-I'm sorry if this is a noobish question, or asking this kind of questions is
-not done.
-I'm not really familiar with dev mailing lists.
-I'm new to kernel development, not new to linux.
+It is working well here, and has been for the last week or two.
 
-I was wondering what the status of support for the 4331 wifi chipset was?
-As I can see there's already quite some code for the 4331 chipset, but I
-can't really make up from that if it's supposed to work or not, or maybe
-partially?
+I'm not sure if all the patches are pushed upstream into the
+wireless-testing tree yet. Hopefully Rafa? will publish everything in a
+git tree.
 
-I have compiled latest linux-next kernel including the b43 driver, extracted
-firmware, but I can't seem to see an interface registering.
-Only thing I can see in dmesg:
-Broadcom 43xx driver loaded [ Features: PMNLS, Firmware-ID:  FW13 ]
-
-Whereafter I expect it to load the firmware from /lib/firmware, but it
-doesn't...
-
-I'm running Arch Linux, with latest linux-next git kernel on a recent
-Macbook Pro 8,1
-
-I'm willing to help with anything that can help the development of this
-driver.
-Many thanks for any info you can provide me with!
-
-Maxime Vincent
+-- 
+dwmw2
 -------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110822/58e84c5d/attachment.html>
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 5818 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110822/4fb8f320/attachment.bin>
