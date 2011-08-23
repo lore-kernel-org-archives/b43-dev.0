@@ -1,34 +1,90 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Tue, 23 Aug 2011 17:52:38 +0100
-Subject: [PATCH] b43: HT-PHY: init: add missing small-tables writes
-In-Reply-To: <20110823134932.GB9770@tuxdriver.com>
-References: <1313250844-4526-1-git-send-email-zajec5@gmail.com>
-	<CACna6rwoyPuwnzcw4BR5dmOiX9ogsTbquaG6qwRMZtLZytNnoA@mail.gmail.com>
-	<20110823134932.GB9770@tuxdriver.com>
-Message-ID: <1314118360.21805.126.camel@shinybook.infradead.org>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 23 Aug 2011 19:09:30 +0200
+Subject: [PATCH] b43: HT-PHY: allow writing longer tables with a single call
+Message-ID: <1314119370-22869-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Tue, 2011-08-23 at 09:49 -0400, John W. Linville wrote:
-> Please, _please_, _PLEASE_ stop doing this.  I process a lot of
-> patches, and sometimes I will miss these directives.
+Sometimes we need to write table which is 2-10 elements long. It's
+easier to create such a function instead of defining array every time.
 
-Best just to publish a git tree which John can pull in to
-wireless-testing.git, much as trees get pulled to linux-next.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/tables_phy_ht.c |   45 ++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/tables_phy_ht.h |    1 +
+ 2 files changed, 46 insertions(+), 0 deletions(-)
 
-That way it'll *always* have the patches you want, in the order you
-want.
-
+diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
+index 2127bd2..677d217 100644
+--- a/drivers/net/wireless/b43/tables_phy_ht.c
++++ b/drivers/net/wireless/b43/tables_phy_ht.c
+@@ -710,6 +710,51 @@ void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value)
+ 	return;
+ }
+ 
++void b43_httab_write_few(struct b43_wldev *dev, u32 offset, size_t num, ...)
++{
++	va_list args;
++	u32 type, value;
++	unsigned int i;
++
++	type = offset & B43_HTTAB_TYPEMASK;
++	offset &= 0xFFFF;
++
++	va_start(args, num);
++	switch (type) {
++	case B43_HTTAB_8BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		for (i = 0; i < num; i++) {
++			value = va_arg(args, int);
++			B43_WARN_ON(value & ~0xFF);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++		}
++		break;
++	case B43_HTTAB_16BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		for (i = 0; i < num; i++) {
++			value = va_arg(args, int);
++			B43_WARN_ON(value & ~0xFFFF);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
++		}
++		break;
++	case B43_HTTAB_32BIT:
++		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
++		for (i = 0; i < num; i++) {
++			value = va_arg(args, int);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI,
++				      value >> 16);
++			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO,
++				      value & 0xFFFF);
++		}
++		break;
++	default:
++		B43_WARN_ON(1);
++	}
++	va_end(args);
++
++	return;
++}
++
+ void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
+ 			  unsigned int nr_elements, const void *_data)
+ {
+diff --git a/drivers/net/wireless/b43/tables_phy_ht.h b/drivers/net/wireless/b43/tables_phy_ht.h
+index bd20e9a..1b5ef2b 100644
+--- a/drivers/net/wireless/b43/tables_phy_ht.h
++++ b/drivers/net/wireless/b43/tables_phy_ht.h
+@@ -14,6 +14,7 @@ u32 b43_httab_read(struct b43_wldev *dev, u32 offset);
+ void b43_httab_read_bulk(struct b43_wldev *dev, u32 offset,
+ 			 unsigned int nr_elements, void *_data);
+ void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value);
++void b43_httab_write_few(struct b43_wldev *dev, u32 offset, size_t num, ...);
+ void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
+ 			  unsigned int nr_elements, const void *_data);
+ 
 -- 
-dwmw2
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: smime.p7s
-Type: application/x-pkcs7-signature
-Size: 5818 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110823/2f749092/attachment.bin>
+1.7.3.4
