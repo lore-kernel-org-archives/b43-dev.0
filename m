@@ -1,8 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 24 Aug 2011 11:52:34 +0200
-Subject: [PATCH 1/2] b43: HT-PHY: use separated function for forcing RF
-	sequence
-Message-ID: <1314179555-8188-1-git-send-email-zajec5@gmail.com>
+Date: Wed, 24 Aug 2011 11:52:35 +0200
+Subject: [PATCH 2/2] b43: HT-PHY: read clip state
+In-Reply-To: <1314179555-8188-1-git-send-email-zajec5@gmail.com>
+References: <1314179555-8188-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1314179555-8188-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,94 +11,65 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Comparison of the HT and N code has shown similarities in the ops
-performed after b43_mac_phy_clock_set. That way we understood what is
-happening in the HT-PHY code.
+We don't know yet when to restore it, implement just reading. We found
+out what for are that PHY ops by comparing HT with N code.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_ht.c |   32 +++++++++++++++++++++++---------
- drivers/net/wireless/b43/phy_ht.h |   11 +++++++++++
- 2 files changed, 34 insertions(+), 9 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c |   11 ++++++++++-
+ drivers/net/wireless/b43/phy_ht.h |    4 ++++
+ 2 files changed, 14 insertions(+), 1 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 62a9084..c0e436c 100644
+index c0e436c..4d6345e 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -191,6 +191,27 @@ static void b43_phy_ht_afe_unk1(struct b43_wldev *dev)
- 	}
+@@ -212,6 +212,13 @@ static void b43_phy_ht_force_rf_sequence(struct b43_wldev *dev, u16 rf_seq)
+ 	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
  }
  
-+static void b43_phy_ht_force_rf_sequence(struct b43_wldev *dev, u16 rf_seq)
++static void b43_phy_ht_read_clip_detection(struct b43_wldev *dev, u16 *clip_st)
 +{
-+	u8 i;
-+
-+	u16 save_seq_mode = b43_phy_read(dev, B43_PHY_HT_RF_SEQ_MODE);
-+	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_MODE, 0x3);
-+
-+	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_TRIG, rf_seq);
-+	for (i = 0; i < 200; i++) {
-+		if (!(b43_phy_read(dev, B43_PHY_HT_RF_SEQ_STATUS) & rf_seq)) {
-+			i = 0;
-+			break;
-+		}
-+		msleep(1);
-+	}
-+	if (i)
-+		b43err(dev->wl, "Forcing RF sequence timeout\n");
-+
-+	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
++	clip_st[0] = b43_phy_read(dev, B43_PHY_HT_C1_CLIP1THRES);
++	clip_st[1] = b43_phy_read(dev, B43_PHY_HT_C2_CLIP1THRES);
++	clip_st[2] = b43_phy_read(dev, B43_PHY_HT_C3_CLIP1THRES);
 +}
 +
  static void b43_phy_ht_bphy_init(struct b43_wldev *dev)
  {
  	unsigned int i;
-@@ -313,7 +334,6 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
- 
+@@ -335,6 +342,7 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
  static int b43_phy_ht_op_init(struct b43_wldev *dev)
  {
--	u8 i;
  	u16 tmp;
++	u16 clip_state[3];
  
  	b43_phy_ht_tables_init(dev);
-@@ -418,14 +438,8 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
  
- 	b43_mac_phy_clock_set(dev, true);
- 
--	for (i = 0; i < 2; i++) {
--		tmp = b43_phy_read(dev, B43_PHY_EXTG(0));
--		b43_phy_set(dev, B43_PHY_EXTG(0), 0x3);
--		b43_phy_set(dev, B43_PHY_EXTG(3), i ? 0x20 : 0x1);
--		/* FIXME: wait for some bit to be cleared (find out which) */
--		b43_phy_read(dev, B43_PHY_EXTG(4));
--		b43_phy_write(dev, B43_PHY_EXTG(0), tmp);
--	}
-+	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RX2TX);
-+	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RST2RX);
+@@ -443,7 +451,8 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
  
  	/* TODO: PHY op on reg 0xb0 */
  
+-	/* TODO: PHY ops on regs 0x40e, 0x44e, 0x48e */
++	/* TODO: Should we restore it? Or store it in global PHY info? */
++	b43_phy_ht_read_clip_detection(dev, clip_state);
+ 
+ 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
+ 		b43_phy_ht_bphy_init(dev);
 diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
-index f70af0c..0661ae2 100644
+index 0661ae2..6544c42 100644
 --- a/drivers/net/wireless/b43/phy_ht.h
 +++ b/drivers/net/wireless/b43/phy_ht.h
-@@ -19,6 +19,17 @@
+@@ -19,6 +19,10 @@
  #define B43_PHY_HT_BW5				0x1D2
  #define B43_PHY_HT_BW6				0x1D3
  
-+#define B43_PHY_HT_RF_SEQ_MODE			B43_PHY_EXTG(0x000)
-+#define B43_PHY_HT_RF_SEQ_TRIG			B43_PHY_EXTG(0x003)
-+#define  B43_PHY_HT_RF_SEQ_TRIG_RX2TX		0x0001 /* RX2TX */
-+#define  B43_PHY_HT_RF_SEQ_TRIG_TX2RX		0x0002 /* TX2RX */
-+#define  B43_PHY_HT_RF_SEQ_TRIG_UPGH		0x0004 /* Update gain H */
-+#define  B43_PHY_HT_RF_SEQ_TRIG_UPGL		0x0008 /* Update gain L */
-+#define  B43_PHY_HT_RF_SEQ_TRIG_UPGU		0x0010 /* Update gain U */
-+#define  B43_PHY_HT_RF_SEQ_TRIG_RST2RX		0x0020 /* Reset to RX */
-+#define B43_PHY_HT_RF_SEQ_STATUS		B43_PHY_EXTG(0x004)
-+/* Values for the status are the same as for the trigger */
++#define B43_PHY_HT_C1_CLIP1THRES		B43_PHY_OFDM(0x00E)
++#define B43_PHY_HT_C2_CLIP1THRES		B43_PHY_OFDM(0x04E)
++#define B43_PHY_HT_C3_CLIP1THRES		B43_PHY_OFDM(0x08E)
 +
- #define B43_PHY_HT_RF_CTL1			B43_PHY_EXTG(0x010)
- 
- #define B43_PHY_HT_AFE_CTL1			B43_PHY_EXTG(0x110)
+ #define B43_PHY_HT_RF_SEQ_MODE			B43_PHY_EXTG(0x000)
+ #define B43_PHY_HT_RF_SEQ_TRIG			B43_PHY_EXTG(0x003)
+ #define  B43_PHY_HT_RF_SEQ_TRIG_RX2TX		0x0001 /* RX2TX */
 -- 
 1.7.3.4
