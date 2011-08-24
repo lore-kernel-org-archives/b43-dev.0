@@ -1,95 +1,103 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 23 Aug 2011 12:10:17 -0500
-Subject: [PATCH] b43: HT-PHY: allow writing longer tables with a single
-	call
-In-Reply-To: <1314119370-22869-1-git-send-email-zajec5@gmail.com>
-References: <1314119370-22869-1-git-send-email-zajec5@gmail.com>
-Message-ID: <4E53DEF9.5080203@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 24 Aug 2011 11:52:34 +0200
+Subject: [PATCH 1/2] b43: HT-PHY: use separated function for forcing RF
+	sequence
+Message-ID: <1314179555-8188-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 08/23/2011 12:09 PM, Rafa? Mi?ecki wrote:
-> Sometimes we need to write table which is 2-10 elements long. It's
-> easier to create such a function instead of defining array every time.
->
-> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+Comparison of the HT and N code has shown similarities in the ops
+performed after b43_mac_phy_clock_set. That way we understood what is
+happening in the HT-PHY code.
 
-ACK.  Larry
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_ht.c |   32 +++++++++++++++++++++++---------
+ drivers/net/wireless/b43/phy_ht.h |   11 +++++++++++
+ 2 files changed, 34 insertions(+), 9 deletions(-)
 
-> ---
->   drivers/net/wireless/b43/tables_phy_ht.c |   45 ++++++++++++++++++++++++++++++
->   drivers/net/wireless/b43/tables_phy_ht.h |    1 +
->   2 files changed, 46 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
-> index 2127bd2..677d217 100644
-> --- a/drivers/net/wireless/b43/tables_phy_ht.c
-> +++ b/drivers/net/wireless/b43/tables_phy_ht.c
-> @@ -710,6 +710,51 @@ void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value)
->   	return;
->   }
->
-> +void b43_httab_write_few(struct b43_wldev *dev, u32 offset, size_t num, ...)
-> +{
-> +	va_list args;
-> +	u32 type, value;
-> +	unsigned int i;
-> +
-> +	type = offset&  B43_HTTAB_TYPEMASK;
-> +	offset&= 0xFFFF;
-> +
-> +	va_start(args, num);
-> +	switch (type) {
-> +	case B43_HTTAB_8BIT:
-> +		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-> +		for (i = 0; i<  num; i++) {
-> +			value = va_arg(args, int);
-> +			B43_WARN_ON(value&  ~0xFF);
-> +			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
-> +		}
-> +		break;
-> +	case B43_HTTAB_16BIT:
-> +		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-> +		for (i = 0; i<  num; i++) {
-> +			value = va_arg(args, int);
-> +			B43_WARN_ON(value&  ~0xFFFF);
-> +			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, value);
-> +		}
-> +		break;
-> +	case B43_HTTAB_32BIT:
-> +		b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, offset);
-> +		for (i = 0; i<  num; i++) {
-> +			value = va_arg(args, int);
-> +			b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI,
-> +				      value>>  16);
-> +			b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO,
-> +				      value&  0xFFFF);
-> +		}
-> +		break;
-> +	default:
-> +		B43_WARN_ON(1);
-> +	}
-> +	va_end(args);
-> +
-> +	return;
-> +}
-> +
->   void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
->   			  unsigned int nr_elements, const void *_data)
->   {
-> diff --git a/drivers/net/wireless/b43/tables_phy_ht.h b/drivers/net/wireless/b43/tables_phy_ht.h
-> index bd20e9a..1b5ef2b 100644
-> --- a/drivers/net/wireless/b43/tables_phy_ht.h
-> +++ b/drivers/net/wireless/b43/tables_phy_ht.h
-> @@ -14,6 +14,7 @@ u32 b43_httab_read(struct b43_wldev *dev, u32 offset);
->   void b43_httab_read_bulk(struct b43_wldev *dev, u32 offset,
->   			 unsigned int nr_elements, void *_data);
->   void b43_httab_write(struct b43_wldev *dev, u32 offset, u32 value);
-> +void b43_httab_write_few(struct b43_wldev *dev, u32 offset, size_t num, ...);
->   void b43_httab_write_bulk(struct b43_wldev *dev, u32 offset,
->   			  unsigned int nr_elements, const void *_data);
->
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 62a9084..c0e436c 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -191,6 +191,27 @@ static void b43_phy_ht_afe_unk1(struct b43_wldev *dev)
+ 	}
+ }
+ 
++static void b43_phy_ht_force_rf_sequence(struct b43_wldev *dev, u16 rf_seq)
++{
++	u8 i;
++
++	u16 save_seq_mode = b43_phy_read(dev, B43_PHY_HT_RF_SEQ_MODE);
++	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_MODE, 0x3);
++
++	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_TRIG, rf_seq);
++	for (i = 0; i < 200; i++) {
++		if (!(b43_phy_read(dev, B43_PHY_HT_RF_SEQ_STATUS) & rf_seq)) {
++			i = 0;
++			break;
++		}
++		msleep(1);
++	}
++	if (i)
++		b43err(dev->wl, "Forcing RF sequence timeout\n");
++
++	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
++}
++
+ static void b43_phy_ht_bphy_init(struct b43_wldev *dev)
+ {
+ 	unsigned int i;
+@@ -313,7 +334,6 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
+ 
+ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ {
+-	u8 i;
+ 	u16 tmp;
+ 
+ 	b43_phy_ht_tables_init(dev);
+@@ -418,14 +438,8 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 
+ 	b43_mac_phy_clock_set(dev, true);
+ 
+-	for (i = 0; i < 2; i++) {
+-		tmp = b43_phy_read(dev, B43_PHY_EXTG(0));
+-		b43_phy_set(dev, B43_PHY_EXTG(0), 0x3);
+-		b43_phy_set(dev, B43_PHY_EXTG(3), i ? 0x20 : 0x1);
+-		/* FIXME: wait for some bit to be cleared (find out which) */
+-		b43_phy_read(dev, B43_PHY_EXTG(4));
+-		b43_phy_write(dev, B43_PHY_EXTG(0), tmp);
+-	}
++	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RX2TX);
++	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RST2RX);
+ 
+ 	/* TODO: PHY op on reg 0xb0 */
+ 
+diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
+index f70af0c..0661ae2 100644
+--- a/drivers/net/wireless/b43/phy_ht.h
++++ b/drivers/net/wireless/b43/phy_ht.h
+@@ -19,6 +19,17 @@
+ #define B43_PHY_HT_BW5				0x1D2
+ #define B43_PHY_HT_BW6				0x1D3
+ 
++#define B43_PHY_HT_RF_SEQ_MODE			B43_PHY_EXTG(0x000)
++#define B43_PHY_HT_RF_SEQ_TRIG			B43_PHY_EXTG(0x003)
++#define  B43_PHY_HT_RF_SEQ_TRIG_RX2TX		0x0001 /* RX2TX */
++#define  B43_PHY_HT_RF_SEQ_TRIG_TX2RX		0x0002 /* TX2RX */
++#define  B43_PHY_HT_RF_SEQ_TRIG_UPGH		0x0004 /* Update gain H */
++#define  B43_PHY_HT_RF_SEQ_TRIG_UPGL		0x0008 /* Update gain L */
++#define  B43_PHY_HT_RF_SEQ_TRIG_UPGU		0x0010 /* Update gain U */
++#define  B43_PHY_HT_RF_SEQ_TRIG_RST2RX		0x0020 /* Reset to RX */
++#define B43_PHY_HT_RF_SEQ_STATUS		B43_PHY_EXTG(0x004)
++/* Values for the status are the same as for the trigger */
++
+ #define B43_PHY_HT_RF_CTL1			B43_PHY_EXTG(0x010)
+ 
+ #define B43_PHY_HT_AFE_CTL1			B43_PHY_EXTG(0x110)
+-- 
+1.7.3.4
