@@ -1,40 +1,36 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Wed, 24 Aug 2011 21:53:09 +0200
-Subject: [RFC/RFT] b43: Relax requirement for descriptors to be in the
-	DMA zone
-In-Reply-To: <4e5553a8.vSmpTZc2Cr8jeze3%Larry.Finger@lwfinger.net>
-References: <4e5553a8.vSmpTZc2Cr8jeze3%Larry.Finger@lwfinger.net>
-Message-ID: <20110824215309.2f2cbb73@milhouse>
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Wed, 24 Aug 2011 20:57:01 +0100
+Subject: [PATCH] b43: HT-PHY: init: add missing small-tables writes
+In-Reply-To: <87pqjuofq3.fsf@purkki.adurom.net>
+References: <1313250844-4526-1-git-send-email-zajec5@gmail.com>
+	<CACna6rwoyPuwnzcw4BR5dmOiX9ogsTbquaG6qwRMZtLZytNnoA@mail.gmail.com>
+	<20110823134932.GB9770@tuxdriver.com>
+	<1314118360.21805.126.camel@shinybook.infradead.org>
+	<87pqjuofq3.fsf@purkki.adurom.net>
+Message-ID: <1314215822.21805.141.camel@shinybook.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: zajec5@gmail.com, Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: Kalle Valo <kvalo@adurom.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Wed, 24 Aug 2011 14:40:24 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+On Wed, 2011-08-24 at 20:56 +0300, Kalle Valo wrote:
+> That's true, but setting up git tree for wireless is not trivial and
+> not for the faint of heart. Especially due to differences between
+> wireless-next and wireless-testing. Sending a patch series is a lot
+> easier and causes less tears. 
 
-> @Rafal - Incorporate this in your other patch.
-
-I would rather like to have this as a separate patch and have
-Rafal's other patch apply on _top_ of this.
-
-> @@ -903,7 +896,7 @@ struct b43_dmaring *b43_setup_dmaring(st
->  			kfree(ring->txhdr_cache);
->  			ring->txhdr_cache = kcalloc(ring->nr_slots / TX_SLOTS_PER_FRAME,
->  						    b43_txhdr_size(dev),
-> -						    GFP_KERNEL | GFP_DMA);
-> +						    GFP_KERNEL);
->  			if (!ring->txhdr_cache)
->  				goto err_kfree_meta;
->  
-> 
-
-Why are you removing this? Seems wrong to me.
-This seems to be part of the bounce-buffer mechanism, that we _do_ still need
-for legacy 30bit devices.
-
+Most of the time it wouldn't need to be based on wireless-testing. It
+could just be based on Linus's last release. If wireless-next is
+actually a real stable git tree, it could perhaps be based on that too.
 
 -- 
-Greetings, Michael.
+dwmw2
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 5818 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110824/655c74a8/attachment.bin>
