@@ -1,49 +1,43 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 26 Aug 2011 12:01:34 -0500
-Subject: 4331 support
-In-Reply-To: <1838685278-1314375210-cardhu_decombobulator_blackberry.rim.net-399296528-@b15.c18.bise7.blackberry>
-References: <1838685278-1314375210-cardhu_decombobulator_blackberry.rim.net-399296528-@b15.c18.bise7.blackberry>
-Message-ID: <4E57D16E.7070006@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Fri, 26 Aug 2011 20:41:18 +0200
+Subject: [wireless-next][PATCH 0/3][ANNOUNCE] b43 the first Linux driver
+	supporting HT-PHY (BCM4331)!
+Message-ID: <1314384081-3460-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, Maxime Vincent <maxime.vince@gmail.com>, Darren <dmbtech@gmail.com>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 08/26/2011 11:13 AM, james at jamesanslow.net wrote:
-> Thanks for the heads-up larry. Can you direct me towards where that's hosted?
->
->
-> ------Original Message------
-> From: Larry Finger
-> Sender: Larry Finger
-> To: James Anslow
-> Cc: b43-dev at lists.infradead.org
-> Subject: Re: 4331 support
-> Sent: 26 Aug 2011 16:57
->
-> On 08/26/2011 10:38 AM, James Anslow wrote:
->> I am using 2.6.38-11 if you mean linux kernel source.
->
-> Yes, I mean the kernel source.
->
-> If you want to use the 4331, you will need the very latest kernel source from
-> the wireless-testing git tree.
->
->
-> A. Because it messes up the way people read things.
-> Q. Why is top posting bad?
+After improving DMA (the important patch for BCM4331 is my one) we can finally
+enable support for HT-PHY. The whole code has been written from MMIO dumps
+grabbed from ndiswrapper+windows driver, but seems to be stable and was tested
+by 3 people. Unfortunately there are still some missing conditions that can't
+be fixed without RE the closed driver or having Broadcom co-operating. However
+it seems we live with that well enough for basic usage :)
 
-You need to install git and do a
+BCM4331 doesn't have any Linux driver yet, both: wl and brcm80211 don't support
+it. So we can be really proud of it ;) Ah, and I should mention that ndiswrapper
+was frequently reported to lock up machines when working with this card (see
+Ubuntu's forum about MacBook 8.1).
 
-git clone 
-git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
+To use b43 with BCM4331 you will need to grab the newest b43-fwcutter and
+extract firmware from some recent closed source driver. See our wiki page in
+few hours for nice howto.
 
-The source will be in wireless-testing directory. To get future updates, cd to 
-that directory and 'git pull'.
+Big thanks go to David Woodhouse for providing me access to his MacBook, letting
+grab the dumps, test patches and debugging a lot of hard cases with me (and
+sometime without ;) ).
 
-Obviously, my subtle A./Q. quote was not sufficient. Top posting in most mailing 
-lists is discouraged. Look at where your question is in the flow of this 
-posting. How is one to follow the reasoning?
+Larry Finger (1):
+  b43: Relax requirement for descriptors to be in the DMA zone
 
-Larry
+Rafa? Mi?ecki (2):
+  b43: use 8K buffers for 64-bit DMA to workaround hardware bug
+  b43: make HT-PHY support experimental
+
+ drivers/net/wireless/b43/Kconfig |    6 +++---
+ drivers/net/wireless/b43/dma.c   |   31 ++++++++++++++++---------------
+ drivers/net/wireless/b43/dma.h   |    3 ++-
+ 3 files changed, 21 insertions(+), 19 deletions(-)
