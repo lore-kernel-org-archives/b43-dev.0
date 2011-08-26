@@ -1,41 +1,63 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 26 Aug 2011 21:15:37 +0200
-Subject: [Bug]No probe response from after 500ms, disconnecting.
-In-Reply-To: <1301780916.5200.31.camel@acer.lan>
-References: <1301780916.5200.31.camel@acer.lan>
-Message-ID: <CACna6rxTZg_uVTJdW8gNriezoWo9pRBm19Z1evvKASH9bg1KEg@mail.gmail.com>
+From: James Anslow <james@jamesanslow.net>
+Date: Fri, 26 Aug 2011 20:56:59 +0100
+Subject: [wireless-next][PATCH 0/3][ANNOUNCE] b43 the first Linux driver
+	supporting HT-PHY (BCM4331)!
+In-Reply-To: <1314384081-3460-1-git-send-email-zajec5@gmail.com>
+References: <1314384081-3460-1-git-send-email-zajec5@gmail.com>
+Message-ID: <4E57FA8B.1000608@jamesanslow.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/4/2 Szymon Zygmunt <szymon.zygmunt@gmail.com>:
-> 1. A description of the problem at hand:
-> Last time I changed my wireless card and I have problems with wireless
-> link when I copy large files over lan. Link is broken after some part of
-> file (eg. 50 - 200 MB) and I have to reload my b43 driver (modprobe -r
-> b43, modprobe b43). After that connection work again for a while and
-> situation is repeated.
+On 26/08/11 19:41, Rafa? Mi?ecki wrote:
+> After improving DMA (the important patch for BCM4331 is my one) we can finally
+> enable support for HT-PHY. The whole code has been written from MMIO dumps
+> grabbed from ndiswrapper+windows driver, but seems to be stable and was tested
+> by 3 people. Unfortunately there are still some missing conditions that can't
+> be fixed without RE the closed driver or having Broadcom co-operating. However
+> it seems we live with that well enough for basic usage :)
 >
-> 2. When it happens:
-> Always when I copy large file from my ftp (sets on openwrt box) to my PC
-> over wifi.
+> BCM4331 doesn't have any Linux driver yet, both: wl and brcm80211 don't support
+> it. So we can be really proud of it ;) Ah, and I should mention that ndiswrapper
+> was frequently reported to lock up machines when working with this card (see
+> Ubuntu's forum about MacBook 8.1).
 >
-> 3. How to reproduce:
-> Start to operation with high transmission rates (eg. copy larg file)
+> To use b43 with BCM4331 you will need to grab the newest b43-fwcutter and
+> extract firmware from some recent closed source driver. See our wiki page in
+> few hours for nice howto.
+>
+> Big thanks go to David Woodhouse for providing me access to his MacBook, letting
+> grab the dumps, test patches and debugging a lot of hard cases with me (and
+> sometime without ;) ).
+>
+> Larry Finger (1):
+>   b43: Relax requirement for descriptors to be in the DMA zone
+>
+> Rafa? Mi?ecki (2):
+>   b43: use 8K buffers for 64-bit DMA to workaround hardware bug
+>   b43: make HT-PHY support experimental
+>
+>  drivers/net/wireless/b43/Kconfig |    6 +++---
+>  drivers/net/wireless/b43/dma.c   |   31 ++++++++++++++++---------------
+>  drivers/net/wireless/b43/dma.h   |    3 ++-
+>  3 files changed, 21 insertions(+), 19 deletions(-)
+>
+>
+> _______________________________________________
+> b43-dev mailing list
+> b43-dev at lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/b43-dev
+Massive congratulations. I can confirm that the 4331 does indeed lock up
+the MBP 8,1 with ndiswrapper so this is hugely appreciated.
 
-Szymon, this is a damn late reply and I think I understand if you've
-already switched to some other card.
+Good job.
 
-In case you're still using b43 & BCM4318: did you manage to fix this
-problem yourself?
-
-If you didn't, can you do some tests for me?
-1) Start your ftp copying, wait for connection to die, and perform "iw
-dev wlan0 scan" (replace wlan0 if you have different interface). Do
-you get any scanning results?
-2) Does switching from DMA to PIO help? (modprobe -r b43 && modprobe b43 pio=1)
-
--- 
-Rafa?
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 900 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110826/eb0a0995/attachment.sig>
