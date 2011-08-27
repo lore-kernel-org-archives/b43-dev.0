@@ -1,109 +1,119 @@
-From: James Anslow <james@jamesanslow.net>
-Date: Sat, 27 Aug 2011 14:38:33 +0100
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 27 Aug 2011 15:47:10 +0200
 Subject: [wireless-next][PATCH 0/3][ANNOUNCE] b43 the first Linux driver
 	supporting HT-PHY (BCM4331)!
-In-Reply-To: <CACna6rw-h9Hwkwgoc0BL8wK5WhSpqDHouPL4rv48Su_JWZ9Hog@mail.gmail.com>
-References: <1314384081-3460-1-git-send-email-zajec5@gmail.com>	<4E58C41B.20307@jamesanslow.net>	<CACna6rzFhf=U9gXwo1k0j5G5=OHCHEuqCoxRF1kpVaqiSf9dwQ@mail.gmail.com>	<4E58EA46.40202@jamesanslow.net>
+In-Reply-To: <4E58F359.90709@jamesanslow.net>
+References: <1314384081-3460-1-git-send-email-zajec5@gmail.com>
+	<4E58C41B.20307@jamesanslow.net>
+	<CACna6rzFhf=U9gXwo1k0j5G5=OHCHEuqCoxRF1kpVaqiSf9dwQ@mail.gmail.com>
+	<4E58EA46.40202@jamesanslow.net>
 	<CACna6rw-h9Hwkwgoc0BL8wK5WhSpqDHouPL4rv48Su_JWZ9Hog@mail.gmail.com>
-Message-ID: <4E58F359.90709@jamesanslow.net>
+	<4E58F359.90709@jamesanslow.net>
+Message-ID: <CACna6rzUhDSXHQxrkn4yw8P-VvRj6DH7Jdd15vrGi0BFxiy78A@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 27/08/11 14:22, Rafa? Mi?ecki wrote:
-> 2011/8/27 James Anslow <james@jamesanslow.net>:
->> On 27/08/11 11:22, Rafa? Mi?ecki wrote:
->>> 2011/8/27 James Anslow <james@jamesanslow.net>:
->>>> On 26/08/11 19:41, Rafa? Mi?ecki wrote:
->>>>> After improving DMA (the important patch for BCM4331 is my one) we can finally
->>>>> enable support for HT-PHY. The whole code has been written from MMIO dumps
->>>>> grabbed from ndiswrapper+windows driver, but seems to be stable and was tested
->>>>> by 3 people. Unfortunately there are still some missing conditions that can't
->>>>> be fixed without RE the closed driver or having Broadcom co-operating. However
->>>>> it seems we live with that well enough for basic usage :)
+2011/8/27 James Anslow <james@jamesanslow.net>:
+> On 27/08/11 14:22, Rafa? Mi?ecki wrote:
+>> 2011/8/27 James Anslow <james@jamesanslow.net>:
+>>> On 27/08/11 11:22, Rafa? Mi?ecki wrote:
+>>>> 2011/8/27 James Anslow <james@jamesanslow.net>:
+>>>>> On 26/08/11 19:41, Rafa? Mi?ecki wrote:
+>>>>>> After improving DMA (the important patch for BCM4331 is my one) we can finally
+>>>>>> enable support for HT-PHY. The whole code has been written from MMIO dumps
+>>>>>> grabbed from ndiswrapper+windows driver, but seems to be stable and was tested
+>>>>>> by 3 people. Unfortunately there are still some missing conditions that can't
+>>>>>> be fixed without RE the closed driver or having Broadcom co-operating. However
+>>>>>> it seems we live with that well enough for basic usage :)
+>>>>>>
+>>>>>> BCM4331 doesn't have any Linux driver yet, both: wl and brcm80211 don't support
+>>>>>> it. So we can be really proud of it ;) Ah, and I should mention that ndiswrapper
+>>>>>> was frequently reported to lock up machines when working with this card (see
+>>>>>> Ubuntu's forum about MacBook 8.1).
+>>>>>>
+>>>>>> To use b43 with BCM4331 you will need to grab the newest b43-fwcutter and
+>>>>>> extract firmware from some recent closed source driver. See our wiki page in
+>>>>>> few hours for nice howto.
+>>>>>>
+>>>>>> Big thanks go to David Woodhouse for providing me access to his MacBook, letting
+>>>>>> grab the dumps, test patches and debugging a lot of hard cases with me (and
+>>>>>> sometime without ;) ).
+>>>>>>
+>>>>>> Larry Finger (1):
+>>>>>> ? b43: Relax requirement for descriptors to be in the DMA zone
+>>>>>>
+>>>>>> Rafa? Mi?ecki (2):
+>>>>>> ? b43: use 8K buffers for 64-bit DMA to workaround hardware bug
+>>>>>> ? b43: make HT-PHY support experimental
+>>>>>>
+>>>>>> ?drivers/net/wireless/b43/Kconfig | ? ?6 +++---
+>>>>>> ?drivers/net/wireless/b43/dma.c ? | ? 31 ++++++++++++++++---------------
+>>>>>> ?drivers/net/wireless/b43/dma.h ? | ? ?3 ++-
+>>>>>> ?3 files changed, 21 insertions(+), 19 deletions(-)
+>>>>>>
+>>>>> I've checked the wiki page and downloads area but the latest version of
+>>>>> fwcutter that I could find was from several days ago.
 >>>>>
->>>>> BCM4331 doesn't have any Linux driver yet, both: wl and brcm80211 don't support
->>>>> it. So we can be really proud of it ;) Ah, and I should mention that ndiswrapper
->>>>> was frequently reported to lock up machines when working with this card (see
->>>>> Ubuntu's forum about MacBook 8.1).
+>>>>> Can anyone direct me towards the latest b43-fwcutter download as
+>>>>> mentioned above?
 >>>>>
->>>>> To use b43 with BCM4331 you will need to grab the newest b43-fwcutter and
->>>>> extract firmware from some recent closed source driver. See our wiki page in
->>>>> few hours for nice howto.
->>>>>
->>>>> Big thanks go to David Woodhouse for providing me access to his MacBook, letting
->>>>> grab the dumps, test patches and debugging a lot of hard cases with me (and
->>>>> sometime without ;) ).
->>>>>
->>>>> Larry Finger (1):
->>>>>   b43: Relax requirement for descriptors to be in the DMA zone
->>>>>
->>>>> Rafa? Mi?ecki (2):
->>>>>   b43: use 8K buffers for 64-bit DMA to workaround hardware bug
->>>>>   b43: make HT-PHY support experimental
->>>>>
->>>>>  drivers/net/wireless/b43/Kconfig |    6 +++---
->>>>>  drivers/net/wireless/b43/dma.c   |   31 ++++++++++++++++---------------
->>>>>  drivers/net/wireless/b43/dma.h   |    3 ++-
->>>>>  3 files changed, 21 insertions(+), 19 deletions(-)
->>>>>
->>>> I've checked the wiki page and downloads area but the latest version of
->>>> fwcutter that I could find was from several days ago.
+>>>>> Can't wait to get 4331 support!
+>>>> Just use the howto for kernel 3.2 (I know it's a little tricky for now
+>>>> to use 3.2, wireless-next is also OK for that howto):
+>>>> http://wireless.kernel.org/en/users/Drivers/b43#Other_distributions_not_mentioned_above
 >>>>
->>>> Can anyone direct me towards the latest b43-fwcutter download as
->>>> mentioned above?
+>>>> You have to:
+>>>> 1) Clone git repository wireless-next
+>>>> 2) Apply 3 patches from this patchset
+>>>> 3) Compile kernel with B43_PHY_HT
+>>>> 4) Install firmware (I think you already started that part)
 >>>>
->>>> Can't wait to get 4331 support!
->>> Just use the howto for kernel 3.2 (I know it's a little tricky for now
->>> to use 3.2, wireless-next is also OK for that howto):
->>> http://wireless.kernel.org/en/users/Drivers/b43#Other_distributions_not_mentioned_above
+>>>> b43-fwcutter in 015 version is alright for extracting 666.2 firmware.
+>>>>
+>>> Thanks for your support on this.
 >>>
->>> You have to:
->>> 1) Clone git repository wireless-next
->>> 2) Apply 3 patches from this patchset
->>> 3) Compile kernel with B43_PHY_HT
->>> 4) Install firmware (I think you already started that part)
+>>> I'm not too knowledgeable when it comes to kernel development. However,
+>>> I am eager to learn.
 >>>
->>> b43-fwcutter in 015 version is alright for extracting 666.2 firmware.
+>>> I've cloned the repo and have wireless-next.
 >>>
->> Thanks for your support on this.
+>>> Can you tell me where I will find these 3 patches to apply them to
+>>> wireless-next?
+>> You can find them on b43-dev ML archive. You can copy them and paste
+>> into 3 separated text files.
 >>
->> I'm not too knowledgeable when it comes to kernel development. However,
->> I am eager to learn.
+>> However to make it easier to you, I've also uploaded them to http server:
+>> http://files.zajec.net/enable-ht/0001-b43-Relax-requirement-for-descriptors-to-be-in-the-D.patch
+>> http://files.zajec.net/enable-ht/0002-b43-use-8K-buffers-for-64-bit-DMA-to-workaround-hard.patch
+>> http://files.zajec.net/enable-ht/0003-b43-make-HT-PHY-support-experimental.patch
 >>
->> I've cloned the repo and have wireless-next.
+>> Save all that 3 files on your disk and then do:
 >>
->> Can you tell me where I will find these 3 patches to apply them to
->> wireless-next?
-> You can find them on b43-dev ML archive. You can copy them and paste
-> into 3 separated text files.
+>> cd /foo/bar/wireless-next
+>> git am 0001-b43-Relax-requirement-for-descriptors-to-be-in-the-D.patch
+>> git am 0002-b43-use-8K-buffers-for-64-bit-DMA-to-workaround-hard.patch
+>> git am 0003-b43-make-HT-PHY-support-experimental.patch
+>>
+>> After that use "make menuconfig", enable BCMA, enable support for BCMA
+>> in b43 and enable HT support in b43.
+>>
+> Thanks for your help.
 >
-> However to make it easier to you, I've also uploaded them to http server:
-> http://files.zajec.net/enable-ht/0001-b43-Relax-requirement-for-descriptors-to-be-in-the-D.patch
-> http://files.zajec.net/enable-ht/0002-b43-use-8K-buffers-for-64-bit-DMA-to-workaround-hard.patch
-> http://files.zajec.net/enable-ht/0003-b43-make-HT-PHY-support-experimental.patch
->
-> Save all that 3 files on your disk and then do:
->
-> cd /foo/bar/wireless-next
-> git am 0001-b43-Relax-requirement-for-descriptors-to-be-in-the-D.patch
-> git am 0002-b43-use-8K-buffers-for-64-bit-DMA-to-workaround-hard.patch
-> git am 0003-b43-make-HT-PHY-support-experimental.patch
->
-> After that use "make menuconfig", enable BCMA, enable support for BCMA
-> in b43 and enable HT support in b43.
->
-Thanks for your help.
+> Will I find the ability to enable support for BCMA and HT support in the
+> menuconfig file or elsewhere?
 
-Will I find the ability to enable support for BCMA and HT support in the
-menuconfig file or elsewhere?
+Yes. menuconfig has great feature of searching. Just enter "/" key and
+type phase you're looking for. For example type "/BCMA" and press
+ENTER. What you want is:
+Device Drivers -> Broadcom specific AMBA -> BCMA support
+Device Drivers -> Broadcom specific AMBA -> Support for BCMA on PCI-host bus
+Device Drivers -> Network device support -> Wireless LAN -> Broadcom
+43xx wireless support -> Support for BCMA bus
+Device Drivers -> Network device support -> Wireless LAN -> Broadcom
+43xx wireless support -> Support for HT-PHY (high throughput) devices
 
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 900 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110827/347db8e0/attachment.sig>
+-- 
+Rafa?
