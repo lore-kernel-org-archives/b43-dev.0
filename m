@@ -1,53 +1,87 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Sat, 27 Aug 2011 13:22:16 +0100
-Subject: [QUESTION] 4331 support
-In-Reply-To: <87k49zkq30.fsf@purkki.adurom.net>
-References: <CACBz148HiqaUWqxNOddxhTH5qYUKTg6Gk6gk7W2Mb_t7jRX=nQ@mail.gmail.com>
-	<1314023603.21805.75.camel@shinybook.infradead.org>
-	<4E526BE6.3020504@lwfinger.net>
-	<1314024656.21805.79.camel@shinybook.infradead.org>
-	<87ty93m4zx.fsf@purkki.adurom.net>
-	<1314446955.14057.146.camel@shinybook.infradead.org>
-	<87k49zkq30.fsf@purkki.adurom.net>
-Message-ID: <1314447737.14057.154.camel@shinybook.infradead.org>
+From: James Anslow <james@jamesanslow.net>
+Date: Sat, 27 Aug 2011 13:59:50 +0100
+Subject: [wireless-next][PATCH 0/3][ANNOUNCE] b43 the first Linux driver
+	supporting HT-PHY (BCM4331)!
+In-Reply-To: <CACna6rzFhf=U9gXwo1k0j5G5=OHCHEuqCoxRF1kpVaqiSf9dwQ@mail.gmail.com>
+References: <1314384081-3460-1-git-send-email-zajec5@gmail.com>	<4E58C41B.20307@jamesanslow.net>
+	<CACna6rzFhf=U9gXwo1k0j5G5=OHCHEuqCoxRF1kpVaqiSf9dwQ@mail.gmail.com>
+Message-ID: <4E58EA46.40202@jamesanslow.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Sat, 2011-08-27 at 15:15 +0300, Kalle Valo wrote:
-> David Woodhouse <dwmw2@infradead.org> writes:
-> 
-> > On Sat, 2011-08-27 at 15:08 +0300, Kalle Valo wrote:
-> >> > It should be possible for it to be based on the latest release from
-> >> > Linus.
-> >> 
-> >> But then it would not contain all the changes in wireless-testing.
-> >
-> > That is the point, yes.
-> 
-> Then b43 would be out of sync from rest of wireless development, for
-> example everything that's happening in mac80211 etc. To me that sounds
-> bad.
+On 27/08/11 11:22, Rafa? Mi?ecki wrote:
+> 2011/8/27 James Anslow <james@jamesanslow.net>:
+>> On 26/08/11 19:41, Rafa? Mi?ecki wrote:
+>>> After improving DMA (the important patch for BCM4331 is my one) we can finally
+>>> enable support for HT-PHY. The whole code has been written from MMIO dumps
+>>> grabbed from ndiswrapper+windows driver, but seems to be stable and was tested
+>>> by 3 people. Unfortunately there are still some missing conditions that can't
+>>> be fixed without RE the closed driver or having Broadcom co-operating. However
+>>> it seems we live with that well enough for basic usage :)
+>>>
+>>> BCM4331 doesn't have any Linux driver yet, both: wl and brcm80211 don't support
+>>> it. So we can be really proud of it ;) Ah, and I should mention that ndiswrapper
+>>> was frequently reported to lock up machines when working with this card (see
+>>> Ubuntu's forum about MacBook 8.1).
+>>>
+>>> To use b43 with BCM4331 you will need to grab the newest b43-fwcutter and
+>>> extract firmware from some recent closed source driver. See our wiki page in
+>>> few hours for nice howto.
+>>>
+>>> Big thanks go to David Woodhouse for providing me access to his MacBook, letting
+>>> grab the dumps, test patches and debugging a lot of hard cases with me (and
+>>> sometime without ;) ).
+>>>
+>>> Larry Finger (1):
+>>>   b43: Relax requirement for descriptors to be in the DMA zone
+>>>
+>>> Rafa? Mi?ecki (2):
+>>>   b43: use 8K buffers for 64-bit DMA to workaround hardware bug
+>>>   b43: make HT-PHY support experimental
+>>>
+>>>  drivers/net/wireless/b43/Kconfig |    6 +++---
+>>>  drivers/net/wireless/b43/dma.c   |   31 ++++++++++++++++---------------
+>>>  drivers/net/wireless/b43/dma.h   |    3 ++-
+>>>  3 files changed, 21 insertions(+), 19 deletions(-)
+>>>
+>> I've checked the wiki page and downloads area but the latest version of
+>> fwcutter that I could find was from several days ago.
+>>
+>> Can anyone direct me towards the latest b43-fwcutter download as
+>> mentioned above?
+>>
+>> Can't wait to get 4331 support!
+> Just use the howto for kernel 3.2 (I know it's a little tricky for now
+> to use 3.2, wireless-next is also OK for that howto):
+> http://wireless.kernel.org/en/users/Drivers/b43#Other_distributions_not_mentioned_above
+>
+> You have to:
+> 1) Clone git repository wireless-next
+> 2) Apply 3 patches from this patchset
+> 3) Compile kernel with B43_PHY_HT
+> 4) Install firmware (I think you already started that part)
+>
+> b43-fwcutter in 015 version is alright for extracting 666.2 firmware.
+>
+Thanks for your support on this.
 
-No, that's fine ? it's quite normal. The generic hardware support, like
-BCM4331 and new PHY support, is much better off that way.
+I'm not too knowledgeable when it comes to kernel development. However,
+I am eager to learn.
 
-Where we are making intrusive changes to mac80211 that require changes
-to all drivers simultaneously, we can still do those in wireless-testing
-on top of the changes from the b43 tree.
+I've cloned the repo and have wireless-next.
 
-(Or if there was a proper git tree with the core mac80211 changes, a b43
-tree could also just pull from that tree. But that probably isn't
-necessary.)
+Can you tell me where I will find these 3 patches to apply them to
+wireless-next?
 
--- 
-dwmw2
+Many thanks
+
 -------------- next part --------------
 A non-text attachment was scrubbed...
-Name: smime.p7s
-Type: application/x-pkcs7-signature
-Size: 5818 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110827/fc2189a0/attachment.bin>
+Name: signature.asc
+Type: application/pgp-signature
+Size: 900 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110827/b8264c1c/attachment-0001.sig>
