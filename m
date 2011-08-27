@@ -1,119 +1,127 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 27 Aug 2011 15:47:10 +0200
-Subject: [wireless-next][PATCH 0/3][ANNOUNCE] b43 the first Linux driver
-	supporting HT-PHY (BCM4331)!
-In-Reply-To: <4E58F359.90709@jamesanslow.net>
-References: <1314384081-3460-1-git-send-email-zajec5@gmail.com>
-	<4E58C41B.20307@jamesanslow.net>
-	<CACna6rzFhf=U9gXwo1k0j5G5=OHCHEuqCoxRF1kpVaqiSf9dwQ@mail.gmail.com>
-	<4E58EA46.40202@jamesanslow.net>
-	<CACna6rw-h9Hwkwgoc0BL8wK5WhSpqDHouPL4rv48Su_JWZ9Hog@mail.gmail.com>
-	<4E58F359.90709@jamesanslow.net>
-Message-ID: <CACna6rzUhDSXHQxrkn4yw8P-VvRj6DH7Jdd15vrGi0BFxiy78A@mail.gmail.com>
+From: Octavian Voicu <octavian.voicu@gmail.com>
+Date: Sat, 27 Aug 2011 17:57:13 +0300
+Subject: BCM4321 support
+In-Reply-To: <CACna6ry4TOJXquSC29pWH81Y9Fe=FPnnSTGGy2vWNd7nDy-RLg@mail.gmail.com>
+References: <CAM0=5GvUyMeE3BdYHQZjZWB9kGxYLJfcJ4ky1BC2m81sdM-XpA@mail.gmail.com>
+	<CACna6ry4TOJXquSC29pWH81Y9Fe=FPnnSTGGy2vWNd7nDy-RLg@mail.gmail.com>
+Message-ID: <CAM0=5GvmNd7GPEhuQpHNBZK6FBarAn279tB7LbbJRDy=e4FKAQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/8/27 James Anslow <james@jamesanslow.net>:
-> On 27/08/11 14:22, Rafa? Mi?ecki wrote:
->> 2011/8/27 James Anslow <james@jamesanslow.net>:
->>> On 27/08/11 11:22, Rafa? Mi?ecki wrote:
->>>> 2011/8/27 James Anslow <james@jamesanslow.net>:
->>>>> On 26/08/11 19:41, Rafa? Mi?ecki wrote:
->>>>>> After improving DMA (the important patch for BCM4331 is my one) we can finally
->>>>>> enable support for HT-PHY. The whole code has been written from MMIO dumps
->>>>>> grabbed from ndiswrapper+windows driver, but seems to be stable and was tested
->>>>>> by 3 people. Unfortunately there are still some missing conditions that can't
->>>>>> be fixed without RE the closed driver or having Broadcom co-operating. However
->>>>>> it seems we live with that well enough for basic usage :)
->>>>>>
->>>>>> BCM4331 doesn't have any Linux driver yet, both: wl and brcm80211 don't support
->>>>>> it. So we can be really proud of it ;) Ah, and I should mention that ndiswrapper
->>>>>> was frequently reported to lock up machines when working with this card (see
->>>>>> Ubuntu's forum about MacBook 8.1).
->>>>>>
->>>>>> To use b43 with BCM4331 you will need to grab the newest b43-fwcutter and
->>>>>> extract firmware from some recent closed source driver. See our wiki page in
->>>>>> few hours for nice howto.
->>>>>>
->>>>>> Big thanks go to David Woodhouse for providing me access to his MacBook, letting
->>>>>> grab the dumps, test patches and debugging a lot of hard cases with me (and
->>>>>> sometime without ;) ).
->>>>>>
->>>>>> Larry Finger (1):
->>>>>> ? b43: Relax requirement for descriptors to be in the DMA zone
->>>>>>
->>>>>> Rafa? Mi?ecki (2):
->>>>>> ? b43: use 8K buffers for 64-bit DMA to workaround hardware bug
->>>>>> ? b43: make HT-PHY support experimental
->>>>>>
->>>>>> ?drivers/net/wireless/b43/Kconfig | ? ?6 +++---
->>>>>> ?drivers/net/wireless/b43/dma.c ? | ? 31 ++++++++++++++++---------------
->>>>>> ?drivers/net/wireless/b43/dma.h ? | ? ?3 ++-
->>>>>> ?3 files changed, 21 insertions(+), 19 deletions(-)
->>>>>>
->>>>> I've checked the wiki page and downloads area but the latest version of
->>>>> fwcutter that I could find was from several days ago.
->>>>>
->>>>> Can anyone direct me towards the latest b43-fwcutter download as
->>>>> mentioned above?
->>>>>
->>>>> Can't wait to get 4331 support!
->>>> Just use the howto for kernel 3.2 (I know it's a little tricky for now
->>>> to use 3.2, wireless-next is also OK for that howto):
->>>> http://wireless.kernel.org/en/users/Drivers/b43#Other_distributions_not_mentioned_above
->>>>
->>>> You have to:
->>>> 1) Clone git repository wireless-next
->>>> 2) Apply 3 patches from this patchset
->>>> 3) Compile kernel with B43_PHY_HT
->>>> 4) Install firmware (I think you already started that part)
->>>>
->>>> b43-fwcutter in 015 version is alright for extracting 666.2 firmware.
->>>>
->>> Thanks for your support on this.
->>>
->>> I'm not too knowledgeable when it comes to kernel development. However,
->>> I am eager to learn.
->>>
->>> I've cloned the repo and have wireless-next.
->>>
->>> Can you tell me where I will find these 3 patches to apply them to
->>> wireless-next?
->> You can find them on b43-dev ML archive. You can copy them and paste
->> into 3 separated text files.
->>
->> However to make it easier to you, I've also uploaded them to http server:
->> http://files.zajec.net/enable-ht/0001-b43-Relax-requirement-for-descriptors-to-be-in-the-D.patch
->> http://files.zajec.net/enable-ht/0002-b43-use-8K-buffers-for-64-bit-DMA-to-workaround-hard.patch
->> http://files.zajec.net/enable-ht/0003-b43-make-HT-PHY-support-experimental.patch
->>
->> Save all that 3 files on your disk and then do:
->>
->> cd /foo/bar/wireless-next
->> git am 0001-b43-Relax-requirement-for-descriptors-to-be-in-the-D.patch
->> git am 0002-b43-use-8K-buffers-for-64-bit-DMA-to-workaround-hard.patch
->> git am 0003-b43-make-HT-PHY-support-experimental.patch
->>
->> After that use "make menuconfig", enable BCMA, enable support for BCMA
->> in b43 and enable HT support in b43.
->>
-> Thanks for your help.
+2011/8/24 Rafa? Mi?ecki <zajec5@gmail.com>:
+> 2011/8/24 Octavian Voicu <octavian.voicu@gmail.com>:
+>> I just replaced my WLAN card on my Dell laptop. The old one, a BCM4311
+>> that came with the laptop, stopped working at some point -- I was
+>> getting?FOUND UNSUPPORTED PHY?(Analog 0, Type 0, Revision 0).
 >
-> Will I find the ability to enable support for BCMA and HT support in the
-> menuconfig file or elsewhere?
+> It seems the card or the slot died. As new card works in the slot, I
+> believe it's card that died.
 
-Yes. menuconfig has great feature of searching. Just enter "/" key and
-type phase you're looking for. For example type "/BCMA" and press
-ENTER. What you want is:
-Device Drivers -> Broadcom specific AMBA -> BCMA support
-Device Drivers -> Broadcom specific AMBA -> Support for BCMA on PCI-host bus
-Device Drivers -> Network device support -> Wireless LAN -> Broadcom
-43xx wireless support -> Support for BCMA bus
-Device Drivers -> Network device support -> Wireless LAN -> Broadcom
-43xx wireless support -> Support for HT-PHY (high throughput) devices
+Something strange is happening.
 
--- 
-Rafa?
+Initially when I first tried the new BCM4321 PCIe card, it would show
+no MAC address. I would have to set a MAC manually using `ifconfig hw
+ether ...`, and only after that I could bring the interface up. It
+still didn't see any networks.
+
+The lspci -vnn would show it like this:
+0c:00.0 Network controller [0280]: Broadcom Corporation BCM4306
+802.11a Wireless LAN Controller [14e4:4321] (rev 03)
+        Subsystem: Broadcom Corporation BCM4306 802.11a Wireless LAN
+Controller [14e4:4321]
+        Flags: bus master, fast devsel, latency 0, IRQ 17
+        Memory at f9ffc000 (64-bit, non-prefetchable) [size=16K]
+        Memory at <ignored> (64-bit, prefetchable)
+        Capabilities: [40] Power Management version 2
+        Capabilities: [58] Vendor Specific Information: Len=78 <?>
+        Capabilities: [e8] MSI: Enable- Count=1/1 Maskable- 64bit+
+        Capabilities: [d0] Express Endpoint, MSI 00
+        Capabilities: [100] Advanced Error Reporting
+        Capabilities: [13c] Virtual Channel
+        Capabilities: [160] Device Serial Number 00-00-00-ff-ff-00-00-00
+        Capabilities: [16c] Power Budgeting <?>
+        Kernel driver in use: b43-pci-bridge
+        Kernel modules: ssb
+
+Then I upgraded the drivers and it magically started to work, or so I
+thought. It would see its MAC address and, at the same time, lspci
+-vnn showed it correctly, like this:
+0c:00.0 Network controller [0280]: Broadcom Corporation BCM4321
+802.11a/b/g/n [14e4:4328] (rev 03)
+        Subsystem: Hewlett-Packard Company BCM4321 802.11a/b/g/n
+Wireless LAN Controller [103c:1367]
+        Flags: bus master, fast devsel, latency 0, IRQ 17
+        Memory at f9ffc000 (64-bit, non-prefetchable) [size=16K]
+        Memory at f0000000 (64-bit, prefetchable) [size=1M]
+
+After working for a day or so and forgetting about it, I check it
+again and I see it's not working anymore. It reverted to the old 4321
+device id shown by lspci, and no MAC. Note that the initial lspci
+output I've given is generated now, as I didn't have any dump from
+then. I'm positive about the device id, not so much about the rest,
+but I'm assuming it was as it is now.
+
+I'm starting to think the driver upgrades weren't responsible for
+"fixing" the card. It looks similar with the pattern I had with the
+old card: didn't work, then one day magically started to work, next
+reboot stopped working again for good.
+
+Currently, inserting b43 with verbose=3, setting the MAC, and bringing
+up the interface gives this in dmesg:
+
+[  130.112440] b43-phy0: Broadcom 4321 WLAN found (core revision 12)
+[  130.210099] b43-phy0 debug: Found PHY: Analog 5, Type 4, Revision 2
+[  130.210135] b43-phy0 debug: Found Radio: Manuf 0x17F, Version
+0x2055, Revision 4
+[  130.298741] Broadcom 43xx driver loaded [ Features: PMNLS,
+Firmware-ID: FW13 ]
+[  185.230221] b43-phy0: Loading firmware version 508.1084 (2009-01-14 01:32:01)
+[  185.253435] b43-phy0 ERROR: radio post init timeout
+[  185.370162] b43-phy0 debug: Chip initialized
+[  185.370408] b43-phy0 debug: 64-bit DMA initialized
+[  185.370487] b43-phy0 debug: QoS enabled
+[  185.411224] b43-phy0 debug: Wireless interface started
+[  185.411264] b43-phy0 debug: Adding Interface type 2
+
+Notice the line "ERROR: radio post init timeout". Don't remember
+seeing this error before (but didn't use verbose either). Also, notice
+how lspci shows that the second chunk of memory is ignored:
+    Memory at <ignored> (64-bit, prefetchable)
+while when it was working it would show this:
+    Memory at f0000000 (64-bit, prefetchable) [size=1M]
+
+I also tried switching the PCIe mini-card slot (I have 3 of them;
+tried them all with no change).
+
+Questions:
+
+1) Is this a hardware problem (with the slot and/or the wlan card itself)?
+
+Don't have other wlan PCIe mini-cards to test. How can I diagnose the problem?
+
+Can all the mini-card slots be busted? (never used the other two, they
+are for WPAN and WWAN)
+
+Should it matter that I'm using a different WLAN card than the
+original one? The laptop also has a "Wi-Fi Catcher" feature,
+integrated with the rfkill button (there is a 3rd state of the button
+that blinks a LED if there are wifi networks around), which stopped
+working at some point (probably when my original card got busted). It
+never worked with the new card.
+
+2) Could it be software related?
+
+How can the system consistently misread the PCI device id?
+
+What's the deal with the second memory chunk? Is it where the MAC is
+stored, and why is the driver ignoring it now?
+
+
+I realize there's a lot of data here, and even more questions, so any
+help is appreciated :)
+
+Thanks,
+Octavian
