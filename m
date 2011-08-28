@@ -1,42 +1,47 @@
-From: Octavian Voicu <octavian.voicu@gmail.com>
-Date: Sun, 28 Aug 2011 19:59:30 +0300
-Subject: BCM4321 support
-In-Reply-To: <CA+XFjip4Z7Ua9eVwWsR4t4pWrR1rdEkhVtOS8KE2oJHN1EWLLg@mail.gmail.com>
-References: <CAM0=5GvUyMeE3BdYHQZjZWB9kGxYLJfcJ4ky1BC2m81sdM-XpA@mail.gmail.com>
-	<CACna6ry4TOJXquSC29pWH81Y9Fe=FPnnSTGGy2vWNd7nDy-RLg@mail.gmail.com>
-	<CAM0=5GvmNd7GPEhuQpHNBZK6FBarAn279tB7LbbJRDy=e4FKAQ@mail.gmail.com>
-	<CA+XFjip4Z7Ua9eVwWsR4t4pWrR1rdEkhVtOS8KE2oJHN1EWLLg@mail.gmail.com>
-Message-ID: <CAM0=5GsXuz_Fybuw3rpkHxE3oqNwRLMcc+ZjsgfGHHiRP_ER8w@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 28 Aug 2011 12:03:05 -0500
+Subject: [PATCH 2/2] bcma: extract some basic info about board from SPROM
+In-Reply-To: <1314550043-6220-2-git-send-email-zajec5@gmail.com>
+References: <1314550043-6220-1-git-send-email-zajec5@gmail.com>
+	<1314550043-6220-2-git-send-email-zajec5@gmail.com>
+Message-ID: <4E5A74C9.1050909@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Sat, Aug 27, 2011 at 9:13 PM, G?bor Stefanik <netrolller.3d@gmail.com> wrote:
-> I think the device ID is stored in the SPROM. Perhaps your card's
-> SPROM is busted.
+On 08/28/2011 11:47 AM, Rafa? Mi?ecki wrote:
+>
+> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+> ---
+>   drivers/bcma/sprom.c |    9 +++++++++
+>   1 files changed, 9 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
+> index 166ed13..d729239 100644
+> --- a/drivers/bcma/sprom.c
+> +++ b/drivers/bcma/sprom.c
+> @@ -133,6 +133,15 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
+>   		v = sprom[SPOFF(SSB_SPROM8_IL0MAC) + i];
+>   		*(((__be16 *)bus->sprom.il0mac) + i) = cpu_to_be16(v);
+>   	}
+> +
+> +	bus->sprom.board_rev = sprom[SPOFF(SSB_SPROM8_BOARDREV)];
+> +
+> +	bus->sprom.boardflags_lo = sprom[SPOFF(SSB_SPROM8_BFLLO)];
+> +	bus->sprom.boardflags_hi = sprom[SPOFF(SSB_SPROM8_BFLHI)];
+> +	bus->sprom.boardflags2_lo = sprom[SPOFF(SSB_SPROM8_BFL2LO)];
+> +	bus->sprom.boardflags2_hi = sprom[SPOFF(SSB_SPROM8_BFL2HI)];
+> +
+> +	bus->sprom.country_code = sprom[SPOFF(SSB_SPROM8_CCODE)];
+>   }
+>
+>   int bcma_sprom_get(struct bcma_bus *bus)
 
-It seems that you were right, my SPROM is busted:
-ssb: WARNING: Using fallback SPROM failed (err -2)
-ssb: WARNING: Invalid SPROM CRC (corrupt SPROM)
-ssb: Unsupported SPROM revision 0 detected. Will extract v1
+Does the card in question not need any other info from the SPROM, or is this 
+just a first step? Is the usual SPROM Rev 8 code part of ssb, and is that the 
+reason you don't use it here?
 
-I also dumped /sys/devices/pci0000:00/0000:00:1c.1/0000:0c:00.0/ssb_sprom
-and it's just zeroes (as in 0x30, not nulls).
-
-Larry, I CC-ed you because I noticed in an earlier message on the lwn
-mailing list that you own (or used to own) the exact model of BCM4321
-as the one I have now:
-
-0c:00.0 Network controller [0280]: Broadcom Corporation BCM4321
-802.11a/b/g/n [14e4:4328] (rev 03)
-        Subsystem: Hewlett-Packard Company BCM4321 802.11a/b/g/n
-Wireless LAN Controller [103c:1367]
-
-Can anybody with a BCM4321 send me a full SPROM dump from their card
-(preferably a HP BCM4321, but I guess any would do)? I want to hack
-something up and try fix my card.
-
-Thanks in advance,
-Octavian
+Larry
