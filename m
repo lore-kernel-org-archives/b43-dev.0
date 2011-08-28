@@ -1,56 +1,73 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 28 Aug 2011 19:07:26 +0200
-Subject: [PATCH 2/2] bcma: extract some basic info about board from SPROM
-In-Reply-To: <4E5A74C9.1050909@lwfinger.net>
-References: <1314550043-6220-1-git-send-email-zajec5@gmail.com>
-	<1314550043-6220-2-git-send-email-zajec5@gmail.com>
-	<4E5A74C9.1050909@lwfinger.net>
-Message-ID: <CACna6rxVhv2Rf2NM9U-cc4cf5XQhSMpbGYmrVSW_KH-e2ETc0Q@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 28 Aug 2011 19:59:28 +0200
+Subject: [ONE MORE][PATCH 4/3] b43: LCN-PHY: implement saving and restoring
+	PHY & radio configuration
+Message-ID: <1314554368-7002-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-W dniu 28 sierpnia 2011 19:03 u?ytkownik Larry Finger
-<Larry.Finger@lwfinger.net> napisa?:
-> On 08/28/2011 11:47 AM, Rafa? Mi?ecki wrote:
->>
->> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
->> ---
->> ?drivers/bcma/sprom.c | ? ?9 +++++++++
->> ?1 files changed, 9 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
->> index 166ed13..d729239 100644
->> --- a/drivers/bcma/sprom.c
->> +++ b/drivers/bcma/sprom.c
->> @@ -133,6 +133,15 @@ static void bcma_sprom_extract_r8(struct bcma_bus
->> *bus, const u16 *sprom)
->> ? ? ? ? ? ? ? ?v = sprom[SPOFF(SSB_SPROM8_IL0MAC) + i];
->> ? ? ? ? ? ? ? ?*(((__be16 *)bus->sprom.il0mac) + i) = cpu_to_be16(v);
->> ? ? ? ?}
->> +
->> + ? ? ? bus->sprom.board_rev = sprom[SPOFF(SSB_SPROM8_BOARDREV)];
->> +
->> + ? ? ? bus->sprom.boardflags_lo = sprom[SPOFF(SSB_SPROM8_BFLLO)];
->> + ? ? ? bus->sprom.boardflags_hi = sprom[SPOFF(SSB_SPROM8_BFLHI)];
->> + ? ? ? bus->sprom.boardflags2_lo = sprom[SPOFF(SSB_SPROM8_BFL2LO)];
->> + ? ? ? bus->sprom.boardflags2_hi = sprom[SPOFF(SSB_SPROM8_BFL2HI)];
->> +
->> + ? ? ? bus->sprom.country_code = sprom[SPOFF(SSB_SPROM8_CCODE)];
->> ?}
->>
->> ?int bcma_sprom_get(struct bcma_bus *bus)
->
-> Does the card in question not need any other info from the SPROM, or is this
-> just a first step? Is the usual SPROM Rev 8 code part of ssb, and is that
-> the reason you don't use it here?
 
-It will need more info, I just didn't add everything yet. I think we
-should review ssb's code anyway, so I didn't copy&paste it. For
-example ssb doesn't read board_rev at the moment for SPROM rev 8.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_lcn.c |   35 +++++++++++++++++++++++++++++++++++
+ 1 files changed, 35 insertions(+), 0 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
+index 4839536..b617e1f 100644
+--- a/drivers/net/wireless/b43/phy_lcn.c
++++ b/drivers/net/wireless/b43/phy_lcn.c
+@@ -213,6 +213,39 @@ static void b43_phy_lcn_pre_radio_init(struct b43_wldev *dev)
+ 	/* TODO: more ops */
+ }
+ 
++static void b43_phy_lcn_save_configsth_restore(struct b43_wldev *dev)
++{
++	u8 i;
++
++	u16 save_radio_regs[6][2] = {
++		{ 0x007, 0 }, { 0x0ff, 0 }, { 0x11f, 0 }, { 0x005, 0 },
++		{ 0x025, 0 }, { 0x112, 0 },
++	};
++	u16 save_phy_regs[14][2] = {
++		{ 0x503, 0 }, { 0x4a4, 0 }, { 0x4d0, 0 }, { 0x4d9, 0 },
++		{ 0x4da, 0 }, { 0x4a6, 0 }, { 0x938, 0 }, { 0x939, 0 },
++		{ 0x4d8, 0 }, { 0x4d0, 0 }, { 0x4d7, 0 }, { 0x4a5, 0 },
++		{ 0x40d, 0 }, { 0x4a2, 0 },
++	};
++	u16 save_radio_4a4;
++
++	for (i = 0; i < 6; i++)
++		save_radio_regs[i][1] = b43_radio_read(dev,
++						       save_radio_regs[i][0]);
++	for (i = 0; i < 14; i++)
++		save_phy_regs[i][1] = b43_phy_read(dev, save_phy_regs[i][0]);
++	save_radio_4a4 = b43_radio_read(dev, 0x4a4);
++
++	/* TODO: config sth */
++
++	for (i = 0; i < 6; i++)
++		b43_radio_write(dev, save_radio_regs[i][0],
++				save_radio_regs[i][1]);
++	for (i = 0; i < 14; i++)
++		b43_phy_write(dev, save_phy_regs[i][0], save_phy_regs[i][1]);
++	b43_radio_write(dev, 0x4a4, save_radio_4a4);
++}
++
+ /**************************************************
+  * Channel switching ops.
+  **************************************************/
+@@ -297,6 +330,8 @@ static int b43_phy_lcn_op_init(struct b43_wldev *dev)
+ 	else
+ 		B43_WARN_ON(1);
+ 
++	b43_phy_lcn_save_configsth_restore(dev);
++
+ 	return 0;
+ }
+ 
 -- 
-Rafa?
+1.7.3.4
