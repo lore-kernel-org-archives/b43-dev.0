@@ -1,41 +1,37 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 28 Aug 2011 18:47:23 +0200
-Subject: [PATCH 2/2] bcma: extract some basic info about board from SPROM
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 28 Aug 2011 11:59:40 -0500
+Subject: [PATCH 1/2] ssb: use u16 for storing board rev
 In-Reply-To: <1314550043-6220-1-git-send-email-zajec5@gmail.com>
 References: <1314550043-6220-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1314550043-6220-2-git-send-email-zajec5@gmail.com>
+Message-ID: <4E5A73FC.4070708@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
+On 08/28/2011 11:47 AM, Rafa? Mi?ecki wrote:
+> Specs say about size 2 (u16) and my 14e4:4727 has board rev 0x1211.
+>
+> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
+> ---
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/bcma/sprom.c |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
-index 166ed13..d729239 100644
---- a/drivers/bcma/sprom.c
-+++ b/drivers/bcma/sprom.c
-@@ -133,6 +133,15 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
- 		v = sprom[SPOFF(SSB_SPROM8_IL0MAC) + i];
- 		*(((__be16 *)bus->sprom.il0mac) + i) = cpu_to_be16(v);
- 	}
-+
-+	bus->sprom.board_rev = sprom[SPOFF(SSB_SPROM8_BOARDREV)];
-+
-+	bus->sprom.boardflags_lo = sprom[SPOFF(SSB_SPROM8_BFLLO)];
-+	bus->sprom.boardflags_hi = sprom[SPOFF(SSB_SPROM8_BFLHI)];
-+	bus->sprom.boardflags2_lo = sprom[SPOFF(SSB_SPROM8_BFL2LO)];
-+	bus->sprom.boardflags2_hi = sprom[SPOFF(SSB_SPROM8_BFL2HI)];
-+
-+	bus->sprom.country_code = sprom[SPOFF(SSB_SPROM8_CCODE)];
- }
- 
- int bcma_sprom_get(struct bcma_bus *bus)
--- 
-1.7.3.4
+>   include/linux/ssb/ssb.h |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+> index 8623217..f10ed7b 100644
+> --- a/include/linux/ssb/ssb.h
+> +++ b/include/linux/ssb/ssb.h
+> @@ -25,7 +25,7 @@ struct ssb_sprom {
+>   	u8 et1phyaddr;		/* MII address for enet1 */
+>   	u8 et0mdcport;		/* MDIO for enet0 */
+>   	u8 et1mdcport;		/* MDIO for enet1 */
+> -	u8 board_rev;		/* Board revision number from SPROM. */
+> +	u16 board_rev;		/* Board revision number from SPROM. */
+>   	u8 country_code;	/* Country Code */
+>   	u16 leddc_on_time;	/* LED Powersave Duty Cycle On Count */
+>   	u16 leddc_off_time;	/* LED Powersave Duty Cycle Off Count */
