@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 28 Aug 2011 14:28:45 +0200
-Subject: [PATCH 3/3] b43: LCN-PHY: prepare functions for channel switching
-In-Reply-To: <1314534525-4475-1-git-send-email-zajec5@gmail.com>
-References: <1314534525-4475-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1314534525-4475-3-git-send-email-zajec5@gmail.com>
+Date: Sun, 28 Aug 2011 14:59:58 +0200
+Subject: [PATCH V2 3/3] b43: LCN-PHY: prepare functions for channel switching
+Message-ID: <1314536398-3056-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,6 +12,8 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 Switching is not fully implemented yet, prepare place for the code.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+V2: s/2059/2064/ (correct radio ID)
 ---
  drivers/net/wireless/b43/phy_lcn.c |   86 +++++++++++++++++++++++++++++++++++-
  1 files changed, 84 insertions(+), 2 deletions(-)
@@ -26,7 +26,7 @@ index 9707a2b..7b20a47 100644
   * Radio 2064.
   **************************************************/
  
-+static void b43_radio_2059_channel_setup(struct b43_wldev *dev)
++static void b43_radio_2064_channel_setup(struct b43_wldev *dev)
 +{
 +	u16 save[2];
 +
@@ -90,7 +90,7 @@ index 9707a2b..7b20a47 100644
 +	b43_phy_set(dev, 0x44a, 0x44);
 +	b43_phy_write(dev, 0x44a, 0x80);
 +
-+	b43_radio_2059_channel_setup(dev);
++	b43_radio_2064_channel_setup(dev);
 +	mdelay(1);
 +
 +	b43_phy_lcn_afe_set_unset(dev);
