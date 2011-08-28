@@ -1,71 +1,84 @@
-From: James Anslow <james@jamesanslow.net>
-Date: Sat, 27 Aug 2011 23:53:58 +0100
-Subject: [Bug]No probe response from after 500ms, disconnecting.
-In-Reply-To: <CACna6rw9HWCvXcDrmXBe4AssUCC_QZ-6KgEUTGfJYabmuAx2hQ@mail.gmail.com>
-References: <1301780916.5200.31.camel@acer.lan>	<CACna6rxTZg_uVTJdW8gNriezoWo9pRBm19Z1evvKASH9bg1KEg@mail.gmail.com>	<CACna6rzug+2yUweLrQhPZqjw0mPxmfQiJ3+ZiootUYy0mMBu8Q@mail.gmail.com>
-	<CACna6rw9HWCvXcDrmXBe4AssUCC_QZ-6KgEUTGfJYabmuAx2hQ@mail.gmail.com>
-Message-ID: <4E597586.90307@jamesanslow.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 28 Aug 2011 14:28:43 +0200
+Subject: [PATCH 1/3] b43: LCN-PHY: add R/W ops for PHY and radio
+Message-ID: <1314534525-4475-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 27/08/11 22:39, Rafa? Mi?ecki wrote:
-> W dniu 27 sierpnia 2011 22:42 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com> napisa?:
->> W dniu 26 sierpnia 2011 21:15 u?ytkownik Rafa? Mi?ecki
->> <zajec5@gmail.com> napisa?:
->>> 2011/4/2 Szymon Zygmunt <szymon.zygmunt@gmail.com>:
->>>> 1. A description of the problem at hand:
->>>> Last time I changed my wireless card and I have problems with wireless
->>>> link when I copy large files over lan. Link is broken after some part of
->>>> file (eg. 50 - 200 MB) and I have to reload my b43 driver (modprobe -r
->>>> b43, modprobe b43). After that connection work again for a while and
->>>> situation is repeated.
->>>>
->>>> 2. When it happens:
->>>> Always when I copy large file from my ftp (sets on openwrt box) to my PC
->>>> over wifi.
->>>>
->>>> 3. How to reproduce:
->>>> Start to operation with high transmission rates (eg. copy larg file)
->>> Szymon, this is a damn late reply and I think I understand if you've
->>> already switched to some other card.
->>>
->>> In case you're still using b43 & BCM4318: did you manage to fix this
->>> problem yourself?
->> I've tested my BCM4318 which is
->> 06:05.0 0280: 14e4:4318 (rev 02)
->>        Subsystem: 1468:0311
->> and it still works fine after using iperf for 20 minutes (about 3.2 GB
->> transfered to my notebook with 14e4:4318). Average speed was 22.5 Mb/s
->> and I was quite close to the AP.
->>
->> I'll try:
->> 1) Switching to the 478.104 firmware
->> 2) Using ftp instead of iperf
->> 3) Moving to some other room, to increase distance
-> I've tried switching between firmwares 410.2160, 478.104 and 508.1092,
-> without any difference.
->
-> I've moved away from AP, the RX speed went down to 11.6 Mb/s (tested
-> for 5 minutes), but not visible problems (received 414 MB).
->
-> I guess Szymon can have affected BCM4318, will I don't. From
-> https://forum.openwrt.org/viewtopic.php?id=24208 :
->> b43 in Backfire works on most BCM4306-BCM4318-based cards, included master (AP) mode. Unfortunately there are some models of BCM4318 which suffer from transmission problems and are unstable as a result, mostly noticeably when running as AP. Others models of BCM4318 seems to run fine.
-Hi,
 
-I just wanted to drop you a mail back to say thanks a lot for your help
-and for your hard work.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_lcn.c |   42 ++++++++++++++++++++++++++++++++++-
+ 1 files changed, 40 insertions(+), 2 deletions(-)
 
-I now have wlan on my mbp thanks to your instructions- life saver! :)
-
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 900 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110827/66205023/attachment.sig>
+diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
+index 4b2cd6d..cf75d3d 100644
+--- a/drivers/net/wireless/b43/phy_lcn.c
++++ b/drivers/net/wireless/b43/phy_lcn.c
+@@ -233,6 +233,46 @@ static void b43_phy_lcn_op_adjust_txpower(struct b43_wldev *dev)
+ }
+ 
+ /**************************************************
++ * R/W ops.
++ **************************************************/
++
++static u16 b43_phy_lcn_op_read(struct b43_wldev *dev, u16 reg)
++{
++	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	return b43_read16(dev, B43_MMIO_PHY_DATA);
++}
++
++static void b43_phy_lcn_op_write(struct b43_wldev *dev, u16 reg, u16 value)
++{
++	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16(dev, B43_MMIO_PHY_DATA, value);
++}
++
++static void b43_phy_lcn_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
++				   u16 set)
++{
++	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16(dev, B43_MMIO_PHY_DATA,
++		    (b43_read16(dev, B43_MMIO_PHY_DATA) & mask) | set);
++}
++
++static u16 b43_phy_lcn_op_radio_read(struct b43_wldev *dev, u16 reg)
++{
++	/* LCN-PHY needs 0x200 for read access */
++	reg |= 0x200;
++
++	b43_write16(dev, B43_MMIO_RADIO24_CONTROL, reg);
++	return b43_read16(dev, B43_MMIO_RADIO24_DATA);
++}
++
++static void b43_phy_lcn_op_radio_write(struct b43_wldev *dev, u16 reg,
++				       u16 value)
++{
++	b43_write16(dev, B43_MMIO_RADIO24_CONTROL, reg);
++	b43_write16(dev, B43_MMIO_RADIO24_DATA, value);
++}
++
++/**************************************************
+  * PHY ops struct.
+  **************************************************/
+ 
+@@ -241,13 +281,11 @@ const struct b43_phy_operations b43_phyops_lcn = {
+ 	.free			= b43_phy_lcn_op_free,
+ 	.prepare_structs	= b43_phy_lcn_op_prepare_structs,
+ 	.init			= b43_phy_lcn_op_init,
+-	/*
+ 	.phy_read		= b43_phy_lcn_op_read,
+ 	.phy_write		= b43_phy_lcn_op_write,
+ 	.phy_maskset		= b43_phy_lcn_op_maskset,
+ 	.radio_read		= b43_phy_lcn_op_radio_read,
+ 	.radio_write		= b43_phy_lcn_op_radio_write,
+-	*/
+ 	.software_rfkill	= b43_phy_lcn_op_software_rfkill,
+ 	.switch_analog		= b43_phy_lcn_op_switch_analog,
+ 	/*
+-- 
+1.7.3.4
