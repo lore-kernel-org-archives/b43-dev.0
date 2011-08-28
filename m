@@ -1,37 +1,42 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 28 Aug 2011 11:59:40 -0500
-Subject: [PATCH 1/2] ssb: use u16 for storing board rev
-In-Reply-To: <1314550043-6220-1-git-send-email-zajec5@gmail.com>
-References: <1314550043-6220-1-git-send-email-zajec5@gmail.com>
-Message-ID: <4E5A73FC.4070708@lwfinger.net>
+From: Octavian Voicu <octavian.voicu@gmail.com>
+Date: Sun, 28 Aug 2011 19:59:30 +0300
+Subject: BCM4321 support
+In-Reply-To: <CA+XFjip4Z7Ua9eVwWsR4t4pWrR1rdEkhVtOS8KE2oJHN1EWLLg@mail.gmail.com>
+References: <CAM0=5GvUyMeE3BdYHQZjZWB9kGxYLJfcJ4ky1BC2m81sdM-XpA@mail.gmail.com>
+	<CACna6ry4TOJXquSC29pWH81Y9Fe=FPnnSTGGy2vWNd7nDy-RLg@mail.gmail.com>
+	<CAM0=5GvmNd7GPEhuQpHNBZK6FBarAn279tB7LbbJRDy=e4FKAQ@mail.gmail.com>
+	<CA+XFjip4Z7Ua9eVwWsR4t4pWrR1rdEkhVtOS8KE2oJHN1EWLLg@mail.gmail.com>
+Message-ID: <CAM0=5GsXuz_Fybuw3rpkHxE3oqNwRLMcc+ZjsgfGHHiRP_ER8w@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On 08/28/2011 11:47 AM, Rafa? Mi?ecki wrote:
-> Specs say about size 2 (u16) and my 14e4:4727 has board rev 0x1211.
->
-> Signed-off-by: Rafa? Mi?ecki<zajec5@gmail.com>
-> ---
+On Sat, Aug 27, 2011 at 9:13 PM, G?bor Stefanik <netrolller.3d@gmail.com> wrote:
+> I think the device ID is stored in the SPROM. Perhaps your card's
+> SPROM is busted.
 
-ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
+It seems that you were right, my SPROM is busted:
+ssb: WARNING: Using fallback SPROM failed (err -2)
+ssb: WARNING: Invalid SPROM CRC (corrupt SPROM)
+ssb: Unsupported SPROM revision 0 detected. Will extract v1
 
->   include/linux/ssb/ssb.h |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
-> index 8623217..f10ed7b 100644
-> --- a/include/linux/ssb/ssb.h
-> +++ b/include/linux/ssb/ssb.h
-> @@ -25,7 +25,7 @@ struct ssb_sprom {
->   	u8 et1phyaddr;		/* MII address for enet1 */
->   	u8 et0mdcport;		/* MDIO for enet0 */
->   	u8 et1mdcport;		/* MDIO for enet1 */
-> -	u8 board_rev;		/* Board revision number from SPROM. */
-> +	u16 board_rev;		/* Board revision number from SPROM. */
->   	u8 country_code;	/* Country Code */
->   	u16 leddc_on_time;	/* LED Powersave Duty Cycle On Count */
->   	u16 leddc_off_time;	/* LED Powersave Duty Cycle Off Count */
+I also dumped /sys/devices/pci0000:00/0000:00:1c.1/0000:0c:00.0/ssb_sprom
+and it's just zeroes (as in 0x30, not nulls).
+
+Larry, I CC-ed you because I noticed in an earlier message on the lwn
+mailing list that you own (or used to own) the exact model of BCM4321
+as the one I have now:
+
+0c:00.0 Network controller [0280]: Broadcom Corporation BCM4321
+802.11a/b/g/n [14e4:4328] (rev 03)
+        Subsystem: Hewlett-Packard Company BCM4321 802.11a/b/g/n
+Wireless LAN Controller [103c:1367]
+
+Can anybody with a BCM4321 send me a full SPROM dump from their card
+(preferably a HP BCM4321, but I guess any would do)? I want to hack
+something up and try fix my card.
+
+Thanks in advance,
+Octavian
