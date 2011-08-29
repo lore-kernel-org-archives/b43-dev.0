@@ -1,20 +1,20 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 29 Aug 2011 13:54:16 -0500
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 29 Aug 2011 21:02:09 +0200
 Subject: Looking for BCM43228
 In-Reply-To: <CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
 References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>
 	<CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
-Message-ID: <4E5BE058.4090302@lwfinger.net>
+Message-ID: <CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-On 08/29/2011 01:12 PM, Rafa? Mi?ecki wrote:
+W dniu 29 sierpnia 2011 20:12 u?ytkownik Rafa? Mi?ecki
+<zajec5@gmail.com> napisa?:
 > W dniu 29 sierpnia 2011 19:28 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com>  napisa?:
+> <zajec5@gmail.com> napisa?:
 >> I'm looking for 14e4:4359 card which is BCM43228 chipset based.
 >>
 >> According to Ubuntu [0] it can be found in Dell's notebooks:
@@ -35,10 +35,12 @@ On 08/29/2011 01:12 PM, Rafa? Mi?ecki wrote:
 >
 > Cards that may be interesting to look at: DW1530, DW1501.
 
-The DW1501 is an 802.11b/g/n card. From what I saw about the BCM43228, it is an 
-802.11a/b/g/n model.
+DW1501 is 14e4:4727 (BCM4313). DW1530 on the other hand sounds
+promising. Not possible to google it connection with "14e4", must be
+sth new.
 
-The site http://tinyurl.com/3mh8kk9 says that the DW1530 has 5 GHz capability. 
-It is probably what you want, but Ebay doesn't have any.
+I'll mail Marc, Ubuntu's launchpad reported to ask if he still has
+access to this notebook.
 
-Larry
+-- 
+Rafa?
