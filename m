@@ -1,33 +1,41 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 30 Aug 2011 08:34:47 +0200
-Subject: Looking for BCM43228
-In-Reply-To: <CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
-References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>
-	<CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
-	<CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>
-	<CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
-Message-ID: <CACna6rxNturBBxqtcE4rKLwK7-5gjzjRPRBLsTWO2t1Uit3C-g@mail.gmail.com>
+From: =?ISO-8859-1?Q?Nicolas_de_Peslo=FCan?= <nicolas.2p.debian@free.fr>
+Date: Tue, 30 Aug 2011 08:46:51 +0200
+Subject: BCM4321 support
+In-Reply-To: <CAM0=5GsX2W7oLXY+WuP+sYJFqWqAOCcKqaqY6UCxFnNBvR3iiw@mail.gmail.com>
+References: <CAM0=5GvUyMeE3BdYHQZjZWB9kGxYLJfcJ4ky1BC2m81sdM-XpA@mail.gmail.com>	<CACna6ry4TOJXquSC29pWH81Y9Fe=FPnnSTGGy2vWNd7nDy-RLg@mail.gmail.com>	<CAM0=5GvmNd7GPEhuQpHNBZK6FBarAn279tB7LbbJRDy=e4FKAQ@mail.gmail.com>	<CA+XFjip4Z7Ua9eVwWsR4t4pWrR1rdEkhVtOS8KE2oJHN1EWLLg@mail.gmail.com>	<CAM0=5GsXuz_Fybuw3rpkHxE3oqNwRLMcc+ZjsgfGHHiRP_ER8w@mail.gmail.com>	<4E5AB689.4010000@lwfinger.net>	<CAM0=5Gv7FzSP9w1xa=WgFdAeKD2R4=wxQOG+H0vX2NRht8Kefw@mail.gmail.com>	<4E5BC004.8060608@lwfinger.net>
+	<CAM0=5GsX2W7oLXY+WuP+sYJFqWqAOCcKqaqY6UCxFnNBvR3iiw@mail.gmail.com>
+Message-ID: <4E5C875B.9030602@free.fr>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-W dniu 29 sierpnia 2011 23:27 u?ytkownik Rafa? Mi?ecki
-<zajec5@gmail.com> napisa?:
-> W dniu 29 sierpnia 2011 21:02 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com> napisa?:
->> I'll mail Marc, Ubuntu's launchpad reported to ask if he still has
->> access to this notebook.
+Le 30/08/2011 01:33, Octavian Voicu a ?crit :
+
+<snip>
+
+> On Tue, Aug 30, 2011 at 12:42 AM, Nicolas de Peslo?an <nicolas.2p.debian@free.fr
+> <mailto:nicolas.2p.debian@free.fr>> wrote:
 >
-> I've just received photo of the card (inside notebook) from Marc. It's
-> labeled as DW1530, bingo! :)
+>     The clean way is make deb-pkg from the root of the kernel tree. It will build whatever need to
+>     be build (normal build), then build several .deb files you can install using dpkg -i. The normal
+>     build takes "normal build time", but building the .deb files takes several minutes. I don't
+>     consider this a problem, but...
 >
-> I'll ask Dell about prices. Larry: I'm also waiting for you getting
-> response, maybe your prices will be lower?
+>     The fastest way is to simply make, then copy the changed modules into /lib/modules/..., but from
+>     a debian point of view, it is very dirty.
+>
+>
+> Yeah, I guess I prefer the very quick and dirty way. I added them to /lib/modules/.../updates/ and
+> ran depmod. Good enough for me. As long as I don't dig too deep in b43 I probably won't need to do
+> full kernel builds.
+>
+> My biggest concern right now is that the modules I build cannot be rmmod-ed after being inserted.
+> This happens with any custom built modules, including the dkms built ones (eg. nvidia).
 
-225 z? at Polish Dell. It's 54,109136 euro according to Google. Not
-cheap :| At least price includes shipping (to the Poland).
+I really suggest you once try building the whole kernel with deb-pkg, then touch a single file in 
+b43, then rebuild. The overhead of producing .deb files is not null, but not big enough to stop me 
+from rebuilding on every try. And I assume it would solve this module unload issue.
 
--- 
-Rafa?
+	Nicolas.
