@@ -1,41 +1,25 @@
-From: =?ISO-8859-1?Q?Nicolas_de_Peslo=FCan?= <nicolas.2p.debian@free.fr>
-Date: Tue, 30 Aug 2011 08:46:51 +0200
-Subject: BCM4321 support
-In-Reply-To: <CAM0=5GsX2W7oLXY+WuP+sYJFqWqAOCcKqaqY6UCxFnNBvR3iiw@mail.gmail.com>
-References: <CAM0=5GvUyMeE3BdYHQZjZWB9kGxYLJfcJ4ky1BC2m81sdM-XpA@mail.gmail.com>	<CACna6ry4TOJXquSC29pWH81Y9Fe=FPnnSTGGy2vWNd7nDy-RLg@mail.gmail.com>	<CAM0=5GvmNd7GPEhuQpHNBZK6FBarAn279tB7LbbJRDy=e4FKAQ@mail.gmail.com>	<CA+XFjip4Z7Ua9eVwWsR4t4pWrR1rdEkhVtOS8KE2oJHN1EWLLg@mail.gmail.com>	<CAM0=5GsXuz_Fybuw3rpkHxE3oqNwRLMcc+ZjsgfGHHiRP_ER8w@mail.gmail.com>	<4E5AB689.4010000@lwfinger.net>	<CAM0=5Gv7FzSP9w1xa=WgFdAeKD2R4=wxQOG+H0vX2NRht8Kefw@mail.gmail.com>	<4E5BC004.8060608@lwfinger.net>
-	<CAM0=5GsX2W7oLXY+WuP+sYJFqWqAOCcKqaqY6UCxFnNBvR3iiw@mail.gmail.com>
-Message-ID: <4E5C875B.9030602@free.fr>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 30 Aug 2011 12:36:50 -0500
+Subject: Looking for BCM43228
+In-Reply-To: <CACna6rxNturBBxqtcE4rKLwK7-5gjzjRPRBLsTWO2t1Uit3C-g@mail.gmail.com>
+References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>	<CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>	<CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>	<CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
+	<CACna6rxNturBBxqtcE4rKLwK7-5gjzjRPRBLsTWO2t1Uit3C-g@mail.gmail.com>
+Message-ID: <4E5D1FB2.5080109@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-Le 30/08/2011 01:33, Octavian Voicu a ?crit :
+On 08/30/2011 01:34 AM, Rafa? Mi?ecki wrote:
+>
+> 225 z? at Polish Dell. It's 54,109136 euro according to Google. Not
+> cheap :| At least price includes shipping (to the Poland).
 
-<snip>
+I have not had a reply yet on my inquiry. An Ebay message might take 2 days. I 
+also sent a query to a local computer outfit that I deal with.
 
-> On Tue, Aug 30, 2011 at 12:42 AM, Nicolas de Peslo?an <nicolas.2p.debian@free.fr
-> <mailto:nicolas.2p.debian@free.fr>> wrote:
->
->     The clean way is make deb-pkg from the root of the kernel tree. It will build whatever need to
->     be build (normal build), then build several .deb files you can install using dpkg -i. The normal
->     build takes "normal build time", but building the .deb files takes several minutes. I don't
->     consider this a problem, but...
->
->     The fastest way is to simply make, then copy the changed modules into /lib/modules/..., but from
->     a debian point of view, it is very dirty.
->
->
-> Yeah, I guess I prefer the very quick and dirty way. I added them to /lib/modules/.../updates/ and
-> ran depmod. Good enough for me. As long as I don't dig too deep in b43 I probably won't need to do
-> full kernel builds.
->
-> My biggest concern right now is that the modules I build cannot be rmmod-ed after being inserted.
-> This happens with any custom built modules, including the dkms built ones (eg. nvidia).
+A cost of 54 euro does seem a bit pricy.
 
-I really suggest you once try building the whole kernel with deb-pkg, then touch a single file in 
-b43, then rebuild. The overhead of producing .deb files is not null, but not big enough to stop me 
-from rebuilding on every try. And I assume it would solve this module unload issue.
-
-	Nicolas.
+Larry
