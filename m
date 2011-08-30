@@ -1,32 +1,33 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 30 Aug 2011 01:46:35 +0200
-Subject: BCM4321 support
-In-Reply-To: <4E5BC004.8060608@lwfinger.net>
-References: <CAM0=5GvUyMeE3BdYHQZjZWB9kGxYLJfcJ4ky1BC2m81sdM-XpA@mail.gmail.com>
-	<CACna6ry4TOJXquSC29pWH81Y9Fe=FPnnSTGGy2vWNd7nDy-RLg@mail.gmail.com>
-	<CAM0=5GvmNd7GPEhuQpHNBZK6FBarAn279tB7LbbJRDy=e4FKAQ@mail.gmail.com>
-	<CA+XFjip4Z7Ua9eVwWsR4t4pWrR1rdEkhVtOS8KE2oJHN1EWLLg@mail.gmail.com>
-	<CAM0=5GsXuz_Fybuw3rpkHxE3oqNwRLMcc+ZjsgfGHHiRP_ER8w@mail.gmail.com>
-	<4E5AB689.4010000@lwfinger.net>
-	<CAM0=5Gv7FzSP9w1xa=WgFdAeKD2R4=wxQOG+H0vX2NRht8Kefw@mail.gmail.com>
-	<4E5BC004.8060608@lwfinger.net>
-Message-ID: <20110830014635.2c0623d8@milhouse>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 30 Aug 2011 08:34:47 +0200
+Subject: Looking for BCM43228
+In-Reply-To: <CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
+References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>
+	<CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
+	<CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>
+	<CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
+Message-ID: <CACna6rxNturBBxqtcE4rKLwK7-5gjzjRPRBLsTWO2t1Uit3C-g@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-On Mon, 29 Aug 2011 11:36:20 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+W dniu 29 sierpnia 2011 23:27 u?ytkownik Rafa? Mi?ecki
+<zajec5@gmail.com> napisa?:
+> W dniu 29 sierpnia 2011 21:02 u?ytkownik Rafa? Mi?ecki
+> <zajec5@gmail.com> napisa?:
+>> I'll mail Marc, Ubuntu's launchpad reported to ask if he still has
+>> access to this notebook.
+>
+> I've just received photo of the card (inside notebook) from Marc. It's
+> labeled as DW1530, bingo! :)
+>
+> I'll ask Dell about prices. Larry: I'm also waiting for you getting
+> response, maybe your prices will be lower?
 
-> The firmware has its own private memory and it shares some memory with the host 
-> CPU
-
-The firmware does not share any memory with the host CPU. The memory is called
-"shared memory", but that is a misnomer. The host CPU accesses that memory
-by memory mapped I/O. Firmware can do DMA only indirectly through the
-TX and RX engines.
+225 z? at Polish Dell. It's 54,109136 euro according to Google. Not
+cheap :| At least price includes shipping (to the Poland).
 
 -- 
-Greetings, Michael.
+Rafa?
