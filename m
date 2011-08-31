@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 31 Aug 2011 23:36:16 +0200
-Subject: [PATCH 1/6] b43: LCN-PHY: minor fixes
-Message-ID: <1314826581-27852-1-git-send-email-zajec5@gmail.com>
+Date: Wed, 31 Aug 2011 23:36:18 +0200
+Subject: [PATCH 3/6] b43: LCN-PHY: rewrite 0x7 table at the end of init
+In-Reply-To: <1314826581-27852-1-git-send-email-zajec5@gmail.com>
+References: <1314826581-27852-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1314826581-27852-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,69 +11,42 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-The biggest change is reversing order of reading 32-bit table value.
-MMIO dumps has shown it's done that way for LCN-PHY.
+This is not implemented in brcmsmac, but was noticed in (newer) wl. Can
+be workaround for some hardware bug.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/b43.h            |    2 ++
- drivers/net/wireless/b43/main.c           |    1 +
- drivers/net/wireless/b43/tables_phy_lcn.c |   10 ++++------
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/net/wireless/b43/tables_phy_lcn.c |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index 8ff7062..f8615cd 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -110,6 +110,8 @@
- #define B43_MMIO_TSF_CFP_START_LOW	0x604
- #define B43_MMIO_TSF_CFP_START_HIGH	0x606
- #define B43_MMIO_TSF_CFP_PRETBTT	0x612
-+#define B43_MMIO_TSF_CLK_FRAC_LOW	0x62E
-+#define B43_MMIO_TSF_CLK_FRAC_HIGH	0x630
- #define B43_MMIO_TSF_0			0x632	/* core rev < 3 only */
- #define B43_MMIO_TSF_1			0x634	/* core rev < 3 only */
- #define B43_MMIO_TSF_2			0x636	/* core rev < 3 only */
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 1722941..6bca727 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2953,6 +2953,7 @@ static void b43_rate_memory_init(struct b43_wldev *dev)
- 	case B43_PHYTYPE_N:
- 	case B43_PHYTYPE_LP:
- 	case B43_PHYTYPE_HT:
-+	case B43_PHYTYPE_LCN:
- 		b43_rate_memory_write(dev, B43_OFDM_RATE_6MB, 1);
- 		b43_rate_memory_write(dev, B43_OFDM_RATE_12MB, 1);
- 		b43_rate_memory_write(dev, B43_OFDM_RATE_18MB, 1);
 diff --git a/drivers/net/wireless/b43/tables_phy_lcn.c b/drivers/net/wireless/b43/tables_phy_lcn.c
-index 0a58428..916d3f1 100644
+index f74c00a..95efea6 100644
 --- a/drivers/net/wireless/b43/tables_phy_lcn.c
 +++ b/drivers/net/wireless/b43/tables_phy_lcn.c
-@@ -318,9 +318,8 @@ u32 b43_lcntab_read(struct b43_wldev *dev, u32 offset)
- 		break;
- 	case B43_LCNTAB_32BIT:
- 		b43_phy_write(dev, B43_PHY_LCN_TABLE_ADDR, offset);
--		value = b43_phy_read(dev, B43_PHY_LCN_TABLE_DATAHI);
--		value <<= 16;
--		value |= b43_phy_read(dev, B43_PHY_LCN_TABLE_DATALO);
-+		value = b43_phy_read(dev, B43_PHY_LCN_TABLE_DATALO);
-+		value |= (b43_phy_read(dev, B43_PHY_LCN_TABLE_DATAHI) << 16);
- 		break;
- 	default:
- 		B43_WARN_ON(1);
-@@ -357,10 +356,9 @@ void b43_lcntab_read_bulk(struct b43_wldev *dev, u32 offset,
- 			break;
- 		case B43_LCNTAB_32BIT:
- 			*((u32 *)data) = b43_phy_read(dev,
--						      B43_PHY_LCN_TABLE_DATAHI);
--			*((u32 *)data) <<= 16;
--			*((u32 *)data) |= b43_phy_read(dev,
- 						B43_PHY_LCN_TABLE_DATALO);
-+			*((u32 *)data) |= (b43_phy_read(dev,
-+					   B43_PHY_LCN_TABLE_DATAHI) << 16);
- 			data += 4;
- 			break;
- 		default:
+@@ -463,6 +463,17 @@ static void b43_phy_lcn_upload_static_tables(struct b43_wldev *dev)
+ 	lcntab_upload(dev, B43_LCNTAB32(0x18, 0), b43_lcntab_0x18);
+ }
+ 
++/* Not implemented in brcmsmac, noticed in wl in MMIO dump */
++static void b43_phy_lcn_rewrite_tables(struct b43_wldev *dev)
++{
++	int i;
++	u32 tmp;
++	for (i = 0; i < 128; i++) {
++		tmp = b43_lcntab_read(dev, B43_LCNTAB32(0x7, 0x240 + i));
++		b43_lcntab_write(dev, B43_LCNTAB32(0x7, 0x240 + i), tmp);
++	}
++}
++
+ static void b43_phy_lcn_clean_0x18_table(struct b43_wldev *dev)
+ {
+ 	u8 i;
+@@ -475,5 +486,6 @@ void b43_phy_lcn_tables_init(struct b43_wldev *dev)
+ {
+ 	b43_phy_lcn_upload_static_tables(dev);
+ 	/* TODO: various tables ops here */
++	b43_phy_lcn_rewrite_tables(dev);
+ 	b43_phy_lcn_clean_0x18_table(dev);
+ }
 -- 
 1.7.3.4
