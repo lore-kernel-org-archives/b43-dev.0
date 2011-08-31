@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 31 Aug 2011 23:36:20 +0200
-Subject: [PATCH 5/6] b43: LCN-PHY: rename functions, get rid of magic names
+Date: Wed, 31 Aug 2011 23:36:21 +0200
+Subject: [PATCH 6/6] b43: LCN-PHY: add conditions for few operations
 In-Reply-To: <1314826581-27852-1-git-send-email-zajec5@gmail.com>
 References: <1314826581-27852-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1314826581-27852-5-git-send-email-zajec5@gmail.com>
+Message-ID: <1314826581-27852-6-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,154 +11,128 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-We've compared b43 with brcmsmac and took functions names from the
-later.
+It was not possible to guess the conditions from MMIO dumps. Take them
+from brcmsmac code.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_lcn.c        |   29 +++++++++++++++++++++++------
- drivers/net/wireless/b43/tables_phy_lcn.c |   10 ++++++----
- 2 files changed, 29 insertions(+), 10 deletions(-)
+ drivers/net/wireless/b43/phy_lcn.c        |   44 ++++++++++++++++++++--------
+ drivers/net/wireless/b43/tables_phy_lcn.c |    8 ++++-
+ 2 files changed, 38 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
-index 9e57577..b461278 100644
+index b461278..d0f106e 100644
 --- a/drivers/net/wireless/b43/phy_lcn.c
 +++ b/drivers/net/wireless/b43/phy_lcn.c
-@@ -31,6 +31,7 @@
-  * Radio 2064.
-  **************************************************/
+@@ -39,6 +39,7 @@ static void b43_radio_2064_channel_setup(struct b43_wldev *dev)
+ 	b43_radio_set(dev, 0x09d, 0x4);
+ 	b43_radio_write(dev, 0x09e, 0xf);
  
-+/* wlc_lcnphy_radio_2064_channel_tune_4313 */
- static void b43_radio_2064_channel_setup(struct b43_wldev *dev)
- {
- 	u16 save[2];
-@@ -73,6 +74,7 @@ static void b43_radio_2064_channel_setup(struct b43_wldev *dev)
- 	b43_radio_write(dev, 0x091, 0x7);
- }
++	/* Channel specific values in theory, in practice always the same */
+ 	b43_radio_write(dev, 0x02a, 0xb);
+ 	b43_radio_maskset(dev, 0x030, ~0x3, 0xa);
+ 	b43_radio_maskset(dev, 0x091, ~0x3, 0);
+@@ -70,22 +71,31 @@ static void b43_radio_2064_channel_setup(struct b43_wldev *dev)
+ 	b43_radio_write(dev, 0x044, save[0]);
+ 	b43_radio_write(dev, 0x12b, save[1]);
  
-+/* wlc_radio_2064_init */
- static void b43_radio_2064_init(struct b43_wldev *dev)
- {
- 	b43_radio_write(dev, 0x09c, 0x0020);
-@@ -122,6 +124,7 @@ static void b43_radio_2064_init(struct b43_wldev *dev)
-  * Various PHY ops
-  **************************************************/
- 
-+/* wlc_lcnphy_toggle_afe_pwdn */
- static void b43_phy_lcn_afe_set_unset(struct b43_wldev *dev)
- {
- 	u16 afe_ctl2 = b43_phy_read(dev, B43_PHY_LCN_AFE_CTL2);
-@@ -137,7 +140,8 @@ static void b43_phy_lcn_afe_set_unset(struct b43_wldev *dev)
- 	b43_phy_write(dev, B43_PHY_LCN_AFE_CTL1, afe_ctl1);
- }
- 
--static void b43_phy_lcn_clear_0x07_table(struct b43_wldev *dev)
-+/* wlc_lcnphy_clear_tx_power_offsets */
-+static void b43_phy_lcn_clear_tx_power_offsets(struct b43_wldev *dev)
- {
- 	u8 i;
- 
-@@ -154,7 +158,8 @@ static void b43_phy_lcn_clear_0x07_table(struct b43_wldev *dev)
- 	}
- }
- 
--static void b43_phy_lcn_pre_radio_init(struct b43_wldev *dev)
-+/* wlc_lcnphy_rev0_baseband_init */
-+static void b43_phy_lcn_rev0_baseband_init(struct b43_wldev *dev)
- {
- 	b43_radio_write(dev, 0x11c, 0);
- 
-@@ -181,7 +186,11 @@ static void b43_phy_lcn_pre_radio_init(struct b43_wldev *dev)
- 	b43_phy_maskset(dev, 0x448, ~0x300, 0x100);
- 	b43_phy_maskset(dev, 0x608, ~0xff, 0x17);
- 	b43_phy_maskset(dev, 0x604, ~0x7ff, 0x3ea);
-+}
- 
-+/* wlc_lcnphy_bu_tweaks */
-+static void b43_phy_lcn_bu_tweaks(struct b43_wldev *dev)
-+{
- 	b43_phy_set(dev, 0x805, 0x1);
- 
- 	b43_phy_maskset(dev, 0x42f, ~0x7, 0x3);
-@@ -203,9 +212,16 @@ static void b43_phy_lcn_pre_radio_init(struct b43_wldev *dev)
- 	b43_phy_write(dev, 0x7d6, 0x0902);
- 
- 	/* TODO: more ops */
-+
+-	b43_radio_write(dev, 0x038, 0x0);
+-	b43_radio_write(dev, 0x091, 0x7);
 +	if (dev->phy.rev == 1) {
-+		/* TODO: more ops */
-+
-+		b43_phy_lcn_clear_tx_power_offsets(dev);
++		/* brcmsmac uses outdated 0x3 for 0x038 */
++		b43_radio_write(dev, 0x038, 0x0);
++		b43_radio_write(dev, 0x091, 0x7);
 +	}
  }
  
--static void b43_phy_lcn_save_configsth_restore(struct b43_wldev *dev)
-+/* wlc_lcnphy_vbat_temp_sense_setup */
-+static void b43_phy_lcn_sense_setup(struct b43_wldev *dev)
+ /* wlc_radio_2064_init */
+ static void b43_radio_2064_init(struct b43_wldev *dev)
+ {
+-	b43_radio_write(dev, 0x09c, 0x0020);
+-	b43_radio_write(dev, 0x105, 0x0008);
++	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
++		b43_radio_write(dev, 0x09c, 0x0020);
++		b43_radio_write(dev, 0x105, 0x0008);
++	} else {
++		/* TODO */
++	}
+ 	b43_radio_write(dev, 0x032, 0x0062);
+ 	b43_radio_write(dev, 0x033, 0x0019);
+ 	b43_radio_write(dev, 0x090, 0x0010);
+ 	b43_radio_write(dev, 0x010, 0x0000);
+-	b43_radio_write(dev, 0x060, 0x007f);
+-	b43_radio_write(dev, 0x061, 0x0072);
+-	b43_radio_write(dev, 0x062, 0x007f);
++	if (dev->phy.rev == 1) {
++		b43_radio_write(dev, 0x060, 0x007f);
++		b43_radio_write(dev, 0x061, 0x0072);
++		b43_radio_write(dev, 0x062, 0x007f);
++	}
+ 	b43_radio_write(dev, 0x01d, 0x0002);
+ 	b43_radio_write(dev, 0x01e, 0x0006);
+ 
+@@ -145,10 +155,12 @@ static void b43_phy_lcn_clear_tx_power_offsets(struct b43_wldev *dev)
  {
  	u8 i;
  
-@@ -297,6 +313,7 @@ static void b43_phy_lcn_op_prepare_structs(struct b43_wldev *dev)
- 	memset(phy_lcn, 0, sizeof(*phy_lcn));
- }
+-	b43_phy_write(dev, B43_PHY_LCN_TABLE_ADDR, (0x7 << 10) | 0x340);
+-	for (i = 0; i < 30; i++) {
+-		b43_phy_write(dev, B43_PHY_LCN_TABLE_DATAHI, 0);
+-		b43_phy_write(dev, B43_PHY_LCN_TABLE_DATALO, 0);
++	if (1) { /* FIXME */
++		b43_phy_write(dev, B43_PHY_LCN_TABLE_ADDR, (0x7 << 10) | 0x340);
++		for (i = 0; i < 30; i++) {
++			b43_phy_write(dev, B43_PHY_LCN_TABLE_DATAHI, 0);
++			b43_phy_write(dev, B43_PHY_LCN_TABLE_DATALO, 0);
++		}
+ 	}
  
-+/* wlc_phy_init_lcnphy */
- static int b43_phy_lcn_op_init(struct b43_wldev *dev)
- {
- 	b43_phy_set(dev, 0x44a, 0x80);
-@@ -312,15 +329,15 @@ static int b43_phy_lcn_op_init(struct b43_wldev *dev)
+ 	b43_phy_write(dev, B43_PHY_LCN_TABLE_ADDR, (0x7 << 10) | 0x80);
+@@ -178,8 +190,13 @@ static void b43_phy_lcn_rev0_baseband_init(struct b43_wldev *dev)
+ 	b43_phy_set(dev, 0x44a, 0x44);
+ 	b43_phy_write(dev, 0x44a, 0x80);
  
- 	b43_phy_lcn_tables_init(dev);
++	if (!(dev->dev->bus_sprom->boardflags_lo & B43_BFL_FEM))
++		; /* TODO */
+ 	b43_phy_maskset(dev, 0x634, ~0xff, 0xc);
+-	b43_phy_maskset(dev, 0x634, ~0xff, 0xa);
++	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_FEM) {
++		b43_phy_maskset(dev, 0x634, ~0xff, 0xa);
++		b43_phy_write(dev, 0x910, 0x1);
++	}
  
--	b43_phy_lcn_pre_radio_init(dev);
--	b43_phy_lcn_clear_0x07_table(dev);
-+	b43_phy_lcn_rev0_baseband_init(dev);
-+	b43_phy_lcn_bu_tweaks(dev);
+ 	b43_phy_write(dev, 0x910, 0x1);
  
- 	if (dev->phy.radio_ver == 0x2064)
- 		b43_radio_2064_init(dev);
- 	else
- 		B43_WARN_ON(1);
+@@ -207,7 +224,8 @@ static void b43_phy_lcn_bu_tweaks(struct b43_wldev *dev)
+ 	b43_phy_maskset(dev, 0x434, ~0xff, 0xfd);
+ 	b43_phy_maskset(dev, 0x420, ~0xff, 0x10);
  
--	b43_phy_lcn_save_configsth_restore(dev);
-+	b43_phy_lcn_sense_setup(dev);
+-	b43_radio_set(dev, 0x09b, 0xf0);
++	if (dev->dev->bus_sprom->board_rev >= 0x1204)
++		b43_radio_set(dev, 0x09b, 0xf0);
  
- 	return 0;
- }
+ 	b43_phy_write(dev, 0x7d6, 0x0902);
+ 
 diff --git a/drivers/net/wireless/b43/tables_phy_lcn.c b/drivers/net/wireless/b43/tables_phy_lcn.c
-index fd2b16d..c62a940 100644
+index c62a940..7bf7057 100644
 --- a/drivers/net/wireless/b43/tables_phy_lcn.c
 +++ b/drivers/net/wireless/b43/tables_phy_lcn.c
-@@ -295,7 +295,7 @@ static const u32 b43_lcntab_0x18[] = {
- 	0x00080000, 0x00080000, 0x00080000, 0x00080000,
- };
- 
--const u16 b43_lcntab_0x0f_late[] = {
-+const u16 b43_lcntab_sw_ctl_4313_epa_rev0[] = {
- 	0x0002, 0x0008, 0x0004, 0x0001, 0x0002, 0x0008,
- 	0x0004, 0x0001, 0x0002, 0x0008, 0x0004, 0x0001,
- 	0x0002, 0x0008, 0x0004, 0x0001, 0x0002, 0x0008,
-@@ -488,7 +488,8 @@ static void b43_phy_lcn_rewrite_tables(struct b43_wldev *dev)
- 	}
- }
- 
--static void b43_phy_lcn_clean_0x18_table(struct b43_wldev *dev)
-+/* wlc_lcnphy_clear_papd_comptable */
-+static void b43_phy_lcn_clean_papd_comp_table(struct b43_wldev *dev)
+@@ -501,9 +501,15 @@ void b43_phy_lcn_tables_init(struct b43_wldev *dev)
  {
- 	u8 i;
- 
-@@ -501,8 +502,9 @@ void b43_phy_lcn_tables_init(struct b43_wldev *dev)
  	b43_phy_lcn_upload_static_tables(dev);
  	/* TODO: various tables ops here */
- 	b43_lcntab_write_bulk(dev, B43_LCNTAB16(0xf, 0),
--			ARRAY_SIZE(b43_lcntab_0x0f_late), b43_lcntab_0x0f_late);
-+			ARRAY_SIZE(b43_lcntab_sw_ctl_4313_epa_rev0),
-+			b43_lcntab_sw_ctl_4313_epa_rev0);
+-	b43_lcntab_write_bulk(dev, B43_LCNTAB16(0xf, 0),
++
++	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_FEM &&
++	    !(dev->dev->bus_sprom->boardflags_hi & B43_BFH_FEM_BT))
++		b43_lcntab_write_bulk(dev, B43_LCNTAB16(0xf, 0),
+ 			ARRAY_SIZE(b43_lcntab_sw_ctl_4313_epa_rev0),
+ 			b43_lcntab_sw_ctl_4313_epa_rev0);
++	else
++		b43err(dev->wl, "SW ctl table is unknown for this card\n");
++
  	/* TODO: various tables ops here */
  	b43_phy_lcn_rewrite_tables(dev);
--	b43_phy_lcn_clean_0x18_table(dev);
-+	b43_phy_lcn_clean_papd_comp_table(dev);
- }
+ 	b43_phy_lcn_clean_papd_comp_table(dev);
 -- 
 1.7.3.4
