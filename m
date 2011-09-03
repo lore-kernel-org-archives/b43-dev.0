@@ -1,34 +1,38 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 02 Sep 2011 17:04:47 -0500
-Subject: Looking for BCM43228
-In-Reply-To: <CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
-References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>
-	<CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
-	<CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>
-	<CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
-Message-ID: <4E6152FF.40101@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sat,  3 Sep 2011 21:01:00 +0200
+Subject: [PATCH 0/3] Update copyrights, module info, a little LCN improvement
+Message-ID: <1315076463-11222-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 08/29/2011 04:27 PM, Rafa? Mi?ecki wrote:
-> W dniu 29 sierpnia 2011 21:02 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com>  napisa?:
->> I'll mail Marc, Ubuntu's launchpad reported to ask if he still has
->> access to this notebook.
->
-> I've just received photo of the card (inside notebook) from Marc. It's
-> labeled as DW1530, bingo! :)
->
-> I'll ask Dell about prices. Larry: I'm also waiting for you getting
-> response, maybe your prices will be lower?
+I'm adding my Copyrights to the files I've touched/created in 2010-2011.
 
-I got no answer from that first vendor. I just sent another message to a 
-different vendor. I found the device on a parts list for some government 
-organization in Ohio that listed the Dell Part Number (430-3960) and a price of 
-12.15 USD. Too bad I couldn't purchase there.
+Hope you'll accept adding myself as b43 author.
 
-Larry
+LCN patch almost finishes tables init for that family of cards.
+
+Rafa? Mi?ecki (3):
+  b43: drop Copyright for not really copyrightable info
+  b43: add my copyrights and myself as the module author
+  b43: LCN-PHY: load TX gain table on init
+
+ drivers/net/wireless/b43/bus.c            |    2 +
+ drivers/net/wireless/b43/main.c           |    2 +
+ drivers/net/wireless/b43/phy_ht.c         |    2 +
+ drivers/net/wireless/b43/phy_lcn.c        |    2 +
+ drivers/net/wireless/b43/phy_n.c          |    1 +
+ drivers/net/wireless/b43/radio_2055.c     |    1 +
+ drivers/net/wireless/b43/radio_2056.c     |    2 +
+ drivers/net/wireless/b43/radio_2056.h     |   26 ----
+ drivers/net/wireless/b43/radio_2059.c     |    2 +
+ drivers/net/wireless/b43/tables_nphy.c    |    1 +
+ drivers/net/wireless/b43/tables_phy_ht.c  |    2 +
+ drivers/net/wireless/b43/tables_phy_lcn.c |  197 ++++++++++++++++++++++++++++-
+ 12 files changed, 211 insertions(+), 29 deletions(-)
+
+-- 
+1.7.3.4
