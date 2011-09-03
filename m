@@ -1,49 +1,30 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 3 Sep 2011 21:39:06 +0200
-Subject: Looking for BCM43228
-In-Reply-To: <4E6152FF.40101@lwfinger.net>
-References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>
-	<CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
-	<CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>
-	<CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
-	<4E6152FF.40101@lwfinger.net>
-Message-ID: <CACna6ryDDorBuh_JJRzm05W_zWaQs+4xJTpbhHPDcXaK0F-ORw@mail.gmail.com>
+Date: Sat, 3 Sep 2011 21:40:36 +0200
+Subject: [PATCH 3/3] b43: LCN-PHY: load TX gain table on init
+In-Reply-To: <1315076463-11222-4-git-send-email-zajec5@gmail.com>
+References: <1315076463-11222-1-git-send-email-zajec5@gmail.com>
+	<1315076463-11222-4-git-send-email-zajec5@gmail.com>
+Message-ID: <CACna6rzVXL4DWY_O+28iGz1OHGisSSnJwahiivNZS6REh6Ukdw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 
-W dniu 3 wrze?nia 2011 00:04 u?ytkownik Larry Finger
-<Larry.Finger@lwfinger.net> napisa?:
-> On 08/29/2011 04:27 PM, Rafa? Mi?ecki wrote:
->>
->> W dniu 29 sierpnia 2011 21:02 u?ytkownik Rafa? Mi?ecki
->> <zajec5@gmail.com> ?napisa?:
->>>
->>> I'll mail Marc, Ubuntu's launchpad reported to ask if he still has
->>> access to this notebook.
->>
->> I've just received photo of the card (inside notebook) from Marc. It's
->> labeled as DW1530, bingo! :)
->>
->> I'll ask Dell about prices. Larry: I'm also waiting for you getting
->> response, maybe your prices will be lower?
->
-> I got no answer from that first vendor. I just sent another message to a
-> different vendor. I found the device on a parts list for some government
-> organization in Ohio that listed the Dell Part Number (430-3960) and a price
-> of 12.15 USD. Too bad I couldn't purchase there.
+W dniu 3 wrze?nia 2011 21:01 u?ytkownik Rafa? Mi?ecki
+<zajec5@gmail.com> napisa?:
+> Values and ops were taken from MMIO dump of wl. struct was copied from
+> brcmsmac.
 
-It seems Dell can be the only choice for us. I've asked Marc for
-checking details of that card. I asked him to try bcma&b43 or get MMIO
-dump with wl. That will make us sure what's PHY hidden inside of that
-card.
+To get table I've simply used vim and RegExp plus find&replace:
 
-I've already bought once a card (BCM43225) in hope it'll contain PHY
-different that card I already have (BCM43224). That cards seem to have
-exactly the same PHY.
+:%s/phy_write(0x0455) <- 0x....\n phy_read(0x0456) -> 0x....\n
+phy_read(0x0457) -> 0x....\n\(.*\n.*\n.*\n\)/\1\r/
+:%s/phy_write(0x0455) <- 0x....\nphy_write(0x0457) <-
+0x\(....\)\nphy_write(0x0456) <- 0x\(....\)/0x\1\2/
+:%s/0x\(..\)\(..\)\(..\)\(..\)\n0x\(.\)\(..\).....\n/\t{ 0x\4, 0x\3,
+0x\2, 0x\5, 0x\6 },/
 
 -- 
 Rafa?
