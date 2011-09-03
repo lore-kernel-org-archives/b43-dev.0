@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat,  3 Sep 2011 21:01:01 +0200
-Subject: [PATCH 1/3] b43: drop Copyright for not really copyrightable info
+Date: Sat,  3 Sep 2011 21:01:02 +0200
+Subject: [PATCH 2/3] b43: add my copyrights and myself as the module author
 In-Reply-To: <1315076463-11222-1-git-send-email-zajec5@gmail.com>
 References: <1315076463-11222-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1315076463-11222-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1315076463-11222-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,48 +11,168 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-As discussed in "Licensing wlc_phy_radio.h and brcm80211" (Message-ID:
-<AANLkTinQMRGkOvi4e4JMsHGV_BF_4Rf5oHCtZgQjwQ1g@mail.gmail.com>) content
-of that file is not copyrightable, just names and numbers.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/radio_2056.h |   26 --------------------------
- 1 files changed, 0 insertions(+), 26 deletions(-)
+ drivers/net/wireless/b43/bus.c            |    2 ++
+ drivers/net/wireless/b43/main.c           |    2 ++
+ drivers/net/wireless/b43/phy_ht.c         |    2 ++
+ drivers/net/wireless/b43/phy_lcn.c        |    2 ++
+ drivers/net/wireless/b43/phy_n.c          |    1 +
+ drivers/net/wireless/b43/radio_2055.c     |    1 +
+ drivers/net/wireless/b43/radio_2056.c     |    2 ++
+ drivers/net/wireless/b43/radio_2059.c     |    2 ++
+ drivers/net/wireless/b43/tables_nphy.c    |    1 +
+ drivers/net/wireless/b43/tables_phy_ht.c  |    2 ++
+ drivers/net/wireless/b43/tables_phy_lcn.c |    2 ++
+ 11 files changed, 19 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/radio_2056.h b/drivers/net/wireless/b43/radio_2056.h
-index d52df6b..a7159d8 100644
---- a/drivers/net/wireless/b43/radio_2056.h
-+++ b/drivers/net/wireless/b43/radio_2056.h
-@@ -1,29 +1,3 @@
--/*
--
--  Broadcom B43 wireless driver
--
--  Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
--
--  Some parts of the code in this file are derived from the brcm80211
--  driver  Copyright (c) 2010 Broadcom Corporation
--
--  This program is free software; you can redistribute it and/or modify
--  it under the terms of the GNU General Public License as published by
--  the Free Software Foundation; either version 2 of the License, or
--  (at your option) any later version.
--
--  This program is distributed in the hope that it will be useful,
--  but WITHOUT ANY WARRANTY; without even the implied warranty of
--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--  GNU General Public License for more details.
--
--  You should have received a copy of the GNU General Public License
--  along with this program; see the file COPYING.  If not, write to
--  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
--  Boston, MA 02110-1301, USA.
--
--*/
--
- #ifndef B43_RADIO_2056_H_
- #define B43_RADIO_2056_H_
+diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
+index 05f6c7b..424692d 100644
+--- a/drivers/net/wireless/b43/bus.c
++++ b/drivers/net/wireless/b43/bus.c
+@@ -3,6 +3,8 @@
+   Broadcom B43 wireless driver
+   Bus abstraction layer
  
++  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
++
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 6bca727..2407702 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -7,6 +7,7 @@
+   Copyright (c) 2005-2009 Michael Buesch <m@bues.ch>
+   Copyright (c) 2005 Danny van Dyk <kugelfang@gentoo.org>
+   Copyright (c) 2005 Andreas Jaggi <andreas.jaggi@waterwave.ch>
++  Copyright (c) 2010-2011 Rafa? Mi?ecki <zajec5@gmail.com>
+ 
+   SDIO support
+   Copyright (c) 2009 Albert Herranz <albert_herranz@yahoo.es>
+@@ -64,6 +65,7 @@ MODULE_AUTHOR("Martin Langer");
+ MODULE_AUTHOR("Stefano Brivio");
+ MODULE_AUTHOR("Michael Buesch");
+ MODULE_AUTHOR("G?bor Stefanik");
++MODULE_AUTHOR("Rafa? Mi?ecki");
+ MODULE_LICENSE("GPL");
+ 
+ MODULE_FIRMWARE("b43/ucode11.fw");
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 4d6345e..7416c5e 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -3,6 +3,8 @@
+   Broadcom B43 wireless driver
+   IEEE 802.11n HT-PHY support
+ 
++  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
++
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
+index d0f106e..d1dfeec 100644
+--- a/drivers/net/wireless/b43/phy_lcn.c
++++ b/drivers/net/wireless/b43/phy_lcn.c
+@@ -3,6 +3,8 @@
+   Broadcom B43 wireless driver
+   IEEE 802.11n LCN-PHY support
+ 
++  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
++
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 6e91680..4951678 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -4,6 +4,7 @@
+   IEEE 802.11n PHY support
+ 
+   Copyright (c) 2008 Michael Buesch <m@bues.ch>
++  Copyright (c) 2010-2011 Rafa? Mi?ecki <zajec5@gmail.com>
+ 
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+diff --git a/drivers/net/wireless/b43/radio_2055.c b/drivers/net/wireless/b43/radio_2055.c
+index 93643f1..5289a18 100644
+--- a/drivers/net/wireless/b43/radio_2055.c
++++ b/drivers/net/wireless/b43/radio_2055.c
+@@ -4,6 +4,7 @@
+   IEEE 802.11n PHY and radio device data tables
+ 
+   Copyright (c) 2008 Michael Buesch <m@bues.ch>
++  Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
+ 
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+diff --git a/drivers/net/wireless/b43/radio_2056.c b/drivers/net/wireless/b43/radio_2056.c
+index 8890df0..a01f776 100644
+--- a/drivers/net/wireless/b43/radio_2056.c
++++ b/drivers/net/wireless/b43/radio_2056.c
+@@ -3,6 +3,8 @@
+   Broadcom B43 wireless driver
+   IEEE 802.11n 2056 radio device data tables
+ 
++  Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
++
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+diff --git a/drivers/net/wireless/b43/radio_2059.c b/drivers/net/wireless/b43/radio_2059.c
+index f029f6e..d4ce8a1 100644
+--- a/drivers/net/wireless/b43/radio_2059.c
++++ b/drivers/net/wireless/b43/radio_2059.c
+@@ -3,6 +3,8 @@
+   Broadcom B43 wireless driver
+   IEEE 802.11n 2059 radio device data tables
+ 
++  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
++
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
+index 916f238..7b326f2 100644
+--- a/drivers/net/wireless/b43/tables_nphy.c
++++ b/drivers/net/wireless/b43/tables_nphy.c
+@@ -4,6 +4,7 @@
+   IEEE 802.11n PHY data tables
+ 
+   Copyright (c) 2008 Michael Buesch <m@bues.ch>
++  Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
+ 
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
+index 677d217..176c49d 100644
+--- a/drivers/net/wireless/b43/tables_phy_ht.c
++++ b/drivers/net/wireless/b43/tables_phy_ht.c
+@@ -3,6 +3,8 @@
+   Broadcom B43 wireless driver
+   IEEE 802.11n HT-PHY data tables
+ 
++  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
++
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+diff --git a/drivers/net/wireless/b43/tables_phy_lcn.c b/drivers/net/wireless/b43/tables_phy_lcn.c
+index 7bf7057..1682ba0 100644
+--- a/drivers/net/wireless/b43/tables_phy_lcn.c
++++ b/drivers/net/wireless/b43/tables_phy_lcn.c
+@@ -3,6 +3,8 @@
+   Broadcom B43 wireless driver
+   IEEE 802.11n LCN-PHY data tables
+ 
++  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
++
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
 -- 
 1.7.3.4
