@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat,  3 Sep 2011 21:01:02 +0200
-Subject: [PATCH 2/3] b43: add my copyrights and myself as the module author
+Date: Sat,  3 Sep 2011 21:01:03 +0200
+Subject: [PATCH 3/3] b43: LCN-PHY: load TX gain table on init
 In-Reply-To: <1315076463-11222-1-git-send-email-zajec5@gmail.com>
 References: <1315076463-11222-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1315076463-11222-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1315076463-11222-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,168 +11,244 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Values and ops were taken from MMIO dump of wl. struct was copied from
+brcmsmac.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/bus.c            |    2 ++
- drivers/net/wireless/b43/main.c           |    2 ++
- drivers/net/wireless/b43/phy_ht.c         |    2 ++
- drivers/net/wireless/b43/phy_lcn.c        |    2 ++
- drivers/net/wireless/b43/phy_n.c          |    1 +
- drivers/net/wireless/b43/radio_2055.c     |    1 +
- drivers/net/wireless/b43/radio_2056.c     |    2 ++
- drivers/net/wireless/b43/radio_2059.c     |    2 ++
- drivers/net/wireless/b43/tables_nphy.c    |    1 +
- drivers/net/wireless/b43/tables_phy_ht.c  |    2 ++
- drivers/net/wireless/b43/tables_phy_lcn.c |    2 ++
- 11 files changed, 19 insertions(+), 0 deletions(-)
+ drivers/net/wireless/b43/tables_phy_lcn.c |  195 ++++++++++++++++++++++++++++-
+ 1 files changed, 192 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
-index 05f6c7b..424692d 100644
---- a/drivers/net/wireless/b43/bus.c
-+++ b/drivers/net/wireless/b43/bus.c
-@@ -3,6 +3,8 @@
-   Broadcom B43 wireless driver
-   Bus abstraction layer
- 
-+  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
-+
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 6bca727..2407702 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -7,6 +7,7 @@
-   Copyright (c) 2005-2009 Michael Buesch <m@bues.ch>
-   Copyright (c) 2005 Danny van Dyk <kugelfang@gentoo.org>
-   Copyright (c) 2005 Andreas Jaggi <andreas.jaggi@waterwave.ch>
-+  Copyright (c) 2010-2011 Rafa? Mi?ecki <zajec5@gmail.com>
- 
-   SDIO support
-   Copyright (c) 2009 Albert Herranz <albert_herranz@yahoo.es>
-@@ -64,6 +65,7 @@ MODULE_AUTHOR("Martin Langer");
- MODULE_AUTHOR("Stefano Brivio");
- MODULE_AUTHOR("Michael Buesch");
- MODULE_AUTHOR("G?bor Stefanik");
-+MODULE_AUTHOR("Rafa? Mi?ecki");
- MODULE_LICENSE("GPL");
- 
- MODULE_FIRMWARE("b43/ucode11.fw");
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 4d6345e..7416c5e 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -3,6 +3,8 @@
-   Broadcom B43 wireless driver
-   IEEE 802.11n HT-PHY support
- 
-+  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
-+
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
-index d0f106e..d1dfeec 100644
---- a/drivers/net/wireless/b43/phy_lcn.c
-+++ b/drivers/net/wireless/b43/phy_lcn.c
-@@ -3,6 +3,8 @@
-   Broadcom B43 wireless driver
-   IEEE 802.11n LCN-PHY support
- 
-+  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
-+
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 6e91680..4951678 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -4,6 +4,7 @@
-   IEEE 802.11n PHY support
- 
-   Copyright (c) 2008 Michael Buesch <m@bues.ch>
-+  Copyright (c) 2010-2011 Rafa? Mi?ecki <zajec5@gmail.com>
- 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-diff --git a/drivers/net/wireless/b43/radio_2055.c b/drivers/net/wireless/b43/radio_2055.c
-index 93643f1..5289a18 100644
---- a/drivers/net/wireless/b43/radio_2055.c
-+++ b/drivers/net/wireless/b43/radio_2055.c
-@@ -4,6 +4,7 @@
-   IEEE 802.11n PHY and radio device data tables
- 
-   Copyright (c) 2008 Michael Buesch <m@bues.ch>
-+  Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
- 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-diff --git a/drivers/net/wireless/b43/radio_2056.c b/drivers/net/wireless/b43/radio_2056.c
-index 8890df0..a01f776 100644
---- a/drivers/net/wireless/b43/radio_2056.c
-+++ b/drivers/net/wireless/b43/radio_2056.c
-@@ -3,6 +3,8 @@
-   Broadcom B43 wireless driver
-   IEEE 802.11n 2056 radio device data tables
- 
-+  Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
-+
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-diff --git a/drivers/net/wireless/b43/radio_2059.c b/drivers/net/wireless/b43/radio_2059.c
-index f029f6e..d4ce8a1 100644
---- a/drivers/net/wireless/b43/radio_2059.c
-+++ b/drivers/net/wireless/b43/radio_2059.c
-@@ -3,6 +3,8 @@
-   Broadcom B43 wireless driver
-   IEEE 802.11n 2059 radio device data tables
- 
-+  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
-+
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
-index 916f238..7b326f2 100644
---- a/drivers/net/wireless/b43/tables_nphy.c
-+++ b/drivers/net/wireless/b43/tables_nphy.c
-@@ -4,6 +4,7 @@
-   IEEE 802.11n PHY data tables
- 
-   Copyright (c) 2008 Michael Buesch <m@bues.ch>
-+  Copyright (c) 2010 Rafa? Mi?ecki <zajec5@gmail.com>
- 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-diff --git a/drivers/net/wireless/b43/tables_phy_ht.c b/drivers/net/wireless/b43/tables_phy_ht.c
-index 677d217..176c49d 100644
---- a/drivers/net/wireless/b43/tables_phy_ht.c
-+++ b/drivers/net/wireless/b43/tables_phy_ht.c
-@@ -3,6 +3,8 @@
-   Broadcom B43 wireless driver
-   IEEE 802.11n HT-PHY data tables
- 
-+  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
-+
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
 diff --git a/drivers/net/wireless/b43/tables_phy_lcn.c b/drivers/net/wireless/b43/tables_phy_lcn.c
-index 7bf7057..1682ba0 100644
+index 1682ba0..a2dd72e 100644
 --- a/drivers/net/wireless/b43/tables_phy_lcn.c
 +++ b/drivers/net/wireless/b43/tables_phy_lcn.c
-@@ -3,6 +3,8 @@
-   Broadcom B43 wireless driver
-   IEEE 802.11n LCN-PHY data tables
+@@ -27,6 +27,18 @@
+ #include "phy_common.h"
+ #include "phy_lcn.h"
  
-+  Copyright (c) 2011 Rafa? Mi?ecki <zajec5@gmail.com>
++struct b43_lcntab_tx_gain_tbl_entry {
++	u8 gm;
++	u8 pga;
++	u8 pad;
++	u8 dac;
++	u8 bb_mult;
++};
 +
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
++/**************************************************
++ * Static tables.
++ **************************************************/
++
+ static const u16 b43_lcntab_0x02[] = {
+ 	0x014d, 0x014d, 0x014d, 0x014d, 0x014d, 0x014d,
+ 	0x014d, 0x014d, 0x014d, 0x014d, 0x014d, 0x014d,
+@@ -297,6 +309,146 @@ static const u32 b43_lcntab_0x18[] = {
+ 	0x00080000, 0x00080000, 0x00080000, 0x00080000,
+ };
+ 
++/**************************************************
++ * TX gain.
++ **************************************************/
++
++const struct b43_lcntab_tx_gain_tbl_entry
++		b43_lcntab_tx_gain_tbl_2ghz_ext_pa_rev0[] = {
++	{ 0x03, 0x00, 0x1f, 0x0, 0x48 },
++	{ 0x03, 0x00, 0x1f, 0x0, 0x46 },
++	{ 0x03, 0x00, 0x1f, 0x0, 0x44 },
++	{ 0x03, 0x00, 0x1e, 0x0, 0x43 },
++	{ 0x03, 0x00, 0x1d, 0x0, 0x44 },
++	{ 0x03, 0x00, 0x1c, 0x0, 0x44 },
++	{ 0x03, 0x00, 0x1b, 0x0, 0x45 },
++	{ 0x03, 0x00, 0x1a, 0x0, 0x46 },
++	{ 0x03, 0x00, 0x19, 0x0, 0x46 },
++	{ 0x03, 0x00, 0x18, 0x0, 0x47 },
++	{ 0x03, 0x00, 0x17, 0x0, 0x48 },
++	{ 0x03, 0x00, 0x17, 0x0, 0x46 },
++	{ 0x03, 0x00, 0x16, 0x0, 0x47 },
++	{ 0x03, 0x00, 0x15, 0x0, 0x48 },
++	{ 0x03, 0x00, 0x15, 0x0, 0x46 },
++	{ 0x03, 0x00, 0x15, 0x0, 0x44 },
++	{ 0x03, 0x00, 0x15, 0x0, 0x42 },
++	{ 0x03, 0x00, 0x15, 0x0, 0x40 },
++	{ 0x03, 0x00, 0x15, 0x0, 0x3f },
++	{ 0x03, 0x00, 0x14, 0x0, 0x40 },
++	{ 0x03, 0x00, 0x13, 0x0, 0x41 },
++	{ 0x03, 0x00, 0x13, 0x0, 0x40 },
++	{ 0x03, 0x00, 0x12, 0x0, 0x41 },
++	{ 0x03, 0x00, 0x12, 0x0, 0x40 },
++	{ 0x03, 0x00, 0x11, 0x0, 0x41 },
++	{ 0x03, 0x00, 0x11, 0x0, 0x40 },
++	{ 0x03, 0x00, 0x10, 0x0, 0x41 },
++	{ 0x03, 0x00, 0x10, 0x0, 0x40 },
++	{ 0x03, 0x00, 0x10, 0x0, 0x3e },
++	{ 0x03, 0x00, 0x10, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x10, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x0f, 0x0, 0x3d },
++	{ 0x03, 0x00, 0x0f, 0x0, 0x3b },
++	{ 0x03, 0x00, 0x0e, 0x0, 0x3d },
++	{ 0x03, 0x00, 0x0e, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x0e, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x0d, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x0d, 0x0, 0x3b },
++	{ 0x03, 0x00, 0x0c, 0x0, 0x3e },
++	{ 0x03, 0x00, 0x0c, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x0c, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x0b, 0x0, 0x3e },
++	{ 0x03, 0x00, 0x0b, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x0b, 0x0, 0x3b },
++	{ 0x03, 0x00, 0x0b, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x0a, 0x0, 0x3d },
++	{ 0x03, 0x00, 0x0a, 0x0, 0x3b },
++	{ 0x03, 0x00, 0x0a, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x09, 0x0, 0x3e },
++	{ 0x03, 0x00, 0x09, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x09, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x09, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x08, 0x0, 0x3e },
++	{ 0x03, 0x00, 0x08, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x08, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x08, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x08, 0x0, 0x37 },
++	{ 0x03, 0x00, 0x07, 0x0, 0x3d },
++	{ 0x03, 0x00, 0x07, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x07, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x07, 0x0, 0x38 },
++	{ 0x03, 0x00, 0x07, 0x0, 0x37 },
++	{ 0x03, 0x00, 0x06, 0x0, 0x3e },
++	{ 0x03, 0x00, 0x06, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x06, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x06, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x06, 0x0, 0x37 },
++	{ 0x03, 0x00, 0x06, 0x0, 0x36 },
++	{ 0x03, 0x00, 0x06, 0x0, 0x34 },
++	{ 0x03, 0x00, 0x05, 0x0, 0x3d },
++	{ 0x03, 0x00, 0x05, 0x0, 0x3b },
++	{ 0x03, 0x00, 0x05, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x05, 0x0, 0x38 },
++	{ 0x03, 0x00, 0x05, 0x0, 0x36 },
++	{ 0x03, 0x00, 0x05, 0x0, 0x35 },
++	{ 0x03, 0x00, 0x05, 0x0, 0x33 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x3e },
++	{ 0x03, 0x00, 0x04, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x04, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x04, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x37 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x36 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x34 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x33 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x31 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x30 },
++	{ 0x03, 0x00, 0x04, 0x0, 0x2e },
++	{ 0x03, 0x00, 0x03, 0x0, 0x3c },
++	{ 0x03, 0x00, 0x03, 0x0, 0x3a },
++	{ 0x03, 0x00, 0x03, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x03, 0x0, 0x37 },
++	{ 0x03, 0x00, 0x03, 0x0, 0x36 },
++	{ 0x03, 0x00, 0x03, 0x0, 0x34 },
++	{ 0x03, 0x00, 0x03, 0x0, 0x33 },
++	{ 0x03, 0x00, 0x03, 0x0, 0x31 },
++	{ 0x03, 0x00, 0x03, 0x0, 0x30 },
++	{ 0x03, 0x00, 0x03, 0x0, 0x2e },
++	{ 0x03, 0x00, 0x03, 0x0, 0x2d },
++	{ 0x03, 0x00, 0x03, 0x0, 0x2c },
++	{ 0x03, 0x00, 0x03, 0x0, 0x2b },
++	{ 0x03, 0x00, 0x03, 0x0, 0x29 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x3d },
++	{ 0x03, 0x00, 0x02, 0x0, 0x3b },
++	{ 0x03, 0x00, 0x02, 0x0, 0x39 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x38 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x36 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x35 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x33 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x32 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x30 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x2f },
++	{ 0x03, 0x00, 0x02, 0x0, 0x2e },
++	{ 0x03, 0x00, 0x02, 0x0, 0x2c },
++	{ 0x03, 0x00, 0x02, 0x0, 0x2b },
++	{ 0x03, 0x00, 0x02, 0x0, 0x2a },
++	{ 0x03, 0x00, 0x02, 0x0, 0x29 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x27 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x26 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x25 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x24 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x23 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x22 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x21 },
++	{ 0x03, 0x00, 0x02, 0x0, 0x20 },
++	{ 0x03, 0x00, 0x01, 0x0, 0x3f },
++	{ 0x03, 0x00, 0x01, 0x0, 0x3d },
++	{ 0x03, 0x00, 0x01, 0x0, 0x3b },
++	{ 0x03, 0x00, 0x01, 0x0, 0x39 },
++};
++
++/**************************************************
++ * SW control.
++ **************************************************/
++
+ const u16 b43_lcntab_sw_ctl_4313_epa_rev0[] = {
+ 	0x0002, 0x0008, 0x0004, 0x0001, 0x0002, 0x0008,
+ 	0x0004, 0x0001, 0x0002, 0x0008, 0x0004, 0x0001,
+@@ -479,6 +631,32 @@ static void b43_phy_lcn_upload_static_tables(struct b43_wldev *dev)
+ 	lcntab_upload(dev, B43_LCNTAB32(0x18, 0), b43_lcntab_0x18);
+ }
+ 
++void b43_phy_lcn_load_tx_gain_tab(struct b43_wldev *dev,
++			const struct b43_lcntab_tx_gain_tbl_entry *gain_table)
++{
++	u32 i;
++	u32 val;
++
++	u16 pa_gain = 0x70;
++	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_FEM)
++		pa_gain = 0x10;
++
++	for (i = 0; i < 128; i++) {
++		val = ((pa_gain << 24) |
++		       (gain_table[i].pad << 16) |
++		       (gain_table[i].pga << 8) |
++			gain_table[i].gm);
++		b43_lcntab_write(dev, B43_LCNTAB32(0x7, 0xc0 + i), val);
++
++		/* brcmsmac doesn't maskset, we follow newer wl here */
++		val = b43_lcntab_read(dev, B43_LCNTAB32(0x7, 0x140 + i));
++		val &= 0x000fffff;
++		val |= ((gain_table[i].dac << 28) |
++			(gain_table[i].bb_mult << 20));
++		b43_lcntab_write(dev, B43_LCNTAB32(0x7, 0x140 + i), val);
++	}
++}
++
+ /* Not implemented in brcmsmac, noticed in wl in MMIO dump */
+ static void b43_phy_lcn_rewrite_tables(struct b43_wldev *dev)
+ {
+@@ -499,13 +677,24 @@ static void b43_phy_lcn_clean_papd_comp_table(struct b43_wldev *dev)
+ 		b43_lcntab_write(dev, B43_LCNTAB32(0x18, i), 0x80000);
+ }
+ 
++/* wlc_lcnphy_tbl_init */
+ void b43_phy_lcn_tables_init(struct b43_wldev *dev)
+ {
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
++
+ 	b43_phy_lcn_upload_static_tables(dev);
+-	/* TODO: various tables ops here */
+ 
+-	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_FEM &&
+-	    !(dev->dev->bus_sprom->boardflags_hi & B43_BFH_FEM_BT))
++	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
++		if (sprom->boardflags_lo & B43_BFL_EXTLNA)
++			b43_phy_lcn_load_tx_gain_tab(dev,
++				b43_lcntab_tx_gain_tbl_2ghz_ext_pa_rev0);
++		else
++			b43err(dev->wl,
++			       "TX gain table unknown for this card\n");
++	}
++
++	if (sprom->boardflags_lo & B43_BFL_FEM &&
++	    !(sprom->boardflags_hi & B43_BFH_FEM_BT))
+ 		b43_lcntab_write_bulk(dev, B43_LCNTAB16(0xf, 0),
+ 			ARRAY_SIZE(b43_lcntab_sw_ctl_4313_epa_rev0),
+ 			b43_lcntab_sw_ctl_4313_epa_rev0);
 -- 
 1.7.3.4
