@@ -1,25 +1,76 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 12 Sep 2011 13:35:46 +0200
+From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
+Date: Mon, 12 Sep 2011 15:16:40 +0200
 Subject: [PATCH] b43-asm, b43-dasm: Add 5 new instructions.
-In-Reply-To: <alpine.LFD.2.02.1109121040030.18551@oracolo.ing.unibs.it>
+In-Reply-To: <20110912131921.3d32b719@milhouse>
 References: <alpine.LFD.2.02.1109121040030.18551@oracolo.ing.unibs.it>
-Message-ID: <20110912133546.6710c606@milhouse>
+	<CA+XFjioSx76LvY0WUCrYYUgnzUj-vdDMfdA_vqxjCwVew6HiPQ@mail.gmail.com>
+	<20110912112514.344cf429@milhouse>
+	<44D50757-55C3-4838-A348-98673FCDBF90@ing.unibs.it>
+	<20110912123559.655e4dbd@milhouse>
+	<B0B2605A-E101-40D5-AD61-9EA490A2F502@ing.unibs.it>
+	<20110912131921.3d32b719@milhouse>
+Message-ID: <7AFFEE88-CE12-4466-A3D3-5368138AA757@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, 12 Sep 2011 10:50:16 +0200 (CEST)
-Francesco Gringoli <francesco.gringoli@ing.unibs.it> wrote:
+On Sep 12, 2011, at 1:19 PM, Michael B?sch wrote:
 
-> Opcode 0x101: multiply op1 and op2 and store upper 16 bits in op3.
-> Suggested name "mul" (multiply).
+> On Mon, 12 Sep 2011 12:58:52 +0200
+> francesco.gringoli at ing.unibs.it wrote:
+> 
+>> On Sep 12, 2011, at 12:35 PM, Michael B?sch wrote:
+>> 
+>>> On Mon, 12 Sep 2011 12:09:01 +0200
+>>> francesco.gringoli at ing.unibs.it wrote:
+>>> 
+>>>> but trying on a = 0x8000 and b = 0x7fff helped me understanding. a - b = 0x8000 + 2'(0x7fff) = 0x0001 > 0. While 0x8000 < 0x7fff.
+>>> 
+>>> I don't get it.
+>>> Can you write simple pseudocode for your instruction?
+>> Will try for jdn.
+>> 
+>>> For example, for jls, we have this pseudocode:
+>>> 
+>>> if (xxx < yyy)
+>>>   pc := jjj
+>>> (where xxx and yyy are two's complement)
+>>> 
+>> 
+>> ** jump if difference is negative
+>> 
+>> 0d6 xxx yyy jjj
+>> 
+>> if ( xxx - yyy < 0 )
+>> 	pc := jjj
+>> 
+>> C-pseudocode for jdn
+>> 
+>> 	short c = xxx - yyy;
+>> 	if ( c < 0 )
+>> 		goto jjj;
+> 
+> Ok. So the existing signed-compare jumps look at the carry of the subtraction
+> operation, but the new jdX instructions look at bit 0x8000 of the subtraction
+> result. (if set -> negative, otherwise positive). jdX ignores the carry.
+Exactly. For instance for jdn we have
 
-So this means the lower 16 bits are discarded? Or where are they put?
-My guess would be that there's also an instruction that multiplies
-op1 with op2 and puts the lower 16 bits into op3.
-What about opcode 0x100? Are you really sure it does the same as 0x101?
+0d6 xxx yyy jjj
+	tmp := xxx - yyy;
+	if( tmp & 0x8000 )
+		pc := jjj
 
--- 
-Greetings, Michael.
+	or alternatively
+
+	tmp := xxx - yyy;
+	if( tmp < 0 )
+		pc := jjj
+
+Tested both in the firmware and they are the same.
+
+Do you agree with those names?
+
+Thanks,
+-Francesco
