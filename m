@@ -1,31 +1,23 @@
 From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 12 Sep 2011 16:13:19 +0200
+Date: Mon, 12 Sep 2011 16:31:33 +0200
 Subject: [PATCH] b43-asm, b43-dasm: Add 5 new instructions.
-In-Reply-To: <0971215D-B6EB-4217-86C3-698352BA01D0@ing.unibs.it>
+In-Reply-To: <alpine.LFD.2.02.1109121040030.18551@oracolo.ing.unibs.it>
 References: <alpine.LFD.2.02.1109121040030.18551@oracolo.ing.unibs.it>
-	<20110912133546.6710c606@milhouse>
-	<0971215D-B6EB-4217-86C3-698352BA01D0@ing.unibs.it>
-Message-ID: <20110912161319.79f1bb3c@milhouse>
+Message-ID: <20110912163133.398b1d3b@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, 12 Sep 2011 16:04:14 +0200
-francesco.gringoli at ing.unibs.it wrote:
-> >> Opcode 0x101: multiply op1 and op2 and store upper 16 bits in op3.
-> >> Suggested name "mul" (multiply).
-> > 
-> > So this means the lower 16 bits are discarded? Or where are they put?
-> Aha! easy as candy! They are put in spr06d.
+Francesco, did you also take a look at the new rev 15+ subroutine call mechanism?
+http://bcm-v4.sipsolutions.net/802.11/Microcode#subroutines_.28rev_15.2B-_cores_only.29
 
-Ok. That's the second "PSM" register, which kind of makes sense.
-(The first "PSM" register is already used by the "PSM conditions")
-
-So yeah, in that case I'm also OK with this instruction.
-
-I will also add this to the documentation.
+My guess is that it stores the call stack somewhere in SHM or probably some new
+dedicated memory. I did not try anything of that on a device, yet, but from looking
+at the disassembly it's pretty obvious that this is a call/ret mechanism. What I
+don't see from the code is where the stack is put, though. If it's put into SHM, that
+should be easy to spot.
 
 -- 
 Greetings, Michael.
