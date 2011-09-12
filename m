@@ -1,38 +1,281 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Wed, 7 Sep 2011 15:48:03 +0200
-Subject: Looking for BCM43228
-In-Reply-To: <4E66941B.8020102@lwfinger.net>
-References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>
-	<CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
-	<CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>
-	<CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
-	<4E6152FF.40101@lwfinger.net>
-	<CACna6ryDDorBuh_JJRzm05W_zWaQs+4xJTpbhHPDcXaK0F-ORw@mail.gmail.com>
-	<20110906102407.05289b0b@mj> <4E66941B.8020102@lwfinger.net>
-Message-ID: <20110907154803.72573d41@milhouse>
+From: Francesco Gringoli <francesco.gringoli@ing.unibs.it>
+Date: Mon, 12 Sep 2011 10:50:16 +0200 (CEST)
+Subject: [PATCH] b43-asm, b43-dasm: Add 5 new instructions.
+Message-ID: <alpine.LFD.2.02.1109121040030.18551@oracolo.ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Pavel Roskin <proski@gnu.org>, linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>, Stefano Brivio <stefano.brivio@polimi.it>
+To: b43-dev@lists.infradead.org
 
-On Tue, 06 Sep 2011 16:43:55 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+Hi Larry and Michael,
 
-> On 09/06/2011 09:24 AM, Pavel Roskin wrote:
-> > On Sat, 3 Sep 2011 21:39:06 +0200
-> >
-> > By the way, there is some money in the b43 fund at
-> > http://linuxwireless.org/en/users/Drivers/b43/donations
-> >
-> > I hope it can be used to compensate the expenses.
-> 
-> It certainly should cover Rafa?'s expenses. Anyone know who is controlling that 
-> account?
+I did some testing with the firmware and discovered the meaning of a few
+instructions that are currently marked either as "unknown jump" on the
+bcm-specs site or do not appear at all. I chose some names but maybe you
+have better ideas regard them.
 
-Stefano Brivio is. However, he seems to have disappeared for quite some time.
-I think he even unsubscribed from the list several months ago.
+Here is a brief description of the instructions I'm talking about and a
+set of patches for b43-tools to enable proper dis/assembly.
 
--- 
-Greetings, Michael.
+Regards,
+-Francesco
+
+-------------=--------------
+Description of the new instructions
+
+Opcode 0x0D6: jumps if the difference between op1 and op2 is negative.
+Suggested name "jdn" (jump if difference is negative).
+
+Opcode 0x0D6|1: jumps if the difference between op1 and op2 is positive or 
+null.
+Suggested name "jdpz" (jump if difference is positive or zero).
+
+Opcode 0x0D8: jumps if the difference between op1 and op2 is positive.
+Suggested name "jdp" (jump if difference is positive).
+
+Opcode 0x0D8|1: jumps if the difference between op1 and op2 is negative or 
+null.
+Suggested name "jdnz" (jump if difference is negative or zero).
+
+Opcode 0x101: multiply op1 and op2 and store upper 16 bits in op3.
+Suggested name "mul" (multiply).
+This works on CPUs running ucode11. I have tested it on CPUs running
+ucode5 and op3 is not assigned.
+
+-------------=--------------
+The following changes are made to b43-tools
+
+1) b43-asm assembles new instructions jdn, jdnz, jdp, jdpz, mul;
+2) b43-dasm disassembles opcodes 0xD6, 0xD7, 0xD8, 0xD9, 0x101.
+
+Signed-off-by: Francesco Gringoli <francesco.gringoli@ing.unibs.it>
+
+Index: assembler/main.c
+===================================================================
+--- assembler.orig/main.c	2011-08-21 14:16:33.000000000 +0200
++++ assembler/main.c	2011-09-10 20:22:52.000000000 +0200
+@@ -737,6 +737,9 @@
+?	unsigned int opcode;
+?
+?	switch (insn->op) {
++ ? ? ? ?case OP_MUL:
++ ? ? ? ? ? ? ? ?do_assemble_insn(ctx, insn, 0x101);
++ ? ? ? ? ? ? ? ?break;
+?	case OP_ADD:
+?		do_assemble_insn(ctx, insn, 0x1C0);
+?		break;
+@@ -855,6 +858,22 @@
+?		out = do_assemble_insn(ctx, insn, 0x0DC | 0x1);
+?		out->is_jump_insn = 1;
+?		break;
++ ? ? ? ?case OP_JDN:
++ ? ? ? ? ? ? ? ?out = do_assemble_insn(ctx, insn, 0x0D6);
++ ? ? ? ? ? ? ? ?out->is_jump_insn = 1;
++ ? ? ? ? ? ? ? ?break;
++ ? ? ? ?case OP_JDPZ:
++ ? ? ? ? ? ? ? ?out = do_assemble_insn(ctx, insn, 0x0D6 | 0x1);
++ ? ? ? ? ? ? ? ?out->is_jump_insn = 1;
++ ? ? ? ? ? ? ? ?break;
++ ? ? ? ?case OP_JDP:
++ ? ? ? ? ? ? ? ?out = do_assemble_insn(ctx, insn, 0x0D8);
++ ? ? ? ? ? ? ? ?out->is_jump_insn = 1;
++ ? ? ? ? ? ? ? ?break;
++ ? ? ? ?case OP_JDNZ:
++ ? ? ? ? ? ? ? ?out = do_assemble_insn(ctx, insn, 0x0D8 | 0x1);
++ ? ? ? ? ? ? ? ?out->is_jump_insn = 1;
++ ? ? ? ? ? ? ? ?break;
+?	case OP_JZX:
+?		opcode = merge_ext_into_opcode(ctx, 0x400, insn);
+?		out = do_assemble_insn(ctx, insn, opcode);
+Index: assembler/parser.y
+===================================================================
+--- assembler.orig/parser.y	2011-08-21 14:16:33.000000000 +0200
++++ assembler/parser.y	2011-09-10 20:26:25.000000000 +0200
+@@ -43,7 +43,7 @@
+?
+?%token EQUAL NOT_EQUAL LOGICAL_OR LOGICAL_AND PLUS MINUS MULTIPLY DIVIDE BITW_OR BITW_AND BITW_XOR BITW_NOT LEFTSHIFT RIGHTSHIFT
+?
+-%token OP_ADD OP_ADDSC OP_ADDC OP_ADDSCC OP_SUB OP_SUBSC OP_SUBC OP_SUBSCC OP_SRA OP_OR OP_AND OP_XOR OP_SR OP_SRX OP_SL OP_RL OP_RR OP_NAND OP_ORX OP_MOV OP_JMP OP_JAND OP_JNAND OP_JS OP_JNS OP_JE OP_JNE OP_JLS OP_JGES OP_JGS OP_JLES OP_JL OP_JGE OP_JG OP_JLE OP_JZX OP_JNZX OP_JEXT OP_JNEXT OP_CALL OP_CALLS OP_RET OP_RETS OP_TKIPH OP_TKIPHS OP_TKIPL OP_TKIPLS OP_NAP RAW_CODE
++%token OP_MUL OP_ADD OP_ADDSC OP_ADDC OP_ADDSCC OP_SUB OP_SUBSC OP_SUBC OP_SUBSCC OP_SRA OP_OR OP_AND OP_XOR OP_SR OP_SRX OP_SL OP_RL OP_RR OP_NAND OP_ORX OP_MOV OP_JMP OP_JAND OP_JNAND OP_JS OP_JNS OP_JE OP_JNE OP_JLS OP_JGES OP_JGS OP_JLES OP_JL OP_JGE OP_JG OP_JLE OP_JZX OP_JNZX OP_JEXT OP_JNEXT OP_JDN OP_JDPZ OP_JDP OP_JDNZ OP_CALL OP_CALLS OP_RET OP_RETS OP_TKIPH OP_TKIPHS OP_TKIPL OP_TKIPLS OP_NAP RAW_CODE
+?
+?%token IVAL_MMIO16 IVAL_MMIO32 IVAL_PHY IVAL_RADIO IVAL_SHM16 IVAL_SHM32 IVAL_TRAM
+?
+@@ -176,6 +176,13 @@
+?			s->u.label = $1;
+?			$$ = s;
+?		?}
++ ? ? ? ? ? ? ? ?| insn_mul {
++ ? ? ? ? ? ? ? ? ? ? ? ?struct statement *s = xmalloc(sizeof(struct statement));
++ ? ? ? ? ? ? ? ? ? ? ? ?INIT_LIST_HEAD(&s->list);
++ ? ? ? ? ? ? ? ? ? ? ? ?s->type = STMT_INSN;
++ ? ? ? ? ? ? ? ? ? ? ? ?s->u.insn = $1;
++ ? ? ? ? ? ? ? ? ? ? ? ?$$ = s;
++ ? ? ? ? ? ? ? ? ?}
+?		| insn_add {
+?			struct statement *s = xmalloc(sizeof(struct statement));
+?			INIT_LIST_HEAD(&s->list);
+@@ -393,6 +400,34 @@
+?			s->u.insn = $1;
+?			$$ = s;
+?		?}
++ ? ? ? ? ? ? ? ?| insn_jdn {
++ ? ? ? ? ? ? ? ? ? ? ? ?struct statement *s = xmalloc(sizeof(struct statement));
++ ? ? ? ? ? ? ? ? ? ? ? ?INIT_LIST_HEAD(&s->list);
++ ? ? ? ? ? ? ? ? ? ? ? ?s->type = STMT_INSN;
++ ? ? ? ? ? ? ? ? ? ? ? ?s->u.insn = $1;
++ ? ? ? ? ? ? ? ? ? ? ? ?$$ = s;
++ ? ? ? ? ? ? ? ? ?}
++ ? ? ? ? ? ? ? ?| insn_jdpz {
++ ? ? ? ? ? ? ? ? ? ? ? ?struct statement *s = xmalloc(sizeof(struct statement));
++ ? ? ? ? ? ? ? ? ? ? ? ?INIT_LIST_HEAD(&s->list);
++ ? ? ? ? ? ? ? ? ? ? ? ?s->type = STMT_INSN;
++ ? ? ? ? ? ? ? ? ? ? ? ?s->u.insn = $1;
++ ? ? ? ? ? ? ? ? ? ? ? ?$$ = s;
++ ? ? ? ? ? ? ? ? ?}
++ ? ? ? ? ? ? ? ?| insn_jdp {
++ ? ? ? ? ? ? ? ? ? ? ? ?struct statement *s = xmalloc(sizeof(struct statement));
++ ? ? ? ? ? ? ? ? ? ? ? ?INIT_LIST_HEAD(&s->list);
++ ? ? ? ? ? ? ? ? ? ? ? ?s->type = STMT_INSN;
++ ? ? ? ? ? ? ? ? ? ? ? ?s->u.insn = $1;
++ ? ? ? ? ? ? ? ? ? ? ? ?$$ = s;
++ ? ? ? ? ? ? ? ? ?}
++ ? ? ? ? ? ? ? ?| insn_jdnz {
++ ? ? ? ? ? ? ? ? ? ? ? ?struct statement *s = xmalloc(sizeof(struct statement));
++ ? ? ? ? ? ? ? ? ? ? ? ?INIT_LIST_HEAD(&s->list);
++ ? ? ? ? ? ? ? ? ? ? ? ?s->type = STMT_INSN;
++ ? ? ? ? ? ? ? ? ? ? ? ?s->u.insn = $1;
++ ? ? ? ? ? ? ? ? ? ? ? ?$$ = s;
++ ? ? ? ? ? ? ? ? ?}
+?		| insn_jl {
+?			struct statement *s = xmalloc(sizeof(struct statement));
+?			INIT_LIST_HEAD(&s->list);
+@@ -591,6 +626,15 @@
+?		?}
+?		;
+?
++/* multiply */
++insn_mul	: OP_MUL operlist_3 {
++			struct instruction *insn = xmalloc(sizeof(struct instruction));
++			insn->op = OP_MUL;
++			insn->operands = $2;
++			$$ = insn;
++		?}
++		;
++
+?/* add */
+?insn_add	: OP_ADD operlist_3 {
+?			struct instruction *insn = xmalloc(sizeof(struct instruction));
+@@ -897,6 +941,38 @@
+?		?}
+?		;
+?
++insn_jdn	: OP_JDN operlist_3 {
++			struct instruction *insn = xmalloc(sizeof(struct instruction));
++			insn->op = OP_JDN;
++			insn->operands = $2;
++			$$ = insn;
++		?}
++		;
++
++insn_jdpz	: OP_JDPZ operlist_3 {
++			struct instruction *insn = xmalloc(sizeof(struct instruction));
++			insn->op = OP_JDPZ;
++			insn->operands = $2;
++			$$ = insn;
++		?}
++		;
++
++insn_jdp	: OP_JDP operlist_3 {
++			struct instruction *insn = xmalloc(sizeof(struct instruction));
++			insn->op = OP_JDP;
++			insn->operands = $2;
++			$$ = insn;
++		?}
++		;
++
++insn_jdnz	: OP_JDNZ operlist_3 {
++			struct instruction *insn = xmalloc(sizeof(struct instruction));
++			insn->op = OP_JDNZ;
++			insn->operands = $2;
++			$$ = insn;
++		?}
++		;
++
+?insn_jext	: OP_JEXT external_jump_operands {
+?			struct instruction *insn = xmalloc(sizeof(struct instruction));
+?			insn->op = OP_JEXT;
+Index: assembler/scanner.l
+===================================================================
+--- assembler.orig/scanner.l	2011-08-21 14:16:33.000000000 +0200
++++ assembler/scanner.l	2011-09-10 20:27:08.000000000 +0200
+@@ -82,6 +82,8 @@
+?\<\<			{ update_lineinfo(); return LEFTSHIFT; }
+?\>\>			{ update_lineinfo(); return RIGHTSHIFT; }
+?
++mul			{ update_lineinfo(); return OP_MUL; }
++
+?add			{ update_lineinfo(); return OP_ADD; }
+?add\.			{ update_lineinfo(); return OP_ADDSC; }
+?addc			{ update_lineinfo(); return OP_ADDC; }
+@@ -120,6 +122,10 @@
+?jge			{ update_lineinfo(); return OP_JGE; }
+?jg			{ update_lineinfo(); return OP_JG; }
+?jle			{ update_lineinfo(); return OP_JLE; }
++jdn			{ update_lineinfo(); return OP_JDN; }
++jdpz			{ update_lineinfo(); return OP_JDPZ; }
++jdp			{ update_lineinfo(); return OP_JDP; }
++jdnz			{ update_lineinfo(); return OP_JDNZ; }
+?jzx			{ update_lineinfo(); return OP_JZX; }
+?jnzx			{ update_lineinfo(); return OP_JNZX; }
+?jext			{ update_lineinfo(); return OP_JEXT; }
+Index: disassembler/main.c
+===================================================================
+--- disassembler.orig/main.c	2011-08-21 14:16:33.000000000 +0200
++++ disassembler/main.c	2011-09-11 17:43:25.000000000 +0200
+@@ -284,6 +284,12 @@
+?	struct bin_instruction *bin = stmt->u.insn.bin;
+?
+?	switch (bin->opcode) {
++	case 0x101:
++		stmt->u.insn.name = "mul";
++		disasm_std_operand(stmt, 0, 0);
++ ? ? ? ? ? ? ? ?disasm_std_operand(stmt, 1, 1);
++ ? ? ? ? ? ? ? ?disasm_std_operand(stmt, 2, 2);
++		break;
+?	case 0x1C0:
+?		stmt->u.insn.name = "add";
+?		disasm_std_operand(stmt, 0, 0);
+@@ -457,28 +463,28 @@
+?		disasm_std_operand(stmt, 1, 1);
+?		break;
+?	case 0x0D6:
+-		stmt->u.insn.name = "@D6"; /* FIXME */
++		stmt->u.insn.name = "jdn";
+?		stmt->u.insn.labelref_operand = 2;
+?		stmt->u.insn.labeladdr = stmt->u.insn.bin->operands[2];
+?		disasm_std_operand(stmt, 0, 0);
+?		disasm_std_operand(stmt, 1, 1);
+?		break;
+?	case (0x0D6 | 0x1):
+-		stmt->u.insn.name = "@D7"; /* FIXME */
++		stmt->u.insn.name = "jdpz";
+?		stmt->u.insn.labelref_operand = 2;
+?		stmt->u.insn.labeladdr = stmt->u.insn.bin->operands[2];
+?		disasm_std_operand(stmt, 0, 0);
+?		disasm_std_operand(stmt, 1, 1);
+?		break;
+?	case 0x0D8:
+-		stmt->u.insn.name = "@D8"; /* FIXME */
++		stmt->u.insn.name = "jdp";
+?		stmt->u.insn.labelref_operand = 2;
+?		stmt->u.insn.labeladdr = stmt->u.insn.bin->operands[2];
+?		disasm_std_operand(stmt, 0, 0);
+?		disasm_std_operand(stmt, 1, 1);
+?		break;
+?	case (0x0D8 | 0x1):
+-		stmt->u.insn.name = "@D9"; /* FIXME */
++		stmt->u.insn.name = "jdnz";
+?		stmt->u.insn.labelref_operand = 2;
+?		stmt->u.insn.labeladdr = stmt->u.insn.bin->operands[2];
+?		disasm_std_operand(stmt, 0, 0);
