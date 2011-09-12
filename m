@@ -1,10 +1,10 @@
 From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
-Date: Mon, 12 Sep 2011 15:49:34 +0200
+Date: Mon, 12 Sep 2011 16:04:14 +0200
 Subject: [PATCH] b43-asm, b43-dasm: Add 5 new instructions.
 In-Reply-To: <20110912133546.6710c606@milhouse>
 References: <alpine.LFD.2.02.1109121040030.18551@oracolo.ing.unibs.it>
 	<20110912133546.6710c606@milhouse>
-Message-ID: <C154B6AE-2936-4257-B69B-37AFE3DB57D0@ing.unibs.it>
+Message-ID: <0971215D-B6EB-4217-86C3-698352BA01D0@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -20,35 +20,15 @@ On Sep 12, 2011, at 1:35 PM, Michael B?sch wrote:
 >> Suggested name "mul" (multiply).
 > 
 > So this means the lower 16 bits are discarded? Or where are they put?
-It seems so. Neither the first or the second operand are modified unfortunately. I tried
+Aha! easy as candy! They are put in spr06d.
 
-	mul	r60, r61, r62;
+Still @100 and @101 does the same...
 
-and we have
-
-	r62 := (r60 * r61) >> 16;
-
-Checked r63 (I thought maybe one register close above to the third operand can be assigned the least significant bits) and it does not change.
-
-Also tried
-
-	mul	r60, r61, r63;
-
-and r62 is not assigned (close below the third operand).
+-Francesco
 
 > My guess would be that there's also an instruction that multiplies
 > op1 with op2 and puts the lower 16 bits into op3.
-In fact!
-
 > What about opcode 0x100? Are you really sure it does the same as 0x101?
-@100 and @101 does apparently the same; indeed result does not depend on the carry and it does not set it.
-
-Maybe @100 and @101 does something different but I should investigate.
-
-Thanks,
--Francesco
-
-> 
 > 
 > -- 
 > Greetings, Michael.
