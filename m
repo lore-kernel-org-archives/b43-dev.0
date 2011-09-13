@@ -1,54 +1,69 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 13 Sep 2011 22:18:30 +0200
-Subject: Should my BCM4321 be working yet?
-In-Reply-To: <20110913074045.28675.qmail@science.horizon.com>
-References: <CACna6rxC+bVhj_wq42aFMkZLEc+8Xq3EWGr8JAb2W80mas_vpg@mail.gmail.com>
-	<20110913074045.28675.qmail@science.horizon.com>
-Message-ID: <CACna6rxVtVGvEVLWPW+1rXcmU3ar_-HuvWdddv_eg339=zrmSw@mail.gmail.com>
+From: Benjamin Lee <ben@b1c1l1.com>
+Date: Tue, 13 Sep 2011 13:48:36 -0700
+Subject: BCM4331 patch against linux-3.1-rc5
+Message-ID: <4E6FC1A4.4000601@b1c1l1.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/9/13 George Spelvin <linux@horizon.com>:
-> Now, if I use the "enable wireless" hotkey, the bluetooth LED lights up.
-> After that, "ifconfig wlan0 up" lights the wifi LED, and "ifconfig wlan0"
-> *does* report UP.
+Hello,
 
-Is there anything interesting in dmesg after that? Please, do:
-1) load b43
-2) use "enable wireless" hotkey
-3) ip link set wlan0 up
-4) iw dev wlan0 scan
-5) dmesg
+Thank you for implementing BCM4331 support!
 
+I am not interested in running the wireless-testing kernel, so I hacked
+together a patch to enable BCM4331 support on linux-3.1-rc5.  Since
+others may be interested in this as well, I am posting it to this list.
 
->> But "ifconfig -a" soon reveals a previously absent =C2=A0wlan0 interface =
-> with
->> a 00:19:75 MAC address (which is NOT a Broadcom address), and I can find
->> an ssb_sprom in /sys (which ssb_sprom -P does reasonably sensible things
->> with).
->
->> MAC can not be so short. Please provide full output of "ip a".
->
-> I truncated it, knowing that the first 24 bits are the IEEE organization
-> ID. ?The full output is like
-> 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
-> ? ?link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-> ? ?inet 127.0.0.1/8 scope host lo
-> 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-> ? ?link/ether 00:15:c5:2b:8f:16 brd ff:ff:ff:ff:ff:ff
-> ? ?inet 192.168.0.100/24 brd 192.168.0.255 scope global eth0
-> 3: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN qlen 1000
-> ? ?link/ether 00:19:7d:27:42:2a brd ff:ff:ff:ff:ff:ff
->
-> (Oops, I typoed the address. ?00:19:7d isn't Broadcom, either.)
->
-> Thank you very much for your response!
+The patch consists of the following patches posted to this list:
 
-Have you tried loading wl driver? Did it report another MAC? Or have
-you tried to look for MAC printed on the wireless card?
+[PATCH 1/3] b43: rename TX header formats
+[PATCH 2/3] b43: use enum for firmware header format
+[PATCH 3/3] b43: support new TX header, noticed to be used by 598.314+ fw
+[PATCH 4/3 V2] b43: support new RX header, noticed to be used in 598.314+ fw
+[PATCH V2] bcma: implement BCM4331 workaround for external PA lines
+[PATCH 1/2] b43: include HT-PHY in some common code
+[PATCH 2/2] b43: make forcing clock common (HT-PHY also uses that)
+[RFC][PATCH] b43: HT-PHY: allow writing longer tables with a single call
+[PATCH 1/4] b43: HT-PHY: init: zero EXTG registers
+[PATCH 2/4] b43: HT-PHY: init: implement few simple PHY writes
+[PATCH 3/4] b43: HT-PHY: init: copy tables and reset CCA
+[PATCH V2 4/4] b43: HT-PHY: init: init BPHY and upload 0x1a table
+[PATCH 1/2] b43: HT-PHY: init: add missing PHY mask/set ops
+[PATCH 2/2] b43: HT-PHY: init: add some AFE (Analog Frontend) operation
+[PATCH] b43: HT-PHY: init: add missing small-tables writes
+[PATCH 1/2] b43: HT-PHY: use separated function for forcing RF sequence
+[PATCH 2/2] b43: HT-PHY: read clip state
+[wireless-next][PATCH 1/3] b43: Relax requirement for descriptors to be
+in the DMA zone
+[wireless-next][PATCH 2/3] b43: use 8K buffers for 64-bit DMA to
+workaround hardware bug
+[wireless-next][PATCH 3/3] b43: make HT-PHY support experimental
+
+The combined patch is attached.  I can confirm that wireless now works
+on my MacBookPro8,2.  Please let me know if I missed anything important.
+
+Also, I would be interested in testing any patches that make the driver
+work with BCM4331 after being suspended to RAM.
+
+Regards,
+
 
 -- 
-Rafa?
+Benjamin Lee
+http://www.b1c1l1.com/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: b43-bcm4331-3.1-rc5.patch
+Type: text/x-patch
+Size: 38757 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110913/31210639/attachment-0001.bin>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 900 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110913/31210639/attachment-0001.sig>
