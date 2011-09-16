@@ -1,69 +1,92 @@
-From: Benjamin Lee <ben@b1c1l1.com>
-Date: Tue, 13 Sep 2011 13:48:36 -0700
-Subject: BCM4331 patch against linux-3.1-rc5
-Message-ID: <4E6FC1A4.4000601@b1c1l1.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Fri, 16 Sep 2011 12:33:58 +0200
+Subject: [PATCH 1/6] bcma: cc: export more control functions
+Message-ID: <1316169243-8808-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
-
-Hello,
-
-Thank you for implementing BCM4331 support!
-
-I am not interested in running the wireless-testing kernel, so I hacked
-together a patch to enable BCM4331 support on linux-3.1-rc5.  Since
-others may be interested in this as well, I am posting it to this list.
-
-The patch consists of the following patches posted to this list:
-
-[PATCH 1/3] b43: rename TX header formats
-[PATCH 2/3] b43: use enum for firmware header format
-[PATCH 3/3] b43: support new TX header, noticed to be used by 598.314+ fw
-[PATCH 4/3 V2] b43: support new RX header, noticed to be used in 598.314+ fw
-[PATCH V2] bcma: implement BCM4331 workaround for external PA lines
-[PATCH 1/2] b43: include HT-PHY in some common code
-[PATCH 2/2] b43: make forcing clock common (HT-PHY also uses that)
-[RFC][PATCH] b43: HT-PHY: allow writing longer tables with a single call
-[PATCH 1/4] b43: HT-PHY: init: zero EXTG registers
-[PATCH 2/4] b43: HT-PHY: init: implement few simple PHY writes
-[PATCH 3/4] b43: HT-PHY: init: copy tables and reset CCA
-[PATCH V2 4/4] b43: HT-PHY: init: init BPHY and upload 0x1a table
-[PATCH 1/2] b43: HT-PHY: init: add missing PHY mask/set ops
-[PATCH 2/2] b43: HT-PHY: init: add some AFE (Analog Frontend) operation
-[PATCH] b43: HT-PHY: init: add missing small-tables writes
-[PATCH 1/2] b43: HT-PHY: use separated function for forcing RF sequence
-[PATCH 2/2] b43: HT-PHY: read clip state
-[wireless-next][PATCH 1/3] b43: Relax requirement for descriptors to be
-in the DMA zone
-[wireless-next][PATCH 2/3] b43: use 8K buffers for 64-bit DMA to
-workaround hardware bug
-[wireless-next][PATCH 3/3] b43: make HT-PHY support experimental
-
-The combined patch is attached.  I can confirm that wireless now works
-on my MacBookPro8,2.  Please let me know if I missed anything important.
-
-Also, I would be interested in testing any patches that make the driver
-work with BCM4331 after being suspended to RAM.
-
-Regards,
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
 
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/bcma/driver_chipcommon_pmu.c        |   38 ++++++++++++++++++++------
+ include/linux/bcma/bcma_driver_chipcommon.h |    9 ++++++
+ 2 files changed, 38 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
+index 4bc10aa..2968d80 100644
+--- a/drivers/bcma/driver_chipcommon_pmu.c
++++ b/drivers/bcma/driver_chipcommon_pmu.c
+@@ -18,20 +18,40 @@ static u32 bcma_chipco_pll_read(struct bcma_drv_cc *cc, u32 offset)
+ 	return bcma_cc_read32(cc, BCMA_CC_PLLCTL_DATA);
+ }
+ 
+-static void bcma_chipco_chipctl_maskset(struct bcma_drv_cc *cc,
+-					u32 offset, u32 mask, u32 set)
++void bcma_chipco_pll_write(struct bcma_drv_cc *cc, u32 offset, u32 value)
+ {
+-	u32 value;
++	bcma_cc_write32(cc, BCMA_CC_PLLCTL_ADDR, offset);
++	bcma_cc_read32(cc, BCMA_CC_PLLCTL_ADDR);
++	bcma_cc_write32(cc, BCMA_CC_PLLCTL_DATA, value);
++}
++EXPORT_SYMBOL_GPL(bcma_chipco_pll_write);
+ 
+-	bcma_cc_read32(cc, BCMA_CC_CHIPCTL_ADDR);
++void bcma_chipco_pll_maskset(struct bcma_drv_cc *cc, u32 offset, u32 mask,
++			     u32 set)
++{
++	bcma_cc_write32(cc, BCMA_CC_PLLCTL_ADDR, offset);
++	bcma_cc_read32(cc, BCMA_CC_PLLCTL_ADDR);
++	bcma_cc_maskset32(cc, BCMA_CC_PLLCTL_DATA, mask, set);
++}
++EXPORT_SYMBOL_GPL(bcma_chipco_pll_maskset);
++
++void bcma_chipco_chipctl_maskset(struct bcma_drv_cc *cc,
++				 u32 offset, u32 mask, u32 set)
++{
+ 	bcma_cc_write32(cc, BCMA_CC_CHIPCTL_ADDR, offset);
+ 	bcma_cc_read32(cc, BCMA_CC_CHIPCTL_ADDR);
+-	value = bcma_cc_read32(cc, BCMA_CC_CHIPCTL_DATA);
+-	value &= mask;
+-	value |= set;
+-	bcma_cc_write32(cc, BCMA_CC_CHIPCTL_DATA, value);
+-	bcma_cc_read32(cc, BCMA_CC_CHIPCTL_DATA);
++	bcma_cc_maskset32(cc, BCMA_CC_CHIPCTL_DATA, mask, set);
++}
++EXPORT_SYMBOL_GPL(bcma_chipco_chipctl_maskset);
++
++void bcma_chipco_regctl_maskset(struct bcma_drv_cc *cc, u32 offset, u32 mask,
++				u32 set)
++{
++	bcma_cc_write32(cc, BCMA_CC_REGCTL_ADDR, offset);
++	bcma_cc_read32(cc, BCMA_CC_REGCTL_ADDR);
++	bcma_cc_maskset32(cc, BCMA_CC_REGCTL_DATA, mask, set);
+ }
++EXPORT_SYMBOL_GPL(bcma_chipco_regctl_maskset);
+ 
+ static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
+ {
+diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
+index a7ae33d..1526d96 100644
+--- a/include/linux/bcma/bcma_driver_chipcommon.h
++++ b/include/linux/bcma/bcma_driver_chipcommon.h
+@@ -378,4 +378,13 @@ u32 bcma_chipco_gpio_polarity(struct bcma_drv_cc *cc, u32 mask, u32 value);
+ /* PMU support */
+ extern void bcma_pmu_init(struct bcma_drv_cc *cc);
+ 
++extern void bcma_chipco_pll_write(struct bcma_drv_cc *cc, u32 offset,
++				  u32 value);
++extern void bcma_chipco_pll_maskset(struct bcma_drv_cc *cc, u32 offset,
++				    u32 mask, u32 set);
++extern void bcma_chipco_chipctl_maskset(struct bcma_drv_cc *cc,
++					u32 offset, u32 mask, u32 set);
++extern void bcma_chipco_regctl_maskset(struct bcma_drv_cc *cc,
++				       u32 offset, u32 mask, u32 set);
++
+ #endif /* LINUX_BCMA_DRIVER_CC_H_ */
 -- 
-Benjamin Lee
-http://www.b1c1l1.com/
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: b43-bcm4331-3.1-rc5.patch
-Type: text/x-patch
-Size: 38757 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110913/31210639/attachment-0001.bin>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 900 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20110913/31210639/attachment-0001.sig>
+1.7.3.4
