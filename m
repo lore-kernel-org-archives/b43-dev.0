@@ -1,26 +1,60 @@
-From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
-Date: Mon, 19 Sep 2011 13:24:06 +0200
-Subject: new info on spr
-Message-ID: <2EE0D17E-16E8-4354-BFFF-8971BA740EF9@ing.unibs.it>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 21 Sep 2011 21:44:14 +0200
+Subject: [PATCH 2/3] b43: update dummy transmission
+In-Reply-To: <1316634255-3116-1-git-send-email-zajec5@gmail.com>
+References: <1316634255-3116-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1316634255-3116-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Hi Michael, Larry,
 
-I c.c. you both because I don't know who is taking care of adding info to the website. Please tell me for the next time :-)
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/main.c |   11 +++++++----
+ 1 files changed, 7 insertions(+), 4 deletions(-)
 
-Hope to not tell things you already know, anyway this is the meaning of four hw (spr) registers that I'm working with these days. They refer to the small FIFOs that are implemented in the template memory which is the actual place from where packets are fetch for transmission (http://bcm-v4.sipsolutions.net/802.11/TemplateRam). These buffers are rings and the dma controller copies a new packet into the corresponding ring when there is enough space.
-
-When (queue number << 8) is put into SPR_TXE0_FIFO_CMD (or'ed with 0x4000) and (queue number << 8) is put into SPR_TXE0_SELECT, the following registers reflect the layout of the corresponding queue in the ring:
-
-- spr091 - register 0x522. Number of packets in the ring. Suggest to change current name SPR_TXE0_0x22 to SPR_TXE0_FIFO_PACKETNUM;
-- spr092 - register 0x524. First byte available in the queue. Suggest to change current name SPR_TXE0_0x24 to SPR_TXE0_FIFO_BYTENUM;
-- spr093 - register 0x526. Point to the first byte of the HOL packet. Suggest to change current name SPR_TXE0_0x26 to SPR_TXE0_FIFO_HOL;
-- spr094 - register 0x528. Point to byte 0x78 of the HOL packet and is always equal to the value in spr093 plus 0x78. No suggestion.
-
-All other registers in this area (SPR_TXE0_0x22->0x78) which are not already described in the wiki are always zero when read, maybe they have other meanings when they are written. Note that packets are copied in the template memory starting on 32bit boundaries and that they can be modified by the firmware by changing values in template memory: the change reflects in the transmitted packet. Since these FIFO are rings, a packet can cross the FIFO end boundary: the tx-engine will take care of this when transmitting.
-
--Francesco
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 9437c9a..9adc43d 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -738,7 +738,8 @@ void b43_dummy_transmission(struct b43_wldev *dev, bool ofdm, bool pa_on)
+ 
+ 	value = (ofdm ? 0x41 : 0x40);
+ 	b43_write16(dev, B43_MMIO_TXE0_PHYCTL, value);
+-	if ((phy->type == B43_PHYTYPE_N) || (phy->type == B43_PHYTYPE_LP))
++	if (phy->type == B43_PHYTYPE_N || phy->type == B43_PHYTYPE_LP ||
++	    phy->type == B43_PHYTYPE_LCN)
+ 		b43_write16(dev, B43_MMIO_TXE0_PHYCTL1, 0x1A02);
+ 
+ 	b43_write16(dev, B43_MMIO_TXE0_WM_0, 0x0000);
+@@ -748,12 +749,13 @@ void b43_dummy_transmission(struct b43_wldev *dev, bool ofdm, bool pa_on)
+ 	b43_write16(dev, B43_MMIO_XMTTXCNT, 0x0014);
+ 	b43_write16(dev, B43_MMIO_XMTSEL, 0x0826);
+ 	b43_write16(dev, B43_MMIO_TXE0_CTL, 0x0000);
+-	if (!pa_on && (phy->type == B43_PHYTYPE_N)) {
+-		//SPEC TODO
+-	}
++
++	if (!pa_on && phy->type == B43_PHYTYPE_N)
++		; /*b43_nphy_pa_override(dev, false) */
+ 
+ 	switch (phy->type) {
+ 	case B43_PHYTYPE_N:
++	case B43_PHYTYPE_LCN:
+ 		b43_write16(dev, B43_MMIO_TXE0_AUX, 0x00D0);
+ 		break;
+ 	case B43_PHYTYPE_LP:
+@@ -762,6 +764,7 @@ void b43_dummy_transmission(struct b43_wldev *dev, bool ofdm, bool pa_on)
+ 	default:
+ 		b43_write16(dev, B43_MMIO_TXE0_AUX, 0x0030);
+ 	}
++	b43_read16(dev, B43_MMIO_TXE0_AUX);
+ 
+ 	if (phy->radio_ver == 0x2050 && phy->radio_rev <= 0x5)
+ 		b43_radio_write16(dev, 0x0051, 0x0017);
+-- 
+1.7.3.4
