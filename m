@@ -1,65 +1,52 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 13 Oct 2011 06:38:12 +0200
-Subject: [PATCH 3.2 1/2] Revert "b43: trivial: do not report any link
-	quality instead of invalid one"
-In-Reply-To: <CA+icZUXzPSm8FdqMbAm34GEDVM-BADOwY==aYiUegd0uhEnACQ@mail.gmail.com>
-References: <1318454295-20573-1-git-send-email-zajec5@gmail.com>
-	<CA+icZUXzPSm8FdqMbAm34GEDVM-BADOwY==aYiUegd0uhEnACQ@mail.gmail.com>
-Message-ID: <CACna6rxSAr+Totf6gJ5P5kGnyNsbbXwhf-rpEmnRBQJ__2ivGg@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 14 Oct 2011 11:30:10 -0500
+Subject: [PATCH] ssb: Convert to use crc8 code in kernel library
+In-Reply-To: <20111014111103.5658d4aa@mj>
+References: <4e90ce9a.89uGF659NNpbpyA3%Larry.Finger@lwfinger.net>
+	<20111014111103.5658d4aa@mj>
+Message-ID: <4E986392.7020008@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sedat.dilek@gmail.com
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: Pavel Roskin <proski@gnu.org>
+Cc: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-W dniu 13 pa?dziernika 2011 00:22 u?ytkownik Sedat Dilek
-<sedat.dilek@googlemail.com> napisa?:
-> 2011/10/12 Rafa? Mi?ecki <zajec5@gmail.com>:
->> This reverts commit 55ad5962e97430c83d51df36fc18865ee4f78c48.
->>
->> I assumed N is newer than LP, which isn't true. This regressed LP case.
->>
->> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->> ---
->> It seems that wasn't so "trivial", sorry for this regression :|
->> ---
->> ?drivers/net/wireless/b43/xmit.c | ? 12 +++++-------
->> ?1 files changed, 5 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
->> index 5f812d1..b8de62c 100644
->> --- a/drivers/net/wireless/b43/xmit.c
->> +++ b/drivers/net/wireless/b43/xmit.c
->> @@ -735,13 +735,11 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
->> ? ? ? ?}
->>
->> ? ? ? ?/* Link quality statistics */
->> - ? ? ? if ((chanstat & B43_RX_CHAN_PHYTYPE) >= B43_PHYTYPE_N) {
->> - ? ? ? ? ? ? ? /*
->> - ? ? ? ? ? ? ? s8 rssi = max(rxhdr->power0, rxhdr->power1);
->> - ? ? ? ? ? ? ? TODO: Find out what the rssi value is (dBm or percentage?)
->> - ? ? ? ? ? ? ? ? ? ? and also find out what the maximum possible value is.
->> - ? ? ? ? ? ? ? ? ? ? Fill status.ssi and status.signal fields.
->> - ? ? ? ? ? ? ? */
->> + ? ? ? if ((chanstat & B43_RX_CHAN_PHYTYPE) == B43_PHYTYPE_N) {
->> +// ? ? ? ? ? ? s8 rssi = max(rxhdr->power0, rxhdr->power1);
->> + ? ? ? ? ? ? ? //TODO: Find out what the rssi value is (dBm or percentage?)
->> + ? ? ? ? ? ? ? // ? ? ?and also find out what the maximum possible value is.
->> + ? ? ? ? ? ? ? // ? ? ?Fill status.ssi and status.signal fields.
->> ? ? ? ?} else {
->> ? ? ? ? ? ? ? ?status.signal = b43_rssi_postprocess(dev, rxhdr->jssi,
->> ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?(phystat0 & B43_RX_PHYST0_OFDM),
->> --
->> 1.7.3.4
->>
+On 10/14/2011 10:11 AM, Pavel Roskin wrote:
+> On Sat, 08 Oct 2011 17:28:42 -0500
+> Larry Finger<Larry.Finger@lwfinger.net>  wrote:
 >
-> Commenting style?
-> Isn't C99-like commenting not well seen?
+>> +static inline void htol16_buf(u16 *buf, unsigned int size)
+>> +{
+>> +	size /= 2;
+>> +	while (size--)
+>> +		*(__le16 *)(buf + size) = cpu_to_le16(*(buf + size));
+>>   }
+>
+> I'm not not sure compilers would optimize it out on little-endian
+> systems.  Perhaps you want a define that uses this code on
+> big-endian systems and does nothing on little endian systems.
+>
+> Also, it would be nice to have a compile-time check that size is even.
+> Or maybe size should be the number of 16-bit words, but then it would be
+> better to call the argument "count" or something like that.
 
-This is simple revert, the code was like that before my patch.
+The patch was dropped. Even so, as this routine is found in brcmsmac, your 
+comments warrant further discussion.
 
-My 2/2 patch remove that ugly commenting style.
+I am pretty sure that the compiler would optimize out the entire htol16_buf 
+routine. After substitution for cpu_to_le16() on a little-endian system, the 
+statement in the while loop becomes '*(buf + size) = *(buf + size)', which is 
+certainly optimized away, as will the now empty while loop. The entire routine 
+is reduced to 'size /= 2'. As this will have no effect on the external world, it 
+will also be dropped leaving an empty htol16_buf(). I don't think any "#ifdef 
+__BIG_ENDIAN ... #endif" statements are needed.
 
--- 
-Rafa?
+Your suggestion that the argument be renamed is good, but there is no need to 
+check for an even number as the data in question come from 16-bit reads of the
+SPROM on the b43 device. That number of 16-bit quantities was multiplied by 2 to 
+get the byte count before calling this routine. Of course, the routine should 
+have been passed the number of 16-bit words, not the byte count. My second 
+version would have done this.
+
+Larry
