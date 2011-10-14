@@ -1,52 +1,25 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 14 Oct 2011 11:30:10 -0500
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Fri, 14 Oct 2011 18:47:24 +0200
 Subject: [PATCH] ssb: Convert to use crc8 code in kernel library
-In-Reply-To: <20111014111103.5658d4aa@mj>
+In-Reply-To: <4E986392.7020008@lwfinger.net>
 References: <4e90ce9a.89uGF659NNpbpyA3%Larry.Finger@lwfinger.net>
-	<20111014111103.5658d4aa@mj>
-Message-ID: <4E986392.7020008@lwfinger.net>
+	<20111014111103.5658d4aa@mj> <4E986392.7020008@lwfinger.net>
+Message-ID: <20111014184724.647ecc32@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Roskin <proski@gnu.org>
-Cc: John W Linville <linville@tuxdriver.com>, Michael Buesch <mb@bu3sch.de>, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Pavel Roskin <proski@gnu.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On 10/14/2011 10:11 AM, Pavel Roskin wrote:
-> On Sat, 08 Oct 2011 17:28:42 -0500
-> Larry Finger<Larry.Finger@lwfinger.net>  wrote:
->
->> +static inline void htol16_buf(u16 *buf, unsigned int size)
->> +{
->> +	size /= 2;
->> +	while (size--)
->> +		*(__le16 *)(buf + size) = cpu_to_le16(*(buf + size));
->>   }
->
-> I'm not not sure compilers would optimize it out on little-endian
-> systems.  Perhaps you want a define that uses this code on
-> big-endian systems and does nothing on little endian systems.
->
-> Also, it would be nice to have a compile-time check that size is even.
-> Or maybe size should be the number of 16-bit words, but then it would be
-> better to call the argument "count" or something like that.
+On Fri, 14 Oct 2011 11:30:10 -0500
+Larry Finger <Larry.Finger@lwfinger.net> wrote:
 
-The patch was dropped. Even so, as this routine is found in brcmsmac, your 
-comments warrant further discussion.
+> I am pretty sure that the compiler would optimize out the entire htol16_buf 
+> routine. After substitution for cpu_to_le16() on a little-endian system, the 
+> statement in the while loop becomes '*(buf + size) = *(buf + size)', which is 
 
-I am pretty sure that the compiler would optimize out the entire htol16_buf 
-routine. After substitution for cpu_to_le16() on a little-endian system, the 
-statement in the while loop becomes '*(buf + size) = *(buf + size)', which is 
-certainly optimized away, as will the now empty while loop. The entire routine 
-is reduced to 'size /= 2'. As this will have no effect on the external world, it 
-will also be dropped leaving an empty htol16_buf(). I don't think any "#ifdef 
-__BIG_ENDIAN ... #endif" statements are needed.
+(There also is cpu_to_le16s(). Just for the record.)
 
-Your suggestion that the argument be renamed is good, but there is no need to 
-check for an even number as the data in question come from 16-bit reads of the
-SPROM on the b43 device. That number of 16-bit quantities was multiplied by 2 to 
-get the byte count before calling this routine. Of course, the routine should 
-have been passed the number of 16-bit words, not the byte count. My second 
-version would have done this.
-
-Larry
+-- 
+Greetings, Michael.
