@@ -1,85 +1,108 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 16 Oct 2011 23:30:49 +0200
-Subject: [PATCH 3.2 REQUEST] b43: HT-PHY: report signal to mac80211
-Message-ID: <1318800649-5609-1-git-send-email-zajec5@gmail.com>
+From: =?ISO-8859-1?Q?Jes=FAs_Vidal_Panal=E9s?= <jesusvpct@vodafone.es>
+Date: Mon, 17 Oct 2011 10:30:26 +0200
+Subject: Broadcom 4303 HP Pavilion zv5000
+Message-ID: <4E9BE7A2.4060703@vodafone.es>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
+
+Hello, i have an older computer from my father (HP Pavilion zv5168ea) 
+and i decided to install a Xubuntu distro (tried 11.10, now 11.04) for 
+my personal use, but i can't get a wireless connection to my router (i'm 
+using WPA-personal encryption but tried with open and nothing). The 
+driver is installed, i can see wifi essid on NetworkManager but the 
+connection is never carried out. I've installed 
+firmware-b43legacy-installer because it has the driver for this card but 
+nothing...
+
+This is the output of lspci -vnn (only wireless card part)
+
+02:02.0 Network controller [0280]: Broadcom Corporation BCM4303 802.11b Wireless LAN Controller [14e4:4301] (rev 02)
+	Subsystem: Hewlett-Packard Company Device [103c:12f3]
+	Flags: bus master, fast devsel, latency 64, IRQ 11
+	Memory at e0104000 (32-bit, non-prefetchable) [size=8K]
+	Kernel driver in use: b43-pci-bridge
+	Kernel modules: ssb
 
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-John, this is new feature, not a bug fix. However I still think it'd be
-great to take this for 3.2. This is hopefully final b43 patch for 3.2
-related to HT-PHY support. With this last one, basic support should be
-100% implemented now.
+This is rfkill list output:
 
-This can be even more important, as there isn't any native Linux driver
-(open or closed source) for HT-PHY (BCM4331) other than b43.
+1: phy0: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
 
-This has been succesfully tested by David, reported signal looked sane
-for him. Unfortunately we still lack info about the noise, but having
-signal gives users some basic overview on the available networks.
----
- drivers/net/wireless/b43/xmit.c |    7 +++++++
- drivers/net/wireless/b43/xmit.h |   16 +++++++++++++++-
- 2 files changed, 22 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
-index 390c234..ed54f7d 100644
---- a/drivers/net/wireless/b43/xmit.c
-+++ b/drivers/net/wireless/b43/xmit.c
-@@ -737,7 +737,14 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
- 
- 	/* Link quality statistics */
- 	switch (chanstat & B43_RX_CHAN_PHYTYPE) {
-+	case B43_PHYTYPE_HT:
-+		/* TODO: is max the right choice? */
-+		status.signal = max(
-+			(__s8) max(rxhdr->phy_ht_power0, rxhdr->phy_ht_power1),
-+			rxhdr->phy_ht_power2);
-+		break;
- 	case B43_PHYTYPE_N:
-+		/* Broadcom has code for min and avg, but always uses max */
- 		if (rxhdr->power0 == 16 || rxhdr->power0 == 32)
- 			status.signal = max(rxhdr->power1, rxhdr->power2);
- 		else
-diff --git a/drivers/net/wireless/b43/xmit.h b/drivers/net/wireless/b43/xmit.h
-index 16c514d..98d9074 100644
---- a/drivers/net/wireless/b43/xmit.h
-+++ b/drivers/net/wireless/b43/xmit.h
-@@ -249,6 +249,12 @@ struct b43_rxhdr_fw4 {
- 		} __packed;
- 	} __packed;
- 	union {
-+		/* HT-PHY */
-+		struct {
-+			PAD_BYTES(1);
-+			__s8 phy_ht_power0;
-+		} __packed;
-+
- 		/* RSSI for N-PHYs */
- 		struct {
- 			__s8 power2;
-@@ -257,7 +263,15 @@ struct b43_rxhdr_fw4 {
- 
- 		__le16 phy_status2;	/* PHY RX Status 2 */
- 	} __packed;
--	__le16 phy_status3;	/* PHY RX Status 3 */
-+	union {
-+		/* HT-PHY */
-+		struct {
-+			__s8 phy_ht_power1;
-+			__s8 phy_ht_power2;
-+		} __packed;
-+
-+		__le16 phy_status3;	/* PHY RX Status 3 */
-+	} __packed;
- 	union {
- 		/* Tested with 598.314, 644.1001 and 666.2 */
- 		struct {
--- 
-1.7.3.4
+lsmod output:
+
+Module                  Size  Used by
+b43legacy             127415  0
+ssb                    45942  1 b43legacy
+mac80211              257001  1 b43legacy
+cfg80211              156212  2 b43legacy,mac80211
+snd_intel8x0           33213  3
+arc4                   12473  2
+snd_ac97_codec        105614  1 snd_intel8x0
+ac97_bus               12642  1 snd_ac97_codec
+snd_pcm                80042  2 snd_intel8x0,snd_ac97_codec
+nouveau               621970  2
+snd_seq_midi           13132  0
+snd_rawmidi            25269  1 snd_seq_midi
+ttm                    65184  1 nouveau
+snd_seq_midi_event     14475  1 snd_seq_midi
+pcmcia                 39671  0
+snd_seq                51291  2 snd_seq_midi,snd_seq_midi_event
+drm_kms_helper         40745  1 nouveau
+snd_timer              28659  2 snd_pcm,snd_seq
+snd_seq_device         14110  3 snd_seq_midi,snd_rawmidi,snd_seq
+drm                   184164  4 nouveau,ttm,drm_kms_helper
+yenta_socket           27230  0
+ppdev                  12849  0
+joydev                 17322  0
+pcmcia_rsrc            18292  1 yenta_socket
+i2c_algo_bit           13184  1 nouveau
+snd                    55295  13 snd_intel8x0,snd_ac97_codec,snd_pcm,snd_rawmidi,snd_seq,snd_timer,snd_seq_device
+pcmcia_core            21505  3 pcmcia,yenta_socket,pcmcia_rsrc
+soundcore              12600  1 snd
+snd_page_alloc         14073  2 snd_intel8x0,snd_pcm
+i2c_nforce2            12906  0
+k8temp                 12872  0
+psmouse                73312  0
+shpchp                 32345  0
+serio_raw              12990  0
+parport_pc             32111  1
+video                  18951  1 nouveau
+lp                     13349  0
+parport                36746  3 ppdev,parport_pc,lp
+firewire_ohci          31504  0
+8139too                23208  0
+8139cp                 22497  0
+pata_amd               13762  2
+firewire_core          56138  1 firewire_ohci
+crc_itu_t              12627  1 firewire_core
+
+
+A piece of dmesg output:
+
+[ 1491.019304] b43-pci-bridge 0000:02:02.0: PCI INT A ->  Link[LNK3] ->  GSI 11 (level, low) ->  IRQ 11
+[ 1491.086827] b43legacy-phy0: Broadcom 4301 WLAN found
+[ 1491.108067] b43legacy-phy0 debug: Found PHY: Analog 0, Type 1, Revision 4
+[ 1491.108093] b43legacy-phy0 debug: Found Radio: Manuf 0x17F, Version 0x2050, Revision 2
+[ 1491.132056] b43legacy-phy0 debug: Radio initialized
+[ 1491.432090] b43legacy-phy0: Loading firmware version 0x127, patch level 14 (2005-04-18 02:36:27)
+[ 1491.556324] b43legacy-phy0 debug: Chip initialized
+[ 1491.556589] b43legacy-phy0 debug: 30-bit DMA initialized
+[ 1491.558904] Registered led device: b43legacy-phy0::tx
+[ 1491.558943] Registered led device: b43legacy-phy0::rx
+[ 1491.558975] Registered led device: b43legacy-phy0::radio
+[ 1491.559001] b43legacy-phy0 debug: Wireless interface started
+[ 1491.564107] b43legacy-phy0 debug: Adding Interface type 2
+[ 1555.492498] wlan0: direct probe to 20:cf:30:ce:0e:c7 (try 1/3)
+[ 1555.692058] wlan0: direct probe to 20:cf:30:ce:0e:c7 (try 2/3)
+[ 1555.892059] wlan0: direct probe to 20:cf:30:ce:0e:c7 (try 3/3)
+[ 1556.092059] wlan0: direct probe to 20:cf:30:ce:0e:c7 timed out
+[ 1882.024387] b43legacy-phy0 warning: Unexpected value for chanstat (0xC00)
+
+
+Any suggestion? Thanks in advance.
