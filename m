@@ -1,56 +1,65 @@
-From: =?UTF-8?B?SmVzw7pzIFZpZGFsIFBhbmFsw6lz?= <jesusvpct@vodafone.es>
-Date: Mon, 17 Oct 2011 16:54:22 +0200
-Subject: Broadcom 4303 HP Pavilion zv5000
-In-Reply-To: <4E9C3FD6.8070806@lwfinger.net>
-References: <4E9BE7A2.4060703@vodafone.es> <4E9C3FD6.8070806@lwfinger.net>
-Message-ID: <4E9C419E.3050508@vodafone.es>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Mon, 17 Oct 2011 16:59:25 +0200
+Subject: [PATCH V2 3.2] b43: fill ctl1 word on all newer PHYs, fix PHY errors
+Message-ID: <1318863565-27145-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-El lun 17 oct 2011 16:46:46 CEST, Larry Finger escribi?:
-> On 10/17/2011 03:30 AM, Jes?s Vidal Panal?s wrote:
->> Hello, i have an older computer from my father (HP Pavilion zv5168ea) 
->> and i
->> decided to install a Xubuntu distro (tried 11.10, now 11.04) for my 
->> personal
->> use, but i can't get a wireless connection to my router (i'm using 
->> WPA-personal
->> encryption but tried with open and nothing). The driver is installed, 
->> i can see
->> wifi essid on NetworkManager but the connection is never carried out. 
->> I've
->> installed firmware-b43legacy-installer because it has the driver for 
->> this card
->> but nothing...
->
-> Not driver - the driver is part of the kernel. That package installs 
-> the firmware.
->
-Sorry for my mistake.
->> This is the output of lspci -vnn (only wireless card part)
->>
->> 02:02.0 Network controller [0280]: Broadcom Corporation BCM4303 
->> 802.11b Wireless
->> LAN Controller [14e4:4301] (rev 02)
->> Subsystem: Hewlett-Packard Company Device [103c:12f3]
->> Flags: bus master, fast devsel, latency 64, IRQ 11
->> Memory at e0104000 (32-bit, non-prefetchable) [size=8K]
->> Kernel driver in use: b43-pci-bridge
->> Kernel modules: ssb
->
-> I have snipped the rest of your posting - it looked normal.
->
-> Check the settings on your AP to make sure it is not set for "G - 
-> only". The BCM4303 is an 802.11b device (note above), thus you need 
-> the "802.11 B/G" setting, whatever it is called for your AP.
->
-> My BCM4303 works fine with WEP, WPA and WPA2 encryption.
->
-Works fine on Windows XP partition.
-> Larry
->
->
->
+This fixes PHY transmission errors reported on some LP-PHY and HT-PHY
+cards. For LP-PHY they were quite rare and not really noticable. On
+HT-PHY they were critical, OFDM rates were not available at all.
+
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+V2: don't use >= for checking "old" vs. "new" PHY type, that was a
+little hacky.
+---
+ drivers/net/wireless/b43/xmit.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
+index c73e860..8d69f7f 100644
+--- a/drivers/net/wireless/b43/xmit.c
++++ b/drivers/net/wireless/b43/xmit.c
+@@ -175,6 +175,7 @@ void b43_generate_plcp_hdr(struct b43_plcp_hdr4 *plcp,
+ 	}
+ }
+ 
++/* TODO: verify if needed for SSLPN or LCN  */
+ static u16 b43_generate_tx_phy_ctl1(struct b43_wldev *dev, u8 bitrate)
+ {
+ 	const struct b43_phy *phy = &dev->phy;
+@@ -256,6 +257,9 @@ int b43_generate_txhdr(struct b43_wldev *dev,
+ 	unsigned int plcp_fragment_len;
+ 	u32 mac_ctl = 0;
+ 	u16 phy_ctl = 0;
++	bool fill_phy_ctl1 = (phy->type == B43_PHYTYPE_LP ||
++			      phy->type == B43_PHYTYPE_N ||
++			      phy->type == B43_PHYTYPE_HT);
+ 	u8 extra_ft = 0;
+ 	struct ieee80211_rate *txrate;
+ 	struct ieee80211_tx_rate *rates;
+@@ -531,7 +535,7 @@ int b43_generate_txhdr(struct b43_wldev *dev,
+ 			extra_ft |= B43_TXH_EFT_RTSFB_CCK;
+ 
+ 		if (rates[0].flags & IEEE80211_TX_RC_USE_RTS_CTS &&
+-		    phy->type == B43_PHYTYPE_N) {
++		    fill_phy_ctl1) {
+ 			txhdr->phy_ctl1_rts = cpu_to_le16(
+ 				b43_generate_tx_phy_ctl1(dev, rts_rate));
+ 			txhdr->phy_ctl1_rts_fb = cpu_to_le16(
+@@ -552,7 +556,7 @@ int b43_generate_txhdr(struct b43_wldev *dev,
+ 		break;
+ 	}
+ 
+-	if (phy->type == B43_PHYTYPE_N) {
++	if (fill_phy_ctl1) {
+ 		txhdr->phy_ctl1 =
+ 			cpu_to_le16(b43_generate_tx_phy_ctl1(dev, rate));
+ 		txhdr->phy_ctl1_fb =
+-- 
+1.7.3.4
