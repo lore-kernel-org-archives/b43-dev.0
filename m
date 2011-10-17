@@ -1,29 +1,42 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Mon, 17 Oct 2011 16:36:59 +0200
-Subject: [PATCH 3.2 REQUEST] b43: HT-PHY: report signal to mac80211
-In-Reply-To: <20111017162727.388624fc@milhouse>
-	(sfid-20111017_162736_674563_4740EF3F)
-References: <1318800649-5609-1-git-send-email-zajec5@gmail.com>
-	<20111017162727.388624fc@milhouse>
-	(sfid-20111017_162736_674563_4740EF3F)
-Message-ID: <1318862219.3960.11.camel@jlt3.sipsolutions.net>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Mon, 17 Oct 2011 09:46:46 -0500
+Subject: Broadcom 4303 HP Pavilion zv5000
+In-Reply-To: <4E9BE7A2.4060703@vodafone.es>
+References: <4E9BE7A2.4060703@vodafone.es>
+Message-ID: <4E9C3FD6.8070806@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>
-Cc: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, David Woodhouse <dwmw2@infradead.org>, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Mon, 2011-10-17 at 16:27 +0200, Michael B?sch wrote:
-> On Sun, 16 Oct 2011 23:30:49 +0200
-> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> > +	case B43_PHYTYPE_HT:
-> > +		/* TODO: is max the right choice? */
-> > +		status.signal = max(
-> > +			(__s8) max(rxhdr->phy_ht_power0, rxhdr->phy_ht_power1),
-> 
-> Hm, why is this cast needed? Does it throw a warning?
+On 10/17/2011 03:30 AM, Jes?s Vidal Panal?s wrote:
+> Hello, i have an older computer from my father (HP Pavilion zv5168ea) and i
+> decided to install a Xubuntu distro (tried 11.10, now 11.04) for my personal
+> use, but i can't get a wireless connection to my router (i'm using WPA-personal
+> encryption but tried with open and nothing). The driver is installed, i can see
+> wifi essid on NetworkManager but the connection is never carried out. I've
+> installed firmware-b43legacy-installer because it has the driver for this card
+> but nothing...
 
-The cast should probably be a max_t() instead.
+Not driver - the driver is part of the kernel. That package installs the firmware.
 
-johannes
+> This is the output of lspci -vnn (only wireless card part)
+>
+> 02:02.0 Network controller [0280]: Broadcom Corporation BCM4303 802.11b Wireless
+> LAN Controller [14e4:4301] (rev 02)
+> Subsystem: Hewlett-Packard Company Device [103c:12f3]
+> Flags: bus master, fast devsel, latency 64, IRQ 11
+> Memory at e0104000 (32-bit, non-prefetchable) [size=8K]
+> Kernel driver in use: b43-pci-bridge
+> Kernel modules: ssb
+
+I have snipped the rest of your posting - it looked normal.
+
+Check the settings on your AP to make sure it is not set for "G - only". The 
+BCM4303 is an 802.11b device (note above), thus you need the "802.11 B/G" 
+setting, whatever it is called for your AP.
+
+My BCM4303 works fine with WEP, WPA and WPA2 encryption.
+
+Larry
