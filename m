@@ -1,78 +1,25 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 17 Oct 2011 11:41:49 +0200
-Subject: Broadcom 4303 HP Pavilion zv5000
-In-Reply-To: <4E9BE7A2.4060703@vodafone.es>
-References: <4E9BE7A2.4060703@vodafone.es>
-Message-ID: <CACna6rzBRHBJ7RZFbEnXgFovQ6fdfV=+rYsZfLEcLA9SdFzJDg@mail.gmail.com>
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Mon, 17 Oct 2011 16:24:47 +0200
+Subject: [PATCH 3.2] b43: fill ctl1 word on all new PHYs, fix PHY errors
+In-Reply-To: <1318800236-5329-1-git-send-email-zajec5@gmail.com>
+References: <1318800236-5329-1-git-send-email-zajec5@gmail.com>
+Message-ID: <20111017162447.5a758fda@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-2011/10/17 Jes?s Vidal Panal?s <jesusvpct@vodafone.es>:
-> Hello, i have an older computer from my father (HP Pavilion zv5168ea) and i
-> decided to install a Xubuntu distro (tried 11.10, now 11.04) for my personal
-> use, but i can't get a wireless connection to my router (i'm using
-> WPA-personal encryption but tried with open and nothing). The driver is
-> installed, i can see wifi essid on NetworkManager but the connection is
-> never carried out. I've installed firmware-b43legacy-installer because it
-> has the driver for this card but nothing...
+On Sun, 16 Oct 2011 23:23:56 +0200
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 
-[minor note] It's BCM4301, see dmesg or updated
-http://pci-ids.ucw.cz/read/PC/14e4/4301
+> +	if (phy->type >= B43_PHYTYPE_N) {
 
-
-> A piece of dmesg output:
->
-> [ 1491.019304] b43-pci-bridge 0000:02:02.0: PCI INT A -> ?Link[LNK3] -> ?GSI
-> 11 (level, low) -> ?IRQ 11
-> [ 1491.086827] b43legacy-phy0: Broadcom 4301 WLAN found
-> [ 1491.108067] b43legacy-phy0 debug: Found PHY: Analog 0, Type 1, Revision 4
-> [ 1491.108093] b43legacy-phy0 debug: Found Radio: Manuf 0x17F, Version
-> 0x2050, Revision 2
-> [ 1491.132056] b43legacy-phy0 debug: Radio initialized
-> [ 1491.432090] b43legacy-phy0: Loading firmware version 0x127, patch level
-> 14 (2005-04-18 02:36:27)
-> [ 1491.556324] b43legacy-phy0 debug: Chip initialized
-> [ 1491.556589] b43legacy-phy0 debug: 30-bit DMA initialized
-> [ 1491.558904] Registered led device: b43legacy-phy0::tx
-> [ 1491.558943] Registered led device: b43legacy-phy0::rx
-> [ 1491.558975] Registered led device: b43legacy-phy0::radio
-> [ 1491.559001] b43legacy-phy0 debug: Wireless interface started
-> [ 1491.564107] b43legacy-phy0 debug: Adding Interface type 2
-
-Looks fine.
-
-
-> [ 1555.492498] wlan0: direct probe to 20:cf:30:ce:0e:c7 (try 1/3)
-> [ 1555.692058] wlan0: direct probe to 20:cf:30:ce:0e:c7 (try 2/3)
-> [ 1555.892059] wlan0: direct probe to 20:cf:30:ce:0e:c7 (try 3/3)
-> [ 1556.092059] wlan0: direct probe to 20:cf:30:ce:0e:c7 timed out
-
-Not sure what you could do to debug this. As quite try you can swith to PIO
-rmmod b43legacy
-modprobe b43legacy pio=1
-
-If that's not going to help, you could try to dump wireless traffic
-with another machine. It would be good idea to at least check, if your
-BCM4301 sends any packet at all.
-
-Also, have you tried connecting to any other networks? Would be also
-nice to try.
-
-
-> [ 1882.024387] b43legacy-phy0 warning: Unexpected value for chanstat (0xC00)
-
-The channel info reported by firmware isn't valid.
-1) PHY type is not set:
-#define B43legacy_RX_CHAN_PHYTYPE	0x0003 /* PHY type */
-2) Channel is not set:
-#define B43legacy_RX_CHAN_ID		0x03FC /* Channel ID */
-
-This shouldn't be critical, as it seems only single packet was
-corrupted. However it may point some general problem with hardware
-calibration, or sth.
+I must say that I really dislike this. It's error prone (previous patch got it wrong)
+and it's hard to read. Just spell out all types or use a switch statement, as appropriate.
+It also makes grepping the sources a lot harder.
+I don't see any real advantage.
 
 -- 
-Rafa?
+Greetings, Michael.
