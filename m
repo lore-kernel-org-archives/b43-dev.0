@@ -1,85 +1,70 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Thu, 17 Nov 2011 12:59:07 +0100
-Subject: Patch "b43: refuse to load unsupported firmware" has been added
- to the 3.0-stable tree
-In-Reply-To: <CACna6ryP4v3pjtrfhEkvYvXBGCujfBpn6YJ+Es=JkcEXsb3xpQ@mail.gmail.com>
-References: <1321487254296@kroah.org> <1321512890.2885.92.camel@deadeye>
- <CACna6ryQe3p3WUeHo5F6HUoO-BH6hC+=YhDgH=sMey6dwperng@mail.gmail.com>
- <20111117121956.68cd800e@milhouse>
- <CACna6ryO0tGJ0SJBnhd9s93BXW-EchrWFX1faWP6gVOEQSYfkA@mail.gmail.com>
- <20111117124231.28a057fd@milhouse>
- <CACna6ryP4v3pjtrfhEkvYvXBGCujfBpn6YJ+Es=JkcEXsb3xpQ@mail.gmail.com>
-Message-ID: <20111117125907.39f3d305@milhouse>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Fri, 18 Nov 2011 14:22:18 -0500
+Subject: b43: BCM 4331: MacBook 8,1: No connection after suspend
+In-Reply-To: <20111118173242.GA2101@schottelius.org>
+References: <20111118173242.GA2101@schottelius.org>
+Message-ID: <20111118192217.GA2663@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Nico -telmich- Schottelius <nico-linux-20111118@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, Arend van Spriel <arend@broadcom.com>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Michael Buesch <m@bues.ch>
 
-On Thu, 17 Nov 2011 12:49:44 +0100
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+Arend has nothing to do with b43, and b43 has it's own
+mailing list, b43-dev at lists.infradead.org.  Even if it didn't,
+linux-wireless at vger.kernel.org would be a more appropriate list than
+this one.
 
-> W dniu 17 listopada 2011 12:42 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
-> > On Thu, 17 Nov 2011 12:37:10 +0100
-> > Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> >
-> >> W dniu 17 listopada 2011 12:19 u?ytkownik Michael B?sch <m@bues.ch> napisa?:
-> >> > On Thu, 17 Nov 2011 09:42:04 +0100
-> >> > Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> >> >> 1) Broadcom driver doesn't contain info about firmware version
-> >> >
-> >> > In fact it does. The microcode does contain the version, of course.
-> >> >
-> >> >> 2) Because of that b43-fwcutter can't name files correctly
-> >> >
-> >> > And fwcutter is even able to extract it from the dump. It also
-> >> > does so currently.
-> >> >
-> >> >> 3) Discovering firmware version requires loading it to the firmware
-> >> >> and reading from SHM
-> >> >
-> >> > No.
-> >>
-> >> I had no idea about that, but I admit, I didn't read the whole
-> >> b43-fwcutter code. Thanks for explaining.
-> >>
-> >> What about API level (revsion?)? Do you think b43-fwcutten can extract
-> >> that? This would be perfect solution to include API level in firmware
-> >> file name.
-> >>
-> >
-> > I'm not sure what you are referring to by "API level". I didn't
-> > follow the latest firmware development too closely. Is that something new?
-> >
-> > fwcutter contains a tiny trivial disassembler that is able to extract various
-> > immediates from the microcode. So if your versioning is stored as immediates
-> > in the code, it's trivial to add extraction for it.
-> >
-> > fwcutter currently extracts (and prints) ucode version, patchlevel, date and time.
-> 
-> http://git.kernel.org/?p=linux/kernel/git/dwmw2/linux-firmware.git;a=commit;h=a531257c40920de0161150091eaccbbc1182eb96
-> 
-> It seems Broadcom wants using some basename-apiversion syntax for
-> their firmware files... but indeed it does not make much sense to me.
-> 
-> According to their firmware, current API is 0. I assume it from
-> reading file name which is bcm43xx-0.fw. It does not make much sense,
-> as we had at least 2 earlier APIs.
-> 
-> Looks like dead end.
-> 
-> Don't know what else we can propose. Putting exact version and
-> patchlevel will make it complex (a lot of firmwares are available).
+John
 
-No. Simply make up arbitrary incrementing numbers and add it to the
-directory name. /lib/firmware/b43 for the old ones.
-/lib/firmware/b43-1 for the next newer one that we support. -2, -3 and so on.
-What internal ucode rev/patchlevel that corresponds to doesn't really matter.
-
-In the driver you can then probe all directories (starting from the number
-that is the newest when the driver was released, of course) and see if
-there's usable firmware in there. This way it will never probe "too new"
-firmwares.
+On Fri, Nov 18, 2011 at 06:32:42PM +0100, Nico -telmich- Schottelius wrote:
+> Hello,
+> 
+> new notebook, new problems (*):
+> 
+> Running 3.2.0-rc1 on the MacBook Pro 8,1 with the BCM4331
+> (14e4:4331) the WLAN indeed works:
+> 
+> [   86.231702] b43-phy0: Broadcom 4331 WLAN found (core revision 29)
+> [   86.269190] ieee80211 phy0: Selected rate control algorithm
+> 'minstrel_ht'
+> [   86.270486] Broadcom 43xx driver loaded [ Features: PMNLS ]
+> [   87.677265] b43-phy0: Loading firmware version 666.2 (2011-02-23
+> 01:15:07)
+> 
+> But: After a suspend it seems not to receive any packets anymore:
+> 
+> [ 2334.494845] wlan0: authenticate with 64:87:d7:37:89:89 (try 1)
+> [ 2334.694035] wlan0: authenticate with 64:87:d7:37:89:89 (try 2)
+> [ 2334.893909] wlan0: authenticate with 64:87:d7:37:89:89 (try 3)
+> [ 2335.093824] wlan0: authentication with 64:87:d7:37:89:89 timed out
+> 
+> wpa_supplicant thus retries to connect to the network again and again
+> without success.
+> 
+> This is reproducable on the MBP 8,1 and is *NOT* fixed if I unload
+> b43 and modprobe it again. It is also "not fixed" when doing
+> multiple suspends/resumes.
+> 
+> Any pointers to this?
+> 
+> Cheers,
+> 
+> Nico
+> 
+> 
+> (*) feels like in good old times...
+> 
+> -- 
+> PGP key: 7ED9 F7D3 6B10 81D7 0EC5  5C09 D7DC C8E4 3187 7DF0
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
 
 -- 
-Greetings, Michael.
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
