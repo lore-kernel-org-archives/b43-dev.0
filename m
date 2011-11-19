@@ -1,46 +1,23 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 19 Nov 2011 21:14:22 +0100
-Subject: b43: BCM 4331: MacBook 8,1: No connection after suspend
-In-Reply-To: <20111119200234.GA2140@schottelius.org>
-References: <20111118173242.GA2101@schottelius.org>
- <20111118173921.GB2101@schottelius.org>
- <4EC6B9E9.50204@broadcom.com> <4EC6BB5E.4010101@broadcom.com>
- <CACna6ryw9gC5CnY-ex45JFmQtXRxs8NX9ADkqVZrOj5CCtjiVw@mail.gmail.com>
- <20111119200234.GA2140@schottelius.org>
-Message-ID: <CACna6rxe7LVOr-nic8z4H38mYH41G5MM2AjECzCFDL+qvxfY+Q@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sat, 19 Nov 2011 14:49:14 -0600
+Subject: b43 success report: Linksys WMP54GS v1.1 PCI
+In-Reply-To: <20111119184543.04c02706.acrux_it@libero.it>
+References: <20111119184543.04c02706.acrux_it@libero.it>
+Message-ID: <4EC8164A.6010509@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nico Schottelius <nico-linux-20111118@schottelius.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Arend van Spriel <arend@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-2011/11/19 Nico Schottelius <nico-linux-20111118@schottelius.org>:
-> Rafa? Mi?ecki [Sat, Nov 19, 2011 at 12:08:51AM +0100]:
->> > In brcmsmac we reprogram the PCI BAR windows upon resume. Not sure if
->> > that is done or needed in bcma, but may be worth checking.
->>
->> Good point.
->>
->> Please reload b43 *and bcma*. Both drivers. Share your results.
->
-> Well, 100 points for you!
->
-> rmmod of b43 and bcma and modprobe of b43 afterwards restores
-> the ability to connect!
+On 11/19/2011 11:45 AM, acrux wrote:
+> hi,
+> just to report a success with this card: Linksys WMP54GS v1.1 PCI
+> http://homesupport.cisco.com/en-us/wireless/lbc/WMP54GS
+> Maybe someone could add this info to Supported Devices:
+> http://linuxwireless.org/en/users/Drivers/b43/devices
 
-Great! :)
+All 4318 cards have been supported for many years, but I added an entry for 
+yours. BTW, that is a wiki and you could have changed it yourself.
 
-
-> Btw, I've found another issue: The signal level seems to be set
-> to 0 for all networks, thus wpa_supplicant does not select the
-> best network (Follow the white rabbit! in my case). Thus
-> I've used "select_network 9" to force connection to the right
-> networt.
-
-Sorry, you're probably missing two important patches:
-b43: fill ctl1 word on all newer PHYs, fix PHY errors
-b43: HT-PHY: report signal to mac80211
-I believe both will appear in 3.2-rc3.
-
--- 
-Rafa?
+Larry
