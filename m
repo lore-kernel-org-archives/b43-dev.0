@@ -1,53 +1,46 @@
-From: acrux <acrux_it@libero.it>
-Date: Sat, 19 Nov 2011 18:45:43 +0100
-Subject: b43 success report: Linksys WMP54GS v1.1 PCI
-Message-ID: <20111119184543.04c02706.acrux_it@libero.it>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 19 Nov 2011 21:14:22 +0100
+Subject: b43: BCM 4331: MacBook 8,1: No connection after suspend
+In-Reply-To: <20111119200234.GA2140@schottelius.org>
+References: <20111118173242.GA2101@schottelius.org>
+ <20111118173921.GB2101@schottelius.org>
+ <4EC6B9E9.50204@broadcom.com> <4EC6BB5E.4010101@broadcom.com>
+ <CACna6ryw9gC5CnY-ex45JFmQtXRxs8NX9ADkqVZrOj5CCtjiVw@mail.gmail.com>
+ <20111119200234.GA2140@schottelius.org>
+Message-ID: <CACna6rxe7LVOr-nic8z4H38mYH41G5MM2AjECzCFDL+qvxfY+Q@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Nico Schottelius <nico-linux-20111118@schottelius.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Arend van Spriel <arend@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
 
-hi,
-just to report a success with this card: Linksys WMP54GS v1.1 PCI
-http://homesupport.cisco.com/en-us/wireless/lbc/WMP54GS
-Maybe someone could add this info to Supported Devices:
-http://linuxwireless.org/en/users/Drivers/b43/devices
+2011/11/19 Nico Schottelius <nico-linux-20111118@schottelius.org>:
+> Rafa? Mi?ecki [Sat, Nov 19, 2011 at 12:08:51AM +0100]:
+>> > In brcmsmac we reprogram the PCI BAR windows upon resume. Not sure if
+>> > that is done or needed in bcma, but may be worth checking.
+>>
+>> Good point.
+>>
+>> Please reload b43 *and bcma*. Both drivers. Share your results.
+>
+> Well, 100 points for you!
+>
+> rmmod of b43 and bcma and modprobe of b43 afterwards restores
+> the ability to connect!
 
-
-
-
-0000:00:06.0 Network controller: Broadcom Corporation BCM4318 [AirForce One 54g] 802.11g Wireless LAN Controller (rev 02)
-	Subsystem: Linksys WMP54GS v1.1 802.11g Wireless-G PCI Adapter with SpeedBooster
-	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
-	Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-	Latency: 0
-	Interrupt: pin A routed to IRQ 9
-	Region 0: Memory at 80002000 (32-bit, non-prefetchable) [size=8K]
-	Kernel driver in use: b43-pci-bridge
-	Kernel modules: ssb
+Great! :)
 
 
+> Btw, I've found another issue: The signal level seems to be set
+> to 0 for all networks, thus wpa_supplicant does not select the
+> best network (Follow the white rabbit! in my case). Thus
+> I've used "select_network 9" to force connection to the right
+> networt.
 
-root at pegasos2:~# crux    
-CRUX PPC (32 bit) version 2.7
-root at pegasos2:~# uname -a
-Linux pegasos2 3.1.1 #1 PREEMPT Fri Nov 18 21:43:16 CET 2011 ppc 7447/7457, altivec supported CHRP Pegasos2 GNU/Linux
-root at pegasos2:~# lsmod |grep b43
-b43                   160368  0 
-mac80211              170782  1 b43
-cfg80211              143001  2 b43,mac80211
-ssb                    37916  1 b43
-root at pegasos2:~# lspci -vnn | grep 14e4
-0000:00:06.0 Network controller [0280]: Broadcom Corporation BCM4318 [AirForce One 54g] 802.11g Wireless LAN Controller [14e4:4318] (rev 02)
-root@pegasos2:~# dmesg |grep b43
-b43-pci-bridge 0000:00:06.0: enabling device (0000 -> 0002)
-b43-phy0: Broadcom 4318 WLAN found (core revision 9)
-Registered led device: b43-phy0::tx
-Registered led device: b43-phy0::rx
-Registered led device: b43-phy0::radio
-b43-phy0: Loading firmware version 508.1084 (2009-01-14 01:32:01)
-
+Sorry, you're probably missing two important patches:
+b43: fill ctl1 word on all newer PHYs, fix PHY errors
+b43: HT-PHY: report signal to mac80211
+I believe both will appear in 3.2-rc3.
 
 -- 
-acrux <acrux_it@libero.it>
+Rafa?
