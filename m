@@ -1,71 +1,71 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 24 Nov 2011 07:35:23 +0100
+From: Justin Azoff <JAzoff@albany.edu>
+Date: Thu, 24 Nov 2011 10:09:22 -0500
 Subject: BCM4312 LP-PHY DMA issues
-In-Reply-To: <20111122174521.GE6004@datacomm.albany.edu>
+In-Reply-To: <CACna6rw6SnLo=M=NKPzv_yb665aj6WCoR8VBNA9goS9otQB8Lw@mail.gmail.com>
 References: <20111122000059.GB6004@datacomm.albany.edu>
  <20111122161313.GA11018@nautica>
  <20111122174521.GE6004@datacomm.albany.edu>
-Message-ID: <CACna6rw6SnLo=M=NKPzv_yb665aj6WCoR8VBNA9goS9otQB8Lw@mail.gmail.com>
+ <CACna6rw6SnLo=M=NKPzv_yb665aj6WCoR8VBNA9goS9otQB8Lw@mail.gmail.com>
+Message-ID: <20111124150922.GJ6004@datacomm.albany.edu>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2011/11/22 Justin Azoff <JAzoff@albany.edu>:
-> On Tue, Nov 22, 2011 at 05:13:13PM +0100, Dominique Martinet wrote:
->> Hi,
->>
->> Is the dmesg output the one without pio=1?
->> It says:
->> [ ? 28.236344] b43-phy0: Loading firmware version 478.104 (2008-07-01
->> 00:50:23)
->> [ ? 33.772580] b43-phy0 ERROR: Fatal DMA error: 0x00000400, 0x00000000,
->> 0x00000000, 0x00000000, 0x00000000, 0x00000000
->> [ ? 33.778855] b43-phy0 ERROR: This device does not support DMA on your
->> system. It will now be switched to PIO.
->> [ ? 33.784685] b43-phy0: Controller RESET (DMA error) ...
->>
->> so I would suppose it fell back to pio=1 and missed something during the
->> initialization (assuming it works when you modprobe it with pio=1
->> directly)
->
-> That is correct:
->
-> ?* with pio=1 it works
-> ?* without pio=0 you get the above message, but then it is never able to connect.
->
->> That being said, it is supposed to work on linux >= 3.0, so I'd try with
->> a more recent firmware just to see if it helps.
->> (cf. http://linuxwireless.org/en/users/Drivers/b43?highlight=%28b43%29#List_of_firmware
->> )
->
-> Ah, I didn't even think to upgrade the firmware.. the debian package
-> that installs the firmware grabs this url:
-> http://downloads.openwrt.org/sources/broadcom-wl-4.178.10.4.tar.bz2
->
-> which appears to be a few versions behind. I'm installed
-> broadcom-wl-5.10.56.27.3_mipsel.tar.bz2 and am testing kernels now.
->
-> 3.1.0-1-686-pae with the new firmware seems to be working :-)
->
-> It went from
->
-> 2011-11-22 12:24:23 check=DL ok=True download_time=26.44 timeout=False min_speed=544 avg_speed=774 max_speed=888
->
-> to
->
-> 2011-11-22 12:42:16 check=DL ok=True download_time=11.75 timeout=False min_speed=1376 avg_speed=1743 max_speed=1976
->
-> and CPU usage is only 15% now.
+On Thu, Nov 24, 2011 at 07:35:23AM +0100, Rafa? Mi?ecki wrote:
+> Huh, that sound interesting. So updating firmware fixed DMA issues for
+> you, right? Are you really sure you're using DMA?
 
-Huh, that sound interesting. So updating firmware fixed DMA issues for
-you, right? Are you really sure you're using DMA?
+Yeah, with the old firmware I had to force pio=1 to get it to work at
+all.  With the new firmware I removed the module options and it works
+great, and there are no DMA errors in dmesg. The cpu usage also went
+from 100% to <10%
 
-I didn't think Broadcom could fix something about DMA errors
-(timeouts?) of LP-PHY in the recent firmware.
+> I didn't think Broadcom could fix something about DMA errors
+> (timeouts?) of LP-PHY in the recent firmware.
 
-Is this still working fine for you? After that ~2 days?
+Got me :-)  Maybe it's not really a DMA error in the first place.. maybe
+the old firmware just has issues with this hardware that get detected as
+a DMA error but are really caused by a general failure somewhere else?
+
+> Is this still working fine for you? After that ~2 days?
+
+Yes!  I built 3 of these laptops to run as wireless probes using
+https://github.com/justinazoff/wireless-probes so I have detailed logs..
+
+2011-11-24 08:49:33 check=DL avg_speed=1723 
+2011-11-24 08:55:01 check=DL avg_speed=2269 
+2011-11-24 09:00:28 check=DL avg_speed=1880 
+2011-11-24 09:05:57 check=DL avg_speed=2227 
+2011-11-24 09:11:24 check=DL avg_speed=1850 
+2011-11-24 09:16:52 check=DL avg_speed=2518 
+2011-11-24 09:22:18 check=DL avg_speed=1685 
+2011-11-24 09:27:48 check=DL avg_speed=1723 
+2011-11-24 09:33:17 check=DL avg_speed=2233 
+2011-11-24 09:38:44 check=DL avg_speed=2013 
+2011-11-24 09:44:11 check=DL avg_speed=1929 
+2011-11-24 09:49:39 check=DL avg_speed=1551 
+2011-11-24 09:51:30 check=DL avg_speed=1717 
+2011-11-24 09:56:59 check=DL avg_speed=1953 
+
+Before, it looked like this:
+
+2011-11-19 06:19:41 check=DL avg_speed=856 
+2011-11-19 06:25:34 check=DL avg_speed=847 
+2011-11-19 06:31:30 check=DL avg_speed=858 
+2011-11-19 06:37:26 check=DL avg_speed=857 
+2011-11-19 06:43:20 check=DL avg_speed=853 
+2011-11-19 06:49:12 check=DL avg_speed=864 
+2011-11-19 06:55:08 check=DL avg_speed=857 
+2011-11-19 07:01:01 check=DL avg_speed=851 
+2011-11-19 07:06:54 check=DL avg_speed=854 
+2011-11-19 07:12:47 check=DL avg_speed=848 
+2011-11-19 07:18:41 check=DL avg_speed=856 
+2011-11-19 07:24:37 check=DL avg_speed=846 
+2011-11-19 07:30:32 check=DL avg_speed=854 
+
 
 -- 
-Rafa?
+-- Justin Azoff
+-- Network Security & Performance Analyst
