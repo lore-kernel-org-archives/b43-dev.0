@@ -1,71 +1,73 @@
-From: Justin Azoff <JAzoff@albany.edu>
-Date: Thu, 24 Nov 2011 10:09:22 -0500
-Subject: BCM4312 LP-PHY DMA issues
-In-Reply-To: <CACna6rw6SnLo=M=NKPzv_yb665aj6WCoR8VBNA9goS9otQB8Lw@mail.gmail.com>
-References: <20111122000059.GB6004@datacomm.albany.edu>
- <20111122161313.GA11018@nautica>
- <20111122174521.GE6004@datacomm.albany.edu>
- <CACna6rw6SnLo=M=NKPzv_yb665aj6WCoR8VBNA9goS9otQB8Lw@mail.gmail.com>
-Message-ID: <20111124150922.GJ6004@datacomm.albany.edu>
+From: Darren <dmbtech@gmail.com>
+Date: Sat, 26 Nov 2011 12:44:21 -0500
+Subject: BCM4331 Losing connectivity with ip_rt_bug
+Message-ID: <4ED12575.2040405@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Thu, Nov 24, 2011 at 07:35:23AM +0100, Rafa? Mi?ecki wrote:
-> Huh, that sound interesting. So updating firmware fixed DMA issues for
-> you, right? Are you really sure you're using DMA?
+Hi,
+I am using the latest wireless-compat b43(which should have all 4331 
+patches), and after leaving my system up for some time I am receiving 
+connectivity issues(sometimes it works fine, sometimes things timeout). 
+When looking in dmesg, it is flooded with ip_rt_bugs.
 
-Yeah, with the old firmware I had to force pio=1 to get it to work at
-all.  With the new firmware I removed the module options and it works
-great, and there are no DMA errors in dmesg. The cpu usage also went
-from 100% to <10%
-
-> I didn't think Broadcom could fix something about DMA errors
-> (timeouts?) of LP-PHY in the recent firmware.
-
-Got me :-)  Maybe it's not really a DMA error in the first place.. maybe
-the old firmware just has issues with this hardware that get detected as
-a DMA error but are really caused by a general failure somewhere else?
-
-> Is this still working fine for you? After that ~2 days?
-
-Yes!  I built 3 of these laptops to run as wireless probes using
-https://github.com/justinazoff/wireless-probes so I have detailed logs..
-
-2011-11-24 08:49:33 check=DL avg_speed=1723 
-2011-11-24 08:55:01 check=DL avg_speed=2269 
-2011-11-24 09:00:28 check=DL avg_speed=1880 
-2011-11-24 09:05:57 check=DL avg_speed=2227 
-2011-11-24 09:11:24 check=DL avg_speed=1850 
-2011-11-24 09:16:52 check=DL avg_speed=2518 
-2011-11-24 09:22:18 check=DL avg_speed=1685 
-2011-11-24 09:27:48 check=DL avg_speed=1723 
-2011-11-24 09:33:17 check=DL avg_speed=2233 
-2011-11-24 09:38:44 check=DL avg_speed=2013 
-2011-11-24 09:44:11 check=DL avg_speed=1929 
-2011-11-24 09:49:39 check=DL avg_speed=1551 
-2011-11-24 09:51:30 check=DL avg_speed=1717 
-2011-11-24 09:56:59 check=DL avg_speed=1953 
-
-Before, it looked like this:
-
-2011-11-19 06:19:41 check=DL avg_speed=856 
-2011-11-19 06:25:34 check=DL avg_speed=847 
-2011-11-19 06:31:30 check=DL avg_speed=858 
-2011-11-19 06:37:26 check=DL avg_speed=857 
-2011-11-19 06:43:20 check=DL avg_speed=853 
-2011-11-19 06:49:12 check=DL avg_speed=864 
-2011-11-19 06:55:08 check=DL avg_speed=857 
-2011-11-19 07:01:01 check=DL avg_speed=851 
-2011-11-19 07:06:54 check=DL avg_speed=854 
-2011-11-19 07:12:47 check=DL avg_speed=848 
-2011-11-19 07:18:41 check=DL avg_speed=856 
-2011-11-19 07:24:37 check=DL avg_speed=846 
-2011-11-19 07:30:32 check=DL avg_speed=854 
-
-
--- 
--- Justin Azoff
--- Network Security & Performance Analyst
+Nov 26 12:39:46 silver kernel: [12774.422200] ip_rt_bug: 10.0.0.4 -> 
+255.255.255.255, ?
+Nov 26 12:39:46 silver kernel: [12774.422216] ------------[ cut here 
+]------------
+Nov 26 12:39:46 silver kernel: [12774.422234] WARNING: at 
+net/ipv4/route.c:1717 ip_rt_bug+0x5f/0x70()
+Nov 26 12:39:46 silver kernel: [12774.422241] Hardware name: MacBookPro8,2
+Nov 26 12:39:46 silver kernel: [12774.422246] Modules linked in: b43 
+mac80211 cfg80211 bcma ssb pcmcia pcmcia_core arc4 snd_hrtimer 
+binfmt_misc ip6table_filter ip6_tables ipt_MASQUERADE iptable_nat nf_nat 
+nf_conntrack_ipv4 nf_defrag_ipv4 xt_state nf_conntrack ipt_REJECT 
+xt_CHECKSUM iptable_mangle xt_tcpudp iptable_filter ip_tables x_tables 
+bridge stp kvm_intel kvm parport_pc ppdev snd_hda_codec_hdmi 
+snd_hda_codec_cirrus snd_hda_intel snd_hda_codec snd_hwdep snd_pcm 
+aesni_intel cryptd aes_x86_64 uvcvideo videodev v4l2_compat_ioctl32 
+snd_seq_midi aes_generic video snd_rawmidi snd_seq_midi_event snd_seq 
+btusb applesmc lp snd_timer snd_seq_device input_polldev snd bluetooth 
+joydev soundcore snd_page_alloc fglrx(P) bcm5974 parport hid_apple 
+usbhid hid firewire_ohci firewire_core crc_itu_t sdhci_pci tg3 sdhci 
+[last unloaded: pcmcia_core]
+Nov 26 12:39:46 silver kernel: [12774.422428] Pid: 11653, comm: dropbox 
+Tainted: P        W   3.1.0-rc1-custom #5
+Nov 26 12:39:46 silver kernel: [12774.422435] Call Trace:
+Nov 26 12:39:46 silver kernel: [12774.422451]  [<ffffffff81063b2f>] 
+warn_slowpath_common+0x7f/0xc0
+Nov 26 12:39:46 silver kernel: [12774.422460]  [<ffffffff81063b8a>] 
+warn_slowpath_null+0x1a/0x20
+Nov 26 12:39:46 silver kernel: [12774.422469]  [<ffffffff8150ea9f>] 
+ip_rt_bug+0x5f/0x70
+Nov 26 12:39:46 silver kernel: [12774.422479]  [<ffffffff815192a9>] 
+ip_local_out+0x29/0x30
+Nov 26 12:39:46 silver kernel: [12774.422486]  [<ffffffff8151a59b>] 
+ip_send_skb+0x1b/0x50
+Nov 26 12:39:46 silver kernel: [12774.422495]  [<ffffffff8153c59a>] 
+udp_send_skb+0x11a/0x3b0
+Nov 26 12:39:46 silver kernel: [12774.422503]  [<ffffffff8153e2f7>] 
+udp_sendmsg+0x377/0x930
+Nov 26 12:39:46 silver kernel: [12774.422513]  [<ffffffff81517640>] ? 
+ip_setup_cork+0x170/0x170
+Nov 26 12:39:46 silver kernel: [12774.422523]  [<ffffffff815480f4>] 
+inet_sendmsg+0x64/0xb0
+Nov 26 12:39:46 silver kernel: [12774.422534]  [<ffffffff814c955f>] 
+sock_sendmsg+0xef/0x120
+Nov 26 12:39:46 silver kernel: [12774.422543]  [<ffffffff814c815e>] ? 
+might_fault+0xe/0x10
+Nov 26 12:39:46 silver kernel: [12774.422553]  [<ffffffff811797e8>] ? 
+core_sys_select+0x328/0x350
+Nov 26 12:39:46 silver kernel: [12774.422563]  [<ffffffff814cb2d1>] ? 
+move_addr_to_kernel+0x71/0x80
+Nov 26 12:39:46 silver kernel: [12774.422573]  [<ffffffff814cbdcd>] 
+sys_sendto+0x13d/0x190
+Nov 26 12:39:46 silver kernel: [12774.422581]  [<ffffffff81179862>] ? 
+sys_select+0x52/0x100
+Nov 26 12:39:46 silver kernel: [12774.422593]  [<ffffffff815e2942>] 
+system_call_fastpath+0x16/0x1b
+Nov 26 12:39:46 silver kernel: [12774.422599] ---[ end trace 
+57afb3a22337fc7e ]---
