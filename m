@@ -1,37 +1,45 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 27 Nov 2011 10:49:28 -0600
-Subject: Looking for BCM43228
-In-Reply-To: <CACna6rzVQ6LZ7p9yLUxkN+_P7UE9TZoQ1Y-rRTNoT=yMF5G+5g@mail.gmail.com>
-References: <CACna6rwU4RuYuiAFjXFDH-c+EFsKtKFmB1Sh8kXdb9EoUt4abg@mail.gmail.com>
- <CACna6rzkSgbf8sV2S1mg2OhxKstXeiqnmNmYFSMuAc563acBpg@mail.gmail.com>
- <CACna6ryTA+nbz9cJtFEWypb1atY2s+eKseANM-u=-EjW6FWE7Q@mail.gmail.com>
- <CACna6rzJzzhdBig48TGV=cfBYuvmjxowSw2Ai_GA-W0n_Y3Qkw@mail.gmail.com>
- <CACna6rzVQ6LZ7p9yLUxkN+_P7UE9TZoQ1Y-rRTNoT=yMF5G+5g@mail.gmail.com>
-Message-ID: <4ED26A18.7090906@lwfinger.net>
+From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
+Date: Tue, 29 Nov 2011 20:28:54 +0100
+Subject: low throughputs with 14e4:4353
+Message-ID: <77990757-D72B-4BF7-BEEB-5EDB9486236B@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On 11/27/2011 09:57 AM, Rafa? Mi?ecki wrote:
-> W dniu 29 sierpnia 2011 23:27 u?ytkownik Rafa? Mi?ecki
-> <zajec5@gmail.com>  napisa?:
->> W dniu 29 sierpnia 2011 21:02 u?ytkownik Rafa? Mi?ecki
->> <zajec5@gmail.com>  napisa?:
->>> I'll mail Marc, Ubuntu's launchpad reported to ask if he still has
->>> access to this notebook.
->>
->> I've just received photo of the card (inside notebook) from Marc. It's
->> labeled as DW1530, bingo! :)
->>
->> I'll ask Dell about prices. Larry: I'm also waiting for you getting
->> response, maybe your prices will be lower?
->
-> You can buy one if you want :)
-> http://www.ebay.com/itm//180755618575
+Hi Rafal,
 
-Thanks for the link. I have one coming.
+I bought some 43224 cards to begin playing with the firmware. Unfortunately I have problems with the throughput that is really low. Kernel is the latest from wireless git and firmware comes from broadcom-wl-5.100.138. I see that the transmitted power is low, I monitored it with a spectrum analyzer and it confirmed. A lot of packets are lost given the low power and minstrel always select 1Mb/s. When receiving with the 43224 in monitor mode, I see that it receives only a few of the frames that are received by a close 4318-based box: the reported power levels are low too. Please find attached all info about kernel/firmware and devices below.
 
-Larry
+I tried all the four cards I have and they behave the same: find a photo of one of them here
+
+	http://www.ing.unibs.it/gringoli/foto.JPG
+
+I tried the cards on a MacBook White, on an Intel Atom based motherboard, Intel Pentium, and AMD Sempron, and I always got very low throughput. The same cards, with the same antennas (everything untouched) but with brcmsmac work well and the spectrum analyzer reports "normal" emitted power levels.
+
+KR,
+-Francesco
+
+Linux version 3.2.0-rc2-wl+ (unibs at costanza.ing.unibs.it) (gcc version 4.1.2 20070626 (Red Hat 4.1.2-13)) #4 SMP Mon Nov 28 19:29:00 CET 2011
+
+[    9.892975] b43-phy0: Broadcom 43224 WLAN found (core revision 23)
+[    9.893403] b43-phy0 debug: Found PHY: Analog 8, Type 4, Revision 6
+[    9.893415] b43-phy0 debug: Found Radio: Manuf 0x17F, Version 0x2056, Revision 11
+[  109.516058] b43-phy0: Loading firmware version 666.2 (2011-02-23 01:15:07)
+[  109.568056] b43-phy0 debug: Chip initialized
+[  109.568208] b43-phy0 debug: 64-bit DMA initialized
+[  109.568272] b43-phy0 debug: QoS enabled
+[  109.568765] b43-phy0 debug: Wireless interface started
+[  109.569035] b43-phy0 debug: Adding Interface type 2
+
+02:00.0 0280: 14e4:4353 (rev 01)
+	Subsystem: 103c:1509
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 256 bytes
+	Interrupt: pin A routed to IRQ 17
+	Region 0: Memory@d0100000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: <access denied>
+	Kernel driver in use: bcma-pci-bridge
+	Kernel modules: bcma
