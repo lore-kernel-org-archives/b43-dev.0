@@ -1,38 +1,106 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 30 Nov 2011 15:27:40 -0600
-Subject: low throughputs with 14e4:4353
-In-Reply-To: <47FBA4BF-B673-43AE-9271-9976878D130D@ing.unibs.it>
-References: <77990757-D72B-4BF7-BEEB-5EDB9486236B@ing.unibs.it>
- <CACna6rxjpXegcp1uAhUnAZH7UhwjfFGFXO1-D1QTUWL+DxMvDg@mail.gmail.com>
- <CACna6ryZiQnCeOHSDZPA0zJ679erJJNtAwU6qqGdVKnpiai4cg@mail.gmail.com>
- <47FBA4BF-B673-43AE-9271-9976878D130D@ing.unibs.it>
-Message-ID: <4ED69FCC.7030200@lwfinger.net>
+From: =?UTF-8?B?SmVzw7pzIFZpZGFsIFBhbmFsw6lz?= <jesusvpct@vodafone.es>
+Date: Thu, 01 Dec 2011 12:51:45 +0100
+Subject: Broadcom 4303 HP Pavilion zv5000
+In-Reply-To: <4EA1CDDF.6010403@vodafone.es>
+References: <4E9BE7A2.4060703@vodafone.es> <4E9D95B4.5050706@vodafone.es>
+ <4E9D9C89.9010200@lwfinger.net> <4E9DB5FD.6090902@vodafone.es>
+ <4E9DC5E2.8070708@lwfinger.net> <4E9DD037.5030808@vodafone.es>
+ <4E9DD41A.2030805@lwfinger.net> <4E9DD6FD.3030108@vodafone.es>
+ <4E9DDC16.40501@lwfinger.net> <4E9DE41D.5020909@vodafone.es>
+ <4E9DEA29.4050509@lwfinger.net> <4E9EBF72.2090505@vodafone.es>
+ <4E9EC5A5.2040105@lwfinger.net> <4E9ECD29.1080105@vodafone.es>
+ <4E9EDCFC.9000301@lwfinger.net> <4E9F3D9E.8020009@vodafone.es>
+ <4E9F5D69.2010105@lwfinger.net> <4E9FD769.6090105@vodafone.es>
+ <CACna6rz9AMUqcBXQgLBsu70qDJEAOQXC5f-664ygWC0KYZRdBg@mail.gmail.com>
+ <4EA160F6.8070403@vodafone.es>
+ <CACna6rwtUJKmkBAVWXtk=O3DbhKUdnSuyv_zhpGvZ47ZF+p6Dw@mail.gmail.com>
+ <4EA1CDDF.6010403@vodafone.es>
+Message-ID: <4ED76A51.6090600@vodafone.es>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 11/30/2011 09:05 AM, francesco.gringoli at ing.unibs.it wrote:
-> Larry,
+El vie 21 oct 2011 21:54:07 CEST, Jes?s Vidal Panal?s escribi?:
+> El vie 21 oct 2011 14:14:17 CEST, Rafa? Mi?ecki escribi?:
+>> W dniu 21 pa?dziernika 2011 14:09 u?ytkownik Jes?s Vidal Panal?s
+>> <jesusvpct@vodafone.es> napisa?:
+>>> El vie 21 oct 2011 12:53:39 CEST, Rafa? Mi?ecki escribi?:
+>>>>
+>>>> 2011/10/20 Jes?s Vidal Panal?s<jesusvpct@vodafone.es>:
+>>>>>
+>>>>> El jue 20 oct 2011 01:29:45 CEST, Larry Finger escribi?:
+>>>>>>
+>>>>>> On 10/19/2011 04:14 PM, Jes?s Vidal Panal?s wrote:
+>>>>>>>
+>>>>>>> Well, i think that i've got ndiswrapper working with the windows
+>>>>>>> driver,
+>>>>>>> but i
+>>>>>>> have the same problem, is not connection. Running wpa_suplicant 
+>>>>>>> (using
+>>>>>>> right
+>>>>>>> configuration) i've got this output:
+>>>>>>>
+>>>>>>> ioctl[SIOCSIWENCODEEXT]: Invalid argument
+>>>>>>> ioctl[SIOCSIWENCODEEXT]: Invalid argument
+>>>>>>> Trying to associate with 20:cf:30:ce:0e:c7 (SSID='WIFI-Tux' 
+>>>>>>> freq=2442
+>>>>>>> MHz)
+>>>>>>> Association request to the driver failed
+>>>>>>> Associated with 00:00:00:00:00:00
+>>>>>>> CTRL-EVENT-DISCONNECTED bssid=20:cf:30:ce:0e:c7 reason=0
+>>>>>>> ioctl[SIOCSIWENCODEEXT]: Invalid argument
+>>>>>>> ioctl[SIOCSIWENCODEEXT]: Invalid argument
+>>>>>>> Trying to associate with 20:cf:30:ce:0e:c7 (SSID='WIFI-Tux' 
+>>>>>>> freq=2442
+>>>>>>> MHz)
+>>>>>>> Association request to the driver failed
+>>>>>>> Associated with 00:00:00:00:00:00
+>>>>>>> CTRL-EVENT-DISCONNECTED bssid=20:cf:30:ce:0e:c7 reason=0
+>>>>>>>
+>>>>>>
+>>>>>> Does wireshark on Win 7 show any packets from your device with
+>>>>>> ndiswrapper?
+>>>>>>
+>>>>>> My hotel has wifi and I will be able to see Email daily.
+>>>>>>
+>>>>>> Larry
+>>>>>>
+>>>>>>
+>>>>>
+>>>>> I don't see any packets either.
+>>>>
+>>>> Thanks a lot guys for debugging this. AFAIU:
+>>>> 1) Linux + b43 = RX ok, TX broken
+>>>> 2) Linux + ndis = RX ok, TX broken
+>>>> 3) XP = RX ok, TX ok
+>>>>
+>>>> Jes?s: I could try debugging if we got any working Linux driver. Even
+>>>> ndiswrapper is alright, we could grab MMIO dumps from ndis na b43 and
+>>>> compare them.
+>>>> Could you try using some different Windows driver with ndiswrapper?
+>>>> Maybe some another one will work with this BCM4301 device?
+>>>>
+>>>
+>>> I don't know what do you mean, do you mean to use other bcm4301 windows
+>>> driver? or bcm43xx windows driver?
+>>
+>> The Windows driver you've loaded in ndiswrapper don't seem to work.
+>> Could you try finding another (newer?) one and use it with
+>> ndiswrapper?
+>> I don't know the name of Windows driver, no idea if it's called
+>> bcm4301, bcm43xx or whatever else.
+>>
 >
-> I found your message on linux-wireless (end of July) reporting that the throughput was about 10Mb/s with bcma. You mention kernel "master-2011-07-26-150-g4ea94a9". I gave it a try (it is a 3.0.0 if I'm not wrong) but I'm still having very low throughput.
+> i can't find any new driver for my laptop. I've tried with this one 
+> http://www.x-drivers.com/catalog/drivers/wireless_networks/companies/broadcom/models/bcm94301/17599.html 
+> but on ndisgtk says that hardware is not present, so i think that this 
+> driver is not good for my laptop.
 >
-> Rafal: so you observe good/bad throughputs at random? Sometimes after cold boot it works fine, other times bad?
->
-> Did you modprobe using some options?
+> _______________________________________________
+> b43-dev mailing list
+> b43-dev at lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/b43-dev
 
-My netperf results (3 sec samples) are:
-
-TCP_MAERTS Test:  13.60 14.41 16.05 15.01 14.70 15.36 14.72 15.07 12.37 11.01
-Results: max 16.05, min 11.01. Mean 14.23(1.44)
-
-TCP_STREAM Test:   3.00  1.89  1.23  2.12  0.91  1.59  1.46  0.71  1.99  2.12
-Results: max  3.00, min  0.71. Mean  1.70(0.64)
-
-As you can see, RX is OK, but TX is quite low.
-
-I will run the same test with brcmsmac later. Their damned Kconfig won't let me 
-build both b43 and brcmsmac at the same time.
-
-Larry
+Any new suggestion about what can i do or test? Thanks.
