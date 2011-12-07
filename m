@@ -1,30 +1,60 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 7 Dec 2011 16:06:56 +0100
-Subject: bcma usage in isr context
-In-Reply-To: <4EDF71C6.9050800@broadcom.com>
-References: <4ED77C85.1050705@broadcom.com>
- <CACna6rznu8d1BjG0EWjP1VRCPdYAGJv1q+fi1X+XF_Bf-Cx+Mg@mail.gmail.com>
- <4EDCE2CC.3060500@broadcom.com>
- <CACna6rwVRrm8YgvoYAmswru8nHXgytuiDRO2F2TQVZyxnfaV9w@mail.gmail.com>
- <4EDF71C6.9050800@broadcom.com>
-Message-ID: <CACna6rzQqJ-jeuoYMiyYBTt7tXzYV-noCg_kCmOynBrFBnLn2A@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Wed, 07 Dec 2011 15:26:42 -0600
+Subject: low throughputs with 14e4:4353
+In-Reply-To: <CACna6rwPEYiZCq+4Di_4xQBF-rQQNw5gVTMkunm2mqoUVBP1Tw@mail.gmail.com>
+References: <77990757-D72B-4BF7-BEEB-5EDB9486236B@ing.unibs.it>
+ <CACna6rxjpXegcp1uAhUnAZH7UhwjfFGFXO1-D1QTUWL+DxMvDg@mail.gmail.com>
+ <CACna6ryZiQnCeOHSDZPA0zJ679erJJNtAwU6qqGdVKnpiai4cg@mail.gmail.com>
+ <CACna6rwQXmF1XA_jhpEPbTUP1D++QBkt4fZ5WVmhMdT4C5XXxA@mail.gmail.com>
+ <CACna6rwPEYiZCq+4Di_4xQBF-rQQNw5gVTMkunm2mqoUVBP1Tw@mail.gmail.com>
+Message-ID: <4EDFDA12.8080303@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
-Cc: "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: b43-dev@lists.infradead.org
 
-W dniu 7 grudnia 2011 15:01 u?ytkownik Arend van Spriel
-<arend@broadcom.com> napisa?:
-> I also intend to do some suspend/resume
-> testing. I believe there was some issue mentioned on wireless mailing
-> list with bcma/b43.
+On 12/07/2011 06:01 AM, Rafa? Mi?ecki wrote:
+> W dniu 5 grudnia 2011 21:39 u?ytkownik Rafa? Mi?ecki<zajec5@gmail.com>  napisa?:
+>> W dniu 29 listopada 2011 22:36 u?ytkownik Rafa? Mi?ecki
+>> <zajec5@gmail.com>  napisa?:
+>>> I'll give it a rest and will try in next days again.
+>>
+>> It really seems it's something spur avoidance related (and so most
+>> probably CC PLL related). After applying my patch implementing SPUR
+>> avoidance, card stops receiving anything. I'll dig more around it.
+>
+> I've found bug in my implementation and fixed it. Today evening I'll
+> test if my patch fixes performance anyhow (I need physical access).
+>
+> Larry: I've found two mistakes/lacks in the specs.
+> 1) http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid
+> This routine ignores my BCM43224. However from wl MMIO dump I can see
+> it should make some ops on my chip. Example log from wl:
+> write32 0xfaaff660<- 0x00000000
+> write32 0xfaaff664<- 0x11100010
+> write32 0xfaaff660<- 0x00000001
+> write32 0xfaaff664<- 0x000c0c06
+> write32 0xfaaff660<- 0x00000002
+> write32 0xfaaff664<- 0x03000a08
+> write32 0xfaaff660<- 0x00000003
+> write32 0xfaaff664<- 0x00000000
+> write32 0xfaaff660<- 0x00000004
+> write32 0xfaaff664<- 0x200005c0
+> write32 0xfaaff660<- 0x00000005
+> write32 0xfaaff664<- 0x88888815
+>   read32 0xfaaff600 ->  0x00000381
+> write32 0xfaaff600<- 0x00000781
+>
+> 2) http://bcm-v4.sipsolutions.net/802.11/PHY/N/ChanspecSetup
+> There is condition: "If the chip is greater than 0x4349 and less then 0x4356".
+> This should but applied "too"/"instead" for BCM43224 at least. wl
+> executes that commands for my BCM43224:
+> write16 0xfaafc62e<- 0x8889
+> write16 0xfaafc630<- 0x0008
 
-That would be great. I don't have any notebook to use with Broadcom
-card, that's why suspend&resume isn't implemented. I do all
-development with my PC. In the notebook wireless card is integrated
-with the motherboard.
+Both places should have used chip ID of 43224 and 43225 (at least). The second 
+also needs 43222 and probably 43228 (I'm still checking that.) The first may 
+also need 43222 and 43228.
 
--- 
-Rafa?
+Larry
