@@ -1,59 +1,103 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 8 Dec 2011 12:19:58 +0100
-Subject: b43-mmio
-Message-ID: <CACna6rzqUS7A8ZBpaKb+CmzL-bBoq-sCaFON2TU6qv3NRNQ3zA@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu,  8 Dec 2011 18:02:21 +0100
+Subject: [PATCH 1/2] ssb: extract FEM info from SPROM
+Message-ID: <1323363742-10603-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-I'd like to share my MMIO tools for translating dumps into
-human-readable and comparable code.
 
-How does it work?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/pci.c            |   23 +++++++++++++++++++++++
+ include/linux/ssb/ssb.h      |    9 +++++++++
+ include/linux/ssb/ssb_regs.h |   17 +++++++++++++++++
+ 3 files changed, 49 insertions(+), 0 deletions(-)
 
-1) mmio-tools contain some scripts for translating MMIO dump into more
-friendly format
-2) ssb contains simple script for describing ssb operations
-3) b43 contains script for detecting PHY/radio operations
-4) scripts in root directory find PHY specific routines
-
-** How to use **
-
-1) Grab dump
-
-2) Apply all basic converting filters with "conver.sh" helper:
-./convert.sh BCM43224-dump.txt
-This generates new file with .b43 extension append. It contains ops like:
- phy_read(0x0078) -> 0x0f7c
-phy_write(0x0078) <- 0x0f7c
-radio_write(0x0053) <- 0x00f7
-
-3) Apply PHY specific script like:
-./phy.n.rev.0123456.sh BCM43224-dump.txt.b43
-This modified .b43 file adding some descriptions in it. For example:
-phy_write(0x01d3) <- 0x0443
-
->>> b43_nphy_classifier start
- phy_read(0x00b0) -> 0x0df7
- phy_read(0x00b0) -> 0x0df7
-phy_write(0x00b0) <- 0x0df7
->>> b43_nphy_classifier end
-
- phy_read(0x0c0a) -> 0x0100
-phy_write(0x0c0a) <- 0x0100
-
->>> b43_nphy_tx_power_fix [rev3+] start
- phy_read(0x008f) -> 0x0000
-phy_write(0x008f) <- 0x0100
-
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index 34c3bab..973223f 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -607,6 +607,29 @@ static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
+ 	memcpy(&out->antenna_gain.ghz5, &out->antenna_gain.ghz24,
+ 	       sizeof(out->antenna_gain.ghz5));
+ 
++	/* Extract FEM info */
++	SPEX(fem.ghz2.tssipos, SSB_SPROM8_FEM2G,
++		SSB_SROM8_FEM_TSSIPOS, SSB_SROM8_FEM_TSSIPOS_SHIFT);
++	SPEX(fem.ghz2.extpa_gain, SSB_SPROM8_FEM2G,
++		SSB_SROM8_FEM_EXTPA_GAIN, SSB_SROM8_FEM_EXTPA_GAIN_SHIFT);
++	SPEX(fem.ghz2.pdet_range, SSB_SPROM8_FEM2G,
++		SSB_SROM8_FEM_PDET_RANGE, SSB_SROM8_FEM_PDET_RANGE_SHIFT);
++	SPEX(fem.ghz2.tr_iso, SSB_SPROM8_FEM2G,
++		SSB_SROM8_FEM_TR_ISO, SSB_SROM8_FEM_TR_ISO_SHIFT);
++	SPEX(fem.ghz2.antswlut, SSB_SPROM8_FEM2G,
++		SSB_SROM8_FEM_ANTSWLUT, SSB_SROM8_FEM_ANTSWLUT_SHIFT);
++
++	SPEX(fem.ghz5.tssipos, SSB_SPROM8_FEM5G,
++		SSB_SROM8_FEM_TSSIPOS, SSB_SROM8_FEM_TSSIPOS_SHIFT);
++	SPEX(fem.ghz5.extpa_gain, SSB_SPROM8_FEM5G,
++		SSB_SROM8_FEM_EXTPA_GAIN, SSB_SROM8_FEM_EXTPA_GAIN_SHIFT);
++	SPEX(fem.ghz5.pdet_range, SSB_SPROM8_FEM5G,
++		SSB_SROM8_FEM_PDET_RANGE, SSB_SROM8_FEM_PDET_RANGE_SHIFT);
++	SPEX(fem.ghz5.tr_iso, SSB_SPROM8_FEM5G,
++		SSB_SROM8_FEM_TR_ISO, SSB_SROM8_FEM_TR_ISO_SHIFT);
++	SPEX(fem.ghz5.antswlut, SSB_SPROM8_FEM5G,
++		SSB_SROM8_FEM_ANTSWLUT, SSB_SROM8_FEM_ANTSWLUT_SHIFT);
++
+ 	sprom_extract_r458(out, in);
+ 
+ 	/* TODO - get remaining rev 8 stuff needed */
+diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+index 061e560..dcf35b0 100644
+--- a/include/linux/ssb/ssb.h
++++ b/include/linux/ssb/ssb.h
+@@ -94,6 +94,15 @@ struct ssb_sprom {
+ 		} ghz5;		/* 5GHz band */
+ 	} antenna_gain;
+ 
++	struct {
++		struct {
++			u8 tssipos, extpa_gain, pdet_range, tr_iso, antswlut;
++		} ghz2;
++		struct {
++			u8 tssipos, extpa_gain, pdet_range, tr_iso, antswlut;
++		} ghz5;
++	} fem;
++
+ 	/* TODO - add any parameters needed from rev 2, 3, 4, 5 or 8 SPROMs */
+ };
+ 
+diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
+index 9894120..c814ae6 100644
+--- a/include/linux/ssb/ssb_regs.h
++++ b/include/linux/ssb/ssb_regs.h
+@@ -432,6 +432,23 @@
+ #define  SSB_SPROM8_RXPO2G		0x00FF	/* 2GHz RX power offset */
+ #define  SSB_SPROM8_RXPO5G		0xFF00	/* 5GHz RX power offset */
+ #define  SSB_SPROM8_RXPO5G_SHIFT	8
++#define SSB_SPROM8_FEM2G		0x00AE
++#define SSB_SPROM8_FEM5G		0x00B0
++#define  SSB_SROM8_FEM_TSSIPOS		0x0001
++#define  SSB_SROM8_FEM_TSSIPOS_SHIFT	0
++#define  SSB_SROM8_FEM_EXTPA_GAIN	0x0006
++#define  SSB_SROM8_FEM_EXTPA_GAIN_SHIFT	1
++#define  SSB_SROM8_FEM_PDET_RANGE	0x00F8
++#define  SSB_SROM8_FEM_PDET_RANGE_SHIFT	3
++#define  SSB_SROM8_FEM_TR_ISO		0x0700
++#define  SSB_SROM8_FEM_TR_ISO_SHIFT	8
++#define  SSB_SROM8_FEM_ANTSWLUT		0xF800
++#define  SSB_SROM8_FEM_ANTSWLUT_SHIFT	11
++#define SSB_SPROM8_THERMAL		0x00B2
++#define SSB_SPROM8_MPWR_RAWTS		0x00B4
++#define SSB_SPROM8_TS_SLP_OPT_CORRX	0x00B6
++#define SSB_SPROM8_FOC_HWIQ_IQSWP	0x00B8
++#define SSB_SPROM8_PHYCAL_TEMPDELTA	0x00BA
+ #define SSB_SPROM8_MAXP_BG		0x00C0  /* Max Power 2GHz in path 1 */
+ #define  SSB_SPROM8_MAXP_BG_MASK	0x00FF  /* Mask for Max Power 2GHz */
+ #define  SSB_SPROM8_ITSSI_BG		0xFF00	/* Mask for path 1 itssi_bg */
 -- 
-Rafa?
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: b43-mmio.tar.bz2
-Type: application/x-bzip2
-Size: 8560 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20111208/838b6804/attachment-0001.bz2>
+1.7.3.4
