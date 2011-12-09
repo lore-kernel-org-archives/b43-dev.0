@@ -1,31 +1,42 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Fri, 9 Dec 2011 19:45:24 +0100
-Subject: RFKILL switch operations with b43
-In-Reply-To: <4EE25315.9030504@lwfinger.net>
-References: <4EE25315.9030504@lwfinger.net>
-Message-ID: <20111209194524.7f57f936@milhouse>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 09 Dec 2011 14:06:30 -0600
+Subject: Performance of BCM43224 (14e4:4353)
+In-Reply-To: <4EE26227.8040900@broadcom.com>
+References: <4EE15A4E.1090500@lwfinger.net> <4EE1E2AC.8030002@broadcom.com>
+ <4EE23AF5.8000400@lwfinger.net> <4EE24615.9020003@broadcom.com>
+ <4EE24C22.4000204@lwfinger.net> <4EE26227.8040900@broadcom.com>
+Message-ID: <4EE26A46.8050906@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-On Fri, 09 Dec 2011 12:27:33 -0600
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+On 12/09/2011 01:31 PM, Arend van Spriel wrote:
+>
+> That is an unexpected code path especially as brcmsmac is probed from
+> bcma so SoC interface type should be AI (aka. AMBA AXI). Checked with
+> the proprietary driver and there is no type 4.
+>
+> Can you provide the bcma_device_id information that bcma has collected
+> and the bcma_chipinfo for your device?
 
-> Does anyone have a laptop with a slide switch (definite on/off positions) and is 
-> using b43? If so, are the "ENABLED" and "DISABLED" messages logged when you move 
-> the switches? What kernel are you using?
-> 
-> The mini-PCIe slot in my laptop is broken, and I need to use an extender, thus I 
-> cannot do the test myself.
+The bcma core scan provides:
 
-If you're not too fat fingered, you can probably modify your extender to add a switch
-or jumper (or loose wire ;) that pulls pin20 to GND with a resistor or floats it.
-That should emulate the rfkill input signal to the wireless device.
+bcma: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x22, class 0x0)
+bcma: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x17, class 0x0)
+bcma: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x0F, class 0x0)
 
-http://pinoutsguide.com/Slots/mini_pcie_pinout.shtml
+b43 reports:
 
--- 
-Greetings, Michael.
+b43-phy0: Broadcom 43224 WLAN found (core revision 23)
+b43-phy0 debug: Found PHY: Analog 8, Type 4, Revision 6
+
+brcmsmac shows:
+
+brcmsmac bcma0:0: mfg 4bf core 812 rev 23 class 0 irq 22
+
+I hope this provides what you need. I did not see anything else in the logs.
+
+Larry
