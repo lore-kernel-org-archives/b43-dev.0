@@ -1,67 +1,35 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  8 Dec 2011 18:02:22 +0100
-Subject: [PATCH 2/2] bcma: extract FEM info from SPROM
-In-Reply-To: <1323363742-10603-1-git-send-email-zajec5@gmail.com>
-References: <1323363742-10603-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1323363742-10603-2-git-send-email-zajec5@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 08 Dec 2011 18:46:06 -0600
+Subject: Performance of BCM43224 (14e4:4353)
+Message-ID: <4EE15A4E.1090500@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>
+Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
+
+Guys,
+
+I just added the patches that let brcmsmac use bcma, and tested the TX and RX 
+rates using netperf. The results are
+
+Driver			RX		TX
+
+brcmsmac		21.7		6.2
+b43			15.0		6.0
+wl			43.5		73.5
+
+The AP is running in 802.11n mode and has throughput of 40-60 Mbps in both 
+directions with an RTL8192CE, thus both open-source drivers have room for 
+improvement.
+
+I am using the following firmware:
+b43-phy0: Loading firmware version 666.2 (2011-02-23 01:15:07)
 
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/bcma/sprom.c                        |   22 ++++++++++++++++++++++
- include/linux/bcma/bcma_driver_chipcommon.h |    1 +
- 2 files changed, 23 insertions(+), 0 deletions(-)
+With b43 and mac80211 debugging turned on, I see a lot of
 
-diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
-index d729239..b6c474b 100644
---- a/drivers/bcma/sprom.c
-+++ b/drivers/bcma/sprom.c
-@@ -142,6 +142,28 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
- 	bus->sprom.boardflags2_hi = sprom[SPOFF(SSB_SPROM8_BFL2HI)];
- 
- 	bus->sprom.country_code = sprom[SPOFF(SSB_SPROM8_CCODE)];
-+
-+	bus->sprom.fem.ghz2.tssipos = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
-+		SSB_SROM8_FEM_TSSIPOS) >> SSB_SROM8_FEM_TSSIPOS_SHIFT;
-+	bus->sprom.fem.ghz2.extpa_gain = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
-+		SSB_SROM8_FEM_EXTPA_GAIN) >> SSB_SROM8_FEM_EXTPA_GAIN_SHIFT;
-+	bus->sprom.fem.ghz2.pdet_range = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
-+		SSB_SROM8_FEM_PDET_RANGE) >> SSB_SROM8_FEM_PDET_RANGE_SHIFT;
-+	bus->sprom.fem.ghz2.tr_iso = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
-+		SSB_SROM8_FEM_TR_ISO) >> SSB_SROM8_FEM_TR_ISO_SHIFT;
-+	bus->sprom.fem.ghz2.antswlut = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
-+		SSB_SROM8_FEM_ANTSWLUT) >> SSB_SROM8_FEM_ANTSWLUT_SHIFT;
-+
-+	bus->sprom.fem.ghz5.tssipos = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
-+		SSB_SROM8_FEM_TSSIPOS) >> SSB_SROM8_FEM_TSSIPOS_SHIFT;
-+	bus->sprom.fem.ghz5.extpa_gain = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
-+		SSB_SROM8_FEM_EXTPA_GAIN) >> SSB_SROM8_FEM_EXTPA_GAIN_SHIFT;
-+	bus->sprom.fem.ghz5.pdet_range = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
-+		SSB_SROM8_FEM_PDET_RANGE) >> SSB_SROM8_FEM_PDET_RANGE_SHIFT;
-+	bus->sprom.fem.ghz5.tr_iso = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
-+		SSB_SROM8_FEM_TR_ISO) >> SSB_SROM8_FEM_TR_ISO_SHIFT;
-+	bus->sprom.fem.ghz5.antswlut = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
-+		SSB_SROM8_FEM_ANTSWLUT) >> SSB_SROM8_FEM_ANTSWLUT_SHIFT;
- }
- 
- int bcma_sprom_get(struct bcma_bus *bus)
-diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
-index 1526d96..a33086a 100644
---- a/include/linux/bcma/bcma_driver_chipcommon.h
-+++ b/include/linux/bcma/bcma_driver_chipcommon.h
-@@ -203,6 +203,7 @@
- #define BCMA_CC_PMU_CTL			0x0600 /* PMU control */
- #define  BCMA_CC_PMU_CTL_ILP_DIV	0xFFFF0000 /* ILP div mask */
- #define  BCMA_CC_PMU_CTL_ILP_DIV_SHIFT	16
-+#define  BCMA_CC_PMU_CTL_PLL_UPD	0x00000400
- #define  BCMA_CC_PMU_CTL_NOILPONW	0x00000200 /* No ILP on wait */
- #define  BCMA_CC_PMU_CTL_HTREQEN	0x00000100 /* HT req enable */
- #define  BCMA_CC_PMU_CTL_ALPREQEN	0x00000080 /* ALP req enable */
--- 
-1.7.3.4
+wlan13: detected beacon loss from AP - sending probe request
+
+Larry
