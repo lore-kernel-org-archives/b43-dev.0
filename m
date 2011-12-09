@@ -1,35 +1,40 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 08 Dec 2011 18:46:06 -0600
+Date: Fri, 09 Dec 2011 10:44:37 -0600
 Subject: Performance of BCM43224 (14e4:4353)
-Message-ID: <4EE15A4E.1090500@lwfinger.net>
+In-Reply-To: <4EE1E2AC.8030002@broadcom.com>
+References: <4EE15A4E.1090500@lwfinger.net> <4EE1E2AC.8030002@broadcom.com>
+Message-ID: <4EE23AF5.8000400@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>
-Cc: b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-Guys,
+On 12/09/2011 04:27 AM, Arend van Spriel wrote:
+>
+> Hi Larry
+>
+> Could you perform your benchmark test on brcmsmac without the bcma
+> patches. It kind of surprises me that we are that far off compared to
+> the wl driver.
 
-I just added the patches that let brcmsmac use bcma, and tested the TX and RX 
-rates using netperf. The results are
+I wondered about that myself. Upon investigation, my test with bcma/brcmsmac 
+never worked. Without the patches, my netperf numbers for brcmsmac are RX 40.0 
+and TX 59.7 Mbps.In all cases, the reported number is the maximum of 10 tries of 
+3 sec each.
 
-Driver			RX		TX
+With the patches, my dmesg contains the following:
 
-brcmsmac		21.7		6.2
-b43			15.0		6.0
-wl			43.5		73.5
+[  908.282281] bcma: Bus registered
+[  908.353242] brcmsmac bcma0:0: mfg 4bf core 812 rev 23 class 0 irq 22
+[  908.380164] ieee80211 phy0: wl0: brcms_b_attach: si_attach failed
+[  908.380184] ieee80211 phy0: wl0: brcms_b_attach: failed with err 11
+[  908.380192] ieee80211 phy0: wl0: brcms_c_attach: failed with err 11
+[  908.380316] ieee80211 phy0: brcmsmac: attach() failed with code 11
+[  908.380379] brcmsmac: brcms_bcma_probe: brcms_attach failed!
+[  908.381715] brcms_module_init: register returned 0
 
-The AP is running in 802.11n mode and has throughput of 40-60 Mbps in both 
-directions with an RTL8192CE, thus both open-source drivers have room for 
-improvement.
-
-I am using the following firmware:
-b43-phy0: Loading firmware version 666.2 (2011-02-23 01:15:07)
-
-
-With b43 and mac80211 debugging turned on, I see a lot of
-
-wlan13: detected beacon loss from AP - sending probe request
+As b43 is also loaded, which may be a second problem, it is run instead of brcmsmac.
 
 Larry
