@@ -1,10 +1,10 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 09 Dec 2011 11:57:54 -0600
+Date: Fri, 09 Dec 2011 12:17:01 -0600
 Subject: Performance of BCM43224 (14e4:4353)
 In-Reply-To: <4EE24615.9020003@broadcom.com>
 References: <4EE15A4E.1090500@lwfinger.net> <4EE1E2AC.8030002@broadcom.com>
  <4EE23AF5.8000400@lwfinger.net> <4EE24615.9020003@broadcom.com>
-Message-ID: <4EE24C22.4000204@lwfinger.net>
+Message-ID: <4EE2509D.6020501@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,15 +12,9 @@ Content-Transfer-Encoding: 7bit
 To: Arend van Spriel <arend@broadcom.com>
 Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-On 12/09/2011 11:32 AM, Arend van Spriel wrote:
+Arend,
 
-> With the submitted patches brcmsmac claims any revision of 802.11 cores.
-> Not sure what b43 claims. I have a patch internally to claim only
-> revisions 23 and 24, which are used in bcm43224, bcm43225, and bcm4313.
-
-The problem is that ai_doattach() is returning NULL. I added pr_err() statements 
-to each of the places that this could happen and found that the error in in this 
-fragment:
+I got a little further. The error message was modified as below:
 
          /* scan for cores */
          if (socitype == SOCI_AI) {
@@ -29,11 +23,11 @@ fragment:
                  ai_scan(&sii->pub, pbus);
          } else {
                  /* Found chip of unknown type */
-                 pr_err("Found chip of type %d\n", socitype);
+                 pr_err("Found chip of type %d, chipid is 0x%x\n", socitype, w);
                  return NULL;
          }
 
-This one logs "brcmsmac: Found chip of type 4". As SOC_AI is the only SOCI_XX 
-that is defined, I am not sure that I will be able to get further.
+This one logs "brcmsmac: Found chip of type 4, chipid is 0x4bf80001". That is a 
+very strange chip ID.
 
 Larry
