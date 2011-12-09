@@ -1,9 +1,10 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 09 Dec 2011 10:44:37 -0600
+Date: Fri, 09 Dec 2011 11:57:54 -0600
 Subject: Performance of BCM43224 (14e4:4353)
-In-Reply-To: <4EE1E2AC.8030002@broadcom.com>
+In-Reply-To: <4EE24615.9020003@broadcom.com>
 References: <4EE15A4E.1090500@lwfinger.net> <4EE1E2AC.8030002@broadcom.com>
-Message-ID: <4EE23AF5.8000400@lwfinger.net>
+ <4EE23AF5.8000400@lwfinger.net> <4EE24615.9020003@broadcom.com>
+Message-ID: <4EE24C22.4000204@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,30 +12,28 @@ Content-Transfer-Encoding: 7bit
 To: Arend van Spriel <arend@broadcom.com>
 Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Francesco Gringoli <francesco.gringoli@ing.unibs.it>, b43-dev <b43-dev@lists.infradead.org>, wireless <linux-wireless@vger.kernel.org>
 
-On 12/09/2011 04:27 AM, Arend van Spriel wrote:
->
-> Hi Larry
->
-> Could you perform your benchmark test on brcmsmac without the bcma
-> patches. It kind of surprises me that we are that far off compared to
-> the wl driver.
+On 12/09/2011 11:32 AM, Arend van Spriel wrote:
 
-I wondered about that myself. Upon investigation, my test with bcma/brcmsmac 
-never worked. Without the patches, my netperf numbers for brcmsmac are RX 40.0 
-and TX 59.7 Mbps.In all cases, the reported number is the maximum of 10 tries of 
-3 sec each.
+> With the submitted patches brcmsmac claims any revision of 802.11 cores.
+> Not sure what b43 claims. I have a patch internally to claim only
+> revisions 23 and 24, which are used in bcm43224, bcm43225, and bcm4313.
 
-With the patches, my dmesg contains the following:
+The problem is that ai_doattach() is returning NULL. I added pr_err() statements 
+to each of the places that this could happen and found that the error in in this 
+fragment:
 
-[  908.282281] bcma: Bus registered
-[  908.353242] brcmsmac bcma0:0: mfg 4bf core 812 rev 23 class 0 irq 22
-[  908.380164] ieee80211 phy0: wl0: brcms_b_attach: si_attach failed
-[  908.380184] ieee80211 phy0: wl0: brcms_b_attach: failed with err 11
-[  908.380192] ieee80211 phy0: wl0: brcms_c_attach: failed with err 11
-[  908.380316] ieee80211 phy0: brcmsmac: attach() failed with code 11
-[  908.380379] brcmsmac: brcms_bcma_probe: brcms_attach failed!
-[  908.381715] brcms_module_init: register returned 0
+         /* scan for cores */
+         if (socitype == SOCI_AI) {
+                 SI_MSG("Found chip type AI (0x%08x)\n", w);
+                 /* pass chipc address instead of original core base */
+                 ai_scan(&sii->pub, pbus);
+         } else {
+                 /* Found chip of unknown type */
+                 pr_err("Found chip of type %d\n", socitype);
+                 return NULL;
+         }
 
-As b43 is also loaded, which may be a second problem, it is run instead of brcmsmac.
+This one logs "brcmsmac: Found chip of type 4". As SOC_AI is the only SOCI_XX 
+that is defined, I am not sure that I will be able to get further.
 
 Larry
