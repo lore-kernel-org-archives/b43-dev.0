@@ -1,139 +1,76 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 11 Dec 2011 13:16:51 +0100
-Subject: [PATCH V2 7/7] b43: N-PHY: implement spurious tone avoidance
-Message-ID: <1323605811-2850-1-git-send-email-zajec5@gmail.com>
+Date: Mon, 12 Dec 2011 21:33:12 +0100
+Subject: [PATCH] bcma: extract revision and TX power IDs from SPROM
+Message-ID: <1323721992-3941-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, Larry Finger <larry.finger@lwfinger.net>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-V2: write pmu_ctl only if it was set. Thx Larry, my gcc didn't notice
----
- drivers/net/wireless/b43/phy_n.c |   93 +++++++++++++++++++++++++++++++++++++-
- 1 files changed, 91 insertions(+), 2 deletions(-)
+ drivers/bcma/sprom.c |   39 +++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 39 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 114c413..730f5a4 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -4023,6 +4023,61 @@ int b43_phy_initn(struct b43_wldev *dev)
- 	return 0;
- }
+diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
+index b6c474b..6f230fb 100644
+--- a/drivers/bcma/sprom.c
++++ b/drivers/bcma/sprom.c
+@@ -129,6 +129,9 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
+ 	u16 v;
+ 	int i;
  
-+/* http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid */
-+static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
-+{
-+	struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
-+	u32 pmu_ctl;
-+	if (dev->dev->chip_id == 43224 || dev->dev->chip_id == 43225) {
-+		if (avoid) {
-+			bcma_chipco_pll_write(cc, 0x0, 0x11500010);
-+			bcma_chipco_pll_write(cc, 0x1, 0x000C0C06);
-+			bcma_chipco_pll_write(cc, 0x2, 0x0F600a08);
-+			bcma_chipco_pll_write(cc, 0x3, 0x00000000);
-+			bcma_chipco_pll_write(cc, 0x4, 0x2001E920);
-+			bcma_chipco_pll_write(cc, 0x5, 0x88888815);
-+		} else {
-+			bcma_chipco_pll_write(cc, 0x0, 0x11100010);
-+			bcma_chipco_pll_write(cc, 0x1, 0x000c0c06);
-+			bcma_chipco_pll_write(cc, 0x2, 0x03000a08);
-+			bcma_chipco_pll_write(cc, 0x3, 0x00000000);
-+			bcma_chipco_pll_write(cc, 0x4, 0x200005c0);
-+			bcma_chipco_pll_write(cc, 0x5, 0x88888815);
-+		}
-+		pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD;
-+	} else if (dev->dev->chip_id == 0x4716) {
-+		if (avoid) {
-+			bcma_chipco_pll_write(cc, 0x0, 0x11500060);
-+			bcma_chipco_pll_write(cc, 0x1, 0x080C0C06);
-+			bcma_chipco_pll_write(cc, 0x2, 0x0F600000);
-+			bcma_chipco_pll_write(cc, 0x3, 0x00000000);
-+			bcma_chipco_pll_write(cc, 0x4, 0x2001E924);
-+			bcma_chipco_pll_write(cc, 0x5, 0x88888815);
-+		} else {
-+			bcma_chipco_pll_write(cc, 0x0, 0x11100060);
-+			bcma_chipco_pll_write(cc, 0x1, 0x080c0c06);
-+			bcma_chipco_pll_write(cc, 0x2, 0x03000000);
-+			bcma_chipco_pll_write(cc, 0x3, 0x00000000);
-+			bcma_chipco_pll_write(cc, 0x4, 0x200005c0);
-+			bcma_chipco_pll_write(cc, 0x5, 0x88888815);
-+		}
-+		pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD | BCMA_CC_PMU_CTL_NOILPONW;
-+	} else if (dev->dev->chip_id == 0x4322 || dev->dev->chip_id == 0x4340 ||
-+		   dev->dev->chip_id == 0x4341) {
-+		bcma_chipco_pll_write(cc, 0x0, 0x11100070);
-+		bcma_chipco_pll_write(cc, 0x1, 0x1014140a);
-+		bcma_chipco_pll_write(cc, 0x5, 0x88888854);
-+		if (avoid)
-+			bcma_chipco_pll_write(cc, 0x2, 0x05201828);
-+		else
-+			bcma_chipco_pll_write(cc, 0x2, 0x05001828);
-+		pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD;
-+	} else {
-+		return;
-+	}
-+	bcma_cc_set32(cc, BCMA_CC_PMU_CTL, pmu_ctl);
-+}
++	bus->sprom.revision = sprom[SSB_SPROMSIZE_WORDS_R4 - 1] &
++		SSB_SPROM_REVISION_REV;
 +
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/ChanspecSetup */
- static void b43_nphy_channel_setup(struct b43_wldev *dev,
- 				const struct b43_phy_n_sfo_cfg *e,
-@@ -4030,6 +4085,7 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
- {
- 	struct b43_phy *phy = &dev->phy;
- 	struct b43_phy_n *nphy = dev->phy.n;
-+	int ch = new_channel->hw_value;
+ 	for (i = 0; i < 3; i++) {
+ 		v = sprom[SPOFF(SSB_SPROM8_IL0MAC) + i];
+ 		*(((__be16 *)bus->sprom.il0mac) + i) = cpu_to_be16(v);
+@@ -136,6 +139,42 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
  
- 	u16 old_band_5ghz;
- 	u32 tmp32;
-@@ -4069,8 +4125,41 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
+ 	bus->sprom.board_rev = sprom[SPOFF(SSB_SPROM8_BOARDREV)];
  
- 	b43_nphy_tx_lp_fbw(dev);
- 
--	if (dev->phy.rev >= 3 && 0) {
--		/* TODO */
-+	if (dev->phy.rev >= 3 &&
-+	    dev->phy.n->spur_avoid != B43_SPUR_AVOID_DISABLE) {
-+		bool avoid = false;
-+		if (dev->phy.n->spur_avoid == B43_SPUR_AVOID_FORCE) {
-+			avoid = true;
-+		} else if (!b43_channel_type_is_40mhz(phy->channel_type)) {
-+			if ((ch >= 5 && ch <= 8) || ch == 13 || ch == 14)
-+				avoid = true;
-+		} else { /* 40MHz */
-+			if (nphy->aband_spurwar_en &&
-+			    (ch == 38 || ch == 102 || ch == 118))
-+				avoid = dev->dev->chip_id == 0x4716;
-+		}
++	bus->sprom.txpid2g[0] = (sprom[SPOFF(SSB_SPROM4_TXPID2G01)] &
++	     SSB_SPROM4_TXPID2G0) >> SSB_SPROM4_TXPID2G0_SHIFT;
++	bus->sprom.txpid2g[1] = (sprom[SPOFF(SSB_SPROM4_TXPID2G01)] &
++	     SSB_SPROM4_TXPID2G1) >> SSB_SPROM4_TXPID2G1_SHIFT;
++	bus->sprom.txpid2g[2] = (sprom[SPOFF(SSB_SPROM4_TXPID2G23)] &
++	     SSB_SPROM4_TXPID2G2) >> SSB_SPROM4_TXPID2G2_SHIFT;
++	bus->sprom.txpid2g[3] = (sprom[SPOFF(SSB_SPROM4_TXPID2G23)] &
++	     SSB_SPROM4_TXPID2G3) >> SSB_SPROM4_TXPID2G3_SHIFT;
 +
-+		b43_nphy_pmu_spur_avoid(dev, avoid);
++	bus->sprom.txpid5gl[0] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL01)] &
++	     SSB_SPROM4_TXPID5GL0) >> SSB_SPROM4_TXPID5GL0_SHIFT;
++	bus->sprom.txpid5gl[1] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL01)] &
++	     SSB_SPROM4_TXPID5GL1) >> SSB_SPROM4_TXPID5GL1_SHIFT;
++	bus->sprom.txpid5gl[2] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL23)] &
++	     SSB_SPROM4_TXPID5GL2) >> SSB_SPROM4_TXPID5GL2_SHIFT;
++	bus->sprom.txpid5gl[3] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL23)] &
++	     SSB_SPROM4_TXPID5GL3) >> SSB_SPROM4_TXPID5GL3_SHIFT;
 +
-+		if (dev->dev->chip_id == 43222 || dev->dev->chip_id == 43224 ||
-+		    dev->dev->chip_id == 43225) {
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW,
-+				    avoid ? 0x5341 : 0x8889);
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x8);
-+		}
++	bus->sprom.txpid5g[0] = (sprom[SPOFF(SSB_SPROM4_TXPID5G01)] &
++	     SSB_SPROM4_TXPID5G0) >> SSB_SPROM4_TXPID5G0_SHIFT;
++	bus->sprom.txpid5g[1] = (sprom[SPOFF(SSB_SPROM4_TXPID5G01)] &
++	     SSB_SPROM4_TXPID5G1) >> SSB_SPROM4_TXPID5G1_SHIFT;
++	bus->sprom.txpid5g[2] = (sprom[SPOFF(SSB_SPROM4_TXPID5G23)] &
++	     SSB_SPROM4_TXPID5G2) >> SSB_SPROM4_TXPID5G2_SHIFT;
++	bus->sprom.txpid5g[3] = (sprom[SPOFF(SSB_SPROM4_TXPID5G23)] &
++	     SSB_SPROM4_TXPID5G3) >> SSB_SPROM4_TXPID5G3_SHIFT;
 +
-+		if (dev->phy.rev == 3 || dev->phy.rev == 4)
-+			; /* TODO: reset PLL */
++	bus->sprom.txpid5gh[0] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH01)] &
++	     SSB_SPROM4_TXPID5GH0) >> SSB_SPROM4_TXPID5GH0_SHIFT;
++	bus->sprom.txpid5gh[1] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH01)] &
++	     SSB_SPROM4_TXPID5GH1) >> SSB_SPROM4_TXPID5GH1_SHIFT;
++	bus->sprom.txpid5gh[2] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH23)] &
++	     SSB_SPROM4_TXPID5GH2) >> SSB_SPROM4_TXPID5GH2_SHIFT;
++	bus->sprom.txpid5gh[3] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH23)] &
++	     SSB_SPROM4_TXPID5GH3) >> SSB_SPROM4_TXPID5GH3_SHIFT;
 +
-+		if (avoid)
-+			b43_phy_set(dev, B43_NPHY_BBCFG, B43_NPHY_BBCFG_RSTRX);
-+		else
-+			b43_phy_mask(dev, B43_NPHY_BBCFG,
-+				     ~B43_NPHY_BBCFG_RSTRX & 0xFFFF);
-+
-+		b43_nphy_reset_cca(dev);
-+
-+		/* wl sets useless phy_isspuravoid here */
- 	}
- 
- 	b43_phy_write(dev, B43_NPHY_NDATAT_DUP40, 0x3830);
+ 	bus->sprom.boardflags_lo = sprom[SPOFF(SSB_SPROM8_BFLLO)];
+ 	bus->sprom.boardflags_hi = sprom[SPOFF(SSB_SPROM8_BFLHI)];
+ 	bus->sprom.boardflags2_lo = sprom[SPOFF(SSB_SPROM8_BFL2LO)];
 -- 
 1.7.3.4
