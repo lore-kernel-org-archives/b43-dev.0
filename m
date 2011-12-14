@@ -1,73 +1,67 @@
-From: Buck Golemon <buck@yelp.com>
-Date: Wed, 14 Dec 2011 08:50:56 -0800
-Subject: Fwd: Broadcom 4331
-In-Reply-To: <CANDQx1rHt2fmFhAD9iqSfXfwujA_VzuSJV-WAxQ11BDWgiwS=Q@mail.gmail.com>
-References: <CANDQx1rHt2fmFhAD9iqSfXfwujA_VzuSJV-WAxQ11BDWgiwS=Q@mail.gmail.com>
-Message-ID: <CANDQx1q-u29YGmOFpCHX59-xq8pv5eEy2UXfsTQkiREYLzCCJg@mail.gmail.com>
+From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
+Date: Wed, 14 Dec 2011 18:02:44 +0100
+Subject: low throughputs with 14e4:4353
+In-Reply-To: <CACna6ryWZQvvTzKioKk=R2VPxsD3snpkaXVrbEUwSDkr+kc7Pg@mail.gmail.com>
+References: <77990757-D72B-4BF7-BEEB-5EDB9486236B@ing.unibs.it>
+ <CACna6rxjpXegcp1uAhUnAZH7UhwjfFGFXO1-D1QTUWL+DxMvDg@mail.gmail.com>
+ <CACna6ryZiQnCeOHSDZPA0zJ679erJJNtAwU6qqGdVKnpiai4cg@mail.gmail.com>
+ <CACna6rwQXmF1XA_jhpEPbTUP1D++QBkt4fZ5WVmhMdT4C5XXxA@mail.gmail.com>
+ <CACna6rwPEYiZCq+4Di_4xQBF-rQQNw5gVTMkunm2mqoUVBP1Tw@mail.gmail.com>
+ <47DE8DA6-544D-4D0F-BD7A-306E5E08F113@ing.unibs.it>
+ <CACna6ryWZQvvTzKioKk=R2VPxsD3snpkaXVrbEUwSDkr+kc7Pg@mail.gmail.com>
+Message-ID: <6929DF57-8EA4-4DF0-8604-F54EEEDBB24E@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-I'm re-sending this as it didn't seem to get through the first time.
+On Dec 8, 2011, at 10:34 AM, Rafa? Mi?ecki wrote:
 
--buck
+> W dniu 8 grudnia 2011 10:21 u?ytkownik
+> <francesco.gringoli@ing.unibs.it> napisa?:
+>> 
+>> On Dec 7, 2011, at 1:01 PM, Rafa? Mi?ecki wrote:
+>> 
+>>> W dniu 5 grudnia 2011 21:39 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+>>>> W dniu 29 listopada 2011 22:36 u?ytkownik Rafa? Mi?ecki
+>>>> <zajec5@gmail.com> napisa?:
+>>>>> I'll give it a rest and will try in next days again.
+>>>> 
+>>>> It really seems it's something spur avoidance related (and so most
+>>>> probably CC PLL related). After applying my patch implementing SPUR
+>>>> avoidance, card stops receiving anything. I'll dig more around it.
+>>> 
+>>> I've found bug in my implementation and fixed it. Today evening I'll
+>>> test if my patch fixes performance anyhow (I need physical access).
+>> Rafal,
+>> 
+>> I did some mmio traces and checked what happens when changing txpower.
+>> 
+>> 1) values in N-PHY tables 0x1A and 0x1B are changed, e.g., for txpower 5 and txpower 10 they are the same, for txpower 15 they are different so I guess there exist thresholds. Unfortunately I don't even know what these tables are.
+>> 
+>> 2) value in PHY register 0x1ea is changed according to the configured power value. As I can read in specs this is the TX power control target power for both radios: e.g., for txpower 5 => 0x2020, for txpower 10 => 0x2c2c, for txpower 15 => 0x3c3c.
+>> 
+>> Then I switched to b43 and load a custom firmware to analyze how register 0x1ea is setup and it holds always 0x0000. I forced it to be 0x2c2c and magically the throughput increased to ~ 3Mb/s. Unfortunately when I try 0x3c3c (corresponding to txpower 15) I get only phy-transmission errors.
+> 
+> I can see a lot of differences between wl and b43, a lot to validate&test.
+> 
+> Do you have some magic scripts for parsing MMIO dumps? I hope you do,
+> otherwise it's impossible to analyze that ;)
+> 
+> You can try adding
+> nphy->txpwrctrl = true;
+> in function b43_nphy_op_prepare_structs if you wish test something
+> right now. I've noticed this missing part today morning, but won't
+> able to test until evening.
+> 
+Hi Rafal,
 
----------- Forwarded message ----------
-From: Buck Golemon <buck@yelp.com>
-Date: Tue, Nov 29, 2011 at 1:25 PM
-Subject: Broadcom 4331
-To: b43-dev at lists.infradead.org
+great! I applied all the last patches you sent and the throughput now grows during an iperf experiment.
 
+Unfortunately, if to a given AP I can get up to 17-18Mb/s from a 4318, my 43224 never exceeds 5Mb/s :-(
 
-I saw that the page was updated to show support for the bcm4331 chip under
-kernel 3.2rc2, so accordingly I've downloaded and installed a nightly build.
+Are you experiencing something similar?
 
-http://linuxwireless.org/en/users/Drivers/b43#Supported_devices
-http://kernel.ubuntu.com/~kernel-ppa/mainline/daily/2011-11-29-oneiric/
-
-I've attached logs showing what happens when I try to load the bcma module
-(which in turn loads b43).
-
-I believe the fatal flaw is this one, below. How can I fix it?
-
-
-==> /var/log/kern.log <==
-Nov 29 12:45:44 buck-MacBookPro kernel: [  646.609889] b43-phy0: Broadcom
-4331 WLAN found (core revision 29)
-Nov 29 12:45:44 buck-MacBookPro kernel: [  646.610040] b43-phy0 ERROR:
-FOUND UNSUPPORTED PHY (Analog 9, Type 7, Revision 1)
-Nov 29 12:45:44 buck-MacBookPro kernel: [  646.610046] b43: probe of
-bcma0:0 failed with error -95
-Nov 29 12:45:44 buck-MacBookPro kernel: [  646.610075] Broadcom 43xx driver
-loaded [ Features: PNL ]
-
-
-$ uname -a
-Linux buck-MacBookPro 3.2.0-999-generic #201111290417 SMP Tue Nov 29
-09:26:30 UTC 2011 i686 i686 i386 GNU/Linux
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20111214/2dd583f9/attachment-0001.html>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: bcma.log
-Type: text/x-log
-Size: 26802 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20111214/2dd583f9/attachment-0001.bin>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: bcma.lspci
-Type: application/octet-stream
-Size: 2556 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20111214/2dd583f9/attachment-0002.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: b43-fwcutter
-Type: application/octet-stream
-Size: 106 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20111214/2dd583f9/attachment-0003.obj>
+Many thanks,
+-Francesco
