@@ -1,88 +1,43 @@
-From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
-Date: Thu, 15 Dec 2011 19:11:04 +0100
-Subject: low throughputs with 14e4:4353
-In-Reply-To: <CACna6rzwHNn2Yc1VCoF-oKw0fOkX-0q1f6FwZzq-AfksYtYFOw@mail.gmail.com>
-References: <77990757-D72B-4BF7-BEEB-5EDB9486236B@ing.unibs.it>
- <CACna6rxjpXegcp1uAhUnAZH7UhwjfFGFXO1-D1QTUWL+DxMvDg@mail.gmail.com>
- <CACna6ryZiQnCeOHSDZPA0zJ679erJJNtAwU6qqGdVKnpiai4cg@mail.gmail.com>
- <CACna6rwQXmF1XA_jhpEPbTUP1D++QBkt4fZ5WVmhMdT4C5XXxA@mail.gmail.com>
- <CACna6rwPEYiZCq+4Di_4xQBF-rQQNw5gVTMkunm2mqoUVBP1Tw@mail.gmail.com>
- <47DE8DA6-544D-4D0F-BD7A-306E5E08F113@ing.unibs.it>
- <CACna6ryWZQvvTzKioKk=R2VPxsD3snpkaXVrbEUwSDkr+kc7Pg@mail.gmail.com>
- <6929DF57-8EA4-4DF0-8604-F54EEEDBB24E@ing.unibs.it>
- <CACna6rzwHNn2Yc1VCoF-oKw0fOkX-0q1f6FwZzq-AfksYtYFOw@mail.gmail.com>
-Message-ID: <05A61EB9-2577-4F4D-A330-C8F28ADDACDA@ing.unibs.it>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 16 Dec 2011 07:31:11 +0100
+Subject: [PATCH V2] b43: avoid packet losses in the dma worker code.
+In-Reply-To: <4eea214d.h4TAGuC6+eReskdR%francesco.gringoli@ing.unibs.it>
+References: <4eea214d.h4TAGuC6+eReskdR%francesco.gringoli@ing.unibs.it>
+Message-ID: <CACna6rytRwpmnj8EofBi99-+teWGyEyc27Gv+K1qQPni3BZZLQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: francesco.gringoli@ing.unibs.it
+Cc: m@bues.ch, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, michele.orru@hotmail.it, riccardo.paolillo@gmail.com
 
-On Dec 14, 2011, at 7:04 PM, Rafa? Mi?ecki wrote:
+2011/12/15  <francesco.gringoli@ing.unibs.it>:
+> This patch addresses a bug in the dma worker code that keeps draining
+> packets even when the hardware queues are full. In such cases packets
+> can not be passed down to the device and are erroneusly dropped by the
+> code.
+>
+> This problem was already discussed here
+>
+> http://www.mail-archive.com/b43-dev at lists.infradead.org/msg01413.html
+>
+> and acknowledged by Michael.
+>
+> The patch also introduces separate workers for each hardware queue
+> and dedicated buffers where storing packets from mac80211 before sending
+> them down to the hardware. Using different workers let bandwidth be
+> perfectly shared among the queues according to contention window parameters
+> defined at the air interface (EDCA settings).
+>
+> Number of hardware queues is now defined in b43.h (B43_QOS_QUEUE_NUM).
 
-> W dniu 14 grudnia 2011 18:02 u?ytkownik
-> <francesco.gringoli@ing.unibs.it> napisa?:
->> On Dec 8, 2011, at 10:34 AM, Rafa? Mi?ecki wrote:
->> 
->>> W dniu 8 grudnia 2011 10:21 u?ytkownik
->>> <francesco.gringoli@ing.unibs.it> napisa?:
->>>> 
->>>> On Dec 7, 2011, at 1:01 PM, Rafa? Mi?ecki wrote:
->>>> 
->>>>> W dniu 5 grudnia 2011 21:39 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
->>>>>> W dniu 29 listopada 2011 22:36 u?ytkownik Rafa? Mi?ecki
->>>>>> <zajec5@gmail.com> napisa?:
->>>>>>> I'll give it a rest and will try in next days again.
->>>>>> 
->>>>>> It really seems it's something spur avoidance related (and so most
->>>>>> probably CC PLL related). After applying my patch implementing SPUR
->>>>>> avoidance, card stops receiving anything. I'll dig more around it.
->>>>> 
->>>>> I've found bug in my implementation and fixed it. Today evening I'll
->>>>> test if my patch fixes performance anyhow (I need physical access).
->>>> Rafal,
->>>> 
->>>> I did some mmio traces and checked what happens when changing txpower.
->>>> 
->>>> 1) values in N-PHY tables 0x1A and 0x1B are changed, e.g., for txpower 5 and txpower 10 they are the same, for txpower 15 they are different so I guess there exist thresholds. Unfortunately I don't even know what these tables are.
->>>> 
->>>> 2) value in PHY register 0x1ea is changed according to the configured power value. As I can read in specs this is the TX power control target power for both radios: e.g., for txpower 5 => 0x2020, for txpower 10 => 0x2c2c, for txpower 15 => 0x3c3c.
->>>> 
->>>> Then I switched to b43 and load a custom firmware to analyze how register 0x1ea is setup and it holds always 0x0000. I forced it to be 0x2c2c and magically the throughput increased to ~ 3Mb/s. Unfortunately when I try 0x3c3c (corresponding to txpower 15) I get only phy-transmission errors.
->>> 
->>> I can see a lot of differences between wl and b43, a lot to validate&test.
->>> 
->>> Do you have some magic scripts for parsing MMIO dumps? I hope you do,
->>> otherwise it's impossible to analyze that ;)
->>> 
->>> You can try adding
->>> nphy->txpwrctrl = true;
->>> in function b43_nphy_op_prepare_structs if you wish test something
->>> right now. I've noticed this missing part today morning, but won't
->>> able to test until evening.
->>> 
->> Hi Rafal,
->> 
->> great! I applied all the last patches you sent and the throughput now grows during an iperf experiment.
->> 
->> Unfortunately, if to a given AP I can get up to 17-18Mb/s from a 4318, my 43224 never exceeds 5Mb/s :-(
->> 
->> Are you experiencing something similar?
-> 
-> I can achieve about 6-8 Mb/s on my BCM43224.
-> 
-> If you take a look at
-> http://bcm-v4.sipsolutions.net/RecentChanges
-> you can see Larry updated/filled a lot of routines recently. Most of
-> them TX related, some writing tables and I think one of them touches
-> 0x1ea register. So give me few more days, I'll publish more patches
-> and the we will finally do some real tests:)
-I really appreciate your efforts, guys!
+Thanks for your changes Francesco. Funny, checkpatch doesn't detect
+ braces were used for single-line instructions. Generally it looks fine
+ :)
 
-Just to add another bit of information: though the link is very good (54Mb/s is always selected by the 4318 card), with the 43224 48 and 54Mb/s frames are likely to fail, while 36Mb/s is almost 100% succeeding.
+ I still would like to take a look at this solution in comparison to
+ single worker. So let me repeat me request: do you still have patch
+ implementing 1 worker solution? Could you share it?
 
--Francesco
-
-> 
-> -- 
-> Rafa?
+-- 
+Rafa?
