@@ -1,52 +1,205 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 21 Dec 2011 19:52:12 +0100
-Subject: bcm4331 firmware installer package
-In-Reply-To: <4EF21983.1020107@broadcom.com>
-References: <CAG9cJm=YkvHY56LoBoUf3fuh=xb7m+c0GgUzMZX+QyG1+CBCMg@mail.gmail.com>
- <4EF21983.1020107@broadcom.com>
-Message-ID: <CACna6rxEjQLj_j-f7WZOtOEGfDa+TPWyLDrn2t-FGZ5T2_fz-g@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 22 Dec 2011 00:47:17 +0100
+Subject: [PATCH 2/4] b43: N-PHY: update gain ctl workarounds
+In-Reply-To: <1324511239-3536-1-git-send-email-zajec5@gmail.com>
+References: <1324511239-3536-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1324511239-3536-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
-Cc: lina <lina.lastname@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Debian Lists <debian-user@lists.debian.org>, =?UTF-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2011/12/21 Arend van Spriel <arend@broadcom.com>:
-> On 12/21/2011 11:59 AM, lina wrote:
->> Hi,
->>
->> I don't know which one (else) can be fit for bcm4331 802.11a/b/g/n (rev 02)
->>
->> From http://wiki.debian.org/bcm43xx#b43_and_b43legacy
->>
->> I tried:
->>
->> 1] aptitude install firmware-b43-lpphy-installer
->>
->> No chroot environment found. Starting normal installation
->> No supported card found.
->> Use proper b43 or b43legacy firmware.
->> Aborting.
->>
->> 2] # aptitude install firmware-b43-installer
->>
->> No chroot environment found. Starting normal installation
->> Unsupported device(s) found: PCI id 14e4:4331
->> Aborting.
->>
->> both of the listed are not working,
->>
->
-> The bcm4331 support in b43 is pretty new so I do not expect distros are
-> providing packages for it. Your best bet is to get linux-firmware repo
-> from git.kernel.org. Probably the b43 developers can point you to the
-> specific firmware file you need to use for that phy.
+Specs were updated, now we match wl according to MMIO dumps.
 
-Arend: I'm not sure how to say it nice... but there is only one
-company starting with "B" having copyrights to the BCM4331 firmware.
-Only this company can legally submit BCM4331 firmware to
-linux-firmware repo.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c       |    4 +-
+ drivers/net/wireless/b43/tables_nphy.c |  106 +++++++++++++++++++++++++++-----
+ 2 files changed, 92 insertions(+), 18 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index d3222b8..38cf37d 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -1511,7 +1511,8 @@ static void b43_nphy_gain_ctl_workarounds_rev3plus(struct b43_wldev *dev)
+ 	/* Prepare values */
+ 	ghz5 = b43_phy_read(dev, B43_NPHY_BANDCTL)
+ 		& B43_NPHY_BANDCTL_5GHZ;
+-	ext_lna = sprom->boardflags_lo & B43_BFL_EXTLNA;
++	ext_lna = ghz5 ? sprom->boardflags_hi & B43_BFH_EXTLNA_5GHZ :
++		sprom->boardflags_lo & B43_BFL_EXTLNA;
+ 	e = b43_nphy_get_gain_ctl_workaround_ent(dev, ghz5, ext_lna);
+ 	if (ghz5 && dev->phy.rev >= 5)
+ 		rssi_gain = 0x90;
+@@ -1562,7 +1563,6 @@ static void b43_nphy_gain_ctl_workarounds_rev3plus(struct b43_wldev *dev)
+ 	b43_phy_write(dev, 0x2A7, e->init_gain);
+ 	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x106), 2,
+ 				e->rfseq_init);
+-	b43_phy_write(dev, B43_NPHY_C1_INITGAIN, e->init_gain);
+ 
+ 	/* TODO: check defines. Do not match variables names */
+ 	b43_phy_write(dev, B43_NPHY_C1_CLIP1_MEDGAIN, e->cliphi_gain);
+diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
+index 3252560..f7def135 100644
+--- a/drivers/net/wireless/b43/tables_nphy.c
++++ b/drivers/net/wireless/b43/tables_nphy.c
+@@ -2752,7 +2752,18 @@ const struct nphy_rf_control_override_rev3 tbl_rf_control_override_rev3[] = {
+ 	{ 0x00C0,  6, 0xE7, 0xF9, 0xEC, 0xFB }  /* field == 0x4000 (fls 15) */
+ };
+ 
+-struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][3] = {
++struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_wa_phy6_radio11_ghz2 = {
++	{ 10, 14, 19, 27 },
++	{ -5, 6, 10, 15 },
++	{ 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA },
++	{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
++	0x427E,
++	{ 0x413F, 0x413F, 0x413F, 0x413F },
++	0x007E, 0x0066, 0x1074,
++	0x18, 0x18, 0x18,
++	0x01D0, 0x5,
++};
++struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][4] = {
+ 	{ /* 2GHz */
+ 		{ /* PHY rev 3 */
+ 			{ 7, 11, 16, 23 },
+@@ -2776,15 +2787,26 @@ struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][3] = {
+ 			0x18, 0x18, 0x18,
+ 			0x01A1, 0x5,
+ 		},
+-		{ /* PHY rev 5+ */
++		{ /* PHY rev 5 */
+ 			{ 9, 13, 18, 26 },
+ 			{ -3, 7, 11, 16 },
+ 			{ 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA },
+ 			{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
+ 			0x427E, /* invalid for external LNA! */
+ 			{ 0x413F, 0x413F, 0x413F, 0x413F }, /* invalid for external LNA! */
+-			0x1076, 0x0066, 0x106A,
+-			0xC, 0xC, 0xC,
++			0x1076, 0x0066, 0x0000, /* low is invalid (the last one) */
++			0x18, 0x18, 0x18,
++			0x01D0, 0x9,
++		},
++		{ /* PHY rev 6+ */
++			{ 8, 13, 18, 25 },
++			{ -5, 6, 10, 14 },
++			{ 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA },
++			{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
++			0x527E, /* invalid for external LNA! */
++			{ 0x513F, 0x513F, 0x513F, 0x513F }, /* invalid for external LNA! */
++			0x1076, 0x0066, 0x0000, /* low is invalid (the last one) */
++			0x18, 0x18, 0x18,
+ 			0x01D0, 0x5,
+ 		},
+ 	},
+@@ -2811,7 +2833,7 @@ struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][3] = {
+ 			0x24, 0x24, 0x24,
+ 			0x0107, 25,
+ 		},
+-		{ /* PHY rev 5+ */
++		{ /* PHY rev 5 */
+ 			{ 6, 10, 16, 21 },
+ 			{ -7, 0, 4, 8 },
+ 			{ 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD },
+@@ -2822,6 +2844,17 @@ struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][3] = {
+ 			0x24, 0x24, 0x24,
+ 			0x00A9, 25,
+ 		},
++		{ /* PHY rev 6+ */
++			{ 6, 10, 16, 21 },
++			{ -7, 0, 4, 8 },
++			{ 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD, 0xD },
++			{ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 },
++			0x729E,
++			{ 0x714F, 0x714F, 0x714F, 0x714F },
++			0x029E, 0x2084, 0x2086,
++			0x24, 0x24, 0x24, /* low is invalid for radio rev 11! */
++			0x00F0, 25,
++		},
+ 	},
+ };
+ 
+@@ -3098,26 +3131,67 @@ struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
+ {
+ 	struct nphy_gain_ctl_workaround_entry *e;
+ 	u8 phy_idx;
++	u8 tr_iso = ghz5 ? dev->dev->bus_sprom->fem.ghz5.tr_iso :
++			   dev->dev->bus_sprom->fem.ghz2.tr_iso;
++
++	if (!ghz5 && dev->phy.rev >= 6 && dev->phy.radio_rev == 11)
++		return &nphy_gain_ctl_wa_phy6_radio11_ghz2;
+ 
+ 	B43_WARN_ON(dev->phy.rev < 3);
+-	if (dev->phy.rev >= 5)
++	if (dev->phy.rev >= 6)
++		phy_idx = 3;
++	else if (dev->phy.rev == 5)
+ 		phy_idx = 2;
+ 	else if (dev->phy.rev == 4)
+ 		phy_idx = 1;
+ 	else
+ 		phy_idx = 0;
+-
+ 	e = &nphy_gain_ctl_workaround[ghz5][phy_idx];
+ 
+-	/* Only one entry differs for external LNA, so instead making whole
+-	 * table 2 times bigger, hack is here
+-	 */
+-	if (!ghz5 && dev->phy.rev >= 5 && ext_lna) {
+-		e->rfseq_init[0] &= 0x0FFF;
+-		e->rfseq_init[1] &= 0x0FFF;
+-		e->rfseq_init[2] &= 0x0FFF;
+-		e->rfseq_init[3] &= 0x0FFF;
+-		e->init_gain &= 0x0FFF;
++	/* Some workarounds to the workarounds... */
++	if (ghz5 && dev->phy.rev >= 6) {
++		if (dev->phy.radio_rev == 11 &&
++		    !b43_channel_type_is_40mhz(dev->phy.channel_type))
++			e->cliplo_gain = 0x2d;
++	} else if (!ghz5 && dev->phy.rev >= 5) {
++		if (ext_lna) {
++			e->rfseq_init[0] &= ~0x4000;
++			e->rfseq_init[1] &= ~0x4000;
++			e->rfseq_init[2] &= ~0x4000;
++			e->rfseq_init[3] &= ~0x4000;
++			e->init_gain &= ~0x4000;
++		}
++		switch (tr_iso) {
++		case 0:
++			e->cliplo_gain = 0x0062;
++		case 1:
++			e->cliplo_gain = 0x0064;
++		case 2:
++			e->cliplo_gain = 0x006a;
++		case 3:
++			e->cliplo_gain = 0x106a;
++		case 4:
++			e->cliplo_gain = 0x106c;
++		case 5:
++			e->cliplo_gain = 0x1074;
++		case 6:
++			e->cliplo_gain = 0x107c;
++		case 7:
++			e->cliplo_gain = 0x207c;
++		default:
++			e->cliplo_gain = 0x106a;
++		}
++	} else if (ghz5 && dev->phy.rev == 4 && ext_lna) {
++		e->rfseq_init[0] &= ~0x4000;
++		e->rfseq_init[1] &= ~0x4000;
++		e->rfseq_init[2] &= ~0x4000;
++		e->rfseq_init[3] &= ~0x4000;
++		e->init_gain &= ~0x4000;
++		e->rfseq_init[0] |= 0x1000;
++		e->rfseq_init[1] |= 0x1000;
++		e->rfseq_init[2] |= 0x1000;
++		e->rfseq_init[3] |= 0x1000;
++		e->init_gain |= 0x1000;
+ 	}
+ 
+ 	return e;
 -- 
-Rafa?
+1.7.3.4
