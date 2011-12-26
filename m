@@ -1,90 +1,65 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 22 Dec 2011 09:49:24 +0100
-Subject: bcm4331 firmware installer package
-In-Reply-To: <CAG9cJmkn9HRM1TWL_P0SHBjx9mG4gZYDXeL=HucSg1FK4bf0JQ@mail.gmail.com>
-References: <CAG9cJm=YkvHY56LoBoUf3fuh=xb7m+c0GgUzMZX+QyG1+CBCMg@mail.gmail.com>
- <4EF21983.1020107@broadcom.com>
- <CACna6rxEjQLj_j-f7WZOtOEGfDa+TPWyLDrn2t-FGZ5T2_fz-g@mail.gmail.com>
- <CAG9cJm=XE3jQiYvGB4T6_Avj=bmc_wXe8JGMr5hePuCu-OnPuA@mail.gmail.com>
- <CACna6rxvmFptSR9WF8Whj1A0ATyygQ9Eo0nUY8n6MugQ0bjP7g@mail.gmail.com>
- <CAG9cJmmnEsLQxxbi41v6nM8D+L_cOSQE73qJmDDYhXPnopn+MA@mail.gmail.com>
- <CACna6rw_zB038mJ5XP6qvZR61pB77yRes3UwM50JFawUAhUpYg@mail.gmail.com>
- <CAG9cJmkn9HRM1TWL_P0SHBjx9mG4gZYDXeL=HucSg1FK4bf0JQ@mail.gmail.com>
-Message-ID: <CACna6ryy3VaL4u=fts4q0KGxXp0NibMcBaS7tnYbAG5w06sj1Q@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Mon, 26 Dec 2011 11:51:40 -0600
+Subject: [PATCH] b43: fix regression in PIO case
+In-Reply-To: <alpine.DEB.2.00.1112261824000.12108@axis700.grange>
+References: <alpine.DEB.2.00.1112261608140.12108@axis700.grange>
+ <alpine.DEB.2.00.1112261824000.12108@axis700.grange>
+Message-ID: <4EF8B42C.2020402@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lina <lina.lastname@gmail.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Debian Lists <debian-user@lists.debian.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, b43-dev <b43-dev@lists.infradead.org>
 
-W dniu 22 grudnia 2011 09:45 u?ytkownik lina <lina.lastname@gmail.com> napisa?:
-> On Thu, Dec 22, 2011 at 4:34 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->> 2011/12/22 lina <lina.lastname@gmail.com>:
->>> On Thu, Dec 22, 2011 at 3:07 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->>>> 2011/12/22 lina <lina.lastname@gmail.com>:
->>>>> I am still a bit confused. (First thanks for the links all of you
->>>>> provided, but I have visited those web before).
->>>>>
->>>>> Here is the thing:
->>>>> BCM4331 802.11a/b/g/n fit for
->>>>> BCM4331 ? ? ? ? ? ? ?b/g ?HT (r1)
->>>>>
->>>>> What does the 802.11a for?
->>>>
->>>> Well, your card can operate in 5GHz band (frequencies). But I'm not
->>>> ?really sure why you ask about this at all.
->>>>
->>>> ?If you want to try experimental BCM4331 support you have to:
->>>> ?1) Install kernel 3.2-rc3 or newer
->>> I have the 3.2.0-rc6
->>>> ?or
->>>> ?2) Install compat wireless
->>>>
->>>> ?After that you've do install firmware (check for wiki howto for kernel
->>>> ?3.2 and newer).
->>>
->>> after installation of the compat-wireless,
->>>
->>> from
->>> http://wireless.kernel.org/en/users/Drivers/b43#firmware
->>>
->>> ?# aptitude install firmware-b43-installer
->>>
->>>
->>> Setting up b43-fwcutter (1:015-9) ...
->>> Setting up firmware-b43-installer (1:015-9) ...
->>> No chroot environment found. Starting normal installation
->>> Unsupported device(s) found: PCI id 14e4:4331
->>> Aborting.
->>>
->>> I don't know which part is wrong here.
->>
->> Your tool is too old (support for BCM4331 is really recent).
-> sorry, here you mean, which tool?
->>
->> Just do as I said and use howto for kernel 3.2, not distro-specific
->> howto. You nede to install b43-fwcutter and manually download file for
-> I can't tell the difference. (I really need detailed instructions,
-> thanks for your patience ahead)
+On 12/26/2011 11:28 AM, Guennadi Liakhovetski wrote:
+> This patch fixes the regression, introduced by
 >
-> I tried to follow what you said before, with the kernel 3.2-rc6
-> install the compate-wireless,
-> but have problem in the following install the firmware-installer.
->> firmware extraction.
+> commit 17030f48e31adde5b043741c91ba143f5f7db0fd
+> From: Rafa? Mi?ecki<zajec5@gmail.com>
+> Date: Thu, 11 Aug 2011 17:16:27 +0200
+> Subject: [PATCH] b43: support new RX header, noticed to be used in 598.314+ fw
+>
+> in PIO case.
+>
+> Signed-off-by: Guennadi Liakhovetski<g.liakhovetski@gmx.de>
+> ---
+> diff --git a/drivers/net/wireless/b43/pio.c b/drivers/net/wireless/b43/pio.c
+> index ce8a4bd..b64b64c 100644
+> --- a/drivers/net/wireless/b43/pio.c
+> +++ b/drivers/net/wireless/b43/pio.c
+> @@ -617,9 +617,19 @@ static bool pio_rx_frame(struct b43_pio_rxqueue *q)
+>   	const char *err_msg = NULL;
+>   	struct b43_rxhdr_fw4 *rxhdr =
+>   		(struct b43_rxhdr_fw4 *)wl->pio_scratchspace;
+> +	size_t rxhdr_size = sizeof(*rxhdr);
+>
+>   	BUILD_BUG_ON(sizeof(wl->pio_scratchspace)<  sizeof(*rxhdr));
+> -	memset(rxhdr, 0, sizeof(*rxhdr));
+> +	switch (dev->fw.hdr_format) {
+> +	case B43_FW_HDR_410:
+> +	case B43_FW_HDR_351:
+> +		rxhdr_size -= sizeof(rxhdr->format_598) -
+> +			sizeof(rxhdr->format_351);
+> +		break;
+> +	case B43_FW_HDR_598:
+> +		break;
+> +	}
 
-wget http://bu3sch.de/b43/fwcutter/b43-fwcutter-015.tar.bz2
-tar xjf b43-fwcutter-015.tar.bz2
-cd b43-fwcutter-015
-make
-sudo make install
-cd ..
+I do not think the above will work for format_410. By my count, the format_410 
+struct is 4 bytes longer than the format_351 struct.
 
-export FIRMWARE_INSTALL_DIR="/lib/firmware"
-wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
-tar xjf broadcom-wl-5.100.138.tar.bz2
-sudo b43-fwcutter -w "$FIRMWARE_INSTALL_DIR"
-broadcom-wl-5.100.138/linux/wl_apsta.o
+Even if it does work, I suggest using the following:
 
--- 
-Rafa?
+	size_t rxhdr_size;
+
+    	BUILD_BUG_ON(sizeof(wl->pio_scratchspace)<  sizeof(*rxhdr));
+	switch (dev->fw.hdr_format) {
+	case B43_FW_HDR_351:
+		rxhdr_size = sizeof(rxhdr->format_351);
+		break;
+	case B43_FW_HDR_410:
+etc.
+
+
+Larry
