@@ -1,79 +1,56 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 26 Dec 2011 12:32:15 -0600
-Subject: [PATCH] b43: fix regression in PIO case
-In-Reply-To: <alpine.DEB.2.00.1112261909550.12108@axis700.grange>
-References: <alpine.DEB.2.00.1112261608140.12108@axis700.grange>
- <alpine.DEB.2.00.1112261824000.12108@axis700.grange>
- <4EF8B42C.2020402@lwfinger.net>
- <alpine.DEB.2.00.1112261909550.12108@axis700.grange>
-Message-ID: <4EF8BDAF.6050402@lwfinger.net>
+From: Tyler Kocheran <rfkrocktk@gmail.com>
+Date: Thu, 29 Dec 2011 20:45:25 -0800
+Subject: 4331 and Bluetooth Bug
+Message-ID: <CAPTk+sbaZC2DUUAUcKk73zG3sc2duLyOXKMCaOQjUt4Lz72cyg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On 12/26/2011 12:17 PM, Guennadi Liakhovetski wrote:
-> On Mon, 26 Dec 2011, Larry Finger wrote:
->
->> On 12/26/2011 11:28 AM, Guennadi Liakhovetski wrote:
->>> This patch fixes the regression, introduced by
->>>
->>> commit 17030f48e31adde5b043741c91ba143f5f7db0fd
->>> From: Rafa? Mi?ecki<zajec5@gmail.com>
->>> Date: Thu, 11 Aug 2011 17:16:27 +0200
->>> Subject: [PATCH] b43: support new RX header, noticed to be used in 598.314+
->>> fw
->>>
->>> in PIO case.
->>>
->>> Signed-off-by: Guennadi Liakhovetski<g.liakhovetski@gmx.de>
->>> ---
->>> diff --git a/drivers/net/wireless/b43/pio.c b/drivers/net/wireless/b43/pio.c
->>> index ce8a4bd..b64b64c 100644
->>> --- a/drivers/net/wireless/b43/pio.c
->>> +++ b/drivers/net/wireless/b43/pio.c
->>> @@ -617,9 +617,19 @@ static bool pio_rx_frame(struct b43_pio_rxqueue *q)
->>>    	const char *err_msg = NULL;
->>>    	struct b43_rxhdr_fw4 *rxhdr =
->>>    		(struct b43_rxhdr_fw4 *)wl->pio_scratchspace;
->>> +	size_t rxhdr_size = sizeof(*rxhdr);
->>>
->>>    	BUILD_BUG_ON(sizeof(wl->pio_scratchspace)<   sizeof(*rxhdr));
->>> -	memset(rxhdr, 0, sizeof(*rxhdr));
->>> +	switch (dev->fw.hdr_format) {
->>> +	case B43_FW_HDR_410:
->>> +	case B43_FW_HDR_351:
->>> +		rxhdr_size -= sizeof(rxhdr->format_598) -
->>> +			sizeof(rxhdr->format_351);
->>> +		break;
->>> +	case B43_FW_HDR_598:
->>> +		break;
->>> +	}
->>
->> I do not think the above will work for format_410. By my count, the format_410
->> struct is 4 bytes longer than the format_351 struct.
->
-> I think you're looking at struct b43_txhdr, whereas the problem is in
-> struct b43_rxhdr_fw4.
->
-> Thanks
-> Guennadi
->
->>
->> Even if it does work, I suggest using the following:
->>
->> 	size_t rxhdr_size;
->>
->>     	BUILD_BUG_ON(sizeof(wl->pio_scratchspace)<   sizeof(*rxhdr));
->> 	switch (dev->fw.hdr_format) {
->> 	case B43_FW_HDR_351:
->> 		rxhdr_size = sizeof(rxhdr->format_351);
->> 		break;
->> 	case B43_FW_HDR_410:
+Hello,
+I'm currently running on a MacBook Pro 8,3, 11.10-amd64 Ubuntu, kernel
+3.0.0-14-generic.
 
-You are correct - I was looking in the wrong place. Even so, I prefer setting 
-rxhdr_size in the case branches, and not adjust one preset earlier.
+I was able to use this
+guide<http://homepage.uibk.ac.at/~c705283/archives/2011/09/04/linux_support_for_broadcom_4331_wireless_chip_macbook_pro_81/index.html>
+to
+compile and use the B43 driver for my 4331 WiFi card. WiFi generally works
+great, though I'll have times when it'll appear connected to the network
+but isn't able to get any internet access, but that's not what this issue
+is about.
 
-Larry
+The main issue is that I've determined that the driver/card severely
+interferes with and inhibits in many cases the use of Bluetooth. While b43
+is loaded, I can't find any Bluetooth device with hcitool scan or hidd
+--search, but when I rmmod it, I'm able to find my devices. If you'd like
+me to demonstrate, I'd be happy to.
+
+The main problems are as follows:
+
+
+   1. Bluetooth is completely unable to detect devices for pairing when b43
+   is running in the kernel, no exceptions.
+   2. More often than not, my Motorola S305 headphones connect to my
+   computer, then disconnect, then reconnect, then disconnect, all without
+   entering A2DP or HFS mode. My headphones never actually get connected in a
+   way that's usable most of the time.
+   3. Audio playback and high-bandwidth uses of Bluetooth are terribly
+   inconsistent, choppy, and sounds terrible.
+
+All of these problem go away if I rmmod b43.
+
+So, going forward I'd like to help in any way I can to get this issue
+resolved. Can anyone show me how I can completely uninstall b43 and start
+again from scratch? Are these issues known? What version of broadcom-wl,
+compat-wireless, and b43-fwcutter should I be compiling against?
+
+uname -a <http://paste.ubuntu.com/786438/>
+lspci -vvn | grep 43 -A7 <http://paste.ubuntu.com/786439/>
+dmesg <http://paste.ubuntu.com/786440/>
+
+Thanks,
+ - TK
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20111229/4629283b/attachment.html>
