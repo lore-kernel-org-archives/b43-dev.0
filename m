@@ -1,11 +1,11 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 2 Jan 2012 13:39:02 +0100
+Date: Mon, 2 Jan 2012 13:41:42 +0100
 Subject: [PATCH 2/3] bcma: SPROM: add macro for easier extraction
 In-Reply-To: <20120102122018.30057.qmail@stuge.se>
 References: <1325490085-3806-1-git-send-email-zajec5@gmail.com>
  <1325490085-3806-2-git-send-email-zajec5@gmail.com>
  <20120102122018.30057.qmail@stuge.se>
-Message-ID: <CACna6rxjZ655nnDZjGWbNcaA8PD6BRMpdhqfBZ-StX9nECrScA@mail.gmail.com>
+Message-ID: <CACna6rxiHydMmVOK18DO6X5COSUvZ+2c5=n-_oztBsP3NkxFhQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,14 +19,10 @@ W dniu 2 stycznia 2012 13:20 u?ytkownik Peter Stuge <peter@stuge.se> napisa?:
 >
 > Maybe this should take at least bus as parameter too?
 
-I don't think we will ever want to extract SPROM info to something
-else. Can't imageine such a situation right now.
-
-Of course it may happen some new requirement will appear in the
-future. But it's hard to predict it right now. And we never know what
-macro will handle that future requirement. Oh, and we always can
-modify existing macro or add new one :) Fortunately it's not any kind
-of API :)
+I also like the proposed solution because it let me fit some lines 80
+chars length. See all the
+SSB_SROM8_*_PA_[0-2]
+from the next patch. Most of them are 80 char long ;)
 
 -- 
 Rafa?
