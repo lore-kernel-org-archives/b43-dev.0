@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon,  2 Jan 2012 08:41:23 +0100
-Subject: [PATCH 1/3] ssb: SPROM: extract each core power info
-Message-ID: <1325490085-3806-1-git-send-email-zajec5@gmail.com>
+Date: Mon,  2 Jan 2012 08:41:24 +0100
+Subject: [PATCH 2/3] bcma: SPROM: add macro for easier extraction
+In-Reply-To: <1325490085-3806-1-git-send-email-zajec5@gmail.com>
+References: <1325490085-3806-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1325490085-3806-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,155 +11,175 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-We already extract some basic info but it's incomplete, reads info
-about the first core only. Used data structure doesn't allow easy
-adding of more cores.
-This patch adds new struct and array for storing power info. The plan
-is to: switch all extractors (including the ones using NVRAM) to new
-struct, switch drivers, then deprecate and finally drop old SSB fields.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/ssb/pci.c            |   40 +++++++++++++++++++++++++++++++++++++++-
- include/linux/ssb/ssb.h      |    8 ++++++++
- include/linux/ssb/ssb_regs.h |   34 ++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+), 1 deletions(-)
+ drivers/bcma/sprom.c |  139 +++++++++++++++++++++++++------------------------
+ 1 files changed, 71 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
-index 973223f..befa89e 100644
---- a/drivers/ssb/pci.c
-+++ b/drivers/ssb/pci.c
-@@ -523,7 +523,13 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
- static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
+diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
+index 6f230fb..27f62cc 100644
+--- a/drivers/bcma/sprom.c
++++ b/drivers/bcma/sprom.c
+@@ -14,8 +14,6 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/slab.h>
+ 
+-#define SPOFF(offset)	((offset) / sizeof(u16))
+-
+ /**************************************************
+  * R/W ops.
+  **************************************************/
+@@ -124,6 +122,11 @@ static int bcma_sprom_valid(const u16 *sprom)
+  * SPROM extraction.
+  **************************************************/
+ 
++#define SPOFF(offset)	((offset) / sizeof(u16))
++
++#define SPEX(_field, _offset, _mask, _shift)	\
++	bus->sprom._field = ((sprom[SPOFF(_offset)] & (_mask)) >> (_shift))
++
+ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
  {
- 	int i;
--	u16 v;
-+	u16 v, o;
-+	u16 pwr_info_offset[] = {
-+		SSB_SROM8_PWR_INFO_CORE0, SSB_SROM8_PWR_INFO_CORE1,
-+		SSB_SROM8_PWR_INFO_CORE2, SSB_SROM8_PWR_INFO_CORE3
-+	};
-+	BUILD_BUG_ON(ARRAY_SIZE(pwr_info_offset) !=
-+			ARRAY_SIZE(out->core_pwr_info));
+ 	u16 v;
+@@ -137,72 +140,72 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
+ 		*(((__be16 *)bus->sprom.il0mac) + i) = cpu_to_be16(v);
+ 	}
  
- 	/* extract the MAC address */
- 	for (i = 0; i < 3; i++) {
-@@ -607,6 +613,38 @@ static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
- 	memcpy(&out->antenna_gain.ghz5, &out->antenna_gain.ghz24,
- 	       sizeof(out->antenna_gain.ghz5));
+-	bus->sprom.board_rev = sprom[SPOFF(SSB_SPROM8_BOARDREV)];
+-
+-	bus->sprom.txpid2g[0] = (sprom[SPOFF(SSB_SPROM4_TXPID2G01)] &
+-	     SSB_SPROM4_TXPID2G0) >> SSB_SPROM4_TXPID2G0_SHIFT;
+-	bus->sprom.txpid2g[1] = (sprom[SPOFF(SSB_SPROM4_TXPID2G01)] &
+-	     SSB_SPROM4_TXPID2G1) >> SSB_SPROM4_TXPID2G1_SHIFT;
+-	bus->sprom.txpid2g[2] = (sprom[SPOFF(SSB_SPROM4_TXPID2G23)] &
+-	     SSB_SPROM4_TXPID2G2) >> SSB_SPROM4_TXPID2G2_SHIFT;
+-	bus->sprom.txpid2g[3] = (sprom[SPOFF(SSB_SPROM4_TXPID2G23)] &
+-	     SSB_SPROM4_TXPID2G3) >> SSB_SPROM4_TXPID2G3_SHIFT;
+-
+-	bus->sprom.txpid5gl[0] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL01)] &
+-	     SSB_SPROM4_TXPID5GL0) >> SSB_SPROM4_TXPID5GL0_SHIFT;
+-	bus->sprom.txpid5gl[1] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL01)] &
+-	     SSB_SPROM4_TXPID5GL1) >> SSB_SPROM4_TXPID5GL1_SHIFT;
+-	bus->sprom.txpid5gl[2] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL23)] &
+-	     SSB_SPROM4_TXPID5GL2) >> SSB_SPROM4_TXPID5GL2_SHIFT;
+-	bus->sprom.txpid5gl[3] = (sprom[SPOFF(SSB_SPROM4_TXPID5GL23)] &
+-	     SSB_SPROM4_TXPID5GL3) >> SSB_SPROM4_TXPID5GL3_SHIFT;
+-
+-	bus->sprom.txpid5g[0] = (sprom[SPOFF(SSB_SPROM4_TXPID5G01)] &
+-	     SSB_SPROM4_TXPID5G0) >> SSB_SPROM4_TXPID5G0_SHIFT;
+-	bus->sprom.txpid5g[1] = (sprom[SPOFF(SSB_SPROM4_TXPID5G01)] &
+-	     SSB_SPROM4_TXPID5G1) >> SSB_SPROM4_TXPID5G1_SHIFT;
+-	bus->sprom.txpid5g[2] = (sprom[SPOFF(SSB_SPROM4_TXPID5G23)] &
+-	     SSB_SPROM4_TXPID5G2) >> SSB_SPROM4_TXPID5G2_SHIFT;
+-	bus->sprom.txpid5g[3] = (sprom[SPOFF(SSB_SPROM4_TXPID5G23)] &
+-	     SSB_SPROM4_TXPID5G3) >> SSB_SPROM4_TXPID5G3_SHIFT;
+-
+-	bus->sprom.txpid5gh[0] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH01)] &
+-	     SSB_SPROM4_TXPID5GH0) >> SSB_SPROM4_TXPID5GH0_SHIFT;
+-	bus->sprom.txpid5gh[1] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH01)] &
+-	     SSB_SPROM4_TXPID5GH1) >> SSB_SPROM4_TXPID5GH1_SHIFT;
+-	bus->sprom.txpid5gh[2] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH23)] &
+-	     SSB_SPROM4_TXPID5GH2) >> SSB_SPROM4_TXPID5GH2_SHIFT;
+-	bus->sprom.txpid5gh[3] = (sprom[SPOFF(SSB_SPROM4_TXPID5GH23)] &
+-	     SSB_SPROM4_TXPID5GH3) >> SSB_SPROM4_TXPID5GH3_SHIFT;
+-
+-	bus->sprom.boardflags_lo = sprom[SPOFF(SSB_SPROM8_BFLLO)];
+-	bus->sprom.boardflags_hi = sprom[SPOFF(SSB_SPROM8_BFLHI)];
+-	bus->sprom.boardflags2_lo = sprom[SPOFF(SSB_SPROM8_BFL2LO)];
+-	bus->sprom.boardflags2_hi = sprom[SPOFF(SSB_SPROM8_BFL2HI)];
+-
+-	bus->sprom.country_code = sprom[SPOFF(SSB_SPROM8_CCODE)];
+-
+-	bus->sprom.fem.ghz2.tssipos = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
+-		SSB_SROM8_FEM_TSSIPOS) >> SSB_SROM8_FEM_TSSIPOS_SHIFT;
+-	bus->sprom.fem.ghz2.extpa_gain = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
+-		SSB_SROM8_FEM_EXTPA_GAIN) >> SSB_SROM8_FEM_EXTPA_GAIN_SHIFT;
+-	bus->sprom.fem.ghz2.pdet_range = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
+-		SSB_SROM8_FEM_PDET_RANGE) >> SSB_SROM8_FEM_PDET_RANGE_SHIFT;
+-	bus->sprom.fem.ghz2.tr_iso = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
+-		SSB_SROM8_FEM_TR_ISO) >> SSB_SROM8_FEM_TR_ISO_SHIFT;
+-	bus->sprom.fem.ghz2.antswlut = (sprom[SPOFF(SSB_SPROM8_FEM2G)] &
+-		SSB_SROM8_FEM_ANTSWLUT) >> SSB_SROM8_FEM_ANTSWLUT_SHIFT;
+-
+-	bus->sprom.fem.ghz5.tssipos = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
+-		SSB_SROM8_FEM_TSSIPOS) >> SSB_SROM8_FEM_TSSIPOS_SHIFT;
+-	bus->sprom.fem.ghz5.extpa_gain = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
+-		SSB_SROM8_FEM_EXTPA_GAIN) >> SSB_SROM8_FEM_EXTPA_GAIN_SHIFT;
+-	bus->sprom.fem.ghz5.pdet_range = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
+-		SSB_SROM8_FEM_PDET_RANGE) >> SSB_SROM8_FEM_PDET_RANGE_SHIFT;
+-	bus->sprom.fem.ghz5.tr_iso = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
+-		SSB_SROM8_FEM_TR_ISO) >> SSB_SROM8_FEM_TR_ISO_SHIFT;
+-	bus->sprom.fem.ghz5.antswlut = (sprom[SPOFF(SSB_SPROM8_FEM5G)] &
+-		SSB_SROM8_FEM_ANTSWLUT) >> SSB_SROM8_FEM_ANTSWLUT_SHIFT;
++	SPEX(board_rev, SSB_SPROM8_BOARDREV, ~0, 0);
++
++	SPEX(txpid2g[0], SSB_SPROM4_TXPID2G01, SSB_SPROM4_TXPID2G0,
++	     SSB_SPROM4_TXPID2G0_SHIFT);
++	SPEX(txpid2g[1], SSB_SPROM4_TXPID2G01, SSB_SPROM4_TXPID2G1,
++	     SSB_SPROM4_TXPID2G1_SHIFT);
++	SPEX(txpid2g[2], SSB_SPROM4_TXPID2G23, SSB_SPROM4_TXPID2G2,
++	     SSB_SPROM4_TXPID2G2_SHIFT);
++	SPEX(txpid2g[3], SSB_SPROM4_TXPID2G23, SSB_SPROM4_TXPID2G3,
++	     SSB_SPROM4_TXPID2G3_SHIFT);
++
++	SPEX(txpid5gl[0], SSB_SPROM4_TXPID5GL01, SSB_SPROM4_TXPID5GL0,
++	     SSB_SPROM4_TXPID5GL0_SHIFT);
++	SPEX(txpid5gl[1], SSB_SPROM4_TXPID5GL01, SSB_SPROM4_TXPID5GL1,
++	     SSB_SPROM4_TXPID5GL1_SHIFT);
++	SPEX(txpid5gl[2], SSB_SPROM4_TXPID5GL23, SSB_SPROM4_TXPID5GL2,
++	     SSB_SPROM4_TXPID5GL2_SHIFT);
++	SPEX(txpid5gl[3], SSB_SPROM4_TXPID5GL23, SSB_SPROM4_TXPID5GL3,
++	     SSB_SPROM4_TXPID5GL3_SHIFT);
++
++	SPEX(txpid5g[0], SSB_SPROM4_TXPID5G01, SSB_SPROM4_TXPID5G0,
++	     SSB_SPROM4_TXPID5G0_SHIFT);
++	SPEX(txpid5g[1], SSB_SPROM4_TXPID5G01, SSB_SPROM4_TXPID5G1,
++	     SSB_SPROM4_TXPID5G1_SHIFT);
++	SPEX(txpid5g[2], SSB_SPROM4_TXPID5G23, SSB_SPROM4_TXPID5G2,
++	     SSB_SPROM4_TXPID5G2_SHIFT);
++	SPEX(txpid5g[3], SSB_SPROM4_TXPID5G23, SSB_SPROM4_TXPID5G3,
++	     SSB_SPROM4_TXPID5G3_SHIFT);
++
++	SPEX(txpid5gh[0], SSB_SPROM4_TXPID5GH01, SSB_SPROM4_TXPID5GH0,
++	     SSB_SPROM4_TXPID5GH0_SHIFT);
++	SPEX(txpid5gh[1], SSB_SPROM4_TXPID5GH01, SSB_SPROM4_TXPID5GH1,
++	     SSB_SPROM4_TXPID5GH1_SHIFT);
++	SPEX(txpid5gh[2], SSB_SPROM4_TXPID5GH23, SSB_SPROM4_TXPID5GH2,
++	     SSB_SPROM4_TXPID5GH2_SHIFT);
++	SPEX(txpid5gh[3], SSB_SPROM4_TXPID5GH23, SSB_SPROM4_TXPID5GH3,
++	     SSB_SPROM4_TXPID5GH3_SHIFT);
++
++	SPEX(boardflags_lo, SSB_SPROM8_BFLLO, ~0, 0);
++	SPEX(boardflags_hi, SSB_SPROM8_BFLHI, ~0, 0);
++	SPEX(boardflags2_lo, SSB_SPROM8_BFL2LO, ~0, 0);
++	SPEX(boardflags2_hi, SSB_SPROM8_BFL2HI, ~0, 0);
++
++	SPEX(country_code, SSB_SPROM8_CCODE, ~0, 0);
++
++	SPEX(fem.ghz2.tssipos, SSB_SPROM8_FEM2G, SSB_SROM8_FEM_TSSIPOS,
++	     SSB_SROM8_FEM_TSSIPOS_SHIFT);
++	SPEX(fem.ghz2.extpa_gain, SSB_SPROM8_FEM2G, SSB_SROM8_FEM_EXTPA_GAIN,
++	     SSB_SROM8_FEM_EXTPA_GAIN_SHIFT);
++	SPEX(fem.ghz2.pdet_range, SSB_SPROM8_FEM2G, SSB_SROM8_FEM_PDET_RANGE,
++	     SSB_SROM8_FEM_PDET_RANGE_SHIFT);
++	SPEX(fem.ghz2.tr_iso, SSB_SPROM8_FEM2G, SSB_SROM8_FEM_TR_ISO,
++	     SSB_SROM8_FEM_TR_ISO_SHIFT);
++	SPEX(fem.ghz2.antswlut, SSB_SPROM8_FEM2G, SSB_SROM8_FEM_ANTSWLUT,
++	     SSB_SROM8_FEM_ANTSWLUT_SHIFT);
++
++	SPEX(fem.ghz5.tssipos, SSB_SPROM8_FEM5G, SSB_SROM8_FEM_TSSIPOS,
++	     SSB_SROM8_FEM_TSSIPOS_SHIFT);
++	SPEX(fem.ghz5.extpa_gain, SSB_SPROM8_FEM5G, SSB_SROM8_FEM_EXTPA_GAIN,
++	     SSB_SROM8_FEM_EXTPA_GAIN_SHIFT);
++	SPEX(fem.ghz5.pdet_range, SSB_SPROM8_FEM5G, SSB_SROM8_FEM_PDET_RANGE,
++	     SSB_SROM8_FEM_PDET_RANGE_SHIFT);
++	SPEX(fem.ghz5.tr_iso, SSB_SPROM8_FEM5G, SSB_SROM8_FEM_TR_ISO,
++	     SSB_SROM8_FEM_TR_ISO_SHIFT);
++	SPEX(fem.ghz5.antswlut, SSB_SPROM8_FEM5G, SSB_SROM8_FEM_ANTSWLUT,
++	     SSB_SROM8_FEM_ANTSWLUT_SHIFT);
+ }
  
-+	/* Extract cores power info info */
-+	for (i = 0; i < ARRAY_SIZE(pwr_info_offset); i++) {
-+		o = pwr_info_offset[i];
-+		SPEX(core_pwr_info[i].itssi_2g, o + SSB_SROM8_2G_MAXP_ITSSI,
-+			SSB_SPROM8_2G_ITSSI, SSB_SPROM8_2G_ITSSI_SHIFT);
-+		SPEX(core_pwr_info[i].maxpwr_2g, o + SSB_SROM8_2G_MAXP_ITSSI,
-+			SSB_SPROM8_2G_MAXP, 0);
-+
-+		SPEX(core_pwr_info[i].pa_2g[0], o + SSB_SROM8_2G_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_2g[1], o + SSB_SROM8_2G_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_2g[2], o + SSB_SROM8_2G_PA_2, ~0, 0);
-+
-+		SPEX(core_pwr_info[i].itssi_5g, o + SSB_SROM8_5G_MAXP_ITSSI,
-+			SSB_SPROM8_5G_ITSSI, SSB_SPROM8_5G_ITSSI_SHIFT);
-+		SPEX(core_pwr_info[i].maxpwr_5g, o + SSB_SROM8_5G_MAXP_ITSSI,
-+			SSB_SPROM8_5G_MAXP, 0);
-+		SPEX(core_pwr_info[i].maxpwr_5gh, o + SSB_SPROM8_5GHL_MAXP,
-+			SSB_SPROM8_5GH_MAXP, 0);
-+		SPEX(core_pwr_info[i].maxpwr_5gl, o + SSB_SPROM8_5GHL_MAXP,
-+			SSB_SPROM8_5GL_MAXP, SSB_SPROM8_5GL_MAXP_SHIFT);
-+
-+		SPEX(core_pwr_info[i].pa_5gl[0], o + SSB_SROM8_5GL_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gl[1], o + SSB_SROM8_5GL_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gl[2], o + SSB_SROM8_5GL_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[0], o + SSB_SROM8_5G_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[1], o + SSB_SROM8_5G_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[2], o + SSB_SROM8_5G_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[0], o + SSB_SROM8_5GH_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[1], o + SSB_SROM8_5GH_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[2], o + SSB_SROM8_5GH_PA_2, ~0, 0);
-+	}
-+
- 	/* Extract FEM info */
- 	SPEX(fem.ghz2.tssipos, SSB_SPROM8_FEM2G,
- 		SSB_SROM8_FEM_TSSIPOS, SSB_SROM8_FEM_TSSIPOS_SHIFT);
-diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
-index dcf35b0..bbc2612 100644
---- a/include/linux/ssb/ssb.h
-+++ b/include/linux/ssb/ssb.h
-@@ -16,6 +16,12 @@ struct pcmcia_device;
- struct ssb_bus;
- struct ssb_driver;
- 
-+struct ssb_sprom_core_pwr_info {
-+	u8 itssi_2g, itssi_5g;
-+	u8 maxpwr_2g, maxpwr_5gl, maxpwr_5g, maxpwr_5gh;
-+	u16 pa_2g[3], pa_5gl[3], pa_5g[3], pa_5gh[3];
-+};
-+
- struct ssb_sprom {
- 	u8 revision;
- 	u8 il0mac[6];		/* MAC address for 802.11b/g */
-@@ -82,6 +88,8 @@ struct ssb_sprom {
- 	u16 boardflags2_hi;	/* Board flags (bits 48-63) */
- 	/* TODO store board flags in a single u64 */
- 
-+	struct ssb_sprom_core_pwr_info core_pwr_info[4];
-+
- 	/* Antenna gain values for up to 4 antennas
- 	 * on each band. Values in dBm/4 (Q5.2). Negative gain means the
- 	 * loss in the connectors is bigger than the gain. */
-diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
-index c814ae6..40b1ef8 100644
---- a/include/linux/ssb/ssb_regs.h
-+++ b/include/linux/ssb/ssb_regs.h
-@@ -449,6 +449,39 @@
- #define SSB_SPROM8_TS_SLP_OPT_CORRX	0x00B6
- #define SSB_SPROM8_FOC_HWIQ_IQSWP	0x00B8
- #define SSB_SPROM8_PHYCAL_TEMPDELTA	0x00BA
-+
-+/* There are 4 blocks with power info sharing the same layout */
-+#define SSB_SROM8_PWR_INFO_CORE0	0x00C0
-+#define SSB_SROM8_PWR_INFO_CORE1	0x00E0
-+#define SSB_SROM8_PWR_INFO_CORE2	0x0100
-+#define SSB_SROM8_PWR_INFO_CORE3	0x0120
-+
-+#define SSB_SROM8_2G_MAXP_ITSSI		0x00
-+#define  SSB_SPROM8_2G_MAXP		0x00FF
-+#define  SSB_SPROM8_2G_ITSSI		0xFF00
-+#define  SSB_SPROM8_2G_ITSSI_SHIFT	8
-+#define SSB_SROM8_2G_PA_0		0x02	/* 2GHz power amp settings */
-+#define SSB_SROM8_2G_PA_1		0x04
-+#define SSB_SROM8_2G_PA_2		0x06
-+#define SSB_SROM8_5G_MAXP_ITSSI		0x08	/* 5GHz ITSSI and 5.3GHz Max Power */
-+#define  SSB_SPROM8_5G_MAXP		0x00FF
-+#define  SSB_SPROM8_5G_ITSSI		0xFF00
-+#define  SSB_SPROM8_5G_ITSSI_SHIFT	8
-+#define SSB_SPROM8_5GHL_MAXP		0x0A	/* 5.2GHz and 5.8GHz Max Power */
-+#define  SSB_SPROM8_5GH_MAXP		0x00FF
-+#define  SSB_SPROM8_5GL_MAXP		0xFF00
-+#define  SSB_SPROM8_5GL_MAXP_SHIFT	8
-+#define SSB_SROM8_5G_PA_0		0x0C	/* 5.3GHz power amp settings */
-+#define SSB_SROM8_5G_PA_1		0x0E
-+#define SSB_SROM8_5G_PA_2		0x10
-+#define SSB_SROM8_5GL_PA_0		0x12	/* 5.2GHz power amp settings */
-+#define SSB_SROM8_5GL_PA_1		0x14
-+#define SSB_SROM8_5GL_PA_2		0x16
-+#define SSB_SROM8_5GH_PA_0		0x18	/* 5.8GHz power amp settings */
-+#define SSB_SROM8_5GH_PA_1		0x1A
-+#define SSB_SROM8_5GH_PA_2		0x1C
-+
-+/* TODO: Make it deprecated */
- #define SSB_SPROM8_MAXP_BG		0x00C0  /* Max Power 2GHz in path 1 */
- #define  SSB_SPROM8_MAXP_BG_MASK	0x00FF  /* Mask for Max Power 2GHz */
- #define  SSB_SPROM8_ITSSI_BG		0xFF00	/* Mask for path 1 itssi_bg */
-@@ -473,6 +506,7 @@
- #define SSB_SPROM8_PA1HIB0		0x00D8	/* 5.8GHz power amp settings */
- #define SSB_SPROM8_PA1HIB1		0x00DA
- #define SSB_SPROM8_PA1HIB2		0x00DC
-+
- #define SSB_SPROM8_CCK2GPO		0x0140	/* CCK power offset */
- #define SSB_SPROM8_OFDM2GPO		0x0142	/* 2.4GHz OFDM power offset */
- #define SSB_SPROM8_OFDM5GPO		0x0146	/* 5.3GHz OFDM power offset */
+ int bcma_sprom_get(struct bcma_bus *bus)
 -- 
 1.7.3.4
