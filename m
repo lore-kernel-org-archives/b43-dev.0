@@ -1,80 +1,22 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon,  2 Jan 2012 08:41:25 +0100
-Subject: [PATCH 3/3] bcma: SPROM: extract power info for cores
-In-Reply-To: <1325490085-3806-1-git-send-email-zajec5@gmail.com>
+From: Peter Stuge <peter@stuge.se>
+Date: Mon, 2 Jan 2012 13:20:18 +0100
+Subject: [PATCH 2/3] bcma: SPROM: add macro for easier extraction
+In-Reply-To: <1325490085-3806-2-git-send-email-zajec5@gmail.com>
 References: <1325490085-3806-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1325490085-3806-3-git-send-email-zajec5@gmail.com>
+ <1325490085-3806-2-git-send-email-zajec5@gmail.com>
+Message-ID: <20120102122018.30057.qmail@stuge.se>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+
+Rafa? Mi?ecki wrote:
+> +#define SPEX(_field, _offset, _mask, _shift)	\
+> +	bus->sprom._field = ((sprom[SPOFF(_offset)] & (_mask)) >> (_shift))
+
+Maybe this should take at least bus as parameter too?
 
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/bcma/sprom.c |   40 +++++++++++++++++++++++++++++++++++++++-
- 1 files changed, 39 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
-index 27f62cc..cb835f0 100644
---- a/drivers/bcma/sprom.c
-+++ b/drivers/bcma/sprom.c
-@@ -129,8 +129,14 @@ static int bcma_sprom_valid(const u16 *sprom)
- 
- static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
- {
--	u16 v;
-+	u16 v, o;
- 	int i;
-+	u16 pwr_info_offset[] = {
-+		SSB_SROM8_PWR_INFO_CORE0, SSB_SROM8_PWR_INFO_CORE1,
-+		SSB_SROM8_PWR_INFO_CORE2, SSB_SROM8_PWR_INFO_CORE3
-+	};
-+	BUILD_BUG_ON(ARRAY_SIZE(pwr_info_offset) !=
-+			ARRAY_SIZE(bus->sprom.core_pwr_info));
- 
- 	bus->sprom.revision = sprom[SSB_SPROMSIZE_WORDS_R4 - 1] &
- 		SSB_SPROM_REVISION_REV;
-@@ -185,6 +191,38 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
- 
- 	SPEX(country_code, SSB_SPROM8_CCODE, ~0, 0);
- 
-+	/* Extract cores power info info */
-+	for (i = 0; i < ARRAY_SIZE(pwr_info_offset); i++) {
-+		o = pwr_info_offset[i];
-+		SPEX(core_pwr_info[i].itssi_2g, o + SSB_SROM8_2G_MAXP_ITSSI,
-+			SSB_SPROM8_2G_ITSSI, SSB_SPROM8_2G_ITSSI_SHIFT);
-+		SPEX(core_pwr_info[i].maxpwr_2g, o + SSB_SROM8_2G_MAXP_ITSSI,
-+			SSB_SPROM8_2G_MAXP, 0);
-+
-+		SPEX(core_pwr_info[i].pa_2g[0], o + SSB_SROM8_2G_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_2g[1], o + SSB_SROM8_2G_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_2g[2], o + SSB_SROM8_2G_PA_2, ~0, 0);
-+
-+		SPEX(core_pwr_info[i].itssi_5g, o + SSB_SROM8_5G_MAXP_ITSSI,
-+			SSB_SPROM8_5G_ITSSI, SSB_SPROM8_5G_ITSSI_SHIFT);
-+		SPEX(core_pwr_info[i].maxpwr_5g, o + SSB_SROM8_5G_MAXP_ITSSI,
-+			SSB_SPROM8_5G_MAXP, 0);
-+		SPEX(core_pwr_info[i].maxpwr_5gh, o + SSB_SPROM8_5GHL_MAXP,
-+			SSB_SPROM8_5GH_MAXP, 0);
-+		SPEX(core_pwr_info[i].maxpwr_5gl, o + SSB_SPROM8_5GHL_MAXP,
-+			SSB_SPROM8_5GL_MAXP, SSB_SPROM8_5GL_MAXP_SHIFT);
-+
-+		SPEX(core_pwr_info[i].pa_5gl[0], o + SSB_SROM8_5GL_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gl[1], o + SSB_SROM8_5GL_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gl[2], o + SSB_SROM8_5GL_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[0], o + SSB_SROM8_5G_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[1], o + SSB_SROM8_5G_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[2], o + SSB_SROM8_5G_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[0], o + SSB_SROM8_5GH_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[1], o + SSB_SROM8_5GH_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[2], o + SSB_SROM8_5GH_PA_2, ~0, 0);
-+	}
-+
- 	SPEX(fem.ghz2.tssipos, SSB_SPROM8_FEM2G, SSB_SROM8_FEM_TSSIPOS,
- 	     SSB_SROM8_FEM_TSSIPOS_SHIFT);
- 	SPEX(fem.ghz2.extpa_gain, SSB_SPROM8_FEM2G, SSB_SROM8_FEM_EXTPA_GAIN,
--- 
-1.7.3.4
+//Peter
