@@ -1,82 +1,91 @@
-From: Tyler Kocheran <rfkrocktk@gmail.com>
-Date: Thu, 5 Jan 2012 18:51:29 -0800
-Subject: poor performance with BCM4331 and 3.2
-In-Reply-To: <CAM-fOTRG63M9c350+t3nxAjfWAuxZMSH4U1gACExKq0ZxHuqtQ@mail.gmail.com>
-References: <CAM-fOTRG63M9c350+t3nxAjfWAuxZMSH4U1gACExKq0ZxHuqtQ@mail.gmail.com>
-Message-ID: <CAPTk+sa-vGgaTSE=UqXsf6uHM9nqG-Ne9vYgaMsxQ2yFwdCDOQ@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 9 Jan 2012 22:31:42 +0100
+Subject: BCM43231
+In-Reply-To: <CAEWwF+bnM0bxbZR6B57H_nv3fkUdhP-ytAu30MLhUWq7QxB3GQ@mail.gmail.com>
+References: <CAEWwF+bnM0bxbZR6B57H_nv3fkUdhP-ytAu30MLhUWq7QxB3GQ@mail.gmail.com>
+Message-ID: <CACna6rzA6ix2PrZDHXQLTDQuo942urtUAWYagDC0x9zANSVNKQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Abimanyu Gottumukkala <me@abimanyu.in>, b43-dev <b43-dev@lists.infradead.org>, Larry Finger <Larry.Finger@lwfinger.net>
+Cc: linux-wireless@vger.kernel.org
 
-George,
-Also running a MacBook Pro (8,3) and seeing similar issues. I'll be
-connected to the AP, but I'll lose all internet connectivity every so
-often. Disconnecting and reconnecting to the AP works, or unloading and
-reloading the module. I'd like to help contribute to this to help it get
-fixed.
+[RESEND without attachment]
 
-I'm even willing to donate root SSH access to the developers, if that
-helps.
+2011/12/30 Abimanyu Gottumukkala <me@abimanyu.in>:
+> Does any one have status or any info on BCM43231 USB drivers?
 
-Thanks,
- - TK
+I've received my WNA3100, 0846:9020 (maybe BCM43231, can't confirm).
+
+ It works with ndiswrapper and bcmwlhigh6, I can scan and even connect
+ to my WPA2 network.
+
+ Unfortunately I've no idea what hardware is this. I've dumped
+ ndiswrapper USB operations but they don't tell me a single thing.
+ Initialization is represented by only ~1000 lines in dumps and I've
+ connected in next ~1500 lines of USB dump. I've been using "usbmon" to
+ dump traffic.
+
+ The hardware seems to have:
+ 1) Configuration
+ 2) 3 endpoints (2*bulk, 1*interrupt)
+
+ The attached dump doesn't contain:
+ 1) Anything EPROM specific (like 0x4BF... or 0x0000000F)
+ 2) Anything SPROM specific (like 0x5372 signature)
+ 3) Anything Broadcom specific (like 0x14e4)
+ 4) Anything BCMA specific (like 0x408 aka BCMA_IOCTL)
+
+ I've no idea what to look for on this card. I started to believe it's
+ some fullmac, but didn't find anything to prove this.
 
 
+ Larry: is there any chance you will give some tips on this hardware? I
+ know RE of x86 driver can be really ugly, but maybe you'll find
+ something somewhere anyway? At least some minimal tip.
 
-On Thu, Jan 5, 2012 at 4:48 PM, George Masgras <gmasgras@gmail.com> wrote:
 
-> Hello,
->  I've been having issues with getting the b43 driver to work reliably
-> in Ubuntu 11.10 on a MacbookPro 8,1.  The problem is that the driver
-> seems to be losing connection very often, especially when I have
-> multiple programs hitting the net. (s.a. Spotify, Firefox and Chrome),
-> sometimes even causing kernel panics( pre kernel 3.2 final). I'm now
-> using kernel 3.2 vanilla with compat-wireless-2012-01-03 compiled on
-> top and I haven't gotten a kernel panic yet but I will post it if I
-> do.
-> I've also noticed that the less people in the office using WIFI, the
-> more stable the connection is (there are ~25 people in the whole
-> office using WIFI,  10 of them in the same room as me).
-> Wicd reports between 80-100% signal strength and the encryption is
-> WPA2 PSK. The AP is a PepWave AP One (3.1.0) and it is behind a wall,
-> in a room 15ft away from my desk.
->
-> more info:
->
-> $ uname -a:
-> Linux geomas-MacBookPro 3.2.0-custom #2 SMP PREEMPT Thu Jan 5 11:14:09
-> PST 2012 x86_64 x86_64 x86_64 GNU/Linux
->
-> $ sudo lspci -vvn|grep 43 -A7:
-> 03:00.0 0280: 14e4:4331 (rev 02)
->        Subsystem: 106b:00d6
->        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
-> ParErr- Stepping- SERR- FastB2B- DisINTx-
->        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-> <TAbort- <MAbort- >SERR- <PERR- INTx-
->        Latency: 0, Cache Line Size: 256 bytes
->        Interrupt: pin A routed to IRQ 17
->        Region 0: Memory at a0600000 (64-bit, non-prefetchable) [size=16K]
->        Capabilities: [40] Power Management version 3
->
-> dmesg:
-> http://pastebin.com/0zAQzwVY
->
-> kern.log:
-> http://pastebin.com/Ncf21bWY
->
->
-> Thank you for all the great work!
->
-> George
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
->
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120105/ed0ac36f/attachment.html>
+ The only thing I've recognized in USB dump is my MAC address
+ (E0:46:9A:19:58:DB):
+ ea7009c0 505509888 S Bo:2:010:3 -115 24 = 14000000 21000000 2b000000
+ 00000000 e0469a19 58db0000
+ f3dbe340 505509949 S Bo:2:010:3 -115 28 = 18000000 22000000 31000000
+ 48000000 08000000 e0469a19 58db0000
+ f0257d40 505510010 S Bo:2:010:3 -115 24 = 14000000 23000000 2b000000
+ 03000000 00000000 00000000
+
+ eea80c40 512759339 S Bo:2:010:3 -115 24 = 14000000 66010000 2b000000
+ 00000000 e0469a19 58db0000
+ eb48d740 512759348 S Bo:2:010:3 -115 28 = 18000000 67010000 31000000
+ 48000000 08000000 e0469a19 58db0000
+ f6275240 512759354 S Bo:2:010:3 -115 24 = 14000000 68010000 2b000000
+ 03000000 00000000 00000000
+ f0257f40 512759360 S Bo:2:010:3 -115 24 = 14000000 69010000 2e000000
+ 6c0d0000 00000000 60030000
+ f0257ac0 512759366 S Bo:2:010:3 -115 20 = 10000000 6a010000 30000000
+ d4050000 00000000
+ eb48d2c0 512759372 S Bo:2:010:3 -115 20 = 10000000 6b010000 30000000
+ d6050000 10000000
+ f6275740 512759378 S Bo:2:010:3 -115 20 = 10000000 6c010000 30000000
+ d8050000 20000000
+ f62757c0 512759384 S Bo:2:010:3 -115 20 = 10000000 6d010000 30000000
+ da050000 30000000
+ f0257a40 512759390 S Bo:2:010:3 -115 20 = 10000000 6e010000 30000000
+ dc050000 40000000
+ f2c191c0 512759396 S Bo:2:010:3 -115 20 = 10000000 6f010000 30000000
+ de050000 50000000
+ eb48d540 512759402 S Bo:2:010:3 -115 20 = 10000000 70010000 30000000
+ e0050000 60000000
+ eb48d340 512759408 S Bo:2:010:3 -115 20 = 10000000 71010000 30000000
+ e2050000 70000000
+ ea700d40 512759414 S Bo:2:010:3 -115 20 = 10000000 72010000 30000000
+ e4050000 80000000
+ f2c19ec0 512759420 S Bo:2:010:3 -115 20 = 10000000 73010000 30000000
+ e6050000 90000000
+
+ f224fec0 505489563 C Ci:2:010:0 0 20 = 10000000 03000001 35000000
+ e0469a19 58db0000
+
+-- 
+Rafa?
