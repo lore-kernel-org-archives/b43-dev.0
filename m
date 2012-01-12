@@ -1,32 +1,22 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 12 Jan 2012 17:11:50 +0100
-Subject: [PATCH] b43: add default option to avoid duplicating device
- support with brcmsmac
-In-Reply-To: <1326315180-29398-1-git-send-email-linville@tuxdriver.com>
-References: <1326315180-29398-1-git-send-email-linville@tuxdriver.com>
-Message-ID: <CACna6rxffpPhYVqKNttu79JET=NkBP4NrAayywQHWcj=mw=T9A@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 12 Jan 2012 17:28:58 +0100
+Subject: [PATCH 0/2] bcma/b43: update MAINTAINERS
+Message-ID: <1326385740-11203-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2012/1/11 John W. Linville <linville@tuxdriver.com>:
-> +config B43_BCMA_EXTRA
-> + ? ? ? bool "Support for devices also supported by brcmsmac"
-> + ? ? ? depends on B43_BCMA
-> + ? ? ? default n
-> +
+John can you take that patches via your tree?
 
-Is this really *the* solution? I wonder if we can do whatever you're
-trying to do in a better way? To let final users try both drivers
-without recompiling kernel?
+Rafa? Mi?ecki (2):
+  MAINTAINERS: move BCMA to keep the list sorted
+  MAINTAINERS: add b43 mailing list
 
-The description also isn't saying too much. I can't imagine anyone
-taking decision advisedly other than "n, as it's the default". On
-other hand, what should we put here? The whole comparison of drivers?
-Can be hard, but I really think there should be more info.
+ MAINTAINERS |   15 ++++++++-------
+ 1 files changed, 8 insertions(+), 7 deletions(-)
 
 -- 
-Rafa?
+1.7.7
