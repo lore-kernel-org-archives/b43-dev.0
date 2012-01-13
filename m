@@ -1,31 +1,29 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 12 Jan 2012 17:44:00 +0100
-Subject: [PATCH V2 2/2] MAINTAINERS: add b43 mailing list
-Message-ID: <1326386640-11677-1-git-send-email-zajec5@gmail.com>
+From: Peter Stuge <peter@stuge.se>
+Date: Fri, 13 Jan 2012 02:32:48 +0100
+Subject: [PATCH] b43: add default option to avoid duplicating device
+ support with brcmsmac
+In-Reply-To: <20120112161720.GI11093@tuxdriver.com>
+References: <1326315180-29398-1-git-send-email-linville@tuxdriver.com>
+ <CACna6rxffpPhYVqKNttu79JET=NkBP4NrAayywQHWcj=mw=T9A@mail.gmail.com>
+ <20120112161720.GI11093@tuxdriver.com>
+Message-ID: <20120113013248.30123.qmail@stuge.se>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
----
-V2: add "(moderated for non-subscribers)"
----
- MAINTAINERS |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+John W. Linville wrote:
+> The summary line could be different as well, if you can think of a
+> better way to describe the issue.  I am open to suggestions.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dc11e28..469efce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1419,6 +1419,7 @@ F:	net/ax25/
- B43 WIRELESS DRIVER
- M:	Stefano Brivio <stefano.brivio@polimi.it>
- L:	linux-wireless at vger.kernel.org
-+L:	b43-dev at lists.infradead.org (moderated for non-subscribers)
- W:	http://linuxwireless.org/en/users/Drivers/b43
- S:	Maintained
- F:	drivers/net/wireless/b43/
--- 
-1.7.7
+I think these terms are clear:
+
+Community b43 driver
+Broadcom brcmsmac driver
+
+How to apply them I leave up to you. :)
+
+
+//Peter
