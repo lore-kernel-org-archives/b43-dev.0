@@ -1,35 +1,35 @@
 From: John W. Linville <linville@tuxdriver.com>
-Date: Fri, 13 Jan 2012 14:20:01 -0500
+Date: Fri, 13 Jan 2012 14:20:27 -0500
 Subject: [PATCH] b43: add default option to avoid duplicating device
  support with brcmsmac
-In-Reply-To: <20120113013248.30123.qmail@stuge.se>
+In-Reply-To: <CAGRGNgUkBUvoBJydcdprBXP0ufR+PQ6nXFXdW546xjHbQ-O2Bg@mail.gmail.com>
 References: <1326315180-29398-1-git-send-email-linville@tuxdriver.com>
  <CACna6rxffpPhYVqKNttu79JET=NkBP4NrAayywQHWcj=mw=T9A@mail.gmail.com>
- <20120112161720.GI11093@tuxdriver.com>
- <20120113013248.30123.qmail@stuge.se>
-Message-ID: <20120113192000.GD18899@tuxdriver.com>
+ <CAGRGNgUkBUvoBJydcdprBXP0ufR+PQ6nXFXdW546xjHbQ-O2Bg@mail.gmail.com>
+Message-ID: <20120113192027.GE18899@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-On Fri, Jan 13, 2012 at 02:32:48AM +0100, Peter Stuge wrote:
-> John W. Linville wrote:
-> > The summary line could be different as well, if you can think of a
-> > better way to describe the issue.  I am open to suggestions.
+On Fri, Jan 13, 2012 at 01:07:03PM +1100, Julian Calaby wrote:
+> 2012/1/13 Rafa? Mi?ecki <zajec5@gmail.com>:
+> > 2012/1/11 John W. Linville <linville@tuxdriver.com>:
+> >> +config B43_BCMA_EXTRA
+> >> + ? ? ? bool "Support for devices also supported by brcmsmac"
+> >> + ? ? ? depends on B43_BCMA
+> >> + ? ? ? default n
+> >> +
+> >
+> > Is this really *the* solution? I wonder if we can do whatever you're
+> > trying to do in a better way? To let final users try both drivers
+> > without recompiling kernel?
 > 
-> I think these terms are clear:
-> 
-> Community b43 driver
-> Broadcom brcmsmac driver
-> 
-> How to apply them I leave up to you. :)
+> Another issue is that this should arguably be default y if brcmsmac is disabled.
 
-Maybe you think that is clear, but it doesn't do much for me.
-
-I could say "Support for devices already supported by the
-Broadcom-supported brcmsmac driver"?
+Can you help by suggesting the correct Kconfig magic to implement that?
 
 John
 -- 
