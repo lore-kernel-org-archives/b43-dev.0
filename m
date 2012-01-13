@@ -1,37 +1,61 @@
 From: John W. Linville <linville@tuxdriver.com>
-Date: Fri, 13 Jan 2012 14:20:27 -0500
-Subject: [PATCH] b43: add default option to avoid duplicating device
- support with brcmsmac
-In-Reply-To: <CAGRGNgUkBUvoBJydcdprBXP0ufR+PQ6nXFXdW546xjHbQ-O2Bg@mail.gmail.com>
-References: <1326315180-29398-1-git-send-email-linville@tuxdriver.com>
- <CACna6rxffpPhYVqKNttu79JET=NkBP4NrAayywQHWcj=mw=T9A@mail.gmail.com>
- <CAGRGNgUkBUvoBJydcdprBXP0ufR+PQ6nXFXdW546xjHbQ-O2Bg@mail.gmail.com>
-Message-ID: <20120113192027.GE18899@tuxdriver.com>
+Date: Fri, 13 Jan 2012 14:38:33 -0500
+Subject: [PATCH 1/2] MAINTAINERS: move BCMA to keep the list sorted
+In-Reply-To: <1326385740-11203-2-git-send-email-zajec5@gmail.com>
+References: <1326385740-11203-1-git-send-email-zajec5@gmail.com>
+ <1326385740-11203-2-git-send-email-zajec5@gmail.com>
+Message-ID: <20120113193833.GF18899@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Fri, Jan 13, 2012 at 01:07:03PM +1100, Julian Calaby wrote:
-> 2012/1/13 Rafa? Mi?ecki <zajec5@gmail.com>:
-> > 2012/1/11 John W. Linville <linville@tuxdriver.com>:
-> >> +config B43_BCMA_EXTRA
-> >> + ? ? ? bool "Support for devices also supported by brcmsmac"
-> >> + ? ? ? depends on B43_BCMA
-> >> + ? ? ? default n
-> >> +
-> >
-> > Is this really *the* solution? I wonder if we can do whatever you're
-> > trying to do in a better way? To let final users try both drivers
-> > without recompiling kernel?
+Patches need Signed-off-by lines...
+
+On Thu, Jan 12, 2012 at 05:28:59PM +0100, Rafa? Mi?ecki wrote:
+> ---
+>  MAINTAINERS |   14 +++++++-------
+>  1 files changed, 7 insertions(+), 7 deletions(-)
 > 
-> Another issue is that this should arguably be default y if brcmsmac is disabled.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4babed7..dc11e28 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1595,6 +1595,13 @@ L:	linux-scsi at vger.kernel.org
+>  S:	Supported
+>  F:	drivers/scsi/bnx2fc/
+>  
+> +BROADCOM SPECIFIC AMBA DRIVER (BCMA)
+> +M:	Rafa? Mi?ecki <zajec5@gmail.com>
+> +L:	linux-wireless at vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/bcma/
+> +F:	include/linux/bcma/
+> +
+>  BROCADE BFA FC SCSI DRIVER
+>  M:	Jing Huang <huangj@brocade.com>
+>  L:	linux-scsi at vger.kernel.org
+> @@ -6101,13 +6108,6 @@ S:	Maintained
+>  F:	drivers/ssb/
+>  F:	include/linux/ssb/
+>  
+> -BROADCOM SPECIFIC AMBA DRIVER (BCMA)
+> -M:	Rafa? Mi?ecki <zajec5@gmail.com>
+> -L:	linux-wireless at vger.kernel.org
+> -S:	Maintained
+> -F:	drivers/bcma/
+> -F:	include/linux/bcma/
+> -
+>  SONY VAIO CONTROL DEVICE DRIVER
+>  M:	Mattia Dongili <malattia@linux.it>
+>  L:	platform-driver-x86 at vger.kernel.org
+> -- 
+> 1.7.7
+> 
+> 
 
-Can you help by suggesting the correct Kconfig magic to implement that?
-
-John
 -- 
 John W. Linville		Someday the world will need a hero, and you
 linville at tuxdriver.com			might be all we have.  Be ready.
