@@ -1,35 +1,98 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Fri, 13 Jan 2012 22:55:06 +0100
-Subject: [PATCH V3 2/2] MAINTAINERS: add b43 mailing list
-In-Reply-To: <1326491706-14970-1-git-send-email-zajec5@gmail.com>
-References: <1326491706-14970-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1326491706-14970-2-git-send-email-zajec5@gmail.com>
+From: Buck Golemon <buck@yelp.com>
+Date: Tue, 17 Jan 2012 12:12:13 -0800
+Subject: Fwd: bcm4331 firmware installer package
+In-Reply-To: <CANDQx1q8cZC8Qz366ET3XQrpAeVJDiurFFiR1NUQ6G0b_ASoZA@mail.gmail.com>
+References: <CAG9cJm=YkvHY56LoBoUf3fuh=xb7m+c0GgUzMZX+QyG1+CBCMg@mail.gmail.com>
+ <4EF21983.1020107@broadcom.com>
+ <CACna6rxEjQLj_j-f7WZOtOEGfDa+TPWyLDrn2t-FGZ5T2_fz-g@mail.gmail.com>
+ <CAG9cJm=XE3jQiYvGB4T6_Avj=bmc_wXe8JGMr5hePuCu-OnPuA@mail.gmail.com>
+ <CACna6rxvmFptSR9WF8Whj1A0ATyygQ9Eo0nUY8n6MugQ0bjP7g@mail.gmail.com>
+ <CAG9cJmmnEsLQxxbi41v6nM8D+L_cOSQE73qJmDDYhXPnopn+MA@mail.gmail.com>
+ <CACna6rw_zB038mJ5XP6qvZR61pB77yRes3UwM50JFawUAhUpYg@mail.gmail.com>
+ <CAG9cJmkn9HRM1TWL_P0SHBjx9mG4gZYDXeL=HucSg1FK4bf0JQ@mail.gmail.com>
+ <CACna6ryy3VaL4u=fts4q0KGxXp0NibMcBaS7tnYbAG5w06sj1Q@mail.gmail.com>
+ <CANDQx1q8cZC8Qz366ET3XQrpAeVJDiurFFiR1NUQ6G0b_ASoZA@mail.gmail.com>
+Message-ID: <CANDQx1oD301Ltd6M3V86Smerp_qcBPrL0ncVb9jtrRpik8pcsA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: lina <lina.lastname@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, Debian Lists <debian-user@lists.debian.org>
 
+2011/12/22 Rafa? Mi?ecki <zajec5@gmail.com>
+>
+> W dniu 22 grudnia 2011 09:45 u?ytkownik lina <lina.lastname@gmail.com> napisa?:
+> > On Thu, Dec 22, 2011 at 4:34 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> >> 2011/12/22 lina <lina.lastname@gmail.com>:
+> >>> On Thu, Dec 22, 2011 at 3:07 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> >>>> 2011/12/22 lina <lina.lastname@gmail.com>:
+> >>>>> I am still a bit confused. (First thanks for the links all of you
+> >>>>> provided, but I have visited those web before).
+> >>>>>
+> >>>>> Here is the thing:
+> >>>>> BCM4331 802.11a/b/g/n fit for
+> >>>>> BCM4331 ? ? ? ? ? ? ?b/g ?HT (r1)
+> >>>>>
+> >>>>> What does the 802.11a for?
+> >>>>
+> >>>> Well, your card can operate in 5GHz band (frequencies). But I'm not
+> >>>> ?really sure why you ask about this at all.
+> >>>>
+> >>>> ?If you want to try experimental BCM4331 support you have to:
+> >>>> ?1) Install kernel 3.2-rc3 or newer
+> >>> I have the 3.2.0-rc6
+> >>>> ?or
+> >>>> ?2) Install compat wireless
+> >>>>
+> >>>> ?After that you've do install firmware (check for wiki howto for kernel
+> >>>> ?3.2 and newer).
+> >>>
+> >>> after installation of the compat-wireless,
+> >>>
+> >>> from
+> >>> http://wireless.kernel.org/en/users/Drivers/b43#firmware
+> >>>
+> >>> ?# aptitude install firmware-b43-installer
+> >>>
+> >>>
+> >>> Setting up b43-fwcutter (1:015-9) ...
+> >>> Setting up firmware-b43-installer (1:015-9) ...
+> >>> No chroot environment found. Starting normal installation
+> >>> Unsupported device(s) found: PCI id 14e4:4331
+> >>> Aborting.
+> >>>
+> >>> I don't know which part is wrong here.
+> >>
+> >> Your tool is too old (support for BCM4331 is really recent).
+> > sorry, here you mean, which tool?
+> >>
+> >> Just do as I said and use howto for kernel 3.2, not distro-specific
+> >> howto. You nede to install b43-fwcutter and manually download file for
+> > I can't tell the difference. (I really need detailed instructions,
+> > thanks for your patience ahead)
+> >
+> > I tried to follow what you said before, with the kernel 3.2-rc6
+> > install the compate-wireless,
+> > but have problem in the following install the firmware-installer.
+> >> firmware extraction.
+>
+> wget http://bu3sch.de/b43/fwcutter/b43-fwcutter-015.tar.bz2
+> tar xjf b43-fwcutter-015.tar.bz2
+> cd b43-fwcutter-015
+> make
+> sudo make install
+> cd ..
+>
+> export FIRMWARE_INSTALL_DIR="/lib/firmware"
+> wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
+> tar xjf broadcom-wl-5.100.138.tar.bz2
+> sudo b43-fwcutter -w "$FIRMWARE_INSTALL_DIR"
+> broadcom-wl-5.100.138/linux/wl_apsta.o
+>
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-V3: S-o-b
----
- MAINTAINERS |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Works for me! Again, this is the first time my wireless has worked!
+I nominate this for inclusion on the wiki under heading "Bleeding-edge
+kernel quickstart".
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dc11e28..469efce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1419,6 +1419,7 @@ F:	net/ax25/
- B43 WIRELESS DRIVER
- M:	Stefano Brivio <stefano.brivio@polimi.it>
- L:	linux-wireless at vger.kernel.org
-+L:	b43-dev at lists.infradead.org (moderated for non-subscribers)
- W:	http://linuxwireless.org/en/users/Drivers/b43
- S:	Maintained
- F:	drivers/net/wireless/b43/
--- 
-1.7.7
+Thanks!
+-buck
