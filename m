@@ -1,98 +1,28 @@
-From: Buck Golemon <buck@yelp.com>
-Date: Tue, 17 Jan 2012 12:12:13 -0800
-Subject: Fwd: bcm4331 firmware installer package
-In-Reply-To: <CANDQx1q8cZC8Qz366ET3XQrpAeVJDiurFFiR1NUQ6G0b_ASoZA@mail.gmail.com>
-References: <CAG9cJm=YkvHY56LoBoUf3fuh=xb7m+c0GgUzMZX+QyG1+CBCMg@mail.gmail.com>
- <4EF21983.1020107@broadcom.com>
- <CACna6rxEjQLj_j-f7WZOtOEGfDa+TPWyLDrn2t-FGZ5T2_fz-g@mail.gmail.com>
- <CAG9cJm=XE3jQiYvGB4T6_Avj=bmc_wXe8JGMr5hePuCu-OnPuA@mail.gmail.com>
- <CACna6rxvmFptSR9WF8Whj1A0ATyygQ9Eo0nUY8n6MugQ0bjP7g@mail.gmail.com>
- <CAG9cJmmnEsLQxxbi41v6nM8D+L_cOSQE73qJmDDYhXPnopn+MA@mail.gmail.com>
- <CACna6rw_zB038mJ5XP6qvZR61pB77yRes3UwM50JFawUAhUpYg@mail.gmail.com>
- <CAG9cJmkn9HRM1TWL_P0SHBjx9mG4gZYDXeL=HucSg1FK4bf0JQ@mail.gmail.com>
- <CACna6ryy3VaL4u=fts4q0KGxXp0NibMcBaS7tnYbAG5w06sj1Q@mail.gmail.com>
- <CANDQx1q8cZC8Qz366ET3XQrpAeVJDiurFFiR1NUQ6G0b_ASoZA@mail.gmail.com>
-Message-ID: <CANDQx1oD301Ltd6M3V86Smerp_qcBPrL0ncVb9jtrRpik8pcsA@mail.gmail.com>
+From: francesco.gringoli at ing.unibs.it <francesco.gringoli@ing.unibs.it>
+Date: Wed, 18 Jan 2012 16:05:39 +0100
+Subject: A-phy
+Message-ID: <361D6290-0077-4303-955E-7BE4854C2CCC@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: lina <lina.lastname@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, Debian Lists <debian-user@lists.debian.org>
+To: b43-dev@lists.infradead.org
 
-2011/12/22 Rafa? Mi?ecki <zajec5@gmail.com>
->
-> W dniu 22 grudnia 2011 09:45 u?ytkownik lina <lina.lastname@gmail.com> napisa?:
-> > On Thu, Dec 22, 2011 at 4:34 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> >> 2011/12/22 lina <lina.lastname@gmail.com>:
-> >>> On Thu, Dec 22, 2011 at 3:07 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> >>>> 2011/12/22 lina <lina.lastname@gmail.com>:
-> >>>>> I am still a bit confused. (First thanks for the links all of you
-> >>>>> provided, but I have visited those web before).
-> >>>>>
-> >>>>> Here is the thing:
-> >>>>> BCM4331 802.11a/b/g/n fit for
-> >>>>> BCM4331 ? ? ? ? ? ? ?b/g ?HT (r1)
-> >>>>>
-> >>>>> What does the 802.11a for?
-> >>>>
-> >>>> Well, your card can operate in 5GHz band (frequencies). But I'm not
-> >>>> ?really sure why you ask about this at all.
-> >>>>
-> >>>> ?If you want to try experimental BCM4331 support you have to:
-> >>>> ?1) Install kernel 3.2-rc3 or newer
-> >>> I have the 3.2.0-rc6
-> >>>> ?or
-> >>>> ?2) Install compat wireless
-> >>>>
-> >>>> ?After that you've do install firmware (check for wiki howto for kernel
-> >>>> ?3.2 and newer).
-> >>>
-> >>> after installation of the compat-wireless,
-> >>>
-> >>> from
-> >>> http://wireless.kernel.org/en/users/Drivers/b43#firmware
-> >>>
-> >>> ?# aptitude install firmware-b43-installer
-> >>>
-> >>>
-> >>> Setting up b43-fwcutter (1:015-9) ...
-> >>> Setting up firmware-b43-installer (1:015-9) ...
-> >>> No chroot environment found. Starting normal installation
-> >>> Unsupported device(s) found: PCI id 14e4:4331
-> >>> Aborting.
-> >>>
-> >>> I don't know which part is wrong here.
-> >>
-> >> Your tool is too old (support for BCM4331 is really recent).
-> > sorry, here you mean, which tool?
-> >>
-> >> Just do as I said and use howto for kernel 3.2, not distro-specific
-> >> howto. You nede to install b43-fwcutter and manually download file for
-> > I can't tell the difference. (I really need detailed instructions,
-> > thanks for your patience ahead)
-> >
-> > I tried to follow what you said before, with the kernel 3.2-rc6
-> > install the compate-wireless,
-> > but have problem in the following install the firmware-installer.
-> >> firmware extraction.
->
-> wget http://bu3sch.de/b43/fwcutter/b43-fwcutter-015.tar.bz2
-> tar xjf b43-fwcutter-015.tar.bz2
-> cd b43-fwcutter-015
-> make
-> sudo make install
-> cd ..
->
-> export FIRMWARE_INSTALL_DIR="/lib/firmware"
-> wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
-> tar xjf broadcom-wl-5.100.138.tar.bz2
-> sudo b43-fwcutter -w "$FIRMWARE_INSTALL_DIR"
-> broadcom-wl-5.100.138/linux/wl_apsta.o
->
+Larry, Rafal,
 
-Works for me! Again, this is the first time my wireless has worked!
-I nominate this for inclusion on the wiki under heading "Bleeding-edge
-kernel quickstart".
+maybe this is not a new question on the list but I'm a little bit confused about a-phy support. I read on the http://bcm-v4.sipsolutions.net/802.11/Multiband page that a-phy should be supported on 14e4:4319 which is pointed out as being a BCM4318, and 14e4:4312 that is BCM4311 instead. On http://linuxwireless.org/en/users/Drivers/b43 I also read that "The 802.11a part of the 4311 is not supported" and, in fact, I have a couple of devices which lspci displays as
 
-Thanks!
--buck
+03:00.0 Network controller: Broadcom Corporation BCM4312 802.11a/b/g (rev 01)
+03:00.0 0280: 14e4:4312 (rev 01)
+
+and dmesg says:
+[  428.174190] b43-phy1: Broadcom 4311 WLAN found (core revision 10)
+[  428.216031] b43-phy1 debug: Found PHY: Analog 4, Type 2, Revision 8
+[  428.216055] b43-phy1 debug: Found Radio: Manuf 0x17F, Version 0x2050, Revision 2
+
+And, in fact, a-phy is not activated (it actually seems completely disabled from initialization code).
+
+So, is there any device I can buy for which b43 supports a-phy If the answer is yes (I really hope so :-) ) do you have some pointers on ebay?
+
+Many many thanks!
+-Francesco
