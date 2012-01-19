@@ -1,31 +1,54 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Thu, 19 Jan 2012 09:16:45 -0500
-Subject: [PATCH V3 2/2] MAINTAINERS: add b43 mailing list
-In-Reply-To: <1326979070.2054.17.camel@shinybook.infradead.org>
-References: <1326491706-14970-1-git-send-email-zajec5@gmail.com>
- <1326491706-14970-2-git-send-email-zajec5@gmail.com>
- <1326975859.2054.14.camel@shinybook.infradead.org>
- <CACna6rynAD9Rxsbmxd2UROrfwEQt65yV=FUR8jGSsDgiBhRiww@mail.gmail.com>
- <1326977309.2054.16.camel@shinybook.infradead.org>
- <CAD3=kO+kLO5-1ZY-X=7TsdEBrgzqQQF8uEVwrtu2eGduhAC6jQ@mail.gmail.com>
- <1326979070.2054.17.camel@shinybook.infradead.org>
-Message-ID: <20120119141644.GB3320@tuxdriver.com>
+From: OmniWare <info@omniware.fr>
+Date: Thu, 19 Jan 2012 17:31:17 +0100
+Subject: =?windows-1252?Q?OmniWare_-_Alternative_acc=E8s_distant_TSE?=
+Message-ID: <58628a8ec4759659cb8fa1dd0e73d5ad@omniware.fr>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Gregory Bellier <gregory.bellier@gmail.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Fri, Jan 20, 2012 at 12:17:50AM +1100, David Woodhouse wrote:
-> On Thu, 2012-01-19 at 14:16 +0100, Gregory Bellier wrote:
-> > Maybe you did that to avoid spamming? ?
-> 
-> It's a crappy way to avoid spamming. We should be able to do better.
-> Filtering out all HTML goes a long way :)
 
-So...do we need another MAINTAINERS patch now?
+OmniWare est un logiciel qui transforme Windows XP ou Windows 7 en v?ritable serveur d'application TSE 
+  
+OmniWare Terminal serveur permet aux collaborateurs de l'entreprise d'acc?der ? leurs applications professionelles depuis n'importe quel lieu : 
+Domicile, h?tel, second ?tablissement, ? l'?tranger... 
+Gr?ce ? OmniWare, les syst?mes Windows 7 ou XP Pro agissent en serveur TSE, permettant ainsi :  
+? la centralisation des applications et des donn?es
+? l'acc?s aux applications sur les postes du r?seau local
+? l'acc?s ? distance s?curis? 
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+Quels sont les avantages procur?s par OmniWare ? 
+Centralisation et mobilit? professionnelle
+OmniWare s?adresse aux entreprises d?sireuses d?offrir un acc?s ? distance aux applications pour leurs collaborateurs (g?rant, commerciaux, travailleurs ? domicile, personnes en d?placement...). Cette solution s?adresse ?galement aux entreprises multi-sites souhaitant simplifier la centralisation de donn?es et eviter les synchronisations de fichiers.
+
+Solution alternative, facile ? d?ployer
+En tant qu'alternative ? Windows Serveur 2003 / 2008 / TSE / Citrix, OmniWare s?installe tr?s facilement sur Windows XP ou Seven pour en faire un v?ritable serveur d?application simple ? mettre en oeuvre et ? maintenir.
+
+Quel est le prix des licences ?
+Nos tarifs sont disponibles sur notre site web, sur la page contact.
+
+Sur quels syst?mes d'exploitation s'installe OmniWare ?
+Omniware s'installe sur Windows Seven ou XP (32 et 64bits), mais ?galement sur Windows serveur 2003 et 2008 SBS, Standard ou Entreprise (32 et 64bits). 
+
+Portail TS Web
+http & https
+
+Acc?s TSE s?curis? depuis n'importe quel navigateur Internet
+Client Java multi-plateformes (Pc, Mac, Linux...)
+Mode transparent RemoteApp
+Gestion des impressions locales
+
+Option Encryption SSL 1048 bits et certificats d'authentification 2048 bits
+Serveur web inclu et install? automatiquement
+Tunneling SSH sur les ports 80 ou 443
+Portail personnalisable
+ 
+ 
+www.omniware.fr
+ 
+Exp?diteur : www.omniware.fr - OmniPr?sence S.a.r.l. - Si vous ne souhaitez plus recevoir nos offres, cliquer ici 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120119/e1ba8c8e/attachment-0001.html>
