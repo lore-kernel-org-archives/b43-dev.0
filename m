@@ -1,27 +1,34 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Fri, 20 Jan 2012 07:00:22 +1100
-Subject: Another ML test
-In-Reply-To: <CAESoE48yRubXjzAHXpwkjmcBdXHSqccuwChUGuKyqSHdzdjenQ@mail.gmail.com>
-References: <CAESoE48yRubXjzAHXpwkjmcBdXHSqccuwChUGuKyqSHdzdjenQ@mail.gmail.com>
-Message-ID: <1327003222.2054.31.camel@shinybook.infradead.org>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 19 Jan 2012 21:48:54 +0100
+Subject: [PATCH V3 2/2] MAINTAINERS: add b43 mailing list
+In-Reply-To: <20120119141644.GB3320@tuxdriver.com>
+References: <1326491706-14970-1-git-send-email-zajec5@gmail.com>
+ <1326491706-14970-2-git-send-email-zajec5@gmail.com>
+ <1326975859.2054.14.camel@shinybook.infradead.org>
+ <CACna6rynAD9Rxsbmxd2UROrfwEQt65yV=FUR8jGSsDgiBhRiww@mail.gmail.com>
+ <1326977309.2054.16.camel@shinybook.infradead.org>
+ <CAD3=kO+kLO5-1ZY-X=7TsdEBrgzqQQF8uEVwrtu2eGduhAC6jQ@mail.gmail.com>
+ <1326979070.2054.17.camel@shinybook.infradead.org>
+ <20120119141644.GB3320@tuxdriver.com>
+Message-ID: <CACna6rwnWJTj3R61Y+fAeb8BbpiAtcN+vBpZHhv9ta3xR0CDgA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, Gregory Bellier <gregory.bellier@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Thu, 2012-01-19 at 14:09 +0100, zajec5 Gazeta.pl wrote:
-> Sent from not-subscribed address
+2012/1/19 John W. Linville <linville@tuxdriver.com>:
+> On Fri, Jan 20, 2012 at 12:17:50AM +1100, David Woodhouse wrote:
+>> On Thu, 2012-01-19 at 14:16 +0100, Gregory Bellier wrote:
+>> > Maybe you did that to avoid spamming? ?
+>>
+>> It's a crappy way to avoid spamming. We should be able to do better.
+>> Filtering out all HTML goes a long way :)
+>
+> So...do we need another MAINTAINERS patch now?
 
-For some reason the block on HTML had also been dropped; I'm not sure
-what happened to the list configuration. I've restored that.
+If we just make sure it's working well - yes.
 
 -- 
-dwmw2
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: smime.p7s
-Type: application/x-pkcs7-signature
-Size: 5818 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120120/5337692f/attachment.bin>
+Rafa?
