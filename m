@@ -1,25 +1,23 @@
-From: Antonio Messina <arcimboldo@gmail.com>
-Date: Thu, 26 Jan 2012 23:53:14 +0100
-Subject: b43 module doesn't work after suspend
-Message-ID: <4F21D95A.4060408@gmail.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 28 Jan 2012 19:25:20 +0100
+Subject: Device Database
+Message-ID: <4F243D90.4080807@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Hi all,
+While working on ssb and bcma, I often do not know if some branch
+defined in the open source part of the Broacom SDK is taken only by
+devices supported by ssb or bcma or both.
+A database with all devices support by bcma, ssb and the Broadcom SDK
+(pci(e) cards and SoCs) with the cores and their revs found on them, the
+chip id and rev, if they have a pmu and what rev and so on.
+I would like to start with such a database, but I do not know where.
+Should I place it on a subpage of
+http://linuxwireless.org/en/users/Drivers/b43 , but it should also
+contain SoC which are not really related to b43 or should I place it
+somewhere on http://bcm-v4.sipsolutions.net/ ?
 
-After suspend to ram my wifi doesn't work. Unloading the `b43' module 
-and re-loading after resume "fix" the issue, but it would be better if 
-it will deal with the suspend/resume cycle smoothly.
-
-My card (MacBookpro8,1):
-03:00.0 Network controller: Broadcom Corporation BCM4331 802.11a/b/g/n 
-(rev 02)
-
-Kernel: 3.2.1 vanilla x86_64
-Distro: Debian testing
-b43 firmware: 666.2 (2011-02-23 01:15:07)
-
-.a.
+Hauke
