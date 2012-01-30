@@ -1,33 +1,44 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Mon, 30 Jan 2012 21:15:06 +0100
-Subject: Broadcom sprom
-Message-ID: <4F26FA4A.9090102@hauke-m.de>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 30 Jan 2012 21:37:40 +0100
+Subject: BCM5354 SoC with LP Phy Wifi
+In-Reply-To: <4F26F36D.5050903@hauke-m.de>
+References: <4F25C467.7070805@hauke-m.de> <4F25D746.2020801@hauke-m.de>
+ <CACna6rxvftL8fQpzhyUD-Q6RgoAur7+qRbb_4VyDa413aBPk+A@mail.gmail.com>
+ <4F26F36D.5050903@hauke-m.de>
+Message-ID: <CACna6ry+DcJe5o4SPmn1=UuUNsPYFpkhXd4Nhw-HQ+Xn=d5_hQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, b43-dev <b43-dev@lists.infradead.org>, Arend van Spriel <arend@broadcom.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: b43-dev@lists.infradead.org
 
-I had a look at the sprom parsing, as the SoC sprom parsing code is
-dated and does not fill in some fields introduced in updates of struct
-ssb_sprom. I had a look at the brcm/include/bcmsrom_tbl.h file found in
-the Broadcom SoC SDK containing the positions and names of the sprom
-values. For the old sprom versions <= 4 our struct ssb_sprom contains
-mostly all fields available in the sprom, but for more recent it misses
-some/many values. I searched brcmsmac for some of them and they are
-mostly parsing the same values for v8 and v9 as the Broadcom SoC SDK
-does, but they do not use all of them.
+W dniu 30 stycznia 2012 20:45 u?ytkownik Hauke Mehrtens
+<hauke@hauke-m.de> napisa?:
+> On 01/30/2012 07:29 AM, Rafa? Mi?ecki wrote:
+>> While I'll try to implement/update LP-PHY code, I think it still would
+>> be nice to investigate this problem. Do we have some leak in b43? We
+>> should fix it if so.
+> I haven't found a leak in b43 yet, just one in an OpenWrt switch driver,
+> while searching in b43. ;-)
+> It's nice to hear that you will work on the LP-PHY part, to me it looks
+> like ~30% of the spec is not implemented. have you started implementing
+> the GMAC Ethernet driver?
 
-How should we proceed? Should I extend struct ssb_sprom to support all
-sprom values available or found in the Broadcom SDK in sprom version 1
-to 9 and add the parsing code to bcm47xx arch code, ssb (for old
-versions) and bcma, or just the ones currently needed by any driver? As
-even brcmsmac does not use all of them some seam to be unused@all.
+I've started fighting with my router. I've tested it's working (on
+original firmware), I'm trying now to get root access to get
+partitions layout. I've already opened it (this required small Torx
+screwdriver) and built 3,3V console. I'm working on creating console
+pins (unfortunately they were removed from production==non-beta
+boards).
 
-As the struct would be under 1KB if we put in all sprom values we know
-of I am for adding all these values into it and we do not have to deal
-with sproms till version 10 is released. ;-)
 
-What are you opinions about this?
+>> Could you check what exactly happens in b43_dma_tx please?
+> Yes I will look deeper into this.
+> Do you have a working LP-PHY device, so that I could give you some
+> patches and then compare the output?
 
-Hauke
+My LP-PHY had some performance problems, probably some important
+calibration is missing.
+
+-- 
+Rafa?
