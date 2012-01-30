@@ -1,69 +1,66 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 30 Jan 2012 07:29:52 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Mon, 30 Jan 2012 20:37:57 +0100
 Subject: BCM5354 SoC with LP Phy Wifi
-In-Reply-To: <4F25D746.2020801@hauke-m.de>
+In-Reply-To: <CACb-4KjixkVS5pe+mucyOaKeHAMb11m=YBZ47STZAiKDwRH2rQ@mail.gmail.com>
 References: <4F25C467.7070805@hauke-m.de>
-	<4F25D746.2020801@hauke-m.de>
-Message-ID: <CACna6rxvftL8fQpzhyUD-Q6RgoAur7+qRbb_4VyDa413aBPk+A@mail.gmail.com>
+ <CACb-4KjixkVS5pe+mucyOaKeHAMb11m=YBZ47STZAiKDwRH2rQ@mail.gmail.com>
+Message-ID: <4F26F195.9050509@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2012/1/30 Hauke Mehrtens <hauke@hauke-m.de>:
-> On 01/29/2012 11:12 PM, Hauke Mehrtens wrote:
->> I got a device with a BCM5354 SoC and a LP-Phy Wifi core on it. With
->> current b43 it still fails with Out of memory when using a recent
->> firmware 666.2 and works with an old firmware 410.2160. I tried DMA and
->> PIO mode and had the same results. I added some printk's into the code
->> and implemented some parts b43 does not have but the Braodcom sdk and
->> brcmsmac has in the dma code, but I haven't resolved the issue.
->>
->> I found out the error occurs when send some packages doing "ifconfig
->> wlan0 up" does not result in any problems, but when I try to scan with
->> "iw wlan0 scan" it oopes very soon. The problem seams to be related to
->> TX as there are many packages received, but the oops occurs after 4
->> calls to b43_dma_tx()
->>
->> Larry, you wrote some more LP spec based on a newer driver is there a
->> list with updated docs or should I manually look into all packages if I
->> want to implement it like it is in the new wl driver.
->> As I see there are also many parts not implemented, but described in the
->> spec so looking over the hole code is probably needed.
->> My device has a sprom of revision 3 and not the expected version 8, does
->> this cause any trouble?
->>
->> Hauke.
-> My device is the following:
->
-> ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x14, vendor 0x4243)
-> ssb: Core 1 found: Fast Ethernet (cc 0x806, rev 0x09, vendor 0x4243)
-> ssb: Core 2 found: MIPS 3302 (cc 0x816, rev 0x08, vendor 0x4243)
-> ssb: Core 3 found: USB 2.0 Host (cc 0x819, rev 0x02, vendor 0x4243)
-> ssb: Core 4 found: MEMC SDRAM (cc 0x80F, rev 0x04, vendor 0x4243)
-> ssb: Core 5 found: IEEE 802.11 (cc 0x812, rev 0x0D, vendor 0x4243)
-> ssb: Core 6 found: Roboswitch (cc 0x81C, rev 0x02, vendor 0x4243)
->
-> b43-phy0: Broadcom 5354 WLAN found (core revision 13)
-> b43-phy0 debug: Found PHY: Analog 6, Type 5, Revision 0
-> b43-phy0 debug: Found Radio: Manuf 0x17F, Version 0x2062, Revision 1
->
-> When doing a passive scan with iw it works without any problems and I
-> get my results without any kernel oops, but when doing an active scan I
-> get an oops.
+Hi William,
 
-If you search for "out of memory b43" you will find the thread where
-we were trying to find the issue. Unfortunately without the real
-access to the hardware it wasn't easy to debug this. Sending patches
-to someone, waiting for recompiling & testing, checking results... I
-failed at that process :(
+On 01/30/2012 04:39 PM, William R Agosto Padilla wrote:
+> Mr. Hauke,
+> 
+> I am new to the reverse engineering process. However I am working on a
+> project that
+> requires me to use printk statements in the b43 device driver code, so I
+> can see how it is
+> really working during initialization, resetting, and suspension of the
+> networking process. 
+> 
+> The first problem that I encountered was finding the b43 source code for
+> download.
+> I was only able to find the assembly code for the b43 firmware. Do you
+> know of a specific download
+> location where I can get the entire b43's ''C'' source code?
+Just go to https://www.kernel.org/ and download the Linux kernel it has
+b43 included in it in drivers/net/wireless/b43 or use
+http://wireless.kernel.org/en/users/Download/stable/
 
-While I'll try to implement/update LP-PHY code, I think it still would
-be nice to investigate this problem. Do we have some leak in b43? We
-should fix it if so.
+>  Reading
+> your email I realized that you
+> have already done what I will be attempting to do. Mainly, using printk
+> statements inside the b43 code.
+> I have been at this for a couple of months without any luck. Would you
+> mind if I ask a few questions 
+> about the way you went about on doing so? Or advice on how to do it?
+> 
+> Did you added the printk statements into the b43 source code or the b43
+> firmware code?
+I do not have access to the source code of the broadcom firmware, but
+there is an open source project developing an open Source firmware
+http://www.ing.unibs.it/~openfwwf/
+>I would like to try
+> something similar. As I mentioned earlier, I was not able to see the
+> b43's 'C' source code with my
+> Linux Ubuntu 11.10 distribution. I found a copy of the firmware source
+> code with the
+> assembly language, etc. Is that the code that you used for the printk
+> statements? 
+I am just working on the driver and treating the firmware as a black box.
+> I thought that since the b43 driver is included in the kernel that
+> Ubuntu 11.10 has, it 
+> would also include the source code--no luck with that.
+> 
+> Any insight that you can share would be very much appreciated.
+> 
+> Cheers
+> 
+> William
 
-Could you check what exactly happens in b43_dma_tx please?
-
--- 
-Rafa?
+Hauke
