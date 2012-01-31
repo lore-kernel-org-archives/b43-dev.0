@@ -1,9 +1,9 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed,  1 Feb 2012 00:13:55 +0100
-Subject: [PATCH 3/4] ssb: log the id, rev and pkg of the chip found
+Date: Wed,  1 Feb 2012 00:13:54 +0100
+Subject: [PATCH 2/4] bcma: log the id, rev and pkg of the chip found
 In-Reply-To: <1328051636-15449-1-git-send-email-hauke@hauke-m.de>
 References: <1328051636-15449-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1328051636-15449-4-git-send-email-hauke@hauke-m.de>
+Message-ID: <1328051636-15449-3-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,22 +16,36 @@ output.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/ssb/scan.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+ drivers/bcma/scan.c |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ssb/scan.c b/drivers/ssb/scan.c
-index 3e84487..266c7c5 100644
---- a/drivers/ssb/scan.c
-+++ b/drivers/ssb/scan.c
-@@ -318,6 +318,9 @@ int ssb_bus_scan(struct ssb_bus *bus,
- 			bus->chip_package = 0;
- 		}
- 	}
-+	ssb_printk(KERN_INFO PFX "Found chip with id 0x%04X, rev 0x%02X and "
-+		   "package 0x%02X\n", bus->chip_id, bus->chip_rev,
-+		   bus->chip_package);
- 	if (!bus->nr_devices)
- 		bus->nr_devices = chipid_to_nrcores(bus->chip_id);
- 	if (bus->nr_devices > ARRAY_SIZE(bus->devices)) {
+diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
+index cad9948..a6f17fe 100644
+--- a/drivers/bcma/scan.c
++++ b/drivers/bcma/scan.c
+@@ -353,6 +353,7 @@ static int bcma_get_next_core(struct bcma_bus *bus, u32 __iomem **eromptr,
+ void bcma_init_bus(struct bcma_bus *bus)
+ {
+ 	s32 tmp;
++	struct bcma_chipinfo *chipinfo = &(bus->chipinfo);
+ 
+ 	if (bus->init_done)
+ 		return;
+@@ -363,9 +364,12 @@ void bcma_init_bus(struct bcma_bus *bus)
+ 	bcma_scan_switch_core(bus, BCMA_ADDR_BASE);
+ 
+ 	tmp = bcma_scan_read32(bus, 0, BCMA_CC_ID);
+-	bus->chipinfo.id = (tmp & BCMA_CC_ID_ID) >> BCMA_CC_ID_ID_SHIFT;
+-	bus->chipinfo.rev = (tmp & BCMA_CC_ID_REV) >> BCMA_CC_ID_REV_SHIFT;
+-	bus->chipinfo.pkg = (tmp & BCMA_CC_ID_PKG) >> BCMA_CC_ID_PKG_SHIFT;
++	chipinfo->id = (tmp & BCMA_CC_ID_ID) >> BCMA_CC_ID_ID_SHIFT;
++	chipinfo->rev = (tmp & BCMA_CC_ID_REV) >> BCMA_CC_ID_REV_SHIFT;
++	chipinfo->pkg = (tmp & BCMA_CC_ID_PKG) >> BCMA_CC_ID_PKG_SHIFT;
++	pr_info("Found chip with id 0x%04X, rev 0x%02X and package 0x%02X\n",
++		chipinfo->id, chipinfo->rev, chipinfo->pkg);
++
+ 	bus->init_done = true;
+ }
+ 
 -- 
 1.7.5.4
