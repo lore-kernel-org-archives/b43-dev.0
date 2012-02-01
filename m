@@ -1,9 +1,9 @@
 From: Arend van Spriel <arend@broadcom.com>
-Date: Wed, 1 Feb 2012 17:09:13 +0100
+Date: Wed, 1 Feb 2012 17:10:32 +0100
 Subject: Dell e6410 with b43
 In-Reply-To: <20120201123324.GG20238@legolas.emea.dhcp.ti.com>
 References: <20120201123324.GG20238@legolas.emea.dhcp.ti.com>
-Message-ID: <4F2963A9.1020100@broadcom.com>
+Message-ID: <4F2963F8.9060804@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -49,10 +49,7 @@ On 02/01/2012 01:33 PM, Felipe Balbi wrote:
 > If it is supported, which firmware should I use ? (kernel is 3.3-rc2)
 > 
 
-It is. See http://linuxwireless.org/en/users/Drivers/brcm80211
-
-The firmware is available in the linux-firmware repository on
-git.kernel.org. See
-http://git.kernel.org/?p=linux/kernel/git/firmware/linux-firmware.git;a=summary
+It is also supported with b43, but you may need to select Kconfig option
+for that.
 
 Gr. AvS
