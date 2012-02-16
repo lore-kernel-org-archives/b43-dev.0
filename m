@@ -1,54 +1,73 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 10 Feb 2012 07:13:08 +0100
-Subject: Wireless Problem
-In-Reply-To: <4F3432DE.9050105@cfl.rr.com>
-References: <4F3417B6.4060005@cfl.rr.com>
- <CACna6rxanokAjM4Jy-7C9SFk89Bepn6p3+GM0kduLxaP0y37GQ@mail.gmail.com>
- <4F34209E.5090704@broadcom.com> <4F3432DE.9050105@cfl.rr.com>
-Message-ID: <CACna6ryyHPa6e9C4xR=uhkfO+q9+FFTzjtWy1G8qcOZGoVAoPw@mail.gmail.com>
+From: Seth Forshee <seth.forshee@canonical.com>
+Date: Thu, 16 Feb 2012 08:55:58 -0600
+Subject: BCM4331 fails to associate after suspend
+In-Reply-To: <20120207152921.GA8464@ubuntu-macmini>
+References: <20120203222818.GA3749@ubuntu-mba> <4F2D0C07.1010704@broadcom.com>
+ <20120204142502.GA10858@ubuntu-mba>
+ <CACna6ryR2xm2EAJaV4vCO8WebR5pXCyFknEMrf8ynVF+HYrxTw@mail.gmail.com>
+ <20120206173757.GC31938@ubuntu-macmini>
+ <4F302647.2070102@hauke-m.de>
+ <20120206223447.GE31938@ubuntu-macmini>
+ <CACna6rx7E9tM82iyYP=eRnTU+QZA1rMfdk8vNnX5k1_jbc5DqQ@mail.gmail.com>
+ <CACna6rzDNfAMq+RHO_X2y3XrQn3oFJxmf9bsR2mzLs3X0o3dSA@mail.gmail.com>
+ <20120207152921.GA8464@ubuntu-macmini>
+Message-ID: <20120216145558.GB30486@ubuntu-macmini>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Arend van Spriel <arend@broadcom.com>, Scott Sanbar <scott.sanbar@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
 
-W dniu 9 lutego 2012 21:55 u?ytkownik Vince Radice
-<vhradice@cfl.rr.com> napisa?:
-> ? ?As for my question about b43-fwcutter, do I do something with this or is
-> it done behind the scenes by a driver?
+On Tue, Feb 07, 2012 at 09:29:21AM -0600, Seth Forshee wrote:
+> On Tue, Feb 07, 2012 at 08:08:11AM +0100, Rafa? Mi?ecki wrote:
+> > W dniu 7 lutego 2012 08:04 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
+> > > 2012/2/6 Seth Forshee <seth.forshee@canonical.com>:
+> > >> On Mon, Feb 06, 2012 at 08:13:11PM +0100, Hauke Mehrtens wrote:
+> > >>> According to the Broadcom SDK for SoCs bcma_pcicore_serdes_workaround()
+> > >>> should be called when coming out of standby/hibernate.
+> > >>> The code wl uses to do the same thing as bcma does is open source. You
+> > >>> find it in the GPL package of many Broadcom based Wifi Routers.
+> > >>
+> > >> Thanks for the suggestion. Unfortunately calling
+> > >> bcma_pcicore_serdes_workaround() during resume doesn't help. I'll look
+> > >> at the wl code to see if I can learn anything there.
+> > >
+> > > Can you try
+> > >
+> > >
+> > > diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
+> > > index febbc0a..a097a26 100644
+> > > --- a/drivers/bcma/main.c
+> > > +++ b/drivers/bcma/main.c
+> > > @@ -267,6 +267,13 @@ int bcma_bus_resume(struct bcma_bus *bus)
+> > > ? ? ? ? ? ? ? ?bcma_core_chipcommon_init(&bus->drv_cc);
+> > > ? ? ? ?}
+> > >
+> > > + ? ? ? /* Init PCIE core */
+> > > + ? ? ? core = bcma_find_core(bus, BCMA_CORE_PCIE);
+> > > + ? ? ? if (core) {
+> > > + ? ? ? ? ? ? ? bus->drv_pci.setup_done = false;
+> > > + ? ? ? ? ? ? ? bcma_core_pci_init(&bus->drv_pci);
+> > > + ? ? ? }
+> > > +
+> > > ? ? ? ?list_for_each_entry(core, &bus->cores, list) {
+> > > ? ? ? ? ? ? ? ?struct device_driver *drv = core->dev.driver;
+> > > ? ? ? ? ? ? ? ?if (drv) {
+> > 
+> > If this doesn't work out of box, please check if reloading b43 is
+> > enough. AFAIR now you have to reload both: b43 and bcma. I hope this
+> > patch will let you avoid reloading at least bcma.
+> 
+> I tried exactly that yesterday, but it doesn't fix the issue. I just
+> checked to see if it allows reloading only b43, and it does not. I still
+> have to reload bcma to get the wireless working again.
 
-No idea what are you asking about. What do you mean by "I do
-something"? What are you trying to achieve?
-b43 driver won't work this this card. b43-fwcutter is firmware
-extractor for b43 driver. It's not needed for this card.
+I've been pounding on this quite a bit in the past week, but I haven't
+been able to get anywhere so far. Any relevant workarounds I found in wl
+have no effect, and neither does any amount of reinitialization.
 
+I'm still digging into the drivers to see if I can learn anything, but
+if anyone has more suggestions I'll happily give them a try.
 
-> ? ?Also, some have had success with the STA drivers. ?I believe that I have
-> installed them with yum. ?How can I tell if they are being used? ?Can I
-> somehow tie those drivers with my usb adapter?
-
-I don't think STA supports fullmac devices (like your USB one). You
-can list loaded modules by "lsmod"
-hint:
-lsmod | grep wl
-lsmod | grep b43
-etc.
-
-lspci also shows currently used driver when using verbose mode (lspci -v):
-06:00.0 Network controller: Intel Corporation WiFi Link 5100
-        Subsystem: Intel Corporation WiFi Link 5100 AGN
-        Flags: bus master, fast devsel, latency 0, IRQ 48
-        Memory at d1500000 (64-bit, non-prefetchable) [size=8K]
-        (...)
-        Kernel driver in use: iwlwifi
-
-P.S.
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
-
-Please, bottom-post.
-
--- 
-Rafa?
+Seth
