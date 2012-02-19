@@ -1,44 +1,36 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 19 Feb 2012 19:49:23 +0100
-Subject: [PATCH 04/11] ssb: add ccode
-In-Reply-To: <1329676345-15856-5-git-send-email-hauke@hauke-m.de>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 19 Feb 2012 13:14:04 -0600
+Subject: [PATCH 02/11] ssb: remove 5GHz antenna gain from sprom
+In-Reply-To: <1329676345-15856-3-git-send-email-hauke@hauke-m.de>
 References: <1329676345-15856-1-git-send-email-hauke@hauke-m.de>
- <1329676345-15856-5-git-send-email-hauke@hauke-m.de>
-Message-ID: <20120219194923.566f3fe8@milhouse>
+ <1329676345-15856-3-git-send-email-hauke@hauke-m.de>
+Message-ID: <4F4149FC.50900@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch
 
-On Sun, 19 Feb 2012 19:32:18 +0100
-Hauke Mehrtens <hauke@hauke-m.de> wrote:
-
-> This member contains the country code encoded with two chars
-> 
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+On 02/19/2012 12:32 PM, Hauke Mehrtens wrote:
+> There is no 2.4 GHz or 5GHz antenna gain stored in sprom. The sprom
+> just stores the gain values for antenna 1 and 2 or 1 to 4 for more
+> recent sprom versions. On old devices antenna 2 was used for 5 GHz wifi.
+>
+> Signed-off-by: Hauke Mehrtens<hauke@hauke-m.de>
 > ---
->  include/linux/ssb/ssb.h |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
-> index 4928419..44e486e 100644
-> --- a/include/linux/ssb/ssb.h
-> +++ b/include/linux/ssb/ssb.h
-> @@ -33,6 +33,7 @@ struct ssb_sprom {
->  	u8 et1mdcport;		/* MDIO for enet1 */
->  	u16 board_rev;		/* Board revision number from SPROM. */
->  	u8 country_code;	/* Country Code */
-> +	char ccode[2];		/* Country Code as two chars like EU or US */
+>   drivers/net/wireless/b43legacy/phy.c |    2 +-
+>   drivers/ssb/pci.c                    |   40 ++++++++++++----------------------
+>   drivers/ssb/pcmcia.c                 |   12 +++------
+>   drivers/ssb/sdio.c                   |   12 +++------
+>   include/linux/ssb/ssb.h              |    7 +-----
+>   5 files changed, 24 insertions(+), 49 deletions(-)
 
-This usually is referred to as "alpha2". So we should name it like that, too.
+After this patch, I get the warning
 
->  	u8 leddc_on_time;	/* LED Powersave Duty Cycle On Count */
->  	u8 leddc_off_time;	/* LED Powersave Duty Cycle Off Count */
->  	u8 ant_available_a;	/* 2GHz antenna available bits (up to 4) */
+drivers/ssb/pci.c: In function ?sprom_extract_r123?:
+drivers/ssb/pci.c:334:5: warning: unused variable ?gain? [-Wunused-variable]
 
+I am still testing, but all other patches compile OK.
 
-
--- 
-Greetings, Michael.
+Larry
