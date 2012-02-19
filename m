@@ -1,73 +1,70 @@
-From: Seth Forshee <seth.forshee@canonical.com>
-Date: Thu, 16 Feb 2012 08:55:58 -0600
-Subject: BCM4331 fails to associate after suspend
-In-Reply-To: <20120207152921.GA8464@ubuntu-macmini>
-References: <20120203222818.GA3749@ubuntu-mba> <4F2D0C07.1010704@broadcom.com>
- <20120204142502.GA10858@ubuntu-mba>
- <CACna6ryR2xm2EAJaV4vCO8WebR5pXCyFknEMrf8ynVF+HYrxTw@mail.gmail.com>
- <20120206173757.GC31938@ubuntu-macmini>
- <4F302647.2070102@hauke-m.de>
- <20120206223447.GE31938@ubuntu-macmini>
- <CACna6rx7E9tM82iyYP=eRnTU+QZA1rMfdk8vNnX5k1_jbc5DqQ@mail.gmail.com>
- <CACna6rzDNfAMq+RHO_X2y3XrQn3oFJxmf9bsR2mzLs3X0o3dSA@mail.gmail.com>
- <20120207152921.GA8464@ubuntu-macmini>
-Message-ID: <20120216145558.GB30486@ubuntu-macmini>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 19 Feb 2012 19:32:15 +0100
+Subject: [PATCH 01/11] ssb: sprom fix some sizes / signedness
+In-Reply-To: <1329676345-15856-1-git-send-email-hauke@hauke-m.de>
+References: <1329676345-15856-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <1329676345-15856-2-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Arend van Spriel <arend@broadcom.com>, Scott Sanbar <scott.sanbar@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch, Hauke Mehrtens <hauke@hauke-m.de>
 
-On Tue, Feb 07, 2012 at 09:29:21AM -0600, Seth Forshee wrote:
-> On Tue, Feb 07, 2012 at 08:08:11AM +0100, Rafa? Mi?ecki wrote:
-> > W dniu 7 lutego 2012 08:04 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
-> > > 2012/2/6 Seth Forshee <seth.forshee@canonical.com>:
-> > >> On Mon, Feb 06, 2012 at 08:13:11PM +0100, Hauke Mehrtens wrote:
-> > >>> According to the Broadcom SDK for SoCs bcma_pcicore_serdes_workaround()
-> > >>> should be called when coming out of standby/hibernate.
-> > >>> The code wl uses to do the same thing as bcma does is open source. You
-> > >>> find it in the GPL package of many Broadcom based Wifi Routers.
-> > >>
-> > >> Thanks for the suggestion. Unfortunately calling
-> > >> bcma_pcicore_serdes_workaround() during resume doesn't help. I'll look
-> > >> at the wl code to see if I can learn anything there.
-> > >
-> > > Can you try
-> > >
-> > >
-> > > diff --git a/drivers/bcma/main.c b/drivers/bcma/main.c
-> > > index febbc0a..a097a26 100644
-> > > --- a/drivers/bcma/main.c
-> > > +++ b/drivers/bcma/main.c
-> > > @@ -267,6 +267,13 @@ int bcma_bus_resume(struct bcma_bus *bus)
-> > > ? ? ? ? ? ? ? ?bcma_core_chipcommon_init(&bus->drv_cc);
-> > > ? ? ? ?}
-> > >
-> > > + ? ? ? /* Init PCIE core */
-> > > + ? ? ? core = bcma_find_core(bus, BCMA_CORE_PCIE);
-> > > + ? ? ? if (core) {
-> > > + ? ? ? ? ? ? ? bus->drv_pci.setup_done = false;
-> > > + ? ? ? ? ? ? ? bcma_core_pci_init(&bus->drv_pci);
-> > > + ? ? ? }
-> > > +
-> > > ? ? ? ?list_for_each_entry(core, &bus->cores, list) {
-> > > ? ? ? ? ? ? ? ?struct device_driver *drv = core->dev.driver;
-> > > ? ? ? ? ? ? ? ?if (drv) {
-> > 
-> > If this doesn't work out of box, please check if reloading b43 is
-> > enough. AFAIR now you have to reload both: b43 and bcma. I hope this
-> > patch will let you avoid reloading at least bcma.
-> 
-> I tried exactly that yesterday, but it doesn't fix the issue. I just
-> checked to see if it allows reloading only b43, and it does not. I still
-> have to reload bcma to get the wireless working again.
+Some parts of the sprom struct are bigger than needed.
+The leddc and maxpwr values are just 8 bit long and not 16.
+rxpo2g and rxpo5g are signed
 
-I've been pounding on this quite a bit in the past week, but I haven't
-been able to get anywhere so far. Any relevant workarounds I found in wl
-have no effect, and neither does any amount of reinitialization.
+I got these information for the open source part of the Braodcom SDK
+covering sprom version 1 to 9. rxpo2g contained a negative number on my
+bcm5354 based device, this cased an error and Broadcom SDK says this is
+signed.
 
-I'm still digging into the drivers to see if I can learn anything, but
-if anyone has more suggestions I'll happily give them a try.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ include/linux/ssb/ssb.h |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
-Seth
+diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+index bbc2612..f169621 100644
+--- a/include/linux/ssb/ssb.h
++++ b/include/linux/ssb/ssb.h
+@@ -33,8 +33,8 @@ struct ssb_sprom {
+ 	u8 et1mdcport;		/* MDIO for enet1 */
+ 	u16 board_rev;		/* Board revision number from SPROM. */
+ 	u8 country_code;	/* Country Code */
+-	u16 leddc_on_time;	/* LED Powersave Duty Cycle On Count */
+-	u16 leddc_off_time;	/* LED Powersave Duty Cycle Off Count */
++	u8 leddc_on_time;	/* LED Powersave Duty Cycle On Count */
++	u8 leddc_off_time;	/* LED Powersave Duty Cycle Off Count */
+ 	u8 ant_available_a;	/* 2GHz antenna available bits (up to 4) */
+ 	u8 ant_available_bg;	/* 5GHz antenna available bits (up to 4) */
+ 	u16 pa0b0;
+@@ -53,10 +53,10 @@ struct ssb_sprom {
+ 	u8 gpio1;		/* GPIO pin 1 */
+ 	u8 gpio2;		/* GPIO pin 2 */
+ 	u8 gpio3;		/* GPIO pin 3 */
+-	u16 maxpwr_bg;		/* 2.4GHz Amplifier Max Power (in dBm Q5.2) */
+-	u16 maxpwr_al;		/* 5.2GHz Amplifier Max Power (in dBm Q5.2) */
+-	u16 maxpwr_a;		/* 5.3GHz Amplifier Max Power (in dBm Q5.2) */
+-	u16 maxpwr_ah;		/* 5.8GHz Amplifier Max Power (in dBm Q5.2) */
++	u8 maxpwr_bg;		/* 2.4GHz Amplifier Max Power (in dBm Q5.2) */
++	u8 maxpwr_al;		/* 5.2GHz Amplifier Max Power (in dBm Q5.2) */
++	u8 maxpwr_a;		/* 5.3GHz Amplifier Max Power (in dBm Q5.2) */
++	u8 maxpwr_ah;		/* 5.8GHz Amplifier Max Power (in dBm Q5.2) */
+ 	u8 itssi_a;		/* Idle TSSI Target for A-PHY */
+ 	u8 itssi_bg;		/* Idle TSSI Target for B/G-PHY */
+ 	u8 tri2g;		/* 2.4GHz TX isolation */
+@@ -67,8 +67,8 @@ struct ssb_sprom {
+ 	u8 txpid5gl[4];		/* 4.9 - 5.1GHz TX power index */
+ 	u8 txpid5g[4];		/* 5.1 - 5.5GHz TX power index */
+ 	u8 txpid5gh[4];		/* 5.5 - ...GHz TX power index */
+-	u8 rxpo2g;		/* 2GHz RX power offset */
+-	u8 rxpo5g;		/* 5GHz RX power offset */
++	s8 rxpo2g;		/* 2GHz RX power offset */
++	s8 rxpo5g;		/* 5GHz RX power offset */
+ 	u8 rssisav2g;		/* 2GHz RSSI params */
+ 	u8 rssismc2g;
+ 	u8 rssismf2g;
+-- 
+1.7.5.4
