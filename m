@@ -1,79 +1,56 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Date: Mon, 20 Feb 2012 15:08:55 +0400
-Subject: [PATCH 11/11] MIPS: BCM47XX: provide sprom to bcma bus
-In-Reply-To: <1329676345-15856-12-git-send-email-hauke@hauke-m.de>
-References: <1329676345-15856-1-git-send-email-hauke@hauke-m.de>
- <1329676345-15856-12-git-send-email-hauke@hauke-m.de>
-Message-ID: <4F4229C7.1070107@mvista.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Tue, 21 Feb 2012 00:38:19 +0100
+Subject: [RFC] b43: fix memory leak on bcm5354
+Message-ID: <1329781099-17342-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch
+To: zajec5@gmail.com, Larry.Finger@lwfinger.net
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, m@bues.ch, Hauke Mehrtens <hauke@hauke-m.de>
 
-Hello.
+When using the bcm5354 with a recent firmware >= 478.104 it runs into a
+memory very shortly after doing an active scan or any thing else where
+packages are send. This was cased by a gpio misconfiguration, the
+firmware triggered the GPIO pins used for buttons on some devices and
+that caused an other driver (OpenWrt diag) listening for these buttons
+to send many user space messages.
+This patch fixes the bug for my devices (Asus WL-520GU) and makes it
+work with firmware 666.2, but I do not know if this patch is correct.
+The spec for this part is out of date:
+http://bcm-specs.sipsolutions.net/GPIO
 
-On 19-02-2012 22:32, Hauke Mehrtens wrote:
+GPIO pin layout:
+pin#	name	type
+0	power	led
+1	wlan	led
+2	reset	button
+3	ses	buttom
 
-> On SoCs the sprom is often stored in nvram in the flashchip. This patch
-> registers a sprom fallback callback handler in bcma and provides the
-> sprom needed for this device.
+related nvram configuration:
+wl0gpio2=11
+wl0gpio3=11
+wl0gpio0=11
+wl0gpio1=0x02
+reset_gpio=2
 
-> Signed-off-by: Hauke Mehrtens<hauke@hauke-m.de>
-> ---
->   arch/mips/bcm47xx/setup.c |   39 +++++++++++++++++++++++++++++++++++----
->   1 files changed, 35 insertions(+), 4 deletions(-)
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/net/wireless/b43/main.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-> diff --git a/arch/mips/bcm47xx/setup.c b/arch/mips/bcm47xx/setup.c
-> index 6b0dacd..6f8b073 100644
-> --- a/arch/mips/bcm47xx/setup.c
-> +++ b/arch/mips/bcm47xx/setup.c
-[...]
-> @@ -159,10 +159,41 @@ static void __init bcm47xx_register_ssb(void)
->   #endif
->
->   #ifdef CONFIG_BCM47XX_BCMA
-> +static int bcm47xx_get_sprom_bcma(struct bcma_bus *bus, struct ssb_sprom *out)
-> +{
-> +	char prefix[10];
-> +	struct bcma_device *core;
-> +
-> +	if (bus->hosttype == BCMA_HOSTTYPE_PCI) {
-
-    Why not *switch* statement? It seems more natural in this situation...
-
-> +		snprintf(prefix, sizeof(prefix), "pci/%u/%u/",
-> +			 bus->host_pci->bus->number + 1,
-> +			 PCI_SLOT(bus->host_pci->devfn));
-> +		bcm47xx_fill_sprom(out, prefix);
-> +		return 0;
-> +	} else if (bus->hosttype == BCMA_HOSTTYPE_SOC) {
-> +		bcm47xx_fill_sprom_ethernet(out, NULL);
-> +		core = bcma_find_core(bus, BCMA_CORE_80211);
-> +		if (core) {
-> +			snprintf(prefix, sizeof(prefix), "sb/%u/",
-> +				 core->core_index);
-> +			bcm47xx_fill_sprom(out, prefix);
-> +		}
-> +		return 0;
-> +	} else {
-> +		printk(KERN_WARNING "bcm47xx: unable to fill SPROM for given bustype.\n");
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->   static void __init bcm47xx_register_bcma(void)
->   {
->   	int err;
->
-> +	err = bcma_arch_register_fallback_sprom(&bcm47xx_get_sprom_bcma);
-> +	if (err)
-> +		printk(KERN_WARNING "bcm47xx: someone else already registered"
-
-    pr_warn(). And don't break the message to help grepping.
-
-> +			" a bcma SPROM callback handler (err %d)\n", err);
-> +
-
-WBR, Sergei
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 23ffb1b..f782723 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -2720,6 +2720,8 @@ static int b43_gpio_init(struct b43_wldev *dev)
+ 		mask |= 0x0060;
+ 		set |= 0x0060;
+ 	}
++	if (dev->dev->chip_id == 0x5354)
++		set &= 0xff02;
+ 	if (0 /* FIXME: conditional unknown */ ) {
+ 		b43_write16(dev, B43_MMIO_GPIO_MASK,
+ 			    b43_read16(dev, B43_MMIO_GPIO_MASK)
+-- 
+1.7.5.4
