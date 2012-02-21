@@ -1,61 +1,68 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue, 21 Feb 2012 20:11:51 +0100
-Subject: [RFC] b43: fix memory leak on bcm5354
-In-Reply-To: <4F42EBFC.4060307@lwfinger.net>
-References: <1329781099-17342-1-git-send-email-hauke@hauke-m.de>
- <4F42EBFC.4060307@lwfinger.net>
-Message-ID: <4F43EC77.6030409@hauke-m.de>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Tue, 21 Feb 2012 14:37:44 -0500
+Subject: [PATCH 00/11] ssb/bcma/BCM47XX: sprom fixes and extensions
+In-Reply-To: <1329676345-15856-1-git-send-email-hauke@hauke-m.de>
+References: <1329676345-15856-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <20120221193744.GB19354@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, m@bues.ch
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch
 
-On 02/21/2012 01:57 AM, Larry Finger wrote:
-> On 02/20/2012 05:38 PM, Hauke Mehrtens wrote:
->> When using the bcm5354 with a recent firmware>= 478.104 it runs into a
->> memory very shortly after doing an active scan or any thing else where
+Has Ralf seen the arch/mips patches?
+
+On Sun, Feb 19, 2012 at 07:32:14PM +0100, Hauke Mehrtens wrote:
+> This patch series fixes some errors in the sprom structures and extends 
+> it to contain members for all sprom values for sprom version 1 to 9. 
+> This was done by looking into the open source part of the Broadcom SDK. 
+> This also adds a fallback sprom registration method to bcma.
+> It also contains some small fixes for the bcma47xx arch code and a 
+> rewrite of the code to provide the sprom from flash. It now also 
+> provides sprom from flash for devices using bcma to control the system 
+> bus.
 > 
-> You are missing a word after memory.
-It leaked to somewhere else. ;-)
-
->> packages are send. This was cased by a gpio misconfiguration, the
->> firmware triggered the GPIO pins used for buttons on some devices and
->> that caused an other driver (OpenWrt diag) listening for these buttons
->> to send many user space messages.
->> This patch fixes the bug for my devices (Asus WL-520GU) and makes it
->> work with firmware 666.2, but I do not know if this patch is correct.
->> The spec for this part is out of date:
->> http://bcm-specs.sipsolutions.net/GPIO
+> This patch series is based on wireles-testing. I think it is the best 
+> way to merge this through John's wireless tree as the changes in the 
+> sprom struct should be used in further patches extending the pci sprom 
+> parsing and the usage of struct sprom by the brcmsmac driver.
 > 
-> I just updated the specs based on additional info I found. Everything I
-> see say that there are 4 bits for the LEDs. Do you have a source for
-> what you posted below?
-Thanks for updating the spec, but this is nothing special for the
-bcm5354. My device just has one WLAN LED, like many SoCs.
+> Hauke Mehrtens (11):
+>   ssb: sprom fix some sizes / signedness
+>   ssb: remove 5GHz antenna gain from sprom
+>   ssb: fix per path sprom vars
+>   ssb: add ccode
+>   ssb: add some missing sprom attributes
+>   bcma: export bcma_find_core
+>   bcma: add support for sprom not found on the device.
+>   MIPS: BCM47XX: return number of written bytes in nvram_getenv
+>   MIPS: BCM47XX: fix signature of nvram_parse_macaddr
+>   MIPS: BCM47XX: move and extend sprom parsing
+>   MIPS: BCM47XX: provide sprom to bcma bus
+> 
+>  arch/mips/bcm47xx/Makefile                   |    2 +-
+>  arch/mips/bcm47xx/nvram.c                    |    3 +-
+>  arch/mips/bcm47xx/setup.c                    |  188 ++-------
+>  arch/mips/bcm47xx/sprom.c                    |  618 ++++++++++++++++++++++++++
+>  arch/mips/include/asm/mach-bcm47xx/bcm47xx.h |    3 +
+>  arch/mips/include/asm/mach-bcm47xx/nvram.h   |    2 +-
+>  drivers/bcma/main.c                          |    3 +-
+>  drivers/bcma/sprom.c                         |   75 +++-
+>  drivers/net/wireless/b43legacy/phy.c         |    2 +-
+>  drivers/ssb/pci.c                            |   40 +--
+>  drivers/ssb/pcmcia.c                         |   12 +-
+>  drivers/ssb/sdio.c                           |   12 +-
+>  include/linux/bcma/bcma.h                    |    7 +
+>  include/linux/ssb/ssb.h                      |  102 ++++-
+>  14 files changed, 844 insertions(+), 225 deletions(-)
+>  create mode 100644 arch/mips/bcm47xx/sprom.c
+> 
+> -- 
+> 1.7.5.4
+> 
+> 
 
->> GPIO pin layout:
->> pin#    name    type
->> 0    power    led
->> 1    wlan    led
->> 2    reset    button
->> 3    ses    buttom
-
-This is from the Asus WL-520GU section of the the OpenWrt diag driver
-[0] and I verified it myself on this device.
-
->> related nvram configuration:
->> wl0gpio2=11
->> wl0gpio3=11
->> wl0gpio0=11
->> wl0gpio1=0x02
->> reset_gpio=2
-
-This was extracted from the nvram of the Asus W-520GU with "nvram show
-|grep gpio". This was a used device, so I do not know if someone else
-already did some modifications to the nvram.
-
-Hauke
-
-[0]: https://dev.openwrt.org/browser/trunk/package/broadcom-diag/src/diag.c
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
