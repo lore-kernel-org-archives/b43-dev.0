@@ -1,39 +1,44 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 23 Feb 2012 19:14:17 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Thu, 23 Feb 2012 22:27:29 +0100
 Subject: [PATCH 01/11] ssb: sprom fix some sizes / signedness
-In-Reply-To: <1329676345-15856-2-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <CACna6rwNEPY3iJCeWV3AmbBy7fQwQrgr9Oji6tro-Dr23y5udQ@mail.gmail.com>
 References: <1329676345-15856-1-git-send-email-hauke@hauke-m.de>
  <1329676345-15856-2-git-send-email-hauke@hauke-m.de>
-Message-ID: <CACna6rwNEPY3iJCeWV3AmbBy7fQwQrgr9Oji6tro-Dr23y5udQ@mail.gmail.com>
+ <CACna6rwNEPY3iJCeWV3AmbBy7fQwQrgr9Oji6tro-Dr23y5udQ@mail.gmail.com>
+Message-ID: <4F46AF41.6060803@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 Cc: linville@tuxdriver.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch
 
-2012/2/19 Hauke Mehrtens <hauke@hauke-m.de>:
-> @@ -53,10 +53,10 @@ struct ssb_sprom {
-> ? ? ? ?u8 gpio1; ? ? ? ? ? ? ? /* GPIO pin 1 */
-> ? ? ? ?u8 gpio2; ? ? ? ? ? ? ? /* GPIO pin 2 */
-> ? ? ? ?u8 gpio3; ? ? ? ? ? ? ? /* GPIO pin 3 */
-> - ? ? ? u16 maxpwr_bg; ? ? ? ? ?/* 2.4GHz Amplifier Max Power (in dBm Q5.2) */
-> - ? ? ? u16 maxpwr_al; ? ? ? ? ?/* 5.2GHz Amplifier Max Power (in dBm Q5.2) */
-> - ? ? ? u16 maxpwr_a; ? ? ? ? ? /* 5.3GHz Amplifier Max Power (in dBm Q5.2) */
-> - ? ? ? u16 maxpwr_ah; ? ? ? ? ?/* 5.8GHz Amplifier Max Power (in dBm Q5.2) */
-> + ? ? ? u8 maxpwr_bg; ? ? ? ? ? /* 2.4GHz Amplifier Max Power (in dBm Q5.2) */
-> + ? ? ? u8 maxpwr_al; ? ? ? ? ? /* 5.2GHz Amplifier Max Power (in dBm Q5.2) */
-> + ? ? ? u8 maxpwr_a; ? ? ? ? ? ?/* 5.3GHz Amplifier Max Power (in dBm Q5.2) */
-> + ? ? ? u8 maxpwr_ah; ? ? ? ? ? /* 5.8GHz Amplifier Max Power (in dBm Q5.2) */
-> ? ? ? ?u8 itssi_a; ? ? ? ? ? ? /* Idle TSSI Target for A-PHY */
-> ? ? ? ?u8 itssi_bg; ? ? ? ? ? ?/* Idle TSSI Target for B/G-PHY */
-> ? ? ? ?u8 tri2g; ? ? ? ? ? ? ? /* 2.4GHz TX isolation */
-
-Just a note in case you're going to develop ssb/bcma/b43/brcm code.
-Please note we're trying to switch from properties you modified to
-struct ssb_sprom_core_pwr_info.
-
-The patch still looks fine.
-
--- 
-Rafa?
+On 02/23/2012 07:14 PM, Rafa? Mi?ecki wrote:
+> 2012/2/19 Hauke Mehrtens <hauke@hauke-m.de>:
+>> @@ -53,10 +53,10 @@ struct ssb_sprom {
+>>        u8 gpio1;               /* GPIO pin 1 */
+>>        u8 gpio2;               /* GPIO pin 2 */
+>>        u8 gpio3;               /* GPIO pin 3 */
+>> -       u16 maxpwr_bg;          /* 2.4GHz Amplifier Max Power (in dBm Q5.2) */
+>> -       u16 maxpwr_al;          /* 5.2GHz Amplifier Max Power (in dBm Q5.2) */
+>> -       u16 maxpwr_a;           /* 5.3GHz Amplifier Max Power (in dBm Q5.2) */
+>> -       u16 maxpwr_ah;          /* 5.8GHz Amplifier Max Power (in dBm Q5.2) */
+>> +       u8 maxpwr_bg;           /* 2.4GHz Amplifier Max Power (in dBm Q5.2) */
+>> +       u8 maxpwr_al;           /* 5.2GHz Amplifier Max Power (in dBm Q5.2) */
+>> +       u8 maxpwr_a;            /* 5.3GHz Amplifier Max Power (in dBm Q5.2) */
+>> +       u8 maxpwr_ah;           /* 5.8GHz Amplifier Max Power (in dBm Q5.2) */
+>>        u8 itssi_a;             /* Idle TSSI Target for A-PHY */
+>>        u8 itssi_bg;            /* Idle TSSI Target for B/G-PHY */
+>>        u8 tri2g;               /* 2.4GHz TX isolation */
+> 
+> Just a note in case you're going to develop ssb/bcma/b43/brcm code.
+> Please note we're trying to switch from properties you modified to
+> struct ssb_sprom_core_pwr_info.
+These vars are available in sprom 1-3,8,9 and the ones in struct
+ssb_sprom_core_pwr_info just for sprom 4,5,8,9. The old are probably not
+used by newer chips any more. I just found these because I generated my
+parsing code from broadcom open source code and got a compiler warning
+because of wrong sizes.
+> 
+> The patch still looks fine.
+> 
