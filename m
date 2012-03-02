@@ -1,152 +1,90 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed,  1 Feb 2012 00:13:56 +0100
-Subject: [PATCH 4/4] ssb: add support for bcm5354
-In-Reply-To: <1328051636-15449-1-git-send-email-hauke@hauke-m.de>
-References: <1328051636-15449-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1328051636-15449-5-git-send-email-hauke@hauke-m.de>
+From: Arend van Spriel <arend@broadcom.com>
+Date: Fri, 2 Mar 2012 11:39:46 +0100
+Subject: [RFC] bcma: add support for on-chip OTP memory used for
+ SPROM storage
+In-Reply-To: <4F4FF0A4.8080308@hauke-m.de>
+References: <1330033977-5741-1-git-send-email-arend@broadcom.com>
+ <4F48D997.1060400@hauke-m.de> <4F4B571E.7040704@broadcom.com>
+ <4F4FE989.3090108@broadcom.com> <4F4FF0A4.8080308@hauke-m.de>
+Message-ID: <4F50A372.2020608@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, m@bues.ch, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Rafal Milecki <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, b43 developer list <b43-dev@lists.infradead.org>
 
-This patch adds support the the BCM5354 SoC.
-It has a PMU and a constant not configurable clock.
+On 03/01/2012 10:56 PM, Hauke Mehrtens wrote:
+> On 03/01/2012 10:26 PM, Arend van Spriel wrote:
+>> On 02/27/2012 11:12 AM, Arend van Spriel wrote:
+>>> On 02/25/2012 01:52 PM, Hauke Mehrtens wrote:
+>>>> On 02/23/2012 10:52 PM, Arend van Spriel wrote:
+>>>>> Wireless Broadcom chips can have either their SPROM data stored
+>>>>> on either external SPROM or on-chip OTP memory. Both are accessed
+>>>>> through the same register space. This patch adds support for the
+>>>>> on-chip OTP memory.
+>>>>>
+>>>>> Tested with:
+>>>>> BCM43224 OTP and SPROM
+>>>>> BCM4331 SPROM
+>>>>> BCM4313 OTP
+>>>>
+>>>> Does bcma now support the same features regarding sprom and otp as
+>>>> brcmsamc expect it does not read out all the attributes brcmsmac reads
+>>>> out or are there any features still missing? I am just asking because
+>>>> the code used in brcmsmac is ~4 times longer.
+>>>
+>>> I started on using bcma sprom content in brcmsmac and indeed there are
+>>> some entries missing. The change in this patch only provides read-access
+>>> to the srom data. As the chip comes up for read-access there is not much
+>>> programming need to accomplish that. The only feature that is not there
+>>> is that on some chips OTP can be powered down for power-saving. The
+>>> current chips supported by BCMA don't have that.
+>>
+>> With BCMA retrieving the SPROM data correctly, regardless how/where it
+>> is stored I went to change brcmsmac to make use of it. However, it
+>> turned out several attributes were missing.
+>>
+>> Now I could go and extend the ssb_sprom structure, but there I got
+>> confused. The structure is filled by BCMA in the function
+>> bcma_sprom_extract_r8(). The name suggest it deals with SROM revision 8
+>> attributes, but:
+>>
+>>      for (i = 0; i<  3; i++) {
+>>          v = sprom[SPOFF(SSB_SPROM8_IL0MAC) + i];
+>>          *(((__be16 *)bus->sprom.il0mac) + i) = cpu_to_be16(v);
+>>      }
+>>
+>>      SPEX(board_rev, SSB_SPROM8_BOARDREV, ~0, 0);
+>>
+>>      SPEX(txpid2g[0], SSB_SPROM4_TXPID2G01, SSB_SPROM4_TXPID2G0,
+>>           SSB_SPROM4_TXPID2G0_SHIFT);
+>>      SPEX(txpid2g[1], SSB_SPROM4_TXPID2G01, SSB_SPROM4_TXPID2G1,
+>>           SSB_SPROM4_TXPID2G1_SHIFT);
+>>
+>> The attributes txpid2g that are filled here are deprecated for srom
+>> revision 8. Is b43 using these fields for boards with srom rev 8?
+> The code filling txpid2g is probably wrong or dated and should be
+> removed. It could be that the spec b43 is written on was based on an old
+> version of the Broadcom wl driver and they used txpid2g in n-phy code.
+> txpid2g is used by b43 (b43_nphy_tx_power_fix()), but brcmsmac
+> (wlc_phy_txpwr_fixpower_nphy()) uses 0 where b43 used the sprom values.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/ssb/driver_chipcommon_pmu.c |   48 +++++++++++++++++++++++++++++++---
- drivers/ssb/driver_mipscore.c       |    3 ++
- drivers/ssb/main.c                  |    3 ++
- drivers/ssb/ssb_private.h           |    4 +++
- 4 files changed, 53 insertions(+), 5 deletions(-)
+Take your word for it. Only looked at brcmsmac code and at a glance for 
+n-phy it seems hardcoded and determined by the phy revision.
 
-diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
-index e5a2e0e..b58fef7 100644
---- a/drivers/ssb/driver_chipcommon_pmu.c
-+++ b/drivers/ssb/driver_chipcommon_pmu.c
-@@ -13,6 +13,9 @@
- #include <linux/ssb/ssb_driver_chipcommon.h>
- #include <linux/delay.h>
- #include <linux/export.h>
-+#ifdef CONFIG_BCM47XX
-+#include <asm/mach-bcm47xx/nvram.h>
-+#endif
- 
- #include "ssb_private.h"
- 
-@@ -92,10 +95,6 @@ static void ssb_pmu0_pllinit_r0(struct ssb_chipcommon *cc,
- 	u32 pmuctl, tmp, pllctl;
- 	unsigned int i;
- 
--	if ((bus->chip_id == 0x5354) && !crystalfreq) {
--		/* The 5354 crystal freq is 25MHz */
--		crystalfreq = 25000;
--	}
- 	if (crystalfreq)
- 		e = pmu0_plltab_find_entry(crystalfreq);
- 	if (!e)
-@@ -321,7 +320,11 @@ static void ssb_pmu_pll_init(struct ssb_chipcommon *cc)
- 	u32 crystalfreq = 0; /* in kHz. 0 = keep default freq. */
- 
- 	if (bus->bustype == SSB_BUSTYPE_SSB) {
--		/* TODO: The user may override the crystal frequency. */
-+#ifdef CONFIG_BCM47XX
-+		char buf[20];
-+		if (nvram_getenv("xtalfreq", buf, sizeof(buf)) >= 0)
-+			crystalfreq = simple_strtoul(buf, NULL, 0);
-+#endif
- 	}
- 
- 	switch (bus->chip_id) {
-@@ -330,7 +333,11 @@ static void ssb_pmu_pll_init(struct ssb_chipcommon *cc)
- 		ssb_pmu1_pllinit_r0(cc, crystalfreq);
- 		break;
- 	case 0x4328:
-+		ssb_pmu0_pllinit_r0(cc, crystalfreq);
-+		break;
- 	case 0x5354:
-+		if (crystalfreq == 0)
-+			crystalfreq = 25000;
- 		ssb_pmu0_pllinit_r0(cc, crystalfreq);
- 		break;
- 	case 0x4322:
-@@ -607,3 +614,34 @@ void ssb_pmu_set_ldo_paref(struct ssb_chipcommon *cc, bool on)
- 
- EXPORT_SYMBOL(ssb_pmu_set_ldo_voltage);
- EXPORT_SYMBOL(ssb_pmu_set_ldo_paref);
-+
-+u32 ssb_pmu_get_cpu_clock(struct ssb_chipcommon *cc)
-+{
-+	struct ssb_bus *bus = cc->dev->bus;
-+
-+	switch (bus->chip_id) {
-+	case 0x5354:
-+		/* 5354 chip uses a non programmable PLL of frequency 240MHz */
-+		return 240000000;
-+	default:
-+		ssb_printk(KERN_ERR PFX
-+			   "ERROR: PMU cpu clock unknown for device %04X\n",
-+			   bus->chip_id);
-+		return 0;
-+	}
-+}
-+
-+u32 ssb_pmu_get_controlclock(struct ssb_chipcommon *cc)
-+{
-+	struct ssb_bus *bus = cc->dev->bus;
-+
-+	switch (bus->chip_id) {
-+	case 0x5354:
-+		return 120000000;
-+	default:
-+		ssb_printk(KERN_ERR PFX
-+			   "ERROR: PMU controlclock unknown for device %04X\n",
-+			   bus->chip_id);
-+		return 0;
-+	}
-+}
-diff --git a/drivers/ssb/driver_mipscore.c b/drivers/ssb/driver_mipscore.c
-index ced5015..d784ec8 100644
---- a/drivers/ssb/driver_mipscore.c
-+++ b/drivers/ssb/driver_mipscore.c
-@@ -208,6 +208,9 @@ u32 ssb_cpu_clock(struct ssb_mipscore *mcore)
- 	struct ssb_bus *bus = mcore->dev->bus;
- 	u32 pll_type, n, m, rate = 0;
- 
-+	if (bus->chipco.capabilities & SSB_CHIPCO_CAP_PMU)
-+	    	return ssb_pmu_get_cpu_clock(&bus->chipco);
-+
- 	if (bus->extif.dev) {
- 		ssb_extif_get_clockcontrol(&bus->extif, &pll_type, &n, &m);
- 	} else if (bus->chipco.dev) {
-diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
-index bb6317f..d109cf0 100644
---- a/drivers/ssb/main.c
-+++ b/drivers/ssb/main.c
-@@ -1094,6 +1094,9 @@ u32 ssb_clockspeed(struct ssb_bus *bus)
- 	u32 plltype;
- 	u32 clkctl_n, clkctl_m;
- 
-+	if (bus->chipco.capabilities & SSB_CHIPCO_CAP_PMU)
-+	    	return ssb_pmu_get_controlclock(&bus->chipco);
-+
- 	if (ssb_extif_available(&bus->extif))
- 		ssb_extif_get_clockcontrol(&bus->extif, &plltype,
- 					   &clkctl_n, &clkctl_m);
-diff --git a/drivers/ssb/ssb_private.h b/drivers/ssb/ssb_private.h
-index 7765301..a305550 100644
---- a/drivers/ssb/ssb_private.h
-+++ b/drivers/ssb/ssb_private.h
-@@ -207,4 +207,8 @@ static inline void b43_pci_ssb_bridge_exit(void)
- }
- #endif /* CONFIG_SSB_B43_PCI_BRIDGE */
- 
-+/* driver_chipcommon_pmu.c */
-+extern u32 ssb_pmu_get_cpu_clock(struct ssb_chipcommon *cc);
-+extern u32 ssb_pmu_get_controlclock(struct ssb_chipcommon *cc);
-+
- #endif /* LINUX_SSB_PRIVATE_H_ */
--- 
-1.7.5.4
+>> I propose to move to BCMA having its own sprom structure definition.
+>> Srom revision 10 is upcoming and it does only apply to BCMA-based cards.
+> Doesn't this also apply for srom rev 9, or are there any ssb based
+> devices with srom rev 9 out there?
+
+You are right. The overlap is for revision 8, which is found in both ssb 
+and bcma based cards. For bcm4331 it is more subtle as there are cards 
+with srom rev 8 and srom rev 9. Not sure if and how b43 is dealing with 
+that.
+
+I will prepare a RFC patch with a new bcma_sprom structure, but I would 
+prefer someone from b43 to provide the patch for the b43 driver to use 
+the new structure as I am not familiar with that driver.
+
+Gr. AvS
