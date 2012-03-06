@@ -1,19 +1,17 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 6 Mar 2012 22:59:42 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Tue, 06 Mar 2012 23:55:08 +0100
 Subject: [RFT][PATCH] b43: fix logic in GPIO configuration
 In-Reply-To: <1331071898-3651-1-git-send-email-zajec5@gmail.com>
 References: <1331071898-3651-1-git-send-email-zajec5@gmail.com>
-Message-ID: <20120306225942.6a115221@milhouse>
+Message-ID: <4F5695CC.3010206@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org, larry.finger@lwfinger.net, florian@openwrt.org
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, larry.finger@lwfinger.net, florian@openwrt.org, m@bues.ch
 
-On Tue,  6 Mar 2012 23:11:38 +0100
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-
+On 03/06/2012 11:11 PM, Rafa? Mi?ecki wrote:
 > By using reverted mask we were taking over pins we were not supporsed to
 > touch. After fixing this workaround for BCM5354 should not be needed
 > anymore.
@@ -55,31 +53,16 @@ Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 >  #endif
 >  	}
 
-This patch makes sense. Can you also check b43legacy? I guess it has the same problem.
+Hi,
 
-And while we're at it, you could also remove these two lines:
+This patch did not helped fixing my problem. The ucode still takes over
+the GPIOs of the buttons with firmware version 666.2. I am getting the
+following messages:
 
-2737         if (dev->dev->core_rev >= 2)
-2738                 mask |= 0x0010; /* FIXME: This is redundant. */
-
-because core_rev is always >= 2 in b43 and as the FIXME says the bit is already set.
-
-
-Also, take a look at b43_gpio_cleanup() (in b43 and b43legacy).
-It always forces all bits to zero. This clearly is wrong, too. It is supposed to
-revert the changes done in the b43 GPIO setup. It seems too complicated to
-fixup the code to actually do this, though. I think we should simply get rid of
-b43_gpio_cleanup() completely and simply leave the GPIOs as-is. No kittens
-will be hurt by doing so; so it's ok.
-
--- 
-Greetings, Michael.
-
-PGP encryption is encouraged / 908D8B0E
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120306/68cb7f1b/attachment.sig>
+[   83.620000] b43-phy0: Loading firmware version 666.2 (2011-02-23
+01:15:07)
+[   83.624000] Init value of B43_GPIO_CONTROL: 0x0
+[   83.632000] b43-phy0 debug: b2062: Using crystal tab entry 19200 kHz.
+[   83.640000] hotplug_button: action: pressed, name: reset, seen: 17179652
+[   83.644000] hotplug_button: action: pressed, name: ses, seen: 17179652
+[   89.404000] b43-phy0 debug: Chip initialized
