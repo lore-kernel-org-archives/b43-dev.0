@@ -1,80 +1,34 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 7 Mar 2012 07:52:53 +0100
+Date: Wed, 7 Mar 2012 07:54:44 +0100
 Subject: [RFT][PATCH] b43: fix logic in GPIO configuration
-In-Reply-To: <4F5695CC.3010206@hauke-m.de>
+In-Reply-To: <20120307003221.7664eb4a@milhouse>
 References: <1331071898-3651-1-git-send-email-zajec5@gmail.com>
- <4F5695CC.3010206@hauke-m.de>
-Message-ID: <CACna6rwCbwW4iaZ8HRVo_Hrfk_Z+q-E7ad=i9f0C=pF=-zHeEQ@mail.gmail.com>
+ <4F5695CC.3010206@hauke-m.de> <20120307003221.7664eb4a@milhouse>
+Message-ID: <CACna6rzo79zByzwqcF77nadqFjHRk6v6nkG=05VohJV2ijQn1w@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, larry.finger@lwfinger.net, florian@openwrt.org, m@bues.ch
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, larry.finger@lwfinger.net, florian@openwrt.org
 
-W dniu 6 marca 2012 23:55 u?ytkownik Hauke Mehrtens <hauke@hauke-m.de> napisa?:
-> On 03/06/2012 11:11 PM, Rafa? Mi?ecki wrote:
->> By using reverted mask we were taking over pins we were not supporsed to
->> touch. After fixing this workaround for BCM5354 should not be needed
->> anymore.
+2012/3/7 Michael B?sch <m@bues.ch>:
+> On Tue, 06 Mar 2012 23:55:08 +0100
+> Hauke Mehrtens <hauke@hauke-m.de> wrote:
+>
+>> This patch did not helped fixing my problem. The ucode still takes over
+>> the GPIOs of the buttons with firmware version 666.2. I am getting the
+>> following messages:
 >>
->> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->> ---
->> ?drivers/net/wireless/b43/main.c | ? ?6 ++----
->> ?1 files changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
->> index 1d633f3..8a89885 100644
->> --- a/drivers/net/wireless/b43/main.c
->> +++ b/drivers/net/wireless/b43/main.c
->> @@ -2706,8 +2706,6 @@ static int b43_gpio_init(struct b43_wldev *dev)
->> ? ? ? ? ? ? ? mask |= 0x0060;
->> ? ? ? ? ? ? ? set |= 0x0060;
->> ? ? ? }
->> - ? ? if (dev->dev->chip_id == 0x5354)
->> - ? ? ? ? ? ? set &= 0xff02;
->> ? ? ? if (0 /* FIXME: conditional unknown */ ) {
->> ? ? ? ? ? ? ? b43_write16(dev, B43_MMIO_GPIO_MASK,
->> ? ? ? ? ? ? ? ? ? ? ? ? ? b43_read16(dev, B43_MMIO_GPIO_MASK)
->> @@ -2730,7 +2728,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
->> ? ? ? case B43_BUS_BCMA:
->> ? ? ? ? ? ? ? bcma_cc_write32(&dev->dev->bdev->bus->drv_cc, BCMA_CC_GPIOCTL,
->> ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? (bcma_cc_read32(&dev->dev->bdev->bus->drv_cc,
->> - ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? BCMA_CC_GPIOCTL) & mask) | set);
->> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? BCMA_CC_GPIOCTL) & ~mask) | set);
->> ? ? ? ? ? ? ? break;
->> ?#endif
->> ?#ifdef CONFIG_B43_SSB
->> @@ -2739,7 +2737,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
->> ? ? ? ? ? ? ? if (gpiodev)
->> ? ? ? ? ? ? ? ? ? ? ? ssb_write32(gpiodev, B43_GPIO_CONTROL,
->> ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? (ssb_read32(gpiodev, B43_GPIO_CONTROL)
->> - ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? & mask) | set);
->> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? & ~mask) | set);
->> ? ? ? ? ? ? ? break;
->> ?#endif
->> ? ? ? }
+>> [ ? 83.620000] b43-phy0: Loading firmware version 666.2 (2011-02-23
+>> 01:15:07)
+>> [ ? 83.624000] Init value of B43_GPIO_CONTROL: 0x0
 >
-> Hi,
 >
-> This patch did not helped fixing my problem. The ucode still takes over
-> the GPIOs of the buttons with firmware version 666.2. I am getting the
-> following messages:
->
-> [ ? 83.620000] b43-phy0: Loading firmware version 666.2 (2011-02-23
-> 01:15:07)
-> [ ? 83.624000] Init value of B43_GPIO_CONTROL: 0x0
-> [ ? 83.632000] b43-phy0 debug: b2062: Using crystal tab entry 19200 kHz.
-> [ ? 83.640000] hotplug_button: action: pressed, name: reset, seen: 17179652
-> [ ? 83.644000] hotplug_button: action: pressed, name: ses, seen: 17179652
-> [ ? 89.404000] b43-phy0 debug: Chip initialized
+> I think this is caused by b43_gpio_cleanup. Can you try removing that function (or just returning early, for the time being.)
 
-Interesting/weird. I suspected there are some bits set in
-B43_GPIO_CONTROL we should not clean. And you just adjusted "set" to
-keep them set. But now it seems B43_GPIO_CONTROL is *zero* at the
-beginning and we actually have to *set* 0xFF00 to stop firmware
-touching them? Really tricky, I didn't suspect we may need to change
-default state of non-b43-related GPIOs.
+B43_GPIO_CONTROL is zero by default (after boot), so AFAIU setting it
+back to zero in b43_gpio_cleanup shouldn't break anything.
 
 -- 
 Rafa?
