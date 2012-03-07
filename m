@@ -1,102 +1,51 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 7 Mar 2012 08:23:05 +0100
-Subject: [RFT][PATCH] b43: fix logic in GPIO configuration
-In-Reply-To: <CACna6rwCbwW4iaZ8HRVo_Hrfk_Z+q-E7ad=i9f0C=pF=-zHeEQ@mail.gmail.com>
-References: <1331071898-3651-1-git-send-email-zajec5@gmail.com>
- <4F5695CC.3010206@hauke-m.de>
- <CACna6rwCbwW4iaZ8HRVo_Hrfk_Z+q-E7ad=i9f0C=pF=-zHeEQ@mail.gmail.com>
-Message-ID: <CACna6rxq5XHjB=21iaNWADMZOUativUe1DQOAb_SGPST7nhcCg@mail.gmail.com>
+From: Arend van Spriel <arend@broadcom.com>
+Date: Wed, 7 Mar 2012 08:45:58 +0100
+Subject: [RFC] bcma: replace ssb_sprom structure with bcma_sprom structure
+In-Reply-To: <4F569C78.90204@hauke-m.de>
+References: <1331036818-9240-1-git-send-email-arend@broadcom.com>
+ <4F569C78.90204@hauke-m.de>
+Message-ID: <4F571236.7070608@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, larry.finger@lwfinger.net, florian@openwrt.org, m@bues.ch
+Cc: Rafal Milecki <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev-list <b43-dev@lists.infradead.org>
 
-W dniu 7 marca 2012 07:52 u?ytkownik Rafa? Mi?ecki <zajec5@gmail.com> napisa?:
-> W dniu 6 marca 2012 23:55 u?ytkownik Hauke Mehrtens <hauke@hauke-m.de> napisa?:
->> On 03/06/2012 11:11 PM, Rafa? Mi?ecki wrote:
->>> By using reverted mask we were taking over pins we were not supporsed to
->>> touch. After fixing this workaround for BCM5354 should not be needed
->>> anymore.
->>>
->>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->>> ---
->>> ?drivers/net/wireless/b43/main.c | ? ?6 ++----
->>> ?1 files changed, 2 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
->>> index 1d633f3..8a89885 100644
->>> --- a/drivers/net/wireless/b43/main.c
->>> +++ b/drivers/net/wireless/b43/main.c
->>> @@ -2706,8 +2706,6 @@ static int b43_gpio_init(struct b43_wldev *dev)
->>> ? ? ? ? ? ? ? mask |= 0x0060;
->>> ? ? ? ? ? ? ? set |= 0x0060;
->>> ? ? ? }
->>> - ? ? if (dev->dev->chip_id == 0x5354)
->>> - ? ? ? ? ? ? set &= 0xff02;
->>> ? ? ? if (0 /* FIXME: conditional unknown */ ) {
->>> ? ? ? ? ? ? ? b43_write16(dev, B43_MMIO_GPIO_MASK,
->>> ? ? ? ? ? ? ? ? ? ? ? ? ? b43_read16(dev, B43_MMIO_GPIO_MASK)
->>> @@ -2730,7 +2728,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
->>> ? ? ? case B43_BUS_BCMA:
->>> ? ? ? ? ? ? ? bcma_cc_write32(&dev->dev->bdev->bus->drv_cc, BCMA_CC_GPIOCTL,
->>> ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? (bcma_cc_read32(&dev->dev->bdev->bus->drv_cc,
->>> - ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? BCMA_CC_GPIOCTL) & mask) | set);
->>> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? BCMA_CC_GPIOCTL) & ~mask) | set);
->>> ? ? ? ? ? ? ? break;
->>> ?#endif
->>> ?#ifdef CONFIG_B43_SSB
->>> @@ -2739,7 +2737,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
->>> ? ? ? ? ? ? ? if (gpiodev)
->>> ? ? ? ? ? ? ? ? ? ? ? ssb_write32(gpiodev, B43_GPIO_CONTROL,
->>> ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? (ssb_read32(gpiodev, B43_GPIO_CONTROL)
->>> - ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? & mask) | set);
->>> + ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? & ~mask) | set);
->>> ? ? ? ? ? ? ? break;
->>> ?#endif
->>> ? ? ? }
+On 03/07/2012 12:23 AM, Hauke Mehrtens wrote:
+> On 03/06/2012 01:26 PM, Arend van Spriel wrote:
+>> BCMA shared a structure with SSB in which sprom data was stored. This
+>> could have been appropriate but with upcoming srom revisions that are
+>> of no interest to SSB it is better to have own definitions with BCMA.
 >>
->> Hi,
->>
->> This patch did not helped fixing my problem. The ucode still takes over
->> the GPIOs of the buttons with firmware version 666.2. I am getting the
->> following messages:
->>
->> [ ? 83.620000] b43-phy0: Loading firmware version 666.2 (2011-02-23
->> 01:15:07)
->> [ ? 83.624000] Init value of B43_GPIO_CONTROL: 0x0
->> [ ? 83.632000] b43-phy0 debug: b2062: Using crystal tab entry 19200 kHz.
->> [ ? 83.640000] hotplug_button: action: pressed, name: reset, seen: 17179652
->> [ ? 83.644000] hotplug_button: action: pressed, name: ses, seen: 17179652
->> [ ? 89.404000] b43-phy0 debug: Chip initialized
+>> This patch adds support for srom revisions 8 and 9.
 >
-> Interesting/weird. I suspected there are some bits set in
-> B43_GPIO_CONTROL we should not clean. And you just adjusted "set" to
-> keep them set. But now it seems B43_GPIO_CONTROL is *zero* at the
-> beginning and we actually have to *set* 0xFF00 to stop firmware
-> touching them? Really tricky, I didn't suspect we may need to change
-> default state of non-b43-related GPIOs.
+> Will sprom version 10 contain many new or different attributes so the
+> struct has to be extended a lot in comparison to the changes made from
+> version 8 to 9?
+>
 
-Ahh, sorry. For all the time I believed the code you added was:
-set |= 0xff02;
+For version 10 there are only a couple of new attributes, but version 11 
+is a major overhaul. Initially, I intended to have the bcma_sprom 
+structure contain a union of revision specific structs, but the flat 
+ssb_sprom structure made me reconsider. Looking at the current size of 
+bcma_sprom I am tempted to move back to the original union solution.
 
-However the code you *really* added is:
-set &= 0xff02;
+>>
+>> Signed-off-by: Arend van Spriel<arend@broadcom.com>
+>> ---
+>> The BCMA structure is based on internal specifications. Therefor the structure
+>> fields are not matching the SSB sprom structure. By dropping the use of the SSB
+>> sprom structure in BCMA a fair amount of work is needed in b43 driver. If it
+>> helps I can provide a mapping between bcma_sprom and ssb_sprom structure members.
+> The bcm47xx architecture code will not compile with this patch either.
+>
+> A quick look into b43 showed that it uses the boardflags flags all other
+> the code and the other stuff in most cases just in some initialization
+> function of the specific phy so it should be manageable to use a
+> different sprom strcut for bcma. Is there any other PHY than the N-PHY
+> that is used with ssb and bcma?
 
-Sorry for messing. OK, let's short analyze that. By default we set "set" to:
-set = 0x0000000F;
-so you code basically makes it
-set = 0x00000002;
+I believe all AXI chips are having some flavour of N-PHY (or 11ac).
 
-0x2 (BIT 1) is wlan led on your device. So you let firmware use wlan
-led, but you stop it from touching power led (0x1), reset button (0x4)
-and ses button (0x8). OK, it makes sense.
-
-In the brcm80211 code there was unused si_gpioreserve function. I
-guess it used to be called in some way like:
-if (dev->dev->chip_id == 0x5354)
-si_gpioreserve(sih, 0x2, 1+)
-
--- 
-Rafa?
+Gr. AvS
