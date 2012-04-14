@@ -1,40 +1,30 @@
-From: Ben Prescott <b43-dev.lists@thewatertower.org>
-Date: Wed, 11 Apr 2012 18:39:25 +0100
-Subject: b43: system hangs during kernel initialisation [14e4:4318]
-In-Reply-To: <43470.80.0.47.200.1332963853.squirrel@server27.ukservers.net>
-References: <4F72181C.3030903@thewatertower.org>
- <4F723155.1080104@lwfinger.net> <4F72AE46.1050805@thewatertower.org>
- <4F7335FC.5090501@lwfinger.net>
- <43470.80.0.47.200.1332963853.squirrel@server27.ukservers.net>
-Message-ID: <4F85C1CD.1010506@thewatertower.org>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 14 Apr 2012 22:20:27 +0200
+Subject: brcmsmac on BCM47XX SoCs
+In-Reply-To: <4F815181.6030007@broadcom.com>
+References: <4F7F71A2.40105@hauke-m.de> <4F815181.6030007@broadcom.com>
+Message-ID: <4F89DC0B.20106@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
 
+On 04/08/2012 10:51 AM, Arend van Spriel wrote:
+> On 04/06/2012 11:43 PM, Hauke Mehrtens wrote:
+>> Are there any devices with a ccrev<  20 supported by brcmsmac, the
+>> lowest version I saw was 31 and there are some conditions in brcmsmac
+>> for<  6,<  10 and<  20?
+> 
+> brcmsmac is targetted for bcm4313, bcm43224, and bcm43225 so the lowest
+> is ccrev 32. The bcm4718 seems to have ccrev 31.
+> 
 
-On 28/03/12 20:44, Ben Prescott wrote:
-> Not a problem at all;  the b43.blacklist=yes kernel param causes the
-> module to bail out;  I used that to get 12.04 installed.
->
-> That said, I rebuilt to 11.10 to test older kernels, and that's where the
-> system is at the moment.
->
-> I've installed Ubuntu's b43 firmware package and rebooted into the
-> 3.2.0-rc2 kernel.
->
-> that works, now.
->
-> regards, Ben
->
-> ben at tecumseh:~$ uname -a
-> Linux tecumseh 3.2.0-030200rc2-generic #201111151435 SMP Tue Nov 15
-> 19:43:49 UTC 2011 i686 i686 i386 GNU/Linux
->
+Now I am at the pci core rev. Are there any bcma/ai based devices with a
+PCI not PCIE core on the chip? The PCIE cores of my devices are rev 14
+(BCM4718) and 15 (BCM43224) are there any devices with a bus supported
+by bcma available with a revision less than 14? In brcmsmac is lots of
+code to do something different on devices with such PCI(E) core revs.
 
-Further reports of this issue are arising, this time on old Apple kit.
-
-https://bugs.launchpad.net/ubuntu/+source/casper/+bug/956677
-
-regards, Ben
+Hauke
