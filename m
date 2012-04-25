@@ -1,30 +1,49 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sat, 14 Apr 2012 22:20:27 +0200
-Subject: brcmsmac on BCM47XX SoCs
-In-Reply-To: <4F815181.6030007@broadcom.com>
-References: <4F7F71A2.40105@hauke-m.de> <4F815181.6030007@broadcom.com>
-Message-ID: <4F89DC0B.20106@hauke-m.de>
+From: Seth Forshee <seth.forshee@canonical.com>
+Date: Wed, 25 Apr 2012 17:28:00 -0500
+Subject: [PATCH] b43: only reload config after successful initialization
+Message-ID: <1335392880-23250-1-git-send-email-seth.forshee@canonical.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
+To: Stefano Brivio <stefano.brivio@polimi.it>, linux-wireless@vger.kernel.org
+Cc: b43-dev@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>, Felix Fietkau <nbd@openwrt.org>
 
-On 04/08/2012 10:51 AM, Arend van Spriel wrote:
-> On 04/06/2012 11:43 PM, Hauke Mehrtens wrote:
->> Are there any devices with a ccrev<  20 supported by brcmsmac, the
->> lowest version I saw was 31 and there are some conditions in brcmsmac
->> for<  6,<  10 and<  20?
-> 
-> brcmsmac is targetted for bcm4313, bcm43224, and bcm43225 so the lowest
-> is ccrev 32. The bcm4718 seems to have ccrev 31.
-> 
+Commit 2a19032 (b43: reload phy and bss settings after core restarts)
+introduced an unconditional call to b43_op_config() at the end of
+b43_op_start(). When firmware fails to load this can wedge the system.
+There's no need to reload the configuration after a failed
+initialization anyway, so only make the call if initialization was
+successful.
 
-Now I am at the pci core rev. Are there any bcma/ai based devices with a
-PCI not PCIE core on the chip? The PCIE cores of my devices are rev 14
-(BCM4718) and 15 (BCM43224) are there any devices with a bus supported
-by bcma available with a revision less than 14? In brcmsmac is lots of
-code to do something different on devices with such PCI(E) core revs.
+BugLink: http://bugs.launchpad.net/bugs/950295
+Cc: Felix Fietkau <nbd@openwrt.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+---
+ drivers/net/wireless/b43/main.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Hauke
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 05ea95b..617afc8 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4841,8 +4841,14 @@ static int b43_op_start(struct ieee80211_hw *hw)
+  out_mutex_unlock:
+ 	mutex_unlock(&wl->mutex);
+ 
+-	/* reload configuration */
+-	b43_op_config(hw, ~0);
++	/*
++	 * Configuration may have been overwritten during initialization.
++	 * Reload the configuration, but only if initialization was
++	 * successful. Reloading the configuration after a failed init
++	 * may hang the system.
++	 */
++	if (!err)
++		b43_op_config(hw, ~0);
+ 
+ 	return err;
+ }
+-- 
+1.7.9.5
