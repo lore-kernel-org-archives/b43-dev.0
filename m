@@ -1,76 +1,33 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sun, 29 Apr 2012 02:18:52 +0200
-Subject: [PATCH 4/4] bcma: add bcma_core_pci_config_fixup()
+From: Arend van Spriel <arend@broadcom.com>
+Date: Sun, 29 Apr 2012 10:05:22 +0200
+Subject: [PATCH 0/4] bcma: add PCI functions from brcmsmac
 In-Reply-To: <1335658732-24351-1-git-send-email-hauke@hauke-m.de>
 References: <1335658732-24351-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1335658732-24351-5-git-send-email-hauke@hauke-m.de>
+Message-ID: <4F9CF642.1000705@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, arend@broadcom.com, Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-This code is based on code from pcie_misc_config_fixup() in brcmsmac.
-This patch is part of the move of pci specific code from brcmsmac to
-bcma.
+On 04/29/2012 02:18 AM, Hauke Mehrtens wrote:
+> This patch series contains the functions regarding the PCIe core from
+> brcmsmac for the supported PCIe core revisions.
+>
+> Some of these functions have to be called on resume after suspend, but
+> I do not know which or if all have to be called. I do not have a PCIe
+> based device supported by brcmsmac, so I can not test this. Could
+> someone which such a device do some tests and create a patch with the
+> functions, which have to be called on resume.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/bcma/driver_pci.c            |   18 ++++++++++++++++++
- include/linux/bcma/bcma_driver_pci.h |    4 ++++
- 2 files changed, 22 insertions(+)
+I do have some devices and feel it is my/our responsibility to get this 
+tested. I let you know the results.
 
-diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
-index 472d14f..9a96f14 100644
---- a/drivers/bcma/driver_pci.c
-+++ b/drivers/bcma/driver_pci.c
-@@ -186,6 +186,23 @@ static void bcma_core_pci_fixcfg(struct bcma_drv_pci *pc)
- 	}
- }
- 
-+/* Fix MISC config to allow coming out of L2/L3-Ready state w/o PRST */
-+/* Needs to happen when coming out of 'standby'/'hibernate' */
-+static void bcma_core_pci_config_fixup(struct bcma_drv_pci *pc)
-+{
-+	u16 val16;
-+	uint regoff;
-+
-+	regoff = BCMA_CORE_PCI_SPROM(BCMA_CORE_PCI_SPROM_MISC_CONFIG);
-+
-+	val16 = pcicore_read16(pc, regoff);
-+
-+	if (!(val16 & BCMA_CORE_PCI_SPROM_L23READY_EXIT_NOPERST)) {
-+		val16 |= BCMA_CORE_PCI_SPROM_L23READY_EXIT_NOPERST;
-+		pcicore_write16(pc, regoff, val16);
-+	}
-+}
-+
- /**************************************************
-  * Init.
-  **************************************************/
-@@ -194,6 +211,7 @@ static void __devinit bcma_core_pci_clientmode_init(struct bcma_drv_pci *pc)
- {
- 	bcma_core_pci_fixcfg(pc);
- 	bcma_pcicore_serdes_workaround(pc);
-+	bcma_core_pci_config_fixup(pc);
- }
- 
- void __devinit bcma_core_pci_init(struct bcma_drv_pci *pc)
-diff --git a/include/linux/bcma/bcma_driver_pci.h b/include/linux/bcma/bcma_driver_pci.h
-index 5b0542c..41da581 100644
---- a/include/linux/bcma/bcma_driver_pci.h
-+++ b/include/linux/bcma/bcma_driver_pci.h
-@@ -90,6 +90,10 @@ struct pci_dev;
- #define  BCMA_CORE_PCI_SPROM_PI_OFFSET		0	/* first word */
- #define   BCMA_CORE_PCI_SPROM_PI_MASK		0xf000	/* bit 15:12 */
- #define   BCMA_CORE_PCI_SPROM_PI_SHIFT		12	/* bit 15:12 */
-+#define  BCMA_CORE_PCI_SPROM_MISC_CONFIG	5	/* word 5 */
-+#define   BCMA_CORE_PCI_SPROM_L23READY_EXIT_NOPERST	0x8000	/* bit 15 */
-+#define   BCMA_CORE_PCI_SPROM_CLKREQ_OFFSET_REV5	20	/* word 20 for srom rev <= 5 */
-+#define   BCMA_CORE_PCI_SPROM_CLKREQ_ENB	0x0800	/* bit 11 */
- 
- /* SBtoPCIx */
- #define BCMA_CORE_PCI_SBTOPCI_MEM		0x00000000
--- 
-1.7.9.5
+> The goal of theses patches is to remove the PCIe code from brcmsmac to
+> get one step ahead in making brcmsmac support non pcie based devices.
+>
+> This is based on wireless-testing/master.
+>
+
+Gr. AvS
