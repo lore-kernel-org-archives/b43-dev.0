@@ -1,49 +1,47 @@
-From: Seth Forshee <seth.forshee@canonical.com>
-Date: Wed, 25 Apr 2012 17:28:00 -0500
-Subject: [PATCH] b43: only reload config after successful initialization
-Message-ID: <1335392880-23250-1-git-send-email-seth.forshee@canonical.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 29 Apr 2012 02:04:05 +0200
+Subject: [PATCH 0/8] ssb/bcma/bcm47xx: extend boardinfo and sprom
+Message-ID: <1335657853-23925-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefano Brivio <stefano.brivio@polimi.it>, linux-wireless@vger.kernel.org
-Cc: b43-dev@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>, Felix Fietkau <nbd@openwrt.org>
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch, ralf@linux-mips.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-Commit 2a19032 (b43: reload phy and bss settings after core restarts)
-introduced an unconditional call to b43_op_config() at the end of
-b43_op_start(). When firmware fails to load this can wedge the system.
-There's no need to reload the configuration after a failed
-initialization anyway, so only make the call if initialization was
-successful.
+This patch series fixes the boardinfo for ssb based devices by removing 
+board_rev from the struct, this should be fetched from sprom. In 
+addition a boardinfo struct was added to bcma.
+The pci sprom parsing code was extended for bcma to provide all 
+attributes needed by brcmsmac and that code was also copied to ssb.
 
-BugLink: http://bugs.launchpad.net/bugs/950295
-Cc: Felix Fietkau <nbd@openwrt.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
----
- drivers/net/wireless/b43/main.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+This is based on wireless-testing/master.
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 05ea95b..617afc8 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4841,8 +4841,14 @@ static int b43_op_start(struct ieee80211_hw *hw)
-  out_mutex_unlock:
- 	mutex_unlock(&wl->mutex);
- 
--	/* reload configuration */
--	b43_op_config(hw, ~0);
-+	/*
-+	 * Configuration may have been overwritten during initialization.
-+	 * Reload the configuration, but only if initialization was
-+	 * successful. Reloading the configuration after a failed init
-+	 * may hang the system.
-+	 */
-+	if (!err)
-+		b43_op_config(hw, ~0);
- 
- 	return err;
- }
+Hauke Mehrtens (8):
+  ssb: remove rev from boardinfo
+  MIPS: bcm47xx: refactor fetching board data
+  bcma: add boardinfo struct
+  MIPS: bcm47xx: read baordrev without prefix from sprom
+  ssb/bcma: fill attribute alpha2 from sprom
+  ssb: fill board_rev attribute from sprom
+  bcma: read out some additional sprom attributes
+  bcma/ssb: parse new attributes from sprom
+
+ arch/mips/bcm47xx/setup.c                    |   11 +-
+ arch/mips/bcm47xx/sprom.c                    |   26 +++++
+ arch/mips/include/asm/mach-bcm47xx/bcm47xx.h |    9 ++
+ drivers/bcma/host_pci.c                      |    3 +
+ drivers/bcma/sprom.c                         |  149 +++++++++++++++++++++++++-
+ drivers/net/wireless/b43/bus.c               |    6 +-
+ drivers/net/wireless/b43/main.c              |    4 +-
+ drivers/net/wireless/b43legacy/main.c        |    2 +-
+ drivers/net/wireless/b43legacy/phy.c         |    4 +-
+ drivers/net/wireless/b43legacy/radio.c       |   10 +-
+ drivers/ssb/pci.c                            |   88 +++++++++++++--
+ include/linux/bcma/bcma.h                    |    7 ++
+ include/linux/ssb/ssb.h                      |    1 -
+ include/linux/ssb/ssb_regs.h                 |   61 ++++++++++-
+ 14 files changed, 347 insertions(+), 34 deletions(-)
+
 -- 
 1.7.9.5
