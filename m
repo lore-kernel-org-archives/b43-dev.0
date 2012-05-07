@@ -1,40 +1,41 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 06 May 2012 16:01:05 -0500
-Subject: [PATCH] b43legacy: Fix error due to MMIO access with SSB
- unpowered
-Message-ID: <4fa6e691.07pJDEPTzATe9gO6%Larry.Finger@lwfinger.net>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Mon,  7 May 2012 23:04:53 +0200
+Subject: [PATCH] ssb: add PCI IDs 0x4322 and 0xa8d6
+Message-ID: <1336424693-25926-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John W Linville <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, m@bues.ch, Hauke Mehrtens <hauke@hauke-m.de>
 
-There is a dummy read of a PCI MMIO register that occurs before the SSB bus
-has been powered, which is an error. This bug has not been seen earlier,
-but was apparently exposed when udev was updated to version 182.
+The 0x4322 ID is found on the BCM4322 used on some SoCs like the
+Linksys WRT610N V1 connected to a BCM4705. The 0xa8d6 ID is found on
+the BCM43222 used on some other SoCs like the D-Link DSL-2760U
+connected to a BCM63xx.
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
+ drivers/ssb/b43_pci_bridge.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-John,
-
-This fix should be applied to 3.4.
-
-Larry
----
-
-Index: wireless-testing-new/drivers/net/wireless/b43legacy/main.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/b43legacy/main.c
-+++ wireless-testing-new/drivers/net/wireless/b43legacy/main.c
-@@ -1573,8 +1573,6 @@ static void b43legacy_request_firmware(s
- 	const char *filename;
- 	int err;
- 
--	/* do dummy read */
--	ssb_read32(dev->dev, SSB_TMSHIGH);
- 	if (!fw->ucode) {
- 		if (rev == 2)
- 			filename = "ucode2";
+diff --git a/drivers/ssb/b43_pci_bridge.c b/drivers/ssb/b43_pci_bridge.c
+index bad7ba5..f824fec 100644
+--- a/drivers/ssb/b43_pci_bridge.c
++++ b/drivers/ssb/b43_pci_bridge.c
+@@ -29,11 +29,13 @@ static const struct pci_device_id b43_pci_bridge_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4319) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4320) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4321) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4322) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4324) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4325) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4328) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4329) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x432b) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0xa8d6) },
+ 	{ 0, },
+ };
+ MODULE_DEVICE_TABLE(pci, b43_pci_bridge_tbl);
+-- 
+1.7.9.5
