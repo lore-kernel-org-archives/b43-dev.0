@@ -1,41 +1,34 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Mon,  7 May 2012 23:04:53 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Mon, 7 May 2012 23:11:56 +0200
 Subject: [PATCH] ssb: add PCI IDs 0x4322 and 0xa8d6
-Message-ID: <1336424693-25926-1-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1336424693-25926-1-git-send-email-hauke@hauke-m.de>
+References: <1336424693-25926-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <20120507231156.22350d39@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, m@bues.ch, Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-The 0x4322 ID is found on the BCM4322 used on some SoCs like the
-Linksys WRT610N V1 connected to a BCM4705. The 0xa8d6 ID is found on
-the BCM43222 used on some other SoCs like the D-Link DSL-2760U
-connected to a BCM63xx.
+On Mon,  7 May 2012 23:04:53 +0200
+Hauke Mehrtens <hauke@hauke-m.de> wrote:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/ssb/b43_pci_bridge.c |    2 ++
- 1 file changed, 2 insertions(+)
+> The 0x4322 ID is found on the BCM4322 used on some SoCs like the
+> Linksys WRT610N V1 connected to a BCM4705. The 0xa8d6 ID is found on
+> the BCM43222 used on some other SoCs like the D-Link DSL-2760U
 
-diff --git a/drivers/ssb/b43_pci_bridge.c b/drivers/ssb/b43_pci_bridge.c
-index bad7ba5..f824fec 100644
---- a/drivers/ssb/b43_pci_bridge.c
-+++ b/drivers/ssb/b43_pci_bridge.c
-@@ -29,11 +29,13 @@ static const struct pci_device_id b43_pci_bridge_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4319) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4320) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4321) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4322) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4324) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4325) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4328) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4329) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x432b) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0xa8d6) },
- 	{ 0, },
- };
- MODULE_DEVICE_TABLE(pci, b43_pci_bridge_tbl);
+It would probably make more sense, if we wrote the 0xa8d6 in decimal.
+Which is 43222.
+
 -- 
-1.7.9.5
+Greetings, Michael.
+
+PGP encryption is encouraged / 908D8B0E
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120507/eb966955/attachment.sig>
