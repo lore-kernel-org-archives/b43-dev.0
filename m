@@ -1,34 +1,35 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 7 May 2012 23:11:56 +0200
-Subject: [PATCH] ssb: add PCI IDs 0x4322 and 0xa8d6
-In-Reply-To: <1336424693-25926-1-git-send-email-hauke@hauke-m.de>
-References: <1336424693-25926-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <20120507231156.22350d39@milhouse>
+From: Francesco Gringoli <francesco.gringoli@ing.unibs.it>
+Date: Tue, 8 May 2012 00:38:20 +0200
+Subject: multiple SSID support (in BCM4318)
+In-Reply-To: <op.wdviz4o2trbvx2@steve>
+References: <op.wdviz4o2trbvx2@steve>
+Message-ID: <FF9FBC50-1922-474E-B204-ECCA89C21FF3@ing.unibs.it>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On Mon,  7 May 2012 23:04:53 +0200
-Hauke Mehrtens <hauke@hauke-m.de> wrote:
 
-> The 0x4322 ID is found on the BCM4322 used on some SoCs like the
-> Linksys WRT610N V1 connected to a BCM4705. The 0xa8d6 ID is found on
-> the BCM43222 used on some other SoCs like the D-Link DSL-2760U
+On May 6, 2012, at 8:29 AM, Tom?? Hnyk wrote:
 
-It would probably make more sense, if we wrote the 0xa8d6 in decimal.
-Which is 43222.
+> Hello all,
+> are multiple SSID supported (especially on BCM4318)? I could not find the answer through googling.
+> 
+> By tw way, on your page, you say "BCM4318 chipset: AP mode does not work because of packet loss in high transmission rates. Hard to debug & fix." IS it still true? It seems to me it works fine, but I have been trying it only for a while.
+Hi Tom?s,
 
--- 
-Greetings, Michael.
+this problem was almost not detectable by users and it was finally addressed here http://lists.infradead.org/pipermail/b43-dev/2011-December/002249.html
 
-PGP encryption is encouraged / 908D8B0E
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120507/eb966955/attachment.sig>
+Everything should work fine as you say.
+
+KR,
+-Francesco
+
+> Regards,
+> Tomas
+> 
+> _______________________________________________
+> b43-dev mailing list
+> b43-dev at lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/b43-dev
