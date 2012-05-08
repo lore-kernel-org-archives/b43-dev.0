@@ -1,35 +1,35 @@
-From: Francesco Gringoli <francesco.gringoli@ing.unibs.it>
-Date: Tue, 8 May 2012 00:38:20 +0200
-Subject: multiple SSID support (in BCM4318)
-In-Reply-To: <op.wdviz4o2trbvx2@steve>
-References: <op.wdviz4o2trbvx2@steve>
-Message-ID: <FF9FBC50-1922-474E-B204-ECCA89C21FF3@ing.unibs.it>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Date: Tue, 08 May 2012 17:27:32 -0600
+Subject: [PATCH] b43: use pci_is_pcie() instead of obsolete pci_dev.is_pcie
+Message-ID: <20120508232732.19543.37241.stgit@bhelgaas.mtv.corp.google.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org
+Cc: b43-dev@lists.infradead.org, Stefano Brivio <stefano.brivio@polimi.it>, Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
 
+Use pci_is_pcie() instead of looking at obsolete is_pcie field in
+struct pci_dev.
 
-On May 6, 2012, at 8:29 AM, Tom?? Hnyk wrote:
+CC: Stefano Brivio <stefano.brivio@polimi.it>
+CC: b43-dev at lists.infradead.org
+CC: Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/net/wireless/b43/dma.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> Hello all,
-> are multiple SSID supported (especially on BCM4318)? I could not find the answer through googling.
-> 
-> By tw way, on your page, you say "BCM4318 chipset: AP mode does not work because of packet loss in high transmission rates. Hard to debug & fix." IS it still true? It seems to me it works fine, but I have been trying it only for a while.
-Hi Tom?s,
-
-this problem was almost not detectable by users and it was finally addressed here http://lists.infradead.org/pipermail/b43-dev/2011-December/002249.html
-
-Everything should work fine as you say.
-
-KR,
--Francesco
-
-> Regards,
-> Tomas
-> 
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index b5f1b91..777cd74 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -1109,7 +1109,7 @@ static bool b43_dma_translation_in_low_word(struct b43_wldev *dev,
+ #ifdef CONFIG_B43_SSB
+ 	if (dev->dev->bus_type == B43_BUS_SSB &&
+ 	    dev->dev->sdev->bus->bustype == SSB_BUSTYPE_PCI &&
+-	    !(dev->dev->sdev->bus->host_pci->is_pcie &&
++	    !(pci_is_pcie(dev->dev->sdev->bus->host_pci) &&
+ 	      ssb_read32(dev->dev->sdev, SSB_TMSHIGH) & SSB_TMSHIGH_DMA64))
+ 			return 1;
+ #endif
