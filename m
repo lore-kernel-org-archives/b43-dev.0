@@ -1,46 +1,50 @@
-From: Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
-Date: Wed, 09 May 2012 08:51:12 +0900
-Subject: [PATCH] b43: use pci_is_pcie() instead of obsolete pci_dev.is_pcie
-In-Reply-To: <20120508232732.19543.37241.stgit@bhelgaas.mtv.corp.google.com>
-References: <20120508232732.19543.37241.stgit@bhelgaas.mtv.corp.google.com>
-Message-ID: <4FA9B170.2000704@jp.fujitsu.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Thu, 10 May 2012 00:17:39 +0200
+Subject: [PATCH 0/4] bcma: add PCI functions from brcmsmac
+In-Reply-To: <1335658732-24351-1-git-send-email-hauke@hauke-m.de>
+References: <1335658732-24351-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <4FAAED03.4090008@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Stefano Brivio <stefano.brivio@polimi.it>
+To: Hauke Mehrtens <hauke@hauke-m.de>, zajec5@gmail.com
+Cc: linville@tuxdriver.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, arend@broadcom.com
 
-Reviewed-by: Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
+On 04/29/2012 02:18 AM, Hauke Mehrtens wrote:
+> This patch series contains the functions regarding the PCIe core from 
+> brcmsmac for the supported PCIe core revisions.
+> 
+> Some of these functions have to be called on resume after suspend, but 
+> I do not know which or if all have to be called. I do not have a PCIe 
+> based device supported by brcmsmac, so I can not test this. Could 
+> someone which such a device do some tests and create a patch with the 
+> functions, which have to be called on resume.
+> 
+> The goal of theses patches is to remove the PCIe code from brcmsmac to 
+> get one step ahead in making brcmsmac support non pcie based devices.
+> 
+> This is based on wireless-testing/master.
+> 
+> Hauke Mehrtens (4):
+>   bcma: implement setting core clock mode to dynamic
+>   bcma: add bcma_core_pci_extend_L1timer
+>   bcma: add bcma_core_pci_fixcfg()
+>   bcma: add bcma_core_pci_config_fixup()
+> 
+>  drivers/bcma/core.c                  |    2 +-
+>  drivers/bcma/driver_pci.c            |   53 ++++++++++++++++++++++++++++++++--
+>  include/linux/bcma/bcma_driver_pci.h |   11 +++++++
+>  3 files changed, 63 insertions(+), 3 deletions(-)
+> 
 
-Regards,
-Kenji Kaneshige
+Hi Rafa?,
 
+could you give me an ack or a nack about this patch series and the other
+(ssb/bcma/bcm47xx: extend boardinfo and sprom).
 
-(2012/05/09 8:27), Bjorn Helgaas wrote:
-> Use pci_is_pcie() instead of looking at obsolete is_pcie field in
-> struct pci_dev.
-> 
-> CC: Stefano Brivio<stefano.brivio@polimi.it>
-> CC: b43-dev at lists.infradead.org
-> CC: Kenji Kaneshige<kaneshige.kenji@jp.fujitsu.com>
-> Signed-off-by: Bjorn Helgaas<bhelgaas@google.com>
-> ---
->   drivers/net/wireless/b43/dma.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-> index b5f1b91..777cd74 100644
-> --- a/drivers/net/wireless/b43/dma.c
-> +++ b/drivers/net/wireless/b43/dma.c
-> @@ -1109,7 +1109,7 @@ static bool b43_dma_translation_in_low_word(struct b43_wldev *dev,
->   #ifdef CONFIG_B43_SSB
->   	if (dev->dev->bus_type == B43_BUS_SSB&&
->   	dev->dev->sdev->bus->bustype == SSB_BUSTYPE_PCI&&
-> -	    !(dev->dev->sdev->bus->host_pci->is_pcie&&
-> +	    !(pci_is_pcie(dev->dev->sdev->bus->host_pci)&&
->   	ssb_read32(dev->dev->sdev, SSB_TMSHIGH)&  SSB_TMSHIGH_DMA64))
->   			return 1;
->   #endif
-> 
-> 
+I have tested them with b43 and brcmsmac on bcma and ssb based SoCs
+(bcm4718 + bcm43224, bcm4705 + 2x bcm4322, bcm4704 + bcm4318)  and have
+not found any problems.
+
+Hauke
