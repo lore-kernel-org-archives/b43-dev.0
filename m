@@ -1,37 +1,42 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Tue, 15 May 2012 17:16:05 -0400
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Tue, 15 May 2012 23:55:51 +0200
 Subject: [PATCH 0/8] ssb/bcma/bcm47xx: extend boardinfo and sprom
-In-Reply-To: <1335657853-23925-1-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <20120515211605.GH24572@tuxdriver.com>
 References: <1335657853-23925-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <20120515211605.GH24572@tuxdriver.com>
+ <20120515211605.GH24572@tuxdriver.com>
+Message-ID: <20120515215551.GA16397@linux-mips.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch, ralf@linux-mips.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch
 
-On Sun, Apr 29, 2012 at 02:04:05AM +0200, Hauke Mehrtens wrote:
-> This patch series fixes the boardinfo for ssb based devices by removing 
-> board_rev from the struct, this should be fetched from sprom. In 
-> addition a boardinfo struct was added to bcma.
-> The pci sprom parsing code was extended for bcma to provide all 
-> attributes needed by brcmsmac and that code was also copied to ssb.
+On Tue, May 15, 2012 at 05:16:05PM -0400, John W. Linville wrote:
+
+> On Sun, Apr 29, 2012 at 02:04:05AM +0200, Hauke Mehrtens wrote:
+> > This patch series fixes the boardinfo for ssb based devices by removing 
+> > board_rev from the struct, this should be fetched from sprom. In 
+> > addition a boardinfo struct was added to bcma.
+> > The pci sprom parsing code was extended for bcma to provide all 
+> > attributes needed by brcmsmac and that code was also copied to ssb.
+> > 
+> > This is based on wireless-testing/master.
+> > 
+> > Hauke Mehrtens (8):
+> >   ssb: remove rev from boardinfo
+> >   MIPS: bcm47xx: refactor fetching board data
+> >   bcma: add boardinfo struct
+> >   MIPS: bcm47xx: read baordrev without prefix from sprom
+> >   ssb/bcma: fill attribute alpha2 from sprom
+> >   ssb: fill board_rev attribute from sprom
+> >   bcma: read out some additional sprom attributes
+> >   bcma/ssb: parse new attributes from sprom
 > 
-> This is based on wireless-testing/master.
-> 
-> Hauke Mehrtens (8):
->   ssb: remove rev from boardinfo
->   MIPS: bcm47xx: refactor fetching board data
->   bcma: add boardinfo struct
->   MIPS: bcm47xx: read baordrev without prefix from sprom
->   ssb/bcma: fill attribute alpha2 from sprom
->   ssb: fill board_rev attribute from sprom
->   bcma: read out some additional sprom attributes
->   bcma/ssb: parse new attributes from sprom
+> I'd still like to see an ACK from Ralf on the mips stuff?
 
-I'd still like to see an ACK from Ralf on the mips stuff?
+Sorry, I'm awfully backloged.
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+Acked-by: Ralf Baechle <ralf@linux-mips.org>
+
+  Ralf
