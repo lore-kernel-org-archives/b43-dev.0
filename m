@@ -1,36 +1,58 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 10 May 2012 00:22:46 +0200
-Subject: [PATCH v2] ssb: add PCI IDs 0x4322 and 43222
-Message-ID: <1336602166-7518-1-git-send-email-hauke@hauke-m.de>
+From: John W. Linville <linville@tuxdriver.com>
+Date: Tue, 15 May 2012 17:15:26 -0400
+Subject: [PATCH 0/4] bcma: add PCI functions from brcmsmac
+In-Reply-To: <4FAAED03.4090008@hauke-m.de>
+References: <1335658732-24351-1-git-send-email-hauke@hauke-m.de>
+ <4FAAED03.4090008@hauke-m.de>
+Message-ID: <20120515211526.GG24572@tuxdriver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, m@bues.ch, Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, arend@broadcom.com
 
-The 0x4322 ID is found on the BCM4322 used on some SoCs like the
-Linksys WRT610N V1 connected to a BCM4705. The 43222 (0xa8d6) ID
-is found on the BCM43222 used on some other SoCs like the D-Link
-DSL-2760U connected to a BCM63xx.
+On Thu, May 10, 2012 at 12:17:39AM +0200, Hauke Mehrtens wrote:
+> On 04/29/2012 02:18 AM, Hauke Mehrtens wrote:
+> > This patch series contains the functions regarding the PCIe core from 
+> > brcmsmac for the supported PCIe core revisions.
+> > 
+> > Some of these functions have to be called on resume after suspend, but 
+> > I do not know which or if all have to be called. I do not have a PCIe 
+> > based device supported by brcmsmac, so I can not test this. Could 
+> > someone which such a device do some tests and create a patch with the 
+> > functions, which have to be called on resume.
+> > 
+> > The goal of theses patches is to remove the PCIe code from brcmsmac to 
+> > get one step ahead in making brcmsmac support non pcie based devices.
+> > 
+> > This is based on wireless-testing/master.
+> > 
+> > Hauke Mehrtens (4):
+> >   bcma: implement setting core clock mode to dynamic
+> >   bcma: add bcma_core_pci_extend_L1timer
+> >   bcma: add bcma_core_pci_fixcfg()
+> >   bcma: add bcma_core_pci_config_fixup()
+> > 
+> >  drivers/bcma/core.c                  |    2 +-
+> >  drivers/bcma/driver_pci.c            |   53 ++++++++++++++++++++++++++++++++--
+> >  include/linux/bcma/bcma_driver_pci.h |   11 +++++++
+> >  3 files changed, 63 insertions(+), 3 deletions(-)
+> > 
+> 
+> Hi Rafa?,
+> 
+> could you give me an ack or a nack about this patch series and the other
+> (ssb/bcma/bcm47xx: extend boardinfo and sprom).
+> 
+> I have tested them with b43 and brcmsmac on bcma and ssb based SoCs
+> (bcm4718 + bcm43224, bcm4705 + 2x bcm4322, bcm4704 + bcm4318)  and have
+> not found any problems.
+> 
+> Hauke
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/ssb/b43_pci_bridge.c |    2 ++
- 1 file changed, 2 insertions(+)
+Rafa?, ping?
 
-diff --git a/drivers/ssb/b43_pci_bridge.c b/drivers/ssb/b43_pci_bridge.c
-index bad7ba5..f551e53 100644
---- a/drivers/ssb/b43_pci_bridge.c
-+++ b/drivers/ssb/b43_pci_bridge.c
-@@ -29,6 +29,8 @@ static const struct pci_device_id b43_pci_bridge_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4319) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4320) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4321) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4322) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 43222) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4324) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4325) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4328) },
 -- 
-1.7.9.5
+John W. Linville		Someday the world will need a hero, and you
+linville at tuxdriver.com			might be all we have.  Be ready.
