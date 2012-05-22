@@ -1,42 +1,53 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Tue, 15 May 2012 23:55:51 +0200
-Subject: [PATCH 0/8] ssb/bcma/bcm47xx: extend boardinfo and sprom
-In-Reply-To: <20120515211605.GH24572@tuxdriver.com>
-References: <1335657853-23925-1-git-send-email-hauke@hauke-m.de>
- <20120515211605.GH24572@tuxdriver.com>
-Message-ID: <20120515215551.GA16397@linux-mips.org>
+From: Kshitij Kulshreshtha <kkhere.geo@gmail.com>
+Date: Tue, 22 May 2012 16:02:39 +0200
+Subject: Procedure for donating hardware to b43 project
+Message-ID: <4FBB9C7F.5010102@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-mips@linux-mips.org, linux-wireless@vger.kernel.org, arend@broadcom.com, m@bues.ch
+To: b43-dev@lists.infradead.org
 
-On Tue, May 15, 2012 at 05:16:05PM -0400, John W. Linville wrote:
+Hello,
 
-> On Sun, Apr 29, 2012 at 02:04:05AM +0200, Hauke Mehrtens wrote:
-> > This patch series fixes the boardinfo for ssb based devices by removing 
-> > board_rev from the struct, this should be fetched from sprom. In 
-> > addition a boardinfo struct was added to bcma.
-> > The pci sprom parsing code was extended for bcma to provide all 
-> > attributes needed by brcmsmac and that code was also copied to ssb.
-> > 
-> > This is based on wireless-testing/master.
-> > 
-> > Hauke Mehrtens (8):
-> >   ssb: remove rev from boardinfo
-> >   MIPS: bcm47xx: refactor fetching board data
-> >   bcma: add boardinfo struct
-> >   MIPS: bcm47xx: read baordrev without prefix from sprom
-> >   ssb/bcma: fill attribute alpha2 from sprom
-> >   ssb: fill board_rev attribute from sprom
-> >   bcma: read out some additional sprom attributes
-> >   bcma/ssb: parse new attributes from sprom
-> 
-> I'd still like to see an ACK from Ralf on the mips stuff?
+I am interested in donating a Broadcom BCM94228HMB Mini-PCIe card for
+the purpose of open source driver development. The card has the PCI ID
+14e4:4359 This device is listed as not tested on the b43 driver website
+[1] and upon binding the pci device to the bcma driver and force loading
+b43 in kernel version 3.3.6 I get the following output.
 
-Sorry, I'm awfully backloged.
+[13174.301451] bcma: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800,
+rev 0x25, class 0x0)
+[13174.301475] bcma: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812,
+rev 0x1E, class 0x0)
+[13174.301526] bcma: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev
+0x12, class 0x0)
+ [13174.301548] bcma: Core 3 found: SDIO Device (manuf 0x4BF, id 0x829,
+rev 0x07, class 0x0)
+[13174.301667] bcma: PLL init unknown for device 0xA8DC
+[13174.301669] bcma: PMU resource config unknown for device 0xA8DC
+[13174.301671] bcma: PMU switch/regulators init unknown for device 0xA8DC
+[13174.301672] bcma: Workarounds unknown for device 0xA8DC
+[13174.308903] bcma: No SPROM available
+[13174.308995] bcma: Bus registered
+[13174.327537] b43-phy0: Broadcom 43228 WLAN found (core revision 30)
+[13174.327953] b43-phy0 ERROR: FOUND UNSUPPORTED PHY (Analog 9, Type 9,
+Revision 0)
+[13174.327958] b43: probe of bcma0:1 failed with error -95
+[13174.327968] Broadcom 43xx driver loaded [ Features: PMNLS ]
 
-Acked-by: Ralf Baechle <ralf@linux-mips.org>
+Incidentally the card seems to have a Bluetooth component as well, but
+this does not show up at all under linux.
 
-  Ralf
+So what would be the procedure to donate this card to someone who knows
+a more about the b43 driver and devices so this device can be supported
+in the future?
+
+Thanks and regards.
+
+-- 
+Dr. Kshitij Kulshreshtha
+
+
+Arnikaweg 62
+33100 Paderborn.
