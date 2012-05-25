@@ -1,91 +1,40 @@
-From: Seth Forshee <seth.forshee@canonical.com>
-Date: Fri, 25 May 2012 15:44:59 -0500
+From: Arend van Spriel <arend@broadcom.com>
+Date: Fri, 25 May 2012 22:59:37 +0200
 Subject: BCM4331 tx failures after S3
-In-Reply-To: <4FBFE95F.2080306@broadcom.com>
+In-Reply-To: <20120525204459.GE2895@thinkpad-t410>
 References: <20120522165251.GA31347@thinkpad-t410>
- <4FBCAE3E.6050206@broadcom.com>
- <20120523135506.GB30165@thinkpad-t410>
- <4FBE0110.5020209@broadcom.com>
- <20120524212115.GD26760@thinkpad-t410>
+ <4FBCAE3E.6050206@broadcom.com> <20120523135506.GB30165@thinkpad-t410>
+ <4FBE0110.5020209@broadcom.com> <20120524212115.GD26760@thinkpad-t410>
  <4FBEA96D.8030207@hauke-m.de> <20120525141339.GB2895@thinkpad-t410>
- <4FBFB79F.4060609@broadcom.com>
- <20120525183451.GD2895@thinkpad-t410>
- <4FBFE95F.2080306@broadcom.com>
-Message-ID: <20120525204459.GE2895@thinkpad-t410>
+ <4FBFB79F.4060609@broadcom.com> <20120525183451.GD2895@thinkpad-t410>
+ <4FBFE95F.2080306@broadcom.com> <20120525204459.GE2895@thinkpad-t410>
+Message-ID: <4FBFF2B9.1070107@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, Stefano Brivio <stefano.brivio@polimi.it>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
+To: Seth Forshee <seth.forshee@canonical.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
 
-On Fri, May 25, 2012 at 10:19:43PM +0200, Arend van Spriel wrote:
-> >> Well let me explain some behaviour. Upon suspend mac80211 takes down the
-> >> driver with the last callback being .stop(). Upon resume mac80211 calls
-> >> the driver with .start() callback.
-> >>
-> >> The brcmsmac driver has two bool states that are in play here: driver_up
-> >> and hw_up. Upon .stop() callback the driver_up is set to false, but
-> >> hw_up remains true. A subsequent .start() will perform some
-> >> reconfiguration and driver_up will be made true.
-> >>
-> >> The suspend/resume scenario is different for brcmsmac. bcma will call
-> >> brcmsmac .suspend() callback in which we set hw_up to false. This
-> >> changes the behaviour of the .start() callback after resume. Basically,
-> >> it reinitializes the hardware.
-> > 
-> > I'm having a bit of a hard time understanding the relevance of your
-> > description, since we're talking about b43. Are you suggesting that b43
-> > should do something similar? But even then I don't see any of the
-> > reinitialization done by brcmsmac setting BCMA_CC_CHIPCTL with the
-> > needed value. Am I missing something?
-> > 
-> > Seth
-> > 
+On 05/25/2012 10:44 PM, Seth Forshee wrote:
+> Before. I printed the value from bcma_host_pci_resume().
 > 
-> Yes, that is my suggestion. I dived into the b43 driver, but I do not
-> see a .resume callback for bcma:
-> 
-> static struct bcma_driver b43_bcma_driver = {
-> 	.name		= KBUILD_MODNAME,
-> 	.id_table	= b43_bcma_tbl,
-> 	.probe		= b43_bcma_probe,
-> 	.remove		= b43_bcma_remove,
-> };
-> 
-> So upon suspend/resume b43 seems to take no extra steps, but I may be
-> missing it as I am not a b43 specialist (let me CC the b43 developer
-> list :-) ).
+> I can easily make a patch that fixes the chipctl register up as needed
+> during resume to fix my problem. But based on the fact that other fields
+> in the register are also changing value, I'm wondering if more thorough
+> handling is needed for the register.
 
-I don't think your missing it. There doesn't seem to be a resume handler
-in b43.
+Ok. I dived into b43 and it does disable the wireless core in the
+.stop() callback. So I believe it does reinitialize the device when
+.start() callback is being called after resume. So I think you should
+check the chipctl register at the end of the .start() callback.
 
-> In brcmsmac the brcms_b_hw_up() is called in brcms_c_up() when the flag
-> hw_up is false:
-> 
-> int brcms_c_up(struct brcms_c_info *wlc)
-> {
-> 	if (!wlc->pub->hw_up) {
-> 		brcms_b_hw_up(wlc->hw);
-> 		wlc->pub->hw_up = true;
-> 	}
-> 
-> /* Initialize just the hardware when coming out of POR or S3/S5 system
-> states */
-> static void brcms_b_hw_up(struct brcms_hardware *wlc_hw)
-> 
-> You are right that this particular code does not fiddle with
-> BCMA_CC_CHIPCTL. Where in the code did you print the value of this
-> register? Before or after the mac80211 .start() callback has been called?
+> And I'm also a little fuzzy on
+> exactly who should be responsible for what in the relationship between
+> b43 and the wireless drivers.
 
-Before. I printed the value from bcma_host_pci_resume().
+I assume you mean bcma instead of b43, right? I admit it is a bit shady,
+because bcma is more than just a bus driver. It also contains drivers
+for the chipcommon and pcie cores on the device.
 
-I can easily make a patch that fixes the chipctl register up as needed
-during resume to fix my problem. But based on the fact that other fields
-in the register are also changing value, I'm wondering if more thorough
-handling is needed for the register. And I'm also a little fuzzy on
-exactly who should be responsible for what in the relationship between
-b43 and the wireless drivers.
-
-Thanks,
-Seth
+Gr. AvS
