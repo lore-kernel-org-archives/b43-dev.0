@@ -1,40 +1,48 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Thu, 31 May 2012 19:43:38 +0200
-Subject: [PATCH] b43: ensure ext PA lines are enabled for BCM4331
-In-Reply-To: <20120531142652.GA32179@thinkpad-t410>
-References: <1338472163-3810-1-git-send-email-seth.forshee@canonical.com>
- <4FC77D25.4060100@hauke-m.de> <20120531142652.GA32179@thinkpad-t410>
-Message-ID: <4FC7ADCA.5020002@broadcom.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Thu, 31 May 2012 22:38:22 +0200
+Subject: [PATCH] ssb: recognize ARM Cortex M3
+Message-ID: <1338496702-16324-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Seth Forshee <seth.forshee@canonical.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, m@bues.ch, Hauke Mehrtens <hauke@hauke-m.de>
 
-On 05/31/2012 04:26 PM, Seth Forshee wrote:
-> On Thu, May 31, 2012 at 04:16:05PM +0200, Hauke Mehrtens wrote:
->> > Hi Seth,
->> > 
->> > why don't you call this from bcma_pmu_workarounds() in
->> > drivers/bcma/driver_chipcommon_pmu.c instead of calling this from b43? I
->> > think it looks better to call some workarounds on chip common from bcma
->> > and not from b43.
-> Arend recommended calling it from within b43's start op, but I'm not
-> sure of the reason. Arend?
+I found this core on a BCM4322, a PCI card in the Linksys WRT610N V1.
+This core is not used by the driver, this patch just makes ssb show the
+correct name.
 
-Well, my comment on start op was regarding your observation of CHIPCTL
-being zero. As the start op does reinitialize the hardware you should
-check CHIPCTL register at the end of it. This is just to confirm the
-register contains valid bits.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/ssb/scan.c      |    2 ++
+ include/linux/ssb/ssb.h |    1 +
+ 2 files changed, 3 insertions(+)
 
-> Agreed though that if there's no need to run it every time the interface
-> is started then bcma_pmu_workarounds() would be a nicer place for it.
-> 
-
-So I agree with Hauke and have this code in bcma. Just not sure whether
-bcma_pmu_workarounds() is the place to put it. This is not a pmu related
-register, but as the function was already there I will not stress to
-move it to driver_chipcommon.c ;-)
-
-Gr. AvS
+diff --git a/drivers/ssb/scan.c b/drivers/ssb/scan.c
+index 266c7c5..ab4627c 100644
+--- a/drivers/ssb/scan.c
++++ b/drivers/ssb/scan.c
+@@ -90,6 +90,8 @@ const char *ssb_core_name(u16 coreid)
+ 		return "ARM 1176";
+ 	case SSB_DEV_ARM_7TDMI:
+ 		return "ARM 7TDMI";
++	case SSB_DEV_ARM_CM3:
++		return "ARM Cortex M3";
+ 	}
+ 	return "UNKNOWN";
+ }
+diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+index bc14bd7..bb674c0 100644
+--- a/include/linux/ssb/ssb.h
++++ b/include/linux/ssb/ssb.h
+@@ -243,6 +243,7 @@ struct ssb_bus_ops {
+ #define SSB_DEV_MINI_MACPHY	0x823
+ #define SSB_DEV_ARM_1176	0x824
+ #define SSB_DEV_ARM_7TDMI	0x825
++#define SSB_DEV_ARM_CM3		0x82A
+ 
+ /* Vendor-ID values */
+ #define SSB_VENDOR_BROADCOM	0x4243
+-- 
+1.7.9.5
