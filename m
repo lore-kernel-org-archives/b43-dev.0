@@ -1,40 +1,58 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Fri, 25 May 2012 22:59:37 +0200
-Subject: BCM4331 tx failures after S3
-In-Reply-To: <20120525204459.GE2895@thinkpad-t410>
-References: <20120522165251.GA31347@thinkpad-t410>
- <4FBCAE3E.6050206@broadcom.com> <20120523135506.GB30165@thinkpad-t410>
- <4FBE0110.5020209@broadcom.com> <20120524212115.GD26760@thinkpad-t410>
- <4FBEA96D.8030207@hauke-m.de> <20120525141339.GB2895@thinkpad-t410>
- <4FBFB79F.4060609@broadcom.com> <20120525183451.GD2895@thinkpad-t410>
- <4FBFE95F.2080306@broadcom.com> <20120525204459.GE2895@thinkpad-t410>
-Message-ID: <4FBFF2B9.1070107@broadcom.com>
+From: Seth Forshee <seth.forshee@canonical.com>
+Date: Thu, 31 May 2012 08:49:23 -0500
+Subject: [PATCH] b43: ensure ext PA lines are enabled for BCM4331
+Message-ID: <1338472163-3810-1-git-send-email-seth.forshee@canonical.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Seth Forshee <seth.forshee@canonical.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-wireless@vger.kernel.org, Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
+To: Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>
 
-On 05/25/2012 10:44 PM, Seth Forshee wrote:
-> Before. I printed the value from bcma_host_pci_resume().
-> 
-> I can easily make a patch that fixes the chipctl register up as needed
-> during resume to fix my problem. But based on the fact that other fields
-> in the register are also changing value, I'm wondering if more thorough
-> handling is needed for the register.
+Some MacBook Pro models with BCM4331 wireless will stop transmitting
+after resuming from S3 without external power attached. This is fixed by
+ensuring that the ext PA lines are enabled in BCMA_CC_CHIPCTL. Export
+the function in bcma which does this for use by b43 and enable the ext
+PA lines during wireless core initialization.
 
-Ok. I dived into b43 and it does disable the wireless core in the
-.stop() callback. So I believe it does reinitialize the device when
-.start() callback is being called after resume. So I think you should
-check the chipctl register at the end of the .start() callback.
+BugLink: http://bugs.launchpad.net/bugs/925577
+Cc: Arend van Spriel <arend@broadcom.com>
+Cc: stable at vger.kernel.org
+Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+---
+ drivers/bcma/driver_chipcommon_pmu.c |    1 +
+ drivers/net/wireless/b43/main.c      |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
-> And I'm also a little fuzzy on
-> exactly who should be responsible for what in the relationship between
-> b43 and the wireless drivers.
-
-I assume you mean bcma instead of b43, right? I admit it is a bit shady,
-because bcma is more than just a bus driver. It also contains drivers
-for the chipcommon and pcie cores on the device.
-
-Gr. AvS
+diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
+index a058842..332d7fb 100644
+--- a/drivers/bcma/driver_chipcommon_pmu.c
++++ b/drivers/bcma/driver_chipcommon_pmu.c
+@@ -129,6 +129,7 @@ void bcma_chipco_bcm4331_ext_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
+ 	}
+ 	bcma_cc_write32(cc, BCMA_CC_CHIPCTL, val);
+ }
++EXPORT_SYMBOL_GPL(bcma_chipco_bcm4331_ext_pa_lines_ctl);
+ 
+ void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
+ {
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 5a39b22..6bac5cf 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4713,6 +4713,13 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
+ 	b43_upload_card_macaddress(dev);
+ 	b43_security_init(dev);
+ 
++#ifdef CONFIG_B43_BCMA
++	/* Required for tx to work on BCM4331 */
++	if (dev->dev->bus_type == B43_BUS_BCMA && dev->dev->chip_id == 0x4331)
++		bcma_chipco_bcm4331_ext_pa_lines_ctl(&dev->dev->bdev->bus->drv_cc,
++						     true);
++#endif
++
+ 	ieee80211_wake_queues(dev->wl->hw);
+ 
+ 	b43_set_status(dev, B43_STAT_INITIALIZED);
+-- 
+1.7.9.5
