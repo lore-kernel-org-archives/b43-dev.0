@@ -1,48 +1,45 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 31 May 2012 22:38:22 +0200
-Subject: [PATCH] ssb: recognize ARM Cortex M3
-Message-ID: <1338496702-16324-1-git-send-email-hauke@hauke-m.de>
+Date: Thu, 31 May 2012 22:39:30 +0200
+Subject: [PATCH] bcma: fix null pointer in bcma_core_pci_irq_ctl
+Message-ID: <1338496770-16381-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, m@bues.ch, Hauke Mehrtens <hauke@hauke-m.de>
+Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-I found this core on a BCM4322, a PCI card in the Linksys WRT610N V1.
-This core is not used by the driver, this patch just makes ssb show the
-correct name.
+pc could be null if hosttype != BCMA_HOSTTYPE_PCI.
+If we are on a device without a pci core this function is called with
+pc = null by b43 and brcmsmac. If the host type is PCI we have a pci
+core as well and pc can not be null.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/ssb/scan.c      |    2 ++
- include/linux/ssb/ssb.h |    1 +
- 2 files changed, 3 insertions(+)
+ drivers/bcma/driver_pci.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ssb/scan.c b/drivers/ssb/scan.c
-index 266c7c5..ab4627c 100644
---- a/drivers/ssb/scan.c
-+++ b/drivers/ssb/scan.c
-@@ -90,6 +90,8 @@ const char *ssb_core_name(u16 coreid)
- 		return "ARM 1176";
- 	case SSB_DEV_ARM_7TDMI:
- 		return "ARM 7TDMI";
-+	case SSB_DEV_ARM_CM3:
-+		return "ARM Cortex M3";
- 	}
- 	return "UNKNOWN";
- }
-diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
-index bc14bd7..bb674c0 100644
---- a/include/linux/ssb/ssb.h
-+++ b/include/linux/ssb/ssb.h
-@@ -243,6 +243,7 @@ struct ssb_bus_ops {
- #define SSB_DEV_MINI_MACPHY	0x823
- #define SSB_DEV_ARM_1176	0x824
- #define SSB_DEV_ARM_7TDMI	0x825
-+#define SSB_DEV_ARM_CM3		0x82A
+diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
+index 9a96f14..884b7af 100644
+--- a/drivers/bcma/driver_pci.c
++++ b/drivers/bcma/driver_pci.c
+@@ -232,7 +232,7 @@ void __devinit bcma_core_pci_init(struct bcma_drv_pci *pc)
+ int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
+ 			  bool enable)
+ {
+-	struct pci_dev *pdev = pc->core->bus->host_pci;
++	struct pci_dev *pdev;
+ 	u32 coremask, tmp;
+ 	int err = 0;
  
- /* Vendor-ID values */
- #define SSB_VENDOR_BROADCOM	0x4243
+@@ -243,6 +243,8 @@ int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
+ 		goto out;
+ 	}
+ 
++	pdev = pc->core->bus->host_pci;
++
+ 	err = pci_read_config_dword(pdev, BCMA_PCI_IRQMASK, &tmp);
+ 	if (err)
+ 		goto out;
 -- 
 1.7.9.5
