@@ -1,104 +1,67 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 31 May 2012 22:40:59 +0200
-Subject: [PATCH] bcma: make some functions static
-Message-ID: <1338496859-16436-1-git-send-email-hauke@hauke-m.de>
+From: Seth Forshee <seth.forshee@canonical.com>
+Date: Thu, 31 May 2012 17:06:35 -0500
+Subject: [PATCH] b43: ensure ext PA lines are enabled for BCM4331
+In-Reply-To: <4FC79AFD.6030803@hauke-m.de>
+References: <1338472163-3810-1-git-send-email-seth.forshee@canonical.com>
+ <4FC77D25.4060100@hauke-m.de>
+ <20120531142652.GA32179@thinkpad-t410>
+ <4FC79AFD.6030803@hauke-m.de>
+Message-ID: <20120531220635.GE32179@thinkpad-t410>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Arend van Spriel <arend@broadcom.com>, Stefano Brivio <stefano.brivio@polimi.it>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-The functions and structs are not used in an other file and the
-prototypes are in no header file, just make them static so the compiler
-is able to optimize them better.
+On Thu, May 31, 2012 at 06:23:25PM +0200, Hauke Mehrtens wrote:
+> On 05/31/2012 04:26 PM, Seth Forshee wrote:
+> > On Thu, May 31, 2012 at 04:16:05PM +0200, Hauke Mehrtens wrote:
+> >> Hi Seth,
+> >>
+> >> why don't you call this from bcma_pmu_workarounds() in
+> >> drivers/bcma/driver_chipcommon_pmu.c instead of calling this from b43? I
+> >> think it looks better to call some workarounds on chip common from bcma
+> >> and not from b43.
+> > 
+> > Arend recommended calling it from within b43's start op, but I'm not
+> > sure of the reason. Arend?
+> > 
+> > Agreed though that if there's no need to run it every time the interface
+> > is started then bcma_pmu_workarounds() would be a nicer place for it.
+> 
+> brcmsmac calls the chip specific the workarounds in ai_doattach(), but
+> the ones for BCM4313 and BCM43224 are also in bcma_pmu_workarounds(),
+> this should be cleaned up to have them just at one place. In some old
+> version of brcmsmac the workaround for the BCM4331 was also called from
+> ai_doattach() function, but later removed likely because this devices is
+> not supported by brcmsmac.
+> So if there is not better reason as, the proprietary Broadcom driver
+> does so, I would like to see this call in bcma_pmu_workarounds().
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/bcma/driver_chipcommon_pmu.c |    6 +++---
- drivers/bcma/host_pci.c              |   11 ++++++-----
- drivers/bcma/host_soc.c              |    2 +-
- 3 files changed, 10 insertions(+), 9 deletions(-)
+I found the SDK code from a router source package, and oddly that code
+is clearing those bits in si_doattach(). In fact si_chipcontrl_epa4331()
+is never called to enable the ext PA lines, only to disable them. The
+sprom code reads the value before disabling them and restores it after
+reading from the sprom. Enabling the ext PA pins is what fixes things
+for me. Predictably, duplicating this in bcma makes wireless broken all
+the time. 
 
-diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index a058842..ee4d39c 100644
---- a/drivers/bcma/driver_chipcommon_pmu.c
-+++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -96,7 +96,7 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
- 		bcma_cc_write32(cc, BCMA_CC_PMU_MAXRES_MSK, max_msk);
- }
- 
--void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
-+static void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
- {
- 	struct bcma_bus *bus = cc->core->bus;
- 
-@@ -130,7 +130,7 @@ void bcma_chipco_bcm4331_ext_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
- 	bcma_cc_write32(cc, BCMA_CC_CHIPCTL, val);
- }
- 
--void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
-+static void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
- {
- 	struct bcma_bus *bus = cc->core->bus;
- 
-@@ -249,7 +249,7 @@ static u32 bcma_pmu_clock(struct bcma_drv_cc *cc, u32 pll0, u32 m)
- }
- 
- /* query bus clock frequency for PMU-enabled chipcommon */
--u32 bcma_pmu_get_clockcontrol(struct bcma_drv_cc *cc)
-+static u32 bcma_pmu_get_clockcontrol(struct bcma_drv_cc *cc)
- {
- 	struct bcma_bus *bus = cc->core->bus;
- 
-diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
-index 6c05cf4..f7fbae7 100644
---- a/drivers/bcma/host_pci.c
-+++ b/drivers/bcma/host_pci.c
-@@ -77,8 +77,8 @@ static void bcma_host_pci_write32(struct bcma_device *core, u16 offset,
- }
- 
- #ifdef CONFIG_BCMA_BLOCKIO
--void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
--			      size_t count, u16 offset, u8 reg_width)
-+static void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
-+				     size_t count, u16 offset, u8 reg_width)
- {
- 	void __iomem *addr = core->bus->mmio + offset;
- 	if (core->bus->mapped_core != core)
-@@ -100,8 +100,9 @@ void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
- 	}
- }
- 
--void bcma_host_pci_block_write(struct bcma_device *core, const void *buffer,
--			       size_t count, u16 offset, u8 reg_width)
-+static void bcma_host_pci_block_write(struct bcma_device *core,
-+				      const void *buffer, size_t count,
-+				      u16 offset, u8 reg_width)
- {
- 	void __iomem *addr = core->bus->mmio + offset;
- 	if (core->bus->mapped_core != core)
-@@ -139,7 +140,7 @@ static void bcma_host_pci_awrite32(struct bcma_device *core, u16 offset,
- 	iowrite32(value, core->bus->mmio + (1 * BCMA_CORE_SIZE) + offset);
- }
- 
--const struct bcma_host_ops bcma_host_pci_ops = {
-+static const struct bcma_host_ops bcma_host_pci_ops = {
- 	.read8		= bcma_host_pci_read8,
- 	.read16		= bcma_host_pci_read16,
- 	.read32		= bcma_host_pci_read32,
-diff --git a/drivers/bcma/host_soc.c b/drivers/bcma/host_soc.c
-index 3c381fb..3475e60 100644
---- a/drivers/bcma/host_soc.c
-+++ b/drivers/bcma/host_soc.c
-@@ -143,7 +143,7 @@ static void bcma_host_soc_awrite32(struct bcma_device *core, u16 offset,
- 	writel(value, core->io_wrap + offset);
- }
- 
--const struct bcma_host_ops bcma_host_soc_ops = {
-+static const struct bcma_host_ops bcma_host_soc_ops = {
- 	.read8		= bcma_host_soc_read8,
- 	.read16		= bcma_host_soc_read16,
- 	.read32		= bcma_host_soc_read32,
--- 
-1.7.9.5
+At any rate, it sounds like we're agreed to add the workaround in
+bcma_pmu_workarounds(), so I'll redo the patch.
+
+> >> According to some Broadcom code this should also be called for chip_id
+> >> 43431 when turning it on and in the sprom code.
+> > 
+> > I'm having trouble parsing this, specifically the "and in the sprom
+> > code" part. Can you clarify?
+> 
+> In the Broadcom SDK code si_chipcontrl_epa4331(), the same function as
+> bcma_chipco_bcm4331_ext_pa_lines_ctl() in bcma, gets called for devices
+> with a chip id of 0x4331 and 43431, both seam to be BCM4331 devices. We
+> should also call our workarounds for both chip ids.
+
+I'll fix this too.
+
+Thanks,
+Seth
