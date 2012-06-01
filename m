@@ -1,68 +1,63 @@
-From: Kshitij Kulshreshtha <kkhere.geo@gmail.com>
-Date: Fri, 01 Jun 2012 13:16:32 +0200
-Subject: Procedure for donating hardware to b43 project
-In-Reply-To: <4FBB9C7F.5010102@gmail.com>
-References: <4FBB9C7F.5010102@gmail.com>
-Message-ID: <4FC8A490.4070507@gmail.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Fri, 01 Jun 2012 22:19:54 +0200
+Subject: [PATCH] bcma: make some functions static
+In-Reply-To: <4FC8762D.8090807@broadcom.com>
+References: <1338496859-16436-1-git-send-email-hauke@hauke-m.de>
+ <4FC8762D.8090807@broadcom.com>
+Message-ID: <4FC923EA.7030008@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Arend van Spriel <arend@broadcom.com>
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-*ping*
-
-Does anyone want this piece of hardware?
-
-As on 2012-05-22 16:02, Kshitij Kulshreshtha did write:
-> Hello,
+On 06/01/2012 09:58 AM, Arend van Spriel wrote:
+> On 05/31/2012 10:40 PM, Hauke Mehrtens wrote:
+>> The functions and structs are not used in an other file and the
+>> prototypes are in no header file, just make them static so the compiler
+>> is able to optimize them better.
+>>
+>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+>> ---
+>> diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
+>> index 6c05cf4..f7fbae7 100644
+>> --- a/drivers/bcma/host_pci.c
+>> +++ b/drivers/bcma/host_pci.c
+>> @@ -77,8 +77,8 @@ static void bcma_host_pci_write32(struct bcma_device *core, u16 offset,
+>>  }
+>>  
+>>  #ifdef CONFIG_BCMA_BLOCKIO
+>> -void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
+>> -			      size_t count, u16 offset, u8 reg_width)
+>> +static void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
+>> +				     size_t count, u16 offset, u8 reg_width)
 > 
-> I am interested in donating a Broadcom BCM94228HMB Mini-PCIe card for
-> the purpose of open source driver development. The card has the PCI ID
-> 14e4:4359 This device is listed as not tested on the b43 driver website
-> [1] and upon binding the pci device to the bcma driver and force loading
-> b43 in kernel version 3.3.6 I get the following output.
+> align this with struct keyword above.
+This is about formating? The s from struct and the s from size_t are in
+the same column, in this patch it is a little bit shifted because the
+first tab is just 7 spaces long because of the + in front of it, if you
+apply it it is in the same line.
 > 
-> [13174.301451] bcma: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800,
-> rev 0x25, class 0x0)
-> [13174.301475] bcma: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812,
-> rev 0x1E, class 0x0)
-> [13174.301526] bcma: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev
-> 0x12, class 0x0)
->  [13174.301548] bcma: Core 3 found: SDIO Device (manuf 0x4BF, id 0x829,
-> rev 0x07, class 0x0)
-> [13174.301667] bcma: PLL init unknown for device 0xA8DC
-> [13174.301669] bcma: PMU resource config unknown for device 0xA8DC
-> [13174.301671] bcma: PMU switch/regulators init unknown for device 0xA8DC
-> [13174.301672] bcma: Workarounds unknown for device 0xA8DC
-> [13174.308903] bcma: No SPROM available
-> [13174.308995] bcma: Bus registered
-> [13174.327537] b43-phy0: Broadcom 43228 WLAN found (core revision 30)
-> [13174.327953] b43-phy0 ERROR: FOUND UNSUPPORTED PHY (Analog 9, Type 9,
-> Revision 0)
-> [13174.327958] b43: probe of bcma0:1 failed with error -95
-> [13174.327968] Broadcom 43xx driver loaded [ Features: PMNLS ]
+>>  {
+>>  	void __iomem *addr = core->bus->mmio + offset;
+>>  	if (core->bus->mapped_core != core)
+>> @@ -100,8 +100,9 @@ void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
+>>  	}
+>>  }
+>>  
+>> -void bcma_host_pci_block_write(struct bcma_device *core, const void *buffer,
+>> -			       size_t count, u16 offset, u8 reg_width)
+>> +static void bcma_host_pci_block_write(struct bcma_device *core,
+>> +				      const void *buffer, size_t count,
+>> +				      u16 offset, u8 reg_width)
 > 
-> Incidentally the card seems to have a Bluetooth component as well, but
-> this does not show up at all under linux.
-> 
-> So what would be the procedure to donate this card to someone who knows
-> a more about the b43 driver and devices so this device can be supported
-> in the future?
-> 
-> Thanks and regards.
-> 
+> same here. checkpatch also spews warnings about DOS line endings.
+When I run this mail thought checkpatch I also get these DOS line ending
+messages. I do not have the original mail many more, but when I generate
+the same file I send with git send mail it doe snot contain any DOS line
+endings, checkpatch does not complain at all. Either the mail I
+generated yesterday was somehow different or something added these DOS
+line endings.
 
--- 
-Dr. Kshitij Kulshreshtha
-
-Institut f?r Mathematik,
-Universit?t Paderborn,
-Warburger Stra?e 100,
-33098 Paderborn.
-
-B?ro: A3.235
-
-Privatanschrift:
-Arnikaweg 62
-33100 Paderborn.
+Hauke
