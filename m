@@ -1,94 +1,59 @@
 From: Oleksij Rempel <bug-track@fisher-privat.net>
-Date: Fri,  1 Jun 2012 09:37:20 +0200
-Subject: [PATCH 1/1] b43: do not call ieee80211_unregister_hw if we are not
+Date: Fri,  1 Jun 2012 09:37:19 +0200
+Subject: [PATCH 0/1 ] b43: do not call ieee80211_unregister_hw if we are not
  registred
-In-Reply-To: <1338536240-4392-1-git-send-email-bug-track@fisher-privat.net>
-References: <1338536240-4392-1-git-send-email-bug-track@fisher-privat.net>
-Message-ID: <1338536240-4392-2-git-send-email-bug-track@fisher-privat.net>
+Message-ID: <1338536240-4392-1-git-send-email-bug-track@fisher-privat.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-this patch fixes kernel Oops on "rmmod b43" if firmware was not loaded:
+Fallwoing patch fixes Oops on rmmod b43. I didn't wonted to pass
+cpmplete Oops to the patch description. For those who wont to see it,
+here is complete extra oops trace:
 
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000088
-IP: [<ffffffff8104e988>] drain_workqueue+0x25/0x142
-PGD 153ac6067 PUD 153b82067 PMD 0
-Oops: 0000 [#1] SMP
-
-Signed-off-by: Oleksij Rempel <bug-track@fisher-privat.net>
----
- drivers/net/wireless/b43/b43.h  |    4 ++++
- drivers/net/wireless/b43/main.c |   19 ++++++++++++-------
- 2 files changed, 16 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index 67c13af..c06b6cb 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -877,6 +877,10 @@ struct b43_wl {
- 	 * from the mac80211 subsystem. */
- 	u16 mac80211_initially_registered_queues;
- 
-+	/* Set this if we call ieee80211_register_hw() and check if we call
-+	 * ieee80211_unregister_hw(). */
-+	bool hw_registred;
-+
- 	/* We can only have one operating interface (802.11 core)
- 	 * at a time. General information about this interface follows.
- 	 */
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index e4d6dc2..747079b 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2437,6 +2437,7 @@ start_ieee80211:
- 	err = ieee80211_register_hw(wl->hw);
- 	if (err)
- 		goto err_one_core_detach;
-+	wl->hw_registred = true;
- 	b43_leds_register(wl->current_dev);
- 	goto out;
- 
-@@ -5283,6 +5284,7 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
- 
- 	hw->queues = modparam_qos ? B43_QOS_QUEUE_NUM : 1;
- 	wl->mac80211_initially_registered_queues = hw->queues;
-+	wl->hw_registred = false;
- 	hw->max_rates = 2;
- 	SET_IEEE80211_DEV(hw, dev->dev);
- 	if (is_valid_ether_addr(sprom->et1mac))
-@@ -5354,12 +5356,15 @@ static void b43_bcma_remove(struct bcma_device *core)
- 	 * as the ieee80211 unreg will destroy the workqueue. */
- 	cancel_work_sync(&wldev->restart_work);
- 
--	/* Restore the queues count before unregistering, because firmware detect
--	 * might have modified it. Restoring is important, so the networking
--	 * stack can properly free resources. */
--	wl->hw->queues = wl->mac80211_initially_registered_queues;
--	b43_leds_stop(wldev);
--	ieee80211_unregister_hw(wl->hw);
-+	B43_WARN_ON(!wl);
-+	if (wl->current_dev == wldev && wl->hw_registred) {
-+		/* Restore the queues count before unregistering, because firmware detect
-+		 * might have modified it. Restoring is important, so the networking
-+		 * stack can properly free resources. */
-+		wl->hw->queues = wl->mac80211_initially_registered_queues;
-+		b43_leds_stop(wldev);
-+		ieee80211_unregister_hw(wl->hw);
-+	}
- 
- 	b43_one_core_detach(wldev->dev);
- 
-@@ -5430,7 +5435,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
- 	cancel_work_sync(&wldev->restart_work);
- 
- 	B43_WARN_ON(!wl);
--	if (wl->current_dev == wldev) {
-+	if (wl->current_dev == wldev && wl->hw_registred) {
- 		/* Restore the queues count before unregistering, because firmware detect
- 		 * might have modified it. Restoring is important, so the networking
- 		 * stack can properly free resources. */
--- 
-1.7.9.5
+P: [<ffffffff8104e988>] drain_workqueue+0x25/0x142
+[  139.018775] PGD 153ac6067 PUD 153b82067 PMD 0
+[  139.018814] Oops: 0000 [#1] SMP
+[  139.018843] CPU 0
+[  139.018858] Modules linked in: tun kvm_intel kvm bnep rfcomm binfmt_misc b43(-) mac80211 snd_hda_codec_hdmi snd_hda_codec_idt snd_hda_intel snd_hda_codec i915 cfg80211 snd_hwdep snd_pcm_oss snd_mixer_oss snd_pcm snd_seq_dummy btusb drm_kms_helper snd_seq_oss bluetooth snd_seq_midi usb_storage psmouse snd_rawmidi snd_seq_midi_event sr_mod firewire_ohci rfkill snd_seq firewire_core serio_raw coretemp ssb cdrom snd_timer snd_seq_device snd soundcore snd_page_alloc crc_itu_t cfbcopyarea cfbimgblt cfbfillrect batman_adv
+[  139.019004]
+[  139.019004] Pid: 3583, comm: rmmod Not tainted 3.4.0-rc7-00106-gb1dab2f-dirty #167                  /DG45ID
+[  139.019004] RIP: 0010:[<ffffffff8104e988>]  [<ffffffff8104e988>] drain_workqueue+0x25/0x142
+[  139.019004] RSP: 0018:ffff88014b90fd28  EFLAGS: 00010246
+[  139.019004] RAX: 0000000000001f1f RBX: 0000000000000000 RCX: 0000000000000000
+[  139.019004] RDX: 000000000000001f RSI: 0000000000000000 RDI: ffffffff819b2c80
+[  139.019004] RBP: ffff88014b90fd68 R08: 0000000000000000 R09: ffffffff8189b4d8
+[  139.019004] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801a0d97000
+[  139.019004] R13: ffff8801a3146c00 R14: 0000000000000001 R15: 0000000000000008
+[  139.019004] FS:  00007f2a2fb1c700(0000) GS:ffff8801abc00000(0000) knlGS:0000000000000000
+[  139.019004] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+[  139.019004] CR2: 0000000000000088 CR3: 000000017642c000 CR4: 00000000000407f0
+[  139.019004] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  139.019004] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+[  139.019004] Process rmmod (pid: 3583, threadinfo ffff88014b90e000, task ffff880153946630)
+[  139.019004] Stack:
+[  139.019004]  ffff88014b90fd58 ffffffff8138fef5 0000000000000048 0000000000000000
+[  139.019004]  ffff8801a0d97000 ffff8801a3146c00 0000000000000001 0000000000000008
+[  139.019004]  ffff88014b90fd98 ffffffff8104fb30 0000000000000000 ffff8801a23e0560
+[  139.019004] Call Trace:
+[  139.019004]  [<ffffffff8138fef5>] ? skb_dequeue+0x61/0x6d
+[  139.019004]  [<ffffffff8104fb30>] destroy_workqueue+0x17/0xea
+[  139.019004]  [<ffffffffa024619d>] ieee80211_unregister_hw+0xe5/0x116 [mac80211]
+[  139.019004]  [<ffffffffa02a9c5d>] b43_ssb_remove+0x7f/0xbe [b43]
+[  139.019004]  [<ffffffff812b1a61>] __device_release_driver+0x86/0xcf
+[  139.019004]  [<ffffffff812b23a1>] driver_detach+0x84/0xab
+[  139.019004]  [<ffffffff812b1883>] bus_remove_driver+0xb7/0xdc
+[  139.019004]  [<ffffffff812b2990>] driver_unregister+0x69/0x71
+[  139.019004]  [<ffffffffa02ce900>] ? b43_debugfs_exit+0x1a/0x1a [b43]
+[  139.019004]  [<ffffffffa006c79e>] ssb_driver_unregister+0x12/0x14 [ssb]
+[  139.019004]  [<ffffffffa02ce910>] b43_exit+0x10/0x28 [b43]
+[  139.019004]  [<ffffffff8107efec>] sys_delete_module+0x20b/0x27d
+[  139.019004]  [<ffffffff810dc506>] ? vm_munmap+0x50/0x60
+[  139.019004]  [<ffffffff8146fcd2>] system_call_fastpath+0x16/0x1b
+[  139.019004] Code: 41 5e 41 5f 5d c3 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 ec 18 66 66 66 66 90 48 89 fb 48 c7 c7 80 2c 9b 81 e8 e0 07 42 00 <8b> 83 88 00 00 00 8d 50 01 85 c0 89 93 88 00 00 00 75 03 83 0b
+[  139.019004] RIP  [<ffffffff8104e988>] drain_workqueue+0x25/0x142
+[  139.019004]  RSP <ffff88014b90fd28>
+[  139.019004] CR2: 0000000000000088
+[  139.121477] ---[ end trace b82c4fe2c4e7d3f0 ]---
