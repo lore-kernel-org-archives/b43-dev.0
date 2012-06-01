@@ -1,67 +1,94 @@
-From: Seth Forshee <seth.forshee@canonical.com>
-Date: Thu, 31 May 2012 17:06:35 -0500
-Subject: [PATCH] b43: ensure ext PA lines are enabled for BCM4331
-In-Reply-To: <4FC79AFD.6030803@hauke-m.de>
-References: <1338472163-3810-1-git-send-email-seth.forshee@canonical.com>
- <4FC77D25.4060100@hauke-m.de>
- <20120531142652.GA32179@thinkpad-t410>
- <4FC79AFD.6030803@hauke-m.de>
-Message-ID: <20120531220635.GE32179@thinkpad-t410>
+From: Oleksij Rempel <bug-track@fisher-privat.net>
+Date: Fri,  1 Jun 2012 09:37:20 +0200
+Subject: [PATCH 1/1] b43: do not call ieee80211_unregister_hw if we are not
+ registred
+In-Reply-To: <1338536240-4392-1-git-send-email-bug-track@fisher-privat.net>
+References: <1338536240-4392-1-git-send-email-bug-track@fisher-privat.net>
+Message-ID: <1338536240-4392-2-git-send-email-bug-track@fisher-privat.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Arend van Spriel <arend@broadcom.com>, Stefano Brivio <stefano.brivio@polimi.it>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Thu, May 31, 2012 at 06:23:25PM +0200, Hauke Mehrtens wrote:
-> On 05/31/2012 04:26 PM, Seth Forshee wrote:
-> > On Thu, May 31, 2012 at 04:16:05PM +0200, Hauke Mehrtens wrote:
-> >> Hi Seth,
-> >>
-> >> why don't you call this from bcma_pmu_workarounds() in
-> >> drivers/bcma/driver_chipcommon_pmu.c instead of calling this from b43? I
-> >> think it looks better to call some workarounds on chip common from bcma
-> >> and not from b43.
-> > 
-> > Arend recommended calling it from within b43's start op, but I'm not
-> > sure of the reason. Arend?
-> > 
-> > Agreed though that if there's no need to run it every time the interface
-> > is started then bcma_pmu_workarounds() would be a nicer place for it.
-> 
-> brcmsmac calls the chip specific the workarounds in ai_doattach(), but
-> the ones for BCM4313 and BCM43224 are also in bcma_pmu_workarounds(),
-> this should be cleaned up to have them just at one place. In some old
-> version of brcmsmac the workaround for the BCM4331 was also called from
-> ai_doattach() function, but later removed likely because this devices is
-> not supported by brcmsmac.
-> So if there is not better reason as, the proprietary Broadcom driver
-> does so, I would like to see this call in bcma_pmu_workarounds().
+this patch fixes kernel Oops on "rmmod b43" if firmware was not loaded:
 
-I found the SDK code from a router source package, and oddly that code
-is clearing those bits in si_doattach(). In fact si_chipcontrl_epa4331()
-is never called to enable the ext PA lines, only to disable them. The
-sprom code reads the value before disabling them and restores it after
-reading from the sprom. Enabling the ext PA pins is what fixes things
-for me. Predictably, duplicating this in bcma makes wireless broken all
-the time. 
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000088
+IP: [<ffffffff8104e988>] drain_workqueue+0x25/0x142
+PGD 153ac6067 PUD 153b82067 PMD 0
+Oops: 0000 [#1] SMP
 
-At any rate, it sounds like we're agreed to add the workaround in
-bcma_pmu_workarounds(), so I'll redo the patch.
+Signed-off-by: Oleksij Rempel <bug-track@fisher-privat.net>
+---
+ drivers/net/wireless/b43/b43.h  |    4 ++++
+ drivers/net/wireless/b43/main.c |   19 ++++++++++++-------
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-> >> According to some Broadcom code this should also be called for chip_id
-> >> 43431 when turning it on and in the sprom code.
-> > 
-> > I'm having trouble parsing this, specifically the "and in the sprom
-> > code" part. Can you clarify?
-> 
-> In the Broadcom SDK code si_chipcontrl_epa4331(), the same function as
-> bcma_chipco_bcm4331_ext_pa_lines_ctl() in bcma, gets called for devices
-> with a chip id of 0x4331 and 43431, both seam to be BCM4331 devices. We
-> should also call our workarounds for both chip ids.
-
-I'll fix this too.
-
-Thanks,
-Seth
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 67c13af..c06b6cb 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -877,6 +877,10 @@ struct b43_wl {
+ 	 * from the mac80211 subsystem. */
+ 	u16 mac80211_initially_registered_queues;
+ 
++	/* Set this if we call ieee80211_register_hw() and check if we call
++	 * ieee80211_unregister_hw(). */
++	bool hw_registred;
++
+ 	/* We can only have one operating interface (802.11 core)
+ 	 * at a time. General information about this interface follows.
+ 	 */
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index e4d6dc2..747079b 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -2437,6 +2437,7 @@ start_ieee80211:
+ 	err = ieee80211_register_hw(wl->hw);
+ 	if (err)
+ 		goto err_one_core_detach;
++	wl->hw_registred = true;
+ 	b43_leds_register(wl->current_dev);
+ 	goto out;
+ 
+@@ -5283,6 +5284,7 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ 
+ 	hw->queues = modparam_qos ? B43_QOS_QUEUE_NUM : 1;
+ 	wl->mac80211_initially_registered_queues = hw->queues;
++	wl->hw_registred = false;
+ 	hw->max_rates = 2;
+ 	SET_IEEE80211_DEV(hw, dev->dev);
+ 	if (is_valid_ether_addr(sprom->et1mac))
+@@ -5354,12 +5356,15 @@ static void b43_bcma_remove(struct bcma_device *core)
+ 	 * as the ieee80211 unreg will destroy the workqueue. */
+ 	cancel_work_sync(&wldev->restart_work);
+ 
+-	/* Restore the queues count before unregistering, because firmware detect
+-	 * might have modified it. Restoring is important, so the networking
+-	 * stack can properly free resources. */
+-	wl->hw->queues = wl->mac80211_initially_registered_queues;
+-	b43_leds_stop(wldev);
+-	ieee80211_unregister_hw(wl->hw);
++	B43_WARN_ON(!wl);
++	if (wl->current_dev == wldev && wl->hw_registred) {
++		/* Restore the queues count before unregistering, because firmware detect
++		 * might have modified it. Restoring is important, so the networking
++		 * stack can properly free resources. */
++		wl->hw->queues = wl->mac80211_initially_registered_queues;
++		b43_leds_stop(wldev);
++		ieee80211_unregister_hw(wl->hw);
++	}
+ 
+ 	b43_one_core_detach(wldev->dev);
+ 
+@@ -5430,7 +5435,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
+ 	cancel_work_sync(&wldev->restart_work);
+ 
+ 	B43_WARN_ON(!wl);
+-	if (wl->current_dev == wldev) {
++	if (wl->current_dev == wldev && wl->hw_registred) {
+ 		/* Restore the queues count before unregistering, because firmware detect
+ 		 * might have modified it. Restoring is important, so the networking
+ 		 * stack can properly free resources. */
+-- 
+1.7.9.5
