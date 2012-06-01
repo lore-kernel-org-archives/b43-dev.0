@@ -1,63 +1,66 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Fri, 01 Jun 2012 22:19:54 +0200
-Subject: [PATCH] bcma: make some functions static
-In-Reply-To: <4FC8762D.8090807@broadcom.com>
-References: <1338496859-16436-1-git-send-email-hauke@hauke-m.de>
- <4FC8762D.8090807@broadcom.com>
-Message-ID: <4FC923EA.7030008@hauke-m.de>
+Date: Fri, 01 Jun 2012 22:33:32 +0200
+Subject: [PATCH] bcma: fix null pointer in bcma_core_pci_irq_ctl
+In-Reply-To: <4FC8796E.4060800@broadcom.com>
+References: <1338496770-16381-1-git-send-email-hauke@hauke-m.de>
+ <4FC8796E.4060800@broadcom.com>
+Message-ID: <4FC9271C.5030608@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Arend van Spriel <arend@broadcom.com>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, Joe Perches <joe@perches.com>
 
-On 06/01/2012 09:58 AM, Arend van Spriel wrote:
-> On 05/31/2012 10:40 PM, Hauke Mehrtens wrote:
->> The functions and structs are not used in an other file and the
->> prototypes are in no header file, just make them static so the compiler
->> is able to optimize them better.
+On 06/01/2012 10:12 AM, Arend van Spriel wrote:
+> On 05/31/2012 10:39 PM, Hauke Mehrtens wrote:
+>> pc could be null if hosttype != BCMA_HOSTTYPE_PCI.
+>> If we are on a device without a pci core this function is called with
+>> pc = null by b43 and brcmsmac. If the host type is PCI we have a pci
+>> core as well and pc can not be null.
 >>
 >> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 >> ---
->> diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
->> index 6c05cf4..f7fbae7 100644
->> --- a/drivers/bcma/host_pci.c
->> +++ b/drivers/bcma/host_pci.c
->> @@ -77,8 +77,8 @@ static void bcma_host_pci_write32(struct bcma_device *core, u16 offset,
->>  }
->>  
->>  #ifdef CONFIG_BCMA_BLOCKIO
->> -void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
->> -			      size_t count, u16 offset, u8 reg_width)
->> +static void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
->> +				     size_t count, u16 offset, u8 reg_width)
-> 
-> align this with struct keyword above.
-This is about formating? The s from struct and the s from size_t are in
-the same column, in this patch it is a little bit shifted because the
-first tab is just 7 spaces long because of the + in front of it, if you
-apply it it is in the same line.
-> 
+>>  drivers/bcma/driver_pci.c |    4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
+>> index 9a96f14..884b7af 100644
+>> --- a/drivers/bcma/driver_pci.c
+>> +++ b/drivers/bcma/driver_pci.c
+>> @@ -232,7 +232,7 @@ void __devinit bcma_core_pci_init(struct bcma_drv_pci *pc)
+>>  int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
+>>  			  bool enable)
 >>  {
->>  	void __iomem *addr = core->bus->mmio + offset;
->>  	if (core->bus->mapped_core != core)
->> @@ -100,8 +100,9 @@ void bcma_host_pci_block_read(struct bcma_device *core, void *buffer,
->>  	}
->>  }
+>> -	struct pci_dev *pdev = pc->core->bus->host_pci;
+>> +	struct pci_dev *pdev;
+>>  	u32 coremask, tmp;
+>>  	int err = 0;
 >>  
->> -void bcma_host_pci_block_write(struct bcma_device *core, const void *buffer,
->> -			       size_t count, u16 offset, u8 reg_width)
->> +static void bcma_host_pci_block_write(struct bcma_device *core,
->> +				      const void *buffer, size_t count,
->> +				      u16 offset, u8 reg_width)
-> 
-> same here. checkpatch also spews warnings about DOS line endings.
-When I run this mail thought checkpatch I also get these DOS line ending
-messages. I do not have the original mail many more, but when I generate
-the same file I send with git send mail it doe snot contain any DOS line
-endings, checkpatch does not complain at all. Either the mail I
-generated yesterday was somehow different or something added these DOS
-line endings.
+>> @@ -243,6 +243,8 @@ int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
+> Could you change the if statement as well:
+>   - if (core->bus->hosttype != BCMA_HOSTTYPE_PCI) {
+>   + if (!pc || core->bus->hosttype != BCMA_HOSTTYPE_PCI)
+
+Yes that's good I will change that, just to be save.
+
+>>		/* This bcma device is not on a PCI host-bus. So the IRQs are
+>>		 * not routed through the PCI core.
+>>		 * So we must not enable routing through the PCI core. */
+>>		goto out;
+>   -  	}
+
+Is removing the braces correct here? There is just one line of code so
+it will compile and the braces are not necessary, but I think it would
+looks somehow strange because there is a 3 line comment in addition to
+the one line of code in that if block.
+
+@Joe Perches what do you think about this?
+
+>> +	pdev = pc->core->bus->host_pci;
+>> +
+>>  	err = pci_read_config_dword(pdev, BCMA_PCI_IRQMASK, &tmp);
+>>  	if (err)
+>>  		goto out;
 
 Hauke
