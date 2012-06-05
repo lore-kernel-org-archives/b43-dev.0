@@ -1,7 +1,9 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue,  5 Jun 2012 23:54:59 +0200
-Subject: [PATCH 0/8] bcma misc updates
-Message-ID: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
+Date: Tue,  5 Jun 2012 23:55:00 +0200
+Subject: [PATCH 1/8] bcma: extend workaround for bcm4331
+In-Reply-To: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
+References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <1338933307-13446-2-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,36 +11,41 @@ Content-Transfer-Encoding: 7bit
 To: linville@tuxdriver.com
 Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-These are some updates for bcma. Some are extending or completing some 
-workarounds for PCIe based wireless cards. A patch adds 
-bcma_pmu_spuravoid_pllupdate, used by brcmsmac and an other patch adds 
-constants for the chip ids. This code is mostly based on code from 
-brcmsmac and the Broadcom SDK for BCM47XX SoCs.
+This patch is based on a recent version of the Broadcom SDK.
 
-This was tested on a BCM4718 SoC with a BCM43224 PCIe and a BCM5357.
-The Wifi part of the BCM4718 and BCM43224 is more or less working with 
-brcmsmac, which need some more patches for that, but it has low speed 
-and some times or with some access points I still get errors. The wifi 
-of the BCM5357 does not work.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/bcma/driver_chipcommon_pmu.c        |    3 +++
+ include/linux/bcma/bcma_driver_chipcommon.h |    1 +
+ 2 files changed, 4 insertions(+)
 
-Hauke Mehrtens (8):
-  bcma: extend workaround for bcm4331
-  bcma: add constants for chip ids
-  bcma: Fix for 4329b0 bad LPOM is detection
-  bcma: add PCI ID for BCM43224
-  bcma: complete workaround for BCMA43224 and BCM4313
-  bcma: handle SoCs in pmu initialization
-  bcma: add bcma_pmu_spuravoid_pllupdate()
-  bcma: add mdelay bcma_pmu_resources_init()
-
- drivers/bcma/driver_chipcommon_pmu.c        |  355 +++++++++++++++++++++++----
- drivers/bcma/driver_mips.c                  |    8 +-
- drivers/bcma/driver_pci_host.c              |    8 +-
- drivers/bcma/host_pci.c                     |    1 +
- drivers/bcma/sprom.c                        |   18 +-
- include/linux/bcma/bcma.h                   |   30 +++
- include/linux/bcma/bcma_driver_chipcommon.h |   23 ++
- 7 files changed, 381 insertions(+), 62 deletions(-)
-
+diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
+index 97f6495..65fae62 100644
+--- a/drivers/bcma/driver_chipcommon_pmu.c
++++ b/drivers/bcma/driver_chipcommon_pmu.c
+@@ -123,8 +123,11 @@ void bcma_chipco_bcm4331_ext_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
+ 		val |= BCMA_CHIPCTL_4331_EXTPA_EN;
+ 		if (bus->chipinfo.pkg == 9 || bus->chipinfo.pkg == 11)
+ 			val |= BCMA_CHIPCTL_4331_EXTPA_ON_GPIO2_5;
++		else if (bus->chipinfo.rev > 0)
++			val |= BCMA_CHIPCTL_4331_EXTPA_EN2;
+ 	} else {
+ 		val &= ~BCMA_CHIPCTL_4331_EXTPA_EN;
++		val &= ~BCMA_CHIPCTL_4331_EXTPA_EN2;
+ 		val &= ~BCMA_CHIPCTL_4331_EXTPA_ON_GPIO2_5;
+ 	}
+ 	bcma_cc_write32(cc, BCMA_CC_CHIPCTL, val);
+diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
+index 8bbfe31..1e523cc 100644
+--- a/include/linux/bcma/bcma_driver_chipcommon.h
++++ b/include/linux/bcma/bcma_driver_chipcommon.h
+@@ -321,6 +321,7 @@
+ #define BCMA_CHIPCTL_4331_OVR_PIPEAUXPWRDOWN	BIT(9)	/* override core control on pipe_AuxPowerDown */
+ #define BCMA_CHIPCTL_4331_PCIE_AUXCLKEN		BIT(10)	/* pcie_auxclkenable */
+ #define BCMA_CHIPCTL_4331_PCIE_PIPE_PLLDOWN	BIT(11)	/* pcie_pipe_pllpowerdown */
++#define BCMA_CHIPCTL_4331_EXTPA_EN2		BIT(12)	/* 0 ext pa disable, 1 ext pa enabled */
+ #define BCMA_CHIPCTL_4331_BT_SHD0_ON_GPIO4	BIT(16)	/* enable bt_shd0 at gpio4 */
+ #define BCMA_CHIPCTL_4331_BT_SHD1_ON_GPIO5	BIT(17)	/* enable bt_shd1 at gpio5 */
+ 
 -- 
 1.7.9.5
