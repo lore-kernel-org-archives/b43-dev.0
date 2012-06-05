@@ -1,85 +1,63 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 01 Jun 2012 15:56:24 -0700
-Subject: [PATCH] bcma: fix null pointer in bcma_core_pci_irq_ctl
-In-Reply-To: <4FC9271C.5030608@hauke-m.de>
-References: <1338496770-16381-1-git-send-email-hauke@hauke-m.de>
- <4FC8796E.4060800@broadcom.com> <4FC9271C.5030608@hauke-m.de>
-Message-ID: <1338591384.19112.12.camel@joe2Laptop>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Mon, 04 Jun 2012 19:10:14 -0500
+Subject: Procedure for donating hardware to b43 project
+In-Reply-To: <4FC8A490.4070507@gmail.com>
+References: <4FBB9C7F.5010102@gmail.com> <4FC8A490.4070507@gmail.com>
+Message-ID: <4FCD4E66.5040202@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Arend van Spriel <arend@broadcom.com>, linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On Fri, 2012-06-01 at 22:33 +0200, Hauke Mehrtens wrote:
-> On 06/01/2012 10:12 AM, Arend van Spriel wrote:
-> > On 05/31/2012 10:39 PM, Hauke Mehrtens wrote:
-> >> pc could be null if hosttype != BCMA_HOSTTYPE_PCI.
-> >> If we are on a device without a pci core this function is called with
-> >> pc = null by b43 and brcmsmac. If the host type is PCI we have a pci
-> >> core as well and pc can not be null.
-> >>
-> >> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> >> ---
-> >>  drivers/bcma/driver_pci.c |    4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
-> >> index 9a96f14..884b7af 100644
-> >> --- a/drivers/bcma/driver_pci.c
-> >> +++ b/drivers/bcma/driver_pci.c
-> >> @@ -232,7 +232,7 @@ void __devinit bcma_core_pci_init(struct bcma_drv_pci *pc)
-> >>  int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
-> >>  			  bool enable)
-> >>  {
-> >> -	struct pci_dev *pdev = pc->core->bus->host_pci;
-> >> +	struct pci_dev *pdev;
-> >>  	u32 coremask, tmp;
-> >>  	int err = 0;
-> >>  
-> >> @@ -243,6 +243,8 @@ int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc, struct bcma_device *core,
-> > Could you change the if statement as well:
-> >   - if (core->bus->hosttype != BCMA_HOSTTYPE_PCI) {
-> >   + if (!pc || core->bus->hosttype != BCMA_HOSTTYPE_PCI)
-> 
-> Yes that's good I will change that, just to be save.
-> 
-> >>		/* This bcma device is not on a PCI host-bus. So the IRQs are
-> >>		 * not routed through the PCI core.
-> >>		 * So we must not enable routing through the PCI core. */
-> >>		goto out;
-> >   -  	}
-> 
-> Is removing the braces correct here? There is just one line of code so
-> it will compile and the braces are not necessary, but I think it would
-> looks somehow strange because there is a 3 line comment in addition to
-> the one line of code in that if block.
-> 
-> @Joe Perches what do you think about this?
+On 06/01/2012 06:16 AM, Kshitij Kulshreshtha wrote:
+> *ping*
+>
+> Does anyone want this piece of hardware?
+>
+> As on 2012-05-22 16:02, Kshitij Kulshreshtha did write:
+>> Hello,
+>>
+>> I am interested in donating a Broadcom BCM94228HMB Mini-PCIe card for
+>> the purpose of open source driver development. The card has the PCI ID
+>> 14e4:4359 This device is listed as not tested on the b43 driver website
+>> [1] and upon binding the pci device to the bcma driver and force loading
+>> b43 in kernel version 3.3.6 I get the following output.
+>>
+>> [13174.301451] bcma: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800,
+>> rev 0x25, class 0x0)
+>> [13174.301475] bcma: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812,
+>> rev 0x1E, class 0x0)
+>> [13174.301526] bcma: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev
+>> 0x12, class 0x0)
+>>   [13174.301548] bcma: Core 3 found: SDIO Device (manuf 0x4BF, id 0x829,
+>> rev 0x07, class 0x0)
+>> [13174.301667] bcma: PLL init unknown for device 0xA8DC
+>> [13174.301669] bcma: PMU resource config unknown for device 0xA8DC
+>> [13174.301671] bcma: PMU switch/regulators init unknown for device 0xA8DC
+>> [13174.301672] bcma: Workarounds unknown for device 0xA8DC
+>> [13174.308903] bcma: No SPROM available
+>> [13174.308995] bcma: Bus registered
+>> [13174.327537] b43-phy0: Broadcom 43228 WLAN found (core revision 30)
+>> [13174.327953] b43-phy0 ERROR: FOUND UNSUPPORTED PHY (Analog 9, Type 9,
+>> Revision 0)
+>> [13174.327958] b43: probe of bcma0:1 failed with error -95
+>> [13174.327968] Broadcom 43xx driver loaded [ Features: PMNLS ]
+>>
+>> Incidentally the card seems to have a Bluetooth component as well, but
+>> this does not show up at all under linux.
+>>
+>> So what would be the procedure to donate this card to someone who knows
+>> a more about the b43 driver and devices so this device can be supported
+>> in the future?
+>>
+>> Thanks and regards.
 
-I try not to tell others what they must do, I just
-try to suggest more standard ways to do things.
+I have been holding back in case someone spoke up, but as no one has, I would be 
+happy to add it to my collection.
 
-I think it's better to use braces when there's a
-multiline comment after a test with a single statement.
+I will send you my mailing address in a separate post.
 
-	if (some_test()) {
-		/* a multiline
-		 * comment
-		 */
-		single_statement(action);
-	}
+Thanks,
 
-But I would tend to move that sort of comment above the fold
-and use something like:
-
-	/* If the bcma device is not on a PCI host-bus,
-	 * IRQs are not routed through the PCI core.
-	 */
-	if (!pc || core->bus->hosttype != BCMA_HOSTTYPE_PCI)
-		goto out;
-
-Feel free to do what you you think best.
-
-cheers, Joe
+Larry
