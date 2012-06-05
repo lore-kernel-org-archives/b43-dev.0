@@ -1,9 +1,9 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Tue,  5 Jun 2012 23:55:00 +0200
-Subject: [PATCH 1/8] bcma: extend workaround for bcm4331
+Date: Tue,  5 Jun 2012 23:55:02 +0200
+Subject: [PATCH 3/8] bcma: Fix for 4329b0 bad LPOM is detection
 In-Reply-To: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
 References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1338933307-13446-2-git-send-email-hauke@hauke-m.de>
+Message-ID: <1338933307-13446-4-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,41 +11,34 @@ Content-Transfer-Encoding: 7bit
 To: linville@tuxdriver.com
 Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-This patch is based on a recent version of the Broadcom SDK.
+This workaround should be triggered based on the chipid and rev and not
+the core id and rev. This is based on code in the Broadcom SDK.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/bcma/driver_chipcommon_pmu.c        |    3 +++
- include/linux/bcma/bcma_driver_chipcommon.h |    1 +
- 2 files changed, 4 insertions(+)
+ drivers/bcma/driver_chipcommon_pmu.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index 97f6495..65fae62 100644
+index da8769e..dd2b55d 100644
 --- a/drivers/bcma/driver_chipcommon_pmu.c
 +++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -123,8 +123,11 @@ void bcma_chipco_bcm4331_ext_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
- 		val |= BCMA_CHIPCTL_4331_EXTPA_EN;
- 		if (bus->chipinfo.pkg == 9 || bus->chipinfo.pkg == 11)
- 			val |= BCMA_CHIPCTL_4331_EXTPA_ON_GPIO2_5;
-+		else if (bus->chipinfo.rev > 0)
-+			val |= BCMA_CHIPCTL_4331_EXTPA_EN2;
- 	} else {
- 		val &= ~BCMA_CHIPCTL_4331_EXTPA_EN;
-+		val &= ~BCMA_CHIPCTL_4331_EXTPA_EN2;
- 		val &= ~BCMA_CHIPCTL_4331_EXTPA_ON_GPIO2_5;
- 	}
- 	bcma_cc_write32(cc, BCMA_CC_CHIPCTL, val);
-diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
-index 8bbfe31..1e523cc 100644
---- a/include/linux/bcma/bcma_driver_chipcommon.h
-+++ b/include/linux/bcma/bcma_driver_chipcommon.h
-@@ -321,6 +321,7 @@
- #define BCMA_CHIPCTL_4331_OVR_PIPEAUXPWRDOWN	BIT(9)	/* override core control on pipe_AuxPowerDown */
- #define BCMA_CHIPCTL_4331_PCIE_AUXCLKEN		BIT(10)	/* pcie_auxclkenable */
- #define BCMA_CHIPCTL_4331_PCIE_PIPE_PLLDOWN	BIT(11)	/* pcie_pipe_pllpowerdown */
-+#define BCMA_CHIPCTL_4331_EXTPA_EN2		BIT(12)	/* 0 ext pa disable, 1 ext pa enabled */
- #define BCMA_CHIPCTL_4331_BT_SHD0_ON_GPIO4	BIT(16)	/* enable bt_shd0 at gpio4 */
- #define BCMA_CHIPCTL_4331_BT_SHD1_ON_GPIO5	BIT(17)	/* enable bt_shd1 at gpio5 */
+@@ -166,6 +166,7 @@ static void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
+ void bcma_pmu_init(struct bcma_drv_cc *cc)
+ {
+ 	u32 pmucap;
++	struct bcma_bus *bus = cc->core->bus;
  
+ 	pmucap = bcma_cc_read32(cc, BCMA_CC_PMU_CAP);
+ 	cc->pmu.rev = (pmucap & BCMA_CC_PMU_CAP_REVISION);
+@@ -180,7 +181,7 @@ void bcma_pmu_init(struct bcma_drv_cc *cc)
+ 		bcma_cc_set32(cc, BCMA_CC_PMU_CTL,
+ 			     BCMA_CC_PMU_CTL_NOILPONW);
+ 
+-	if (cc->core->id.id == 0x4329 && cc->core->id.rev == 2)
++	if (bus->chipinfo.id == 0x4329 && bus->chipinfo.rev == 2)
+ 		pr_err("Fix for 4329b0 bad LPOM state not implemented!\n");
+ 
+ 	bcma_pmu_pll_init(cc);
 -- 
 1.7.9.5
