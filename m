@@ -1,27 +1,108 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Wed, 6 Jun 2012 13:51:53 +0200
-Subject: [PATCH 2/8] bcma: add constants for chip ids
-In-Reply-To: <1338933307-13446-3-git-send-email-hauke@hauke-m.de>
+From: Florian Fainelli <florian@openwrt.org>
+Date: Wed, 06 Jun 2012 14:19:53 +0200
+Subject: [PATCH 6/8] bcma: handle SoCs in pmu initialization
+In-Reply-To: <1338933307-13446-7-git-send-email-hauke@hauke-m.de>
 References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
- <1338933307-13446-3-git-send-email-hauke@hauke-m.de>
-Message-ID: <4FCF4459.8020806@broadcom.com>
+ <1338933307-13446-7-git-send-email-hauke@hauke-m.de>
+Message-ID: <2716026.rMfCBzMpF9@flexo>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org
 
-On 06/05/2012 11:55 PM, Hauke Mehrtens wrote:
-> The chip IDs are used all over bcma and no constants where defined.
-> This patch adds the constants and makes bcma use them.
+Hi Hauke,
 
-Acked-by: Arend van Spriel <arend@broadcom.com>
+On Tuesday 05 June 2012 23:55:05 Hauke Mehrtens wrote:
+> The SoCs do not need any special handling in bcma_pmu_pll_init(),
+> bcma_pmu_resources_init(), bcma_pmu_swreg_init() and
+> bcma_pmu_workarounds. This patches suppresses some warnings in the log.
+
+This does not look like it scales very good, how about you turn the pr_err() 
+into a pr_debug() so that developpers porting bcma on a new chip need to turn 
+on the appropriate debug knobs to get the message?
+
+> 
 > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 > ---
->  drivers/bcma/driver_chipcommon_pmu.c |   81 +++++++++++++++++-----------------
->  drivers/bcma/driver_mips.c           |    8 ++--
->  drivers/bcma/driver_pci_host.c       |    8 ++--
->  drivers/bcma/sprom.c                 |   18 ++++----
->  include/linux/bcma/bcma.h            |   30 +++++++++++++
->  5 files changed, 90 insertions(+), 55 deletions(-)
+>  drivers/bcma/driver_chipcommon_pmu.c |   32 
+++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/bcma/driver_chipcommon_pmu.c 
+b/drivers/bcma/driver_chipcommon_pmu.c
+> index 2ebba9c..9bf2dff 100644
+> --- a/drivers/bcma/driver_chipcommon_pmu.c
+> +++ b/drivers/bcma/driver_chipcommon_pmu.c
+> @@ -63,6 +63,14 @@ static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
+>  	case BCMA_CHIP_ID_BCM4331:
+>  	case BCMA_CHIP_ID_BCM43224:
+>  	case BCMA_CHIP_ID_BCM43225:
+> +	case BCMA_CHIP_ID_BCM4716:
+> +	case BCMA_CHIP_ID_BCM4748:
+> +	case BCMA_CHIP_ID_BCM47162:
+> +	case BCMA_CHIP_ID_BCM4749:
+> +	case BCMA_CHIP_ID_BCM5357:
+> +	case BCMA_CHIP_ID_BCM5356:
+> +	case BCMA_CHIP_ID_BCM53572:
+> +	case BCMA_CHIP_ID_BCM4706:
+>  		break;
+>  	default:
+>  		pr_err("PLL init unknown for device 0x%04X\n",
+> @@ -83,6 +91,14 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc 
+*cc)
+>  	case BCMA_CHIP_ID_BCM4331:
+>  	case BCMA_CHIP_ID_BCM43224:
+>  	case BCMA_CHIP_ID_BCM43225:
+> +	case BCMA_CHIP_ID_BCM4716:
+> +	case BCMA_CHIP_ID_BCM4748:
+> +	case BCMA_CHIP_ID_BCM47162:
+> +	case BCMA_CHIP_ID_BCM4749:
+> +	case BCMA_CHIP_ID_BCM5357:
+> +	case BCMA_CHIP_ID_BCM5356:
+> +	case BCMA_CHIP_ID_BCM53572:
+> +	case BCMA_CHIP_ID_BCM4706:
+>  		break;
+>  	default:
+>  		pr_err("PMU resource config unknown for device 0x%04X\n",
+> @@ -105,6 +121,14 @@ static void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
+>  	case BCMA_CHIP_ID_BCM4331:
+>  	case BCMA_CHIP_ID_BCM43224:
+>  	case BCMA_CHIP_ID_BCM43225:
+> +	case BCMA_CHIP_ID_BCM4716:
+> +	case BCMA_CHIP_ID_BCM4748:
+> +	case BCMA_CHIP_ID_BCM47162:
+> +	case BCMA_CHIP_ID_BCM4749:
+> +	case BCMA_CHIP_ID_BCM5357:
+> +	case BCMA_CHIP_ID_BCM5356:
+> +	case BCMA_CHIP_ID_BCM53572:
+> +	case BCMA_CHIP_ID_BCM4706:
+>  		break;
+>  	default:
+>  		pr_err("PMU switch/regulators init unknown for device "
+> @@ -168,6 +192,14 @@ static void bcma_pmu_workarounds(struct bcma_drv_cc 
+*cc)
+>  		}
+>  		break;
+>  	case BCMA_CHIP_ID_BCM43225:
+> +	case BCMA_CHIP_ID_BCM4716:
+> +	case BCMA_CHIP_ID_BCM4748:
+> +	case BCMA_CHIP_ID_BCM47162:
+> +	case BCMA_CHIP_ID_BCM4749:
+> +	case BCMA_CHIP_ID_BCM5357:
+> +	case BCMA_CHIP_ID_BCM5356:
+> +	case BCMA_CHIP_ID_BCM53572:
+> +	case BCMA_CHIP_ID_BCM4706:
+>  		break;
+>  	default:
+>  		pr_err("Workarounds unknown for device 0x%04X\n",
+> -- 
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Florian
