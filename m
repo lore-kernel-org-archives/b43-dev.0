@@ -1,56 +1,127 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed, 06 Jun 2012 10:42:02 +0200
-Subject: [PATCH 3/8] bcma: Fix for 4329b0 bad LPOM is detection
-In-Reply-To: <2043822.26J1ek8FFi@flexo>
-References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
- <1338933307-13446-4-git-send-email-hauke@hauke-m.de>
- <2043822.26J1ek8FFi@flexo>
-Message-ID: <4FCF17DA.4010100@hauke-m.de>
+Date: Wed, 06 Jun 2012 10:49:30 +0200
+Subject: BCM4318 problem on Kubuntu
+In-Reply-To: <4FCED87C.6060801@lwfinger.net>
+References: <315651.5469.14371-10360-1586159934-1338927105@seznam.cz>
+ <4FCED87C.6060801@lwfinger.net>
+Message-ID: <4FCF199A.7000702@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <florian@openwrt.org>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On 06/06/2012 10:08 AM, Florian Fainelli wrote:
-> Hi Hauke,
-> 
-> On Tuesday 05 June 2012 23:55:02 Hauke Mehrtens wrote:
->> This workaround should be triggered based on the chipid and rev and not
->> the core id and rev. This is based on code in the Broadcom SDK.
+On 06/06/2012 06:11 AM, Larry Finger wrote:
+> On 06/05/2012 03:11 PM, Vaclav Peroutka wrote:
+>> Hello,
 >>
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
->>  drivers/bcma/driver_chipcommon_pmu.c |    3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> I updated my Kubuntu and I still have problems with BCM4318 driver.
+>> Unfortunately I can not install any newer Ubuntu as my old notebook
+>> Amilo 8010 always freezes during booting of the live CD.
 >>
->> diff --git a/drivers/bcma/driver_chipcommon_pmu.c 
-> b/drivers/bcma/driver_chipcommon_pmu.c
->> index da8769e..dd2b55d 100644
->> --- a/drivers/bcma/driver_chipcommon_pmu.c
->> +++ b/drivers/bcma/driver_chipcommon_pmu.c
->> @@ -166,6 +166,7 @@ static void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
->>  void bcma_pmu_init(struct bcma_drv_cc *cc)
->>  {
->>  	u32 pmucap;
->> +	struct bcma_bus *bus = cc->core->bus;
->>  
->>  	pmucap = bcma_cc_read32(cc, BCMA_CC_PMU_CAP);
->>  	cc->pmu.rev = (pmucap & BCMA_CC_PMU_CAP_REVISION);
->> @@ -180,7 +181,7 @@ void bcma_pmu_init(struct bcma_drv_cc *cc)
->>  		bcma_cc_set32(cc, BCMA_CC_PMU_CTL,
->>  			     BCMA_CC_PMU_CTL_NOILPONW);
->>  
->> -	if (cc->core->id.id == 0x4329 && cc->core->id.rev == 2)
->> +	if (bus->chipinfo.id == 0x4329 && bus->chipinfo.rev == 2)
->>  		pr_err("Fix for 4329b0 bad LPOM state not implemented!\n");
+>> Can somebody know, what is wrong ?
+>>
+>> I have following system:
+>> $ uname -a
+>> Linux malamys-laptop 2.6.32-41-generic #89-Ubuntu SMP Fri Apr 27
+>> 22:22:09 UTC 2012 i686 GNU/Linux
+>>
+>> $ lspci -vnn | grep 14e4
+>> 06:04.0 Network controller [0280]: Broadcom Corporation BCM4318
+>> [AirForce One 54g] 802.11g Wireless LAN Controller [14e4:4318] (rev 02)
+>>
+>> $ lsmod | grep b43
+>> b43                   163556  0
+>> mac80211              205434  1 b43
+>> cfg80211              126528  2 b43,mac80211
+>> ssb                    38934  1 b43
+>> led_class               2864  2 b43,sdhci
+>>
+>> excerpt of /var/log/messages
+>> Jun  5 22:39:26 malamys-laptop kernel: [   28.708196] b43-phy0:
+>> Broadcom 4318 WLAN found (core revision 9)
+>> Jun  5 22:39:26 malamys-laptop kernel: [   28.718799] input: SynPS/2
+>> Synaptics TouchPad as /devices/platform/i8042/serio1/input/i
+>> nput4
+>> Jun  5 22:39:26 malamys-laptop kernel: [   28.747484] type=1505
+>> audit(1338928766.914:11):  operation="profile_load" pid=684 name=
+>> "/usr/lib/cups/backend/cups-pdf"
+>> Jun  5 22:39:26 malamys-laptop kernel: [   28.755714] r8169: eth0:
+>> link down
+>> Jun  5 22:39:26 malamys-laptop kernel: [   28.755990]
+>> ADDRCONF(NETDEV_UP): eth0: link is not ready
+>> Jun  5 22:39:26 malamys-laptop kernel: [   28.808940] Bluetooth: L2CAP
+>> ver 2.14
+>> Jun  5 22:39:26 malamys-laptop kernel: [   28.808946] Bluetooth: L2CAP
+>> socket layer initialized
+>> Jun  5 22:39:27 malamys-laptop kernel: [   28.857917] Registered led
+>> device: b43-phy0::tx
+>> Jun  5 22:39:27 malamys-laptop kernel: [   28.857939] Registered led
+>> device: b43-phy0::rx
+>> Jun  5 22:39:27 malamys-laptop kernel: [   28.857959] Registered led
+>> device: b43-phy0::radio
+>> Jun  5 22:39:27 malamys-laptop kernel: [   28.858059] Broadcom 43xx
+>> driver loaded [ Features: PL, Firmware-ID: FW13 ]
+>> Jun  5 22:39:27 malamys-laptop kernel: [   28.930469] [drm]
+>> initialized overlay support
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.129631] Bluetooth: BNEP
+>> (Ethernet Emulation) ver 1.3
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.129636] Bluetooth: BNEP
+>> filters: protocol multicast
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.152076] b43 ssb0:0:
+>> firmware: requesting b43/ucode5.fw
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.182309] b43 ssb0:0:
+>> firmware: requesting b43/pcm5.fw
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.190748] b43 ssb0:0:
+>> firmware: requesting b43/b0g0initvals5.fw
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.196865] b43 ssb0:0:
+>> firmware: requesting b43/b0g0bsinitvals5.fw
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.259129] pcmcia_socket
+>> pcmcia_socket0: cs: IO port probe 0x100-0x3af: clean.
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.260864] pcmcia_socket
+>> pcmcia_socket0: cs: IO port probe 0x3e0-0x4ff: excluding 0x4d
+>> 0-0x4d7
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.261597] pcmcia_socket
+>> pcmcia_socket0: cs: IO port probe 0x820-0x8ff: clean.
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.262202] pcmcia_socket
+>> pcmcia_socket0: cs: IO port probe 0xc00-0xcf7: clean.
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.262980] pcmcia_socket
+>> pcmcia_socket0: cs: IO port probe 0xa00-0xaff: clean.
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.435791] apm: BIOS not
+>> found.
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.437416] Bridge
+>> firewalling registered
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.476032] b43-phy0:
+>> Loading firmware version 666.2 (2011-02-23 01:15:07)
 > 
-> Does not that deserve a new define to be in line with your previous patch?
-> --
-> Florian
+> I am not certain that this version of the firmware works with the 4318.
+> You might try an older version.
 
-Probably we can remove this completely. The BCM4329 is a fullmac chip
-mostly used in phones and this part is done in the firmware.
+Support for firmware >= 598 was added in 3.2, so you have to use an
+older firmware or a more recent kernel or compat-wireless.
 
-Hauke
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.520939]
+>> ADDRCONF(NETDEV_UP): wlan0: link is not ready
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.670392] Bluetooth: SCO
+>> (Voice Link) ver 0.6
+>> Jun  5 22:39:27 malamys-laptop kernel: [   29.670396] Bluetooth: SCO
+>> socket layer initialized
+>>
+>> then in dmesg I have a plenty of following:
+>> [  118.012839] ------------[ cut here ]------------
+>> [  118.012854] WARNING: at
+>> /build/buildd/linux-2.6.32/net/mac80211/rx.c:2482
+>> ieee80211_rx+0x133/0x160 [mac80211]()
+>> [  118.012857] Hardware name: AMILO PRO V8010
+> 
+> My system is too new to tell exactly what causes this error; however, I
+> think it comes from the wireless band not being set up correctly. Do you
+> have CRDA installed? I do not see any evidence of it in the dmesg output
+> that you posted.
+> 
+> Larry
+> 
+> _______________________________________________
+> b43-dev mailing list
+> b43-dev at lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/b43-dev
