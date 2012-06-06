@@ -1,29 +1,49 @@
-From: =?us-ascii?Q?Vaclav=20Peroutka?= <vaclavpe@seznam.cz>
-Date: Wed, 06 Jun 2012 07:45:33 +0200 (CEST)
-Subject: =?us-ascii?Q?Re=3A=20BCM4318=20problem=20on=20Kubuntu?=
-In-Reply-To: <4FCED87C.6060801@lwfinger.net>
-Message-ID: <315704.11262.21982-2893-1003786267-1338961532@seznam.cz>
+From: Florian Fainelli <florian@openwrt.org>
+Date: Wed, 06 Jun 2012 10:08:15 +0200
+Subject: [PATCH 3/8] bcma: Fix for 4329b0 bad LPOM is detection
+In-Reply-To: <1338933307-13446-4-git-send-email-hauke@hauke-m.de>
+References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
+ <1338933307-13446-4-git-send-email-hauke@hauke-m.de>
+Message-ID: <2043822.26J1ek8FFi@flexo>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org
 
-> > Jun  5 22:39:27 malamys-laptop kernel: [   29.476032] b43-phy0: Loading
-> firmware version 666.2 (2011-02-23 01:15:07)
+Hi Hauke,
+
+On Tuesday 05 June 2012 23:55:02 Hauke Mehrtens wrote:
+> This workaround should be triggered based on the chipid and rev and not
+> the core id and rev. This is based on code in the Broadcom SDK.
 > 
-> I am not certain that this version of the firmware works with the 4318. You 
-> might try an older version.
-
-> > [  118.012857] Hardware name: AMILO PRO V8010
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+>  drivers/bcma/driver_chipcommon_pmu.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> My system is too new to tell exactly what causes this error; however, I think it
-> 
-> comes from the wireless band not being set up correctly. Do you have CRDA 
-> installed? I do not see any evidence of it in the dmesg output that you posted.
+> diff --git a/drivers/bcma/driver_chipcommon_pmu.c 
+b/drivers/bcma/driver_chipcommon_pmu.c
+> index da8769e..dd2b55d 100644
+> --- a/drivers/bcma/driver_chipcommon_pmu.c
+> +++ b/drivers/bcma/driver_chipcommon_pmu.c
+> @@ -166,6 +166,7 @@ static void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
+>  void bcma_pmu_init(struct bcma_drv_cc *cc)
+>  {
+>  	u32 pmucap;
+> +	struct bcma_bus *bus = cc->core->bus;
+>  
+>  	pmucap = bcma_cc_read32(cc, BCMA_CC_PMU_CAP);
+>  	cc->pmu.rev = (pmucap & BCMA_CC_PMU_CAP_REVISION);
+> @@ -180,7 +181,7 @@ void bcma_pmu_init(struct bcma_drv_cc *cc)
+>  		bcma_cc_set32(cc, BCMA_CC_PMU_CTL,
+>  			     BCMA_CC_PMU_CTL_NOILPONW);
+>  
+> -	if (cc->core->id.id == 0x4329 && cc->core->id.rev == 2)
+> +	if (bus->chipinfo.id == 0x4329 && bus->chipinfo.rev == 2)
+>  		pr_err("Fix for 4329b0 bad LPOM state not implemented!\n");
 
-What is CRDA ? I will check logs. In the meantime, I succeeded to install newest Ubuntu with WiFi card switched off in BIOS. I found this "LiveCD freezing" problem on another forum and the solution was exactly to unplug the card. So now I can make experiments on the latest linux release as well. However, I don't know where to start after I enable the card in BIOS...
-
-What older firmware do you recommend me and where can I get it ?
-
-Vaclav
+Does not that deserve a new define to be in line with your previous patch?
+--
+Florian
