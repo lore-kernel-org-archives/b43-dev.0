@@ -1,107 +1,57 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 07 Jun 2012 14:59:30 +0200
-Subject: [PATCH 6/8] bcma: handle SoCs in pmu initialization
-In-Reply-To: <2716026.rMfCBzMpF9@flexo>
-References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
- <1338933307-13446-7-git-send-email-hauke@hauke-m.de>
- <2716026.rMfCBzMpF9@flexo>
-Message-ID: <4FD0A5B2.1090604@hauke-m.de>
+From: Andre Heider <a.heider@gmail.com>
+Date: Thu, 7 Jun 2012 17:24:51 +0200
+Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
+ n_queues))
+In-Reply-To: <1339053364.4517.0.camel@jlt3.sipsolutions.net>
+References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
+ <1339014959.4523.0.camel@jlt3.sipsolutions.net>
+ <CAHsu+b-ByqBaci9W-oS3OPEK3LdRcuGphtQPOTQ02hPWNpWgQw@mail.gmail.com>
+ <1339053364.4517.0.camel@jlt3.sipsolutions.net>
+Message-ID: <CAHsu+b9UjkF6VM_YjJkHVDQzrZqsWqmG-XJKFNeSCdWGbdEngw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <florian@openwrt.org>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On 06/06/2012 02:19 PM, Florian Fainelli wrote:
-> Hi Hauke,
-> 
-> On Tuesday 05 June 2012 23:55:05 Hauke Mehrtens wrote:
->> The SoCs do not need any special handling in bcma_pmu_pll_init(),
->> bcma_pmu_resources_init(), bcma_pmu_swreg_init() and
->> bcma_pmu_workarounds. This patches suppresses some warnings in the log.
-> 
-> This does not look like it scales very good, how about you turn the pr_err() 
-> into a pr_debug() so that developpers porting bcma on a new chip need to turn 
-> on the appropriate debug knobs to get the message?
-
-I would more like to remove this message completely so that the default
-case does nothing. A developer should be capable of finding this
-function without any debug message when he wants to add support for a
-new device.
-
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
->>  drivers/bcma/driver_chipcommon_pmu.c |   32 
-> ++++++++++++++++++++++++++++++++
->>  1 file changed, 32 insertions(+)
+On Thu, Jun 7, 2012 at 9:16 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> On Thu, 2012-06-07 at 09:10 +0200, Andre Heider wrote:
+>> On Wed, Jun 6, 2012 at 10:35 PM, Johannes Berg
+>> <johannes@sipsolutions.net> wrote:
+>> > On Wed, 2012-06-06 at 21:10 +0200, Andre Heider wrote:
+>> >> Hi,
+>> >>
+>> >> the wlan daughterboard on a nintendo wii stopped working with current master.
+>> >> Building from the v3.4 tag gives me a working device.
+>> >>
+>> >> I bisected this to:
+>> >>
+>> >> commit 3a25a8c8b75b430c4f4022918e26fa51d557ecde
+>> >> Author: Johannes Berg <johannes.berg@intel.com>
+>> >>
+>> >> The hw queues fail the check in ieee80211_check_queues(). When I hack
+>> >> that function to always "return 0;" wlan works again.
+>> >
+>> > There's a fix for this on the way since Larry had also reported the bug,
+>> > but I don't know where it is right now.
 >>
->> diff --git a/drivers/bcma/driver_chipcommon_pmu.c 
-> b/drivers/bcma/driver_chipcommon_pmu.c
->> index 2ebba9c..9bf2dff 100644
->> --- a/drivers/bcma/driver_chipcommon_pmu.c
->> +++ b/drivers/bcma/driver_chipcommon_pmu.c
->> @@ -63,6 +63,14 @@ static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
->>  	case BCMA_CHIP_ID_BCM4331:
->>  	case BCMA_CHIP_ID_BCM43224:
->>  	case BCMA_CHIP_ID_BCM43225:
->> +	case BCMA_CHIP_ID_BCM4716:
->> +	case BCMA_CHIP_ID_BCM4748:
->> +	case BCMA_CHIP_ID_BCM47162:
->> +	case BCMA_CHIP_ID_BCM4749:
->> +	case BCMA_CHIP_ID_BCM5357:
->> +	case BCMA_CHIP_ID_BCM5356:
->> +	case BCMA_CHIP_ID_BCM53572:
->> +	case BCMA_CHIP_ID_BCM4706:
->>  		break;
->>  	default:
->>  		pr_err("PLL init unknown for device 0x%04X\n",
->> @@ -83,6 +91,14 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc 
-> *cc)
->>  	case BCMA_CHIP_ID_BCM4331:
->>  	case BCMA_CHIP_ID_BCM43224:
->>  	case BCMA_CHIP_ID_BCM43225:
->> +	case BCMA_CHIP_ID_BCM4716:
->> +	case BCMA_CHIP_ID_BCM4748:
->> +	case BCMA_CHIP_ID_BCM47162:
->> +	case BCMA_CHIP_ID_BCM4749:
->> +	case BCMA_CHIP_ID_BCM5357:
->> +	case BCMA_CHIP_ID_BCM5356:
->> +	case BCMA_CHIP_ID_BCM53572:
->> +	case BCMA_CHIP_ID_BCM4706:
->>  		break;
->>  	default:
->>  		pr_err("PMU resource config unknown for device 0x%04X\n",
->> @@ -105,6 +121,14 @@ static void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
->>  	case BCMA_CHIP_ID_BCM4331:
->>  	case BCMA_CHIP_ID_BCM43224:
->>  	case BCMA_CHIP_ID_BCM43225:
->> +	case BCMA_CHIP_ID_BCM4716:
->> +	case BCMA_CHIP_ID_BCM4748:
->> +	case BCMA_CHIP_ID_BCM47162:
->> +	case BCMA_CHIP_ID_BCM4749:
->> +	case BCMA_CHIP_ID_BCM5357:
->> +	case BCMA_CHIP_ID_BCM5356:
->> +	case BCMA_CHIP_ID_BCM53572:
->> +	case BCMA_CHIP_ID_BCM4706:
->>  		break;
->>  	default:
->>  		pr_err("PMU switch/regulators init unknown for device "
->> @@ -168,6 +192,14 @@ static void bcma_pmu_workarounds(struct bcma_drv_cc 
-> *cc)
->>  		}
->>  		break;
->>  	case BCMA_CHIP_ID_BCM43225:
->> +	case BCMA_CHIP_ID_BCM4716:
->> +	case BCMA_CHIP_ID_BCM4748:
->> +	case BCMA_CHIP_ID_BCM47162:
->> +	case BCMA_CHIP_ID_BCM4749:
->> +	case BCMA_CHIP_ID_BCM5357:
->> +	case BCMA_CHIP_ID_BCM5356:
->> +	case BCMA_CHIP_ID_BCM53572:
->> +	case BCMA_CHIP_ID_BCM4706:
->>  		break;
->>  	default:
->>  		pr_err("Workarounds unknown for device 0x%04X\n",
->> -- 
->> 1.7.9.5
+>> Okay, nice. Then I won't go hunting and just try the next -rc.
+>
+> Found the commit now:
+>
+> commit a9d3c05cca51d80ef2b9eddabf794c9458e36c2c
+> Author: Johannes Berg <johannes.berg@intel.com>
+> Date: ? Mon May 7 17:45:29 2012 +0200
+>
+> ? ?mac80211: fix single queue drivers
+
+Just checked again, that commit was already part of my tree, so I
+still run into this issue.
+
+A couple of printk()'s report that local->hw.queues is 4 in
+ieee80211_set_default_queues() while n_queues in
+ieee80211_check_queues() is 1...
+
+Thanks,
+Andre
