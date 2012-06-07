@@ -1,7 +1,7 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 07 Jun 2012 13:29:45 -0500
-Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i]
- >= n_queues))
+From: Andre Heider <a.heider@gmail.com>
+Date: Thu, 7 Jun 2012 20:34:09 +0200
+Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
+ n_queues))
 In-Reply-To: <20120607193027.05389791@milhouse>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339014959.4523.0.camel@jlt3.sipsolutions.net>
@@ -10,15 +10,15 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b9UjkF6VM_YjJkHVDQzrZqsWqmG-XJKFNeSCdWGbdEngw@mail.gmail.com>
  <20120607180325.7752b3c0@milhouse> <4FD0E3F3.2060900@lwfinger.net>
  <20120607193027.05389791@milhouse>
-Message-ID: <4FD0F319.3060306@lwfinger.net>
+Message-ID: <CAHsu+b-6WsiHrhQ5crCtmT4MYttDJznOMyGB4NMyUYzXfgAaVQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <m@bues.ch>
-Cc: Andre Heider <a.heider@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: =?ISO-8859-1?Q?Michael_B=FCsch?= <m@bues.ch>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
 
-On 06/07/2012 12:30 PM, Michael B?sch wrote:
+On Thu, Jun 7, 2012 at 7:30 PM, Michael B?sch <m@bues.ch> wrote:
 > On Thu, 07 Jun 2012 12:25:07 -0500
 > Larry Finger <Larry.Finger@lwfinger.net> wrote:
 >
@@ -28,7 +28,5 @@ On 06/07/2012 12:30 PM, Michael B?sch wrote:
 > patching comes into effect. You should be able to reproduce even with standard
 > firmware by disabling QOS with the module parameter.
 
-Loading b43 with the qos=0 option works, but using the open-source firmware does 
-fail.
-
-Larry
+As far as I can tell openfwwf is the only working firmware for this chip.
+It's 'special': http://www.gc-linux.org/wiki/Wii:WLAN
