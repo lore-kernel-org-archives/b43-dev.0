@@ -1,9 +1,14 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Fri, 8 Jun 2012 20:31:31 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Fri, 08 Jun 2012 20:36:20 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <4FD24332.3010202@lwfinger.net>
+In-Reply-To: <4FD22727.7000500@lwfinger.net>
+ (sfid-20120608_182415_948584_8403B5AF)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
+ <1339136879.5832.1.camel@jlt3.sipsolutions.net>
+ <1339137689.5832.2.camel@jlt3.sipsolutions.net>
+ <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
+ <1339167160.4901.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-p1aTUG8L=5SCNB8Gqzwsm7_VA53Qf-ENPHmM5Z5C8hg@mail.gmail.com>
  <1339168452.5748.0.camel@jlt3.sipsolutions.net>
  <1339168600.5748.2.camel@jlt3.sipsolutions.net>
@@ -16,50 +21,21 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b8ZGPN3iQNGH1mdzMO6kH+F1n+qZ5cT4KMcx8bh_BP1qg@mail.gmail.com>
  <1339171159.5748.11.camel@jlt3.sipsolutions.net>
  <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
- <4FD22727.7000500@lwfinger.net>
- <1339172904.5748.18.camel@jlt3.sipsolutions.net>
- <20120608183339.78a7fcbd@milhouse> <4FD239AA.9090708@lwfinger.net>
- <20120608201053.48548a11@milhouse> <4FD24332.3010202@lwfinger.net>
-Message-ID: <20120608203131.01dce8e3@milhouse>
+ <4FD22727.7000500@lwfinger.net> (sfid-20120608_182415_948584_8403B5AF)
+Message-ID: <1339180580.5748.32.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Fri, 08 Jun 2012 13:23:46 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+Let's go back to the root of this problem ...
 
-> On 06/08/2012 01:10 PM, Michael B?sch wrote:
-> > On Fri, 08 Jun 2012 12:43:06 -0500
-> > Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> >
-> >> On 06/08/2012 11:33 AM, Michael B?sch wrote:
-> >>>
-> >>> Larry, did you check with PIO?
-> >>
-> >> No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for
-> >> both kinds of firmware, while PIO fails for both.
-> >
-> > Does PIO even work without that patch and with prop-firmware?
-> 
-> No. That seems to be a different bug.
+Is there *any* open firmware that enables QoS today? If not, this is
+probably a much better choice for a patch for now, even though my other
+patch contained code improvements for b43 in various areas.
 
-That's nice. Could you probably bisect it? It used to work at some point.
+http://p.sipsolutions.net/d486b77caacf3dbb.txt
 
-PS:
-I'm sorry that I'm not of much help these days, because I currently
-don't have a working b43 device around :)
-
--- 
-Greetings, Michael.
-
-PGP encryption is encouraged / 908D8B0E
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120608/c962331f/attachment-0001.sig>
+johannes
