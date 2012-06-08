@@ -1,9 +1,9 @@
 From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 17:44:47 +0200
+Date: Fri, 08 Jun 2012 17:48:30 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <1339170182.5748.7.camel@jlt3.sipsolutions.net>
- (sfid-20120608_174309_875550_ADC4A235)
+In-Reply-To: <1339170287.5748.8.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_174453_828379_B54E3AF3)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339014959.4523.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-ByqBaci9W-oS3OPEK3LdRcuGphtQPOTQ02hPWNpWgQw@mail.gmail.com>
@@ -26,7 +26,9 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  (sfid-20120608_173825_724071_61477734)
  <1339170182.5748.7.camel@jlt3.sipsolutions.net>
  (sfid-20120608_174309_875550_ADC4A235)
-Message-ID: <1339170287.5748.8.camel@jlt3.sipsolutions.net>
+ <1339170287.5748.8.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_174453_828379_B54E3AF3)
+Message-ID: <1339170510.5748.9.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -34,25 +36,30 @@ Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
 Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Fri, 2012-06-08 at 17:43 +0200, Johannes Berg wrote:
-> On Fri, 2012-06-08 at 10:38 -0500, Larry Finger wrote:
+On Fri, 2012-06-08 at 17:44 +0200, Johannes Berg wrote:
+> On Fri, 2012-06-08 at 17:43 +0200, Johannes Berg wrote:
+> > On Fri, 2012-06-08 at 10:38 -0500, Larry Finger wrote:
+> > 
+> > > I got the same result as Andre when using open-source firmware - endless MAC 
+> > > suspend failures. It works OK with the proprietary fw, with or without a "qos=0" 
+> > > module parameter.
+> > 
+> > I just noticed one more bug -- I need to number the ACs the other way
+> > around, changing
+> > 	vif->hw_queue[i] = i;
+> > to
+> > 	vif->hw_queue[i] = 3 - i;
+> > 
+> > in main.c, because 0 is BK and 3 is VO, rather than 0 VO/3 BK like in
+> > mac80211.
+> > 
+> > http://p.sipsolutions.net/449d71a3c76656f1.txt
 > 
-> > I got the same result as Andre when using open-source firmware - endless MAC 
-> > suspend failures. It works OK with the proprietary fw, with or without a "qos=0" 
-> > module parameter.
-> 
-> I just noticed one more bug -- I need to number the ACs the other way
-> around, changing
-> 	vif->hw_queue[i] = i;
-> to
-> 	vif->hw_queue[i] = 3 - i;
-> 
-> in main.c, because 0 is BK and 3 is VO, rather than 0 VO/3 BK like in
-> mac80211.
-> 
-> http://p.sipsolutions.net/449d71a3c76656f1.txt
+> Ahrg! I keep numbering them wrong, this should be fixed:
+> http://p.sipsolutions.net/3bbdb9c6294dad70.txt
 
-Ahrg! I keep numbering them wrong, this should be fixed:
-http://p.sipsolutions.net/3bbdb9c6294dad70.txt
+Nope, still wrong, I shouldn't be using skb_get_queue_mapping but rather
+info->index since now mac80211 is giving us the right *queue number*
+rather than just *AC*
 
 johannes
