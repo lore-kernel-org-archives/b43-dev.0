@@ -1,11 +1,9 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 20:11:24 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Fri, 8 Jun 2012 20:10:53 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <1339178163.5748.27.camel@jlt3.sipsolutions.net>
- (sfid-20120608_195614_138814_5C64BE11)
+In-Reply-To: <4FD239AA.9090708@lwfinger.net>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
- <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
  <1339167160.4901.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-p1aTUG8L=5SCNB8Gqzwsm7_VA53Qf-ENPHmM5Z5C8hg@mail.gmail.com>
  <1339168452.5748.0.camel@jlt3.sipsolutions.net>
@@ -22,38 +20,34 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <4FD22727.7000500@lwfinger.net>
  <1339172904.5748.18.camel@jlt3.sipsolutions.net>
  <20120608183339.78a7fcbd@milhouse> <4FD239AA.9090708@lwfinger.net>
- (sfid-20120608_194312_026371_EC8C6BE2)
- <1339178163.5748.27.camel@jlt3.sipsolutions.net>
- (sfid-20120608_195614_138814_5C64BE11)
-Message-ID: <1339179084.5748.29.camel@jlt3.sipsolutions.net>
+Message-ID: <20120608201053.48548a11@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: Johannes Berg <johannes@sipsolutions.net>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Fri, 2012-06-08 at 19:56 +0200, Johannes Berg wrote:
-> On Fri, 2012-06-08 at 12:43 -0500, Larry Finger wrote:
-> > On 06/08/2012 11:33 AM, Michael B?sch wrote:
-> > >
-> > > Larry, did you check with PIO?
-> > 
-> > No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for 
-> > both kinds of firmware, while PIO fails for both.
+On Fri, 08 Jun 2012 12:43:06 -0500
+Larry Finger <Larry.Finger@lwfinger.net> wrote:
+
+> On 06/08/2012 11:33 AM, Michael B?sch wrote:
+> >
+> > Larry, did you check with PIO?
 > 
-> Hmm, both with QoS enabled and disabled?. I don't really see what could
-> be causing this, sorry.
-> 
-> One more thing that I just realised though is that mac80211 uses the #
-> of queues to determine whether to advertise QoS or not, so the whole
-> thing won't actually work anyway without more work :-(
+> No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for 
+> both kinds of firmware, while PIO fails for both.
 
-Maybe these two patches work:
+Does PIO even work without that patch and with prop-firmware?
 
-http://p.sipsolutions.net/b8912f8cad4cb3b2.txt
-http://p.sipsolutions.net/ad2677233e6917e8.txt
+-- 
+Greetings, Michael.
 
-still kinda hack like it always was, but ...
-
-johannes
+PGP encryption is encouraged / 908D8B0E
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120608/35b3ff47/attachment.sig>
