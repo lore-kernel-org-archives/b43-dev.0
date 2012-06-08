@@ -1,9 +1,9 @@
 From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 17:38:47 +0200
+Date: Fri, 08 Jun 2012 17:43:02 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <CAHsu+b_Dp-A_kC-MSofJko3hr4dYxreYQ7rrq7wzsJXVoY_5yw@mail.gmail.com>
- (sfid-20120608_172503_149994_C06790C0)
+In-Reply-To: <4FD21C6B.5000402@lwfinger.net>
+ (sfid-20120608_173825_724071_61477734)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339014959.4523.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-ByqBaci9W-oS3OPEK3LdRcuGphtQPOTQ02hPWNpWgQw@mail.gmail.com>
@@ -22,30 +22,30 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339168452.5748.0.camel@jlt3.sipsolutions.net>
  <1339168600.5748.2.camel@jlt3.sipsolutions.net>
  <CAHsu+b_Dp-A_kC-MSofJko3hr4dYxreYQ7rrq7wzsJXVoY_5yw@mail.gmail.com>
- (sfid-20120608_172503_149994_C06790C0)
-Message-ID: <1339169927.5748.5.camel@jlt3.sipsolutions.net>
+ <4FD21C6B.5000402@lwfinger.net> (sfid-20120608_173825_724071_61477734)
+Message-ID: <1339170182.5748.7.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andre Heider <a.heider@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Fri, 2012-06-08 at 17:25 +0200, Andre Heider wrote:
+On Fri, 2012-06-08 at 10:38 -0500, Larry Finger wrote:
 
+> I got the same result as Andre when using open-source firmware - endless MAC 
+> suspend failures. It works OK with the proprietary fw, with or without a "qos=0" 
+> module parameter.
 
-> [    9.654251] b43-phy0 debug: Adding Interface type 2
-> [   11.371154] b43-phy0 ERROR: MAC suspend failed
+I just noticed one more bug -- I need to number the ACs the other way
+around, changing
+	vif->hw_queue[i] = i;
+to
+	vif->hw_queue[i] = 3 - i;
 
-That doesn't make much sense to me, the code paths related to that
-shouldn't have changed, unless somehow some frame goes to the wrong
-queue which would seem strange ...
+in main.c, because 0 is BK and 3 is VO, rather than 0 VO/3 BK like in
+mac80211.
 
-Maybe you could print out what queues the frames go to or something ...
-I don't even know what's happening in those seconds between those two
-messages so I can't really help you much.
-
-Regardless, I fixed some bugs in my patch related to mcast:
-http://p.sipsolutions.net/4e1aec97842e0f72.txt
+http://p.sipsolutions.net/449d71a3c76656f1.txt
 
 johannes
