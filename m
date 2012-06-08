@@ -1,11 +1,9 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 18:28:24 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Fri, 8 Jun 2012 18:33:39 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <4FD22727.7000500@lwfinger.net>
- (sfid-20120608_182413_078769_E0EF593E)
+In-Reply-To: <1339172904.5748.18.camel@jlt3.sipsolutions.net>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
- <1339136879.5832.1.camel@jlt3.sipsolutions.net>
  <1339137689.5832.2.camel@jlt3.sipsolutions.net>
  <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
  <1339167160.4901.0.camel@jlt3.sipsolutions.net>
@@ -21,32 +19,43 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b8ZGPN3iQNGH1mdzMO6kH+F1n+qZ5cT4KMcx8bh_BP1qg@mail.gmail.com>
  <1339171159.5748.11.camel@jlt3.sipsolutions.net>
  <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
- <4FD22727.7000500@lwfinger.net> (sfid-20120608_182413_078769_E0EF593E)
-Message-ID: <1339172904.5748.18.camel@jlt3.sipsolutions.net>
+ <4FD22727.7000500@lwfinger.net>
+ <1339172904.5748.18.camel@jlt3.sipsolutions.net>
+Message-ID: <20120608183339.78a7fcbd@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Fri, 2012-06-08 at 11:24 -0500, Larry Finger wrote:
-> On 06/08/2012 11:05 AM, Andre Heider wrote:
+On Fri, 08 Jun 2012 18:28:24 +0200
+Johannes Berg <johannes@sipsolutions.net> wrote:
 
-> >>>> Hopefully this is better: http://p.sipsolutions.net/017d73ac0688f863.txt
+> Right, that would do it. I think we may want to add a
+> #define B43_HW_QUEUE_NUM 5
+> 
+> and then use it in all the right places instead of changing
+> B43_QOS_QUEUE_NUM maybe?
 
-> Strange. I commented out the BUILD_BUG statements in version 017d73a,
+Sounds like a good plan.
 
-Right, that would do it. I think we may want to add a
-#define B43_HW_QUEUE_NUM 5
+> >  and it 
+> > worked for me with both flavors of fw.
+> 
+> Well, good to know... I wonder what Andre's bug is then, maybe not
+> related to this?
 
-and then use it in all the right places instead of changing
-B43_QOS_QUEUE_NUM maybe?
+Larry, did you check with PIO?
 
->  and it 
-> worked for me with both flavors of fw.
+-- 
+Greetings, Michael.
 
-Well, good to know... I wonder what Andre's bug is then, maybe not
-related to this?
-
-johannes
+PGP encryption is encouraged / 908D8B0E
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120608/06704690/attachment.sig>
