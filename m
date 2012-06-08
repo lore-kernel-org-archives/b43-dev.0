@@ -1,9 +1,19 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 08 Jun 2012 11:24:07 -0500
-Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i]
- >= n_queues))
-In-Reply-To: <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Fri, 08 Jun 2012 18:24:09 +0200
+Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
+ n_queues))
+In-Reply-To: <1339172402.5748.15.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_182011_815432_531593AA)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
+ <1339014959.4523.0.camel@jlt3.sipsolutions.net>
+ <CAHsu+b-ByqBaci9W-oS3OPEK3LdRcuGphtQPOTQ02hPWNpWgQw@mail.gmail.com>
+ <1339053364.4517.0.camel@jlt3.sipsolutions.net>
+ <CAHsu+b9UjkF6VM_YjJkHVDQzrZqsWqmG-XJKFNeSCdWGbdEngw@mail.gmail.com>
+ <20120607180325.7752b3c0@milhouse>
+ <1339094215.4630.7.camel@jlt3.sipsolutions.net>
+ <1339102567.4630.8.camel@jlt3.sipsolutions.net>
+ <4FD11B47.10002@lwfinger.net>
+ <CAHsu+b9=4i1oSni1onKAKqH4FZ26nye=7GifnnJO-6c5gCaWpQ@mail.gmail.com>
  <1339136879.5832.1.camel@jlt3.sipsolutions.net>
  <1339137689.5832.2.camel@jlt3.sipsolutions.net>
  <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
@@ -20,65 +30,45 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b8ZGPN3iQNGH1mdzMO6kH+F1n+qZ5cT4KMcx8bh_BP1qg@mail.gmail.com>
  <1339171159.5748.11.camel@jlt3.sipsolutions.net>
  <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
-Message-ID: <4FD22727.7000500@lwfinger.net>
+ <1339171694.5748.12.camel@jlt3.sipsolutions.net>
+ <CAHsu+b-fZQ0auLAd_8rqaoNfLF-2UghRrB7S7qgu1RrqesbW4Q@mail.gmail.com>
+ (sfid-20120608_181648_775335_FE32999F)
+ <1339172402.5748.15.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_182011_815432_531593AA)
+Message-ID: <1339172649.5748.16.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Andre Heider <a.heider@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, =?UTF-8?B?TWljaGFlbCBCw7xz?= =?UTF-8?B?Y2g=?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 06/08/2012 11:05 AM, Andre Heider wrote:
-> On Fri, Jun 8, 2012 at 5:59 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
->> On Fri, 2012-06-08 at 17:56 +0200, Andre Heider wrote:
->>
->>>> Hopefully this is better: http://p.sipsolutions.net/017d73ac0688f863.txt
->>>
->>> The previous patched all had the mac suspend failure. This one:
->>>
->>> drivers/net/wireless/b43/main.c: In function 'b43_qos_upload_all':
->>> drivers/net/wireless/b43/main.c:3483: error: size of array 'type name'
->>> is negative
->>> drivers/net/wireless/b43/main.c: In function 'b43_qos_clear':
->>> drivers/net/wireless/b43/main.c:3502: error: size of array 'type name'
->>> is negative
->>> drivers/net/wireless/b43/main.c: In function 'b43_op_conf_tx':
->>> drivers/net/wireless/b43/main.c:3578: error: size of array 'type name'
->>> is negative
->>
->> Huh, I thought I compiled it ... guess I had the wrong version.
->>
->> http://p.sipsolutions.net/511dda98892d2c9a.txt
->
-> It's getting warmer:
->
-> [    9.456216] b43-phy0: Loading OpenSource firmware version 410.31754
-> [    9.473798] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [    9.491781] b43-phy0: QoS not supported by firmware
-> [    9.868750] b43-phy0 debug: Chip initialized
-> [    9.888580] b43-phy0 debug: PIO initialized
-> [    9.899273] b43-phy0 debug: QoS disabled
-> [   10.088420] b43-phy0 debug: Wireless interface started
-> [   10.212209] b43-phy0 debug: Adding Interface type 2
-> [   12.739776] wlan0: authenticate with d8:5d:4c:9c:31:14
-> [   12.796248] wlan0: send auth to d8:5d:4c:9c:31:14 (try 1/3)
-> [   12.811768] wlan0: authenticated
-> [   12.823310] wlan0: associate with d8:5d:4c:9c:31:14 (try 1/3)
-> [   12.844942] wlan0: RX AssocResp from d8:5d:4c:9c:31:14 (capab=0x411
-> status=0 aid=2)
-> [   12.863966] wlan0: associated
-> [   16.319097] ieee80211 phy0: wlan0: No probe response from AP
-> d8:5d:4c:9c:31:14 after 500ms, disconnecting.
-> [   16.349674] cfg80211: Calling CRDA for country: DE
-> [   17.597307] wlan0: authenticate with d8:5d:4c:9c:31:14
-> [   17.638399] wlan0: send auth to d8:5d:4c:9c:31:14 (try 1/3)
-> [   17.851085] wlan0: send auth to d8:5d:4c:9c:31:14 (try 2/3)
-> [   18.063086] wlan0: send auth to d8:5d:4c:9c:31:14 (try 3/3)
-> [   18.275081] wlan0: authentication with d8:5d:4c:9c:31:14 timed out
->
-> Tried it 3 times, always times out.
+On Fri, 2012-06-08 at 18:20 +0200, Johannes Berg wrote:
+> On Fri, 2012-06-08 at 18:16 +0200, Andre Heider wrote:
+> 
+> > >> > http://p.sipsolutions.net/511dda98892d2c9a.txt
+> 
+> > >> [   17.597307] wlan0: authenticate with d8:5d:4c:9c:31:14
+> > >> [   17.638399] wlan0: send auth to d8:5d:4c:9c:31:14 (try 1/3)
+> > >> [   17.851085] wlan0: send auth to d8:5d:4c:9c:31:14 (try 2/3)
+> > >> [   18.063086] wlan0: send auth to d8:5d:4c:9c:31:14 (try 3/3)
+> > >> [   18.275081] wlan0: authentication with d8:5d:4c:9c:31:14 timed out
+> > >>
+> > >> Tried it 3 times, always times out.
+> > >
+> > > So you didn't get the warning, but can you still check what
+> > > info->hw_queue is in pio.c?
+> > 
+> > always "1"
+> 
+> Ok, so that's correct. Hmm.
+> 
+> Can you check in mac80211's debugfs if the queues are ever started? Or
+> maybe somewhere else? That's the only thing I can think of, if this is
+> getting 1 I finally got the mapping right ...
 
-Strange. I commented out the BUILD_BUG statements in version 017d73a, and it 
-worked for me with both flavors of fw.
+I'd be very surprised if the queue is stopped, it doesn't look that
+way .. but maybe you can figure that out with mac80211 tracing:
+http://linuxwireless.org/en/developers/Documentation/mac80211/tracing
 
-Larry
+johannes
