@@ -1,8 +1,8 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 08 Jun 2012 14:37:43 -0500
-Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i]
- >= n_queues))
-In-Reply-To: <20120608203131.01dce8e3@milhouse>
+From: Andre Heider <a.heider@gmail.com>
+Date: Fri, 8 Jun 2012 21:42:25 +0200
+Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
+ n_queues))
+In-Reply-To: <4FD25487.7050002@lwfinger.net>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b-p1aTUG8L=5SCNB8Gqzwsm7_VA53Qf-ENPHmM5Z5C8hg@mail.gmail.com>
  <1339168452.5748.0.camel@jlt3.sipsolutions.net>
@@ -20,47 +20,67 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339172904.5748.18.camel@jlt3.sipsolutions.net>
  <20120608183339.78a7fcbd@milhouse> <4FD239AA.9090708@lwfinger.net>
  <20120608201053.48548a11@milhouse> <4FD24332.3010202@lwfinger.net>
- <20120608203131.01dce8e3@milhouse>
-Message-ID: <4FD25487.7050002@lwfinger.net>
+ <20120608203131.01dce8e3@milhouse> <4FD25487.7050002@lwfinger.net>
+Message-ID: <CAHsu+b9Z3iQL4nEKa9oEsJEHgD2viGoyr=0_=sjxtbkAgQRykA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <m@bues.ch>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: =?ISO-8859-1?Q?Michael_B=FCsch?= <m@bues.ch>, Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On 06/08/2012 01:31 PM, Michael B?sch wrote:
-> On Fri, 08 Jun 2012 13:23:46 -0500
-> Larry Finger <Larry.Finger@lwfinger.net> wrote:
->
->> On 06/08/2012 01:10 PM, Michael B?sch wrote:
->>> On Fri, 08 Jun 2012 12:43:06 -0500
->>> Larry Finger <Larry.Finger@lwfinger.net> wrote:
->>>
->>>> On 06/08/2012 11:33 AM, Michael B?sch wrote:
->>>>>
->>>>> Larry, did you check with PIO?
->>>>
->>>> No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for
->>>> both kinds of firmware, while PIO fails for both.
->>>
->>> Does PIO even work without that patch and with prop-firmware?
+On Fri, Jun 8, 2012 at 9:37 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> On 06/08/2012 01:31 PM, Michael B?sch wrote:
 >>
->> No. That seems to be a different bug.
+>> On Fri, 08 Jun 2012 13:23:46 -0500
+>> Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>>
+>>> On 06/08/2012 01:10 PM, Michael B?sch wrote:
+>>>>
+>>>> On Fri, 08 Jun 2012 12:43:06 -0500
+>>>> Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>>>>
+>>>>> On 06/08/2012 11:33 AM, Michael B?sch wrote:
+>>>>>>
+>>>>>>
+>>>>>> Larry, did you check with PIO?
+>>>>>
+>>>>>
+>>>>> No, I only used DMA. With the latest patch, compilation is Ok, and DMA
+>>>>> works for
+>>>>> both kinds of firmware, while PIO fails for both.
+>>>>
+>>>>
+>>>> Does PIO even work without that patch and with prop-firmware?
+>>>
+>>>
+>>> No. That seems to be a different bug.
+>>
+>>
+>> That's nice. Could you probably bisect it? It used to work at some point.
+>>
+>> PS:
+>> I'm sorry that I'm not of much help these days, because I currently
+>> don't have a working b43 device around :)
 >
-> That's nice. Could you probably bisect it? It used to work at some point.
 >
-> PS:
-> I'm sorry that I'm not of much help these days, because I currently
-> don't have a working b43 device around :)
+> No problem. Most of the time when I'm running b43, it is on one of my older
+> test machines.
+>
+> I need to do a little more testing before I start a bisection of the PIO
+> problem. My PPC Mac fails with kernel 2.6.32, which is as old as I have
+> available. At the moment, I don't have the time to fire up an old i586
+> notebook to see if we have a PIO problem, or an endian issue with PIO;
+> however, I think Andre's wii is big endian.
 
-No problem. Most of the time when I'm running b43, it is on one of my older test 
-machines.
+Yeah, it's a 32bit powerpc.
 
-I need to do a little more testing before I start a bisection of the PIO 
-problem. My PPC Mac fails with kernel 2.6.32, which is as old as I have 
-available. At the moment, I don't have the time to fire up an old i586 notebook 
-to see if we have a PIO problem, or an endian issue with PIO; however, I think 
-Andre's wii is big endian.
+From my initial report:
+The hw queues fail the check in ieee80211_check_queues(). When I hack
+that function to always "return 0;" wlan works again.
 
-Larry
+Apart from the patch test runs that's what I'm running atm, so I'm
+pretty sure you can assume its not a BE issue.
+
+Regards,
+Andre
