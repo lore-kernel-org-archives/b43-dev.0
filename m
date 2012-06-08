@@ -1,9 +1,8 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 18:41:44 +0200
+From: Andre Heider <a.heider@gmail.com>
+Date: Fri, 8 Jun 2012 18:54:24 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <CAHsu+b-fZQ0auLAd_8rqaoNfLF-2UghRrB7S7qgu1RrqesbW4Q@mail.gmail.com>
- (sfid-20120608_181648_775335_FE32999F)
+In-Reply-To: <1339173704.5748.19.camel@jlt3.sipsolutions.net>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339014959.4523.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-ByqBaci9W-oS3OPEK3LdRcuGphtQPOTQ02hPWNpWgQw@mail.gmail.com>
@@ -32,27 +31,35 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
  <1339171694.5748.12.camel@jlt3.sipsolutions.net>
  <CAHsu+b-fZQ0auLAd_8rqaoNfLF-2UghRrB7S7qgu1RrqesbW4Q@mail.gmail.com>
- (sfid-20120608_181648_775335_FE32999F)
-Message-ID: <1339173704.5748.19.camel@jlt3.sipsolutions.net>
+ <1339173704.5748.19.camel@jlt3.sipsolutions.net>
+Message-ID: <CAHsu+b_J5CsTdbGn=epwx3A+zJ6Nw8rmuVRjZEwMMsaeGOycpQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andre Heider <a.heider@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, =?ISO-8859-1?Q?Michael_B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
 
-On Fri, 2012-06-08 at 18:16 +0200, Andre Heider wrote:
+On Fri, Jun 8, 2012 at 6:41 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> On Fri, 2012-06-08 at 18:16 +0200, Andre Heider wrote:
+>
+>> >> [ ? 17.597307] wlan0: authenticate with d8:5d:4c:9c:31:14
+>> >> [ ? 17.638399] wlan0: send auth to d8:5d:4c:9c:31:14 (try 1/3)
+>> >> [ ? 17.851085] wlan0: send auth to d8:5d:4c:9c:31:14 (try 2/3)
+>> >> [ ? 18.063086] wlan0: send auth to d8:5d:4c:9c:31:14 (try 3/3)
+>> >> [ ? 18.275081] wlan0: authentication with d8:5d:4c:9c:31:14 timed out
+>> >>
+>> >> Tried it 3 times, always times out.
+>
+> I missed one a use of queue_mapping, try this:
+>
+> http://p.sipsolutions.net/cc1fc9799ad3c015.txt
 
-> >> [   17.597307] wlan0: authenticate with d8:5d:4c:9c:31:14
-> >> [   17.638399] wlan0: send auth to d8:5d:4c:9c:31:14 (try 1/3)
-> >> [   17.851085] wlan0: send auth to d8:5d:4c:9c:31:14 (try 2/3)
-> >> [   18.063086] wlan0: send auth to d8:5d:4c:9c:31:14 (try 3/3)
-> >> [   18.275081] wlan0: authentication with d8:5d:4c:9c:31:14 timed out
-> >>
-> >> Tried it 3 times, always times out.
+Unfortunately still the authentication timeout.
 
-I missed one a use of queue_mapping, try this:
-
-http://p.sipsolutions.net/cc1fc9799ad3c015.txt
-
-johannes
+And trace-cmd, hmm. There're no debian packages for it (at least for
+powerpc), ubuntu only has x86 and x86_64, I don't have a compiler on
+the wii, my powerpc crosscompiler doesn't have a libc and if I find a
+solution I can only blind-script a trace via rc.local because without
+wlan there's no way to interact :)
+But I'll think of something...
