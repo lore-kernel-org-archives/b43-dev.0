@@ -1,8 +1,8 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Fri, 8 Jun 2012 20:10:53 +0200
-Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
- n_queues))
-In-Reply-To: <4FD239AA.9090708@lwfinger.net>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 08 Jun 2012 13:23:46 -0500
+Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i]
+ >= n_queues))
+In-Reply-To: <20120608201053.48548a11@milhouse>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339167160.4901.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-p1aTUG8L=5SCNB8Gqzwsm7_VA53Qf-ENPHmM5Z5C8hg@mail.gmail.com>
@@ -20,34 +20,28 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <4FD22727.7000500@lwfinger.net>
  <1339172904.5748.18.camel@jlt3.sipsolutions.net>
  <20120608183339.78a7fcbd@milhouse> <4FD239AA.9090708@lwfinger.net>
-Message-ID: <20120608201053.48548a11@milhouse>
+ <20120608201053.48548a11@milhouse>
+Message-ID: <4FD24332.3010202@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
+To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <m@bues.ch>
 Cc: Johannes Berg <johannes@sipsolutions.net>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Fri, 08 Jun 2012 12:43:06 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+On 06/08/2012 01:10 PM, Michael B?sch wrote:
+> On Fri, 08 Jun 2012 12:43:06 -0500
+> Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>
+>> On 06/08/2012 11:33 AM, Michael B?sch wrote:
+>>>
+>>> Larry, did you check with PIO?
+>>
+>> No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for
+>> both kinds of firmware, while PIO fails for both.
+>
+> Does PIO even work without that patch and with prop-firmware?
 
-> On 06/08/2012 11:33 AM, Michael B?sch wrote:
-> >
-> > Larry, did you check with PIO?
-> 
-> No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for 
-> both kinds of firmware, while PIO fails for both.
+No. That seems to be a different bug.
 
-Does PIO even work without that patch and with prop-firmware?
-
--- 
-Greetings, Michael.
-
-PGP encryption is encouraged / 908D8B0E
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120608/35b3ff47/attachment.sig>
+Larry
