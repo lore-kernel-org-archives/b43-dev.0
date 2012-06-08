@@ -1,9 +1,9 @@
 From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 20:42:28 +0200
+Date: Fri, 08 Jun 2012 21:04:49 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <1339180580.5748.32.camel@jlt3.sipsolutions.net>
- (sfid-20120608_203626_490471_92895C0D)
+In-Reply-To: <1339180948.5748.35.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_204234_267803_1F940956)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339136879.5832.1.camel@jlt3.sipsolutions.net>
  <1339137689.5832.2.camel@jlt3.sipsolutions.net>
@@ -25,7 +25,9 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  (sfid-20120608_182415_948584_8403B5AF)
  <1339180580.5748.32.camel@jlt3.sipsolutions.net>
  (sfid-20120608_203626_490471_92895C0D)
-Message-ID: <1339180948.5748.35.camel@jlt3.sipsolutions.net>
+ <1339180948.5748.35.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_204234_267803_1F940956)
+Message-ID: <1339182289.5748.36.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -33,17 +35,21 @@ Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
 Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Fri, 2012-06-08 at 20:36 +0200, Johannes Berg wrote:
-> Let's go back to the root of this problem ...
+On Fri, 2012-06-08 at 20:42 +0200, Johannes Berg wrote:
+> On Fri, 2012-06-08 at 20:36 +0200, Johannes Berg wrote:
+> > Let's go back to the root of this problem ...
+> > 
+> > Is there *any* open firmware that enables QoS today? If not, this is
+> > probably a much better choice for a patch for now, even though my other
+> > patch contained code improvements for b43 in various areas.
+> > 
+> > http://p.sipsolutions.net/d486b77caacf3dbb.txt
 > 
-> Is there *any* open firmware that enables QoS today? If not, this is
-> probably a much better choice for a patch for now, even though my other
-> patch contained code improvements for b43 in various areas.
+> Nope, this leaves qos_enabled wrong ...
 > 
-> http://p.sipsolutions.net/d486b77caacf3dbb.txt
+> http://p.sipsolutions.net/64cce044448bd819.txt
 
-Nope, this leaves qos_enabled wrong ...
-
-http://p.sipsolutions.net/64cce044448bd819.txt
+Ahrg, b43 only sets fw.opensource too late ... this moves it:
+http://p.sipsolutions.net/00c0056dc206e247.txt
 
 johannes
