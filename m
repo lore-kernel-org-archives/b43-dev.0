@@ -1,9 +1,9 @@
 From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 19:56:03 +0200
+Date: Fri, 08 Jun 2012 20:11:24 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <4FD239AA.9090708@lwfinger.net>
- (sfid-20120608_194312_026371_EC8C6BE2)
+In-Reply-To: <1339178163.5748.27.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_195614_138814_5C64BE11)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
  <1339167160.4901.0.camel@jlt3.sipsolutions.net>
@@ -23,7 +23,9 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339172904.5748.18.camel@jlt3.sipsolutions.net>
  <20120608183339.78a7fcbd@milhouse> <4FD239AA.9090708@lwfinger.net>
  (sfid-20120608_194312_026371_EC8C6BE2)
-Message-ID: <1339178163.5748.27.camel@jlt3.sipsolutions.net>
+ <1339178163.5748.27.camel@jlt3.sipsolutions.net>
+ (sfid-20120608_195614_138814_5C64BE11)
+Message-ID: <1339179084.5748.29.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -31,22 +33,27 @@ Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
 Cc: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Fri, 2012-06-08 at 12:43 -0500, Larry Finger wrote:
-> On 06/08/2012 11:33 AM, Michael B?sch wrote:
-> >
-> > Larry, did you check with PIO?
+On Fri, 2012-06-08 at 19:56 +0200, Johannes Berg wrote:
+> On Fri, 2012-06-08 at 12:43 -0500, Larry Finger wrote:
+> > On 06/08/2012 11:33 AM, Michael B?sch wrote:
+> > >
+> > > Larry, did you check with PIO?
+> > 
+> > No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for 
+> > both kinds of firmware, while PIO fails for both.
 > 
-> No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for 
-> both kinds of firmware, while PIO fails for both.
+> Hmm, both with QoS enabled and disabled?. I don't really see what could
+> be causing this, sorry.
+> 
+> One more thing that I just realised though is that mac80211 uses the #
+> of queues to determine whether to advertise QoS or not, so the whole
+> thing won't actually work anyway without more work :-(
 
-Hmm, both with QoS enabled and disabled?. I don't really see what could
-be causing this, sorry.
+Maybe these two patches work:
 
-One more thing that I just realised though is that mac80211 uses the #
-of queues to determine whether to advertise QoS or not, so the whole
-thing won't actually work anyway without more work :-(
+http://p.sipsolutions.net/b8912f8cad4cb3b2.txt
+http://p.sipsolutions.net/ad2677233e6917e8.txt
 
-I'm tempted to just remove the check for now to "fix" b43 and then maybe
-you can load firmware before registering with mac80211 in b43?
+still kinda hack like it always was, but ...
 
 johannes
