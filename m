@@ -1,14 +1,9 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 21:04:49 +0200
-Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
- n_queues))
-In-Reply-To: <1339180948.5748.35.camel@jlt3.sipsolutions.net>
- (sfid-20120608_204234_267803_1F940956)
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 08 Jun 2012 14:37:43 -0500
+Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i]
+ >= n_queues))
+In-Reply-To: <20120608203131.01dce8e3@milhouse>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
- <1339136879.5832.1.camel@jlt3.sipsolutions.net>
- <1339137689.5832.2.camel@jlt3.sipsolutions.net>
- <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
- <1339167160.4901.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-p1aTUG8L=5SCNB8Gqzwsm7_VA53Qf-ENPHmM5Z5C8hg@mail.gmail.com>
  <1339168452.5748.0.camel@jlt3.sipsolutions.net>
  <1339168600.5748.2.camel@jlt3.sipsolutions.net>
@@ -22,34 +17,50 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339171159.5748.11.camel@jlt3.sipsolutions.net>
  <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
  <4FD22727.7000500@lwfinger.net>
- (sfid-20120608_182415_948584_8403B5AF)
- <1339180580.5748.32.camel@jlt3.sipsolutions.net>
- (sfid-20120608_203626_490471_92895C0D)
- <1339180948.5748.35.camel@jlt3.sipsolutions.net>
- (sfid-20120608_204234_267803_1F940956)
-Message-ID: <1339182289.5748.36.camel@jlt3.sipsolutions.net>
+ <1339172904.5748.18.camel@jlt3.sipsolutions.net>
+ <20120608183339.78a7fcbd@milhouse> <4FD239AA.9090708@lwfinger.net>
+ <20120608201053.48548a11@milhouse> <4FD24332.3010202@lwfinger.net>
+ <20120608203131.01dce8e3@milhouse>
+Message-ID: <4FD25487.7050002@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?TWljaGFlbCBCw7xzY2g=?= <m@bues.ch>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Andre Heider <a.heider@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Fri, 2012-06-08 at 20:42 +0200, Johannes Berg wrote:
-> On Fri, 2012-06-08 at 20:36 +0200, Johannes Berg wrote:
-> > Let's go back to the root of this problem ...
-> > 
-> > Is there *any* open firmware that enables QoS today? If not, this is
-> > probably a much better choice for a patch for now, even though my other
-> > patch contained code improvements for b43 in various areas.
-> > 
-> > http://p.sipsolutions.net/d486b77caacf3dbb.txt
-> 
-> Nope, this leaves qos_enabled wrong ...
-> 
-> http://p.sipsolutions.net/64cce044448bd819.txt
+On 06/08/2012 01:31 PM, Michael B?sch wrote:
+> On Fri, 08 Jun 2012 13:23:46 -0500
+> Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>
+>> On 06/08/2012 01:10 PM, Michael B?sch wrote:
+>>> On Fri, 08 Jun 2012 12:43:06 -0500
+>>> Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>>>
+>>>> On 06/08/2012 11:33 AM, Michael B?sch wrote:
+>>>>>
+>>>>> Larry, did you check with PIO?
+>>>>
+>>>> No, I only used DMA. With the latest patch, compilation is Ok, and DMA works for
+>>>> both kinds of firmware, while PIO fails for both.
+>>>
+>>> Does PIO even work without that patch and with prop-firmware?
+>>
+>> No. That seems to be a different bug.
+>
+> That's nice. Could you probably bisect it? It used to work at some point.
+>
+> PS:
+> I'm sorry that I'm not of much help these days, because I currently
+> don't have a working b43 device around :)
 
-Ahrg, b43 only sets fw.opensource too late ... this moves it:
-http://p.sipsolutions.net/00c0056dc206e247.txt
+No problem. Most of the time when I'm running b43, it is on one of my older test 
+machines.
 
-johannes
+I need to do a little more testing before I start a bisection of the PIO 
+problem. My PPC Mac fails with kernel 2.6.32, which is as old as I have 
+available. At the moment, I don't have the time to fire up an old i586 notebook 
+to see if we have a PIO problem, or an endian issue with PIO; however, I think 
+Andre's wii is big endian.
+
+Larry
