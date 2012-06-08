@@ -1,12 +1,10 @@
 From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 08 Jun 2012 20:36:20 +0200
+Date: Fri, 08 Jun 2012 20:38:13 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <4FD22727.7000500@lwfinger.net>
- (sfid-20120608_182415_948584_8403B5AF)
+In-Reply-To: <CAHsu+b8M=KGyp9PL5hJ6cxgF=1kGXHoUt7idLA+UD+UqoJW6uA@mail.gmail.com>
+ (sfid-20120608_202844_443710_C05C013D)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
- <1339136879.5832.1.camel@jlt3.sipsolutions.net>
- <1339137689.5832.2.camel@jlt3.sipsolutions.net>
  <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
  <1339167160.4901.0.camel@jlt3.sipsolutions.net>
  <CAHsu+b-p1aTUG8L=5SCNB8Gqzwsm7_VA53Qf-ENPHmM5Z5C8hg@mail.gmail.com>
@@ -21,21 +19,44 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b8ZGPN3iQNGH1mdzMO6kH+F1n+qZ5cT4KMcx8bh_BP1qg@mail.gmail.com>
  <1339171159.5748.11.camel@jlt3.sipsolutions.net>
  <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
- <4FD22727.7000500@lwfinger.net> (sfid-20120608_182415_948584_8403B5AF)
-Message-ID: <1339180580.5748.32.camel@jlt3.sipsolutions.net>
+ <4FD22727.7000500@lwfinger.net>
+ <1339172904.5748.18.camel@jlt3.sipsolutions.net>
+ <20120608183339.78a7fcbd@milhouse> <4FD239AA.9090708@lwfinger.net>
+ <1339178163.5748.27.camel@jlt3.sipsolutions.net>
+ <1339179084.5748.29.camel@jlt3.sipsolutions.net>
+ <CAHsu+b8M=KGyp9PL5hJ6cxgF=1kGXHoUt7idLA+UD+UqoJW6uA@mail.gmail.com>
+ (sfid-20120608_202844_443710_C05C013D)
+Message-ID: <1339180693.5748.33.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Andre Heider <a.heider@gmail.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-Let's go back to the root of this problem ...
+On Fri, 2012-06-08 at 20:28 +0200, Andre Heider wrote:
 
-Is there *any* open firmware that enables QoS today? If not, this is
-probably a much better choice for a patch for now, even though my other
-patch contained code improvements for b43 in various areas.
+> > Maybe these two patches work:
+> >
+> > http://p.sipsolutions.net/b8912f8cad4cb3b2.txt
+> > http://p.sipsolutions.net/ad2677233e6917e8.txt
+> >
+> > still kinda hack like it always was, but ...
+> 
+> Those don't apply clean on 48d212a2eec, resolved a conflict, but
+> device worked and I could login ;)
 
-http://p.sipsolutions.net/d486b77caacf3dbb.txt
+Ok, so I guess that confirms that somehow PIO breaks when we configure
+QoS parameters or something .. bit strange, but hey.
+
+> But as soon as I ran `dmesg` (over ssh+wlan) I got a kernel crash. It
+> scrolled by too fast, but alot of b43 stuff starting with
+> __netif_schedule. Unsure if its because of these patches or unrelated.
+
+Could be related, or not.
+
+I still dislike the way b43 plays with this stuff at runtime, and
+Michael pointed out a flaw in my patch too, so we can't apply these
+anyway...
 
 johannes
