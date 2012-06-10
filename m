@@ -1,27 +1,31 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 10 Jun 2012 18:53:10 +0200
-Subject: [PATCH 7/8] bcma: add bcma_pmu_spuravoid_pllupdate()
-In-Reply-To: <1338933307-13446-8-git-send-email-hauke@hauke-m.de>
+Date: Sun, 10 Jun 2012 18:54:56 +0200
+Subject: [PATCH 6/8] bcma: handle SoCs in pmu initialization
+In-Reply-To: <2716026.rMfCBzMpF9@flexo>
 References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
- <1338933307-13446-8-git-send-email-hauke@hauke-m.de>
-Message-ID: <CACna6rwbS9YTM7gqX14T71Lart2HbUsFo4su8h6HEhv91C_9XA@mail.gmail.com>
+ <1338933307-13446-7-git-send-email-hauke@hauke-m.de>
+ <2716026.rMfCBzMpF9@flexo>
+Message-ID: <CACna6rw_5dcR9tu_Nnq_0Z3u+KJ--Lmx7yi+uHJm-kJPepqrng@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org
+To: Florian Fainelli <florian@openwrt.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, linville@tuxdriver.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org
 
-2012/6/5 Hauke Mehrtens <hauke@hauke-m.de>:
-> This function is needed by brcmsmac. This code is based on code from
-> the Broadcom SDK.
+2012/6/6 Florian Fainelli <florian@openwrt.org>:
+> Hi Hauke,
+>
+> On Tuesday 05 June 2012 23:55:05 Hauke Mehrtens wrote:
+>> The SoCs do not need any special handling in bcma_pmu_pll_init(),
+>> bcma_pmu_resources_init(), bcma_pmu_swreg_init() and
+>> bcma_pmu_workarounds. This patches suppresses some warnings in the log.
+>
+> This does not look like it scales very good, how about you turn the pr_err()
+> into a pr_debug() so that developpers porting bcma on a new chip need to turn
+> on the appropriate debug knobs to get the message?
 
-This is already implemented in b43/phy_n.c:
-
-/* http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid */
-static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
-
-I guess we should replace b43 code with a call to introduced function.
+debug sounds fine for me
 
 -- 
 Rafa?
