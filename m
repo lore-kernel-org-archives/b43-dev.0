@@ -1,39 +1,34 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sun, 10 Jun 2012 21:37:55 +0200
-Subject: [PATCH 6/8] bcma: handle SoCs in pmu initialization
-In-Reply-To: <CACna6rw_5dcR9tu_Nnq_0Z3u+KJ--Lmx7yi+uHJm-kJPepqrng@mail.gmail.com>
-References: <1338933307-13446-1-git-send-email-hauke@hauke-m.de>
- <1338933307-13446-7-git-send-email-hauke@hauke-m.de>
- <2716026.rMfCBzMpF9@flexo>
- <CACna6rw_5dcR9tu_Nnq_0Z3u+KJ--Lmx7yi+uHJm-kJPepqrng@mail.gmail.com>
-Message-ID: <4FD4F793.2030507@hauke-m.de>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Sun, 10 Jun 2012 22:11:56 +0200
+Subject: [PATCH] ssb: add missing PCI ID for b/g/n single band BCM4322
+Message-ID: <1339359116-6878-1-git-send-email-jonas.gorski@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Florian Fainelli <florian@openwrt.org>, linville@tuxdriver.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org
+To: linux-wireless@vger.kernel.org
+Cc: b43-dev@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>, Michael Buesch <m@bues.ch>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-On 06/10/2012 06:54 PM, Rafa? Mi?ecki wrote:
-> 2012/6/6 Florian Fainelli <florian@openwrt.org>:
->> Hi Hauke,
->>
->> On Tuesday 05 June 2012 23:55:05 Hauke Mehrtens wrote:
->>> The SoCs do not need any special handling in bcma_pmu_pll_init(),
->>> bcma_pmu_resources_init(), bcma_pmu_swreg_init() and
->>> bcma_pmu_workarounds. This patches suppresses some warnings in the log.
->>
->> This does not look like it scales very good, how about you turn the pr_err()
->> into a pr_debug() so that developpers porting bcma on a new chip need to turn
->> on the appropriate debug knobs to get the message?
-> 
-> debug sounds fine for me
-> 
-Hi Rafa?,
+14e4:432c is found on some bcm63xx devices. The device is working fine
+with b43.
 
-bcma_pmu_swreg_init() and bcma_pmu_pll_init() are doing nothing should
-they get removed? In the current version of the patch I also removed the
-chip ids of the PCIe based cards from the switch case statement if they
-just ended in a break, is that ok with you?
+Reported-by: ?lvaro Fern?ndez Rojas <noltari@gmail.com>
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
+ drivers/ssb/b43_pci_bridge.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Hauke
+diff --git a/drivers/ssb/b43_pci_bridge.c b/drivers/ssb/b43_pci_bridge.c
+index f551e53..266aa16 100644
+--- a/drivers/ssb/b43_pci_bridge.c
++++ b/drivers/ssb/b43_pci_bridge.c
+@@ -36,6 +36,7 @@ static const struct pci_device_id b43_pci_bridge_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4328) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4329) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x432b) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x432c) },
+ 	{ 0, },
+ };
+ MODULE_DEVICE_TABLE(pci, b43_pci_bridge_tbl);
+-- 
+1.7.2.5
