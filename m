@@ -1,9 +1,8 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 13 Jun 2012 10:31:34 +0200
+From: Andre Heider <a.heider@gmail.com>
+Date: Wed, 13 Jun 2012 17:39:39 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <1339182289.5748.36.camel@jlt3.sipsolutions.net>
- (sfid-20120608_210507_564049_E7275D9F)
+In-Reply-To: <1339576294.4519.17.camel@jlt3.sipsolutions.net>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339136879.5832.1.camel@jlt3.sipsolutions.net>
  <1339137689.5832.2.camel@jlt3.sipsolutions.net>
@@ -22,26 +21,26 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339171159.5748.11.camel@jlt3.sipsolutions.net>
  <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
  <4FD22727.7000500@lwfinger.net>
- (sfid-20120608_182415_948584_8403B5AF)
  <1339180580.5748.32.camel@jlt3.sipsolutions.net>
- (sfid-20120608_203626_490471_92895C0D)
  <1339180948.5748.35.camel@jlt3.sipsolutions.net>
- (sfid-20120608_204234_267803_1F940956)
  <1339182289.5748.36.camel@jlt3.sipsolutions.net>
- (sfid-20120608_210507_564049_E7275D9F)
-Message-ID: <1339576294.4519.17.camel@jlt3.sipsolutions.net>
+ <1339576294.4519.17.camel@jlt3.sipsolutions.net>
+Message-ID: <CAHsu+b9soGKgZmqWLU=-v0zOG0v_Arf8DFoCn1EQ7-86Mg_CdQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, =?ISO-8859-1?Q?Michael_B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
 
-On Fri, 2012-06-08 at 21:04 +0200, Johannes Berg wrote:
+On Wed, Jun 13, 2012 at 10:31 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Fri, 2012-06-08 at 21:04 +0200, Johannes Berg wrote:
+>
+>> Ahrg, b43 only sets fw.opensource too late ... this moves it:
+>> http://p.sipsolutions.net/00c0056dc206e247.txt
+>
+> Has anyone tested this?
 
-> Ahrg, b43 only sets fw.opensource too late ... this moves it:
-> http://p.sipsolutions.net/00c0056dc206e247.txt
-
-Has anyone tested this?
-
-johannes
+Sorry, missed that one.
+I get this crash with that patch: http://i.imgur.com/2CMzA.png
