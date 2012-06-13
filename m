@@ -1,16 +1,9 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 13 Jun 2012 17:46:42 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Wed, 13 Jun 2012 20:42:30 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <CAHsu+b9soGKgZmqWLU=-v0zOG0v_Arf8DFoCn1EQ7-86Mg_CdQ@mail.gmail.com>
- (sfid-20120613_173942_534457_89B175CF)
+In-Reply-To: <1339602402.4519.48.camel@jlt3.sipsolutions.net>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
- <1339136879.5832.1.camel@jlt3.sipsolutions.net>
- <1339137689.5832.2.camel@jlt3.sipsolutions.net>
- <CAHsu+b9uyohfFG46R7QHht6tD3MVUzk4_LJeXp+CC2bRv=NihA@mail.gmail.com>
- <1339167160.4901.0.camel@jlt3.sipsolutions.net>
- <CAHsu+b-p1aTUG8L=5SCNB8Gqzwsm7_VA53Qf-ENPHmM5Z5C8hg@mail.gmail.com>
- <1339168452.5748.0.camel@jlt3.sipsolutions.net>
  <1339168600.5748.2.camel@jlt3.sipsolutions.net>
  <CAHsu+b_Dp-A_kC-MSofJko3hr4dYxreYQ7rrq7wzsJXVoY_5yw@mail.gmail.com>
  <4FD21C6B.5000402@lwfinger.net>
@@ -27,29 +20,44 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339182289.5748.36.camel@jlt3.sipsolutions.net>
  <1339576294.4519.17.camel@jlt3.sipsolutions.net>
  <CAHsu+b9soGKgZmqWLU=-v0zOG0v_Arf8DFoCn1EQ7-86Mg_CdQ@mail.gmail.com>
- (sfid-20120613_173942_534457_89B175CF)
-Message-ID: <1339602402.4519.48.camel@jlt3.sipsolutions.net>
+ <1339602402.4519.48.camel@jlt3.sipsolutions.net>
+Message-ID: <20120613204230.474d1b6c@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andre Heider <a.heider@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Andre Heider <a.heider@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 
-On Wed, 2012-06-13 at 17:39 +0200, Andre Heider wrote:
-> On Wed, Jun 13, 2012 at 10:31 AM, Johannes Berg
-> <johannes@sipsolutions.net> wrote:
-> > On Fri, 2012-06-08 at 21:04 +0200, Johannes Berg wrote:
-> >
-> >> Ahrg, b43 only sets fw.opensource too late ... this moves it:
-> >> http://p.sipsolutions.net/00c0056dc206e247.txt
-> >
-> > Has anyone tested this?
+On Wed, 13 Jun 2012 17:46:42 +0200
+Johannes Berg <johannes@sipsolutions.net> wrote:
+
+> On Wed, 2012-06-13 at 17:39 +0200, Andre Heider wrote:
+> > On Wed, Jun 13, 2012 at 10:31 AM, Johannes Berg
+> > <johannes@sipsolutions.net> wrote:
+> > > On Fri, 2012-06-08 at 21:04 +0200, Johannes Berg wrote:
+> > >
+> > >> Ahrg, b43 only sets fw.opensource too late ... this moves it:
+> > >> http://p.sipsolutions.net/00c0056dc206e247.txt
+> > >
+> > > Has anyone tested this?
+> > 
+> > Sorry, missed that one.
+> > I get this crash with that patch: http://i.imgur.com/2CMzA.png
 > 
-> Sorry, missed that one.
-> I get this crash with that patch: http://i.imgur.com/2CMzA.png
+> Huh, that doesn't make a lot of sense to me, I don't move any
+> locking ...
 
-Huh, that doesn't make a lot of sense to me, I don't move any
-locking ...
+This just seems to be a follow-up oops and the original one scrolled off screen.
 
-johannes
+-- 
+Greetings, Michael.
+
+PGP encryption is encouraged / 908D8B0E
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120613/4a2950eb/attachment.sig>
