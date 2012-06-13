@@ -1,8 +1,9 @@
-From: Andre Heider <a.heider@gmail.com>
-Date: Wed, 13 Jun 2012 17:39:39 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Wed, 13 Jun 2012 17:46:42 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <1339576294.4519.17.camel@jlt3.sipsolutions.net>
+In-Reply-To: <CAHsu+b9soGKgZmqWLU=-v0zOG0v_Arf8DFoCn1EQ7-86Mg_CdQ@mail.gmail.com>
+ (sfid-20120613_173942_534457_89B175CF)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339136879.5832.1.camel@jlt3.sipsolutions.net>
  <1339137689.5832.2.camel@jlt3.sipsolutions.net>
@@ -25,22 +26,30 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339180948.5748.35.camel@jlt3.sipsolutions.net>
  <1339182289.5748.36.camel@jlt3.sipsolutions.net>
  <1339576294.4519.17.camel@jlt3.sipsolutions.net>
-Message-ID: <CAHsu+b9soGKgZmqWLU=-v0zOG0v_Arf8DFoCn1EQ7-86Mg_CdQ@mail.gmail.com>
+ <CAHsu+b9soGKgZmqWLU=-v0zOG0v_Arf8DFoCn1EQ7-86Mg_CdQ@mail.gmail.com>
+ (sfid-20120613_173942_534457_89B175CF)
+Message-ID: <1339602402.4519.48.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, =?ISO-8859-1?Q?Michael_B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+To: Andre Heider <a.heider@gmail.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Wed, Jun 13, 2012 at 10:31 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Fri, 2012-06-08 at 21:04 +0200, Johannes Berg wrote:
->
->> Ahrg, b43 only sets fw.opensource too late ... this moves it:
->> http://p.sipsolutions.net/00c0056dc206e247.txt
->
-> Has anyone tested this?
+On Wed, 2012-06-13 at 17:39 +0200, Andre Heider wrote:
+> On Wed, Jun 13, 2012 at 10:31 AM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+> > On Fri, 2012-06-08 at 21:04 +0200, Johannes Berg wrote:
+> >
+> >> Ahrg, b43 only sets fw.opensource too late ... this moves it:
+> >> http://p.sipsolutions.net/00c0056dc206e247.txt
+> >
+> > Has anyone tested this?
+> 
+> Sorry, missed that one.
+> I get this crash with that patch: http://i.imgur.com/2CMzA.png
 
-Sorry, missed that one.
-I get this crash with that patch: http://i.imgur.com/2CMzA.png
+Huh, that doesn't make a lot of sense to me, I don't move any
+locking ...
+
+johannes
