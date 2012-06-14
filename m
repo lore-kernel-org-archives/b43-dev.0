@@ -1,9 +1,8 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Thu, 14 Jun 2012 18:37:57 +0200
+From: Andre Heider <a.heider@gmail.com>
+Date: Thu, 14 Jun 2012 19:00:05 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <CAHsu+b_ue7LknbwMCdYsK6pQ8XxwjCL8Ham3xLucaaXZab69-g@mail.gmail.com>
- (sfid-20120614_182647_613518_EB710054)
+In-Reply-To: <1339691877.9786.0.camel@jlt3.sipsolutions.net>
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339168600.5748.2.camel@jlt3.sipsolutions.net>
  <CAHsu+b_Dp-A_kC-MSofJko3hr4dYxreYQ7rrq7wzsJXVoY_5yw@mail.gmail.com>
@@ -24,28 +23,35 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339602402.4519.48.camel@jlt3.sipsolutions.net>
  <20120613204230.474d1b6c@milhouse>
  <CAHsu+b_ue7LknbwMCdYsK6pQ8XxwjCL8Ham3xLucaaXZab69-g@mail.gmail.com>
- (sfid-20120614_182647_613518_EB710054)
-Message-ID: <1339691877.9786.0.camel@jlt3.sipsolutions.net>
+ <1339691877.9786.0.camel@jlt3.sipsolutions.net>
+Message-ID: <CAHsu+b9XNO5roFZNETAgs8_5OLymCaKNcTU1XUsc2fXBu+4kpg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andre Heider <a.heider@gmail.com>
-Cc: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: =?ISO-8859-1?Q?Michael_B=FCsch?= <m@bues.ch>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
 
-On Thu, 2012-06-14 at 18:26 +0200, Andre Heider wrote:
+On Thu, Jun 14, 2012 at 6:37 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Thu, 2012-06-14 at 18:26 +0200, Andre Heider wrote:
+>
+>> > This just seems to be a follow-up oops and the original one scrolled off screen.
+>>
+>> Indeed, the framebuffer showed up too late on TV and I didn't even notice ;)
+>>
+>> pause_on_oops=30 made that easier, and the offender is
+>> drivers/net/wireless/b43/main.c:5294 from the patch:
+>> wldev->qos_enabled = true;
+>
+> Ok ... seems wldev doesn't exist then? Doesn't make any sense to me, but
+> I don't understand the code ... not that it matters, try this:
+>
+> http://p.sipsolutions.net/9c830800d14f3ff8.txt
 
-> > This just seems to be a follow-up oops and the original one scrolled off screen.
-> 
-> Indeed, the framebuffer showed up too late on TV and I didn't even notice ;)
-> 
-> pause_on_oops=30 made that easier, and the offender is
-> drivers/net/wireless/b43/main.c:5294 from the patch:
-> wldev->qos_enabled = true;
+This still oopses: if (!modparam_qos || wldev->fw.opensource)
 
-Ok ... seems wldev doesn't exist then? Doesn't make any sense to me, but
-I don't understand the code ... not that it matters, try this:
-
-http://p.sipsolutions.net/9c830800d14f3ff8.txt
-
-johannes
+I do get a working wlan0 if I force "hw->queues = 1;" without that
+offending line, but just a `dmesg` over wlan+ssh yields another one
+(prolly the same one I already described on an older patch):
+http://i.imgur.com/epdRF.jpg
