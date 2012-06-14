@@ -1,8 +1,9 @@
-From: Andre Heider <a.heider@gmail.com>
-Date: Thu, 14 Jun 2012 19:23:00 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Thu, 14 Jun 2012 19:27:17 +0200
 Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
  n_queues))
-In-Reply-To: <1339694227.9786.7.camel@jlt3.sipsolutions.net>
+In-Reply-To: <CAHsu+b85rvSsGBfJQFFjdMhrF=Ycw0+pxxjf=U=xA2Or2q9jXQ@mail.gmail.com>
+ (sfid-20120614_192302_952190_7ED159EF)
 References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <1339168600.5748.2.camel@jlt3.sipsolutions.net>
  <CAHsu+b_Dp-A_kC-MSofJko3hr4dYxreYQ7rrq7wzsJXVoY_5yw@mail.gmail.com>
@@ -27,34 +28,45 @@ References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
  <CAHsu+b9XNO5roFZNETAgs8_5OLymCaKNcTU1XUsc2fXBu+4kpg@mail.gmail.com>
  <1339693777.9786.6.camel@jlt3.sipsolutions.net>
  <1339694227.9786.7.camel@jlt3.sipsolutions.net>
-Message-ID: <CAHsu+b85rvSsGBfJQFFjdMhrF=Ycw0+pxxjf=U=xA2Or2q9jXQ@mail.gmail.com>
+ <CAHsu+b85rvSsGBfJQFFjdMhrF=Ycw0+pxxjf=U=xA2Or2q9jXQ@mail.gmail.com>
+ (sfid-20120614_192302_952190_7ED159EF)
+Message-ID: <1339694837.9786.8.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: =?ISO-8859-1?Q?Michael_B=FCsch?= <m@bues.ch>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+To: Andre Heider <a.heider@gmail.com>
+Cc: Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Thu, Jun 14, 2012 at 7:17 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Thu, 2012-06-14 at 19:09 +0200, Johannes Berg wrote:
->> On Thu, 2012-06-14 at 19:00 +0200, Andre Heider wrote:
->>
->> > > http://p.sipsolutions.net/9c830800d14f3ff8.txt
->> >
->> > This still oopses: if (!modparam_qos || wldev->fw.opensource)
->> >
->> > I do get a working wlan0 if I force "hw->queues = 1;" without that
->> > offending line, but just a `dmesg` over wlan+ssh yields another one
->> > (prolly the same one I already described on an older patch):
->> > http://i.imgur.com/epdRF.jpg
->>
->> Doh, of course, I still have wldev ... I'm in a meeting now, will check
->> again later.
->
-> Let's just move the hw->queues setup ...
->
-> http://p.sipsolutions.net/e45e57bbc9509e69.txt
+On Thu, 2012-06-14 at 19:23 +0200, Andre Heider wrote:
+> On Thu, Jun 14, 2012 at 7:17 PM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+> > On Thu, 2012-06-14 at 19:09 +0200, Johannes Berg wrote:
+> >> On Thu, 2012-06-14 at 19:00 +0200, Andre Heider wrote:
+> >>
+> >> > > http://p.sipsolutions.net/9c830800d14f3ff8.txt
+> >> >
+> >> > This still oopses: if (!modparam_qos || wldev->fw.opensource)
+> >> >
+> >> > I do get a working wlan0 if I force "hw->queues = 1;" without that
+> >> > offending line, but just a `dmesg` over wlan+ssh yields another one
+> >> > (prolly the same one I already described on an older patch):
+> >> > http://i.imgur.com/epdRF.jpg
+> >>
+> >> Doh, of course, I still have wldev ... I'm in a meeting now, will check
+> >> again later.
+> >
+> > Let's just move the hw->queues setup ...
+> >
+> > http://p.sipsolutions.net/e45e57bbc9509e69.txt
+> 
+> No oops during loading the fw or bringing the device up, but same
+> crash as in the picture above ;)
 
-No oops during loading the fw or bringing the device up, but same
-crash as in the picture above ;)
+I guess I shouldn't be doing this right now ...
+
+Can't somebody else help me out? Rafal? Larry? Michael? I clearly don't
+know this code well enough and you should be able to identify the intent
+from the patch ...
+
+johannes
