@@ -1,54 +1,29 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 15 Jun 2012 10:17:35 +0200
-Subject: chip id 4318 regression: WARN_ON_ONCE(sdata->vif.hw_queue[i] >=
- n_queues))
-In-Reply-To: <4FDA97E5.3090208@lwfinger.net>
- (sfid-20120615_040326_000897_768A8A5E)
-References: <CAHsu+b_wQOuhbBkx25CZ2cai5VVos7zK3s=EiPBy_+OnXWiWaA@mail.gmail.com>
- <CAHsu+b9EgAfq6_G8xqRzf0qHkmyQnvs7j=g4wWcSVJXstAz4mw@mail.gmail.com>
- <4FD22727.7000500@lwfinger.net>
- <1339180580.5748.32.camel@jlt3.sipsolutions.net>
- <1339180948.5748.35.camel@jlt3.sipsolutions.net>
- <1339182289.5748.36.camel@jlt3.sipsolutions.net>
- <1339576294.4519.17.camel@jlt3.sipsolutions.net>
- <CAHsu+b9soGKgZmqWLU=-v0zOG0v_Arf8DFoCn1EQ7-86Mg_CdQ@mail.gmail.com>
- <1339602402.4519.48.camel@jlt3.sipsolutions.net>
- <20120613204230.474d1b6c@milhouse>
- <CAHsu+b_ue7LknbwMCdYsK6pQ8XxwjCL8Ham3xLucaaXZab69-g@mail.gmail.com>
- <1339691877.9786.0.camel@jlt3.sipsolutions.net>
- <CAHsu+b9XNO5roFZNETAgs8_5OLymCaKNcTU1XUsc2fXBu+4kpg@mail.gmail.com>
- <1339693777.9786.6.camel@jlt3.sipsolutions.net>
- <1339694227.9786.7.camel@jlt3.sipsolutions.net>
- <CAHsu+b85rvSsGBfJQFFjdMhrF=Ycw0+pxxjf=U=xA2Or2q9jXQ@mail.gmail.com>
- (sfid-20120614_192302_952190_7ED159EF)
- <1339694837.9786.8.camel@jlt3.sipsolutions.net>
- <4FDA97E5.3090208@lwfinger.net> (sfid-20120615_040326_000897_768A8A5E)
-Message-ID: <1339748255.4512.7.camel@jlt3.sipsolutions.net>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 15 Jun 2012 03:48:39 -0700
+Subject: [PATCH wireless-next 00/20] Use pr_<level>
+In-Reply-To: <1339745811.4512.0.camel@jlt3.sipsolutions.net>
+References: <cover.1339739415.git.joe@perches.com>
+ (sfid-20120615_080311_586023_85E50A2D)
+ <1339745811.4512.0.camel@jlt3.sipsolutions.net>
+Message-ID: <1339757319.24527.21.camel@joe2Laptop>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Andre Heider <a.heider@gmail.com>, Michael =?ISO-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, libertas-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2012-06-14 at 21:03 -0500, Larry Finger wrote:
-
-> >>> http://p.sipsolutions.net/e45e57bbc9509e69.txt
-> >>
-> >> No oops during loading the fw or bringing the device up, but same
-> >> crash as in the picture above ;)
-> >
-> > I guess I shouldn't be doing this right now ...
-> >
-> > Can't somebody else help me out? Rafal? Larry? Michael? I clearly don't
-> > know this code well enough and you should be able to identify the intent
-> > from the patch ...
+On Fri, 2012-06-15 at 09:36 +0200, Johannes Berg wrote:
+> On Thu, 2012-06-14 at 22:53 -0700, Joe Perches wrote:
+> > Update logging style
 > 
-> I will give it a try. I was in the Canadian wilderness for 5 days fishing, which 
-> is why I have not responded earlier.
-> 
-> The device does not fail on my hardware, but I can prepare things for Andre to test.
+> So ... since we make everybody else explain *why* they make a change, I
+> think you should too.
 
-Thanks Larry! Hope you brought home some good catch :-)
-
-johannes
+To improve logging style consistency.
+To reduce logging defects.
+To standardize logging prefixes.
+To tee up conversions of:
+	pr_<level>("%s: ...", ([truct netdevice *]foo)->name, ...)
+to
+	netdev_<level>(foo, "...", ...) 
