@@ -1,9 +1,9 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sat, 30 Jun 2012 01:44:39 +0200
-Subject: [PATCH v2 3/9] bcma: remove fix for 4329b0 bad LPOM is detection
+Date: Sat, 30 Jun 2012 01:44:40 +0200
+Subject: [PATCH v2 4/9] bcma: add PCI ID for BCM43224
 In-Reply-To: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
 References: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1341013486-2520-4-git-send-email-hauke@hauke-m.de>
+Message-ID: <1341013486-2520-5-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,31 +11,26 @@ Content-Transfer-Encoding: 7bit
 To: linville@tuxdriver.com
 Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, Hauke Mehrtens <hauke@hauke-m.de>
 
-There is not core id with 0x4329, but at the same place in the open
-source part of the Broadcom SDK is a check for some device with the
-chip id of 0x4329. The device with a chip id of 0x4329 is a full mac
-device, so it will never be supported by bcma, this part is running in
-the firmware of the device and not on the host CPU.
-This code is wrong and will never be used, so just remove it.
+This ID was found on the PCIe wireless card on the board of a Netgear
+WNDR3400 using a bcm4716. The device with this ID is identified by b43
+as "Broadcom 43224 WLAN".
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/bcma/driver_chipcommon_pmu.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/bcma/host_pci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index 89528cf..2d9ac3e 100644
---- a/drivers/bcma/driver_chipcommon_pmu.c
-+++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -180,9 +180,6 @@ void bcma_pmu_init(struct bcma_drv_cc *cc)
- 		bcma_cc_set32(cc, BCMA_CC_PMU_CTL,
- 			     BCMA_CC_PMU_CTL_NOILPONW);
+diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
+index 6c05cf4..c693c0b 100644
+--- a/drivers/bcma/host_pci.c
++++ b/drivers/bcma/host_pci.c
+@@ -268,6 +268,7 @@ static SIMPLE_DEV_PM_OPS(bcma_pm_ops, bcma_host_pci_suspend,
  
--	if (cc->core->id.id == 0x4329 && cc->core->id.rev == 2)
--		pr_err("Fix for 4329b0 bad LPOM state not implemented!\n");
--
- 	bcma_pmu_pll_init(cc);
- 	bcma_pmu_resources_init(cc);
- 	bcma_pmu_swreg_init(cc);
+ static DEFINE_PCI_DEVICE_TABLE(bcma_pci_bridge_tbl) = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x0576) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 43224) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4331) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4353) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4357) },
 -- 
 1.7.9.5
