@@ -1,9 +1,10 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sat, 30 Jun 2012 01:44:42 +0200
-Subject: [PATCH v2 6/9] bcma: remove bcma_pmu_{pll,swreg}_init()
+Date: Sat, 30 Jun 2012 01:44:43 +0200
+Subject: [PATCH v2 7/9] bcma: remove chip ids doing nothing from PMU
+ initialization.
 In-Reply-To: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
 References: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <1341013486-2520-7-git-send-email-hauke@hauke-m.de>
+Message-ID: <1341013486-2520-8-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,75 +12,51 @@ Content-Transfer-Encoding: 7bit
 To: linville@tuxdriver.com
 Cc: zajec5@gmail.com, b43-dev@lists.infradead.org, arend@broadcom.com, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, Hauke Mehrtens <hauke@hauke-m.de>
 
-These functions are doing nothing in the current code.
-
-I do not think we will need these function in the future as the
-corresponding functions in the Broadcom SDK are just doing something
-useful on chips supported by ssb or fullmac chips.
+The list of devices where nothing has to be done in
+bcma_pmu_resources_init() and bcma_pmu_workarounds() is longer as all
+the SoCs are missing there and some new devices will be added in some
+time later. This patch changes the default case to just log on debug
+level and also let the other devices which do not need any special
+handling into the default case, instead of adding the missing 8 SoC
+chip ids.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/bcma/driver_chipcommon_pmu.c |   34 ----------------------------------
- 1 file changed, 34 deletions(-)
+ drivers/bcma/driver_chipcommon_pmu.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index a8fcdf0..069fca7 100644
+index 069fca7..1a7a72f 100644
 --- a/drivers/bcma/driver_chipcommon_pmu.c
 +++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -54,22 +54,6 @@ void bcma_chipco_regctl_maskset(struct bcma_drv_cc *cc, u32 offset, u32 mask,
- }
- EXPORT_SYMBOL_GPL(bcma_chipco_regctl_maskset);
- 
--static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
--{
--	struct bcma_bus *bus = cc->core->bus;
--
--	switch (bus->chipinfo.id) {
--	case BCMA_CHIP_ID_BCM4313:
+@@ -64,13 +64,9 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
+ 		min_msk = 0x200D;
+ 		max_msk = 0xFFFF;
+ 		break;
 -	case BCMA_CHIP_ID_BCM4331:
 -	case BCMA_CHIP_ID_BCM43224:
 -	case BCMA_CHIP_ID_BCM43225:
 -		break;
--	default:
--		pr_err("PLL init unknown for device 0x%04X\n",
+ 	default:
+-		pr_err("PMU resource config unknown for device 0x%04X\n",
 -			bus->chipinfo.id);
--	}
--}
--
- static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
- {
- 	struct bcma_bus *bus = cc->core->bus;
-@@ -96,22 +80,6 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
- 		bcma_cc_write32(cc, BCMA_CC_PMU_MAXRES_MSK, max_msk);
- }
++		pr_debug("PMU resource config unknown or not needed for device 0x%04X\n",
++			 bus->chipinfo.id);
+ 	}
  
--void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
--{
--	struct bcma_bus *bus = cc->core->bus;
--
--	switch (bus->chipinfo.id) {
--	case BCMA_CHIP_ID_BCM4313:
--	case BCMA_CHIP_ID_BCM4331:
--	case BCMA_CHIP_ID_BCM43224:
+ 	/* Set the resource masks. */
+@@ -135,11 +131,9 @@ void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
+ 						    BCMA_CCTRL_43224B0_12MA_LED_DRIVE);
+ 		}
+ 		break;
 -	case BCMA_CHIP_ID_BCM43225:
 -		break;
--	default:
--		pr_err("PMU switch/regulators init unknown for device "
--			"0x%04X\n", bus->chipinfo.id);
--	}
--}
--
- /* Disable to allow reading SPROM. Don't know the adventages of enabling it. */
- void bcma_chipco_bcm4331_ext_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
- {
-@@ -192,9 +160,7 @@ void bcma_pmu_init(struct bcma_drv_cc *cc)
- 		bcma_cc_set32(cc, BCMA_CC_PMU_CTL,
- 			     BCMA_CC_PMU_CTL_NOILPONW);
- 
--	bcma_pmu_pll_init(cc);
- 	bcma_pmu_resources_init(cc);
--	bcma_pmu_swreg_init(cc);
- 	bcma_pmu_workarounds(cc);
+ 	default:
+-		pr_err("Workarounds unknown for device 0x%04X\n",
+-			bus->chipinfo.id);
++		pr_debug("Workarounds unknown or not needed for device 0x%04X\n",
++			 bus->chipinfo.id);
+ 	}
  }
  
 -- 
