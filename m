@@ -1,74 +1,54 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Fri, 01 Jun 2012 00:58:19 +0200
-Subject: [PATCH] b43: ensure ext PA lines are enabled for BCM4331
-In-Reply-To: <20120531220635.GE32179@thinkpad-t410>
-References: <1338472163-3810-1-git-send-email-seth.forshee@canonical.com>
- <4FC77D25.4060100@hauke-m.de> <20120531142652.GA32179@thinkpad-t410>
- <4FC79AFD.6030803@hauke-m.de> <20120531220635.GE32179@thinkpad-t410>
-Message-ID: <4FC7F78B.6080103@hauke-m.de>
+From: Arend van Spriel <arend@broadcom.com>
+Date: Tue, 3 Jul 2012 08:51:29 +0200
+Subject: REGRESSION: [PATCH v2 0/9] bcma misc updates
+In-Reply-To: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
+References: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <4FF29671.1020406@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Seth Forshee <seth.forshee@canonical.com>
-Cc: Arend van Spriel <arend@broadcom.com>, Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com
 
-On 06/01/2012 12:06 AM, Seth Forshee wrote:
-> On Thu, May 31, 2012 at 06:23:25PM +0200, Hauke Mehrtens wrote:
->> On 05/31/2012 04:26 PM, Seth Forshee wrote:
->>> On Thu, May 31, 2012 at 04:16:05PM +0200, Hauke Mehrtens wrote:
->>>> Hi Seth,
->>>>
->>>> why don't you call this from bcma_pmu_workarounds() in
->>>> drivers/bcma/driver_chipcommon_pmu.c instead of calling this from b43? I
->>>> think it looks better to call some workarounds on chip common from bcma
->>>> and not from b43.
->>>
->>> Arend recommended calling it from within b43's start op, but I'm not
->>> sure of the reason. Arend?
->>>
->>> Agreed though that if there's no need to run it every time the interface
->>> is started then bcma_pmu_workarounds() would be a nicer place for it.
->>
->> brcmsmac calls the chip specific the workarounds in ai_doattach(), but
->> the ones for BCM4313 and BCM43224 are also in bcma_pmu_workarounds(),
->> this should be cleaned up to have them just at one place. In some old
->> version of brcmsmac the workaround for the BCM4331 was also called from
->> ai_doattach() function, but later removed likely because this devices is
->> not supported by brcmsmac.
->> So if there is not better reason as, the proprietary Broadcom driver
->> does so, I would like to see this call in bcma_pmu_workarounds().
+On 06/30/2012 01:44 AM, Hauke Mehrtens wrote:
+> These are some updates for bcma. Some are extending or completing some 
+> workarounds for PCIe based wireless cards. A patch adds 
+> bcma_pmu_spuravoid_pllupdate, used by brcmsmac and an other patch adds 
+> constants for the chip ids. This code is mostly based on code from 
+> brcmsmac and the Broadcom SDK for BCM47XX SoCs.
 > 
-> I found the SDK code from a router source package, and oddly that code
-> is clearing those bits in si_doattach(). In fact si_chipcontrl_epa4331()
-> is never called to enable the ext PA lines, only to disable them. The
-> sprom code reads the value before disabling them and restores it after
-> reading from the sprom. Enabling the ext PA pins is what fixes things
-> for me. Predictably, duplicating this in bcma makes wireless broken all
-> the time.
+> This was tested on a BCM4718 SoC with a BCM43224 PCIe and a BCM5357.
+> The Wifi part of the BCM4718 and BCM43224 is more or less working with 
+> brcmsmac, which need some more patches for that, but it has low speed 
+> and some times or with some access points I still get errors. The wifi 
+> of the BCM5357 does not work.
+> 
 
-The open source SDK just contains some of the code, the wireless part is
-closed source and I haven't seen any call which enables this in the open
-part too. The initial commit of brcm80211 to the kernel staging area
-contains a call to this function with true given.
-It is commit a9533e7ea3c410fed2f4cd8b3e1e213e48529b75 if you are interested.
+Hi Hauke,
 
-> At any rate, it sounds like we're agreed to add the workaround in
-> bcma_pmu_workarounds(), so I'll redo the patch.
-> 
->>>> According to some Broadcom code this should also be called for chip_id
->>>> 43431 when turning it on and in the sprom code.
->>>
->>> I'm having trouble parsing this, specifically the "and in the sprom
->>> code" part. Can you clarify?
->>
->> In the Broadcom SDK code si_chipcontrl_epa4331(), the same function as
->> bcma_chipco_bcm4331_ext_pa_lines_ctl() in bcma, gets called for devices
->> with a chip id of 0x4331 and 43431, both seam to be BCM4331 devices. We
->> should also call our workarounds for both chip ids.
-> 
-> I'll fix this too.
-> 
-> Thanks,
-> Seth
-> 
+This patch series caused a regression in one of our smoketest machines
+last night. I have not looked at the exact patch causing it (suspect
+2/9). The failure happens on a BCM43224 chip with external SPROM. Here
+is the log info:
+
+[317752.101665] bcma: Found chip with id 0xA8D8, rev 0x01 and package 0x08
+[317752.101809] bcma: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800,
+rev 0x22, class 0x0)
+[317752.101827] bcma: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812,
+rev 0x17, class 0x0)
+[317752.101870] bcma: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev
+0x0F, class 0x0)
+[317752.171926] bcma: Failed to get SPROM: -71 <== -EPROTO (crc failed).
+[317752.171982] bcma: Bus registered
+[317753.184455] brcmsmac bcma0:0: mfg 4bf core 812 rev 23 class 0 irq 16
+[317753.191868] brcmsmac: Applying 43224B0+ WARs
+[317753.193918] ieee80211 phy0: wl0: brcms_b_attach: bad macaddr
+[317753.193924] ieee80211 phy0: wl0: brcms_b_attach: failed with err 22
+[317753.193928] ieee80211 phy0: wl0: brcms_c_attach: failed with err 22
+[317753.193959] ieee80211 phy0: brcmsmac: attach() failed with code 22
+[317753.193966] brcmsmac: brcms_bcma_probe: brcms_attach failed!
+
+I suspect it tries reading OTP instead of the external SPROM.
+
+Gr. AvS
