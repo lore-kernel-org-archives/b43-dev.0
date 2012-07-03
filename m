@@ -1,33 +1,28 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Tue, 3 Jul 2012 10:22:46 +0200
-Subject: REGRESSION: [PATCH v2 0/9] bcma misc updates
-In-Reply-To: <4FF2A2D4.9070308@hauke-m.de>
-References: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
- <4FF29671.1020406@broadcom.com> <4FF2A2D4.9070308@hauke-m.de>
-Message-ID: <4FF2ABD6.3070007@broadcom.com>
+From: Tom Gundersen <teg@jklm.no>
+Date: Tue, 3 Jul 2012 21:56:16 +0200
+Subject: kernel oops on rmmod
+Message-ID: <CAG-2HqW0CZdrbjU+6S-fDQv2h6EcC-CutTV_0hutUQ_ezLEyFQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com
+To: b43-dev@lists.infradead.org
 
-On 07/03/2012 09:44 AM, Hauke Mehrtens wrote:
->> I suspect it tries reading OTP instead of the external SPROM.
->> > 
->> > Gr. AvS
->> > 
-> Hi Arend,
-> 
-> my BCM43224 uses a Sprom from the flash chip of the SoC, so it could be
-> that something is wrong in the sprom reading, but I haven't touched the
-> sprom code expect for using constants.
-> 
-> Do you know which patch is causing this issue?
-> 
-> Hauke
-> 
+Hi guys,
 
-I intended to bisect the series. I will let you know what I find.
+I just experienced a kernel oops, and thought I'd let you know even if
+I don't have much details, as I imagine it might be simple to verify.
 
-Gr. AvS
+I'm on linux 3.4.4 using the b43 module.
+
+The trigger was:
+
+Boot without the correct firmware installed and immediately do "rmmod
+b43". The backtrace mentioned "workqueue" and "b43".
+
+I can get more details if you require it (assuming it is easily
+reproducible, I only did this once so far).
+
+Cheers,
+
+Tom
