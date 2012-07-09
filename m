@@ -1,47 +1,27 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 08 Jul 2012 17:31:24 -0500
+From: Arend van Spriel <arend@broadcom.com>
+Date: Mon, 9 Jul 2012 10:53:15 +0200
 Subject: b43 does not work on broadcom 43227
-In-Reply-To: <1341782825.4900.11.camel@zeus>
+In-Reply-To: <4FFA0A3C.3040204@lwfinger.net>
 References: <1341782825.4900.11.camel@zeus>
-Message-ID: <4FFA0A3C.3040204@lwfinger.net>
+ <4FFA0A3C.3040204@lwfinger.net>
+Message-ID: <4FFA9BFB.3020600@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eloy Anguiano <eloy.anguiano@uam.es>
-Cc: b43-dev@lists.infradead.org, wireless <linux-wireless@vger.kernel.org>
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Eloy Anguiano <eloy.anguiano@uam.es>, b43-dev@lists.infradead.org, wireless <linux-wireless@vger.kernel.org>
 
-On 07/08/2012 04:27 PM, Eloy Anguiano wrote:
-> Dear developers,
->
-> Perhaps this is not a bug because my card is not probed. I have a
-> Broadcom 43227 and the wireless does not work at all. I need your driver
-> to activate it as a AP, but as far as I know, is imposible at this
-> moment. Then I will use Broadcom driver waiting to your next
-> developments. I say you because I think that developers need some
-> feedback, for free software development.
+On 07/09/2012 12:31 AM, Larry Finger wrote:
+> I think that Broadcom will be changing brcmsmac to support these
+> devices, but my understanding is that they are concentrating on fullmac
+> devices at the moment.
+> 
+> Larry
 
-As you guessed, it is not a bug as support for that device has never been 
-enabled. I think your device will use bcma just as my BCM43228 does. I have 
-started developing the patches needed to implement it with b43; however, I have 
-not gotten very far. Could you please confirm that the the PCI ID is 14e4:4358? 
-If that is correct, could you also try the attached patch and report the info 
-that is logged in the dmesg output?
+That is correct. The bcm43227 is very similar to the bcm43228, the
+difference being the supported bands. I have not heard back since I
+forwarded your questions on 43228 support in brcmsmac. So for now I can
+only say that bcm43227 and bcm43228 will be added in one patch.
 
-I think that Broadcom will be changing brcmsmac to support these devices, but my 
-understanding is that they are concentrating on fullmac devices at the moment.
-
-Larry
--------------- next part --------------
-Index: wireless-testing-new/drivers/bcma/host_pci.c
-===================================================================
---- wireless-testing-new.orig/drivers/bcma/host_pci.c
-+++ wireless-testing-new/drivers/bcma/host_pci.c
-@@ -272,6 +272,7 @@ static DEFINE_PCI_DEVICE_TABLE(bcma_pci_
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4331) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4353) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4357) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4738) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4727) },
- 	{ 0, },
- };
+Gr. AvS
