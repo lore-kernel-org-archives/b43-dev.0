@@ -1,27 +1,24 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Mon, 9 Jul 2012 10:53:15 +0200
-Subject: b43 does not work on broadcom 43227
-In-Reply-To: <4FFA0A3C.3040204@lwfinger.net>
-References: <1341782825.4900.11.camel@zeus>
- <4FFA0A3C.3040204@lwfinger.net>
-Message-ID: <4FFA9BFB.3020600@broadcom.com>
+From: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+Date: Fri, 13 Jul 2012 20:52:23 +0200
+Subject: mac80211: Restructure ieee80211_tx_info->control to gain free space
+ along tx-path 
+Message-ID: <1342205545-45382-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Eloy Anguiano <eloy.anguiano@uam.es>, b43-dev@lists.infradead.org, wireless <linux-wireless@vger.kernel.org>
+To: linville@tuxdriver.com
+Cc: linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, ath5k-devel@lists.ath5k.org, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, coelho@ti.com, johannes.berg@intel.com
 
-On 07/09/2012 12:31 AM, Larry Finger wrote:
-> I think that Broadcom will be changing brcmsmac to support these
-> devices, but my understanding is that they are concentrating on fullmac
-> devices at the moment.
-> 
-> Larry
+In order to enable new annotations per data packet along the max80211 tx-path,
+(e.g. upcoming Transmit Power Control (TPC) per packet) this patch-serie does:
 
-That is correct. The bcm43227 is very similar to the bcm43228, the
-difference being the supported bands. I have not heard back since I
-forwarded your questions on 43228 support in brcmsmac. So for now I can
-only say that bcm43227 and bcm43228 will be added in one patch.
+- fix the ieee80211_tx_info->control usage in driver mac80211_hwsim
+- remove control.sta from ieee80211_tx_info and adapt all affected drivers
 
-Gr. AvS
+
+Greetings Thomas                                                                                                                                                                                                                        
+
+---
+CC list is a reduced "get_maintainer.pl", focuses on mailing lists - suggested
+by J. Berg
