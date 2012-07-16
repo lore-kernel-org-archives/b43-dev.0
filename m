@@ -1,61 +1,42 @@
-From: Luciano Coelho <coelho@ti.com>
-Date: Sun, 15 Jul 2012 07:49:15 +0300
-Subject: [PATCH 2/2] mac80211: Remove control.sta from struct
- ieee80211_tx_info and restructure tx-path
-In-Reply-To: <1342205545-45382-3-git-send-email-thomas@net.t-labs.tu-berlin.de>
-References: <1342205545-45382-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
- <1342205545-45382-3-git-send-email-thomas@net.t-labs.tu-berlin.de>
-Message-ID: <1342327755.1196.6.camel@cumari.coelho.fi>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Mon, 16 Jul 2012 23:44:25 +0200
+Subject: REGRESSION: [PATCH v2 0/9] bcma misc updates
+In-Reply-To: <4FF2ABD6.3070007@broadcom.com>
+References: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
+ <4FF29671.1020406@broadcom.com> <4FF2A2D4.9070308@hauke-m.de>
+ <4FF2ABD6.3070007@broadcom.com>
+Message-ID: <50048B39.7060507@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, ath5k-devel@venema.h4ckr.net, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, johannes.berg@intel.com
+To: Arend van Spriel <arend@broadcom.com>
+Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com
 
-On Fri, 2012-07-13 at 20:52 +0200, Thomas Huehn wrote:
-> The pointer control.sta is removed from ieee80211_tx_info to free up sufficient
-> memory in SKB_CB on the tx-path to enable new annotations per data packet e.g.
-> support of upcoming Transmit Power Control (TPC).
-> Now the control.sta pointer is put on the stack where it is passed as function
-> parameter to the .tx equivalent (ieee80211_ops) of each affected wireless
-> driver. Therefore a new structure ieee80211_tx_control is added to mac80211.h
-> which holds the sta structure instead.
+On 07/03/2012 10:22 AM, Arend van Spriel wrote:
+> On 07/03/2012 09:44 AM, Hauke Mehrtens wrote:
+>>> I suspect it tries reading OTP instead of the external SPROM.
+>>>>
+>>>> Gr. AvS
+>>>>
+>> Hi Arend,
+>>
+>> my BCM43224 uses a Sprom from the flash chip of the SoC, so it could be
+>> that something is wrong in the sprom reading, but I haven't touched the
+>> sprom code expect for using constants.
+>>
+>> Do you know which patch is causing this issue?
+>>
+>> Hauke
+>>
 > 
-> The tx-path of all affected drivers is restructured to respect the chaneged
-> layout of struct ieee80211_tx_info. List of modified drivers:
-> ath9k
-> ath5k
-> iwl3954
-> iwl4965
-> iwl-agn
-> mwl8k
-> carl9170
-> ath9k-htc
-> p54
-> rt2x00
-> rtl8180
-> rtl8087
-> hwsim
-> b43
-> b43legacy
-> brcmsmac
-> zd1211rw
-> wl1251
-> wlcore
-> rtlwifi
-> libertas_tf
-> at76c50x-usb
-> adm8211
+> I intended to bisect the series. I will let you know what I find.
 > 
-> Signed-off-by: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
-> Signed-off-by: Alina Friedrichsen <x-alina@gmx.net>
-> Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-> ---
+> Gr. AvS
 
-For the TI drivers part (wl1251/wlcore):
+Hi Arend,
 
-Acked-by: Luciano Coelho <coelho@ti.com>
+Did you bisect this? I still have no idea which or why any of the
+patches could cause this.
 
---
-Luca.
+Hauke
