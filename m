@@ -1,57 +1,32 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Tue, 17 Jul 2012 09:31:33 +0200
-Subject: REGRESSION: [PATCH v2 0/9] bcma misc updates
-In-Reply-To: <50048B39.7060507@hauke-m.de>
-References: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
- <4FF29671.1020406@broadcom.com> <4FF2A2D4.9070308@hauke-m.de>
- <4FF2ABD6.3070007@broadcom.com> <50048B39.7060507@hauke-m.de>
-Message-ID: <500514D5.4090207@broadcom.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Tue, 17 Jul 2012 11:44:50 +0200
+Subject: [PATCH 2/2] mac80211: Remove control.sta from struct
+ ieee80211_tx_info and restructure tx-path
+In-Reply-To: <1342205545-45382-3-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ (sfid-20120713_205245_114771_49FF4AC7)
+References: <1342205545-45382-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ <1342205545-45382-3-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ (sfid-20120713_205245_114771_49FF4AC7)
+Message-ID: <1342518290.7427.9.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com
+To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, ath5k-devel@lists.ath5k.org, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, coelho@ti.com
 
-On 07/16/2012 11:44 PM, Hauke Mehrtens wrote:
-> On 07/03/2012 10:22 AM, Arend van Spriel wrote:
->> On 07/03/2012 09:44 AM, Hauke Mehrtens wrote:
->>>> I suspect it tries reading OTP instead of the external SPROM.
->>>>>
->>>>> Gr. AvS
->>>>>
->>> Hi Arend,
->>>
->>> my BCM43224 uses a Sprom from the flash chip of the SoC, so it could be
->>> that something is wrong in the sprom reading, but I haven't touched the
->>> sprom code expect for using constants.
->>>
->>> Do you know which patch is causing this issue?
->>>
->>> Hauke
->>>
->>
->> I intended to bisect the series. I will let you know what I find.
->>
->> Gr. Av
-> 
-> Hi Arend,
-> 
-> Did you bisect this? I still have no idea which or why any of the
-> patches could cause this.
-> 
-> Hauke
-> 
+Ok first of all, please actually compile the tree after your changes. It
+doesn't. When it does, please fix
+ 1) line length in the commit log should be < 72 chars
+ 2) indentation in mac80211.h
+ 3) removal of an important comment in mac80211.h that I pointed out in
+    previous review
 
-Hi Hauke,
+> The tx-path of all affected drivers is restructured to respect the chaneged
+> layout of struct ieee80211_tx_info. List of modified drivers:
+> ath9k
 
-I seem to have a number of issues with BCMA, which all seem host_pci
-related. It looks like there is some merge issue in PCI API. It may be
-due to the fact that wireless-testing got rebased by John and I merged
-it into our internal branch.
+Please also remove the driver list. git can tell you the modified files
+very easily.
 
-So my plan is to rebase our internal branch to wireless-testing instead
-of a merge. I did not come back to you because I wanted to make sense of
-the issues I was seeing.
-
-Gr. AvS
+johannes
