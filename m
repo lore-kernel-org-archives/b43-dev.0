@@ -1,47 +1,24 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Tue, 17 Jul 2012 15:03:57 +0200
-Subject: [ath5k-devel] [PATCH 2/2] mac80211: Remove control.sta from
- struct ieee80211_tx_info and restructure tx-path
-In-Reply-To: <5005613F.1000004@net.t-labs.tu-berlin.de>
-References: <1342205545-45382-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
- <1342205545-45382-3-git-send-email-thomas@net.t-labs.tu-berlin.de>
- (sfid-20120713_205245_114771_49FF4AC7)
- <1342518290.7427.9.camel@jlt3.sipsolutions.net>
- <5005613F.1000004@net.t-labs.tu-berlin.de>
-Message-ID: <1342530237.8139.5.camel@jlt3.sipsolutions.net>
+From: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+Date: Tue, 17 Jul 2012 22:11:15 +0200
+Subject: [PATCH v2 0/0] mac80211: Restructure ieee80211_tx_info->control to
+ gain free space along tx-path 
+Message-ID: <1342555877-23563-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
-Cc: coelho@ti.com, brcm80211-dev-list@broadcom.com, ath5k-devel@lists.ath5k.org, linux-wireless@vger.kernel.org, linville@tuxdriver.com, users@rt2x00.serialmonkey.com, ilw@linux.intel.com, ath9k-devel@lists.ath9k.org, b43-dev@lists.infradead.org, chunkeey@googlemail.com, dsd@gentoo.org, buytenh@wantstofly.org
+To: linville@tuxdriver.com
+Cc: linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, ath5k-devel@lists.ath5k.org, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, coelho@ti.com, johannes.berg@intel.com
 
-On Tue, 2012-07-17 at 14:57 +0200, Thomas Huehn wrote:
+In order to enable new annotations per data packet along the max80211 tx-path,
+(e.g. upcoming Transmit Power Control (TPC) per packet) this patch-serie does:
 
-> > Ok first of all, please actually compile the tree after your changes. It
-> > doesn't. When it does, please fix
-> 
-> I always do compile the compat-wireless-tree after changes I introduce,
-> and it compiles without errors in the case of this mac80211:sta-remove
-> patch. But as my build tree is based on the OpenWrt environment, it
-> might be not 100% in sync. Could you be a bit more explicit where does
-> it brake in you case (which function, driver...) ?
+- fix the ieee80211_tx_info->control usage in driver mac80211_hwsim
+- remove control.sta from ieee80211_tx_info and adapt all affected drivers
 
-No, I'm not going to play that game. Make sure it compiles on
-wireless-next.
 
-> I guess you refer to the comment in mac80211.h, struct tx_info that I
-> removed:
-> - * The TX control's sta pointer is only valid during the ->tx call,
-> - * it may be NULL.
-> 
-> I am not sure what you want me to keep here as comment. As the sta
-> pointer is moved into the new struct tx_control and the remaining
-> pointers in the tx_info->control structure (vif, hw_key) are ALL only
-> valid during the ->tx call and may be NULL. So I could think of adding a
-> comment to tx_control about the sta been NULL, but anything more ?
+Greetings Thomas                                                                                                                                                                                                                        
 
-It's also not allowed to copy the pointer, due to RCU, which is
-information you lost.
-
-johannes
+---
+CC list is a reduced "get_maintainer.pl", focuses on mailing lists - suggested
+by J. Berg
