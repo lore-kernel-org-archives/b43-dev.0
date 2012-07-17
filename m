@@ -1,42 +1,57 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Mon, 16 Jul 2012 23:44:25 +0200
+From: Arend van Spriel <arend@broadcom.com>
+Date: Tue, 17 Jul 2012 09:31:33 +0200
 Subject: REGRESSION: [PATCH v2 0/9] bcma misc updates
-In-Reply-To: <4FF2ABD6.3070007@broadcom.com>
+In-Reply-To: <50048B39.7060507@hauke-m.de>
 References: <1341013486-2520-1-git-send-email-hauke@hauke-m.de>
  <4FF29671.1020406@broadcom.com> <4FF2A2D4.9070308@hauke-m.de>
- <4FF2ABD6.3070007@broadcom.com>
-Message-ID: <50048B39.7060507@hauke-m.de>
+ <4FF2ABD6.3070007@broadcom.com> <50048B39.7060507@hauke-m.de>
+Message-ID: <500514D5.4090207@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: linville@tuxdriver.com, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com
 
-On 07/03/2012 10:22 AM, Arend van Spriel wrote:
-> On 07/03/2012 09:44 AM, Hauke Mehrtens wrote:
->>> I suspect it tries reading OTP instead of the external SPROM.
->>>>
->>>> Gr. AvS
->>>>
->> Hi Arend,
+On 07/16/2012 11:44 PM, Hauke Mehrtens wrote:
+> On 07/03/2012 10:22 AM, Arend van Spriel wrote:
+>> On 07/03/2012 09:44 AM, Hauke Mehrtens wrote:
+>>>> I suspect it tries reading OTP instead of the external SPROM.
+>>>>>
+>>>>> Gr. AvS
+>>>>>
+>>> Hi Arend,
+>>>
+>>> my BCM43224 uses a Sprom from the flash chip of the SoC, so it could be
+>>> that something is wrong in the sprom reading, but I haven't touched the
+>>> sprom code expect for using constants.
+>>>
+>>> Do you know which patch is causing this issue?
+>>>
+>>> Hauke
+>>>
 >>
->> my BCM43224 uses a Sprom from the flash chip of the SoC, so it could be
->> that something is wrong in the sprom reading, but I haven't touched the
->> sprom code expect for using constants.
+>> I intended to bisect the series. I will let you know what I find.
 >>
->> Do you know which patch is causing this issue?
->>
->> Hauke
->>
+>> Gr. Av
 > 
-> I intended to bisect the series. I will let you know what I find.
+> Hi Arend,
 > 
-> Gr. AvS
+> Did you bisect this? I still have no idea which or why any of the
+> patches could cause this.
+> 
+> Hauke
+> 
 
-Hi Arend,
+Hi Hauke,
 
-Did you bisect this? I still have no idea which or why any of the
-patches could cause this.
+I seem to have a number of issues with BCMA, which all seem host_pci
+related. It looks like there is some merge issue in PCI API. It may be
+due to the fact that wireless-testing got rebased by John and I merged
+it into our internal branch.
 
-Hauke
+So my plan is to rebase our internal branch to wireless-testing instead
+of a merge. I did not come back to you because I wanted to make sense of
+the issues I was seeing.
+
+Gr. AvS
