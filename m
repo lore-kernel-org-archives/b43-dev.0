@@ -1,68 +1,159 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 19 Jul 2012 10:07:23 -0500
-Subject: BCM4306 (rev 5) Problem with firmware loading since kernel 3.4
-In-Reply-To: <20120719085208.GA17532@dirichlet.Morel>
-References: <20120719085208.GA17532@dirichlet.Morel>
-Message-ID: <500822AB.9080601@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 22 Jul 2012 15:00:54 +0200
+Subject: [IDEA RFC][PATCH] b43: G-PHY: drop unused PHY rev 1 code
+Message-ID: <1342962054-26239-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 07/19/2012 03:52 AM, Felix Janda wrote:
-> Hello,
->
-> I'm using the card:
->
-> 03:03.0 0280: 14e4:4320 (rev 03)
->
-> Since kernel 3.4 b43 has problems with loading the firmware for me.
-> Bisecting gave
->
-> # bad: [6b6fa5868eec26bdc6a83543cebb8cf832a2645a] b43: Load firmware from a work queue and not from the probe routine
-> git bisect bad 6b6fa5868eec26bdc6a83543cebb8cf832a2645a
-> # good: [a3ea2c76b193be5794e0de6aff66e14c21b904f8] b43legacy: Load firmware from work queue instead of from probe routine
-> git bisect good a3ea2c76b193be5794e0de6aff66e14c21b904f8
->
-> With the problematic kernel dmesg tells me:
->
-> [    1.230562] b43-phy0: Broadcom 4306 WLAN found (core revision 5)
-> [    1.363845] b43-phy0 debug: Found PHY: Analog 2, Type 2, Revision 2
-> [    1.363866] b43-phy0 debug: Found Radio: Manuf 0x17F, Version 0x2050, Revision 2
-> [   61.944937] b43-phy0 ERROR: Firmware file "b43/ucode5.fw" not found
-> [   61.944942] b43-phy0 ERROR: Firmware file "b43-open/ucode5.fw" not found
-> [   61.944945] b43-phy0 ERROR: You must go to http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the correct firmware for this driver version. Please carefully read all instructions on this website.
->
-> Surprisingly, I could get the driver to load the firmware by including
-> b43/ucode5.fw in the kernel. Furthermore it seems to be able to load
-> other firmware from /lib/firmware. Now (actually this output is from
-> the current kernel from git) dmesg says:
->
-> [    1.224694] b43-phy0: Broadcom 4306 WLAN found (core revision 5)
-> [    1.358016] b43-phy0 debug: Found PHY: Analog 2, Type 2, Revision 2
-> [    1.358037] b43-phy0 debug: Found Radio: Manuf 0x17F, Version 0x2050, Revision 2
-> [   62.012797] Registered led device: b43-phy0::tx
-> [   62.019411] Registered led device: b43-phy0::rx
-> [   62.022505] Registered led device: b43-phy0::radio
-> [   62.512028] b43-phy0: Loading firmware version 666.2 (2011-02-23 01:15:07)
-> [   62.512034] b43-phy0 warning: No "pcm5.fw" firmware file found. Hardware accelerated cryptography is disabled.
-> [   62.512037] b43-phy0 warning: You must go to http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the correct firmware for this driver version. Please carefully read all instructions on this website.
-> [   62.544048] b43-phy0 debug: Chip initialized
-> [   62.544203] b43-phy0 debug: 30-bit DMA initialized
-> [   62.544244] b43-phy0 debug: QoS enabled
-> [   62.548076] b43-phy0 debug: Wireless interface started
-> [   62.548126] b43-phy0 debug: Adding Interface type 2
->
-> The delay of 60 seconds is kind of inconvenient...
->
-> Do you have an idea what could be the problem or give me some hints how
-> to debug it?
+b43 does not support devices with G-PHY rev 1. They are handled by
+b43legacy.
+---
+This change matches http://bcm-v4.sipsolutions.net/802.11/PHY/Init/G
+routine. Since b43 and b43legacy were splitted, I believe PHY support
+can be splitted too.
 
-Is b43 built into your kernel rather than as a module? If so, then the problem 
-is known. I have started generating a fix, but it is not yet ready. As a 
-workaround, change your kernel configuration so that b43 and ssb are modules.
+I think similar change (just "reversed" can be applied to the b43legacy)
+---
+ drivers/net/wireless/b43/main.c  |    2 +-
+ drivers/net/wireless/b43/phy_g.c |  103 +-------------------------------------
+ 2 files changed, 2 insertions(+), 103 deletions(-)
 
-If b43 is already a module, please let me know.
-
-Larry
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index b80352b..8e5f4e8 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4306,7 +4306,7 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+ 			unsupported = 1;
+ 		break;
+ 	case B43_PHYTYPE_G:
+-		if (phy_rev > 9)
++		if (phy_rev < 2 || phy_rev > 9)
+ 			unsupported = 1;
+ 		break;
+ #ifdef CONFIG_B43_PHY_N
+diff --git a/drivers/net/wireless/b43/phy_g.c b/drivers/net/wireless/b43/phy_g.c
+index 12f467b..a67f278 100644
+--- a/drivers/net/wireless/b43/phy_g.c
++++ b/drivers/net/wireless/b43/phy_g.c
+@@ -1489,104 +1489,6 @@ static u16 b43_radio_init2050(struct b43_wldev *dev)
+ 	return ret;
+ }
+ 
+-static void b43_phy_initb5(struct b43_wldev *dev)
+-{
+-	struct b43_phy *phy = &dev->phy;
+-	struct b43_phy_g *gphy = phy->g;
+-	u16 offset, value;
+-	u8 old_channel;
+-
+-	if (phy->analog == 1) {
+-		b43_radio_set(dev, 0x007A, 0x0050);
+-	}
+-	if ((dev->dev->board_vendor != SSB_BOARDVENDOR_BCM) &&
+-	    (dev->dev->board_type != SSB_BOARD_BU4306)) {
+-		value = 0x2120;
+-		for (offset = 0x00A8; offset < 0x00C7; offset++) {
+-			b43_phy_write(dev, offset, value);
+-			value += 0x202;
+-		}
+-	}
+-	b43_phy_maskset(dev, 0x0035, 0xF0FF, 0x0700);
+-	if (phy->radio_ver == 0x2050)
+-		b43_phy_write(dev, 0x0038, 0x0667);
+-
+-	if (phy->gmode || phy->rev >= 2) {
+-		if (phy->radio_ver == 0x2050) {
+-			b43_radio_set(dev, 0x007A, 0x0020);
+-			b43_radio_set(dev, 0x0051, 0x0004);
+-		}
+-		b43_write16(dev, B43_MMIO_PHY_RADIO, 0x0000);
+-
+-		b43_phy_set(dev, 0x0802, 0x0100);
+-		b43_phy_set(dev, 0x042B, 0x2000);
+-
+-		b43_phy_write(dev, 0x001C, 0x186A);
+-
+-		b43_phy_maskset(dev, 0x0013, 0x00FF, 0x1900);
+-		b43_phy_maskset(dev, 0x0035, 0xFFC0, 0x0064);
+-		b43_phy_maskset(dev, 0x005D, 0xFF80, 0x000A);
+-	}
+-
+-	if (dev->bad_frames_preempt) {
+-		b43_phy_set(dev, B43_PHY_RADIO_BITFIELD, (1 << 11));
+-	}
+-
+-	if (phy->analog == 1) {
+-		b43_phy_write(dev, 0x0026, 0xCE00);
+-		b43_phy_write(dev, 0x0021, 0x3763);
+-		b43_phy_write(dev, 0x0022, 0x1BC3);
+-		b43_phy_write(dev, 0x0023, 0x06F9);
+-		b43_phy_write(dev, 0x0024, 0x037E);
+-	} else
+-		b43_phy_write(dev, 0x0026, 0xCC00);
+-	b43_phy_write(dev, 0x0030, 0x00C6);
+-	b43_write16(dev, 0x03EC, 0x3F22);
+-
+-	if (phy->analog == 1)
+-		b43_phy_write(dev, 0x0020, 0x3E1C);
+-	else
+-		b43_phy_write(dev, 0x0020, 0x301C);
+-
+-	if (phy->analog == 0)
+-		b43_write16(dev, 0x03E4, 0x3000);
+-
+-	old_channel = phy->channel;
+-	/* Force to channel 7, even if not supported. */
+-	b43_gphy_channel_switch(dev, 7, 0);
+-
+-	if (phy->radio_ver != 0x2050) {
+-		b43_radio_write16(dev, 0x0075, 0x0080);
+-		b43_radio_write16(dev, 0x0079, 0x0081);
+-	}
+-
+-	b43_radio_write16(dev, 0x0050, 0x0020);
+-	b43_radio_write16(dev, 0x0050, 0x0023);
+-
+-	if (phy->radio_ver == 0x2050) {
+-		b43_radio_write16(dev, 0x0050, 0x0020);
+-		b43_radio_write16(dev, 0x005A, 0x0070);
+-	}
+-
+-	b43_radio_write16(dev, 0x005B, 0x007B);
+-	b43_radio_write16(dev, 0x005C, 0x00B0);
+-
+-	b43_radio_set(dev, 0x007A, 0x0007);
+-
+-	b43_gphy_channel_switch(dev, old_channel, 0);
+-
+-	b43_phy_write(dev, 0x0014, 0x0080);
+-	b43_phy_write(dev, 0x0032, 0x00CA);
+-	b43_phy_write(dev, 0x002A, 0x88A3);
+-
+-	b43_set_txpower_g(dev, &gphy->bbatt, &gphy->rfatt, gphy->tx_control);
+-
+-	if (phy->radio_ver == 0x2050)
+-		b43_radio_write16(dev, 0x005D, 0x000D);
+-
+-	b43_write16(dev, 0x03E4, (b43_read16(dev, 0x03E4) & 0xFFC0) | 0x0004);
+-}
+-
+ static void b43_phy_initb6(struct b43_wldev *dev)
+ {
+ 	struct b43_phy *phy = &dev->phy;
+@@ -1993,10 +1895,7 @@ static void b43_phy_initg(struct b43_wldev *dev)
+ 	struct b43_phy_g *gphy = phy->g;
+ 	u16 tmp;
+ 
+-	if (phy->rev == 1)
+-		b43_phy_initb5(dev);
+-	else
+-		b43_phy_initb6(dev);
++	b43_phy_initb6(dev);
+ 
+ 	if (phy->rev >= 2 || phy->gmode)
+ 		b43_phy_inita(dev);
+-- 
+1.7.7
