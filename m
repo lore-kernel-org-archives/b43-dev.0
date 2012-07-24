@@ -1,78 +1,89 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 23 Jul 2012 22:57:01 +0200
-Subject: [PATCH] b43: fix logic in GPIO init
-Message-ID: <1343077021-14020-1-git-send-email-zajec5@gmail.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Tue, 24 Jul 2012 16:47:31 +0200
+Subject: [PATCH v4] mac80211: Remove control.sta from struct
+ ieee80211_tx_info and restructure tx-path
+In-Reply-To: <1343072022-1383-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ (sfid-20120723_213356_862232_300A4FC5)
+References: <1343072022-1383-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ (sfid-20120723_213356_862232_300A4FC5)
+Message-ID: <1343141251.4415.39.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, ath5k-devel@lists.ath5k.org, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, coelho@ti.com, nbd@openwrt.org
 
-Add some comments by the way
+On Mon, 2012-07-23 at 21:33 +0200, Thomas Huehn wrote:
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/main.c |   21 +++++++++++++--------
- 1 files changed, 13 insertions(+), 8 deletions(-)
+> --- a/net/mac80211/ieee80211_i.h
+> +++ b/net/mac80211/ieee80211_i.h
+> @@ -196,6 +196,8 @@ struct ieee80211_tx_data {
+>  	struct ieee80211_channel *channel;
+>  
+>  	unsigned int flags;
+> +
+> +	struct ieee80211_tx_control control;
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index a56f182..f6f8ccd 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2719,32 +2719,37 @@ static int b43_gpio_init(struct b43_wldev *dev)
- 	if (dev->dev->chip_id == 0x4301) {
- 		mask |= 0x0060;
- 		set |= 0x0060;
-+	} else if (dev->dev->chip_id == 0x5354) {
-+		/* Don't allow overtaking buttons GPIOs */
-+		set &= 0x2; /* 0x2 is LED GPIO on BCM5354 */
- 	}
--	if (dev->dev->chip_id == 0x5354)
--		set &= 0xff02;
-+
- 	if (0 /* FIXME: conditional unknown */ ) {
- 		b43_write16(dev, B43_MMIO_GPIO_MASK,
- 			    b43_read16(dev, B43_MMIO_GPIO_MASK)
- 			    | 0x0100);
--		mask |= 0x0180;
--		set |= 0x0180;
-+		/* BT Coexistance Input */
-+		mask |= 0x0080;
-+		set |= 0x0080;
-+		/* BT Coexistance Out */
-+		mask |= 0x0100;
-+		set |= 0x0100;
- 	}
- 	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_PACTRL) {
-+		/* PA is controlled by gpio 9, let ucode handle it */
- 		b43_write16(dev, B43_MMIO_GPIO_MASK,
- 			    b43_read16(dev, B43_MMIO_GPIO_MASK)
- 			    | 0x0200);
- 		mask |= 0x0200;
- 		set |= 0x0200;
- 	}
--	if (dev->dev->core_rev >= 2)
--		mask |= 0x0010;	/* FIXME: This is redundant. */
- 
- 	switch (dev->dev->bus_type) {
- #ifdef CONFIG_B43_BCMA
- 	case B43_BUS_BCMA:
- 		bcma_cc_write32(&dev->dev->bdev->bus->drv_cc, BCMA_CC_GPIOCTL,
- 				(bcma_cc_read32(&dev->dev->bdev->bus->drv_cc,
--					BCMA_CC_GPIOCTL) & mask) | set);
-+					BCMA_CC_GPIOCTL) & ~mask) | set);
- 		break;
- #endif
- #ifdef CONFIG_B43_SSB
-@@ -2753,7 +2758,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
- 		if (gpiodev)
- 			ssb_write32(gpiodev, B43_GPIO_CONTROL,
- 				    (ssb_read32(gpiodev, B43_GPIO_CONTROL)
--				    & mask) | set);
-+				    & ~mask) | set);
- 		break;
- #endif
- 	}
--- 
-1.7.7
+Why is this needed/useful?
+
+>  		info->control.vif = vif;
+> -		info->control.sta = sta;
+> +		control->sta = sta;
+>  
+>  		__skb_unlink(skb, skbs);
+> -		drv_tx(local, skb);
+> +		drv_tx(local, control, skb);
+
+You're assigning to it right before, and I don't see you using it any
+time before, so why not just have the control struct on the stack of
+this function?
+
+That would save all this passing around:
+
+> @@ -1253,6 +1254,7 @@ static bool ieee80211_tx_frags(struct ieee80211_local *local,
+>   * Returns false if the frame couldn't be transmitted but was queued instead.
+>   */
+>  static bool __ieee80211_tx(struct ieee80211_local *local,
+> +			   struct ieee80211_tx_control *control,
+>  			   struct sk_buff_head *skbs, int led_len,
+>  			   struct sta_info *sta, bool txpending)
+>  {
+> @@ -1301,7 +1303,7 @@ static bool __ieee80211_tx(struct ieee80211_local *local,
+>  		break;
+>  	}
+>  
+> -	result = ieee80211_tx_frags(local, vif, pubsta, skbs,
+> +	result = ieee80211_tx_frags(local, vif, pubsta, control, skbs,
+>  				    txpending);
+>  
+>  	ieee80211_tpt_led_trig_tx(local, fc, led_len);
+> @@ -1409,7 +1411,7 @@ static bool ieee80211_tx(struct ieee80211_sub_if_data *sdata,
+>  			sdata->vif.hw_queue[skb_get_queue_mapping(skb)];
+>  
+>  	if (!invoke_tx_handlers(&tx))
+> -		result = __ieee80211_tx(local, &tx.skbs, led_len,
+> +		result = __ieee80211_tx(local, &tx.control, &tx.skbs, led_len,
+>  					tx.sta, txpending);
+>   out:
+>  	rcu_read_unlock();
+> @@ -2154,6 +2156,7 @@ static bool ieee80211_tx_pending_skb(struct ieee80211_local *local,
+>  	struct ieee80211_sub_if_data *sdata;
+>  	struct sta_info *sta;
+>  	struct ieee80211_hdr *hdr;
+> +	struct ieee80211_tx_control control;
+>  	bool result;
+>  
+>  	sdata = vif_to_sdata(info->control.vif);
+> @@ -2169,7 +2172,7 @@ static bool ieee80211_tx_pending_skb(struct ieee80211_local *local,
+>  		hdr = (struct ieee80211_hdr *)skb->data;
+>  		sta = sta_info_get(sdata, hdr->addr1);
+>  
+> -		result = __ieee80211_tx(local, &skbs, skb->len, sta, true);
+> +		result = __ieee80211_tx(local, &control, &skbs, skb->len, sta, true);
+>  	}
+>  
+>  	return result;
+
+
+johannes
