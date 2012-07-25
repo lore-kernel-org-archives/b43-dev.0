@@ -1,76 +1,45 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 25 Jul 2012 17:55:37 +0200
-Subject: [PATCH V2] b43: be more user friendly with PHY info
-In-Reply-To: <1343231325.1693.13.camel@joe2Laptop>
-References: <1343227629-14161-1-git-send-email-zajec5@gmail.com>
- <1343225435.1693.10.camel@joe2Laptop>
- <CACna6rwDo=oW42mEwHXT0M5c56tWWtBqqb+Wv+L0iKzSasux8A@mail.gmail.com>
- <1343231325.1693.13.camel@joe2Laptop>
-Message-ID: <CACna6rzaRpk0ScqfzX4j8p7kJcRGhWtunuycMvmhaimmaiVN3w@mail.gmail.com>
+From: Luciano Coelho <coelho@ti.com>
+Date: Wed, 25 Jul 2012 22:25:02 +0300
+Subject: [PATCH v5] mac80211: Remove control.sta from struct
+ ieee80211_tx_info and restructure tx-path
+In-Reply-To: <500FEDDD.206@net.t-labs.tu-berlin.de>
+References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ (sfid-20120724_221843_511093_701FFAF2)
+ <1343208990.4463.25.camel@jlt3.sipsolutions.net>
+ (sfid-20120725_113644_599580_8AC4476F)
+ <1343220625.4463.31.camel@jlt3.sipsolutions.net>
+ <500FEDDD.206@net.t-labs.tu-berlin.de>
+Message-ID: <1343244302.3750.44.camel@cumari.coelho.fi>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+Cc: Johannes Berg <johannes@sipsolutions.net>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, ath5k-devel@venema.h4ckr.net, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, nbd@openwrt.org
 
-2012/7/25 Joe Perches <joe@perches.com>:
-> On Wed, 2012-07-25 at 16:22 +0200, Rafa? Mi?ecki wrote:
->> 2012/7/25 Joe Perches <joe@perches.com>:
->> > On Wed, 2012-07-25 at 16:47 +0200, Rafa? Mi?ecki wrote:
->> >> use PHY names instead of magic numbers.
->> > []
->> >> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
->> > []
->> >> @@ -4277,6 +4277,37 @@ out:
->> > []
->> >> +static char *b43_phy_name(struct b43_wldev *dev, u8 phy_type)
->> >> +{
->> >> +     switch (phy_type) {
->> >> +     case B43_PHYTYPE_A:
->> >> +             return "A";
->> > []
->> >> +     }
->> >> +
->> >> +     b43err(dev->wl, "Unknown PHY Type: %d\n", phy_type);
->> >> +     return "UNKNOWN";
->> >
->> > In general, it's a bad idea to emit error messages
->> > in a generic call like this.
->>
->> This function is not supposed to be called anywhere else, it's only
->> for a single user-friendly message.
->>
->>
->> >> @@ -4337,13 +4368,12 @@ static int b43_phy_versioning(struct b43_wldev *dev)
->> >>               unsupported = 1;
->> >>       }
->> >>       if (unsupported) {
->> >> -             b43err(dev->wl, "FOUND UNSUPPORTED PHY "
->> >> -                    "(Analog %u, Type %u, Revision %u)\n",
->> >> -                    analog_type, phy_type, phy_rev);
->> >> +             b43err(dev->wl, "FOUND UNSUPPORTED PHY (Analog %u, Type %s, Revision %u)\n",
->> >> +                    analog_type, b43_phy_name(dev, phy_type), phy_rev);
->> >
->> > The extra message doesn't add much useful info
->> > and can also cause errors in continued messages.
->>
->> By "extra message" do you mean the one from b43_phy_name? I wanted to
->> print PHY type as digit somewhere (in case it is not recognized). I
->> can't use simple
->> return ("UNKNOWN %d", phy_type);
->> , such a solution would require allocating memory for string and
->> freeing it. It would complicate the function.
->>
->> Do you have any suggestion for better handling this?
->>
->
-> Change the UNSUPPORTED PHY message to
->
->         "...Type: %d:(%s)...",
->         ..., phy_type, b43_phy_name(dev, phy_type), ...
+On Wed, 2012-07-25 at 15:00 +0200, Thomas Huehn wrote:
+> Hi Johannes,
 
-I think it should be fine :)
+Hi guys,
 
--- 
-Rafa?
+
+> Johannes Berg schrieb:
+> >> Finally applied, but I dropped these spurious changes:
+> > Never mind, it still doesn't compile, dropped it.
+> >
+> > I had to rebase my tree due to that, sorry!
+> >
+> 
+> My last PATCH included some changes at a TI driver which was adapted in
+> wireless-testing in John's tree. As I touch that many drivers I would
+> like to use your tree instead, to provide a proper PATCH that builds at
+> your tree state...small de-synchronization issues just make it fail.
+
+Since Johannes has already more or less acked this patch, wouldn't it be
+easier to integrate via John's tree? I think it would make syncing with
+mac80211 and all the drivers easier.
+
+Just my 2 cents.
+
+--
+Luca.
