@@ -1,38 +1,99 @@
-From: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
-Date: Wed, 25 Jul 2012 15:00:13 +0200
-Subject: [PATCH v5] mac80211: Remove control.sta from struct
- ieee80211_tx_info and restructure tx-path
-In-Reply-To: <1343220625.4463.31.camel@jlt3.sipsolutions.net>
-References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
- (sfid-20120724_221843_511093_701FFAF2)
- <1343208990.4463.25.camel@jlt3.sipsolutions.net>
- (sfid-20120725_113644_599580_8AC4476F)
- <1343220625.4463.31.camel@jlt3.sipsolutions.net>
-Message-ID: <500FEDDD.206@net.t-labs.tu-berlin.de>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 25 Jul 2012 16:47:09 +0200
+Subject: [PATCH V2] b43: be more user friendly with PHY info
+Message-ID: <1343227629-14161-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, ath5k-devel@lists.ath5k.org, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, coelho@ti.com, nbd@openwrt.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Hi Johannes,
+First of all, use PHY names instead of magic numbers. It should make
+configuring kernel easier in case of not enabled PHY type support.
+Secondly, always print info about PHY. This is really basic info about
+hardware and quite important for the support level.
 
-Johannes Berg schrieb:
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+V2: add new PHYTYPEs
+---
+ drivers/net/wireless/b43/b43.h  |    2 +
+ drivers/net/wireless/b43/main.c |   40 ++++++++++++++++++++++++++++++++++----
+ 2 files changed, 37 insertions(+), 5 deletions(-)
 
-
->> Finally applied, but I dropped these spurious changes:
-> Never mind, it still doesn't compile, dropped it.
->
-> I had to rebase my tree due to that, sorry!
->
-
-My last PATCH included some changes at a TI driver which was adapted in
-wireless-testing in John's tree. As I touch that many drivers I would
-like to use your tree instead, to provide a proper PATCH that builds at
-your tree state...small de-synchronization issues just make it fail.
-
-Can I use your wireless-next for that at:
-linux/kernel/git/jberg/mac80211-next.git .. or any other suggestion ?
-
-Greetings Thomas
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 7c899fc..b0c7f47 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -415,6 +415,8 @@ enum {
+ #define B43_PHYTYPE_HT			0x07
+ #define B43_PHYTYPE_LCN			0x08
+ #define B43_PHYTYPE_LCNXN		0x09
++#define B43_PHYTYPE_LCN40		0x0a
++#define B43_PHYTYPE_AC			0x0b
+ 
+ /* PHYRegisters */
+ #define B43_PHY_ILT_A_CTRL		0x0072
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index b80352b..5655c9c 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4277,6 +4277,37 @@ out:
+ 	return err;
+ }
+ 
++static char *b43_phy_name(struct b43_wldev *dev, u8 phy_type)
++{
++	switch (phy_type) {
++	case B43_PHYTYPE_A:
++		return "A";
++	case B43_PHYTYPE_B:
++		return "B";
++	case B43_PHYTYPE_G:
++		return "G";
++	case B43_PHYTYPE_N:
++		return "N";
++	case B43_PHYTYPE_LP:
++		return "LP";
++	case B43_PHYTYPE_SSLPN:
++		return "SSLPN";
++	case B43_PHYTYPE_HT:
++		return "HT";
++	case B43_PHYTYPE_LCN:
++		return "LCN";
++	case B43_PHYTYPE_LCNXN:
++		return "LCNXN";
++	case B43_PHYTYPE_LCN40:
++		return "LCN40";
++	case B43_PHYTYPE_AC:
++		return "AC";
++	}
++
++	b43err(dev->wl, "Unknown PHY Type: %d\n", phy_type);
++	return "UNKNOWN";
++}
++
+ /* Get PHY and RADIO versioning numbers */
+ static int b43_phy_versioning(struct b43_wldev *dev)
+ {
+@@ -4337,13 +4368,12 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+ 		unsupported = 1;
+ 	}
+ 	if (unsupported) {
+-		b43err(dev->wl, "FOUND UNSUPPORTED PHY "
+-		       "(Analog %u, Type %u, Revision %u)\n",
+-		       analog_type, phy_type, phy_rev);
++		b43err(dev->wl, "FOUND UNSUPPORTED PHY (Analog %u, Type %s, Revision %u)\n",
++		       analog_type, b43_phy_name(dev, phy_type), phy_rev);
+ 		return -EOPNOTSUPP;
+ 	}
+-	b43dbg(dev->wl, "Found PHY: Analog %u, Type %u, Revision %u\n",
+-	       analog_type, phy_type, phy_rev);
++	b43info(dev->wl, "Found PHY: Analog %u, Type %s, Revision %u\n",
++		analog_type, b43_phy_name(dev, phy_type), phy_rev);
+ 
+ 	/* Get RADIO versioning */
+ 	if (dev->dev->core_rev >= 24) {
+-- 
+1.7.7
