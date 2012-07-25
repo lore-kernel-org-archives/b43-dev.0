@@ -1,46 +1,38 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 25 Jul 2012 14:50:25 +0200
+From: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+Date: Wed, 25 Jul 2012 15:00:13 +0200
 Subject: [PATCH v5] mac80211: Remove control.sta from struct
  ieee80211_tx_info and restructure tx-path
-In-Reply-To: <1343208990.4463.25.camel@jlt3.sipsolutions.net>
- (sfid-20120725_113644_599580_8AC4476F)
+In-Reply-To: <1343220625.4463.31.camel@jlt3.sipsolutions.net>
 References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
  (sfid-20120724_221843_511093_701FFAF2)
  <1343208990.4463.25.camel@jlt3.sipsolutions.net>
  (sfid-20120725_113644_599580_8AC4476F)
-Message-ID: <1343220625.4463.31.camel@jlt3.sipsolutions.net>
+ <1343220625.4463.31.camel@jlt3.sipsolutions.net>
+Message-ID: <500FEDDD.206@net.t-labs.tu-berlin.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+To: Johannes Berg <johannes@sipsolutions.net>
 Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, ath5k-devel@lists.ath5k.org, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, coelho@ti.com, nbd@openwrt.org
 
-On Wed, 2012-07-25 at 11:36 +0200, Johannes Berg wrote:
-> On Tue, 2012-07-24 at 22:18 +0200, Thomas Huehn wrote:
-> > The pointer control.sta is removed from ieee80211_tx_info to free up
-> > sufficient memory in SKB_CB on the tx-path to enable new annotations
-> > per data packet e.g.support of upcoming Transmit Power Control (TPC).
-> > Now the control.sta pointer is put on the stack where passed as
-> > function parameter to the .tx equivalent (ieee80211_ops) of each
-> > affected wireless driver.
-> > Therefore a new structure ieee80211_tx_control is added to mac80211.h
-> > which holds the sta structure instead. The tx-path of all affected
-> > drivers is restructured to respect the chaneges.
-> > 
-> > Signed-off-by: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
-> > Signed-off-by: Alina Friedrichsen <x-alina@gmx.net>
-> > Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-> > ---
-> > restructure this patch to respect logical API evolutions. thx to Johannes Berg
-> > add missing drivers that are effected as well. thx to Xose Vazquez Perez
-> > add missing drivers that are effected as well. thx to Johannes Berg
-> > simplified control pointer passing in tx.c - thx to Johannes Berg
-> 
-> Finally applied, but I dropped these spurious changes:
+Hi Johannes,
 
-Never mind, it still doesn't compile, dropped it.
+Johannes Berg schrieb:
 
-I had to rebase my tree due to that, sorry!
 
-johannes
+>> Finally applied, but I dropped these spurious changes:
+> Never mind, it still doesn't compile, dropped it.
+>
+> I had to rebase my tree due to that, sorry!
+>
+
+My last PATCH included some changes at a TI driver which was adapted in
+wireless-testing in John's tree. As I touch that many drivers I would
+like to use your tree instead, to provide a proper PATCH that builds at
+your tree state...small de-synchronization issues just make it fail.
+
+Can I use your wireless-next for that at:
+linux/kernel/git/jberg/mac80211-next.git .. or any other suggestion ?
+
+Greetings Thomas
