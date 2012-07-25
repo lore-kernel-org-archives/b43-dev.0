@@ -1,99 +1,46 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 25 Jul 2012 16:47:09 +0200
+From: Joe Perches <joe@perches.com>
+Date: Wed, 25 Jul 2012 07:10:35 -0700
 Subject: [PATCH V2] b43: be more user friendly with PHY info
-Message-ID: <1343227629-14161-1-git-send-email-zajec5@gmail.com>
+In-Reply-To: <1343227629-14161-1-git-send-email-zajec5@gmail.com>
+References: <1343227629-14161-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1343225435.1693.10.camel@joe2Laptop>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-First of all, use PHY names instead of magic numbers. It should make
-configuring kernel easier in case of not enabled PHY type support.
-Secondly, always print info about PHY. This is really basic info about
-hardware and quite important for the support level.
+On Wed, 2012-07-25 at 16:47 +0200, Rafa? Mi?ecki wrote:
+> use PHY names instead of magic numbers.
+[]
+> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+[]
+> @@ -4277,6 +4277,37 @@ out:
+[]
+> +static char *b43_phy_name(struct b43_wldev *dev, u8 phy_type)
+> +{
+> +	switch (phy_type) {
+> +	case B43_PHYTYPE_A:
+> +		return "A";
+[]
+> +	}
+> +
+> +	b43err(dev->wl, "Unknown PHY Type: %d\n", phy_type);
+> +	return "UNKNOWN";
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-V2: add new PHYTYPEs
----
- drivers/net/wireless/b43/b43.h  |    2 +
- drivers/net/wireless/b43/main.c |   40 ++++++++++++++++++++++++++++++++++----
- 2 files changed, 37 insertions(+), 5 deletions(-)
+In general, it's a bad idea to emit error messages
+in a generic call like this.
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index 7c899fc..b0c7f47 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -415,6 +415,8 @@ enum {
- #define B43_PHYTYPE_HT			0x07
- #define B43_PHYTYPE_LCN			0x08
- #define B43_PHYTYPE_LCNXN		0x09
-+#define B43_PHYTYPE_LCN40		0x0a
-+#define B43_PHYTYPE_AC			0x0b
- 
- /* PHYRegisters */
- #define B43_PHY_ILT_A_CTRL		0x0072
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index b80352b..5655c9c 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4277,6 +4277,37 @@ out:
- 	return err;
- }
- 
-+static char *b43_phy_name(struct b43_wldev *dev, u8 phy_type)
-+{
-+	switch (phy_type) {
-+	case B43_PHYTYPE_A:
-+		return "A";
-+	case B43_PHYTYPE_B:
-+		return "B";
-+	case B43_PHYTYPE_G:
-+		return "G";
-+	case B43_PHYTYPE_N:
-+		return "N";
-+	case B43_PHYTYPE_LP:
-+		return "LP";
-+	case B43_PHYTYPE_SSLPN:
-+		return "SSLPN";
-+	case B43_PHYTYPE_HT:
-+		return "HT";
-+	case B43_PHYTYPE_LCN:
-+		return "LCN";
-+	case B43_PHYTYPE_LCNXN:
-+		return "LCNXN";
-+	case B43_PHYTYPE_LCN40:
-+		return "LCN40";
-+	case B43_PHYTYPE_AC:
-+		return "AC";
-+	}
-+
-+	b43err(dev->wl, "Unknown PHY Type: %d\n", phy_type);
-+	return "UNKNOWN";
-+}
-+
- /* Get PHY and RADIO versioning numbers */
- static int b43_phy_versioning(struct b43_wldev *dev)
- {
-@@ -4337,13 +4368,12 @@ static int b43_phy_versioning(struct b43_wldev *dev)
- 		unsupported = 1;
- 	}
- 	if (unsupported) {
--		b43err(dev->wl, "FOUND UNSUPPORTED PHY "
--		       "(Analog %u, Type %u, Revision %u)\n",
--		       analog_type, phy_type, phy_rev);
-+		b43err(dev->wl, "FOUND UNSUPPORTED PHY (Analog %u, Type %s, Revision %u)\n",
-+		       analog_type, b43_phy_name(dev, phy_type), phy_rev);
- 		return -EOPNOTSUPP;
- 	}
--	b43dbg(dev->wl, "Found PHY: Analog %u, Type %u, Revision %u\n",
--	       analog_type, phy_type, phy_rev);
-+	b43info(dev->wl, "Found PHY: Analog %u, Type %s, Revision %u\n",
-+		analog_type, b43_phy_name(dev, phy_type), phy_rev);
- 
- 	/* Get RADIO versioning */
- 	if (dev->dev->core_rev >= 24) {
--- 
-1.7.7
+> @@ -4337,13 +4368,12 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+>  		unsupported = 1;
+>  	}
+>  	if (unsupported) {
+> -		b43err(dev->wl, "FOUND UNSUPPORTED PHY "
+> -		       "(Analog %u, Type %u, Revision %u)\n",
+> -		       analog_type, phy_type, phy_rev);
+> +		b43err(dev->wl, "FOUND UNSUPPORTED PHY (Analog %u, Type %s, Revision %u)\n",
+> +		       analog_type, b43_phy_name(dev, phy_type), phy_rev);
+
+The extra message doesn't add much useful info
+and can also cause errors in continued messages.
