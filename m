@@ -1,45 +1,93 @@
-From: Luciano Coelho <coelho@ti.com>
-Date: Wed, 25 Jul 2012 22:25:02 +0300
-Subject: [PATCH v5] mac80211: Remove control.sta from struct
- ieee80211_tx_info and restructure tx-path
-In-Reply-To: <500FEDDD.206@net.t-labs.tu-berlin.de>
-References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
- (sfid-20120724_221843_511093_701FFAF2)
- <1343208990.4463.25.camel@jlt3.sipsolutions.net>
- (sfid-20120725_113644_599580_8AC4476F)
- <1343220625.4463.31.camel@jlt3.sipsolutions.net>
- <500FEDDD.206@net.t-labs.tu-berlin.de>
-Message-ID: <1343244302.3750.44.camel@cumari.coelho.fi>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 26 Jul 2012 00:07:37 +0200
+Subject: [PATCH 1/3] b43: add helper waiting for given value in radio reg
+Message-ID: <1343254059-4788-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
-Cc: Johannes Berg <johannes@sipsolutions.net>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, ath5k-devel@venema.h4ckr.net, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, nbd@openwrt.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Wed, 2012-07-25 at 15:00 +0200, Thomas Huehn wrote:
-> Hi Johannes,
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_common.c |   15 +++++++++++++++
+ drivers/net/wireless/b43/phy_common.h |    6 ++++++
+ drivers/net/wireless/b43/phy_n.c      |   12 +-----------
+ 3 files changed, 22 insertions(+), 11 deletions(-)
 
-Hi guys,
-
-
-> Johannes Berg schrieb:
-> >> Finally applied, but I dropped these spurious changes:
-> > Never mind, it still doesn't compile, dropped it.
-> >
-> > I had to rebase my tree due to that, sorry!
-> >
-> 
-> My last PATCH included some changes at a TI driver which was adapted in
-> wireless-testing in John's tree. As I touch that many drivers I would
-> like to use your tree instead, to provide a proper PATCH that builds at
-> your tree state...small de-synchronization issues just make it fail.
-
-Since Johannes has already more or less acked this patch, wouldn't it be
-easier to integrate via John's tree? I think it would make syncing with
-mac80211 and all the drivers easier.
-
-Just my 2 cents.
-
---
-Luca.
+diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
+index f627cef..f01676a 100644
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -240,6 +240,21 @@ void b43_radio_maskset(struct b43_wldev *dev, u16 offset, u16 mask, u16 set)
+ 			  (b43_radio_read16(dev, offset) & mask) | set);
+ }
+ 
++bool b43_radio_wait_value(struct b43_wldev *dev, u16 offset, u16 mask,
++			  u16 value, int delay, int timeout)
++{
++	u16 val;
++	int i;
++
++	for (i = 0; i < timeout; i += delay) {
++		val = b43_radio_read(dev, offset);
++		if ((val & mask) == value)
++			return true;
++		udelay(delay);
++	}
++	return false;
++}
++
+ u16 b43_phy_read(struct b43_wldev *dev, u16 reg)
+ {
+ 	assert_mac_suspended(dev);
+diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
+index 9233b13..f1b9993 100644
+--- a/drivers/net/wireless/b43/phy_common.h
++++ b/drivers/net/wireless/b43/phy_common.h
+@@ -365,6 +365,12 @@ void b43_radio_set(struct b43_wldev *dev, u16 offset, u16 set);
+ void b43_radio_maskset(struct b43_wldev *dev, u16 offset, u16 mask, u16 set);
+ 
+ /**
++ * b43_radio_wait_value - Waits for a given value in masked register read
++ */
++bool b43_radio_wait_value(struct b43_wldev *dev, u16 offset, u16 mask,
++			  u16 value, int delay, int timeout);
++
++/**
+  * b43_radio_lock - Lock firmware radio register access
+  */
+ void b43_radio_lock(struct b43_wldev *dev);
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index e49d847..0963d59 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -753,8 +753,6 @@ static void b43_radio_init2055_post(struct b43_wldev *dev)
+ {
+ 	struct b43_phy_n *nphy = dev->phy.n;
+ 	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+-	int i;
+-	u16 val;
+ 	bool workaround = false;
+ 
+ 	if (sprom->revision < 4)
+@@ -777,15 +775,7 @@ static void b43_radio_init2055_post(struct b43_wldev *dev)
+ 	b43_radio_set(dev, B2055_CAL_MISC, 0x1);
+ 	msleep(1);
+ 	b43_radio_set(dev, B2055_CAL_MISC, 0x40);
+-	for (i = 0; i < 200; i++) {
+-		val = b43_radio_read(dev, B2055_CAL_COUT2);
+-		if (val & 0x80) {
+-			i = 0;
+-			break;
+-		}
+-		udelay(10);
+-	}
+-	if (i)
++	if (!b43_radio_wait_value(dev, B2055_CAL_COUT2, 0x80, 0x80, 10, 2000))
+ 		b43err(dev->wl, "radio post init timeout\n");
+ 	b43_radio_mask(dev, B2055_CAL_LPOCTL, 0xFF7F);
+ 	b43_switch_channel(dev, dev->phy.channel);
+-- 
+1.7.7
