@@ -1,96 +1,36 @@
-From: Oleksij Rempel <bug-track@fisher-privat.net>
-Date: Thu, 26 Jul 2012 08:22:59 +0200
-Subject: [PATCH V3] b43: be more user friendly with PHY info
-In-Reply-To: <CACna6ryQ4eV62Fsjn6jBOVasu2BX4C=CxRz_TacVVQ4MVJUxrA@mail.gmail.com>
-References: <1343283361-4050-1-git-send-email-zajec5@gmail.com>
- <CA+XFjiofydQef-7GaUvZKXrH8Wx1sb1mh5j2jTHxh5bvd6NK5w@mail.gmail.com>
- <CACna6ryQ4eV62Fsjn6jBOVasu2BX4C=CxRz_TacVVQ4MVJUxrA@mail.gmail.com>
-Message-ID: <5010E243.6000807@fisher-privat.net>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Thu, 26 Jul 2012 08:24:16 +0200
+Subject: [PATCH v5] mac80211: Remove control.sta from struct
+ ieee80211_tx_info and restructure tx-path
+In-Reply-To: <1343244302.3750.44.camel@cumari.coelho.fi>
+References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ (sfid-20120724_221843_511093_701FFAF2)
+ <1343208990.4463.25.camel@jlt3.sipsolutions.net>
+ (sfid-20120725_113644_599580_8AC4476F)
+ <1343220625.4463.31.camel@jlt3.sipsolutions.net>
+ <500FEDDD.206@net.t-labs.tu-berlin.de>
+ <1343244302.3750.44.camel@cumari.coelho.fi>
+Message-ID: <1343283856.4611.1.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Luciano Coelho <coelho@ti.com>
+Cc: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, ath5k-devel@venema.h4ckr.net, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, nbd@openwrt.org
 
-Am 26.07.2012 08:10, schrieb Rafa? Mi?ecki:
-> 2012/7/26 G?bor Stefanik <netrolller.3d@gmail.com>:
->> On Thu, Jul 26, 2012 at 8:16 AM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->>> First of all, use PHY names instead of magic numbers. It should make
->>> configuring kernel easier in case of not enabled PHY type support.
->>> Secondly, always print info about PHY. This is really basic info about
->>> hardware and quite important for the support level.
->>>
->>> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->>> ---
->>> V2: add new PHYTYPEs
->>> V3: don't printk error in b43_phy_name, just return "UNKNOWN". We still
->>>     can know PHY type thanks to change in caller, which prints both:
->>>     %d and %s. Thanks Joe!
->>> ---
->>>  drivers/net/wireless/b43/b43.h  |    2 ++
->>>  drivers/net/wireless/b43/main.c |   39 ++++++++++++++++++++++++++++++++++-----
->>>  2 files changed, 36 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
->>> index 7c899fc..b0c7f47 100644
->>> --- a/drivers/net/wireless/b43/b43.h
->>> +++ b/drivers/net/wireless/b43/b43.h
->>> @@ -415,6 +415,8 @@ enum {
->>>  #define B43_PHYTYPE_HT                 0x07
->>>  #define B43_PHYTYPE_LCN                        0x08
->>>  #define B43_PHYTYPE_LCNXN              0x09
->>> +#define B43_PHYTYPE_LCN40              0x0a
->>> +#define B43_PHYTYPE_AC                 0x0b
->>>
->>>  /* PHYRegisters */
->>>  #define B43_PHY_ILT_A_CTRL             0x0072
->>> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
->>> index b80352b..a8f812b 100644
->>> --- a/drivers/net/wireless/b43/main.c
->>> +++ b/drivers/net/wireless/b43/main.c
->>> @@ -4277,6 +4277,35 @@ out:
->>>         return err;
->>>  }
->>>
->>> +static char *b43_phy_name(struct b43_wldev *dev, u8 phy_type)
->>> +{
->>> +       switch (phy_type) {
->>> +       case B43_PHYTYPE_A:
->>> +               return "A";
->>> +       case B43_PHYTYPE_B:
->>> +               return "B";
->>> +       case B43_PHYTYPE_G:
->>> +               return "G";
->>> +       case B43_PHYTYPE_N:
->>> +               return "N";
->>> +       case B43_PHYTYPE_LP:
->>> +               return "LP";
->>> +       case B43_PHYTYPE_SSLPN:
->>> +               return "SSLPN";
->>> +       case B43_PHYTYPE_HT:
->>> +               return "HT";
->>> +       case B43_PHYTYPE_LCN:
->>> +               return "LCN";
->>> +       case B43_PHYTYPE_LCNXN:
->>> +               return "LCNXN";
->>> +       case B43_PHYTYPE_LCN40:
->>> +               return "LCN40";
->>> +       case B43_PHYTYPE_AC:
->>> +               return "AC";
->>> +       }
->>> +       return "UNKNOWN";
->>
->> How about putting the PHY type ID into the string in the Unknown case?
->> Or will it be printed somewhere else?
+On Wed, 2012-07-25 at 22:25 +0300, Luciano Coelho wrote:
+
+> > My last PATCH included some changes at a TI driver which was adapted in
+> > wireless-testing in John's tree. As I touch that many drivers I would
+> > like to use your tree instead, to provide a proper PATCH that builds at
+> > your tree state...small de-synchronization issues just make it fail.
 > 
-> Hm, maybe I don't see something obvious. How would you do that? Using
-> which function?
-> 
+> Since Johannes has already more or less acked this patch, wouldn't it be
+> easier to integrate via John's tree? I think it would make syncing with
+> mac80211 and all the drivers easier.
 
-No need to, it is done here:
-b43info(dev->wl, "Found PHY: Analog %u, Type %d (%s), Revision %u\n",
-	analog_type, phy_type, b43_phy_name(dev, phy_type), phy_rev);
+That wouldn't have helped, I actually merged wireless-next and wireless
+before applying the patch, so it just overlapped with other changes
+between Thomas's testing and applying it.
 
--- 
-Regards,
-Oleksij
+johannes
