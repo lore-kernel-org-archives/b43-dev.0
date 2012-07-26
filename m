@@ -1,8 +1,8 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Thu, 26 Jul 2012 13:57:38 +0200
+From: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+Date: Thu, 26 Jul 2012 15:36:19 +0200
 Subject: [PATCH v5] mac80211: Remove control.sta from struct
  ieee80211_tx_info and restructure tx-path
-In-Reply-To: <50110D8C.3010705@net.t-labs.tu-berlin.de>
+In-Reply-To: <1343303858.4477.1.camel@jlt3.sipsolutions.net>
 References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
  (sfid-20120724_221843_511093_701FFAF2)
  <1343208990.4463.25.camel@jlt3.sipsolutions.net>
@@ -12,30 +12,48 @@ References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
  <1343244302.3750.44.camel@cumari.coelho.fi>
  <1343283856.4611.1.camel@jlt3.sipsolutions.net>
  <50110D8C.3010705@net.t-labs.tu-berlin.de>
-Message-ID: <1343303858.4477.1.camel@jlt3.sipsolutions.net>
+ <1343303858.4477.1.camel@jlt3.sipsolutions.net>
+Message-ID: <501147D3.2080606@net.t-labs.tu-berlin.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
+To: Johannes Berg <johannes@sipsolutions.net>
 Cc: Luciano Coelho <coelho@ti.com>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, ath5k-devel@venema.h4ckr.net, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, nbd@openwrt.org
 
-On Thu, 2012-07-26 at 11:27 +0200, Thomas Huehn wrote:
+Hi Johannes,
 
-> (2)
-> url = git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
-> 
-> last commit e4cbd6542efdab97ed6d38e706b7cac51c68ced7
+Johannes Berg schrieb:
+> On Thu, 2012-07-26 at 11:27 +0200, Thomas Huehn wrote:
+>
+>> (2)
+>> url =
+git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
+>>
+>> last commit e4cbd6542efdab97ed6d38e706b7cac51c68ced7
+>
+> I'm on this commit + your patch.
+>
+>   CC [M]  drivers/net/wireless/ti/wlcore/main.o
+> /home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c: In
+function ?wl1271_op_tx?:
+>
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:39:
+error: ?sta? undeclared (first use in this function)
+>
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:39:
+note: each undeclared identifier is reported only once for each function
+it appears in
+>
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:2: error:
+too many arguments to function ?wl12xx_tx_get_hlid?
+> In file included from
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:43:0:
+> /home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.h:248:4:
+note: declared here
+>
 
-I'm on this commit + your patch.
+In my build env I missed the wl12xx tick under the TI submenu ... I will
+fix that bug and send a v6.
 
-  CC [M]  drivers/net/wireless/ti/wlcore/main.o
-/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c: In function ?wl1271_op_tx?:
-/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:39: error: ?sta? undeclared (first use in this function)
-/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:39: note: each undeclared identifier is reported only once for each function it appears in
-/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:2: error: too many arguments to function ?wl12xx_tx_get_hlid?
-In file included from /home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:43:0:
-/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.h:248:4: note: declared here
-
-
-johannes
+Greetings Thomas
