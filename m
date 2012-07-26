@@ -1,8 +1,8 @@
-From: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
-Date: Thu, 26 Jul 2012 11:27:40 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Thu, 26 Jul 2012 13:57:38 +0200
 Subject: [PATCH v5] mac80211: Remove control.sta from struct
  ieee80211_tx_info and restructure tx-path
-In-Reply-To: <1343283856.4611.1.camel@jlt3.sipsolutions.net>
+In-Reply-To: <50110D8C.3010705@net.t-labs.tu-berlin.de>
 References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
  (sfid-20120724_221843_511093_701FFAF2)
  <1343208990.4463.25.camel@jlt3.sipsolutions.net>
@@ -11,33 +11,31 @@ References: <1343161108-6941-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
  <500FEDDD.206@net.t-labs.tu-berlin.de>
  <1343244302.3750.44.camel@cumari.coelho.fi>
  <1343283856.4611.1.camel@jlt3.sipsolutions.net>
-Message-ID: <50110D8C.3010705@net.t-labs.tu-berlin.de>
+ <50110D8C.3010705@net.t-labs.tu-berlin.de>
+Message-ID: <1343303858.4477.1.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
+To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
 Cc: Luciano Coelho <coelho@ti.com>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, ath5k-devel@venema.h4ckr.net, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, nbd@openwrt.org
 
-Hi Johannes,
+On Thu, 2012-07-26 at 11:27 +0200, Thomas Huehn wrote:
 
-On my Linux box I applied and compiled the current v5 version of the
-patch successfully. On top of the following freshly checked out git
-repos I put the remove-sta patch:
+> (2)
+> url = git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
+> 
+> last commit e4cbd6542efdab97ed6d38e706b7cac51c68ced7
 
-(1)
-url =
-git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
+I'm on this commit + your patch.
 
-last commit 80f3bc801e351ee7f71de67a3939dd7628cdb195
+  CC [M]  drivers/net/wireless/ti/wlcore/main.o
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c: In function ?wl1271_op_tx?:
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:39: error: ?sta? undeclared (first use in this function)
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:39: note: each undeclared identifier is reported only once for each function it appears in
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:1202:2: error: too many arguments to function ?wl12xx_tx_get_hlid?
+In file included from /home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/main.c:43:0:
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.h:248:4: note: declared here
 
 
-(2)
-url = git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
-
-last commit e4cbd6542efdab97ed6d38e706b7cac51c68ced7
-
-Did you had anything different when you tried to compile it as I can not
-reproduce the compile error here on my side.
-
-Greetings Thomas
+johannes
