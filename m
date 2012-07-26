@@ -1,14 +1,12 @@
 From: Johannes Berg <johannes@sipsolutions.net>
-Date: Thu, 26 Jul 2012 18:19:39 +0200
+Date: Thu, 26 Jul 2012 18:17:33 +0200
 Subject: [PATCH v6] mac80211: Remove control.sta from struct
  ieee80211_tx_info and restructure tx-path
-In-Reply-To: <1343319453.4477.2.camel@jlt3.sipsolutions.net>
- (sfid-20120726_181745_936314_D74A954D)
+In-Reply-To: <1343318961-46933-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
+ (sfid-20120726_180930_993025_AB3D0B96)
 References: <1343318961-46933-1-git-send-email-thomas@net.t-labs.tu-berlin.de>
  (sfid-20120726_180930_993025_AB3D0B96)
- <1343319453.4477.2.camel@jlt3.sipsolutions.net>
- (sfid-20120726_181745_936314_D74A954D)
-Message-ID: <1343319579.4477.3.camel@jlt3.sipsolutions.net>
+Message-ID: <1343319453.4477.2.camel@jlt3.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,28 +14,31 @@ Content-Transfer-Encoding: 7bit
 To: Thomas Huehn <thomas@net.t-labs.tu-berlin.de>
 Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, ath5k-devel@lists.ath5k.org, ilw@linux.intel.com, users@rt2x00.serialmonkey.com, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, chunkeey@googlemail.com, buytenh@wantstofly.org, dsd@gentoo.org, coelho@ti.com, nbd@openwrt.org
 
-On Thu, 2012-07-26 at 18:17 +0200, Johannes Berg wrote:
-> On Thu, 2012-07-26 at 18:09 +0200, Thomas Huehn wrote:
-> > The pointer control.sta is removed from ieee80211_tx_info to free up
-> > sufficient memory in SKB_CB on the tx-path to enable new annotations
-> > per data packet e.g.support of upcoming Transmit Power Control (TPC).
-> > Now the control.sta pointer is put on the stack where passed as
-> > function parameter to the .tx equivalent (ieee80211_ops) of each
-> > affected wireless driver.
-> > Therefore a new structure ieee80211_tx_control is added to mac80211.h
-> > which holds the sta structure instead. The tx-path of all affected
-> > drivers is restructured to respect the chaneges.
-> 
-> *sigh*
-> 
-> /home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.c: In
-> function ?wl1271_skb_queue_head?:
-> /home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.c:622:48:
-> warning: ?hlid? may be used uninitialized in this function
-> [-Wuninitialized]
+On Thu, 2012-07-26 at 18:09 +0200, Thomas Huehn wrote:
+> The pointer control.sta is removed from ieee80211_tx_info to free up
+> sufficient memory in SKB_CB on the tx-path to enable new annotations
+> per data packet e.g.support of upcoming Transmit Power Control (TPC).
+> Now the control.sta pointer is put on the stack where passed as
+> function parameter to the .tx equivalent (ieee80211_ops) of each
+> affected wireless driver.
+> Therefore a new structure ieee80211_tx_control is added to mac80211.h
+> which holds the sta structure instead. The tx-path of all affected
+> drivers is restructured to respect the chaneges.
 
-Those changes make no sense anyway -- you should be able to pass the
-station pointer through if it previously used info->control.sta, instead
-of doing an (expensive) lookup.
+*sigh*
+
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.c: In
+function ?wl1271_skb_queue_head?:
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.c:622:48:
+warning: ?hlid? may be used uninitialized in this function
+[-Wuninitialized]
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.c: In
+function ?wlcore_tx_work_locked?:
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.c:391:47:
+warning: ?hlid? may be used uninitialized in this function
+[-Wuninitialized]
+/home/johannes/sys/wireless/drivers/net/wireless/ti/wlcore/tx.c:351:5:
+note: ?hlid? was declared here
+
 
 johannes
