@@ -1,28 +1,23 @@
-From: Pascal de Bruijn <pmjdebruijn@gmail.com>
-Date: Mon, 10 Sep 2012 09:00:16 +0200
-Subject: Firmware missing
-In-Reply-To: <504D58BC.4010408@lwfinger.net>
-References: <BLU0-SMTP21303A6C0541F53CC55ABF6B2AC0@phx.gbl>
- <504D58BC.4010408@lwfinger.net>
-Message-ID: <CAMG-XFAtsMkJbwAJtwjj33jO_w+BhBC1Zmut6nytqOHnLGpMvQ@mail.gmail.com>
+From: Robert Dowell <bagdadbob66@gmail.com>
+Date: Mon, 10 Sep 2012 09:26:53 -0500
+Subject: b43-open driver missing
+Message-ID: <B25C1849-6EA9-4AA9-8794-85B99186F25C@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, Sep 10, 2012 at 5:04 AM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> On 09/09/2012 09:30 PM, derrick wrote:
->>
->> How do I get wireless internet on my laptop using Linux OS?? Help??! Thank
->> you
+While installing the ppc-x64 version of Fedora x86_64 on an IMac I got the following message:
 
-Which Linux OS, which distribution?
+[27.045279]Error: Firmware file "b43-open/ucode5.fw" not found.
 
-Lots of distributions have packages that take care of that. For
-example on Debian/Ubuntu do a search like so:
+[27.045444] b43-phy0 Error: You must go to Http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the correct firmware for this driver version.
 
-# apt-cache search b43
+I went to the site on another computer and while reading the installation details, I noticed that I was asked to post details of for missing distributions at this address. The following is the address where I downloaded the ISO from:
 
-Regards,
-Pascal de Bruijn
+ftp://mirrors.rit.edu/../../../fedora-secondary/releases/17/Fedora/ppc64/iso/
+
+The only problem I'm having is the fact that when I get those errors the system freezes at that point and I use power it off and reboot.
+
+I'm not sure what it is you do. But I hope this information helps.
