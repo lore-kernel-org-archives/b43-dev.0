@@ -1,29 +1,44 @@
-From: Jarl Friis <jarl@softace.dk>
-Date: Wed, 19 Sep 2012 20:56:22 +0200
-Subject: [PATCH 1/2] Added information about which firmware file is being
- requested.
-In-Reply-To: <505A1206.4020606@msgid.tls.msk.ru>
+From: Arend van Spriel <arend@broadcom.com>
+Date: Wed, 19 Sep 2012 21:33:02 +0200
+Subject: [PATCH 2/2] Using LP firmware for taking advantage of the
+ low-power capabilities.
+In-Reply-To: <CAOjsGA25PR9OCC_cAVn=gztk9YB6pNxCz=1mFjDxxQoc-tofEw@mail.gmail.com>
 References: <1348053493-22955-1-git-send-email-jarl@softace.dk>
- <505A1206.4020606@msgid.tls.msk.ru>
-Message-ID: <CAOjsGA3BgzBn-YOEFYFs5HqLAh4_d46Juj1M-XYooqXeVtn9uw@mail.gmail.com>
+ <1348053493-22955-2-git-send-email-jarl@softace.dk>
+ <5059DFF1.4060405@lwfinger.net>
+ <CAOjsGA25PR9OCC_cAVn=gztk9YB6pNxCz=1mFjDxxQoc-tofEw@mail.gmail.com>
+Message-ID: <505A1DEE.9010905@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Tokarev <mjt@tls.msk.ru>
-Cc: Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: Jarl Friis <jarl@softace.dk>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?B?R8OhYm9yIFN0ZWZhbmlr?= <netrolller.3d@gmail.com>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-2012/9/19 Michael Tokarev <mjt@tls.msk.ru>:
-> On 19.09.2012 15:18, Jarl Friis wrote:
+On 09/19/2012 08:54 PM, Jarl Friis wrote:
+>> Is the addition of your copyright to the driver
+>> >warranted by this change?
+> As far as I understand the copyright law: Yes, but I'm not an expert.
+> Neither am I 100% sure what you mean.
+
+You add your name to the copy notice of the file so you claim it for the 
+entire file.
+
+>> >For example, I have made much larger contributions
+>> >to b43 over the years before I started doing reverse-engineering on this
+>> >driver, but I never added my copyright.
+> I suggest you do.
+
+Typically, the names you see there are and/or were b43 maintainers.
+
+>> >Your "Signed-off-by" implies
+>> >copyright for the patch.
+> The fact that I authored the patch implies copyright (even without
+> Signed-off-by)
 >
->> +     b43info(ctx->dev->wl, "Requesting firmware file '%s'\n", ctx->fwname);
->>       err = request_firmware(&blob, ctx->fwname, ctx->dev->dev->dev);
->
-> Hmm.  I wonder if this should be printed in request_firmware()
-> itself instead of in all callers?
+> Jarl
 
-Now that you mention it, I also think that is a much better idea.
-However that would be a much more central place to do the change, so I
-would gladly see somebody else do that patch (in replacement of mine)
+You can indeed claim it for your patch, but I think not beyond that. But 
+I am no lawyer either so .....pffff.
 
-Jarl
+Gr. AvS
