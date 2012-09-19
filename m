@@ -1,42 +1,80 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 10 Sep 2012 11:05:33 -0500
-Subject: b43-open driver missing
-In-Reply-To: <CANDpMDvU9Yk37tdiN=i049UwSi15P68D5ZtQYH2KKeMhB5XUvQ@mail.gmail.com>
-References: <B25C1849-6EA9-4AA9-8794-85B99186F25C@gmail.com>
- <CANDpMDvU9Yk37tdiN=i049UwSi15P68D5ZtQYH2KKeMhB5XUvQ@mail.gmail.com>
-Message-ID: <504E0FCD.4050105@lwfinger.net>
+From: Jarl Friis <jarl@softace.dk>
+Date: Wed, 19 Sep 2012 13:18:13 +0200
+Subject: =?UTF-8?q?=5BPATCH=202/2=5D=20Using=20LP=20firmware=20for=20taking=20advantage=20of=20the=20low-power=20capabilities=2E?=
+In-Reply-To: <1348053493-22955-1-git-send-email-jarl@softace.dk>
+References: <1348053493-22955-1-git-send-email-jarl@softace.dk>
+Message-ID: <1348053493-22955-2-git-send-email-jarl@softace.dk>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?q?G=C3=A1bor=20Stefanik?= <netrolller.3d@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Jarl Friis <jarl@softace.dk>
 
-On 09/10/2012 09:31 AM, Peter Lemenkov wrote:
-> Hello All.
->
-> 2012/9/10 Robert Dowell <bagdadbob66@gmail.com>:
->> While installing the ppc-x64 version of Fedora x86_64 on an IMac I got the following message:
->>
->> [27.045279]Error: Firmware file "b43-open/ucode5.fw" not found.
->
-> You need to install b43-openfwwf package first (actually I though it
-> should be installed by Anaconda by default - now I'm not so sure).
->
->> The only problem I'm having is the fact that when I get those errors the system freezes at that point and I use power it off and reboot.
->
-> This sounds like another issue.
+This is using the LP specific firmware to better take advantage of the
+Low-Power capabilities.
 
-Robert:
+Signed-off-by: Jarl Friis <jarl@softace.dk>
+---
+ drivers/net/wireless/b43/main.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-Driver b43 only tries to load firmware from /lib/firmware/b43-open/ when the 
-request for firmware from /lib/firmware/b43/ fails. As the open firmware only 
-works for a very limited set of devices, you should concentrate on installing 
-the proprietary (normal) firmware. The following instructions will work for 
-Fedora as long as you have a network connection:
-
-sudo yum install b43-fwcutter wget
-wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
-tar xjf broadcom-wl-5.100.138.tar.bz2
-sudo b43-fwcutter -w /lib/firmware broadcom-wl-5.100.138/linux/wl_apsta.o
-
-Larry
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 202a0eb..9ee6030 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -8,6 +8,7 @@
+   Copyright (c) 2005 Danny van Dyk <kugelfang@gentoo.org>
+   Copyright (c) 2005 Andreas Jaggi <andreas.jaggi@waterwave.ch>
+   Copyright (c) 2010-2011 Rafa? Mi?ecki <zajec5@gmail.com>
++  Copyright (c) 2012 Jarl Friis <jarl@softace.dk>
+ 
+   SDIO support
+   Copyright (c) 2009 Albert Herranz <albert_herranz@yahoo.es>
+@@ -72,6 +73,7 @@ MODULE_FIRMWARE("b43/ucode11.fw");
+ MODULE_FIRMWARE("b43/ucode13.fw");
+ MODULE_FIRMWARE("b43/ucode14.fw");
+ MODULE_FIRMWARE("b43/ucode15.fw");
++MODULE_FIRMWARE("b43/ucode16_lp.fw");
+ MODULE_FIRMWARE("b43/ucode16_mimo.fw");
+ MODULE_FIRMWARE("b43/ucode5.fw");
+ MODULE_FIRMWARE("b43/ucode9.fw");
+@@ -2208,6 +2210,12 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+ 			else
+ 				goto err_no_ucode;
+ 			break;
++		case B43_PHYTYPE_LP:
++			if (rev >= 16)
++				filename = "ucode16_lp";
++			else
++				goto err_no_ucode;
++			break;
+ 		case B43_PHYTYPE_HT:
+ 			if (rev == 29)
+ 				filename = "ucode29_mimo";
+@@ -2277,8 +2285,10 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+ 			filename = "lp0initvals13";
+ 		else if (rev == 14)
+ 			filename = "lp0initvals14";
+-		else if (rev >= 15)
++		else if (rev == 15)
+ 			filename = "lp0initvals15";
++		else if (rev >= 16)
++			filename = "lp0initvals16";
+ 		else
+ 			goto err_no_initvals;
+ 		break;
+@@ -2336,8 +2346,10 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+ 			filename = "lp0bsinitvals13";
+ 		else if (rev == 14)
+ 			filename = "lp0bsinitvals14";
+-		else if (rev >= 15)
++		else if (rev == 15)
+ 			filename = "lp0bsinitvals15";
++		else if (rev >= 16)
++			filename = "lp0bsinitvals16";
+ 		else
+ 			goto err_no_initvals;
+ 		break;
+-- 
+1.7.9.5
