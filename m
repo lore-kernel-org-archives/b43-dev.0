@@ -1,42 +1,98 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Wed, 19 Sep 2012 22:39:56 +1000
-Subject: [PATCH 1/2] Added information about which firmware file is being
- requested.
-In-Reply-To: <1348053493-22955-1-git-send-email-jarl@softace.dk>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Wed, 19 Sep 2012 10:08:33 -0500
+Subject: [PATCH 2/2] Using LP firmware for taking advantage of the
+ low-power capabilities.
+In-Reply-To: <1348053493-22955-2-git-send-email-jarl@softace.dk>
 References: <1348053493-22955-1-git-send-email-jarl@softace.dk>
-Message-ID: <CAGRGNgUGOPt2iRaL+HGxsK-uFjSfmQVW6S0TzWhSgdZv7AJqTw@mail.gmail.com>
+ <1348053493-22955-2-git-send-email-jarl@softace.dk>
+Message-ID: <5059DFF1.4060405@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Jarl Friis <jarl@softace.dk>
-Cc: Stefano Brivio <stefano.brivio@polimi.it>, =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?B?R8OhYm9yIFN0ZWZh?= =?UTF-8?B?bmlr?= <netrolller.3d@gmail.com>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-Hi Jarl,
+On 09/19/2012 06:18 AM, Jarl Friis wrote:
+> This is using the LP specific firmware to better take advantage of the
+> Low-Power capabilities.
+>
+> Signed-off-by: Jarl Friis <jarl@softace.dk>
+> ---
+>   drivers/net/wireless/b43/main.c |   16 ++++++++++++++--
+>   1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+> index 202a0eb..9ee6030 100644
+> --- a/drivers/net/wireless/b43/main.c
+> +++ b/drivers/net/wireless/b43/main.c
+> @@ -8,6 +8,7 @@
+>     Copyright (c) 2005 Danny van Dyk <kugelfang@gentoo.org>
+>     Copyright (c) 2005 Andreas Jaggi <andreas.jaggi@waterwave.ch>
+>     Copyright (c) 2010-2011 Rafa? Mi?ecki <zajec5@gmail.com>
+> +  Copyright (c) 2012 Jarl Friis <jarl@softace.dk>
+>
+>     SDIO support
+>     Copyright (c) 2009 Albert Herranz <albert_herranz@yahoo.es>
+> @@ -72,6 +73,7 @@ MODULE_FIRMWARE("b43/ucode11.fw");
+>   MODULE_FIRMWARE("b43/ucode13.fw");
+>   MODULE_FIRMWARE("b43/ucode14.fw");
+>   MODULE_FIRMWARE("b43/ucode15.fw");
+> +MODULE_FIRMWARE("b43/ucode16_lp.fw");
+>   MODULE_FIRMWARE("b43/ucode16_mimo.fw");
+>   MODULE_FIRMWARE("b43/ucode5.fw");
+>   MODULE_FIRMWARE("b43/ucode9.fw");
+> @@ -2208,6 +2210,12 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+>   			else
+>   				goto err_no_ucode;
+>   			break;
+> +		case B43_PHYTYPE_LP:
+> +			if (rev >= 16)
+> +				filename = "ucode16_lp";
+> +			else
+> +				goto err_no_ucode;
+> +			break;
+>   		case B43_PHYTYPE_HT:
+>   			if (rev == 29)
+>   				filename = "ucode29_mimo";
+> @@ -2277,8 +2285,10 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+>   			filename = "lp0initvals13";
+>   		else if (rev == 14)
+>   			filename = "lp0initvals14";
+> -		else if (rev >= 15)
+> +		else if (rev == 15)
+>   			filename = "lp0initvals15";
+> +		else if (rev >= 16)
+> +			filename = "lp0initvals16";
+>   		else
+>   			goto err_no_initvals;
+>   		break;
+> @@ -2336,8 +2346,10 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+>   			filename = "lp0bsinitvals13";
+>   		else if (rev == 14)
+>   			filename = "lp0bsinitvals14";
+> -		else if (rev >= 15)
+> +		else if (rev == 15)
+>   			filename = "lp0bsinitvals15";
+> +		else if (rev >= 16)
+> +			filename = "lp0bsinitvals16";
+>   		else
+>   			goto err_no_initvals;
+>   		break;
 
-You should really mention which driver these are for in the subject line, say:
+I have some questions about this patch. Where did you get the information needed 
+to make these changes? Did it come from reverse engineering some Broadcom code, 
+or did you look at their actual code? There is a great deal of difference 
+relative to our "clean-room" status. Anyone that has seen non-GPL Broadcom 
+material cannot contribute code to b43.
 
-[PATCH] b43: Added information about which firmware file is being requested
+Have you tested this code on devices with rev>=16?
 
-On Wed, Sep 19, 2012 at 9:18 PM, Jarl Friis <jarl@softace.dk> wrote:
-> This is informative information to provide about which actual firmware
-> file is being used.
+Now for some comments: This patch also needs the "b43:" added to the subject. In 
+addition, you appear to have at least one white-space error in the 
+MODULE_FIRMWARE line. Is the addition of your copyright to the driver warranted 
+by this change? For example, I have made much larger contributions to b43 over 
+the years before I started doing reverse-engineering on this driver, but I never 
+added my copyright. Your "Signed-off-by" implies copyright for the patch.
 
-Also, this patch is so small and obvious that you could arguably get
-away with something like:
-
-Subject: [PATCH] b43: Log firmware filename
-
-Log the name of the firmware file requested.
-
-
-Or something along those lines.
-
-Thanks,
-
--- 
-Julian Calaby
-
-Email: julian.calaby at gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
-.Plan: http://sites.google.com/site/juliancalaby/
+Larry
