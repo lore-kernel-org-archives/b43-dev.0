@@ -1,35 +1,35 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 20 Sep 2012 08:06:44 +0200
-Subject: [PATCH 1/2] Added information about which firmware file is being
- requested.
-In-Reply-To: <CAOjsGA3BgzBn-YOEFYFs5HqLAh4_d46Juj1M-XYooqXeVtn9uw@mail.gmail.com>
+From: Jarl Friis <jarl@softace.dk>
+Date: Thu, 20 Sep 2012 08:32:42 +0200
+Subject: [PATCH 2/2] Using LP firmware for taking advantage of the
+ low-power capabilities.
+In-Reply-To: <CACna6ryRXB6GjymaP-RM8HTEeWRHnE8B=5tdH3J4JGyeHBEE6Q@mail.gmail.com>
 References: <1348053493-22955-1-git-send-email-jarl@softace.dk>
- <505A1206.4020606@msgid.tls.msk.ru>
- <CAOjsGA3BgzBn-YOEFYFs5HqLAh4_d46Juj1M-XYooqXeVtn9uw@mail.gmail.com>
-Message-ID: <CACna6rw_=GWx8eymg3hsGc4v7pDKFx8Wxrym7c5pQOdseXfUSw@mail.gmail.com>
+ <1348053493-22955-2-git-send-email-jarl@softace.dk>
+ <CAOjsGA2uvCxnX1PH85w2vO894kZT+af-Tgj7bV-3kw3ScxN10g@mail.gmail.com>
+ <CACna6ryRXB6GjymaP-RM8HTEeWRHnE8B=5tdH3J4JGyeHBEE6Q@mail.gmail.com>
+Message-ID: <CAOjsGA3cmuGHY1WAJ92RwbUf1iNpFHaSvePxvzSYxkY1FJzjkw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarl Friis <jarl@softace.dk>
-Cc: Michael Tokarev <mjt@tls.msk.ru>, Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-2012/9/19 Jarl Friis <jarl@softace.dk>:
-> 2012/9/19 Michael Tokarev <mjt@tls.msk.ru>:
->> On 19.09.2012 15:18, Jarl Friis wrote:
->>
->>> +     b43info(ctx->dev->wl, "Requesting firmware file '%s'\n", ctx->fwname);
->>>       err = request_firmware(&blob, ctx->fwname, ctx->dev->dev->dev);
->>
->> Hmm.  I wonder if this should be printed in request_firmware()
->> itself instead of in all callers?
+2012/9/20 Rafa? Mi?ecki <zajec5@gmail.com>:
+> Well, your BCM4322 is not LP-PHY card... does it really work better
+> after that change, and wakes up faster? ;)
+
+That was my un-scientific impression, yes (probably biased by
+expectations, right? :-) ). But it could also be that I was using a
+more upstream kernel than the stock ubuntu kernel. I don't know :-)
+
+> BCM4313 is LCN-PHY, so your change won't affect it, not to mention it
+> is not supported by b43.
 >
-> Now that you mention it, I also think that is a much better idea.
-> However that would be a much more central place to do the change, so I
-> would gladly see somebody else do that patch (in replacement of mine)
+> 14e4:4315 is really BCM4312 (LP-PHY) and maybe could be affected by
+> this patch... but just in case of core 16. AFAIK our 14e4:4315 are
+> usually devices with core rev 15.
 
-I agree, please submit patch modifying request_firmware if you believe
-it's important.
+Thanks for clearing that out...
 
--- 
-Rafa?
+Jarl
