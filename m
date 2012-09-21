@@ -1,35 +1,41 @@
-From: Jarl Friis <jarl@softace.dk>
-Date: Thu, 20 Sep 2012 08:32:42 +0200
-Subject: [PATCH 2/2] Using LP firmware for taking advantage of the
- low-power capabilities.
-In-Reply-To: <CACna6ryRXB6GjymaP-RM8HTEeWRHnE8B=5tdH3J4JGyeHBEE6Q@mail.gmail.com>
-References: <1348053493-22955-1-git-send-email-jarl@softace.dk>
- <1348053493-22955-2-git-send-email-jarl@softace.dk>
- <CAOjsGA2uvCxnX1PH85w2vO894kZT+af-Tgj7bV-3kw3ScxN10g@mail.gmail.com>
- <CACna6ryRXB6GjymaP-RM8HTEeWRHnE8B=5tdH3J4JGyeHBEE6Q@mail.gmail.com>
-Message-ID: <CAOjsGA3cmuGHY1WAJ92RwbUf1iNpFHaSvePxvzSYxkY1FJzjkw@mail.gmail.com>
+From: Helge Bildhoff <h.bildhoff@gmail.com>
+Date: Fri, 21 Sep 2012 09:43:54 +0200
+Subject: b43 does not recognize BCM43225
+Message-ID: <1348213434.1717.6.camel@localhost.localdomain>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Stefano Brivio <stefano.brivio@polimi.it>, =?UTF-8?Q?G=C3=A1bor_Stefanik?= <netrolller.3d@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: b43-dev@lists.infradead.org
 
-2012/9/20 Rafa? Mi?ecki <zajec5@gmail.com>:
-> Well, your BCM4322 is not LP-PHY card... does it really work better
-> after that change, and wakes up faster? ;)
+hey guys, my bcm43225 on my acer extensa 5635zg is not recognized with
+b43 at all, although it's supposed to work..
+i'm running arch on linux 3.5.4, have installed the firmware version
+5.100.138 via the AUR (the files are present in /usr/lib/firmware/b43)
+and have blacklisted brcmsmac.
+on loading the driver dmesg just says:
 
-That was my un-scientific impression, yes (probably biased by
-expectations, right? :-) ). But it could also be that I was using a
-more upstream kernel than the stock ubuntu kernel. I don't know :-)
+[ 1176.374026] Broadcom 43xx driver loaded [ Features: PMNLS ]
 
-> BCM4313 is LCN-PHY, so your change won't affect it, not to mention it
-> is not supported by b43.
->
-> 14e4:4315 is really BCM4312 (LP-PHY) and maybe could be affected by
-> this patch... but just in case of core 16. AFAIK our 14e4:4315 are
-> usually devices with core rev 15.
+nothing more.
+here's my PCI-ID:
 
-Thanks for clearing that out...
+07:00.0 Network controller [0280]: Broadcom Corporation BCM43225
+802.11b/g/n [14e4:4357] (rev 01)
+	Subsystem: Foxconn International, Inc. T77H103.00 Wireless Half-size
+Mini PCIe Card [105b:e021]
+	Flags: bus master, fast devsel, latency 0, IRQ 19
+	Memory at c0400000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: <access denied>
+	Kernel driver in use: bcma-pci-bridge
 
-Jarl
+looking forward to hearing from you.
+
+helge.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 490 bytes
+Desc: This is a digitally signed message part
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120921/638aa42b/attachment.sig>
