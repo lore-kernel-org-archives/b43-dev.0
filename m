@@ -1,37 +1,24 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 14 Oct 2012 12:39:42 +0200
-Subject: patches for b43-dev
-In-Reply-To: <CAJJAcoeBqNP9aBCTnjRsrZfTaVrQ8ak_Zf_PtNs_-M_GsSJxBQ@mail.gmail.com>
-References: <CAJJAcoeBqNP9aBCTnjRsrZfTaVrQ8ak_Zf_PtNs_-M_GsSJxBQ@mail.gmail.com>
-Message-ID: <CACna6rz9O5EoFsdESJBgob+sZQCB9BUB2X=Mt9qWBW=njRcObA@mail.gmail.com>
+From: Cedric Sodhi <manday@gmx.net>
+Date: Sun, 14 Oct 2012 17:24:52 +0200
+Subject: BCM43228 Support?
+Message-ID: <20121014152451.GB15215@slate>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2012/10/14 David Shwatrz <dshwatrz@gmail.com>:
-> I have a question about the patches which are sent to this mailing list:
-> against which tree are they made?
->
-> I assume that they are not against wireless-testing as I see no "CC"
-> to  wireless-testing mailing list. (at least when
-> looking at the mailing list archives,
-> http://lists.infradead.org/pipermail/b43-dev/).
->
-> Is there some git tree for this mailing list ? In case there is, are
-> there from time to time requests to
->  wireless-testing to pull from this tree?
+Hello, do you have any information on when to reckon with BCM43228
+support? Users of that chip - like me - are in the unfortunate rare
+sitatuation that it doesn't work on Linux by any means at all.
+Ndiswrapper does not support it, b43legacy and b43 don't support,
+broadcom-sta does not support it and bcma doesn't support it, either.
 
-I/we don't put John/wireless in git commit's CC, but mails include
-them in To (mail's "to"). My way:
-git send-email \
---no-chain-reply-to \
---from "Rafa? Mi?ecki ..." \
---to linux-wireless at ... \
---to "John W. Linville ..." \
---cc b43-dev at ... \
-my-patches/
+This is really very unfortunate, this is my laptop's wireless of choice
+(ironically, the laptop shipped with linux on it - an old kernel where
+broadcom-sta still worked) and I need network.
 
--- 
-Rafa?
+I'd glady welcome any suggestions or information.
+
+Thank you for your help,
+Cedric
