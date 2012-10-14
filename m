@@ -1,27 +1,26 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 24 Sep 2012 23:09:28 +0200
-Subject: [RFC] b43-fwcutter: Add support for generating a fw for brcmsmac
-In-Reply-To: <1348425562-30730-1-git-send-email-hauke@hauke-m.de>
-References: <1348425562-30730-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <20120924230928.4c2fa4c2@milhouse>
+From: David Shwatrz <dshwatrz@gmail.com>
+Date: Sun, 14 Oct 2012 11:36:45 +0200
+Subject: patches for b43-dev
+Message-ID: <CAJJAcoeBqNP9aBCTnjRsrZfTaVrQ8ak_Zf_PtNs_-M_GsSJxBQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com
+To: b43-dev@lists.infradead.org
 
-I applied this to the git repository and released b43-fwcutter-016.
-There are no other changes since 015.
+Hi,
+I have a question about the patches which are sent to this mailing list:
+against which tree are they made?
 
--- 
-Greetings, Michael.
+I assume that they are not against wireless-testing as I see no "CC"
+to  wireless-testing mailing list. (at least when
+looking at the mailing list archives,
+http://lists.infradead.org/pipermail/b43-dev/).
 
-PGP encryption is encouraged / 908D8B0E
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20120924/aa2ccf14/attachment.sig>
+Is there some git tree for this mailing list ? In case there is, are
+there from time to time requests to
+ wireless-testing to pull from this tree?
+
+
+regards,
+DS
