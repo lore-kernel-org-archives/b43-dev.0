@@ -1,82 +1,95 @@
-From: Chris Murphy <lists@colorremedies.com>
-Date: Thu, 18 Oct 2012 21:29:07 -0600
-Subject: BCM4321, kernel 3.6.2, unable to connect to N, WPA2P-AES
-Message-ID: <29463F1E-C655-491C-BA23-781DA360F7DE@colorremedies.com>
+From: Jeroen van der Vegt <jvdvegt@gmail.com>
+Date: Sat, 20 Oct 2012 14:32:24 +0200
+Subject: b43 does not work with 4353 in Macbook Pro 6,2
+Message-ID: <CAMCJTp_kQgZ9QAKUVnNzLcSqAXf8sXX=s+3kCAC3ry85yyNKZQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Summary:
-
-The BCM4321 I have, 14e4:4328, should be capable of b/g/n, but when I try to connect to wireless N, I'm re-prompted for the password. With the same hardware (router and computer) booted OS X of various versions, a connection is possible.
+Hi,
 
 
-Router:
-Linksys WRT600N v1.1
-DD-WRT v24-sp2 (06/08/12) mini-usb-ftp - build 19342
-ssid: color2n
-mode: N-Only
-Channel: 2 - 2.417 Ghz
-Security: WPA2 Personal, AES
+When I load the B43 driver on my Macbook Pro 6,2 ('rmmod wl; modprobe
+b43') all modules are loaded fine but no network device appears. I'm
+running Ubuntu 12.04 (3.2.0-32).
+On this list I read that recompiling 'wireless-compat' with
+B43_BCMA_EXTRA='y' should help
+(http://lists.infradead.org/pipermail/b43-dev/2012-March/002457.html).
+I don't feel like having to compile my own kernel as I used to , so I
+hoped installing 'linux-backports-modules-cw-3.3-precise-generic'
+would help. This didn't change much however (features L and S appeared
+in dmesg) for the b43 driver but broke the wl driver.
+
+It seems the option was deliberately disabled in the Ubuntu kernel:
+http://ubuntu.5.n6.nabble.com/PATCH-UBUNTU-Config-disable-CONFIG-B43-BCMA-EXTRA-td4975384.html
+:(
 
 
-Kernels tried:
+Cheers,
 
-Linux f17s 3.6.2-4.fc17.x86_64 #1 SMP Wed Oct 17 02:43:21 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
-Linux f17s 3.6.1-1.fc17.x86_64 #1 SMP Wed Oct 10 12:13:05 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
-Linux f17s 3.5.6-1.fc17.x86_64 #1 SMP Sun Oct 7 19:31:14 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+Jeroen.
 
-Versions:
-b43-fwcutter-015-2.fc17.x86_64
-broadcom-wl-5.100.138.tar.bz2
+dmesg:
+[  658.485734] bcma-pci-bridge 0000:03:00.0: PCI INT A -> GSI 17
+(level, low) -> IRQ 17
+[  658.485748] bcma-pci-bridge 0000:03:00.0: setting latency timer to 64
+[  658.485808] Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev
+0x22, class 0x0)
+[  658.485833] Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev
+0x17, class 0x0)
+[  658.485890] Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x0F, class 0x0)
+[  658.558019] Failed to get SPROM: -71
+[  658.558103] Bus registered
+[  658.665460] cfg80211: Calling CRDA to update world regulatory domain
+[  658.732673] Broadcom 43xx driver loaded [ Features: PMNLS ]
+[  658.764829] cfg80211: World regulatory domain updated:
+[  658.764833] cfg80211:   (start_freq - end_freq @ bandwidth),
+(max_antenna_gain, max_eirp)
+[  658.764835] cfg80211:   (2402000 KHz - 2472000 KHz @ 40000 KHz),
+(300 mBi, 2000 mBm)
+[  658.764838] cfg80211:   (2457000 KHz - 2482000 KHz @ 20000 KHz),
+(300 mBi, 2000 mBm)
+[  658.764840] cfg80211:   (2474000 KHz - 2494000 KHz @ 20000 KHz),
+(300 mBi, 2000 mBm)
+[  658.764842] cfg80211:   (5170000 KHz - 5250000 KHz @ 40000 KHz),
+(300 mBi, 2000 mBm)
+[  658.764844] cfg80211:   (5735000 KHz - 5835000 KHz @ 40000 KHz),
+(300 mBi, 2000 mBm)
 
 
-
-[root at f17s chris]# lspci -vvn | grep 43 -A7
-0b:00.0 0280: 14e4:4328 (rev 05)
-	Subsystem: 106b:008c
-	Physical Slot: 4
-	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
-	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+lspci -vvn|grep 43 -A7:
+03:00.0 0280: 14e4:4353 (rev 01)
+	Subsystem: 106b:0093
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
+Stepping- SERR- FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
 	Latency: 0, Cache Line Size: 256 bytes
-	Interrupt: pin A routed to IRQ 16
-	Region 0: Memory at d7300000 (64-bit, non-prefetchable) [size=16K]
---
-	Kernel driver in use: b43-pci-bridge
-[root at f17s chris]# lspci -vnn -d 14e4:
-0b:00.0 Network controller [0280]: Broadcom Corporation BCM4321 802.11a/b/g/n [14e4:4328] (rev 05)
-	Subsystem: Apple Computer Inc. Device [106b:008c]
-	Physical Slot: 4
-	Flags: bus master, fast devsel, latency 0, IRQ 16
-	Memory@d7300000 (64-bit, non-prefetchable) [size=16K]
+	Interrupt: pin A routed to IRQ 17
+	Region 0: Memory@c1b00000 (64-bit, non-prefetchable) [size=16K]
 	Capabilities: [40] Power Management version 3
-	Capabilities: [58] Vendor Specific Information: Len=78 <?>
-	Capabilities: [e8] MSI: Enable- Count=1/1 Maskable- 64bit+
-	Capabilities: [d0] Express Endpoint, MSI 00
-	Capabilities: [100] Advanced Error Reporting
-	Capabilities: [13c] Virtual Channel
-	Capabilities: [160] Device Serial Number 8b-73-c2-ff-ff-b9-00-1e
-	Capabilities: [16c] Power Budgeting <?>
-	Kernel driver in use: b43-pci-bridge
 
-========
+lsmod:
+Module                  Size  Used by
+b43                   365785  0
+mac80211              506816  1 b43
+cfg80211              205544  2 b43,mac80211
+bcma                   26696  1 b43
+ssb                    52752  1 b43
 
-dmesg repeats this hundreds of times:
-
-[   46.176606] wlan0: authenticate with 00:21:29:6c:23:73
-[   46.184511] wlan0: send auth to 00:21:29:6c:23:73 (try 1/3)
-[   46.194564] wlan0: authenticated
-[   46.194726] b43 ssb0:0: wlan0: disabling HT as WMM/QoS is not supported
-[   46.195068] wlan0: associate with 00:21:29:6c:23:73 (try 1/3)
-[   46.197408] wlan0: RX AssocResp from 00:21:29:6c:23:73 (capab=0x411 status=18 aid=0)
-[   46.197412] wlan0: 00:21:29:6c:23:73 denied association (code=18)
-[   46.201514] wlan0: deauthenticating from 00:21:29:6c:23:73 by local choice (reason=3)
-
-
-
-I have had success with broadcom-wl, however with kernel 3.6 I've started getting oops. I've erased broadcom-wl and use b43-fwcutter to enable the kernel built-in support with the proprietary firmware, but I've run into this problem.
-
-
-Chris Murphy
+grep BCM /boot/config-3.2.0-32-generic:
+CONFIG_CAN_BCM=m
+CONFIG_BT_HCIBCM203X=m
+CONFIG_B43_BCMA=y
+CONFIG_B43_BCMA_PIO=y
+CONFIG_MOUSE_BCM5974=m
+CONFIG_BCMA_POSSIBLE=y
+CONFIG_BCMA=m
+CONFIG_BCMA_BLOCKIO=y
+CONFIG_BCMA_HOST_PCI_POSSIBLE=y
+CONFIG_BCMA_HOST_PCI=y
+# CONFIG_BCMA_DEBUG is not set
+CONFIG_DVB_BCM3510=m
+CONFIG_BCM_WIMAX=m
