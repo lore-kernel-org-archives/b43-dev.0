@@ -1,88 +1,75 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sat, 20 Oct 2012 14:52:37 +0200
-Subject: b43 does not work with 4353 in Macbook Pro 6,2
-In-Reply-To: <CAMCJTp_kQgZ9QAKUVnNzLcSqAXf8sXX=s+3kCAC3ry85yyNKZQ@mail.gmail.com>
-References: <CAMCJTp_kQgZ9QAKUVnNzLcSqAXf8sXX=s+3kCAC3ry85yyNKZQ@mail.gmail.com>
-Message-ID: <50829E95.5030505@hauke-m.de>
+From: Markus Kanet <dvmailing@gmx.eu>
+Date: Tue, 23 Oct 2012 06:36:54 +0200
+Subject: b43 driver NULL pointer dereference on 3.4.15
+Message-ID: <50861EE6.70902@gmx.eu>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 10/20/2012 02:32 PM, Jeroen van der Vegt wrote:
-> Hi,
-> 
-> 
-> When I load the B43 driver on my Macbook Pro 6,2 ('rmmod wl; modprobe
-> b43') all modules are loaded fine but no network device appears. I'm
-> running Ubuntu 12.04 (3.2.0-32).
-> On this list I read that recompiling 'wireless-compat' with
-> B43_BCMA_EXTRA='y' should help
-> (http://lists.infradead.org/pipermail/b43-dev/2012-March/002457.html).
-> I don't feel like having to compile my own kernel as I used to , so I
-> hoped installing 'linux-backports-modules-cw-3.3-precise-generic'
-> would help. This didn't change much however (features L and S appeared
-> in dmesg) for the b43 driver but broke the wl driver.
-> 
-> It seems the option was deliberately disabled in the Ubuntu kernel:
-> http://ubuntu.5.n6.nabble.com/PATCH-UBUNTU-Config-disable-CONFIG-B43-BCMA-EXTRA-td4975384.html
-> :(
-> 
-> 
-> Cheers,
-> 
-> Jeroen.
-> 
-> dmesg:
-> [  658.485734] bcma-pci-bridge 0000:03:00.0: PCI INT A -> GSI 17
-> (level, low) -> IRQ 17
-> [  658.485748] bcma-pci-bridge 0000:03:00.0: setting latency timer to 64
-> [  658.485808] Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev
-> 0x22, class 0x0)
-> [  658.485833] Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev
-> 0x17, class 0x0)
-> [  658.485890] Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x0F, class 0x0)
-> [  658.558019] Failed to get SPROM: -71
+NULL pointer dereference when unloading the b43 driver (not b43legacy) 
+during shutdown if firmware was never loaded. See attached syslog.
 
-Reading the sprom did not worked. This is probably a BCM43224 OTP, for
-which support was added in kernel 3.4 to bcma.
+Looks like the same bug as fixed in this commit for b43legacy driver:
 
-> [  658.558103] Bus registered
-> [  658.665460] cfg80211: Calling CRDA to update world regulatory domain
-> [  658.732673] Broadcom 43xx driver loaded [ Features: PMNLS ]
-> [  658.764829] cfg80211: World regulatory domain updated:
-> [  658.764833] cfg80211:   (start_freq - end_freq @ bandwidth),
-> (max_antenna_gain, max_eirp)
-> [  658.764835] cfg80211:   (2402000 KHz - 2472000 KHz @ 40000 KHz),
-> (300 mBi, 2000 mBm)
-> [  658.764838] cfg80211:   (2457000 KHz - 2482000 KHz @ 20000 KHz),
-> (300 mBi, 2000 mBm)
-> [  658.764840] cfg80211:   (2474000 KHz - 2494000 KHz @ 20000 KHz),
-> (300 mBi, 2000 mBm)
-> [  658.764842] cfg80211:   (5170000 KHz - 5250000 KHz @ 40000 KHz),
-> (300 mBi, 2000 mBm)
-> [  658.764844] cfg80211:   (5735000 KHz - 5835000 KHz @ 40000 KHz),
-> (300 mBi, 2000 mBm)
-> 
-> 
-> lspci -vvn|grep 43 -A7:
-> 03:00.0 0280: 14e4:4353 (rev 01)
-> 	Subsystem: 106b:0093
-> 	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
-> Stepping- SERR- FastB2B- DisINTx-
-> 	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-> <TAbort- <MAbort- >SERR- <PERR- INTx-
-> 	Latency: 0, Cache Line Size: 256 bytes
-> 	Interrupt: pin A routed to IRQ 17
-> 	Region 0: Memory at c1b00000 (64-bit, non-prefetchable) [size=16K]
-> 	Capabilities: [40] Power Management version 3
-> 
+commit dc8276b241ad415b2602c4a7309e5b518bb09c32
+Author: Larry Finger <Larry.Finger@lwfinger.net>
+Date:   Wed Sep 26 12:32:02 2012 -0500
 
-You device should be supported by b43 and brcmsmac. Please try out at
-least kernel version 3.4 or a corresponding compat-wireless version.
-There is also a ubuntu package named
-linux-backports-modules-cw-3.4-precise-generic which contains a more
-recent compat-wireles version.
+     b43legacy: Fix crash on unload when firmware not available
 
-Hauke
+     commit 2d838bb608e2d1f6cb4280e76748cb812dc822e7 upstream.
+
+     When b43legacy is loaded without the firmware being available, a
+     following unload generates a kernel NULL pointer dereference BUG
+     as follows:
+-------------- next part --------------
+Oct 23 06:15:07 ganymed kernel: b43-phy0 ERROR: Firmware file "b43/ucode5.fw" not found
+Oct 23 06:15:07 ganymed kernel: b43-phy0 ERROR: Firmware file "b43-open/ucode5.fw" not found
+Oct 23 06:15:07 ganymed kernel: b43-phy0 ERROR: You must go to http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the correct firmware for this driver version. Please carefully read all instructions on this website.
+...
+Oct 23 06:15:38 ganymed kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000088
+Oct 23 06:15:38 ganymed kernel: IP: [<ffffffff8106f025>] drain_workqueue+0x25/0x200
+Oct 23 06:15:38 ganymed kernel: PGD 3b9f8067 PUD 3bcc2067 PMD 0 
+Oct 23 06:15:38 ganymed kernel: Oops: 0000 [#1] SMP 
+Oct 23 06:15:38 ganymed kernel: CPU 0 
+Oct 23 06:15:38 ganymed kernel: Modules linked in: b43(-) mac80211 cfg80211 mmc_block tifm_sd snd_seq_dummy snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss snd_mixer_oss ipv6 cpufreq_ondemand lp ppdev parport_pc parport pcspkr fan fuse snd_hda_codec_realtek i915 ssb snd_hda_intel drm_kms_helper snd_hda_codec joydev drm sg pcmcia acer_wmi snd_hwdep coretemp snd_pcm intel_agp sparse_keymap firewire_ohci acpi_cpufreq sdhci_pci freq_table tifm_7xx1 rfkill yenta_socket tifm_core firewire_core sdhci mperf i2c_algo_bit battery psmouse microcode snd_timer tg3 pcmcia_rsrc serio_raw processor video thermal ac evdev snd i2c_i801 libphy pcmcia_core wmi intel_gtt agpgart mmc_core thermal_sys hwmon soundcore snd_page_alloc i2c_core button loop
+Oct 23 06:15:38 ganymed kernel: 
+Oct 23 06:15:38 ganymed kernel: Pid: 2197, comm: modprobe Not tainted 3.4.15-dark #1 Acer            Extensa 5620                   /Columbia                       
+Oct 23 06:15:38 ganymed kernel: RIP: 0010:[<ffffffff8106f025>]  [<ffffffff8106f025>] drain_workqueue+0x25/0x200
+Oct 23 06:15:38 ganymed kernel: RSP: 0018:ffff88003c7bbd28  EFLAGS: 00010246
+Oct 23 06:15:38 ganymed kernel: RAX: 0000000000002a2a RBX: 0000000000000000 RCX: 0000000000000000
+Oct 23 06:15:38 ganymed kernel: RDX: 000000000000002a RSI: 0000000000000282 RDI: ffffffff822276c0
+Oct 23 06:15:38 ganymed kernel: RBP: ffff88003c7bbd68 R08: ffffffff820d7c90 R09: 0000000000000000
+Oct 23 06:15:38 ganymed kernel: R10: ffffffff811bc418 R11: 0000000000000000 R12: 0000000000000000
+Oct 23 06:15:38 ganymed kernel: R13: ffff88003b0d70c0 R14: 0000000000000000 R15: 0000000000000000
+Oct 23 06:15:38 ganymed kernel: FS:  00007f9ff1580720(0000) GS:ffff88003f400000(0000) knlGS:0000000000000000
+Oct 23 06:15:38 ganymed kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+Oct 23 06:15:38 ganymed kernel: CR2: 0000000000000088 CR3: 000000003bb44000 CR4: 00000000000007f0
+Oct 23 06:15:38 ganymed kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+Oct 23 06:15:38 ganymed kernel: DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Oct 23 06:15:38 ganymed kernel: Process modprobe (pid: 2197, threadinfo ffff88003c7ba000, task ffff88003d7251c0)
+Oct 23 06:15:38 ganymed kernel: Stack:
+Oct 23 06:15:38 ganymed kernel:  ffff88003c7bbd58 ffffffff819591c7 ffff88003c7bbd88 ffff88003c5a0560
+Oct 23 06:15:38 ganymed kernel:  0000000000000000 ffff88003b0d70c0 0000000000000000 0000000000000000
+Oct 23 06:15:38 ganymed kernel:  ffff88003c7bbd98 ffffffff8106f21a ffff88003c7bbd98 ffff88003c5a0560
+Oct 23 06:15:38 ganymed kernel: Call Trace:
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff819591c7>] ? skb_dequeue+0x67/0x90
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff8106f21a>] destroy_workqueue+0x1a/0x1e0
+Oct 23 06:15:38 ganymed kernel:  [<ffffffffa040e1d9>] ieee80211_unregister_hw+0xe9/0x120 [mac80211]
+Oct 23 06:15:38 ganymed kernel:  [<ffffffffa048774a>] b43_ssb_remove+0xaa/0xb0 [b43]
+Oct 23 06:15:38 ganymed kernel:  [<ffffffffa02676d0>] ssb_device_remove+0x30/0x50 [ssb]
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff8156392c>] __device_release_driver+0x7c/0xe0
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff81564158>] driver_detach+0xb8/0xc0
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff815635d9>] bus_remove_driver+0x79/0xd0
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff81564562>] driver_unregister+0x62/0xa0
+Oct 23 06:15:38 ganymed kernel:  [<ffffffffa0267af2>] ssb_driver_unregister+0x12/0x20 [ssb]
+Oct 23 06:15:38 ganymed kernel:  [<ffffffffa04b2a28>] b43_exit+0x10/0x26 [b43]
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff810aa8e2>] sys_delete_module+0x192/0x290
+Oct 23 06:15:38 ganymed kernel:  [<ffffffff81a5e792>] system_call_fastpath+0x16/0x1b
+Oct 23 06:15:38 ganymed kernel: Code: 84 00 00 00 00 00 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 ec 18 66 66 66 66 90 48 89 fb 48 c7 c7 c0 76 22 82 e8 bb ed 9e 00 <8b> 83 88 00 00 00 8d 50 01 85 c0 89 93 88 00 00 00 75 03 83 0b 
+Oct 23 06:15:38 ganymed kernel: RIP  [<ffffffff8106f025>] drain_workqueue+0x25/0x200
+Oct 23 06:15:38 ganymed kernel:  RSP <ffff88003c7bbd28>
+Oct 23 06:15:38 ganymed kernel: CR2: 0000000000000088
+Oct 23 06:15:38 ganymed kernel: ---[ end trace 76c098a6d84b4b6f ]---
