@@ -1,62 +1,36 @@
-From: Aitor Cuartango <aitor.cuartango@gmail.com>
-Date: Sat, 27 Oct 2012 20:13:24 +0200
-Subject: [PATCH 1/2] ssb: add PCI ID 0x4350
-In-Reply-To: <50896EA9.2090607@hauke-m.de>
-References: <1351183169-13392-1-git-send-email-hauke@hauke-m.de>
- <CACna6rwYraTcddRHUh-5a_cQ4QkLiUKrLO5FYvnMneTtWpYEwg@mail.gmail.com>
- <50896EA9.2090607@hauke-m.de>
-Message-ID: <CADGCtVSQEthQCkcqChs1FDfoCDrJh7UOj+y6z-N+PXQATr+mkw@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 9 Nov 2012 07:46:52 +0100
+Subject: [help] WiFi connection //Re: [PATCH][2.6.39?] b43: trivial:
+ update module info about firmware
+In-Reply-To: <CAF1EbZh=mPKVy=G4AgK1Fz6FxJjnAgaHdoGt6Uwohe+fvhYkgg@mail.gmail.com>
+References: <CAF1EbZh=mPKVy=G4AgK1Fz6FxJjnAgaHdoGt6Uwohe+fvhYkgg@mail.gmail.com>
+Message-ID: <CACna6ryLuoEZeTTP9g-RfY-1QofGMf4445huU8PZSyEv8ZSxSA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, m@bues.ch
+To: =?UTF-8?B?WmhvdSBoYW5neGluZyDlkajooYzooYw=?= <hangxing.zhou@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-If you need more information about the device let me know.
-
-With the last openwrt's trunk i can create a wifi network but only in b/g mode.
-
-I've test editing manually /etc/config/wireless  and change :
-        option hwmode '11g'
-with
-        option hwmode '11ng'
-
-but it does not starts, perhaps i need to do more changes in this file...
-
-
-Thanks all!
-aitor
-
-
-2012/10/25 Hauke Mehrtens <hauke@hauke-m.de>:
-> On 10/25/2012 06:47 PM, Rafa? Mi?ecki wrote:
->> 2012/10/25 Hauke Mehrtens <hauke@hauke-m.de>:
->>> 14e4:4350 is found on a Broadcom BCM43222.
->>
->> Huh, I expected BCM43222 to be BCMA based, interesting. Could you
->> provide ssb log for scanning (cores listing) and PHY&RADIO info?
->>
+2012/11/9 Zhou hangxing ??? <hangxing.zhou@gmail.com>:
+> One question about WiFi connect event in driver layer. I appreciate some
+> information from your guys if possible.
 >
-> It is not my device, but Aitor found it, here are the details:
-> http://comments.gmane.org/gmane.comp.embedded.openwrt.user/2031
+> There is a device_A with WiFi module,  the application in smart
+> phone(iPhone) can communicate with the device_A via socket connection.
 >
-> Here is the log you requested, without the patches:
-> ...
-> b43-pci-bridge 0000:00:02.0: setting latency timer to 64
-> ssb: Found chip with id 0xA8D6, rev 0x00 and package 0x08
-> ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x1E, vendor 0x4243)
-> ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x10, vendor 0x4243)
-> ssb: Core 2 found: PCI (cc 0x804, rev 0x0E, vendor 0x4243)
-> ssb: chipcommon status is 0x40040
-> ssb: Found rev 2 PMU (capabilities 0x044C3002)
-> ssb: ERROR: PLL init unknown for device A8D6
-> ssb: ERROR: PMU resource config unknown for device A8D6
-> ssb: SPROM offset is 0x1000
-> ssb: SPROM revision 8 detected.
-> b43-phy0: Broadcom 43222 WLAN found (core revision 16)
-> ssb: Sonics Silicon Backplane found on PCI device 0000:00:02.0
-> ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
-> ...
+> In this case, if user goes to setting screen in iPhone, and disable the WiFi
+> directly( the application is still running).
 >
-> Hauke
+> Does the driver layer know the status of WiFi connection in device_A?
+> Or any event message can be indicated by WiFi driver in device_A?
+
+So... are you using Linux on iPhone? Some Android port?
+
+What WiFi chipset does it have? Some BCM4312 (LP-PHY) with higher PHY
+rev? I though phones are usually using fullmac devices...
+
+You way want to check rfkill, but I'm not sure it Android is using that.
+
+-- 
+Rafa?
