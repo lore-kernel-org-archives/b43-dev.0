@@ -1,17 +1,17 @@
 From: Bill Pemberton <wfp5p@virginia.edu>
-Date: Mon, 19 Nov 2012 13:20:34 -0500
-Subject: [PATCH 085/493] net/wireless: remove use of __devexit_p
+Date: Mon, 19 Nov 2012 13:22:25 -0500
+Subject: [PATCH 196/493] net/wireless: remove use of __devinit
 In-Reply-To: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
 References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
-Message-ID: <1353349642-3677-85-git-send-email-wfp5p@virginia.edu>
+Message-ID: <1353349642-3677-196-git-send-email-wfp5p@virginia.edu>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: gregkh@linuxfoundation.org
-Cc: "John W. Linville" <linville@tuxdriver.com>, Jiri Slaby <jirislaby@gmail.com>, Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>, Simon Kelley <simon@thekelleys.org.uk>, Stefano Brivio <stefano.brivio@polimi.it>, Stanislav Yakovlev <stas.yakovlev@gmail.com>, Dan Williams <dcbw@redhat.com>, Christian Lamparter <chunkeey@googlemail.com>, Ivo van Doorn <IvDoorn@gmail.com>, Gertjan van Wingerde <gwingerde@gmail.com>, Helmut Schaa <helmut.schaa@googlemail.com>, Herton Ronaldo Krzesinski <herton@canonical.com>, Hin-Tak Leung <htl10@users.sourceforge.net>, Larry Finger <Larry.Finger@lwfinger.net>, Luciano Coelho <coelho@ti.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ath5k-devel@lists.ath5k.org, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, libertas-dev@lists.infradead.org, users@rt2x00.serialmonkey.com
+Cc: "John W. Linville" <linville@tuxdriver.com>, Jiri Slaby <jirislaby@gmail.com>, Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>, Simon Kelley <simon@thekelleys.org.uk>, Stefano Brivio <stefano.brivio@polimi.it>, Stanislav Yakovlev <stas.yakovlev@gmail.com>, Dan Williams <dcbw@redhat.com>, Christian Lamparter <chunkeey@googlemail.com>, Herton Ronaldo Krzesinski <herton@canonical.com>, Hin-Tak Leung <htl10@users.sourceforge.net>, Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Luciano Coelho <coelho@ti.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ath5k-devel@lists.ath5k.org, b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, libertas-dev@lists.infradead.org
 
-CONFIG_HOTPLUG is going away as an option so __devexit_p is no longer
+CONFIG_HOTPLUG is going away as an option so __devinit is no longer
 needed.
 
 Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
@@ -24,12 +24,10 @@ Cc: Stefano Brivio <stefano.brivio@polimi.it>
 Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com> 
 Cc: Dan Williams <dcbw@redhat.com> 
 Cc: Christian Lamparter <chunkeey@googlemail.com> 
-Cc: Ivo van Doorn <IvDoorn@gmail.com> 
-Cc: Gertjan van Wingerde <gwingerde@gmail.com> 
-Cc: Helmut Schaa <helmut.schaa@googlemail.com> 
 Cc: Herton Ronaldo Krzesinski <herton@canonical.com> 
 Cc: Hin-Tak Leung <htl10@users.sourceforge.net> 
 Cc: Larry Finger <Larry.Finger@lwfinger.net> 
+Cc: Chaoming Li <chaoming_li@realsil.com.cn> 
 Cc: Luciano Coelho <coelho@ti.com> 
 Cc: linux-wireless at vger.kernel.org 
 Cc: netdev at vger.kernel.org 
@@ -37,482 +35,418 @@ Cc: ath5k-devel at lists.ath5k.org
 Cc: b43-dev at lists.infradead.org 
 Cc: brcm80211-dev-list at broadcom.com 
 Cc: libertas-dev at lists.infradead.org 
-Cc: users at rt2x00.serialmonkey.com 
 ---
  drivers/net/wireless/adm8211.c                        | 2 +-
  drivers/net/wireless/airo.c                           | 2 +-
+ drivers/net/wireless/ath/ath5k/base.c                 | 4 ++--
+ drivers/net/wireless/ath/ath5k/led.c                  | 2 +-
  drivers/net/wireless/ath/ath5k/pci.c                  | 2 +-
  drivers/net/wireless/atmel_pci.c                      | 2 +-
  drivers/net/wireless/b43/pcmcia.c                     | 2 +-
  drivers/net/wireless/b43/sdio.c                       | 2 +-
  drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c | 2 +-
- drivers/net/wireless/ipw2x00/ipw2100.c                | 2 +-
- drivers/net/wireless/ipw2x00/ipw2200.c                | 2 +-
- drivers/net/wireless/iwlegacy/3945-mac.c              | 2 +-
- drivers/net/wireless/iwlegacy/4965-mac.c              | 2 +-
- drivers/net/wireless/iwlwifi/pcie/drv.c               | 2 +-
+ drivers/net/wireless/ipw2x00/ipw2200.c                | 4 ++--
  drivers/net/wireless/libertas/if_spi.c                | 2 +-
- drivers/net/wireless/mwl8k.c                          | 4 ++--
- drivers/net/wireless/orinoco/orinoco_nortel.c         | 2 +-
- drivers/net/wireless/orinoco/orinoco_pci.c            | 2 +-
- drivers/net/wireless/orinoco/orinoco_plx.c            | 2 +-
- drivers/net/wireless/orinoco/orinoco_tmd.c            | 2 +-
+ drivers/net/wireless/mwl8k.c                          | 2 +-
  drivers/net/wireless/p54/p54pci.c                     | 2 +-
  drivers/net/wireless/p54/p54spi.c                     | 2 +-
  drivers/net/wireless/p54/p54usb.c                     | 2 +-
- drivers/net/wireless/rt2x00/rt2400pci.c               | 2 +-
- drivers/net/wireless/rt2x00/rt2500pci.c               | 2 +-
- drivers/net/wireless/rt2x00/rt2800pci.c               | 4 ++--
- drivers/net/wireless/rt2x00/rt61pci.c                 | 2 +-
  drivers/net/wireless/rtl818x/rtl8180/dev.c            | 2 +-
  drivers/net/wireless/rtl818x/rtl8187/dev.c            | 2 +-
- drivers/net/wireless/ti/wl1251/sdio.c                 | 2 +-
+ drivers/net/wireless/rtlwifi/pci.c                    | 2 +-
+ drivers/net/wireless/rtlwifi/pci.h                    | 2 +-
+ drivers/net/wireless/rtlwifi/usb.c                    | 2 +-
+ drivers/net/wireless/rtlwifi/usb.h                    | 2 +-
  drivers/net/wireless/ti/wl1251/spi.c                  | 2 +-
  drivers/net/wireless/ti/wl12xx/main.c                 | 2 +-
  drivers/net/wireless/ti/wl18xx/main.c                 | 2 +-
+ drivers/net/wireless/ti/wlcore/main.c                 | 2 +-
  drivers/net/wireless/ti/wlcore/sdio.c                 | 2 +-
  drivers/net/wireless/ti/wlcore/spi.c                  | 2 +-
- 33 files changed, 35 insertions(+), 35 deletions(-)
+ drivers/net/wireless/ti/wlcore/wlcore.h               | 2 +-
+ 28 files changed, 30 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/net/wireless/adm8211.c b/drivers/net/wireless/adm8211.c
-index 154a496..a05bac2 100644
+index a05bac2..bd89a29 100644
 --- a/drivers/net/wireless/adm8211.c
 +++ b/drivers/net/wireless/adm8211.c
-@@ -1985,7 +1985,7 @@ static struct pci_driver adm8211_driver = {
- 	.name		= "adm8211",
- 	.id_table	= adm8211_pci_id_table,
- 	.probe		= adm8211_probe,
--	.remove		= __devexit_p(adm8211_remove),
-+	.remove		= adm8211_remove,
- #ifdef CONFIG_PM
- 	.suspend	= adm8211_suspend,
- 	.resume		= adm8211_resume,
+@@ -1761,7 +1761,7 @@ static const struct ieee80211_ops adm8211_ops = {
+ 	.get_tsf		= adm8211_get_tsft
+ };
+ 
+-static int __devinit adm8211_probe(struct pci_dev *pdev,
++static int adm8211_probe(struct pci_dev *pdev,
+ 				   const struct pci_device_id *id)
+ {
+ 	struct ieee80211_hw *dev;
 diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
-index 57f7db1..af1096b 100644
+index af1096b..b010f41 100644
 --- a/drivers/net/wireless/airo.c
 +++ b/drivers/net/wireless/airo.c
-@@ -78,7 +78,7 @@ static struct pci_driver airo_driver = {
- 	.name     = DRV_NAME,
- 	.id_table = card_ids,
- 	.probe    = airo_pci_probe,
--	.remove   = __devexit_p(airo_pci_remove),
-+	.remove   = airo_pci_remove,
- 	.suspend  = airo_pci_suspend,
- 	.resume   = airo_pci_resume,
+@@ -5584,7 +5584,7 @@ static void timer_func( struct net_device *dev ) {
+ }
+ 
+ #ifdef CONFIG_PCI
+-static int __devinit airo_pci_probe(struct pci_dev *pdev,
++static int airo_pci_probe(struct pci_dev *pdev,
+ 				    const struct pci_device_id *pent)
+ {
+ 	struct net_device *dev;
+diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
+index 9f31cfa..026ae8a 100644
+--- a/drivers/net/wireless/ath/ath5k/base.c
++++ b/drivers/net/wireless/ath/ath5k/base.c
+@@ -2434,7 +2434,7 @@ static const struct ieee80211_iface_combination if_comb = {
+ 	.num_different_channels = 1,
  };
+ 
+-int __devinit
++int
+ ath5k_init_ah(struct ath5k_hw *ah, const struct ath_bus_ops *bus_ops)
+ {
+ 	struct ieee80211_hw *hw = ah->hw;
+@@ -2860,7 +2860,7 @@ static void ath5k_reset_work(struct work_struct *work)
+ 	mutex_unlock(&ah->lock);
+ }
+ 
+-static int __devinit
++static int
+ ath5k_init(struct ieee80211_hw *hw)
+ {
+ 
+diff --git a/drivers/net/wireless/ath/ath5k/led.c b/drivers/net/wireless/ath/ath5k/led.c
+index b9f708a..f77ef36 100644
+--- a/drivers/net/wireless/ath/ath5k/led.c
++++ b/drivers/net/wireless/ath/ath5k/led.c
+@@ -158,7 +158,7 @@ void ath5k_unregister_leds(struct ath5k_hw *ah)
+ 	ath5k_unregister_led(&ah->tx_led);
+ }
+ 
+-int __devinit ath5k_init_leds(struct ath5k_hw *ah)
++int ath5k_init_leds(struct ath5k_hw *ah)
+ {
+ 	int ret = 0;
+ 	struct ieee80211_hw *hw = ah->hw;
 diff --git a/drivers/net/wireless/ath/ath5k/pci.c b/drivers/net/wireless/ath/ath5k/pci.c
-index dff48fb..c3ba483 100644
+index c3ba483..1a78ba3 100644
 --- a/drivers/net/wireless/ath/ath5k/pci.c
 +++ b/drivers/net/wireless/ath/ath5k/pci.c
-@@ -336,7 +336,7 @@ static struct pci_driver ath5k_pci_driver = {
- 	.name		= KBUILD_MODNAME,
- 	.id_table	= ath5k_pci_id_table,
- 	.probe		= ath5k_pci_probe,
--	.remove		= __devexit_p(ath5k_pci_remove),
-+	.remove		= ath5k_pci_remove,
- 	.driver.pm	= ATH5K_PM_OPS,
- };
+@@ -155,7 +155,7 @@ static const struct ath_bus_ops ath_pci_bus_ops = {
+ * PCI Initialization *
+ \********************/
  
+-static int __devinit
++static int
+ ath5k_pci_probe(struct pci_dev *pdev,
+ 		const struct pci_device_id *id)
+ {
 diff --git a/drivers/net/wireless/atmel_pci.c b/drivers/net/wireless/atmel_pci.c
-index 51e33b5..fbe6580 100644
+index fbe6580..1c12fec 100644
 --- a/drivers/net/wireless/atmel_pci.c
 +++ b/drivers/net/wireless/atmel_pci.c
-@@ -45,7 +45,7 @@ static struct pci_driver atmel_driver = {
- 	.name     = "atmel",
- 	.id_table = card_ids,
- 	.probe    = atmel_pci_probe,
--	.remove   = __devexit_p(atmel_pci_remove),
-+	.remove   = atmel_pci_remove,
+@@ -49,7 +49,7 @@ static struct pci_driver atmel_driver = {
  };
  
  
+-static int __devinit atmel_pci_probe(struct pci_dev *pdev,
++static int atmel_pci_probe(struct pci_dev *pdev,
+ 				     const struct pci_device_id *pent)
+ {
+ 	struct net_device *dev;
 diff --git a/drivers/net/wireless/b43/pcmcia.c b/drivers/net/wireless/b43/pcmcia.c
-index 714cad6..3477213 100644
+index 3477213..3506cca 100644
 --- a/drivers/net/wireless/b43/pcmcia.c
 +++ b/drivers/net/wireless/b43/pcmcia.c
-@@ -125,7 +125,7 @@ static struct pcmcia_driver b43_pcmcia_driver = {
- 	.name		= "b43-pcmcia",
- 	.id_table	= b43_pcmcia_tbl,
- 	.probe		= b43_pcmcia_probe,
--	.remove		= __devexit_p(b43_pcmcia_remove),
-+	.remove		= b43_pcmcia_remove,
- 	.suspend	= b43_pcmcia_suspend,
- 	.resume		= b43_pcmcia_resume,
- };
+@@ -60,7 +60,7 @@ static int b43_pcmcia_resume(struct pcmcia_device *dev)
+ # define b43_pcmcia_resume		NULL
+ #endif /* CONFIG_PM */
+ 
+-static int __devinit b43_pcmcia_probe(struct pcmcia_device *dev)
++static int b43_pcmcia_probe(struct pcmcia_device *dev)
+ {
+ 	struct ssb_bus *ssb;
+ 	int err = -ENOMEM;
 diff --git a/drivers/net/wireless/b43/sdio.c b/drivers/net/wireless/b43/sdio.c
-index a54fb2d..80b0755 100644
+index 80b0755..d2b1f98 100644
 --- a/drivers/net/wireless/b43/sdio.c
 +++ b/drivers/net/wireless/b43/sdio.c
-@@ -193,7 +193,7 @@ static struct sdio_driver b43_sdio_driver = {
- 	.name		= "b43-sdio",
- 	.id_table	= b43_sdio_ids,
- 	.probe		= b43_sdio_probe,
--	.remove		= __devexit_p(b43_sdio_remove),
-+	.remove		= b43_sdio_remove,
- };
+@@ -93,7 +93,7 @@ void b43_sdio_free_irq(struct b43_wldev *dev)
+ 	sdio->irq_handler = NULL;
+ }
  
- int b43_sdio_init(void)
+-static int __devinit b43_sdio_probe(struct sdio_func *func,
++static int b43_sdio_probe(struct sdio_func *func,
+ 				    const struct sdio_device_id *id)
+ {
+ 	struct b43_sdio *sdio;
 diff --git a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
-index a744ea5..cdd5aa2 100644
+index cdd5aa2..7e65f9a 100644
 --- a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
 +++ b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
-@@ -1160,7 +1160,7 @@ static struct bcma_driver brcms_bcma_driver = {
- 	.probe    = brcms_bcma_probe,
- 	.suspend  = brcms_suspend,
- 	.resume   = brcms_resume,
--	.remove   = __devexit_p(brcms_remove),
-+	.remove   = brcms_remove,
- 	.id_table = brcms_coreid_table,
- };
- 
-diff --git a/drivers/net/wireless/ipw2x00/ipw2100.c b/drivers/net/wireless/ipw2x00/ipw2100.c
-index 29b8fa1..b96c615 100644
---- a/drivers/net/wireless/ipw2x00/ipw2100.c
-+++ b/drivers/net/wireless/ipw2x00/ipw2100.c
-@@ -6609,7 +6609,7 @@ static struct pci_driver ipw2100_pci_driver = {
- 	.name = DRV_NAME,
- 	.id_table = ipw2100_pci_id_table,
- 	.probe = ipw2100_pci_init_one,
--	.remove = __devexit_p(ipw2100_pci_remove_one),
-+	.remove = ipw2100_pci_remove_one,
- #ifdef CONFIG_PM
- 	.suspend = ipw2100_suspend,
- 	.resume = ipw2100_resume,
+@@ -1093,7 +1093,7 @@ fail:
+  *
+  * Perimeter lock is initialized in the course of this function.
+  */
+-static int __devinit brcms_bcma_probe(struct bcma_device *pdev)
++static int brcms_bcma_probe(struct bcma_device *pdev)
+ {
+ 	struct brcms_info *wl;
+ 	struct ieee80211_hw *hw;
 diff --git a/drivers/net/wireless/ipw2x00/ipw2200.c b/drivers/net/wireless/ipw2x00/ipw2200.c
-index 768bf61..b809b99 100644
+index b809b99..3f099a6 100644
 --- a/drivers/net/wireless/ipw2x00/ipw2200.c
 +++ b/drivers/net/wireless/ipw2x00/ipw2200.c
-@@ -12057,7 +12057,7 @@ static struct pci_driver ipw_driver = {
- 	.name = DRV_NAME,
- 	.id_table = card_ids,
- 	.probe = ipw_pci_probe,
--	.remove = __devexit_p(ipw_pci_remove),
-+	.remove = ipw_pci_remove,
- #ifdef CONFIG_PM
- 	.suspend = ipw_pci_suspend,
- 	.resume = ipw_pci_resume,
-diff --git a/drivers/net/wireless/iwlegacy/3945-mac.c b/drivers/net/wireless/iwlegacy/3945-mac.c
-index e252acb..88fdd39 100644
---- a/drivers/net/wireless/iwlegacy/3945-mac.c
-+++ b/drivers/net/wireless/iwlegacy/3945-mac.c
-@@ -3884,7 +3884,7 @@ static struct pci_driver il3945_driver = {
- 	.name = DRV_NAME,
- 	.id_table = il3945_hw_card_ids,
- 	.probe = il3945_pci_probe,
--	.remove = __devexit_p(il3945_pci_remove),
-+	.remove = il3945_pci_remove,
- 	.driver.pm = IL_LEGACY_PM_OPS,
+@@ -10774,7 +10774,7 @@ static void ipw_bg_link_down(struct work_struct *work)
+ 	mutex_unlock(&priv->mutex);
+ }
+ 
+-static int __devinit ipw_setup_deferred_work(struct ipw_priv *priv)
++static int ipw_setup_deferred_work(struct ipw_priv *priv)
+ {
+ 	int ret = 0;
+ 
+@@ -11722,7 +11722,7 @@ static const struct net_device_ops ipw_netdev_ops = {
+ 	.ndo_validate_addr	= eth_validate_addr,
  };
  
-diff --git a/drivers/net/wireless/iwlegacy/4965-mac.c b/drivers/net/wireless/iwlegacy/4965-mac.c
-index eac4dc8..14e0a94 100644
---- a/drivers/net/wireless/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/iwlegacy/4965-mac.c
-@@ -6772,7 +6772,7 @@ static struct pci_driver il4965_driver = {
- 	.name = DRV_NAME,
- 	.id_table = il4965_hw_card_ids,
- 	.probe = il4965_pci_probe,
--	.remove = __devexit_p(il4965_pci_remove),
-+	.remove = il4965_pci_remove,
- 	.driver.pm = IL_LEGACY_PM_OPS,
- };
- 
-diff --git a/drivers/net/wireless/iwlwifi/pcie/drv.c b/drivers/net/wireless/iwlwifi/pcie/drv.c
-index 2a46753..7cb27af 100644
---- a/drivers/net/wireless/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/iwlwifi/pcie/drv.c
-@@ -353,7 +353,7 @@ static struct pci_driver iwl_pci_driver = {
- 	.name = DRV_NAME,
- 	.id_table = iwl_hw_card_ids,
- 	.probe = iwl_pci_probe,
--	.remove = __devexit_p(iwl_pci_remove),
-+	.remove = iwl_pci_remove,
- 	.driver.pm = IWL_PM_OPS,
- };
- 
+-static int __devinit ipw_pci_probe(struct pci_dev *pdev,
++static int ipw_pci_probe(struct pci_dev *pdev,
+ 				   const struct pci_device_id *ent)
+ {
+ 	int err = 0;
 diff --git a/drivers/net/wireless/libertas/if_spi.c b/drivers/net/wireless/libertas/if_spi.c
-index 9604a1c..98cccc7 100644
+index 98cccc7..abc32e3 100644
 --- a/drivers/net/wireless/libertas/if_spi.c
 +++ b/drivers/net/wireless/libertas/if_spi.c
-@@ -1285,7 +1285,7 @@ static const struct dev_pm_ops if_spi_pm_ops = {
+@@ -1124,7 +1124,7 @@ static void if_spi_resume_worker(struct work_struct *work)
+ 	}
+ }
  
- static struct spi_driver libertas_spi_driver = {
- 	.probe	= if_spi_probe,
--	.remove = __devexit_p(libertas_spi_remove),
-+	.remove = libertas_spi_remove,
- 	.driver = {
- 		.name	= "libertas_spi",
- 		.owner	= THIS_MODULE,
+-static int __devinit if_spi_probe(struct spi_device *spi)
++static int if_spi_probe(struct spi_device *spi)
+ {
+ 	struct if_spi_card *card;
+ 	struct lbs_private *priv = NULL;
 diff --git a/drivers/net/wireless/mwl8k.c b/drivers/net/wireless/mwl8k.c
-index 3db4950..c26cfaa 100644
+index c26cfaa..1bbdc63 100644
 --- a/drivers/net/wireless/mwl8k.c
 +++ b/drivers/net/wireless/mwl8k.c
-@@ -5929,8 +5929,8 @@ static struct pci_driver mwl8k_driver = {
- 	.name		= MWL8K_NAME,
- 	.id_table	= mwl8k_pci_id_table,
- 	.probe		= mwl8k_probe,
--	.remove		= __devexit_p(mwl8k_remove),
--	.shutdown	= __devexit_p(mwl8k_shutdown),
-+	.remove		= mwl8k_remove,
-+	.shutdown	= mwl8k_shutdown,
- };
+@@ -5755,7 +5755,7 @@ err_free_cookie:
  
- module_pci_driver(mwl8k_driver);
-diff --git a/drivers/net/wireless/orinoco/orinoco_nortel.c b/drivers/net/wireless/orinoco/orinoco_nortel.c
-index 326396b..f286540 100644
---- a/drivers/net/wireless/orinoco/orinoco_nortel.c
-+++ b/drivers/net/wireless/orinoco/orinoco_nortel.c
-@@ -288,7 +288,7 @@ static struct pci_driver orinoco_nortel_driver = {
- 	.name		= DRIVER_NAME,
- 	.id_table	= orinoco_nortel_id_table,
- 	.probe		= orinoco_nortel_init_one,
--	.remove		= __devexit_p(orinoco_nortel_remove_one),
-+	.remove		= orinoco_nortel_remove_one,
- 	.suspend	= orinoco_pci_suspend,
- 	.resume		= orinoco_pci_resume,
- };
-diff --git a/drivers/net/wireless/orinoco/orinoco_pci.c b/drivers/net/wireless/orinoco/orinoco_pci.c
-index 6058c66..bf6d436 100644
---- a/drivers/net/wireless/orinoco/orinoco_pci.c
-+++ b/drivers/net/wireless/orinoco/orinoco_pci.c
-@@ -228,7 +228,7 @@ static struct pci_driver orinoco_pci_driver = {
- 	.name		= DRIVER_NAME,
- 	.id_table	= orinoco_pci_id_table,
- 	.probe		= orinoco_pci_init_one,
--	.remove		= __devexit_p(orinoco_pci_remove_one),
-+	.remove		= orinoco_pci_remove_one,
- 	.suspend	= orinoco_pci_suspend,
- 	.resume		= orinoco_pci_resume,
- };
-diff --git a/drivers/net/wireless/orinoco/orinoco_plx.c b/drivers/net/wireless/orinoco/orinoco_plx.c
-index 2bac824..63a614f 100644
---- a/drivers/net/wireless/orinoco/orinoco_plx.c
-+++ b/drivers/net/wireless/orinoco/orinoco_plx.c
-@@ -334,7 +334,7 @@ static struct pci_driver orinoco_plx_driver = {
- 	.name		= DRIVER_NAME,
- 	.id_table	= orinoco_plx_id_table,
- 	.probe		= orinoco_plx_init_one,
--	.remove		= __devexit_p(orinoco_plx_remove_one),
-+	.remove		= orinoco_plx_remove_one,
- 	.suspend	= orinoco_pci_suspend,
- 	.resume		= orinoco_pci_resume,
- };
-diff --git a/drivers/net/wireless/orinoco/orinoco_tmd.c b/drivers/net/wireless/orinoco/orinoco_tmd.c
-index 93159d6..f67f43e 100644
---- a/drivers/net/wireless/orinoco/orinoco_tmd.c
-+++ b/drivers/net/wireless/orinoco/orinoco_tmd.c
-@@ -214,7 +214,7 @@ static struct pci_driver orinoco_tmd_driver = {
- 	.name		= DRIVER_NAME,
- 	.id_table	= orinoco_tmd_id_table,
- 	.probe		= orinoco_tmd_init_one,
--	.remove		= __devexit_p(orinoco_tmd_remove_one),
-+	.remove		= orinoco_tmd_remove_one,
- 	.suspend	= orinoco_pci_suspend,
- 	.resume		= orinoco_pci_resume,
- };
+ 	return rc;
+ }
+-static int __devinit mwl8k_probe(struct pci_dev *pdev,
++static int mwl8k_probe(struct pci_dev *pdev,
+ 				 const struct pci_device_id *id)
+ {
+ 	static int printed_version;
 diff --git a/drivers/net/wireless/p54/p54pci.c b/drivers/net/wireless/p54/p54pci.c
-index b439079..b382469 100644
+index b382469..e5b29e9 100644
 --- a/drivers/net/wireless/p54/p54pci.c
 +++ b/drivers/net/wireless/p54/p54pci.c
-@@ -699,7 +699,7 @@ static struct pci_driver p54p_driver = {
- 	.name		= "p54pci",
- 	.id_table	= p54p_table,
- 	.probe		= p54p_probe,
--	.remove		= __devexit_p(p54p_remove),
-+	.remove		= p54p_remove,
- 	.driver.pm	= P54P_PM_OPS,
- };
+@@ -540,7 +540,7 @@ out:
+ 	pci_dev_put(pdev);
+ }
  
+-static int __devinit p54p_probe(struct pci_dev *pdev,
++static int p54p_probe(struct pci_dev *pdev,
+ 				const struct pci_device_id *id)
+ {
+ 	struct p54p_priv *priv;
 diff --git a/drivers/net/wireless/p54/p54spi.c b/drivers/net/wireless/p54/p54spi.c
-index f792990..51129f4 100644
+index 51129f4..d75ab3e 100644
 --- a/drivers/net/wireless/p54/p54spi.c
 +++ b/drivers/net/wireless/p54/p54spi.c
-@@ -710,7 +710,7 @@ static struct spi_driver p54spi_driver = {
- 	},
+@@ -595,7 +595,7 @@ static void p54spi_op_stop(struct ieee80211_hw *dev)
+ 	cancel_work_sync(&priv->work);
+ }
  
- 	.probe		= p54spi_probe,
--	.remove		= __devexit_p(p54spi_remove),
-+	.remove		= p54spi_remove,
- };
- 
- static int __init p54spi_init(void)
+-static int __devinit p54spi_probe(struct spi_device *spi)
++static int p54spi_probe(struct spi_device *spi)
+ {
+ 	struct p54s_priv *priv = NULL;
+ 	struct ieee80211_hw *hw;
 diff --git a/drivers/net/wireless/p54/p54usb.c b/drivers/net/wireless/p54/p54usb.c
-index effb044..0463ac2 100644
+index 0463ac2..000f7ba 100644
 --- a/drivers/net/wireless/p54/p54usb.c
 +++ b/drivers/net/wireless/p54/p54usb.c
-@@ -1131,7 +1131,7 @@ static struct usb_driver p54u_driver = {
- 	.name	= "p54usb",
- 	.id_table = p54u_table,
- 	.probe = p54u_probe,
--	.disconnect = __devexit_p(p54u_disconnect),
-+	.disconnect = p54u_disconnect,
- 	.pre_reset = p54u_pre_reset,
- 	.post_reset = p54u_post_reset,
- #ifdef CONFIG_PM
-diff --git a/drivers/net/wireless/rt2x00/rt2400pci.c b/drivers/net/wireless/rt2x00/rt2400pci.c
-index e3a2d90..a2d2bc2 100644
---- a/drivers/net/wireless/rt2x00/rt2400pci.c
-+++ b/drivers/net/wireless/rt2x00/rt2400pci.c
-@@ -1831,7 +1831,7 @@ static struct pci_driver rt2400pci_driver = {
- 	.name		= KBUILD_MODNAME,
- 	.id_table	= rt2400pci_device_table,
- 	.probe		= rt2400pci_probe,
--	.remove		= __devexit_p(rt2x00pci_remove),
-+	.remove		= rt2x00pci_remove,
- 	.suspend	= rt2x00pci_suspend,
- 	.resume		= rt2x00pci_resume,
- };
-diff --git a/drivers/net/wireless/rt2x00/rt2500pci.c b/drivers/net/wireless/rt2x00/rt2500pci.c
-index 479d756..9bea10f 100644
---- a/drivers/net/wireless/rt2x00/rt2500pci.c
-+++ b/drivers/net/wireless/rt2x00/rt2500pci.c
-@@ -2122,7 +2122,7 @@ static struct pci_driver rt2500pci_driver = {
- 	.name		= KBUILD_MODNAME,
- 	.id_table	= rt2500pci_device_table,
- 	.probe		= rt2500pci_probe,
--	.remove		= __devexit_p(rt2x00pci_remove),
-+	.remove		= rt2x00pci_remove,
- 	.suspend	= rt2x00pci_suspend,
- 	.resume		= rt2x00pci_resume,
- };
-diff --git a/drivers/net/wireless/rt2x00/rt2800pci.c b/drivers/net/wireless/rt2x00/rt2800pci.c
-index 27829e1..9224d87 100644
---- a/drivers/net/wireless/rt2x00/rt2800pci.c
-+++ b/drivers/net/wireless/rt2x00/rt2800pci.c
-@@ -1176,7 +1176,7 @@ static struct platform_driver rt2800soc_driver = {
- 		.mod_name	= KBUILD_MODNAME,
- 	},
- 	.probe		= rt2800soc_probe,
--	.remove		= __devexit_p(rt2x00soc_remove),
-+	.remove		= rt2x00soc_remove,
- 	.suspend	= rt2x00soc_suspend,
- 	.resume		= rt2x00soc_resume,
- };
-@@ -1193,7 +1193,7 @@ static struct pci_driver rt2800pci_driver = {
- 	.name		= KBUILD_MODNAME,
- 	.id_table	= rt2800pci_device_table,
- 	.probe		= rt2800pci_probe,
--	.remove		= __devexit_p(rt2x00pci_remove),
-+	.remove		= rt2x00pci_remove,
- 	.suspend	= rt2x00pci_suspend,
- 	.resume		= rt2x00pci_resume,
- };
-diff --git a/drivers/net/wireless/rt2x00/rt61pci.c b/drivers/net/wireless/rt2x00/rt61pci.c
-index d6582a2..f95792c 100644
---- a/drivers/net/wireless/rt2x00/rt61pci.c
-+++ b/drivers/net/wireless/rt2x00/rt61pci.c
-@@ -3094,7 +3094,7 @@ static struct pci_driver rt61pci_driver = {
- 	.name		= KBUILD_MODNAME,
- 	.id_table	= rt61pci_device_table,
- 	.probe		= rt61pci_probe,
--	.remove		= __devexit_p(rt2x00pci_remove),
-+	.remove		= rt2x00pci_remove,
- 	.suspend	= rt2x00pci_suspend,
- 	.resume		= rt2x00pci_resume,
- };
+@@ -986,7 +986,7 @@ static int p54u_load_firmware(struct ieee80211_hw *dev,
+ 	return err;
+ }
+ 
+-static int __devinit p54u_probe(struct usb_interface *intf,
++static int p54u_probe(struct usb_interface *intf,
+ 				const struct usb_device_id *id)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(intf);
 diff --git a/drivers/net/wireless/rtl818x/rtl8180/dev.c b/drivers/net/wireless/rtl818x/rtl8180/dev.c
-index 021d83e..b117541 100644
+index b117541..6a5c0b8 100644
 --- a/drivers/net/wireless/rtl818x/rtl8180/dev.c
 +++ b/drivers/net/wireless/rtl818x/rtl8180/dev.c
-@@ -1170,7 +1170,7 @@ static struct pci_driver rtl8180_driver = {
- 	.name		= KBUILD_MODNAME,
- 	.id_table	= rtl8180_table,
- 	.probe		= rtl8180_probe,
--	.remove		= __devexit_p(rtl8180_remove),
-+	.remove		= rtl8180_remove,
- #ifdef CONFIG_PM
- 	.suspend	= rtl8180_suspend,
- 	.resume		= rtl8180_resume,
+@@ -901,7 +901,7 @@ static void rtl8180_eeprom_register_write(struct eeprom_93cx6 *eeprom)
+ 	udelay(10);
+ }
+ 
+-static int __devinit rtl8180_probe(struct pci_dev *pdev,
++static int rtl8180_probe(struct pci_dev *pdev,
+ 				   const struct pci_device_id *id)
+ {
+ 	struct ieee80211_hw *dev;
 diff --git a/drivers/net/wireless/rtl818x/rtl8187/dev.c b/drivers/net/wireless/rtl818x/rtl8187/dev.c
-index 7811b63..9892310 100644
+index 9892310..f879bc3 100644
 --- a/drivers/net/wireless/rtl818x/rtl8187/dev.c
 +++ b/drivers/net/wireless/rtl818x/rtl8187/dev.c
-@@ -1664,7 +1664,7 @@ static struct usb_driver rtl8187_driver = {
- 	.name		= KBUILD_MODNAME,
- 	.id_table	= rtl8187_table,
- 	.probe		= rtl8187_probe,
--	.disconnect	= __devexit_p(rtl8187_disconnect),
-+	.disconnect	= rtl8187_disconnect,
- 	.disable_hub_initiated_lpm = 1,
+@@ -1411,7 +1411,7 @@ static void rtl8187_eeprom_register_write(struct eeprom_93cx6 *eeprom)
+ 	udelay(10);
+ }
+ 
+-static int __devinit rtl8187_probe(struct usb_interface *intf,
++static int rtl8187_probe(struct usb_interface *intf,
+ 				   const struct usb_device_id *id)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(intf);
+diff --git a/drivers/net/wireless/rtlwifi/pci.c b/drivers/net/wireless/rtlwifi/pci.c
+index f38e30a..f2bd68e 100644
+--- a/drivers/net/wireless/rtlwifi/pci.c
++++ b/drivers/net/wireless/rtlwifi/pci.c
+@@ -1756,7 +1756,7 @@ static bool _rtl_pci_find_adapter(struct pci_dev *pdev,
+ 	return true;
+ }
+ 
+-int __devinit rtl_pci_probe(struct pci_dev *pdev,
++int rtl_pci_probe(struct pci_dev *pdev,
+ 			    const struct pci_device_id *id)
+ {
+ 	struct ieee80211_hw *hw = NULL;
+diff --git a/drivers/net/wireless/rtlwifi/pci.h b/drivers/net/wireless/rtlwifi/pci.h
+index f71b12a..5eee0fa 100644
+--- a/drivers/net/wireless/rtlwifi/pci.h
++++ b/drivers/net/wireless/rtlwifi/pci.h
+@@ -236,7 +236,7 @@ int rtl_pci_reset_trx_ring(struct ieee80211_hw *hw);
+ 
+ extern struct rtl_intf_ops rtl_pci_ops;
+ 
+-int __devinit rtl_pci_probe(struct pci_dev *pdev,
++int rtl_pci_probe(struct pci_dev *pdev,
+ 			    const struct pci_device_id *id);
+ void rtl_pci_disconnect(struct pci_dev *pdev);
+ int rtl_pci_suspend(struct device *dev);
+diff --git a/drivers/net/wireless/rtlwifi/usb.c b/drivers/net/wireless/rtlwifi/usb.c
+index e3ea4b3..29f0969 100644
+--- a/drivers/net/wireless/rtlwifi/usb.c
++++ b/drivers/net/wireless/rtlwifi/usb.c
+@@ -940,7 +940,7 @@ static struct rtl_intf_ops rtl_usb_ops = {
+ 	.waitq_insert = rtl_usb_tx_chk_waitq_insert,
  };
  
-diff --git a/drivers/net/wireless/ti/wl1251/sdio.c b/drivers/net/wireless/ti/wl1251/sdio.c
-index e2750a1..e3f287f 100644
---- a/drivers/net/wireless/ti/wl1251/sdio.c
-+++ b/drivers/net/wireless/ti/wl1251/sdio.c
-@@ -347,7 +347,7 @@ static struct sdio_driver wl1251_sdio_driver = {
- 	.name		= "wl1251_sdio",
- 	.id_table	= wl1251_devices,
- 	.probe		= wl1251_sdio_probe,
--	.remove		= __devexit_p(wl1251_sdio_remove),
-+	.remove		= wl1251_sdio_remove,
- 	.drv.pm		= &wl1251_sdio_pm_ops,
- };
+-int __devinit rtl_usb_probe(struct usb_interface *intf,
++int rtl_usb_probe(struct usb_interface *intf,
+ 			const struct usb_device_id *id)
+ {
+ 	int err;
+diff --git a/drivers/net/wireless/rtlwifi/usb.h b/drivers/net/wireless/rtlwifi/usb.h
+index 43846b3..5235136 100644
+--- a/drivers/net/wireless/rtlwifi/usb.h
++++ b/drivers/net/wireless/rtlwifi/usb.h
+@@ -156,7 +156,7 @@ struct rtl_usb_priv {
  
+ 
+ 
+-int __devinit rtl_usb_probe(struct usb_interface *intf,
++int rtl_usb_probe(struct usb_interface *intf,
+ 			    const struct usb_device_id *id);
+ void rtl_usb_disconnect(struct usb_interface *intf);
+ int rtl_usb_suspend(struct usb_interface *pusb_intf, pm_message_t message);
 diff --git a/drivers/net/wireless/ti/wl1251/spi.c b/drivers/net/wireless/ti/wl1251/spi.c
-index 567660c..3ec61b9 100644
+index 3ec61b9..640a3d5 100644
 --- a/drivers/net/wireless/ti/wl1251/spi.c
 +++ b/drivers/net/wireless/ti/wl1251/spi.c
-@@ -326,7 +326,7 @@ static struct spi_driver wl1251_spi_driver = {
- 	},
- 
- 	.probe		= wl1251_spi_probe,
--	.remove		= __devexit_p(wl1251_spi_remove),
-+	.remove		= wl1251_spi_remove,
+@@ -237,7 +237,7 @@ static const struct wl1251_if_operations wl1251_spi_ops = {
+ 	.power = wl1251_spi_set_power,
  };
  
- static int __init wl1251_spi_init(void)
+-static int __devinit wl1251_spi_probe(struct spi_device *spi)
++static int wl1251_spi_probe(struct spi_device *spi)
+ {
+ 	struct wl12xx_platform_data *pdata;
+ 	struct ieee80211_hw *hw;
 diff --git a/drivers/net/wireless/ti/wl12xx/main.c b/drivers/net/wireless/ti/wl12xx/main.c
-index dadf1db..bc522b6 100644
+index bc522b6..c10e691 100644
 --- a/drivers/net/wireless/ti/wl12xx/main.c
 +++ b/drivers/net/wireless/ti/wl12xx/main.c
-@@ -1733,7 +1733,7 @@ MODULE_DEVICE_TABLE(platform, wl12xx_id_table);
+@@ -1696,7 +1696,7 @@ static int wl12xx_setup(struct wl1271 *wl)
+ 	return 0;
+ }
  
- static struct platform_driver wl12xx_driver = {
- 	.probe		= wl12xx_probe,
--	.remove		= __devexit_p(wlcore_remove),
-+	.remove		= wlcore_remove,
- 	.id_table	= wl12xx_id_table,
- 	.driver = {
- 		.name	= "wl12xx_driver",
+-static int __devinit wl12xx_probe(struct platform_device *pdev)
++static int wl12xx_probe(struct platform_device *pdev)
+ {
+ 	struct wl1271 *wl;
+ 	struct ieee80211_hw *hw;
 diff --git a/drivers/net/wireless/ti/wl18xx/main.c b/drivers/net/wireless/ti/wl18xx/main.c
-index a39682a..2d037d5 100644
+index 2d037d5..7171c93 100644
 --- a/drivers/net/wireless/ti/wl18xx/main.c
 +++ b/drivers/net/wireless/ti/wl18xx/main.c
-@@ -1536,7 +1536,7 @@ MODULE_DEVICE_TABLE(platform, wl18xx_id_table);
+@@ -1499,7 +1499,7 @@ static int wl18xx_setup(struct wl1271 *wl)
+ 	return 0;
+ }
  
- static struct platform_driver wl18xx_driver = {
- 	.probe		= wl18xx_probe,
--	.remove		= __devexit_p(wlcore_remove),
-+	.remove		= wlcore_remove,
- 	.id_table	= wl18xx_id_table,
- 	.driver = {
- 		.name	= "wl18xx_driver",
+-static int __devinit wl18xx_probe(struct platform_device *pdev)
++static int wl18xx_probe(struct platform_device *pdev)
+ {
+ 	struct wl1271 *wl;
+ 	struct ieee80211_hw *hw;
+diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+index 25530c8..2dd4ada 100644
+--- a/drivers/net/wireless/ti/wlcore/main.c
++++ b/drivers/net/wireless/ti/wlcore/main.c
+@@ -5659,7 +5659,7 @@ out:
+ 	complete_all(&wl->nvs_loading_complete);
+ }
+ 
+-int __devinit wlcore_probe(struct wl1271 *wl, struct platform_device *pdev)
++int wlcore_probe(struct wl1271 *wl, struct platform_device *pdev)
+ {
+ 	int ret;
+ 
 diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
-index 73ace4b..830bf0d 100644
+index 830bf0d..6fa2a01 100644
 --- a/drivers/net/wireless/ti/wlcore/sdio.c
 +++ b/drivers/net/wireless/ti/wlcore/sdio.c
-@@ -384,7 +384,7 @@ static struct sdio_driver wl1271_sdio_driver = {
- 	.name		= "wl1271_sdio",
- 	.id_table	= wl1271_devices,
- 	.probe		= wl1271_probe,
--	.remove		= __devexit_p(wl1271_remove),
-+	.remove		= wl1271_remove,
- #ifdef CONFIG_PM
- 	.drv = {
- 		.pm = &wl1271_sdio_pm_ops,
-diff --git a/drivers/net/wireless/ti/wlcore/spi.c b/drivers/net/wireless/ti/wlcore/spi.c
-index a519bc3..b183001 100644
---- a/drivers/net/wireless/ti/wlcore/spi.c
-+++ b/drivers/net/wireless/ti/wlcore/spi.c
-@@ -422,7 +422,7 @@ static struct spi_driver wl1271_spi_driver = {
- 	},
- 
- 	.probe		= wl1271_probe,
--	.remove		= __devexit_p(wl1271_remove),
-+	.remove		= wl1271_remove,
+@@ -214,7 +214,7 @@ static struct wl1271_if_operations sdio_ops = {
+ 	.set_block_size = wl1271_sdio_set_block_size,
  };
  
- static int __init wl1271_init(void)
+-static int __devinit wl1271_probe(struct sdio_func *func,
++static int wl1271_probe(struct sdio_func *func,
+ 				  const struct sdio_device_id *id)
+ {
+ 	struct wl12xx_platform_data *wlan_data;
+diff --git a/drivers/net/wireless/ti/wlcore/spi.c b/drivers/net/wireless/ti/wlcore/spi.c
+index b183001..ee39484 100644
+--- a/drivers/net/wireless/ti/wlcore/spi.c
++++ b/drivers/net/wireless/ti/wlcore/spi.c
+@@ -324,7 +324,7 @@ static struct wl1271_if_operations spi_ops = {
+ 	.set_block_size = NULL,
+ };
+ 
+-static int __devinit wl1271_probe(struct spi_device *spi)
++static int wl1271_probe(struct spi_device *spi)
+ {
+ 	struct wl12xx_spi_glue *glue;
+ 	struct wl12xx_platform_data *pdata;
+diff --git a/drivers/net/wireless/ti/wlcore/wlcore.h b/drivers/net/wireless/ti/wlcore/wlcore.h
+index 68584aa..adc6152 100644
+--- a/drivers/net/wireless/ti/wlcore/wlcore.h
++++ b/drivers/net/wireless/ti/wlcore/wlcore.h
+@@ -414,7 +414,7 @@ struct wl1271 {
+ 	struct completion nvs_loading_complete;
+ };
+ 
+-int __devinit wlcore_probe(struct wl1271 *wl, struct platform_device *pdev);
++int wlcore_probe(struct wl1271 *wl, struct platform_device *pdev);
+ int __devexit wlcore_remove(struct platform_device *pdev);
+ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size);
+ int wlcore_free_hw(struct wl1271 *wl);
 -- 
 1.8.0
