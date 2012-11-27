@@ -1,64 +1,60 @@
-From: nuno.silva at aalto.fi <nuno.silva@aalto.fi>
-Date: Tue, 27 Nov 2012 14:52:21 +0200
-Subject: bcm4312 and overloaded APs
-In-Reply-To: <87625dcpwv.fsf@ist.utl.pt> (Nuno Silva's message of "Sat, 10 Nov
- 2012 19:45:52 +0200")
-References: <87625dcpwv.fsf@ist.utl.pt>
-Message-ID: <8738zvxl6i.fsf@ist.utl.pt>
+From: Ma Xiaojun <damage3025@gmail.com>
+Date: Tue, 27 Nov 2012 14:59:31 -0600
+Subject: BCM4331 Stability Issue
+Message-ID: <CAGVx7UXC6H1mBGfCfLHXrVkv0DLSbSGghUXFJhVrsPVnaEg-bQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 2012-11-10, nuno.silva-uOixanVlb7U at public.gmane.org wrote:
+Hi,
 
-> Hello,
->
-> I am trying to debug a possible issue with my current configuration: I
-> am using wpa_supplicant together with a broadcom card (through the b43
-> driver) under Gentoo.
->
-> The card: 
-> Broadcom Corporation BCM4312 802.11b/g LP-PHY (rev 01)
->
-> And this is under linux version 3.2.1 on amd64, with some Gentoo-level
-> patches.
->
-> At my school, we have an open wireless network, and computers are
-> frequently within reach of several access points for this network.
->
-> But the APs seem to employ some load-balancing strategy, where several
-> APs will turn down the association request claiming they're overloaded
-> (RX AssocResp with status=17).
-[...]
-> Now I don't know if this is some kind of load-balancing or how does it
-> work, nor do I know if this is the expected behavior (maybe it is?). If
-> this is not supposed to happen, where can I look to try to fix the
-> issue?
-[...]
+$ uname -a
+Linux ubuntu 3.2.0-33-generic #52-Ubuntu SMP Thu Oct 18 16:29:15 UTC
+2012 x86_64 x86_64 x86_64 GNU/Linux
 
-After updating the kernel (now 3.5.7), I still get similar issues with
-this driver, in fact, right now I was being connected to a not-so-close
-AP with bad signal quality, because association with the closest one was
-rejected (and it still takes some time to try another AP). 
+$ lspci -vvn|grep 43 -A7
+03:00.0 0280: 14e4:4331 (rev 02)
+	Subsystem: 106b:00d6
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
+Stepping- SERR- FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 256 bytes
+	Interrupt: pin A routed to IRQ 17
+	Region 0: Memory@a0600000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: <access denied>
 
-As I keep both drivers around in my system (just because it never
-occured to me to uninstall the proprietary since I switched to the open
-driver), I decided to give the proprietary one a try. 
+$ dmesg
+http://paste.ubuntu.com/1392777/
 
-So, some rmmods and modprobes later, it seems that the proprietary
-driver connects *instantly* (that is, to be scientifically accurate,
-does not take a noticeable amount of time to get connected).
+My laptop is MacBookPro8,1 and I'm running Ubuntu 12.04 64bit without
+any kernel related tweak. I installed firmware from
+broadcom-wl-5.100.138.tar.bz2 as described in
+http://linuxwireless.org/en/users/Drivers/b43
+( I used "b43-fwcutter" package from Ubuntu repository and extracted
+the firmware manually, I know that postint script in
+"firmware-b43-installer" package of Debian/Ubuntu is a bit outdated. )
 
-That is, for some reason, the open, in-kernel, driver does things in a
-different way that leads to the scenario I described.
+My Wi-Fi is now usable, but it is unstable. The SSID I generally
+connect is provided by a university. The connection uses WPA, TTLS,
+MsCHAPv2. There is also a unencrypted SSID using Web portal. But the
+unencrypted SSID doesn't work any better.
 
-So now I guess it would be interesting to somehow compare what both
-drivers do. As I have access to a wireless network exhibiting the issue
-and I have both drivers installed, I could easily try to gather some
-information with each driver. What would be useful for the devs?
+Now I generally monitor my Wi-Fi state using "ping 8.8.8.8" and "tail
+-f /var/log/syslog". Ping fails from time to time and the syslog at
+that time shows something like "wlan0: direct probe to
+00:11:22:33:44:55 timed out" (the MAC address is definitely fake). In
+most cases the disconnection is temporary. But sometimes only
+restarting NetworkManger could help.
 
--- 
-Nuno Silva (aka njsg)
-http://njsg.sdf-eu.org/
+Mac OS X on same machine seems to be much better on Wi-Fi stability. I
+don't know how to measure it. But I don't need to monitor Wi-Fi state
+and I don't experience visible disconnection (Web page stuck, IRC/XMPP
+disconnection, ...)
+
+What I'd like to know:
+1. Is there any way that I can tweak options of b43 module?
+2. Anything else I can help. I'm definitely a noob on kernel stuff but
+I'm willing to get some related links.
