@@ -1,31 +1,108 @@
-From: Felix Janda <felix.janda@posteo.de>
-Date: Sun, 9 Dec 2012 08:44:50 +0100
-Subject: [RFC/RFT] b43: Load initial firmware file asynchronously
-In-Reply-To: <50C3C940.3060704@lwfinger.net>
-References: <20121208143032.GA1903@gauss> <50C375BE.9050907@lwfinger.net>
- <20121208175615.GA10664@gauss> <50C399A9.2060304@lwfinger.net>
- <20121208202435.GA14973@gauss> <50C3AF0C.8000607@lwfinger.net>
- <20121208214157.GA21034@gauss> <50C3BD0F.1050603@lwfinger.net>
- <20121208223509.GA21258@gauss> <50C3C940.3060704@lwfinger.net>
-Message-ID: <20121209074450.GA1073@gauss>
+From: Felix Fietkau <nbd@openwrt.org>
+Date: Mon, 10 Dec 2012 17:40:21 +0100
+Subject: [PATCH] b43: fix tx path skb leaks
+Message-ID: <1355157621-25099-1-git-send-email-nbd@openwrt.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: John W Linville <linville@tuxdriver.com>, b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
+To: linux-wireless@vger.kernel.org
+Cc: linville@tuxdriver.com, b43-dev@lists.infradead.org
 
-On 12/08/12 at 05:12pm, Larry Finger wrote:
-> > The delay of 60 seconds will stay?
-> 
-> As this happens while user-space is getting started, there is little we can do. 
-> On my dual-core x86_64 system with each CPU running at 2 GHz, it takes 24 sec 
-> before the fw is loaded. At least other things happen in parallel.
-> 
-> Larry
+ieee80211_free_txskb() needs to be used instead of dev_kfree_skb_any for
+tx packets passed to the driver from mac80211
 
-Ok. (The behavior is now the same as if the firmware was built into the kernel.)
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+Cc: stable at vger.kernel.org
+---
+ drivers/net/wireless/b43/dma.c  |  7 +++++--
+ drivers/net/wireless/b43/main.c | 12 ++++++++----
+ drivers/net/wireless/b43/pio.c  |  4 ++--
+ 3 files changed, 15 insertions(+), 8 deletions(-)
 
-So thanks again for the fix.
-
-Felix
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index 777cd74..38bc5a7 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -409,7 +409,10 @@ static inline
+ 				struct b43_dmadesc_meta *meta)
+ {
+ 	if (meta->skb) {
+-		dev_kfree_skb_any(meta->skb);
++		if (ring->tx)
++			ieee80211_free_txskb(ring->dev->wl->hw, meta->skb);
++		else
++			dev_kfree_skb_any(meta->skb);
+ 		meta->skb = NULL;
+ 	}
+ }
+@@ -1454,7 +1457,7 @@ int b43_dma_tx(struct b43_wldev *dev, struct sk_buff *skb)
+ 	if (unlikely(err == -ENOKEY)) {
+ 		/* Drop this packet, as we don't have the encryption key
+ 		 * anymore and must not transmit it unencrypted. */
+-		dev_kfree_skb_any(skb);
++		ieee80211_free_txskb(dev->wl->hw, skb);
+ 		err = 0;
+ 		goto out;
+ 	}
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index ddd6a4f..16ab280 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -3397,7 +3397,7 @@ static void b43_tx_work(struct work_struct *work)
+ 				break;
+ 			}
+ 			if (unlikely(err))
+-				dev_kfree_skb(skb); /* Drop it */
++				ieee80211_free_txskb(wl->hw, skb);
+ 			err = 0;
+ 		}
+ 
+@@ -3419,7 +3419,7 @@ static void b43_op_tx(struct ieee80211_hw *hw,
+ 
+ 	if (unlikely(skb->len < 2 + 2 + 6)) {
+ 		/* Too short, this can't be a valid frame. */
+-		dev_kfree_skb_any(skb);
++		ieee80211_free_txskb(hw, skb);
+ 		return;
+ 	}
+ 	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
+@@ -4229,8 +4229,12 @@ redo:
+ 
+ 	/* Drain all TX queues. */
+ 	for (queue_num = 0; queue_num < B43_QOS_QUEUE_NUM; queue_num++) {
+-		while (skb_queue_len(&wl->tx_queue[queue_num]))
+-			dev_kfree_skb(skb_dequeue(&wl->tx_queue[queue_num]));
++		while (skb_queue_len(&wl->tx_queue[queue_num])) {
++			struct sk_buff *skb;
++
++			skb = skb_dequeue(&wl->tx_queue[queue_num]);
++			ieee80211_free_txskb(wl->hw, skb);
++		}
+ 	}
+ 
+ 	b43_mac_suspend(dev);
+diff --git a/drivers/net/wireless/b43/pio.c b/drivers/net/wireless/b43/pio.c
+index 3533ab8..a73ff8c 100644
+--- a/drivers/net/wireless/b43/pio.c
++++ b/drivers/net/wireless/b43/pio.c
+@@ -196,7 +196,7 @@ static void b43_pio_cancel_tx_packets(struct b43_pio_txqueue *q)
+ 	for (i = 0; i < ARRAY_SIZE(q->packets); i++) {
+ 		pack = &(q->packets[i]);
+ 		if (pack->skb) {
+-			dev_kfree_skb_any(pack->skb);
++			ieee80211_free_txskb(q->dev->wl->hw, pack->skb);
+ 			pack->skb = NULL;
+ 		}
+ 	}
+@@ -552,7 +552,7 @@ int b43_pio_tx(struct b43_wldev *dev, struct sk_buff *skb)
+ 	if (unlikely(err == -ENOKEY)) {
+ 		/* Drop this packet, as we don't have the encryption key
+ 		 * anymore and must not transmit it unencrypted. */
+-		dev_kfree_skb_any(skb);
++		ieee80211_free_txskb(dev->wl->hw, skb);
+ 		err = 0;
+ 		goto out;
+ 	}
+-- 
+1.7.12.2
