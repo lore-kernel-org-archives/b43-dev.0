@@ -1,108 +1,82 @@
-From: Felix Fietkau <nbd@openwrt.org>
-Date: Mon, 10 Dec 2012 17:40:21 +0100
-Subject: [PATCH] b43: fix tx path skb leaks
-Message-ID: <1355157621-25099-1-git-send-email-nbd@openwrt.org>
+From: Vendas Krazer Technologies <evendas@krazer.com.br>
+Date: Fri, 14 Dec 2012 12:43:36 -0200
+Subject: Kit Cliente Atheros 5GHz 150Mbps AN 5.8 1T1R CPE SOFT Antena
+ 18dBi ou 20dBi - NanoStation M5
+Message-ID: <A26A1370.1CDD9F8@krazer>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org
-Cc: linville@tuxdriver.com, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-ieee80211_free_txskb() needs to be used instead of dev_kfree_skb_any for
-tx packets passed to the driver from mac80211
+Lan?amento
 
-Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-Cc: stable at vger.kernel.org
----
- drivers/net/wireless/b43/dma.c  |  7 +++++--
- drivers/net/wireless/b43/main.c | 12 ++++++++----
- drivers/net/wireless/b43/pio.c  |  4 ++--
- 3 files changed, 15 insertions(+), 8 deletions(-)
+CPE Krazer Sky Station 5GHz N
 
-diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-index 777cd74..38bc5a7 100644
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -409,7 +409,10 @@ static inline
- 				struct b43_dmadesc_meta *meta)
- {
- 	if (meta->skb) {
--		dev_kfree_skb_any(meta->skb);
-+		if (ring->tx)
-+			ieee80211_free_txskb(ring->dev->wl->hw, meta->skb);
-+		else
-+			dev_kfree_skb_any(meta->skb);
- 		meta->skb = NULL;
- 	}
- }
-@@ -1454,7 +1457,7 @@ int b43_dma_tx(struct b43_wldev *dev, struct sk_buff *skb)
- 	if (unlikely(err == -ENOKEY)) {
- 		/* Drop this packet, as we don't have the encryption key
- 		 * anymore and must not transmit it unencrypted. */
--		dev_kfree_skb_any(skb);
-+		ieee80211_free_txskb(dev->wl->hw, skb);
- 		err = 0;
- 		goto out;
- 	}
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index ddd6a4f..16ab280 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -3397,7 +3397,7 @@ static void b43_tx_work(struct work_struct *work)
- 				break;
- 			}
- 			if (unlikely(err))
--				dev_kfree_skb(skb); /* Drop it */
-+				ieee80211_free_txskb(wl->hw, skb);
- 			err = 0;
- 		}
- 
-@@ -3419,7 +3419,7 @@ static void b43_op_tx(struct ieee80211_hw *hw,
- 
- 	if (unlikely(skb->len < 2 + 2 + 6)) {
- 		/* Too short, this can't be a valid frame. */
--		dev_kfree_skb_any(skb);
-+		ieee80211_free_txskb(hw, skb);
- 		return;
- 	}
- 	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
-@@ -4229,8 +4229,12 @@ redo:
- 
- 	/* Drain all TX queues. */
- 	for (queue_num = 0; queue_num < B43_QOS_QUEUE_NUM; queue_num++) {
--		while (skb_queue_len(&wl->tx_queue[queue_num]))
--			dev_kfree_skb(skb_dequeue(&wl->tx_queue[queue_num]));
-+		while (skb_queue_len(&wl->tx_queue[queue_num])) {
-+			struct sk_buff *skb;
-+
-+			skb = skb_dequeue(&wl->tx_queue[queue_num]);
-+			ieee80211_free_txskb(wl->hw, skb);
-+		}
- 	}
- 
- 	b43_mac_suspend(dev);
-diff --git a/drivers/net/wireless/b43/pio.c b/drivers/net/wireless/b43/pio.c
-index 3533ab8..a73ff8c 100644
---- a/drivers/net/wireless/b43/pio.c
-+++ b/drivers/net/wireless/b43/pio.c
-@@ -196,7 +196,7 @@ static void b43_pio_cancel_tx_packets(struct b43_pio_txqueue *q)
- 	for (i = 0; i < ARRAY_SIZE(q->packets); i++) {
- 		pack = &(q->packets[i]);
- 		if (pack->skb) {
--			dev_kfree_skb_any(pack->skb);
-+			ieee80211_free_txskb(q->dev->wl->hw, pack->skb);
- 			pack->skb = NULL;
- 		}
- 	}
-@@ -552,7 +552,7 @@ int b43_pio_tx(struct b43_wldev *dev, struct sk_buff *skb)
- 	if (unlikely(err == -ENOKEY)) {
- 		/* Drop this packet, as we don't have the encryption key
- 		 * anymore and must not transmit it unencrypted. */
--		dev_kfree_skb_any(skb);
-+		ieee80211_free_txskb(dev->wl->hw, skb);
- 		err = 0;
- 		goto out;
- 	}
--- 
-1.7.12.2
+Voc? cliente pediu que a Krazer fizesse uma nova CPE num formato mais estiloso, pequena, de menor tamanho e que tivesse novas funcionabilidade, mais especificamente acesso f?cil ao bot?o de reset, prote??o contra queima e a t?o desejada SA?DA PARA ANTENA EXTERNA!!!
+
+R$ 179.90
+
+
+
+Antena Integrada de 18dBi 60?
+
+Duas Portas de Rede Lan e Wan
+
+PA Real de 630mW e LNA Ultra Ganho
+PoE Passivo com Prote??o Dupla de 12 a 24V
+Fonte Chaveada 12V Full Range 110 a 220V
+Exclusiva Sa?da para Antena Externa
+
+Homologa??o Anatel 0269-11-5280
+
+Instala??o R?pida e Simples.
+Software Amigavel e em Portugu?s!
+Suporte a PPPoE Wisp Cliente!
+Controle de Banda!
+
+
+
+Excelente sinal de recep??o!  Longa Dist?ncia!
+
+
+Fa?a um teste em sua rede e compare com os concorrentes, muito mais sinal que UBNT, muito mais dados, transmiss?o de quase 90Mbps TCP/IP continuamente! Lat?ncia de rede de 1 a 5 ms com carga completa!
+
+Contate-nos
+Val Campos // Carla Maria // Eder Roberto
+
+Email / MSN:
+vendas at allearth.com.br
+
+
+Vendas / SAC
+(19) 3256-5557
+(19) 3245-0708
+www.krazer.com.br
+
+
+Envio de Email n?o autorizado ? crime, n?o seja o vil?o da hist?ria! Email ? protegido sobre sigilo fiscal e federal. Lei Federal Brasil.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20121214/e34af634/attachment-0001.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: cpe soft 5ghz atheros 1t1r.gif
+Type: image/gif
+Size: 13384 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20121214/e34af634/attachment-0001.gif>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: cpe-robo.jpg
+Type: image/jpeg
+Size: 12449 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20121214/e34af634/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: suporte-pantilt.jpg
+Type: image/jpeg
+Size: 24223 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20121214/e34af634/attachment-0003.jpg>
