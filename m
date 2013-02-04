@@ -1,118 +1,125 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 26 Jan 2013 22:39:34 -0600
-Subject: BCM4306
-In-Reply-To: <CADX9XQun7M3vx_9P+5MPRPpO7+h=FgD2zeAwSpBQqOmX5ORU_w@mail.gmail.com>
-References: <CADX9XQtND8fLZwaGs+wrCYgwc6wW_nvx7sngx+Pa2+20RmXd1Q@mail.gmail.com>
- <5104A316.9040106@lwfinger.net>
- <CADX9XQun7M3vx_9P+5MPRPpO7+h=FgD2zeAwSpBQqOmX5ORU_w@mail.gmail.com>
-Message-ID: <5104AF86.8050408@lwfinger.net>
+From: Christian Kujau <lists@nerdbynature.de>
+Date: Sun, 3 Feb 2013 21:09:33 -0800 (PST)
+Subject: 3.8: possible circular locking dependency detected
+Message-ID: <alpine.DEB.2.01.1302031843450.13050@trent.utfs.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, b43-dev@lists.infradead.org
 
-On 01/26/2013 10:05 PM, stosss wrote:
-> On Sat, Jan 26, 2013 at 10:46 PM, Larry Finger
-> <Larry.Finger@lwfinger.net> wrote:
->> On 01/26/2013 09:34 PM, stosss wrote:
->>>
->>> Following the instructions from
->>> http://linuxwireless.org/en/users/Drivers/b43
->>>
->>> lspci -vnn -d 14e4:
->>>
->>> 0b:03.0 Network controller [0280]: Broadcom Corporation BCM4306
->>> 802.11b/g Wireless LAN Controller [14e4:4320] (rev 03)
->>>                Subsystem: Hewlett-Packard Company Broadcom  802.11b/g
->>> WLAN [103c:12f8]
->>>                Flags: fast devsel, IRQ 5
->>>                Memory at c8206000 (32-bit, non-prefetchable) [disabled]
->>> [size=8k]
->>>                Kernel modules: ssb
->>>
->>>
->>> PCI-ID          Supported       Chip ID         Modes    PHY version
->>> 14e4:4320       yes            BCM4306/3         ?            G (r2)
->>>
->>> Device firmware installation
->>>
->>> The Broadcom wireless chip needs proprietary software (called
->>> "firmware") that runs on the wireless chip itself to work properly.
->>> This firmware is copyrighted by Broadcom and must be extracted from
->>> Broadcom's proprietary drivers. To get such firmware on your system,
->>> you must download the driver from a legal distribution point, extract
->>> it, and install it. This is accomplished different ways by different
->>> Linux distributions, so please read the section for yours for the best
->>> results. You will need an alternate working internet connection (by
->>> Ethernet cable, for example) since the firmware cannot be included
->>> with the distro itself.
->>>
->>> Post details for missing distributions at b43-dev at lists.infradead.org.
->>> Note: the firmware from the binary drivers is copyrighted by Broadcom
->>> Corporation and cannot be redistributed.
->>>
->>> I have been to the broadcom site. I have found and downloaded files
->>> from the broadcom site and a couple other sites that are for the
->>> bcm4306.
->>>
->>> I am running PCLinuxOS which is a combination of Mandriva, Ubuntu,
->>> Debian and a few other distributions.
->>>
->>> I have installed from the distribution repo
->>> b43-firmware
->>> b43-fwcutter
->>> b43legacy-firmware
->>> bcm43xx-firmware
->>> bcm43-fwcutter
->>> dkms-broadcom-wl
->>>
->>> According to the info above this chip should work. Something is
->>> missing but I don't know what it is.
->>>
->>> There are three windows drivers that show up with ndiswrapper -l that
->>> should work as well but they don't either.
->>>
->>> I don't know what else to check or do. Do I need to black list the
->>> Kernel module ssb ? I have tried to get a Linux or windows driver to
->>> work and I have tried several things even uninstalling all drivers and
->>> then installing the ones listed above.
->>>
->>> It would be awesome if someone could tell me what I haven't done that
->>> I need to do and point me to a workable solution.
->>
->>
->> Did you run b43-fwcutter to extract the firmware?
->
-> I don't know what to do here or if I need to.
->
->> Do you have files in directory /lib/firmware/b43/?
->
-> Yes, all of them end in .fw the b43-firmware is provided by the the
-> distribution repo. I am assuming that it, too, has a script similar to
-> the one with your distribution. There have been several from the
-> distro forum who have used a few methods to achieve success on their
-> systems but none of their suggestions have worked for me. Maybe
-> because I need to run that b43-fwcutter but I don't know what file to
-> use it on. If I knew the answer to that I might have the problem
-> solved.
->
->> I use the openSUSE distro, which includes a script
->> /usr/sbin/install_bcm43xx_firmware that downloads the necessary Broadcom
->> driver file, extracts the firmware using fwcutter, and writes the files to
->> the firmware directory. I have no idea how PCLinuxOS does it.
->
-> I was actually considering installing openSUSE on the laptop that I am
-> having the problem on. To see if I could resolve the problem. I saw it
-> listed as one specifically referenced on
-> thehttp://linuxwireless.org/en/users/Drivers/b43 site.
+Hi,
 
-If you have the firmware files loaded in /lib/firmware/b43/, then you need not 
-do anything else related to firmware. Please run the following 2 commands, and 
-then look at the end of the dmesg output:
+similar to what I reported earlier [0] for 3.8.0-rc1, this happens during 
+"ifup wlan0" (which in effect starts wpa_supplicant to bring up a Broadcom 
+b43 wifi network interface). The interface is working though and continues 
+to work over several ifup/ifdown iterations.
 
-sudo /sbin/modprobe -rv b43
-sudo /sbin/modprobe -v b43
-iwconfig
+The backtrace looks awfully similar to the earlier[0] report, but this 
+time it had b43* stuff in it so I thought I should report it. Full dmesg 
+and .config here: http://nerdbynature.de/bits/3.8.0-rc6/
 
-Larry
+Christian.
+
+[  807.693791] 
+[  807.695519] ======================================================
+[  807.697198] [ INFO: possible circular locking dependency detected ]
+[  807.698890] 3.8.0-rc6-00008-g8b31849 #1 Not tainted
+[  807.700573] -------------------------------------------------------
+[  807.702255] wpa_supplicant/4129 is trying to acquire lock:
+[  807.703925]  ((&wl->firmware_load)){+.+.+.}, at: [<c0049d1c>] flush_work+0x0/0x2b0
+[  807.705696] 
+[  807.705696] but task is already holding lock:
+[  807.709023]  (rtnl_mutex){+.+.+.}, at: [<c04362d4>] rtnl_lock+0x1c/0x2c
+[  807.710743] 
+[  807.710743] which lock already depends on the new lock.
+[  807.710743] 
+[  807.715541] 
+[  807.715541] the existing dependency chain (in reverse order) is:
+[  807.718691] 
+[  807.718691] -> #1 (rtnl_mutex){+.+.+.}:
+[  807.721903]        [<c04f69ac>] mutex_lock_nested+0x6c/0x2bc
+[  807.723533]        [<c04362d4>] rtnl_lock+0x1c/0x2c
+[  807.725138]        [<f20be0d8>] wiphy_register+0x510/0x53c [cfg80211]
+[  807.726798]        [<f64815ec>] ieee80211_register_hw+0x3f8/0x82c [mac80211]
+[  807.728431]        [<f64c6890>] b43_request_firmware+0x8c/0x198 [b43]
+[  807.730025]        [<c004b1f4>] process_one_work+0x1a4/0x498
+[  807.731549]        [<c004b8b4>] worker_thread+0x17c/0x428
+[  807.733025]        [<c0051280>] kthread+0xa8/0xac
+[  807.734439]        [<c0010990>] ret_from_kernel_thread+0x64/0x6c
+[  807.735810] 
+[  807.735810] -> #0 ((&wl->firmware_load)){+.+.+.}:
+[  807.738389]        [<c0071b38>] lock_acquire+0x50/0x6c
+[  807.739694]        [<c0049d58>] flush_work+0x3c/0x2b0
+[  807.740980]        [<c004c30c>] __cancel_work_timer+0x94/0xec
+[  807.742271]        [<f64c748c>] b43_wireless_core_stop+0x5c/0x234 [b43]
+[  807.743574]        [<f64c76b0>] b43_op_stop+0x4c/0x88 [b43]
+[  807.744888]        [<f64a4c08>] ieee80211_stop_device+0x4c/0x8c [mac80211]
+[  807.746240]        [<f64913a8>] ieee80211_do_stop+0x2c0/0x5dc [mac80211]
+[  807.747582]        [<f64916dc>] ieee80211_stop+0x18/0x2c [mac80211]
+[  807.748925]        [<c0423d94>] __dev_close_many+0xb0/0x100
+[  807.750257]        [<c0423e10>] __dev_close+0x2c/0x4c
+[  807.751560]        [<c0427514>] __dev_change_flags+0x124/0x178
+[  807.752868]        [<c042761c>] dev_change_flags+0x1c/0x64
+[  807.754177]        [<c047db9c>] devinet_ioctl+0x69c/0x74c
+[  807.755459]        [<c047ecf8>] inet_ioctl+0xcc/0xf8
+[  807.756709]        [<c040eab0>] sock_ioctl+0x70/0x2e8
+[  807.757948]        [<c00d9f70>] do_vfs_ioctl+0xa4/0x7c0
+[  807.759182]        [<c00da6d0>] sys_ioctl+0x44/0x70
+[  807.760407]        [<c001084c>] ret_from_syscall+0x0/0x38
+[  807.761622] 
+[  807.761622] other info that might help us debug this:
+[  807.761622] 
+[  807.765107]  Possible unsafe locking scenario:
+[  807.765107] 
+[  807.767412]        CPU0                    CPU1
+[  807.768561]        ----                    ----
+[  807.769690]   lock(rtnl_mutex);
+[  807.770822]                                lock((&wl->firmware_load));
+[  807.771970]                                lock(rtnl_mutex);
+[  807.773115]   lock((&wl->firmware_load));
+[  807.774244] 
+[  807.774244]  *** DEADLOCK ***
+[  807.774244] 
+[  807.777405] 1 lock held by wpa_supplicant/4129:
+[  807.778475]  #0:  (rtnl_mutex){+.+.+.}, at: [<c04362d4>] rtnl_lock+0x1c/0x2c
+[  807.779628] 
+[  807.779628] stack backtrace:
+[  807.781720] Call Trace:
+[  807.782765] [eea2db20] [c0009160] show_stack+0x48/0x15c (unreliable)
+[  807.784087] [eea2db60] [c04fae24] print_circular_bug+0x2b0/0x2c8
+[  807.785169] [eea2db90] [c0071300] __lock_acquire+0x14f4/0x18c8
+[  807.786254] [eea2dc30] [c0071b38] lock_acquire+0x50/0x6c
+[  807.787335] [eea2dc50] [c0049d58] flush_work+0x3c/0x2b0
+[  807.788418] [eea2dcc0] [c004c30c] __cancel_work_timer+0x94/0xec
+[  807.789516] [eea2dcf0] [f64c748c] b43_wireless_core_stop+0x5c/0x234 [b43]
+[  807.790629] [eea2dd20] [f64c76b0] b43_op_stop+0x4c/0x88 [b43]
+[  807.791754] [eea2dd40] [f64a4c08] ieee80211_stop_device+0x4c/0x8c [mac80211]
+[  807.792888] [eea2dd50] [f64913a8] ieee80211_do_stop+0x2c0/0x5dc [mac80211]
+[  807.794016] [eea2dd80] [f64916dc] ieee80211_stop+0x18/0x2c [mac80211]
+[  807.795124] [eea2dd90] [c0423d94] __dev_close_many+0xb0/0x100
+[  807.796237] [eea2ddb0] [c0423e10] __dev_close+0x2c/0x4c
+[  807.797345] [eea2ddd0] [c0427514] __dev_change_flags+0x124/0x178
+[  807.798451] [eea2ddf0] [c042761c] dev_change_flags+0x1c/0x64
+[  807.799564] [eea2de10] [c047db9c] devinet_ioctl+0x69c/0x74c
+[  807.800680] [eea2de70] [c047ecf8] inet_ioctl+0xcc/0xf8
+[  807.801792] [eea2de80] [c040eab0] sock_ioctl+0x70/0x2e8
+[  807.802905] [eea2dea0] [c00d9f70] do_vfs_ioctl+0xa4/0x7c0
+[  807.804025] [eea2df10] [c00da6d0] sys_ioctl+0x44/0x70
+[  807.805145] [eea2df40] [c001084c] ret_from_syscall+0x0/0x38
+[  807.806270] --- Exception: c01 at 0xfbf2758
+[  807.806270]     LR = 0xfbf26bc
+
+[  850.445766] b43-phy1: Broadcom 4306 WLAN found (core revision 5)
+[  850.469062] b43-phy1: Found PHY: Analog 2, Type 2 (G), Revision 2
+[  850.493199] Broadcom 43xx driver loaded [ Features: P ]
+[  850.497448] ieee80211 phy1: Selected rate control algorithm 'minstrel_ht'
+[  860.820792] b43-phy1: Loading firmware version 410.2160 (2007-05-26 15:32:10)
+
+
+[0] https://lkml.org/lkml/2013/1/3/543
+-- 
+BOFH excuse #174:
+
+Backbone adjustment
