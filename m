@@ -1,55 +1,49 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Date: Tue, 5 Feb 2013 20:47:11 -0800 (PST)
-Subject: b43: /dev/hwrng isn't random
-Message-ID: <alpine.DEB.2.01.1302052020090.13050@trent.utfs.org>
+From: GPS tracker with CAN bus Supporting <180@exbusines.com>
+Date: Thu, 07 Feb 2013 17:23:55 +0000
+Subject: =?GB2312?B?R1BTIHRyYWNrZXIgd2l0aCBDQU4gYnVzIFN1cHBvcnRpbmfT68T6ubLP7cHL?=
+ =?GB2312?B?z+Cy4aGj?=
+Message-ID: <f46d042f96e010867204d525b5bd@google.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Hi,
+Dear Sir
 
-while playing around with this BCM4306 (b43) wifi NIC (and reporting some 
-lockdep issues, [0]), I noticed that the chip could be used as a HWRNG and 
-driver support for this has been added years ago - great, I never knew!
+  This is Anna,the sales manager of Redview GPS in China.
 
-But when attempting to read from /dev/hwrng (b43 is loaded, interface is 
-up & running), the device returns not random bytes, but:
+VT680 is a GPS tracker which can work with CAN bus to vehicle info from  
+ECU. Following info can be read out without additional sensor : tank fuel,  
+speed, RPM, engine and weight info etc. This is widely used in truck  
+tracking application.
 
-$ head -c 1000 /dev/hwrng | od -x
-0000000 0000 0000 0000 0000 0000 0000 0000 0000
-*
-0001740 0000 0000 0000 0000
-0001750
+I would appreciate if you forward this letter to Technical Manager or to  
+other expert responsible for technical integration of new products in your  
+company, or provide me with his contact for we could discuss all the  
+details of our future cooperation.
 
-I've used a custom-built 3.8-rc6 and a stock Debian 3.2.0-4, same results. 
-I should add that this BCM4306 wifi NIC is inside an older (2005) 
-PowerBook G4 laptop, so maybe it's a hardware fault. However, wifi is 
-working perfectly.
+Your early reply is highly appreciated.
 
-I found a similar thing reported _years_ ago for the OLTP project, with 
-the following note, though I could not find the exact changeset for the 
-fix yet:
+Best Regards
 
-   https://dev.laptop.org/ticket/8089#comment:4
-   > Turned out OFW wasn't turning on the AES module.
+Anna
 
-CONFIG_CRYPTO_AES is enabled in my case. On another box with an BCM4312 
-chip (and a Fedora 3.7.2-204.fc18.i686 kernel) the hwrng is working.
-
-More details, .config & lspci here:
-
-  http://nerdbynature.de/bits/3.8.0-rc6/BCM4306/
-  http://nerdbynature.de/bits/3.8.0-rc6/BCM4312/
-
-Any thoughts how to find out if this is a software or a hardware issue?
-
-Thanks,
-Christian.
-
-[0] http://www.spinics.net/lists/kernel/msg1477153.html
--- 
-BOFH excuse #144:
-
-Too few computrons available.
+https://picasaweb.google.com/lh/sredir?uname=113633352984764324451&target=ALBUM&id=5842262804949642193&authkey=Gv1sRgCO2a9aOiyZmEmAE&invite=CKXkyK0C&feat=email
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130207/126d1065/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: picasaweblogo-zh_CN.gif
+Type: image/gif
+Size: 1646 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130207/126d1065/attachment.gif>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: email.jpg
+Type: image/jpeg
+Size: 4132 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130207/126d1065/attachment.jpg>
