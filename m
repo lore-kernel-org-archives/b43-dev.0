@@ -1,49 +1,27 @@
-From: GPS tracker with CAN bus Supporting <180@exbusines.com>
-Date: Thu, 07 Feb 2013 17:23:55 +0000
-Subject: =?GB2312?B?R1BTIHRyYWNrZXIgd2l0aCBDQU4gYnVzIFN1cHBvcnRpbmfT68T6ubLP7cHL?=
- =?GB2312?B?z+Cy4aGj?=
-Message-ID: <f46d042f96e010867204d525b5bd@google.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Tue, 12 Feb 2013 23:36:55 +0100
+Subject: b43 gpio
+Message-ID: <511AC407.5030707@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Dear Sir
+There are some issues with the b43_gpio_init() method in b43 [0], [1],
+[2], [3]. When I compare the spec [4] with the code in brcmsmac
+brcms_c_gpio_init() it is very different. Is this spec still correct for
+the recent ucode versions e.g. 666.2?
 
-  This is Anna,the sales manager of Redview GPS in China.
+> Start with a GPIO Mask value of 0x1F and GPIO Set value of 0xF (Note >
+that 0xF corresponds with the LEDs GPIO pins).
+This is strange to me, shouldn't only the gpios used by this wifi chip
+be activated?
 
-VT680 is a GPS tracker which can work with CAN bus to vehicle info from  
-ECU. Following info can be read out without additional sensor : tank fuel,  
-speed, RPM, engine and weight info etc. This is widely used in truck  
-tracking application.
+Hauke
 
-I would appreciate if you forward this letter to Technical Manager or to  
-other expert responsible for technical integration of new products in your  
-company, or provide me with his contact for we could discuss all the  
-details of our future cooperation.
-
-Your early reply is highly appreciated.
-
-Best Regards
-
-Anna
-
-https://picasaweb.google.com/lh/sredir?uname=113633352984764324451&target=ALBUM&id=5842262804949642193&authkey=Gv1sRgCO2a9aOiyZmEmAE&invite=CKXkyK0C&feat=email
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130207/126d1065/attachment.html>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: picasaweblogo-zh_CN.gif
-Type: image/gif
-Size: 1646 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130207/126d1065/attachment.gif>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: email.jpg
-Type: image/jpeg
-Size: 4132 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130207/126d1065/attachment.jpg>
+[0]: http://lists.infradead.org/pipermail/b43-dev/2012-February/002431.html
+[1]: https://dev.openwrt.org/ticket/11120
+[2]: https://dev.openwrt.org/ticket/12906
+[3]: https://dev.openwrt.org/ticket/12838
+[4]: http://bcm-specs.sipsolutions.net/GPIO
