@@ -1,120 +1,83 @@
 From: Thomas D. Dean <tomdean@speakeasy.org>
-Date: Mon, 18 Feb 2013 11:48:51 -0800
+Date: Mon, 18 Feb 2013 11:58:55 -0800
 Subject: Debian 6 b43 not working
-Message-ID: <512285A3.40209@speakeasy.org>
+In-Reply-To: <512285A3.40209@speakeasy.org>
+References: <512285A3.40209@speakeasy.org>
+Message-ID: <512287FF.1080303@speakeasy.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-I have a HP ZD7000 laptop with a BCM4306.  I see no errors, but, nothing 
-seems to happen when I try to bring wlan0 up.
+On 02/18/13 11:48, Thomas D. Dean wrote:
+> I have a HP ZD7000 laptop with a BCM4306.  I see no errors, but, nothing
+> seems to happen when I try to bring wlan0 up.
+>
 
- >  uname -a
-Linux zd7000 2.6.32-5-686 #1 SMP Sun Sep 23 09:49:36 UTC 2012 i686 GNU/Linux
-
- > lspci -vnn
-02:03.0 Network controller [0280]: Broadcom Corporation BCM4306 
-802.11b/g Wireless LAN Controller [14e4:4320] (rev 03)
-  Subsystem: Hewlett-Packard Company Broadcom 802.11b/g WLAN [103c:12f4]
-  Flags: fast devsel, IRQ 21
-  Memory at d2004000 (32-bit, non-prefetchable) [size=8K]
-
- > cat b43install.log
-wget http://bues.ch/b43/fwcutter/b43-fwcutter-017.tar.bz2
-tar xjf b43-fwcutter-017.tar.bz2
-cd b43-fwcutter-017
-make
-sudo make install
-cd ..
-export FIRMWARE_INSTALL_DIR="/lib/firmware"
-wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
-tar xjf broadcom-wl-5.100.138.tar.bz2
-sudo b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" \
-     broadcom-wl-5.100.138/linux/wl_apsta.o
-sudo modprobe -r b43
-sudo modprobe b43
-
- > sudo cat /etc/network/interfaces
-# This file describes the network interfaces available on your system
-# and how to activate them. For more information, see interfaces(5).
-
-# The loopback network interface
-auto lo
-iface lo inet loopback
-
-## wlan
-auto wlan0
-
-iface wlan0 inet dhcp
-   wpa-ssid "tddhome"
-   wpa-psk "xxxxxxxx"
-
-# The primary network interface
-allow-hotplug eth0
-#NetworkManager#iface eth0 inet dhcp
-
- > sudo ifup wlan0
-Internet Systems Consortium DHCP Client 4.1.1-P1
-Copyright 2004-2010 Internet Systems Consortium.
-All rights reserved.
-For info, please visit https://www.isc.org/software/dhcp/
-
-Listening on LPF/wlan0/00:90:4b:52:82:8a
-Sending on   LPF/wlan0/00:90:4b:52:82:8a
-Sending on   Socket/fallback
-DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 3
-DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 6
-DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 7
-DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 12
-DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 11
-DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 15
-DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 7
-No DHCPOFFERS received.
-No working leases in persistent database - sleeping.
-
- > sudo iwconfig wlan0
-wlan0   IEEE 802.11bg  ESSID:off/any
-         Mode:Managed  Access Point: Not-Associated   Tx-Power=27 dBm
-         Retry  long limit:7   RTS thr:off   Fragment thr:off
-         Encryption key:off
-         Power Management:off
-
- > sudo ifconfig
-eth0     Link encap:Ethernet  HWaddr 00:c0:9f:41:f9:a1
-          inet addr:192.168.2.4  Bcast:192.168.2.255  Mask:255.255.255.0
-          inet6 addr: fe80::2c0:9fff:fe41:f9a1/64 Scope:Link
-          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:64005 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:16332 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:1000
-          RX bytes:14999473 (14.3 MiB)  TX bytes:2583343 (2.4 MiB)
-          Interrupt:20 Base address:0x3000
-
-lo       Link encap:Local Loopback
-          inet addr:127.0.0.1  Mask:255.0.0.0
-          inet6 addr: ::1/128 Scope:Host
-          UP LOOPBACK RUNNING  MTU:16436  Metric:1
-          RX packets:25 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:25 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0
-          RX bytes:2398 (2.3 KiB)  TX bytes:2398 (2.3 KiB)
-
-wlan0 Link encap:Ethernet  HWaddr 00:90:4b:52:82:8a
-       UP BROADCAST MULTICAST  MTU:1500  Metric:1
-       RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-       TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-       collisions:0 txqueuelen:1000
-       RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-
-wlan0:avahi Link encap:Ethernet  HWaddr 00:90:4b:52:82:8a
-       inet addr:169.254.7.215  Bcast:169.254.255.255  Mask:255.255.0.0
-       UP BROADCAST MULTICAST  MTU:1500  Metric:1
-
-
-What additional information may I provide?
-
-Did I install the correct b43 version?
+Some additional information:  What does the line
+Feb 18 11:56:40 zd7000 kernel: [82985.817765] Pid: 22091, \
+    comm: irq/21-b43 Tainted:
+mean?
 
 Tom Dean
+
+ > from /var/log/messages
+
+Feb 18 11:55:17 zd7000 kernel: [82903.201403] ---[ end trace 
+33198fc3419570d3 ]---
+Feb 18 11:55:17 zd7000 kernel: [82903.340305] ------------[ cut here 
+]------------
+Feb 18 11:55:17 zd7000 kernel: [82903.340317] WARNING: at 
+/build/buildd-linux-2.6_2.6.32-46-i386-7ZiQaK/linux-2.6-2.6.32/debian/build/source_i386_none/net/mac80211/rx.c:2482 
+ieee80211_rx+0xdc/0x577 [mac80211]()
+Feb 18 11:55:17 zd7000 kernel: [82903.340321] Hardware name: Pavilion 
+zd7000 (DS487U#ABA)
+Feb 18 11:55:17 zd7000 kernel: [82903.340323] Modules linked in: b43 ssb 
+pcmcia rng_core mac80211 cfg80211 led_class nls_utf8 nls_cp437 vfat fat 
+speedstep_lib cpufreq_userspace cpufreq_powersave cpufreq_conservative 
+cpufreq_stats sco bridge stp rfcomm bnep l2cap crc16 bluetooth ppdev lp 
+binfmt_misc uinput fuse loop firewire_sbp2 snd_intel8x0m snd_intel8x0 
+snd_ac97_codec ac97_bus yenta_socket nouveau ttm drm_kms_helper snd_pcm 
+snd_seq rsrc_nonstatic drm snd_timer arc4 snd_seq_device ecb 
+i2c_algo_bit snd rfkill soundcore shpchp joydev snd_page_alloc irda 
+pci_hotplug i2c_i801 i2c_core crc_ccitt video parport_pc psmouse parport 
+output pcspkr evdev container button battery ac wmi serio_raw processor 
+ext3 jbd mbcache usbhid hid usb_storage sg sd_mod crc_t10dif sr_mod 
+cdrom ata_generic uhci_hcd cb710_mmc ata_piix firewire_ohci thermal 
+mmc_core 8139too libata thermal_sys firewire_core crc_itu_t cb710 8139cp 
+mii pcmcia_core ehci_hcd usbcore nls_base scsi_mod [last unloaded: 
+led_class]
+Feb 18 11:55:17 zd7000 kernel: [82903.340428] Pid: 22091, comm: 
+irq/21-b43 Tainted: G        W  2.6.32-5-686 #1
+Feb 18 11:55:17 zd7000 kernel: [82903.340430] Call Trace:
+Feb 18 11:55:17 zd7000 kernel: [82903.340439]  [<c1030949>] ? 
+warn_slowpath_common+0x5e/0x8a
+Feb 18 11:55:17 zd7000 kernel: [82903.340443]  [<c103097f>] ? 
+warn_slowpath_null+0xa/0xc
+Feb 18 11:55:17 zd7000 kernel: [82903.340452]  [<e37bd7b1>] ? 
+ieee80211_rx+0xdc/0x577 [mac80211]
+Feb 18 11:55:17 zd7000 kernel: [82903.340461]  [<e383490e>] ? 
+b43_rx+0x42f/0x456 [b43]
+Feb 18 11:55:17 zd7000 kernel: [82903.340468]  [<e3830080>] ? 
+b43_radio_init2060+0x160/0x1ea [b43]
+Feb 18 11:55:17 zd7000 kernel: [82903.340475]  [<e38386e6>] ? 
+op32_fill_descriptor+0x2a/0x8b [b43]
+Feb 18 11:55:17 zd7000 kernel: [82903.340483]  [<e38380a5>] ? 
+b43_dma_rx+0x212/0x282 [b43]
+Feb 18 11:55:17 zd7000 kernel: [82903.340490]  [<e3829d22>] ? 
+b43_do_interrupt_thread+0x3fa/0x4cb [b43]
+Feb 18 11:55:17 zd7000 kernel: [82903.340497]  [<e3829e08>] ? 
+b43_interrupt_thread_handler+0x15/0x27 [b43]
+Feb 18 11:55:17 zd7000 kernel: [82903.340502]  [<c106cf32>] ? 
+irq_thread+0xbc/0x1b4
+Feb 18 11:55:17 zd7000 kernel: [82903.340506]  [<c106ce76>] ? 
+irq_thread+0x0/0x1b4
+Feb 18 11:55:17 zd7000 kernel: [82903.340511]  [<c10440fc>] ? 
+kthread+0x61/0x66
+Feb 18 11:55:17 zd7000 kernel: [82903.340515]  [<c104409b>] ? 
+kthread+0x0/0x66
+Feb 18 11:55:17 zd7000 kernel: [82903.340521]  [<c1003d47>] ? 
+kernel_thread_helper+0x7/0x10
+Feb 18 11:55:17 zd7000 kernel: [82903.340524] ---[ end trace 
+33198fc3419570d4 ]-
