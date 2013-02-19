@@ -1,33 +1,28 @@
-From: Thomas D. Dean <tomdean@speakeasy.org>
-Date: Mon, 18 Feb 2013 13:25:30 -0800
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Tue, 19 Feb 2013 14:32:12 +0100
 Subject: Debian 6 b43 not working
-In-Reply-To: <51228F2A.1010803@lwfinger.net>
+In-Reply-To: <51229C4A.6030502@speakeasy.org>
 References: <512285A3.40209@speakeasy.org> <512287FF.1080303@speakeasy.org>
- <51228F2A.1010803@lwfinger.net>
-Message-ID: <51229C4A.6030502@speakeasy.org>
+ <51228F2A.1010803@lwfinger.net> <51229C4A.6030502@speakeasy.org>
+Message-ID: <20130219143212.31882694@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 02/18/13 12:29, Larry Finger wrote:
+On Mon, 18 Feb 2013 13:25:30 -0800
+"Thomas D. Dean" <tomdean@speakeasy.org> wrote:
 
-> If Debian has a compat-wireless package for your kernel, please try it.
-> That will likely fix the problem. If there is no pre-built package, then
-> you can get the source from
-> https://backports.wiki.kernel.org/index.php/Releases. I would recommend
-> the 3.7.6 release.
->
-> Larry
+> I downloaded and unpacked compat-drivers-3.7.6 - note the new name...
+> 
+> I used scritps/driver-select b43 then make and install.
+> 
+> Fixed the problem.
 
-I did not find a compat-wireless or compat-drivers package.
+You should probably open a bug report in the debian bug tracker.
 
-I downloaded and unpacked compat-drivers-3.7.6 - note the new name...
+-- 
+Greetings, Michael.
 
-I used scritps/driver-select b43 then make and install.
-
-Fixed the problem.
-
-Thanks,
-Tom Dean
+PGP: 908D8B0E
