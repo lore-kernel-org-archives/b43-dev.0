@@ -1,59 +1,39 @@
-From: William R Agosto Padilla <agopad@gmail.com>
-Date: Tue, 19 Feb 2013 12:58:32 -0500
-Subject: Access to Download B43 Source Code
-In-Reply-To: <20130219184640.6c7555d0@milhouse>
-References: <CACb-4KhmSknb7ucLP0cERBx=+nC6kkmsrymaPTXyk5pq+Y+oxg@mail.gmail.com>
- <20130219164802.2b2e83f7@milhouse>
- <CACb-4Kj_4D5EFaQPZaRPdOwB61ntO5uL7iT2v=z-LmNwRRwoVw@mail.gmail.com>
- <20130219184640.6c7555d0@milhouse>
-Message-ID: <CACb-4KgSmHNdSVX2k=OHEb3rARbyRV8P9Jtz=5iOQAOQ4iWCWA@mail.gmail.com>
+From: W. Trevor King <wking@tremily.us>
+Date: Thu, 21 Feb 2013 07:34:42 -0500
+Subject: [PATCH] b43: Fix 'me' -> 'be' typo in Kconfig
+Message-ID: <81849f3444af632521ee18dfa3009b6f60efca86.1361449471.git.wking@tremily.us>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, Michael Buesch <m@bues.ch>, Stefano Brivio <stefano.brivio@polimi.it>, b43-dev@lists.infradead.org, "W. Trevor King" <wking@tremily.us>
 
-Mr. B?sch,
+From: "W. Trevor King" <wking@tremily.us>
 
-Ok, thanks...and you did get the question. I really appreciate you
-taking the time
-to respond and provide advise.
+Also add a missing 'the' before 'runtime performance'.
 
-Very Respectfully,
+Signed-off-by: W. Trevor King <wking@tremily.us>
+---
+Based on wireless-testing's master-2013-02-19.
 
-William
+ drivers/net/wireless/b43/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 2/19/13, Michael B?sch <m@bues.ch> wrote:
-> On Tue, 19 Feb 2013 12:14:11 -0500
-> William R Agosto Padilla <agopad@gmail.com> wrote:
->
->> Mr. B?sch,
->>
->> Thank you for the advise. Once I untar the kernel version 3.7.9, and
->> recompile it, I should be able to see the entire b43 source code in
->> the download directory correct? If I untar it into my home directory,
->> once I recompile the kernel, I should be able to see the b43 source
->> code inside a b43 directory created inside my home directory by the
->> untar process, correct?
->
-> I'm not sure I get your question.
-> Just untar the tarball and find the sources in drivers/net/wireless/b43/
-> in the extracted files.
->
-> PS: In future, please _always_ CC the mailing-list.
->
->
-> --
-> Greetings, Michael.
->
-> PGP: 908D8B0E
->
-
-
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index 7a28d21..f259c49 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -166,8 +166,8 @@ config B43_DEBUG
+ 	  Broadcom 43xx debugging.
+ 
+ 	  This adds additional runtime sanity checks and statistics to the driver.
+-	  These checks and statistics might me expensive and hurt runtime performance
+-	  of your system.
++	  These checks and statistics might be expensive and hurt the runtime
++	  performance of your system.
+ 	  This also adds the b43 debugfs interface.
+ 
+ 	  Do not enable this, unless you are debugging the driver.
 -- 
-William R. Agosto Padilla
-Doctoral Candidate
-AIT D.Sc. Program
-Towson University
-(410) 615-3315 (Cell)
-agopad at gmail.com
+1.8.2.rc0.16.g20a599e
