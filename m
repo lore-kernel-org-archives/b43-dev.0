@@ -1,64 +1,189 @@
-From: W. Trevor King <wking@tremily.us>
-Date: Thu, 21 Feb 2013 10:04:54 -0500
-Subject: #define-ing hardcoded values in tables_phy_lcn.c
-Message-ID: <20130221150454.GA24786@odin.tremily.us>
+From: Thomas D. Dean <tomdean@speakeasy.org>
+Date: Sun, 24 Feb 2013 00:22:05 -0800
+Subject: b43 Load Problems
+Message-ID: <5129CDAD.3080105@speakeasy.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Hello list!
+# uname -a
+Linux zd7000 2.6.32-5-686 #1 SMP Sun Sep 23 09:49:36 UTC 2012 i686 GNU/Linux
 
-I'm playing around with BCM4313 support in b43.  I've enabled
-CONFIG_B43_PHY_LCN and loaded the resulting module, which gives:
+At boot time, I see several error messages about wlan (b43) (below)
 
-  $ dmesg | grep b43
-  [  161.209249] b43-phy1: Broadcom 4313 WLAN found (core revision 24)
-  [  161.210171] b43-phy1: Found PHY: Analog 10, Type 8 (LCN), Revision 1
-  [  161.210185] b43-phy1 debug: Found Radio: Manuf 0x17F, Version 0x2064, Revision 1
-  [  291.683651] b43-phy1: Loading firmware version 666.2 (2011-02-23 01:15:07)
-  [  291.685207] b43-phy1 ERROR: TX gain table unknown for this card
-  [  291.685213] b43-phy1 ERROR: SW ctl table is unknown for this card
-  [  291.711910] b43-phy1 debug: Chip initialized
-  [  291.712164] b43-phy1 debug: 64-bit DMA initialized
-  [  291.712323] b43-phy1 debug: QoS enabled
-  [  291.713781] b43-phy1 debug: Wireless interface started
-  [  291.713890] b43-phy1 debug: Adding Interface type 2
+wlan0 does not come up.  ifup wlan0 fails.
 
-After which, `wpa_cli scan_results` doesn't list any networks.  On the
-plus side, there haven't been any kernel panics ;).  Since the ?TX
-gain table unknown? error came first, I'm trying to figure out how
-brcmsmac handles this card, in the hope that I can just copy over the
-appropriate table.  It looks like b43's b43_phy_lcn_load_tx_gain_table
-matches up pretty closely with brcmsmac's
-wlc_lcnphy_load_tx_gain_table, and there are a number of numbers
-hard-coded into b43's version that are #defined in brcmsmac:
+# locate b43.ko
+/lib/modules/2.6.32-5-686/kernel/drivers/net/wireless/b43/b43.ko
+/lib/modules/2.6.32-5-686/updates/drivers/net/wireless/b43/b43.ko
 
-  b43    brcmsmac
-  =====  ==============================
-  0x140  LCNPHY_TX_PWR_CTRL_IQ_OFFSET
-  0xc0   LCNPHY_TX_PWR_CTRL_GAIN_OFFSET
+The second one corresponds to the driver built from
+   compat-drivers-3.7.6-1
 
-b43 versions of the two constants would probably be
-B43_LCNPHY_TX_PWR_CTRL_IQ_OFFSET and
-B43_LCNTAB_TX_PWR_CTRL_GAIN_OFFSET respecively, #defined in phy_lcn.h.
-There are likely other constants that could take advantage of similar
-naming.
+After boot, I log in and
 
-Should I work up a patch that does this, or are there b43/brcmsmac
-cross pollination issues that get in the way?
+# modprobe -r b43
+# modprobe b43
+# ifup wlan0
 
-Cheers,
-Trevor
+and wlan0 works!
 
--- 
-This email may be signed or encrypted with GnuPG (http://www.gnupg.org).
-For more information, see http://en.wikipedia.org/wiki/Pretty_Good_Privacy
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130221/43dffe53/attachment.sig>
+It appears I have some disagreement between the compat-drivers-3.7.6-1 
+driver and the kernel.  I have the correct headers (see below)
+
+Just to be sure, I did a make uninstall, deleted the 
+compat-drivers-3.7.6-1 directory, downloaded the tar.bz2 again, and 
+repeated the build/install process.  Same results.
+
+In the build process, there was one warning about initialization 
+removing qualifiers on a variable...
+
+Any ideas?
+
+Tom Dean
+
+# dmesg | grep b43
+[    1.356093] b43-pci-bridge 0000:02:03.0: PCI INT A -> GSI 21 (level, 
+low) -> IRQ 21
+[    6.239072] b43: disagrees about version of symbol ssb_device_is_enabled
+[    6.239078] b43: Unknown symbol ssb_device_is_enabled
+[    6.239432] b43: disagrees about version of symbol ssb_pmu_set_ldo_paref
+[    6.239435] b43: Unknown symbol ssb_pmu_set_ldo_paref
+[    6.239697] b43: disagrees about version of symbol 
+ssb_pcicore_dev_irqvecs_enable
+[    6.239700] b43: Unknown symbol ssb_pcicore_dev_irqvecs_enable
+[    6.240110] b43: disagrees about version of symbol ssb_bus_may_powerdown
+[    6.240113] b43: Unknown symbol ssb_bus_may_powerdown
+[    6.240704] b43: disagrees about version of symbol ssb_bus_suspend
+[    6.240706] b43: Unknown symbol ssb_bus_suspend
+[    6.240909] b43: disagrees about version of symbol ssb_bus_unregister
+[    6.240912] b43: Unknown symbol ssb_bus_unregister
+[    6.241352] b43: disagrees about version of symbol ssb_bus_resume
+[    6.241355] b43: Unknown symbol ssb_bus_resume
+[    6.241475] b43: disagrees about version of symbol ssb_set_devtypedata
+[    6.241478] b43: Unknown symbol ssb_set_devtypedata
+[    6.242511] b43: disagrees about version of symbol ssb_device_disable
+[    6.242514] b43: Unknown symbol ssb_device_disable
+[    6.242626] b43: disagrees about version of symbol 
+ssb_pmu_set_ldo_voltage
+[    6.242629] b43: Unknown symbol ssb_pmu_set_ldo_voltage
+[    6.244185] b43: disagrees about version of symbol ssb_device_enable
+[    6.244188] b43: Unknown symbol ssb_device_enable
+[    6.244610] b43: Unknown symbol ssb_chipco_gpio_control
+[    6.244714] b43: disagrees about version of symbol ssb_driver_unregister
+[    6.244716] b43: Unknown symbol ssb_driver_unregister
+[    6.245130] b43: disagrees about version of symbol __ssb_driver_register
+[    6.245133] b43: Unknown symbol __ssb_driver_register
+[    6.245630] b43: disagrees about version of symbol 
+ssb_bus_sdiobus_register
+[    6.245633] b43: Unknown symbol ssb_bus_sdiobus_register
+[    6.245737] b43: disagrees about version of symbol 
+ssb_bus_pcmciabus_register
+[    6.245740] b43: Unknown symbol ssb_bus_pcmciabus_register
+[    6.245872] b43: disagrees about version of symbol ssb_bus_powerup
+[    6.245874] b43: Unknown symbol ssb_bus_powerup
+[    6.246270] b43: Unknown symbol ssb_commit_settings
+[    6.247774] b43: disagrees about version of symbol ssb_dma_translation
+[    6.247777] b43: Unknown symbol ssb_dma_translation
+[   84.097824] b43: disagrees about version of symbol ssb_device_is_enabled
+[   84.097829] b43: Unknown symbol ssb_device_is_enabled
+[   84.098203] b43: disagrees about version of symbol ssb_pmu_set_ldo_paref
+[   84.098206] b43: Unknown symbol ssb_pmu_set_ldo_paref
+[   84.098480] b43: disagrees about version of symbol 
+ssb_pcicore_dev_irqvecs_enable
+[   84.098484] b43: Unknown symbol ssb_pcicore_dev_irqvecs_enable
+[   84.098861] b43: disagrees about version of symbol ssb_bus_may_powerdown
+[   84.098864] b43: Unknown symbol ssb_bus_may_powerdown
+[   84.099452] b43: disagrees about version of symbol ssb_bus_suspend
+[   84.099455] b43: Unknown symbol ssb_bus_suspend
+[   84.099661] b43: disagrees about version of symbol ssb_bus_unregister
+[   84.099664] b43: Unknown symbol ssb_bus_unregister
+[   84.100117] b43: disagrees about version of symbol ssb_bus_resume
+[   84.100120] b43: Unknown symbol ssb_bus_resume
+[   84.100240] b43: disagrees about version of symbol ssb_set_devtypedata
+[   84.100243] b43: Unknown symbol ssb_set_devtypedata
+[   84.101490] b43: disagrees about version of symbol ssb_device_disable
+[   84.101496] b43: Unknown symbol ssb_device_disable
+[   84.101689] b43: disagrees about version of symbol 
+ssb_pmu_set_ldo_voltage
+[   84.101694] b43: Unknown symbol ssb_pmu_set_ldo_voltage
+[   84.103398] b43: disagrees about version of symbol ssb_device_enable
+[   84.103402] b43: Unknown symbol ssb_device_enable
+[   84.103860] b43: Unknown symbol ssb_chipco_gpio_control
+[   84.103972] b43: disagrees about version of symbol ssb_driver_unregister
+[   84.103975] b43: Unknown symbol ssb_driver_unregister
+[   84.104421] b43: disagrees about version of symbol __ssb_driver_register
+[   84.104424] b43: Unknown symbol __ssb_driver_register
+[   84.104957] b43: disagrees about version of symbol 
+ssb_bus_sdiobus_register
+[   84.104960] b43: Unknown symbol ssb_bus_sdiobus_register
+[   84.105137] b43: disagrees about version of symbol 
+ssb_bus_pcmciabus_register
+[   84.105142] b43: Unknown symbol ssb_bus_pcmciabus_register
+[   84.105370] b43: disagrees about version of symbol ssb_bus_powerup
+[   84.105375] b43: Unknown symbol ssb_bus_powerup
+[   84.106006] b43: Unknown symbol ssb_commit_settings
+[   84.107543] b43: disagrees about version of symbol ssb_dma_translation
+[   84.107546] b43: Unknown symbol ssb_dma_translation
+[   94.425174] b43-pci-bridge 0000:02:03.0: PCI INT A disabled
+[  102.897978] b43-pci-bridge 0000:02:03.0: PCI INT A -> GSI 21 (level, 
+low) -> IRQ 21
+[  102.972985] b43-phy0: df1a3ea4
+[  102.997018] b43-phy0: df1a3e50
+[  103.130708] Registered led device: b43-phy0::tx
+[  103.130751] Registered led device: b43-phy0::rx
+[  103.130785] Registered led device: b43-phy0::radio
+
+
+# apt-cache show linux-headers-$(uname -r)
+Package: linux-headers-2.6.32-5-686
+Priority: optional
+Section: kernel
+Installed-Size: 6784
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: i386
+Source: linux-2.6
+Version: 2.6.32-46
+Provides: linux-headers, linux-headers-2.6
+Depends: linux-headers-2.6.32-5-common (= 2.6.32-46), 
+linux-kbuild-2.6.32, gcc-4.3
+Filename: 
+pool/main/l/linux-2.6/linux-headers-2.6.32-5-686_2.6.32-46_i386.deb
+Size: 504436
+MD5sum: 824ef36d242e4f541eefa2a55c26bf08
+SHA1: 479dc514c7bebfe8dc8bbb3e53b194715a607ff1
+SHA256: fb1fa87b17a919a2ff0a476683f25c1b7f5a788f738e9cc149b3d6ce7481c02b
+Description: Header files for Linux 2.6.32-5-686
+  This package provides the architecture-specific kernel header files for
+  Linux kernel 2.6.32-5-686, generally used for building out-of-tree kernel
+  modules.  These files are going to be installed into
+  /usr/src/linux-headers-2.6.32-5-686, and can be used for building modules
+  that load into the kernel provided by the linux-image-2.6.32-5-686
+  package.
+
+Package: linux-headers-2.6.32-5-686
+Source: linux-2.6
+Version: 2.6.32-44
+Installed-Size: 6784
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: i386
+Provides: linux-headers, linux-headers-2.6
+Depends: linux-headers-2.6.32-5-common (= 2.6.32-44), 
+linux-kbuild-2.6.32, gcc-4.3
+Description: Header files for Linux 2.6.32-5-686
+  This package provides the architecture-specific kernel header files for
+  Linux kernel 2.6.32-5-686, generally used for building out-of-tree kernel
+  modules.  These files are going to be installed into
+  /usr/src/linux-headers-2.6.32-5-686, and can be used for building modules
+  that load into the kernel provided by the linux-image-2.6.32-5-686
+  package.
+Section: kernel
+Priority: optional
+Filename: 
+pool/updates/main/l/linux-2.6/linux-headers-2.6.32-5-686_2.6.32-44_i386.deb
+Size: 503984
+MD5sum: ea2799a1892d22bf2b91aa20ee533ae6
+SHA1: dc37cf4e49ae60e77c3a84cdca425bdb58cd5c24
+SHA256: 6b6cc0c55b05acfecf719f9a2ad2c19f1426b8016846af4f944fa3afbc9aebd5
