@@ -1,30 +1,53 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Thu, 28 Feb 2013 13:35:38 +0100
-Subject: [PATCH] b43-asm: fix compile error: undefined reference to
- `yydebug'
-In-Reply-To: <1362047683-4014-1-git-send-email-hauke@hauke-m.de>
-References: <1362047683-4014-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <20130228133538.467b0570@milhouse>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sat,  2 Mar 2013 02:14:25 +0100
+Subject: [PATCH] b43: HT-PHY: make it BCMA-only
+Message-ID: <1362186865-20539-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Thu, 28 Feb 2013 11:34:43 +0100
-Hauke Mehrtens <hauke@hauke-m.de> wrote:
+HT-PHY was found only on BCM4331 which is a BCMA-based chipset. This is
+reallly unlikely we will ever see HT-PHY on SSB thus make the whole code
+BCMA specific. This will allow us to call various BCMA-specific
+functions directly (without extra checks).
 
-> With bison 2.7 YYDEBUG will be set to 0 if it was not set, then #ifdef
-> YYDEBUG returns true, but bison 2.7 treets YYDEBUG 0 as not set.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/Kconfig  |    2 +-
+ drivers/net/wireless/b43/phy_ht.c |    5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-Applied.
-Thanks for the patch.
-
-
-Also note that b43-tools.git will be mirrored from now on at github:
-https://github.com/mbuesch?tab=repositories
-Just in case bues.ch is not reachable for whatever reason. The repositories
-on bues.ch are still the main ones, though, and should be used in links, documentation, etc...
-
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index 7a28d21..09d315d 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -131,7 +131,7 @@ config B43_PHY_LP
+ 
+ config B43_PHY_HT
+ 	bool "Support for HT-PHY (high throughput) devices (EXPERIMENTAL)"
+-	depends on B43 && EXPERIMENTAL
++	depends on B43 && B43_BCMA && EXPERIMENTAL
+ 	---help---
+ 	  Support for the HT-PHY.
+ 
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 7416c5e..3719a88 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -346,6 +346,11 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 	u16 tmp;
+ 	u16 clip_state[3];
+ 
++	if (dev->dev->bus_type != B43_BUS_BCMA) {
++		b43err(dev->wl, "HT-PHY is supported only on BCMA bus!\n");
++		return -EOPNOTSUPP;
++	}
++
+ 	b43_phy_ht_tables_init(dev);
+ 
+ 	b43_phy_mask(dev, 0x0be, ~0x2);
 -- 
-Michael
+1.7.10.4
