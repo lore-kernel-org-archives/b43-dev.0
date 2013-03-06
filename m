@@ -1,55 +1,77 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon,  4 Mar 2013 16:39:10 +0100
-Subject: [PATCH V2] b43: HT-PHY: make it BCMA-only
-Message-ID: <1362411550-3547-1-git-send-email-zajec5@gmail.com>
+From: infoonline_agent4 at nokiamail.com <infoonline_agent4@nokiamail.com>
+Date: Wed, 6 Mar 2013 09:35:29 -0800 (PST)
+Subject: Invitation: EURO CHECK Loan Limited Offers Loan At 2% RATE Apply
+ Now!!!
+Message-ID: <1682654646.1975953.1362591329329.JavaMail.zimbra@store3.c30.cal.bf1.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-HT-PHY was found only on BCM4331 which is a BCMA-based chipset. This is
-reallly unlikely we will ever see HT-PHY on SSB thus make the whole code
-BCMA specific. This will allow us to call various BCMA-specific
-functions directly (without extra checks).
+YAHOO! CALENDAR - YOU'RE INVITED!
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-V2: just rebase
----
- drivers/net/wireless/b43/Kconfig  |    2 +-
- drivers/net/wireless/b43/phy_ht.c |    5 +++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+infoonline_agent4 at nokiamail.com has sent an invitation:
 
-diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
-index 287c6b6..d406cec 100644
---- a/drivers/net/wireless/b43/Kconfig
-+++ b/drivers/net/wireless/b43/Kconfig
-@@ -131,7 +131,7 @@ config B43_PHY_LP
- 
- config B43_PHY_HT
- 	bool "Support for HT-PHY (high throughput) devices"
--	depends on B43
-+	depends on B43 && B43_BCMA
- 	---help---
- 	  Support for the HT-PHY.
- 
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 7416c5e..3719a88 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -346,6 +346,11 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 	u16 tmp;
- 	u16 clip_state[3];
- 
-+	if (dev->dev->bus_type != B43_BUS_BCMA) {
-+		b43err(dev->wl, "HT-PHY is supported only on BCMA bus!\n");
-+		return -EOPNOTSUPP;
-+	}
-+
- 	b43_phy_ht_tables_init(dev);
- 
- 	b43_phy_mask(dev, 0x0be, ~0x2);
--- 
-1.7.10.4
+EURO CHECK Loan Limited Offers Loan At 2% RATE Apply Now!!!
+
+When:
+Wednesday, March 6, 2013 6:30p - 7:30p (GMT+00:00)
+
+EURO CHECK Loan Limited Offers Loan At 2% RATE Apply Now!!!
+
+
+Dear Esteemed Customer,
+
+
+EURO CHECK Loan Limited, specializes in arranging loan of any amounts, longer repayment terms. We offer Business loan, Home loan, Personal loan, Car loan, Student loan, Dept. Consolidation, Loan for Business start. Do you have a small or big project to finance? up and Business Expansion, Real Estate and Mortgages all at 2% interest rate for applicants of all credit types. 
+
+
+The service we offer is quick and stress free. Our Priority is your total Satisfaction! Our goal is that you enjoy the service we provide from start to conclusion. Interested new applicant should reply to ( info_eurocheck at globomail.com ) to contact Administrative Director for more informations: Mr. Manfred Holzer.
+
+
+Sincerely,
+Ms.Ellody.
+
+
+Phone/SmS: +33 751 226 934/+33-753 404 777
+Fax: + 33 160 54177 42
+Address: 88 Boulevard De l?H?pital
+75013 Paris ? France
+www.euro-check.co.uk
+
+*~*~*~*~*~*~*~*~*~*
+RSVP Now!
+http://calendar.yahoo.com/infoonline_agent4 at nokiamail.com/rsvp?e=b43-dev at lists.infradead.org&uid=35aca136-b35d-4e55-8cdf-c61eaf9f028b&tk=49rJHnV37qoHQuOUhZydy.2bbgY-&hh=rzL5leKHw9twoEbMNZIf5xWyTXo-
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130306/06e306ef/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image2
+Type: image/gif
+Size: 733 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130306/06e306ef/attachment.gif>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image3
+Type: image/gif
+Size: 1820 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130306/06e306ef/attachment-0001.gif>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: meeting.ics
+Type: text/calendar
+Size: 3792 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130306/06e306ef/attachment.ics>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: invite.ics
+Type: application/ics
+Size: 3792 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130306/06e306ef/attachment.bin>
