@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  7 Mar 2013 16:47:14 +0100
-Subject: [PATCH 00/13] b43: implement basic TX power mgmt
-Message-ID: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+Date: Thu,  7 Mar 2013 16:47:15 +0100
+Subject: [PATCH 01/13] b43: HT-PHY: rename AFE defines
+In-Reply-To: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1362671247-10766-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,33 +11,101 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-After spotting a lot of N-PHY-similar functions in
-BCM4331 dump of MMIO ops - split into names parts
-I was able to finally improve HT-PHY code.
+It you take a look at N-PHY analog switch function it touches every core
+on the chipset. It seems HT-PHY does they same, it just has 3 cores
+instead of 2 (which make sense since BCM4331 is 3x3). Rename AFE defines
+to include core id.
 
-It now sets TX basically, I can finally talk with devices that are few
-meters away, not just few centimetres. It's a little patch bomb, sorry
-for that, but I wasn't sure if my code is correct until it was complete
-and started working.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_ht.c |   36 ++++++++++++++++++------------------
+ drivers/net/wireless/b43/phy_ht.h |   12 ++++++------
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
-Rafa? Mi?ecki (13):
-  b43: HT-PHY: rename AFE defines
-  b43: HT-PHY: add classifier control function
-  b43: HT-PHY: move TX fix to the separated function
-  b43: HT-PHY: implement spurious tone avoidance
-  b43: HT-PHY: implement MAC reclocking
-  b43: HT-PHY: implement CCA reset
-  b43: HT-PHY: implement PA override
-  b43: HT-PHY: implement controlling TX power control
-  b43: HT-PHY: implement stopping sample tone playback
-  b43: HT-PHY: implement playing sample tone
-  b43: HT-PHY: implement RSSI polling
-  b43: HT-PHY: setup TX power control
-  b43: HT-PHY: enable basic TX power setup
-
- drivers/net/wireless/b43/phy_ht.c |  603 +++++++++++++++++++++++++++++++++----
- drivers/net/wireless/b43/phy_ht.h |   77 ++++-
- 2 files changed, 613 insertions(+), 67 deletions(-)
-
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 3719a88..20c4cb7f 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -177,9 +177,9 @@ static void b43_phy_ht_afe_unk1(struct b43_wldev *dev)
+ 	u8 i;
+ 
+ 	const u16 ctl_regs[3][2] = {
+-		{ B43_PHY_HT_AFE_CTL1, B43_PHY_HT_AFE_CTL2 },
+-		{ B43_PHY_HT_AFE_CTL3, B43_PHY_HT_AFE_CTL4 },
+-		{ B43_PHY_HT_AFE_CTL5, B43_PHY_HT_AFE_CTL6},
++		{ B43_PHY_HT_AFE_C1_OVER, B43_PHY_HT_AFE_C1 },
++		{ B43_PHY_HT_AFE_C2_OVER, B43_PHY_HT_AFE_C2 },
++		{ B43_PHY_HT_AFE_C3_OVER, B43_PHY_HT_AFE_C3},
+ 	};
+ 
+ 	for (i = 0; i < 3; i++) {
+@@ -362,9 +362,9 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 
+ 	b43_phy_mask(dev, B43_PHY_EXTG(0), ~0x3);
+ 
+-	b43_phy_write(dev, B43_PHY_HT_AFE_CTL1, 0);
+-	b43_phy_write(dev, B43_PHY_HT_AFE_CTL3, 0);
+-	b43_phy_write(dev, B43_PHY_HT_AFE_CTL5, 0);
++	b43_phy_write(dev, B43_PHY_HT_AFE_C1_OVER, 0);
++	b43_phy_write(dev, B43_PHY_HT_AFE_C2_OVER, 0);
++	b43_phy_write(dev, B43_PHY_HT_AFE_C3_OVER, 0);
+ 
+ 	b43_phy_write(dev, B43_PHY_EXTG(0x103), 0x20);
+ 	b43_phy_write(dev, B43_PHY_EXTG(0x101), 0x20);
+@@ -511,19 +511,19 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
+ static void b43_phy_ht_op_switch_analog(struct b43_wldev *dev, bool on)
+ {
+ 	if (on) {
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL2, 0x00cd);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL1, 0x0000);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL4, 0x00cd);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL3, 0x0000);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL6, 0x00cd);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL5, 0x0000);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C1, 0x00cd);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C1_OVER, 0x0000);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C2, 0x00cd);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C2_OVER, 0x0000);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C3, 0x00cd);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C3_OVER, 0x0000);
+ 	} else {
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL1, 0x07ff);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL2, 0x00fd);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL3, 0x07ff);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL4, 0x00fd);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL5, 0x07ff);
+-		b43_phy_write(dev, B43_PHY_HT_AFE_CTL6, 0x00fd);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C1_OVER, 0x07ff);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C1, 0x00fd);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C2_OVER, 0x07ff);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C2, 0x00fd);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C3_OVER, 0x07ff);
++		b43_phy_write(dev, B43_PHY_HT_AFE_C3, 0x00fd);
+ 	}
+ }
+ 
+diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
+index 6544c42..60824fa 100644
+--- a/drivers/net/wireless/b43/phy_ht.h
++++ b/drivers/net/wireless/b43/phy_ht.h
+@@ -36,12 +36,12 @@
+ 
+ #define B43_PHY_HT_RF_CTL1			B43_PHY_EXTG(0x010)
+ 
+-#define B43_PHY_HT_AFE_CTL1			B43_PHY_EXTG(0x110)
+-#define B43_PHY_HT_AFE_CTL2			B43_PHY_EXTG(0x111)
+-#define B43_PHY_HT_AFE_CTL3			B43_PHY_EXTG(0x114)
+-#define B43_PHY_HT_AFE_CTL4			B43_PHY_EXTG(0x115)
+-#define B43_PHY_HT_AFE_CTL5			B43_PHY_EXTG(0x118)
+-#define B43_PHY_HT_AFE_CTL6			B43_PHY_EXTG(0x119)
++#define B43_PHY_HT_AFE_C1_OVER			B43_PHY_EXTG(0x110)
++#define B43_PHY_HT_AFE_C1			B43_PHY_EXTG(0x111)
++#define B43_PHY_HT_AFE_C2_OVER			B43_PHY_EXTG(0x114)
++#define B43_PHY_HT_AFE_C2			B43_PHY_EXTG(0x115)
++#define B43_PHY_HT_AFE_C3_OVER			B43_PHY_EXTG(0x118)
++#define B43_PHY_HT_AFE_C3			B43_PHY_EXTG(0x119)
+ 
+ 
+ /* Values for PHY registers used on channel switching */
 -- 
 1.7.10.4
