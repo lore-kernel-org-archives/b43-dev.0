@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  7 Mar 2013 16:47:22 +0100
-Subject: [PATCH 08/13] b43: HT-PHY: implement controlling TX power control
+Date: Thu,  7 Mar 2013 16:47:23 +0100
+Subject: [PATCH 09/13] b43: HT-PHY: implement stopping sample tone playback
 In-Reply-To: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
 References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1362671247-10766-9-git-send-email-zajec5@gmail.com>
+Message-ID: <1362671247-10766-10-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,139 +11,115 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Don't enable it until we have (almost?) whole TX power management
-figured out. It's similar to the N-PHY, the difference is that we call a
-"fix" *before* disabling power control.
+It was another sequence I recognized in HT-PHY dump:
+ phy_read(0x00c7) -> 0x0001
+ phy_read(0x00c3) -> 0x0000
+phy_write(0x00c3) <- 0x0002
+ phy_read(0x00c3) -> 0x0000
+phy_write(0x00c3) <- 0x0000
+The difference to N-PHY is that it writes to 6 tables instead of a one
+(after above).
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_ht.c |   55 +++++++++++++++++++++++++++++++++++++
- drivers/net/wireless/b43/phy_ht.h |   13 +++++++++
- 2 files changed, 68 insertions(+)
+ drivers/net/wireless/b43/phy_ht.c |   41 +++++++++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/phy_ht.h |    6 ++++++
+ 2 files changed, 47 insertions(+)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 3b3517c..4300867 100644
+index 4300867..8e5d5bd 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -319,6 +319,46 @@ static void b43_phy_ht_tx_power_fix(struct b43_wldev *dev)
- 	}
+@@ -294,6 +294,36 @@ static void b43_phy_ht_bphy_init(struct b43_wldev *dev)
  }
  
+ /**************************************************
++ * Samples
++ **************************************************/
++
 +#if 0
-+static void b43_phy_ht_tx_power_ctl(struct b43_wldev *dev, bool enable)
++static void b43_phy_ht_stop_playback(struct b43_wldev *dev)
 +{
 +	struct b43_phy_ht *phy_ht = dev->phy.ht;
-+	u16 en_bits = B43_PHY_HT_TXPCTL_CMD_C1_COEFF |
-+		      B43_PHY_HT_TXPCTL_CMD_C1_HWPCTLEN |
-+		      B43_PHY_HT_TXPCTL_CMD_C1_PCTLEN;
-+	const u16 cmd_regs[3] = { B43_PHY_HT_TXPCTL_CMD_C1,
-+				  B43_PHY_HT_TXPCTL_CMD_C2,
-+				  B43_PHY_HT_TXPCTL_CMD_C3 };
++	u16 tmp;
 +	int i;
 +
-+	if (!enable) {
-+		if (b43_phy_read(dev, B43_PHY_HT_TXPCTL_CMD_C1) & en_bits) {
-+			/* We disable enabled TX pwr ctl, save it's state */
-+			/*
-+			 * TODO: find the registers. On N-PHY they were 0x1ed
-+			 * and 0x1ee, we need 3 such a registers for HT-PHY
-+			 */
-+		}
-+		b43_phy_mask(dev, B43_PHY_HT_TXPCTL_CMD_C1, ~en_bits);
-+	} else {
-+		b43_phy_set(dev, B43_PHY_HT_TXPCTL_CMD_C1, en_bits);
++	tmp = b43_phy_read(dev, B43_PHY_HT_SAMP_STAT);
++	if (tmp & 0x1)
++		b43_phy_set(dev, B43_PHY_HT_SAMP_CMD, B43_PHY_HT_SAMP_CMD_STOP);
++	else if (tmp & 0x2)
++		b43_phy_mask(dev, B43_PHY_HT_IQLOCAL_CMDGCTL, 0x7FFF);
 +
-+		if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
-+			for (i = 0; i < 3; i++)
-+				b43_phy_write(dev, cmd_regs[i], 0x32);
-+		}
++	b43_phy_mask(dev, B43_PHY_HT_SAMP_CMD, ~0x0004);
 +
-+		for (i = 0; i < 3; i++)
-+			if (phy_ht->tx_pwr_idx[i] <=
-+			    B43_PHY_HT_TXPCTL_CMD_C1_INIT)
-+				b43_phy_write(dev, cmd_regs[i],
-+					      phy_ht->tx_pwr_idx[i]);
++	for (i = 0; i < 3; i++) {
++		if (phy_ht->bb_mult_save[i] >= 0) {
++			b43_httab_write(dev, B43_HTTAB16(13, 0x63 + i * 4),
++					phy_ht->bb_mult_save[i]);
++			b43_httab_write(dev, B43_HTTAB16(13, 0x67 + i * 4),
++					phy_ht->bb_mult_save[i]);
++		}
 +	}
-+
-+	phy_ht->tx_pwr_ctl = enable;
 +}
 +#endif
 +
- /**************************************************
-  * Channel switching ops.
++/**************************************************
+  * Tx/Rx
   **************************************************/
-@@ -455,14 +495,21 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
- {
- 	struct b43_phy *phy = &dev->phy;
- 	struct b43_phy_ht *phy_ht = phy->ht;
-+	int i;
  
- 	memset(phy_ht, 0, sizeof(*phy_ht));
+@@ -357,6 +387,13 @@ static void b43_phy_ht_tx_power_ctl(struct b43_wldev *dev, bool enable)
+ 
+ 	phy_ht->tx_pwr_ctl = enable;
+ }
 +
-+	phy_ht->tx_pwr_ctl = true;
++static void b43_phy_ht_tx_power_ctl_idle_tssi(struct b43_wldev *dev)
++{
++	/* TODO */
++	b43_phy_ht_stop_playback(dev);
++	/* TODO */
++}
+ #endif
+ 
+ /**************************************************
+@@ -502,6 +539,9 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
+ 	phy_ht->tx_pwr_ctl = true;
+ 	for (i = 0; i < 3; i++)
+ 		phy_ht->tx_pwr_idx[i] = B43_PHY_HT_TXPCTL_CMD_C1_INIT + 1;
++
 +	for (i = 0; i < 3; i++)
-+		phy_ht->tx_pwr_idx[i] = B43_PHY_HT_TXPCTL_CMD_C1_INIT + 1;
++		phy_ht->bb_mult_save[i] = -1;
  }
  
  static int b43_phy_ht_op_init(struct b43_wldev *dev)
- {
-+	struct b43_phy_ht *phy_ht = dev->phy.ht;
- 	u16 tmp;
- 	u16 clip_state[3];
-+	bool saved_tx_pwr_ctl;
- 
- 	if (dev->dev->bus_type != B43_BUS_BCMA) {
- 		b43err(dev->wl, "HT-PHY is supported only on BCMA bus!\n");
-@@ -589,6 +636,14 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 	b43_httab_write_bulk(dev, B43_HTTAB32(0x1a, 0xc0),
- 			B43_HTTAB_1A_C0_LATE_SIZE, b43_httab_0x1a_0xc0_late);
- 
-+	saved_tx_pwr_ctl = phy_ht->tx_pwr_ctl;
-+	b43_phy_ht_tx_power_fix(dev);
-+#if 0
-+	b43_phy_ht_tx_power_ctl(dev, false);
-+	/* TODO */
-+	b43_phy_ht_tx_power_ctl(dev, saved_tx_pwr_ctl);
-+#endif
-+
- 	return 0;
- }
- 
+@@ -640,6 +680,7 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 	b43_phy_ht_tx_power_fix(dev);
+ #if 0
+ 	b43_phy_ht_tx_power_ctl(dev, false);
++	b43_phy_ht_tx_power_ctl_idle_tssi(dev);
+ 	/* TODO */
+ 	b43_phy_ht_tx_power_ctl(dev, saved_tx_pwr_ctl);
+ #endif
 diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
-index 684807c..bc7a43f 100644
+index bc7a43f..7ec794b 100644
 --- a/drivers/net/wireless/b43/phy_ht.h
 +++ b/drivers/net/wireless/b43/phy_ht.h
-@@ -22,6 +22,13 @@
- #define B43_PHY_HT_BW4				0x1D1
- #define B43_PHY_HT_BW5				0x1D2
- #define B43_PHY_HT_BW6				0x1D3
-+#define B43_PHY_HT_TXPCTL_CMD_C1		0x1E7	/* TX power control command */
-+#define  B43_PHY_HT_TXPCTL_CMD_C1_INIT		0x007F	/* Init */
-+#define  B43_PHY_HT_TXPCTL_CMD_C1_COEFF		0x2000	/* Power control coefficients */
-+#define  B43_PHY_HT_TXPCTL_CMD_C1_HWPCTLEN	0x4000	/* Hardware TX power control enable */
-+#define  B43_PHY_HT_TXPCTL_CMD_C1_PCTLEN	0x8000	/* TX power control enable */
-+#define B43_PHY_HT_TXPCTL_CMD_C2		0x222
-+#define  B43_PHY_HT_TXPCTL_CMD_C2_INIT		0x007F
+@@ -16,6 +16,10 @@
+ #define  B43_PHY_HT_CLASS_CTL_CCK_EN		0x0001 /* CCK enable */
+ #define  B43_PHY_HT_CLASS_CTL_OFDM_EN		0x0002 /* OFDM enable */
+ #define  B43_PHY_HT_CLASS_CTL_WAITED_EN		0x0004 /* Waited enable */
++#define B43_PHY_HT_IQLOCAL_CMDGCTL		0x0C2	/* I/Q LO cal command G control */
++#define B43_PHY_HT_SAMP_CMD			0x0C3	/* Sample command */
++#define  B43_PHY_HT_SAMP_CMD_STOP		0x0002	/* Stop */
++#define B43_PHY_HT_SAMP_STAT			0x0C7	/* Sample status */
+ #define B43_PHY_HT_BW1				0x1CE
+ #define B43_PHY_HT_BW2				0x1CF
+ #define B43_PHY_HT_BW3				0x1D0
+@@ -80,6 +84,8 @@ struct b43_phy_ht {
  
- #define B43_PHY_HT_C1_CLIP1THRES		B43_PHY_OFDM(0x00E)
- #define B43_PHY_HT_C2_CLIP1THRES		B43_PHY_OFDM(0x04E)
-@@ -51,6 +58,9 @@
- #define B43_PHY_HT_AFE_C3_OVER			B43_PHY_EXTG(0x118)
- #define B43_PHY_HT_AFE_C3			B43_PHY_EXTG(0x119)
- 
-+#define B43_PHY_HT_TXPCTL_CMD_C3		B43_PHY_EXTG(0x164)
-+#define  B43_PHY_HT_TXPCTL_CMD_C3_INIT		0x007F
+ 	bool tx_pwr_ctl;
+ 	u8 tx_pwr_idx[3];
 +
- #define B43_PHY_HT_TEST				B43_PHY_N_BMODE(0x00A)
- 
- 
-@@ -67,6 +77,9 @@ struct b43_phy_ht_channeltab_e_phy {
- 
- struct b43_phy_ht {
- 	u16 rf_ctl_int_save[3];
-+
-+	bool tx_pwr_ctl;
-+	u8 tx_pwr_idx[3];
++	s32 bb_mult_save[3];
  };
  
  
