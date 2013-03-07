@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  7 Mar 2013 16:47:24 +0100
-Subject: [PATCH 10/13] b43: HT-PHY: implement playing sample tone
+Date: Thu,  7 Mar 2013 16:47:25 +0100
+Subject: [PATCH 11/13] b43: HT-PHY: implement RSSI polling
 In-Reply-To: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
 References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1362671247-10766-11-git-send-email-zajec5@gmail.com>
+Message-ID: <1362671247-10766-12-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,120 +14,151 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_ht.c |   69 +++++++++++++++++++++++++++++++++++++
- drivers/net/wireless/b43/phy_ht.h |    5 +++
- 2 files changed, 74 insertions(+)
+ drivers/net/wireless/b43/phy_ht.c |   96 ++++++++++++++++++++++++++++++++++++-
+ drivers/net/wireless/b43/phy_ht.h |    5 ++
+ 2 files changed, 100 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 8e5d5bd..363c64c 100644
+index 363c64c..831dca4 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -321,6 +321,70 @@ static void b43_phy_ht_stop_playback(struct b43_wldev *dev)
- 		}
- 	}
- }
-+
-+static u16 b43_phy_ht_load_samples(struct b43_wldev *dev)
-+{
-+	int i;
-+	u16 len = 20 << 3;
-+
-+	b43_phy_write(dev, B43_PHY_HT_TABLE_ADDR, 0x4400);
-+
-+	for (i = 0; i < len; i++) {
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_DATAHI, 0);
-+		b43_phy_write(dev, B43_PHY_HT_TABLE_DATALO, 0);
-+	}
-+
-+	return len;
-+}
-+
-+static void b43_phy_ht_run_samples(struct b43_wldev *dev, u16 samps, u16 loops,
-+				   u16 wait)
-+{
-+	struct b43_phy_ht *phy_ht = dev->phy.ht;
-+	u16 save_seq_mode;
-+	int i;
-+
-+	for (i = 0; i < 3; i++) {
-+		if (phy_ht->bb_mult_save[i] < 0)
-+			phy_ht->bb_mult_save[i] = b43_httab_read(dev, B43_HTTAB16(13, 0x63 + i * 4));
-+	}
-+
-+	b43_phy_write(dev, B43_PHY_HT_SAMP_DEP_CNT, samps - 1);
-+	if (loops != 0xFFFF)
-+		loops--;
-+	b43_phy_write(dev, B43_PHY_HT_SAMP_LOOP_CNT, loops);
-+	b43_phy_write(dev, B43_PHY_HT_SAMP_WAIT_CNT, wait);
-+
-+	save_seq_mode = b43_phy_read(dev, B43_PHY_HT_RF_SEQ_MODE);
-+	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_MODE,
-+		    B43_PHY_HT_RF_SEQ_MODE_CA_OVER);
-+
-+	/* TODO: find out mask bits! Do we need more function arguments? */
-+	b43_phy_mask(dev, B43_PHY_HT_SAMP_CMD, ~0);
-+	b43_phy_mask(dev, B43_PHY_HT_SAMP_CMD, ~0);
-+	b43_phy_mask(dev, B43_PHY_HT_IQLOCAL_CMDGCTL, ~0);
-+	b43_phy_set(dev, B43_PHY_HT_SAMP_CMD, 0x1);
-+
-+	for (i = 0; i < 100; i++) {
-+		if (!(b43_phy_read(dev, B43_PHY_HT_RF_SEQ_STATUS) & 1)) {
-+			i = 0;
-+			break;
-+		}
-+		udelay(10);
-+	}
-+	if (i)
-+		b43err(dev->wl, "run samples timeout\n");
-+
-+	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
-+}
-+
-+static void b43_phy_ht_tx_tone(struct b43_wldev *dev)
-+{
-+	u16 samp;
-+
-+	samp = b43_phy_ht_load_samples(dev);
-+	b43_phy_ht_run_samples(dev, samp, 0xFFFF, 0);
-+}
+@@ -388,6 +388,92 @@ static void b43_phy_ht_tx_tone(struct b43_wldev *dev)
  #endif
  
  /**************************************************
-@@ -391,7 +455,12 @@ static void b43_phy_ht_tx_power_ctl(struct b43_wldev *dev, bool enable)
++ * RSSI
++ **************************************************/
++
++#if 0
++static void b43_phy_ht_rssi_select(struct b43_wldev *dev, u8 core_sel,
++				   u8 rssi_type)
++{
++	const u16 ctl_regs[3][2] = {
++		{ B43_PHY_HT_AFE_C1, B43_PHY_HT_AFE_C1_OVER, },
++		{ B43_PHY_HT_AFE_C2, B43_PHY_HT_AFE_C2_OVER, },
++		{ B43_PHY_HT_AFE_C3, B43_PHY_HT_AFE_C3_OVER, },
++	};
++	const u16 radio_r[] = { R2059_SYN, R2059_TXRX0, R2059_RXRX1, };
++	int core;
++
++	if (core_sel == 0) {
++		b43err(dev->wl, "RSSI selection for core off not implemented yet\n");
++	} else {
++		for (core = 0; core < 3; core++) {
++			/* Check if caller requested a one specific core */
++			if ((core_sel == 1 && core != 0) ||
++			    (core_sel == 2 && core != 1) ||
++			    (core_sel == 3 && core != 2))
++				continue;
++
++			switch (rssi_type) {
++			case 4:
++				b43_phy_set(dev, ctl_regs[core][0], 0x3 << 8);
++				b43_phy_set(dev, ctl_regs[core][0], 0x3 << 10);
++				b43_phy_set(dev, ctl_regs[core][1], 0x1 << 9);
++				b43_phy_set(dev, ctl_regs[core][1], 0x1 << 10);
++
++				b43_radio_set(dev, R2059_RXRX1 | 0xbf, 0x1);
++				b43_radio_write(dev, radio_r[core] | 0x159,
++						0x11);
++				break;
++			default:
++				b43err(dev->wl, "RSSI selection for type %d not implemented yet\n",
++				       rssi_type);
++			}
++		}
++	}
++}
++
++static void b43_phy_ht_poll_rssi(struct b43_wldev *dev, u8 type, s32 *buf,
++				 u8 nsamp)
++{
++	u16 phy_regs_values[12];
++	u16 phy_regs_to_save[] = {
++		B43_PHY_HT_AFE_C1, B43_PHY_HT_AFE_C1_OVER,
++		0x848, 0x841,
++		B43_PHY_HT_AFE_C2, B43_PHY_HT_AFE_C2_OVER,
++		0x868, 0x861,
++		B43_PHY_HT_AFE_C3, B43_PHY_HT_AFE_C3_OVER,
++		0x888, 0x881,
++	};
++	u16 tmp[3];
++	int i;
++
++	for (i = 0; i < 12; i++)
++		phy_regs_values[i] = b43_phy_read(dev, phy_regs_to_save[i]);
++
++	b43_phy_ht_rssi_select(dev, 5, type);
++
++	for (i = 0; i < 6; i++)
++		buf[i] = 0;
++
++	for (i = 0; i < nsamp; i++) {
++		tmp[0] = b43_phy_read(dev, B43_PHY_HT_RSSI_C1);
++		tmp[1] = b43_phy_read(dev, B43_PHY_HT_RSSI_C2);
++		tmp[2] = b43_phy_read(dev, B43_PHY_HT_RSSI_C3);
++
++		buf[0] += ((s8)((tmp[0] & 0x3F) << 2)) >> 2;
++		buf[1] += ((s8)(((tmp[0] >> 8) & 0x3F) << 2)) >> 2;
++		buf[2] += ((s8)((tmp[1] & 0x3F) << 2)) >> 2;
++		buf[3] += ((s8)(((tmp[1] >> 8) & 0x3F) << 2)) >> 2;
++		buf[4] += ((s8)((tmp[2] & 0x3F) << 2)) >> 2;
++		buf[5] += ((s8)(((tmp[2] >> 8) & 0x3F) << 2)) >> 2;
++	}
++
++	for (i = 0; i < 12; i++)
++		b43_phy_write(dev, phy_regs_to_save[i], phy_regs_values[i]);
++}
++#endif
++
++/**************************************************
+  * Tx/Rx
+  **************************************************/
+ 
+@@ -454,12 +540,20 @@ static void b43_phy_ht_tx_power_ctl(struct b43_wldev *dev, bool enable)
+ 
  static void b43_phy_ht_tx_power_ctl_idle_tssi(struct b43_wldev *dev)
  {
++	struct b43_phy_ht *phy_ht = dev->phy.ht;
++	s32 rssi_buf[6];
++
  	/* TODO */
-+
-+	b43_phy_ht_tx_tone(dev);
-+	udelay(20);
-+	/* TODO: poll RSSI */
+ 
+ 	b43_phy_ht_tx_tone(dev);
+ 	udelay(20);
+-	/* TODO: poll RSSI */
++	b43_phy_ht_poll_rssi(dev, 4, rssi_buf, 1);
  	b43_phy_ht_stop_playback(dev);
++	b43_phy_ht_reset_cca(dev);
 +
++	phy_ht->idle_tssi[0] = rssi_buf[0] & 0xff;
++	phy_ht->idle_tssi[1] = rssi_buf[2] & 0xff;
++	phy_ht->idle_tssi[2] = rssi_buf[4] & 0xff;
+ 
  	/* TODO */
  }
- #endif
 diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
-index 7ec794b..c517958 100644
+index c517958..165c501 100644
 --- a/drivers/net/wireless/b43/phy_ht.h
 +++ b/drivers/net/wireless/b43/phy_ht.h
-@@ -19,6 +19,9 @@
- #define B43_PHY_HT_IQLOCAL_CMDGCTL		0x0C2	/* I/Q LO cal command G control */
- #define B43_PHY_HT_SAMP_CMD			0x0C3	/* Sample command */
- #define  B43_PHY_HT_SAMP_CMD_STOP		0x0002	/* Stop */
-+#define B43_PHY_HT_SAMP_LOOP_CNT		0x0C4	/* Sample loop count */
-+#define B43_PHY_HT_SAMP_WAIT_CNT		0x0C5	/* Sample wait count */
-+#define B43_PHY_HT_SAMP_DEP_CNT			0x0C6	/* Sample depth count */
- #define B43_PHY_HT_SAMP_STAT			0x0C7	/* Sample status */
- #define B43_PHY_HT_BW1				0x1CE
- #define B43_PHY_HT_BW2				0x1CF
-@@ -39,6 +42,8 @@
- #define B43_PHY_HT_C3_CLIP1THRES		B43_PHY_OFDM(0x08E)
+@@ -36,6 +36,9 @@
+ #define  B43_PHY_HT_TXPCTL_CMD_C1_PCTLEN	0x8000	/* TX power control enable */
+ #define B43_PHY_HT_TXPCTL_CMD_C2		0x222
+ #define  B43_PHY_HT_TXPCTL_CMD_C2_INIT		0x007F
++#define B43_PHY_HT_RSSI_C1			0x219
++#define B43_PHY_HT_RSSI_C2			0x21A
++#define B43_PHY_HT_RSSI_C3			0x21B
  
- #define B43_PHY_HT_RF_SEQ_MODE			B43_PHY_EXTG(0x000)
-+#define  B43_PHY_HT_RF_SEQ_MODE_CA_OVER		0x0001	/* Core active override */
-+#define  B43_PHY_HT_RF_SEQ_MODE_TR_OVER		0x0002	/* Trigger override */
- #define B43_PHY_HT_RF_SEQ_TRIG			B43_PHY_EXTG(0x003)
- #define  B43_PHY_HT_RF_SEQ_TRIG_RX2TX		0x0001 /* RX2TX */
- #define  B43_PHY_HT_RF_SEQ_TRIG_TX2RX		0x0002 /* TX2RX */
+ #define B43_PHY_HT_C1_CLIP1THRES		B43_PHY_OFDM(0x00E)
+ #define B43_PHY_HT_C2_CLIP1THRES		B43_PHY_OFDM(0x04E)
+@@ -91,6 +94,8 @@ struct b43_phy_ht {
+ 	u8 tx_pwr_idx[3];
+ 
+ 	s32 bb_mult_save[3];
++
++	u8 idle_tssi[3];
+ };
+ 
+ 
 -- 
 1.7.10.4
