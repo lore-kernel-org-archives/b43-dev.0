@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  7 Mar 2013 16:47:20 +0100
-Subject: [PATCH 06/13] b43: HT-PHY: implement CCA reset
+Date: Thu,  7 Mar 2013 16:47:21 +0100
+Subject: [PATCH 07/13] b43: HT-PHY: implement PA override
 In-Reply-To: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
 References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1362671247-10766-7-git-send-email-zajec5@gmail.com>
+Message-ID: <1362671247-10766-8-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,122 +11,77 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-It was just another similar-to-N-PHY and easy-to-track routine:
-write32 0xb0601408 <- 0x00002057
- phy_read(0x0001) -> 0x0000
-phy_write(0x0001) <- 0x4000
-phy_write(0x0001) <- 0x0000
-write32 0xb0601408 <- 0x00002055
-(b43_phy_ht_force_rf_sequence was moved up unmodified)
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-P.S.
-There is a "msleep" usage warning, but it's in the code I just move. Will fix
-sleeps/waits later globally.
----
- drivers/net/wireless/b43/phy_ht.c |   68 +++++++++++++++++++++++++------------
- 1 file changed, 47 insertions(+), 21 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c |   22 ++++++++++++++++++++++
+ drivers/net/wireless/b43/phy_ht.h |    5 +++++
+ 2 files changed, 27 insertions(+)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 4b24816..aedbae7 100644
+index aedbae7..3b3517c 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -154,6 +154,31 @@ static void b43_radio_2059_init(struct b43_wldev *dev)
+@@ -178,6 +178,26 @@ static void b43_phy_ht_force_rf_sequence(struct b43_wldev *dev, u16 rf_seq)
+ 	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
  }
  
- /**************************************************
-+ * RF
-+ **************************************************/
-+
-+static void b43_phy_ht_force_rf_sequence(struct b43_wldev *dev, u16 rf_seq)
++static void b43_phy_ht_pa_override(struct b43_wldev *dev, bool enable)
 +{
-+	u8 i;
++	struct b43_phy_ht *htphy = dev->phy.ht;
++	const u16 regs[3] = { B43_PHY_HT_RF_CTL_INT_C1,
++				  B43_PHY_HT_RF_CTL_INT_C2,
++				  B43_PHY_HT_RF_CTL_INT_C3 };
++	int i;
 +
-+	u16 save_seq_mode = b43_phy_read(dev, B43_PHY_HT_RF_SEQ_MODE);
-+	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_MODE, 0x3);
-+
-+	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_TRIG, rf_seq);
-+	for (i = 0; i < 200; i++) {
-+		if (!(b43_phy_read(dev, B43_PHY_HT_RF_SEQ_STATUS) & rf_seq)) {
-+			i = 0;
-+			break;
-+		}
-+		msleep(1);
++	if (enable) {
++		for (i = 0; i < 3; i++)
++			b43_phy_write(dev, regs[i], htphy->rf_ctl_int_save[i]);
++	} else {
++		for (i = 0; i < 3; i++)
++			htphy->rf_ctl_int_save[i] = b43_phy_read(dev, regs[i]);
++		/* TODO: Does 5GHz band use different value (not 0x0400)? */
++		for (i = 0; i < 3; i++)
++			b43_phy_write(dev, regs[i], 0x0400);
 +	}
-+	if (i)
-+		b43err(dev->wl, "Forcing RF sequence timeout\n");
-+
-+	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
 +}
 +
-+/**************************************************
+ /**************************************************
   * Various PHY ops
   **************************************************/
+@@ -554,8 +574,10 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
  
-@@ -173,6 +198,20 @@ static u16 b43_phy_ht_classifier(struct b43_wldev *dev, u16 mask, u16 val)
- 	return tmp;
- }
+ 	b43_mac_phy_clock_set(dev, true);
  
-+static void b43_phy_ht_reset_cca(struct b43_wldev *dev)
-+{
-+	u16 bbcfg;
-+
-+	b43_phy_force_clock(dev, true);
-+	bbcfg = b43_phy_read(dev, B43_PHY_HT_BBCFG);
-+	b43_phy_write(dev, B43_PHY_HT_BBCFG, bbcfg | B43_PHY_HT_BBCFG_RSTCCA);
-+	udelay(1);
-+	b43_phy_write(dev, B43_PHY_HT_BBCFG, bbcfg & ~B43_PHY_HT_BBCFG_RSTCCA);
-+	b43_phy_force_clock(dev, false);
-+
-+	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RST2RX);
-+}
-+
- static void b43_phy_ht_zero_extg(struct b43_wldev *dev)
- {
- 	u8 i, j;
-@@ -209,27 +248,6 @@ static void b43_phy_ht_afe_unk1(struct b43_wldev *dev)
- 	}
- }
++	b43_phy_ht_pa_override(dev, false);
+ 	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RX2TX);
+ 	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RST2RX);
++	b43_phy_ht_pa_override(dev, true);
  
--static void b43_phy_ht_force_rf_sequence(struct b43_wldev *dev, u16 rf_seq)
--{
--	u8 i;
--
--	u16 save_seq_mode = b43_phy_read(dev, B43_PHY_HT_RF_SEQ_MODE);
--	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_MODE, 0x3);
--
--	b43_phy_set(dev, B43_PHY_HT_RF_SEQ_TRIG, rf_seq);
--	for (i = 0; i < 200; i++) {
--		if (!(b43_phy_read(dev, B43_PHY_HT_RF_SEQ_STATUS) & rf_seq)) {
--			i = 0;
--			break;
--		}
--		msleep(1);
--	}
--	if (i)
--		b43err(dev->wl, "Forcing RF sequence timeout\n");
--
--	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
--}
--
- static void b43_phy_ht_read_clip_detection(struct b43_wldev *dev, u16 *clip_st)
- {
- 	clip_st[0] = b43_phy_read(dev, B43_PHY_HT_C1_CLIP1THRES);
-@@ -319,6 +337,14 @@ static void b43_phy_ht_spur_avoid(struct b43_wldev *dev,
- 	b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x8);
+ 	/* TODO: Should we restore it? Or store it in global PHY info? */
+ 	b43_phy_ht_classifier(dev, 0, 0);
+diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
+index 52603af..684807c 100644
+--- a/drivers/net/wireless/b43/phy_ht.h
++++ b/drivers/net/wireless/b43/phy_ht.h
+@@ -40,6 +40,10 @@
  
- 	/* TODO: reset PLL */
-+
-+	if (spuravoid)
-+		b43_phy_set(dev, B43_PHY_HT_BBCFG, B43_PHY_HT_BBCFG_RSTRX);
-+	else
-+		b43_phy_mask(dev, B43_PHY_HT_BBCFG,
-+				~B43_PHY_HT_BBCFG_RSTRX & 0xFFFF);
-+
-+	b43_phy_ht_reset_cca(dev);
- }
+ #define B43_PHY_HT_RF_CTL1			B43_PHY_EXTG(0x010)
  
- static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
++#define B43_PHY_HT_RF_CTL_INT_C1		B43_PHY_EXTG(0x04c)
++#define B43_PHY_HT_RF_CTL_INT_C2		B43_PHY_EXTG(0x06c)
++#define B43_PHY_HT_RF_CTL_INT_C3		B43_PHY_EXTG(0x08c)
++
+ #define B43_PHY_HT_AFE_C1_OVER			B43_PHY_EXTG(0x110)
+ #define B43_PHY_HT_AFE_C1			B43_PHY_EXTG(0x111)
+ #define B43_PHY_HT_AFE_C2_OVER			B43_PHY_EXTG(0x114)
+@@ -62,6 +66,7 @@ struct b43_phy_ht_channeltab_e_phy {
+ 
+ 
+ struct b43_phy_ht {
++	u16 rf_ctl_int_save[3];
+ };
+ 
+ 
 -- 
 1.7.10.4
