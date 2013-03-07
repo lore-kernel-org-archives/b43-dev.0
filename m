@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  7 Mar 2013 16:47:16 +0100
-Subject: [PATCH 02/13] b43: HT-PHY: add classifier control function
+Date: Thu,  7 Mar 2013 16:47:18 +0100
+Subject: [PATCH 04/13] b43: HT-PHY: implement spurious tone avoidance
 In-Reply-To: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
 References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1362671247-10766-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1362671247-10766-5-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,107 +11,52 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-After comparing operations on reg 0xB on N and HT it seems to be the
-same register with similar ops. Implement them for HT-PHY.
+On N-PHY it's also done after TX power fix, so it was easy to spot.
+Unfortunately the MMIO logs I have from ndsiwrapper include channels
+1-12 only, so enabling code for 13 and 14 is just a N-PHY-based guess.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_ht.c |   36 +++++++++++++++++++++++++++++++-----
- drivers/net/wireless/b43/phy_ht.h |    6 ++++++
- 2 files changed, 37 insertions(+), 5 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 20c4cb7f..2a65d01 100644
+index f7463aa..4ccd371 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -157,6 +157,22 @@ static void b43_radio_2059_init(struct b43_wldev *dev)
-  * Various PHY ops
+@@ -285,6 +285,24 @@ static void b43_phy_ht_tx_power_fix(struct b43_wldev *dev)
+  * Channel switching ops.
   **************************************************/
  
-+static u16 b43_phy_ht_classifier(struct b43_wldev *dev, u16 mask, u16 val)
++static void b43_phy_ht_spur_avoid(struct b43_wldev *dev,
++				  struct ieee80211_channel *new_channel)
 +{
-+	u16 tmp;
-+	u16 allowed = B43_PHY_HT_CLASS_CTL_CCK_EN |
-+		      B43_PHY_HT_CLASS_CTL_OFDM_EN |
-+		      B43_PHY_HT_CLASS_CTL_WAITED_EN;
++	struct bcma_device *core = dev->dev->bdev;
++	int spuravoid = 0;
 +
-+	tmp = b43_phy_read(dev, B43_PHY_HT_CLASS_CTL);
-+	tmp &= allowed;
-+	tmp &= ~mask;
-+	tmp |= (val & mask);
-+	b43_phy_maskset(dev, B43_PHY_HT_CLASS_CTL, ~allowed, tmp);
-+
-+	return tmp;
++	/* Check for 13 and 14 is just a guess, we don't have enough logs. */
++	if (new_channel->hw_value == 13 || new_channel->hw_value == 14)
++		spuravoid = 1;
++	bcma_core_pll_ctl(core, B43_BCMA_CLKCTLST_PHY_PLL_REQ, 0, false);
++	bcma_pmu_spuravoid_pllupdate(&core->bus->drv_cc, spuravoid);
++	bcma_core_pll_ctl(core,
++			  B43_BCMA_CLKCTLST_80211_PLL_REQ |
++			  B43_BCMA_CLKCTLST_PHY_PLL_REQ,
++			  B43_BCMA_CLKCTLST_80211_PLL_ST |
++			  B43_BCMA_CLKCTLST_PHY_PLL_ST, false);
 +}
 +
- static void b43_phy_ht_zero_extg(struct b43_wldev *dev)
- {
- 	u8 i, j;
-@@ -264,7 +280,15 @@ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
- 	b43_phy_write(dev, B43_PHY_HT_BW5, e->bw5);
- 	b43_phy_write(dev, B43_PHY_HT_BW6, e->bw6);
+ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+ 				const struct b43_phy_ht_channeltab_e_phy *e,
+ 				struct ieee80211_channel *new_channel)
+@@ -318,6 +336,8 @@ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+ 	if (1) /* TODO: On N it's for early devices only, what about HT? */
+ 		b43_phy_ht_tx_power_fix(dev);
  
--	/* TODO: some ops on PHY regs 0x0B0 and 0xC0A */
-+	if (new_channel->hw_value == 14) {
-+		b43_phy_ht_classifier(dev, B43_PHY_HT_CLASS_CTL_OFDM_EN, 0);
-+		b43_phy_set(dev, B43_PHY_HT_TEST, 0x0800);
-+	} else {
-+		b43_phy_ht_classifier(dev, B43_PHY_HT_CLASS_CTL_OFDM_EN,
-+				      B43_PHY_HT_CLASS_CTL_OFDM_EN);
-+		if (new_channel->band == IEEE80211_BAND_2GHZ)
-+			b43_phy_mask(dev, B43_PHY_HT_TEST, ~0x840);
-+	}
- 
- 	/* TODO: separated function? */
- 	for (i = 0; i < 3; i++) {
-@@ -376,8 +400,11 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 	if (0) /* TODO: condition */
- 		; /* TODO: PHY op on reg 0x217 */
- 
--	b43_phy_read(dev, 0xb0); /* TODO: what for? */
--	b43_phy_set(dev, 0xb0, 0x1);
-+	if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ)
-+		b43_phy_ht_classifier(dev, B43_PHY_HT_CLASS_CTL_CCK_EN, 0);
-+	else
-+		b43_phy_ht_classifier(dev, B43_PHY_HT_CLASS_CTL_CCK_EN,
-+				      B43_PHY_HT_CLASS_CTL_CCK_EN);
- 
- 	b43_phy_set(dev, 0xb1, 0x91);
- 	b43_phy_write(dev, 0x32f, 0x0003);
-@@ -456,9 +483,8 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RX2TX);
- 	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RST2RX);
- 
--	/* TODO: PHY op on reg 0xb0 */
--
- 	/* TODO: Should we restore it? Or store it in global PHY info? */
-+	b43_phy_ht_classifier(dev, 0, 0);
- 	b43_phy_ht_read_clip_detection(dev, clip_state);
- 
- 	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
-index 60824fa..52603af 100644
---- a/drivers/net/wireless/b43/phy_ht.h
-+++ b/drivers/net/wireless/b43/phy_ht.h
-@@ -12,6 +12,10 @@
- #define B43_PHY_HT_TABLE_ADDR			0x072 /* Table address */
- #define B43_PHY_HT_TABLE_DATALO			0x073 /* Table data low */
- #define B43_PHY_HT_TABLE_DATAHI			0x074 /* Table data high */
-+#define B43_PHY_HT_CLASS_CTL			0x0B0 /* Classifier control */
-+#define  B43_PHY_HT_CLASS_CTL_CCK_EN		0x0001 /* CCK enable */
-+#define  B43_PHY_HT_CLASS_CTL_OFDM_EN		0x0002 /* OFDM enable */
-+#define  B43_PHY_HT_CLASS_CTL_WAITED_EN		0x0004 /* Waited enable */
- #define B43_PHY_HT_BW1				0x1CE
- #define B43_PHY_HT_BW2				0x1CF
- #define B43_PHY_HT_BW3				0x1D0
-@@ -43,6 +47,8 @@
- #define B43_PHY_HT_AFE_C3_OVER			B43_PHY_EXTG(0x118)
- #define B43_PHY_HT_AFE_C3			B43_PHY_EXTG(0x119)
- 
-+#define B43_PHY_HT_TEST				B43_PHY_N_BMODE(0x00A)
++	b43_phy_ht_spur_avoid(dev, new_channel);
 +
+ 	b43_phy_write(dev, 0x017e, 0x3830);
+ }
  
- /* Values for PHY registers used on channel switching */
- struct b43_phy_ht_channeltab_e_phy {
 -- 
 1.7.10.4
