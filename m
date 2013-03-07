@@ -1,85 +1,45 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  7 Mar 2013 16:47:27 +0100
-Subject: [PATCH 13/13] b43: HT-PHY: enable basic TX power setup
-In-Reply-To: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Thu, 7 Mar 2013 17:35:07 +0100
+Subject: [PATCH 11/13] b43: HT-PHY: implement RSSI polling
+In-Reply-To: <1362671247-10766-12-git-send-email-zajec5@gmail.com>
 References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1362671247-10766-14-git-send-email-zajec5@gmail.com>
+ <1362671247-10766-12-git-send-email-zajec5@gmail.com>
+Message-ID: <20130307173507.64a55ba3@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
+On Thu,  7 Mar 2013 16:47:25 +0100
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/phy_ht.c |    9 ---------
- 1 file changed, 9 deletions(-)
+> +	const u16 ctl_regs[3][2] = {
+> +		{ B43_PHY_HT_AFE_C1, B43_PHY_HT_AFE_C1_OVER, },
+> +		{ B43_PHY_HT_AFE_C2, B43_PHY_HT_AFE_C2_OVER, },
+> +		{ B43_PHY_HT_AFE_C3, B43_PHY_HT_AFE_C3_OVER, },
+> +	};
+> +	const u16 radio_r[] = { R2059_SYN, R2059_TXRX0, R2059_RXRX1, };
 
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 6d5eb04..54e5c85 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -297,7 +297,6 @@ static void b43_phy_ht_bphy_init(struct b43_wldev *dev)
-  * Samples
-  **************************************************/
- 
--#if 0
- static void b43_phy_ht_stop_playback(struct b43_wldev *dev)
- {
- 	struct b43_phy_ht *phy_ht = dev->phy.ht;
-@@ -385,13 +384,11 @@ static void b43_phy_ht_tx_tone(struct b43_wldev *dev)
- 	samp = b43_phy_ht_load_samples(dev);
- 	b43_phy_ht_run_samples(dev, samp, 0xFFFF, 0);
- }
--#endif
- 
- /**************************************************
-  * RSSI
-  **************************************************/
- 
--#if 0
- static void b43_phy_ht_rssi_select(struct b43_wldev *dev, u8 core_sel,
- 				   u8 rssi_type)
- {
-@@ -471,7 +468,6 @@ static void b43_phy_ht_poll_rssi(struct b43_wldev *dev, u8 type, s32 *buf,
- 	for (i = 0; i < 12; i++)
- 		b43_phy_write(dev, phy_regs_to_save[i], phy_regs_values[i]);
- }
--#endif
- 
- /**************************************************
-  * Tx/Rx
-@@ -499,7 +495,6 @@ static void b43_phy_ht_tx_power_fix(struct b43_wldev *dev)
- 	}
- }
- 
--#if 0
- static void b43_phy_ht_tx_power_ctl(struct b43_wldev *dev, bool enable)
- {
- 	struct b43_phy_ht *phy_ht = dev->phy.ht;
-@@ -665,7 +660,6 @@ static void b43_phy_ht_tx_power_ctl_setup(struct b43_wldev *dev)
- 		b43_httab_write_bulk(dev, B43_HTTAB16(26 + c, 0), 64, regval);
- 	}
- }
--#endif
- 
- /**************************************************
-  * Channel switching ops.
-@@ -949,13 +943,10 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 
- 	saved_tx_pwr_ctl = phy_ht->tx_pwr_ctl;
- 	b43_phy_ht_tx_power_fix(dev);
--#if 0
- 	b43_phy_ht_tx_power_ctl(dev, false);
- 	b43_phy_ht_tx_power_ctl_idle_tssi(dev);
- 	b43_phy_ht_tx_power_ctl_setup(dev);
--	/* TODO */
- 	b43_phy_ht_tx_power_ctl(dev, saved_tx_pwr_ctl);
--#endif
- 
- 	return 0;
- }
+> +	u16 phy_regs_to_save[] = {
+> +		B43_PHY_HT_AFE_C1, B43_PHY_HT_AFE_C1_OVER,
+> +		0x848, 0x841,
+> +		B43_PHY_HT_AFE_C2, B43_PHY_HT_AFE_C2_OVER,
+> +		0x868, 0x861,
+> +		B43_PHY_HT_AFE_C3, B43_PHY_HT_AFE_C3_OVER,
+> +		0x888, 0x881,
+> +	};
+
+It usually is better to define tables that are constant as "static const",
+so that they are not put on the kernel stack.
+
 -- 
-1.7.10.4
+Michael
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130307/b57a29aa/attachment.sig>
