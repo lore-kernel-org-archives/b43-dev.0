@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat,  9 Mar 2013 13:43:49 +0100
-Subject: [PATCH V3 01/13] b43: HT-PHY: rename AFE defines
-In-Reply-To: <1362671247-10766-2-git-send-email-zajec5@gmail.com>
-References: <1362671247-10766-2-git-send-email-zajec5@gmail.com>
-Message-ID: <1362833029-8484-1-git-send-email-zajec5@gmail.com>
+Date: Sat,  9 Mar 2013 13:49:01 +0100
+Subject: [PATCH V2 07/13] b43: HT-PHY: implement PA override
+In-Reply-To: <1362671247-10766-8-git-send-email-zajec5@gmail.com>
+References: <1362671247-10766-8-git-send-email-zajec5@gmail.com>
+Message-ID: <1362833341-20321-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,108 +11,78 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-It you take a look at N-PHY analog switch function it touches every core
-on the chipset. It seems HT-PHY does they same, it just has 3 cores
-instead of 2 (which make sense since BCM4331 is 3x3). Rename AFE defines
-to include core id.
-
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-V2: make ctl_regs array static btw
-V3: use correct --in-reply-to
-
-Sorry for using wrong In-Reply-To in V2 :(
+V2: use static for "regs" array
 ---
- drivers/net/wireless/b43/phy_ht.c |   38 ++++++++++++++++++-------------------
- drivers/net/wireless/b43/phy_ht.h |   12 ++++++------
- 2 files changed, 25 insertions(+), 25 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c |   22 ++++++++++++++++++++++
+ drivers/net/wireless/b43/phy_ht.h |    5 +++++
+ 2 files changed, 27 insertions(+)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 3719a88..df07c83 100644
+index 23a46c6..1998dca 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -176,10 +176,10 @@ static void b43_phy_ht_afe_unk1(struct b43_wldev *dev)
- {
- 	u8 i;
- 
--	const u16 ctl_regs[3][2] = {
--		{ B43_PHY_HT_AFE_CTL1, B43_PHY_HT_AFE_CTL2 },
--		{ B43_PHY_HT_AFE_CTL3, B43_PHY_HT_AFE_CTL4 },
--		{ B43_PHY_HT_AFE_CTL5, B43_PHY_HT_AFE_CTL6},
-+	static const u16 ctl_regs[3][2] = {
-+		{ B43_PHY_HT_AFE_C1_OVER, B43_PHY_HT_AFE_C1 },
-+		{ B43_PHY_HT_AFE_C2_OVER, B43_PHY_HT_AFE_C2 },
-+		{ B43_PHY_HT_AFE_C3_OVER, B43_PHY_HT_AFE_C3},
- 	};
- 
- 	for (i = 0; i < 3; i++) {
-@@ -362,9 +362,9 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 
- 	b43_phy_mask(dev, B43_PHY_EXTG(0), ~0x3);
- 
--	b43_phy_write(dev, B43_PHY_HT_AFE_CTL1, 0);
--	b43_phy_write(dev, B43_PHY_HT_AFE_CTL3, 0);
--	b43_phy_write(dev, B43_PHY_HT_AFE_CTL5, 0);
-+	b43_phy_write(dev, B43_PHY_HT_AFE_C1_OVER, 0);
-+	b43_phy_write(dev, B43_PHY_HT_AFE_C2_OVER, 0);
-+	b43_phy_write(dev, B43_PHY_HT_AFE_C3_OVER, 0);
- 
- 	b43_phy_write(dev, B43_PHY_EXTG(0x103), 0x20);
- 	b43_phy_write(dev, B43_PHY_EXTG(0x101), 0x20);
-@@ -511,19 +511,19 @@ static void b43_phy_ht_op_software_rfkill(struct b43_wldev *dev,
- static void b43_phy_ht_op_switch_analog(struct b43_wldev *dev, bool on)
- {
- 	if (on) {
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL2, 0x00cd);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL1, 0x0000);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL4, 0x00cd);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL3, 0x0000);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL6, 0x00cd);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL5, 0x0000);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C1, 0x00cd);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C1_OVER, 0x0000);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C2, 0x00cd);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C2_OVER, 0x0000);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C3, 0x00cd);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C3_OVER, 0x0000);
- 	} else {
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL1, 0x07ff);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL2, 0x00fd);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL3, 0x07ff);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL4, 0x00fd);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL5, 0x07ff);
--		b43_phy_write(dev, B43_PHY_HT_AFE_CTL6, 0x00fd);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C1_OVER, 0x07ff);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C1, 0x00fd);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C2_OVER, 0x07ff);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C2, 0x00fd);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C3_OVER, 0x07ff);
-+		b43_phy_write(dev, B43_PHY_HT_AFE_C3, 0x00fd);
- 	}
+@@ -178,6 +178,26 @@ static void b43_phy_ht_force_rf_sequence(struct b43_wldev *dev, u16 rf_seq)
+ 	b43_phy_write(dev, B43_PHY_HT_RF_SEQ_MODE, save_seq_mode);
  }
  
++static void b43_phy_ht_pa_override(struct b43_wldev *dev, bool enable)
++{
++	struct b43_phy_ht *htphy = dev->phy.ht;
++	static const u16 regs[3] = { B43_PHY_HT_RF_CTL_INT_C1,
++				     B43_PHY_HT_RF_CTL_INT_C2,
++				     B43_PHY_HT_RF_CTL_INT_C3 };
++	int i;
++
++	if (enable) {
++		for (i = 0; i < 3; i++)
++			b43_phy_write(dev, regs[i], htphy->rf_ctl_int_save[i]);
++	} else {
++		for (i = 0; i < 3; i++)
++			htphy->rf_ctl_int_save[i] = b43_phy_read(dev, regs[i]);
++		/* TODO: Does 5GHz band use different value (not 0x0400)? */
++		for (i = 0; i < 3; i++)
++			b43_phy_write(dev, regs[i], 0x0400);
++	}
++}
++
+ /**************************************************
+  * Various PHY ops
+  **************************************************/
+@@ -554,8 +574,10 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 
+ 	b43_mac_phy_clock_set(dev, true);
+ 
++	b43_phy_ht_pa_override(dev, false);
+ 	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RX2TX);
+ 	b43_phy_ht_force_rf_sequence(dev, B43_PHY_HT_RF_SEQ_TRIG_RST2RX);
++	b43_phy_ht_pa_override(dev, true);
+ 
+ 	/* TODO: Should we restore it? Or store it in global PHY info? */
+ 	b43_phy_ht_classifier(dev, 0, 0);
 diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
-index 6544c42..60824fa 100644
+index 52603af..684807c 100644
 --- a/drivers/net/wireless/b43/phy_ht.h
 +++ b/drivers/net/wireless/b43/phy_ht.h
-@@ -36,12 +36,12 @@
+@@ -40,6 +40,10 @@
  
  #define B43_PHY_HT_RF_CTL1			B43_PHY_EXTG(0x010)
  
--#define B43_PHY_HT_AFE_CTL1			B43_PHY_EXTG(0x110)
--#define B43_PHY_HT_AFE_CTL2			B43_PHY_EXTG(0x111)
--#define B43_PHY_HT_AFE_CTL3			B43_PHY_EXTG(0x114)
--#define B43_PHY_HT_AFE_CTL4			B43_PHY_EXTG(0x115)
--#define B43_PHY_HT_AFE_CTL5			B43_PHY_EXTG(0x118)
--#define B43_PHY_HT_AFE_CTL6			B43_PHY_EXTG(0x119)
-+#define B43_PHY_HT_AFE_C1_OVER			B43_PHY_EXTG(0x110)
-+#define B43_PHY_HT_AFE_C1			B43_PHY_EXTG(0x111)
-+#define B43_PHY_HT_AFE_C2_OVER			B43_PHY_EXTG(0x114)
-+#define B43_PHY_HT_AFE_C2			B43_PHY_EXTG(0x115)
-+#define B43_PHY_HT_AFE_C3_OVER			B43_PHY_EXTG(0x118)
-+#define B43_PHY_HT_AFE_C3			B43_PHY_EXTG(0x119)
++#define B43_PHY_HT_RF_CTL_INT_C1		B43_PHY_EXTG(0x04c)
++#define B43_PHY_HT_RF_CTL_INT_C2		B43_PHY_EXTG(0x06c)
++#define B43_PHY_HT_RF_CTL_INT_C3		B43_PHY_EXTG(0x08c)
++
+ #define B43_PHY_HT_AFE_C1_OVER			B43_PHY_EXTG(0x110)
+ #define B43_PHY_HT_AFE_C1			B43_PHY_EXTG(0x111)
+ #define B43_PHY_HT_AFE_C2_OVER			B43_PHY_EXTG(0x114)
+@@ -62,6 +66,7 @@ struct b43_phy_ht_channeltab_e_phy {
  
  
- /* Values for PHY registers used on channel switching */
+ struct b43_phy_ht {
++	u16 rf_ctl_int_save[3];
+ };
+ 
+ 
 -- 
 1.7.10.4
