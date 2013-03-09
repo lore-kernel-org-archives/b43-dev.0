@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat,  9 Mar 2013 13:41:31 +0100
-Subject: [PATCH V2 01/13] b43: HT-PHY: rename AFE defines
-In-Reply-To: <1362671247-10766-12-git-send-email-zajec5@gmail.com>
-References: <1362671247-10766-12-git-send-email-zajec5@gmail.com>
-Message-ID: <1362832891-8403-1-git-send-email-zajec5@gmail.com>
+Date: Sat,  9 Mar 2013 13:43:49 +0100
+Subject: [PATCH V3 01/13] b43: HT-PHY: rename AFE defines
+In-Reply-To: <1362671247-10766-2-git-send-email-zajec5@gmail.com>
+References: <1362671247-10766-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1362833029-8484-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -19,6 +19,9 @@ to include core id.
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
 V2: make ctl_regs array static btw
+V3: use correct --in-reply-to
+
+Sorry for using wrong In-Reply-To in V2 :(
 ---
  drivers/net/wireless/b43/phy_ht.c |   38 ++++++++++++++++++-------------------
  drivers/net/wireless/b43/phy_ht.h |   12 ++++++------
