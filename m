@@ -1,27 +1,43 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 09 Mar 2013 11:21:33 -0600
-Subject: [PATCH 00/13] b43: implement basic TX power mgmt
-In-Reply-To: <CACna6rwxMygCwLyya_c9ipA-pEUJzGmWchAY=GNLfKegwy_XPw@mail.gmail.com>
-References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
- <CACna6rwxMygCwLyya_c9ipA-pEUJzGmWchAY=GNLfKegwy_XPw@mail.gmail.com>
-Message-ID: <513B6F9D.9010201@lwfinger.net>
+Date: Mon, 11 Mar 2013 15:38:26 -0500
+Subject: [PATCH] ssb: pci: Fix flipping of MAC address
+Message-ID: <513e40c2.MDaC+Q82iTl9PpIZ%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: John W Linville <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, zajec5@gmail.com
 
-On 03/09/2013 06:58 AM, Rafa? Mi?ecki wrote:
-> I've finished sending V2 of some patches, arrays are now converted to
-> static const where possible.
->
-> I've tried applying this 3 times and Hauke confirmed is applies
-> cleanly, so I hope it's fine now.
+Since commit e565275 entitled "ssb: pci: Standardize a function to get mac
+address", the SPROM readout of the MAC has had the values flipped so that
+00:11:22:33:44:55 became 11:00:33:22:55:44. The fix has been tested on both
+little- and big-endian architectures.
 
-I do not know what happened earlier, but the using the latest set, everything 
-applied cleanly.
+Reported-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
 
-Now for some testing.
+John,
+
+This bug was introduced in 3.9, and should be fixed there.
+
+Thanks,
 
 Larry
+---
+
+Index: wireless-testing-new/drivers/ssb/pci.c
+===================================================================
+--- wireless-testing-new.orig/drivers/ssb/pci.c
++++ wireless-testing-new/drivers/ssb/pci.c
+@@ -234,8 +234,8 @@ static void sprom_get_mac(char *mac, con
+ {
+ 	int i;
+ 	for (i = 0; i < 3; i++) {
+-		*mac++ = in[i];
+ 		*mac++ = in[i] >> 8;
++		*mac++ = in[i];
+ 	}
+ }
+ 
