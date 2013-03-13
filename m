@@ -1,43 +1,35 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 11 Mar 2013 15:38:26 -0500
-Subject: [PATCH] ssb: pci: Fix flipping of MAC address
-Message-ID: <513e40c2.MDaC+Q82iTl9PpIZ%Larry.Finger@lwfinger.net>
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Wed, 13 Mar 2013 10:41:23 +0000
+Subject: [PATCH 00/13] b43: implement basic TX power mgmt
+In-Reply-To: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1363171283.32099.343.camel@i7.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John W Linville <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, zajec5@gmail.com
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-Since commit e565275 entitled "ssb: pci: Standardize a function to get mac
-address", the SPROM readout of the MAC has had the values flipped so that
-00:11:22:33:44:55 became 11:00:33:22:55:44. The fix has been tested on both
-little- and big-endian architectures.
+On Thu, 2013-03-07 at 16:47 +0100, Rafa? Mi?ecki wrote:
+> After spotting a lot of N-PHY-similar functions in
+> BCM4331 dump of MMIO ops - split into names parts
+> I was able to finally improve HT-PHY code.
+> 
+> It now sets TX basically, I can finally talk with devices that are few
+> meters away, not just few centimetres. It's a little patch bomb, sorry
+> for that, but I wasn't sure if my code is correct until it was complete
+> and started working.
 
-Reported-by: Rafa? Mi?ecki <zajec5@gmail.com>
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
+If you have a git tree I can pull this from, I'd be happy to give it
+some testing...
 
-John,
-
-This bug was introduced in 3.9, and should be fixed there.
-
-Thanks,
-
-Larry
----
-
-Index: wireless-testing-new/drivers/ssb/pci.c
-===================================================================
---- wireless-testing-new.orig/drivers/ssb/pci.c
-+++ wireless-testing-new/drivers/ssb/pci.c
-@@ -234,8 +234,8 @@ static void sprom_get_mac(char *mac, con
- {
- 	int i;
- 	for (i = 0; i < 3; i++) {
--		*mac++ = in[i];
- 		*mac++ = in[i] >> 8;
-+		*mac++ = in[i];
- 	}
- }
- 
+-- 
+dwmw2
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 6171 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130313/d3474d97/attachment.bin>
