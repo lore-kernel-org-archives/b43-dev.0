@@ -1,51 +1,149 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Thu, 14 Mar 2013 14:58:36 +0000
-Subject: [PATCH 00/13] b43: implement basic TX power mgmt
-In-Reply-To: <CACna6ryEBFqg1ORRcbob+FWcFGiMt9fOfQAkAov9wmoR8M4Fxw@mail.gmail.com>
-References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
- <1363171283.32099.343.camel@i7.infradead.org>
- <CACna6ryEBFqg1ORRcbob+FWcFGiMt9fOfQAkAov9wmoR8M4Fxw@mail.gmail.com>
-Message-ID: <1363273116.4853.58.camel@i7.infradead.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 14 Mar 2013 13:46:19 -0500
+Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
+Message-ID: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: Michael Buesch <mb@bu3sch.de>, zajec5@gmail.com
+Cc: isedev@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Thu, 2013-03-14 at 00:19 +0100, Rafa? Mi?ecki wrote:
-> 
-> > If you have a git tree I can pull this from, I'd be happy to give it
-> > some testing...
-> 
-> You can try wireless-testing:
-> http://git.kernel.org/cgit/linux/kernel/git/linville/wireless-testing.git
+From: Iestyn C. Elfick <isedev@gmail.com>
 
-Thanks. This is not an improvement here.
+Intermittently, b43 will report "Out of order TX status report on DMA ring".
+When this happens, the driver must be reset before communication can resume.
+The cause of the problem is believed to be an error in the closed-source
+firmware; however, all versions of the firmware are affected.
 
-Sitting at my desk, about 5m from my WNDR3800 access point with walls
-and chimney in between them, I was previously seeing a TX rate of 48Mb/s
-up to 54Mb/s (reported by 'iwconfig wlan0' and also as the RX rate for
-the corresponding wireless client in OpenWRT's status page).
+This change uses the observation that the expected status is always 2 less
+than the observed value, and supplies a fake status report to skip one
+header/data pair.
 
-A primitive test copying a 143MiB file to a wired host would take 35
-seconds, averaging 4.1MiB/s.
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Stable <stable@vger.kernel.org>
+---
 
-With these changes I get TX rates of about 18-24Mb/s and copying the
-same file takes 82 seconds, averaging 1.7MiB/s
+Although this is a hack, it seems to work for the OP. It should not cause any
+ill effects on any device that does not have the problem.
 
-That's comparing the Fedora 3.8.2-206.fc18.x86_64 kernel with current
-wireless-testing, rather than wireless-testing from before and after
-your changes. But that shouldn't matter, presumably?
+It does need a lot more testing, particularly on systems prone to the out-of-order
+status report problem.
 
-Do you want me to do some more specific tests?
+If anyone can think of a cleaner, less intrusive solution, please let us know.
 
--- 
-dwmw2
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: smime.p7s
-Type: application/x-pkcs7-signature
-Size: 6171 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130314/5b34893f/attachment-0001.bin>
+Thanks,
+
+Larry
+---
+
+Index: wireless-testing-rebased/drivers/net/wireless/b43/dma.c
+===================================================================
+--- wireless-testing-rebased.orig/drivers/net/wireless/b43/dma.c
++++ wireless-testing-rebased/drivers/net/wireless/b43/dma.c
+@@ -1487,8 +1487,11 @@ void b43_dma_handle_txstatus(struct b43_
+ 	const struct b43_dma_ops *ops;
+ 	struct b43_dmaring *ring;
+ 	struct b43_dmadesc_meta *meta;
++	static const struct b43_txstatus fake; /* filled with 0 */
++	const struct b43_txstatus *txstat;
+ 	int slot, firstused;
+ 	bool frame_succeed;
++	int skip;
+ 
+ 	ring = parse_cookie(dev, status->cookie, &slot);
+ 	if (unlikely(!ring))
+@@ -1501,13 +1504,26 @@ void b43_dma_handle_txstatus(struct b43_
+ 	firstused = ring->current_slot - ring->used_slots + 1;
+ 	if (firstused < 0)
+ 		firstused = ring->nr_slots + firstused;
++
++	skip = 0;
+ 	if (unlikely(slot != firstused)) {
+ 		/* This possibly is a firmware bug and will result in
+-		 * malfunction, memory leaks and/or stall of DMA functionality. */
++		 * malfunction, memory leaks and/or stall of DMA functionality.
++		 */
+ 		b43dbg(dev->wl, "Out of order TX status report on DMA ring %d. "
+ 		       "Expected %d, but got %d\n",
+ 		       ring->index, firstused, slot);
+-		return;
++		if (slot == firstused + 2) {
++			/* If a single header/data pair was missed, skip over
++			 * the first two slots in an attempt to recover.
++			 */
++			slot = firstused;
++			skip = 2;
++			b43dbg(dev->wl, "Skip on DMA ring %d slot %d.\n",
++			       ring->index, slot);
++		} else {
++			return;
++		}
+ 	}
+ 
+ 	ops = ring->ops;
+@@ -1522,11 +1538,13 @@ void b43_dma_handle_txstatus(struct b43_
+ 			       slot, firstused, ring->index);
+ 			break;
+ 		}
++
+ 		if (meta->skb) {
+ 			struct b43_private_tx_info *priv_info =
+-				b43_get_priv_tx_info(IEEE80211_SKB_CB(meta->skb));
++			     b43_get_priv_tx_info(IEEE80211_SKB_CB(meta->skb));
+ 
+-			unmap_descbuffer(ring, meta->dmaaddr, meta->skb->len, 1);
++			unmap_descbuffer(ring, meta->dmaaddr,
++					 meta->skb->len, 1);
+ 			kfree(priv_info->bouncebuffer);
+ 			priv_info->bouncebuffer = NULL;
+ 		} else {
+@@ -1538,8 +1556,9 @@ void b43_dma_handle_txstatus(struct b43_
+ 			struct ieee80211_tx_info *info;
+ 
+ 			if (unlikely(!meta->skb)) {
+-				/* This is a scatter-gather fragment of a frame, so
+-				 * the skb pointer must not be NULL. */
++				/* This is a scatter-gather fragment of a frame,
++				 * so the skb pointer must not be NULL.
++				 */
+ 				b43dbg(dev->wl, "TX status unexpected NULL skb "
+ 				       "at slot %d (first=%d) on ring %d\n",
+ 				       slot, firstused, ring->index);
+@@ -1550,9 +1569,18 @@ void b43_dma_handle_txstatus(struct b43_
+ 
+ 			/*
+ 			 * Call back to inform the ieee80211 subsystem about
+-			 * the status of the transmission.
++			 * the status of the transmission. When skipping over
++			 * a missed TX status report, use a status structure
++			 * filled with zeros to indicate that the frame was not
++			 * sent (frame_count 0) and not acknowledged
+ 			 */
+-			frame_succeed = b43_fill_txstatus_report(dev, info, status);
++			if (unlikely(!skip))
++				txstat = status;
++			else
++				txstat = &fake;
++
++			frame_succeed = b43_fill_txstatus_report(dev, info,
++								 txstat);
+ #ifdef CONFIG_B43_DEBUG
+ 			if (frame_succeed)
+ 				ring->nr_succeed_tx_packets++;
+@@ -1580,12 +1608,14 @@ void b43_dma_handle_txstatus(struct b43_
+ 		/* Everything unmapped and free'd. So it's not used anymore. */
+ 		ring->used_slots--;
+ 
+-		if (meta->is_last_fragment) {
++		if (meta->is_last_fragment && !skip) {
+ 			/* This is the last scatter-gather
+ 			 * fragment of the frame. We are done. */
+ 			break;
+ 		}
+ 		slot = next_slot(ring, slot);
++		if (skip > 0)
++			--skip;
+ 	}
+ 	if (ring->stopped) {
+ 		B43_WARN_ON(free_slots(ring) < TX_SLOTS_PER_FRAME);
