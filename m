@@ -1,46 +1,46 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 14 Mar 2013 21:17:18 +0100
-Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
-In-Reply-To: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
-References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
-Message-ID: <CACna6rzvqo-CdrwkSH0p9=b=Qn+L78jQQSuGcGbgT865_uKvSw@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 14 Mar 2013 21:41:21 +0100
+Subject: [RFT][PATCH] b43: DMA: debug rings alignment
+Message-ID: <1363293681-23385-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Michael Buesch <mb@bu3sch.de>, isedev@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-2013/3/14 Larry Finger <Larry.Finger@lwfinger.net>:
-> From: Iestyn C. Elfick <isedev@gmail.com>
->
-> Intermittently, b43 will report "Out of order TX status report on DMA ring".
-> When this happens, the driver must be reset before communication can resume.
-> The cause of the problem is believed to be an error in the closed-source
-> firmware; however, all versions of the firmware are affected.
->
-> This change uses the observation that the expected status is always 2 less
-> than the observed value, and supplies a fake status report to skip one
-> header/data pair.
->
-> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-> Cc: Stable <stable@vger.kernel.org>
-> ---
->
-> Although this is a hack, it seems to work for the OP. It should not cause any
-> ill effects on any device that does not have the problem.
->
-> It does need a lot more testing, particularly on systems prone to the out-of-order
-> status report problem.
->
-> If anyone can think of a cleaner, less intrusive solution, please let us know.
+---
+ISE: can you try this with your card? Provide output including "DBG"
+messages please.
+Hope it compiles.
+---
+ drivers/net/wireless/b43/dma.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-I wonder if this is hardware supporting unaligned access with
-full-addressing for DMA engine. Maybe it support index-based indexes
-for backward compatibility only, and it's somehow broken?
-
-Can we test full-addressing first? I'll try to prepare a patch for
-this during the weekend.
-
+diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
+index 38bc5a7..30da6ce 100644
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -915,6 +915,21 @@ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
+ 	ring->last_injected_overflow = jiffies;
+ #endif
+ 
++	if (type == B43_DMA_64BIT) {
++		u32 tmp;
++		if (for_tx) {
++			b43_write32(dev, ring->mmio_base + B43_DMA64_TXRINGLO, 0xff0);
++			tmp = b43_read32(dev, ring->mmio_base + B43_DMA64_TXRINGLO);
++			pr_info("[DBG] Testing TX on ring 0x%X: 0x%X\n", ring->mmio_base, tmp);
++		} else {
++			b43_write32(dev, ring->mmio_base + B43_DMA64_RXRINGLO, 0xff0);
++			tmp = b43_read32(dev, ring->mmio_base + B43_DMA64_RXRINGLO);
++			pr_info("[DBG] Testing RX on ring 0x%X: 0x%X\n", ring->mmio_base, tmp);
++		}
++	} else {
++		pr_err("[DBG] Whoops, it's not 64b DMA engine!\n");
++	}
++
+ 	if (for_tx) {
+ 		/* Assumption: B43_TXRING_SLOTS can be divided by TX_SLOTS_PER_FRAME */
+ 		BUILD_BUG_ON(B43_TXRING_SLOTS % TX_SLOTS_PER_FRAME != 0);
 -- 
-Rafa?
+1.7.10.4
