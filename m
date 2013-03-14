@@ -1,68 +1,63 @@
-From: Chris Vine <chris@cvine.freeserve.co.uk>
-Date: Thu, 14 Mar 2013 21:39:56 +0000
-Subject: BCM4312 / b43 DMA transmission sequence errors
-In-Reply-To: <4530943.RJ7WpUJOSz@wks001.ise.net>
-References: <1695808.c7XUjJpf0R@wks001.ise.net>
- <1476129.oNtxuF3Ght@wks001.ise.net> <51413800.6050300@lwfinger.net>
- <4530943.RJ7WpUJOSz@wks001.ise.net>
-Message-ID: <20130314213956.05aa6dee@bother.homenet>
+From: ISE Development <isedev@gmail.com>
+Date: Thu, 14 Mar 2013 23:32:23 +0100
+Subject: [RFT][PATCH] b43: DMA: debug rings alignment
+In-Reply-To: <8990870.3kQAHQdGWn@wks001.ise.net>
+References: <1363293681-23385-1-git-send-email-zajec5@gmail.com>
+ <8990870.3kQAHQdGWn@wks001.ise.net>
+Message-ID: <2764885.SxiT7ALNty@wks001.ise.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: isedev@gmail.com
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On Thu, 14 Mar 2013 14:08:33 +0100
-ISE Development <isedev@gmail.com> wrote:
-> On Wednesday 13 Mar 2013 21:37:52 Larry Finger wrote:
-> > On 03/13/2013 08:06 PM, ISE Development wrote:
+On Thursday 14 Mar 2013 21:58:18 ISE Development wrote:
+> On Thursday 14 Mar 2013 21:41:21 Rafa? Mi?ecki wrote:
+> > index 38bc5a7..30da6ce 100644
+> > --- a/drivers/net/wireless/b43/dma.c
+> > +++ b/drivers/net/wireless/b43/dma.c
+> > @@ -915,6 +915,21 @@ struct b43_dmaring *b43_setup_dmaring(struct
+> > b43_wldev
+> > *dev, ring->last_injected_overflow = jiffies;
 > > 
-> > >
-> > > I've hacked the driver to 'skip' one header and data frame if
-> > > receiving an interrupt for the first slot + 2. It's not pretty
-> > > and I have literally no idea if it will causes other problems,
-> > > but it has allowed me to keep the Wifi connection up for a little
-> > > over 3 hours now (as compared to the 45 seconds previously). It
-> > > does not appear to be corrupting the data stream (checked by
-> > > download large signed binaries and verifying the signature) and
-> > > as far as my limited knowledge can tell, it should not be causing
-> > > a memory leak.
-> > >
-> > > The patch is listed below, for reference. However, I do not claim
-> > > that it is valid, safe or even reasonsable. It does provide me
-> > > with much needed relief though.
-> > >
-> > > The diff is against the current head of
-> > > linville/wireless-testing.git
-> > > (d41d9c7419e3ac9c81841f43bbd7639dd0a5819e).
-> > >
+> >  #endif
 > > 
-> > I am testing the patch on BCM4312 and other cards.
+> > +       if (type == B43_DMA_64BIT) {
+> > +               u32 tmp;
+> > +               if (for_tx) {
+> > +                       b43_write32(dev, ring->mmio_base +
+> > B43_DMA64_TXRINGLO, 0xff0); +                       tmp = b43_read32(dev,
+> > ring->mmio_base + B43_DMA64_TXRINGLO);
+> > +                       pr_info("[DBG] Testing TX on ring 0x%X: 0x%X\n",
+> > ring->mmio_base, tmp); +               } else {
+> > +                       b43_write32(dev, ring->mmio_base +
+> > B43_DMA64_RXRINGLO, 0xff0); +                       tmp = b43_read32(dev,
+> > ring->mmio_base + B43_DMA64_RXRINGLO);
+> > +                       pr_info("[DBG] Testing RX on ring 0x%X: 0x%X\n",
+> > ring->mmio_base, tmp); +               }
+> > +       } else {
+> > +               pr_err("[DBG] Whoops, it's not 64b DMA engine!\n");
+> > +       }
+> > +
 > > 
-> > Larry
+> >         if (for_tx) {
+> >         
+> >                 /* Assumption: B43_TXRING_SLOTS can be divided by
 > > 
+> > TX_SLOTS_PER_FRAME */ BUILD_BUG_ON(B43_TXRING_SLOTS % TX_SLOTS_PER_FRAME
+> > !=
+> > 0);
 > 
-> Here's a slighted cleaner version, with comments, in case you are
-> considering integrating it.
+> Will start testing now...
 
-[snip]
+Here's the output:
 
-It might look like a bit of a hack (probably one that broadcom have
-hidden away in their own wl driver if it is a firmware issue) but it is
-certainly effective.
+[38667.424687] b43-phy0 debug: [DBG] Testing TX on ring 0x200: 0x0
+[38667.424733] b43-phy0 debug: [DBG] Testing TX on ring 0x240: 0x0
+[38667.424787] b43-phy0 debug: [DBG] Testing TX on ring 0x280: 0x0
+[38667.424840] b43-phy0 debug: [DBG] Testing TX on ring 0x2C0: 0x0
+[38667.424894] b43-phy0 debug: [DBG] Testing TX on ring 0x300: 0x0
+[38667.424948] b43-phy0 debug: [DBG] Testing RX on ring 0x200: 0x0
 
-I have applied this patch to the 3.8.2 kernel and for the first time I
-get reliable performance from the bcm4312 card in my netbook using the
-b43 driver.  I have banged about 5 GB through it and I am continuing to
-do so, but it is still up.  I get I would say on average about one TX
-ring error (on ring 1 in the case of my card) per 500 MB of
-throughput and the frame skip resolves the problem for me.
-
-As this patch also avoid spamming the debug log with shed loads of
-error reports once an inconsistency arises, it also reveals that the
-inconsistency always begins with an expected status report of 138 and a
-report of 140 being received.  Yours, however, may well be different,
-and this may be meaningless anyway.
-
-Chris
+-- 
+-- isedev
