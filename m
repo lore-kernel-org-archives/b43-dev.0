@@ -1,40 +1,46 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Thu, 14 Mar 2013 19:55:49 +0100
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 14 Mar 2013 21:17:18 +0100
 Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
 In-Reply-To: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
 References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
-Message-ID: <20130314195549.56fea051@milhouse>
+Message-ID: <CACna6rzvqo-CdrwkSH0p9=b=Qn+L78jQQSuGcGbgT865_uKvSw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Michael Buesch <mb@bu3sch.de>, zajec5@gmail.com, isedev@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: Michael Buesch <mb@bu3sch.de>, isedev@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Thu, 14 Mar 2013 13:46:19 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+2013/3/14 Larry Finger <Larry.Finger@lwfinger.net>:
+> From: Iestyn C. Elfick <isedev@gmail.com>
+>
+> Intermittently, b43 will report "Out of order TX status report on DMA ring".
+> When this happens, the driver must be reset before communication can resume.
+> The cause of the problem is believed to be an error in the closed-source
+> firmware; however, all versions of the firmware are affected.
+>
+> This change uses the observation that the expected status is always 2 less
+> than the observed value, and supplies a fake status report to skip one
+> header/data pair.
+>
+> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+> Cc: Stable <stable@vger.kernel.org>
+> ---
+>
+> Although this is a hack, it seems to work for the OP. It should not cause any
+> ill effects on any device that does not have the problem.
+>
+> It does need a lot more testing, particularly on systems prone to the out-of-order
+> status report problem.
+>
+> If anyone can think of a cleaner, less intrusive solution, please let us know.
 
->  	if (unlikely(slot != firstused)) {
->  		/* This possibly is a firmware bug and will result in
-> -		 * malfunction, memory leaks and/or stall of DMA functionality. */
-> +		 * malfunction, memory leaks and/or stall of DMA functionality.
-> +		 */
->  		b43dbg(dev->wl, "Out of order TX status report on DMA ring %d. "
->  		       "Expected %d, but got %d\n",
->  		       ring->index, firstused, slot);
-> -		return;
-> +		if (slot == firstused + 2) {
+I wonder if this is hardware supporting unaligned access with
+full-addressing for DMA engine. Maybe it support index-based indexes
+for backward compatibility only, and it's somehow broken?
 
-I guess you need to handle wrap-over here.
-This would probably do:
-		if (slot == next_slot(ring, next_slot(ring, firstused)))
+Can we test full-addressing first? I'll try to prepare a patch for
+this during the weekend.
 
 -- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130314/bbcb41a3/attachment.sig>
+Rafa?
