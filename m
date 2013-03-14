@@ -1,130 +1,51 @@
-From: ISE Development <isedev@gmail.com>
-Date: Thu, 14 Mar 2013 14:08:33 +0100
-Subject: BCM4312 / b43 DMA transmission sequence errors
-In-Reply-To: <51413800.6050300@lwfinger.net>
-References: <1695808.c7XUjJpf0R@wks001.ise.net>
- <1476129.oNtxuF3Ght@wks001.ise.net> <51413800.6050300@lwfinger.net>
-Message-ID: <4530943.RJ7WpUJOSz@wks001.ise.net>
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Thu, 14 Mar 2013 14:58:36 +0000
+Subject: [PATCH 00/13] b43: implement basic TX power mgmt
+In-Reply-To: <CACna6ryEBFqg1ORRcbob+FWcFGiMt9fOfQAkAov9wmoR8M4Fxw@mail.gmail.com>
+References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+ <1363171283.32099.343.camel@i7.infradead.org>
+ <CACna6ryEBFqg1ORRcbob+FWcFGiMt9fOfQAkAov9wmoR8M4Fxw@mail.gmail.com>
+Message-ID: <1363273116.4853.58.camel@i7.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Wednesday 13 Mar 2013 21:37:52 Larry Finger wrote:
-> On 03/13/2013 08:06 PM, ISE Development wrote:
+On Thu, 2013-03-14 at 00:19 +0100, Rafa? Mi?ecki wrote:
 > 
-> >
-> > I've hacked the driver to 'skip' one header and data frame if receiving an interrupt for the first slot + 2. It's not pretty and I have literally no idea if it will causes other problems, but it has allowed me to keep the Wifi connection up for a little over 3 hours now (as compared to the 45 seconds previously). It does not appear to be corrupting the data stream (checked by download large signed binaries and verifying the signature) and as far as my limited knowledge can tell, it should not be causing a memory leak.
-> >
-> > The patch is listed below, for reference. However, I do not claim that it is valid, safe or even reasonsable. It does provide me with much needed relief though.
-> >
-> > The diff is against the current head of linville/wireless-testing.git (d41d9c7419e3ac9c81841f43bbd7639dd0a5819e).
-> >
+> > If you have a git tree I can pull this from, I'd be happy to give it
+> > some testing...
 > 
-> I am testing the patch on BCM4312 and other cards.
-> 
-> Larry
-> 
+> You can try wireless-testing:
+> http://git.kernel.org/cgit/linux/kernel/git/linville/wireless-testing.git
 
-Here's a slighted cleaner version, with comments, in case you are considering integrating it.
+Thanks. This is not an improvement here.
 
-diff --git a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
-index 38bc5a7..edc759d 100644
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -1489,6 +1489,7 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
-        struct b43_dmadesc_meta *meta;
-        int slot, firstused;
-        bool frame_succeed;
-+       int skip;
- 
-        ring = parse_cookie(dev, status->cookie, &slot);
-        if (unlikely(!ring))
-@@ -1501,13 +1502,22 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
-        firstused = ring->current_slot - ring->used_slots + 1;
-        if (firstused < 0)
-                firstused = ring->nr_slots + firstused;
-+
-+       skip = 0;
-        if (unlikely(slot != firstused)) {
-                /* This possibly is a firmware bug and will result in
-                 * malfunction, memory leaks and/or stall of DMA functionality. */
-                b43dbg(dev->wl, "Out of order TX status report on DMA ring %d. "
-                       "Expected %d, but got %d\n",
-                       ring->index, firstused, slot);
--               return;
-+               if(slot == firstused + 2) {
-+                       /* If a single header/data pair was missed, skip over the first
-+                        * two slots in an attempt to recover. */
-+                       slot = firstused;
-+                       skip = 2;
-+               } else {
-+                       return;
-+               }
-        }
- 
-        ops = ring->ops;
-@@ -1522,6 +1532,7 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
-                               slot, firstused, ring->index);
-                        break;
-                }
-+
-                if (meta->skb) {
-                        struct b43_private_tx_info *priv_info =
-                                b43_get_priv_tx_info(IEEE80211_SKB_CB(meta->skb));
-@@ -1552,7 +1563,18 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
-                         * Call back to inform the ieee80211 subsystem about
-                         * the status of the transmission.
-                         */
--                       frame_succeed = b43_fill_txstatus_report(dev, info, status);
-+                       if(!skip)
-+                       {
-+                               frame_succeed = b43_fill_txstatus_report(dev, info, status);
-+                       }
-+                       else
-+                       {
-+                           /* When skipping over a missed TX status report, use a status
-+                            * structure which indicates that the frame was not sent
-+                            * (frame_count 0) and not acknowledged */
-+                               struct b43_txstatus fake = B43_FAKE_TXSTATUS;
-+                               frame_succeed = b43_fill_txstatus_report(dev, info, &fake);
-+                       }
- #ifdef CONFIG_B43_DEBUG
-                        if (frame_succeed)
-                                ring->nr_succeed_tx_packets++;
-@@ -1580,12 +1602,14 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
-                /* Everything unmapped and free'd. So it's not used anymore. */
-                ring->used_slots--;
- 
--               if (meta->is_last_fragment) {
-+               if (meta->is_last_fragment && !skip) {
-                        /* This is the last scatter-gather
-                         * fragment of the frame. We are done. */
-                        break;
-                }
-                slot = next_slot(ring, slot);
-+               if(skip > 0)
-+                       --skip;
-        }
-        if (ring->stopped) {
-                B43_WARN_ON(free_slots(ring) < TX_SLOTS_PER_FRAME);
-diff --git a/drivers/net/wireless/b43/xmit.h b/drivers/net/wireless/b43/xmit.h
-index 98d9074..eae730c 100644
---- a/drivers/net/wireless/b43/xmit.h
-+++ b/drivers/net/wireless/b43/xmit.h
-@@ -218,6 +218,9 @@ struct b43_txstatus {
-        u8 acked;               /* Wireless ACK received */
- };
- 
-+/* This needs to match the b43_txstatus structure above, all zeroed-out */
-+#define B43_FAKE_TXSTATUS { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-+
- /* txstatus supp_reason values */
- enum {
-        B43_TXST_SUPP_NONE,     /* Not suppressed */
+Sitting at my desk, about 5m from my WNDR3800 access point with walls
+and chimney in between them, I was previously seeing a TX rate of 48Mb/s
+up to 54Mb/s (reported by 'iwconfig wlan0' and also as the RX rate for
+the corresponding wireless client in OpenWRT's status page).
 
+A primitive test copying a 143MiB file to a wired host would take 35
+seconds, averaging 4.1MiB/s.
+
+With these changes I get TX rates of about 18-24Mb/s and copying the
+same file takes 82 seconds, averaging 1.7MiB/s
+
+That's comparing the Fedora 3.8.2-206.fc18.x86_64 kernel with current
+wireless-testing, rather than wireless-testing from before and after
+your changes. But that shouldn't matter, presumably?
+
+Do you want me to do some more specific tests?
 
 -- 
--- isedev
+dwmw2
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 6171 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130314/5b34893f/attachment-0001.bin>
