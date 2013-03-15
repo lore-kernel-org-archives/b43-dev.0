@@ -1,31 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 15 Mar 2013 08:57:39 -0400 (EDT)
-Subject: [PATCH net-next] drivers:net: Remove dma_alloc_coherent OOM
- messages
-In-Reply-To: <1363302441.2146.30.camel@joe-AO722>
-References: <1363302441.2146.30.camel@joe-AO722>
-Message-ID: <20130315.085739.1428933964050018561.davem@davemloft.net>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 15 Mar 2013 11:48:42 -0500
+Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
+In-Reply-To: <CACna6rxAGN5cx6BXrdpM+-q_6QAQAvfb8+qhe-romE4hdxSs3g@mail.gmail.com>
+References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
+ <CACna6rzvqo-CdrwkSH0p9=b=Qn+L78jQQSuGcGbgT865_uKvSw@mail.gmail.com>
+ <CACna6rxAGN5cx6BXrdpM+-q_6QAQAvfb8+qhe-romE4hdxSs3g@mail.gmail.com>
+Message-ID: <514350EA.2060205@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Michael Buesch <mb@bu3sch.de>, isedev@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
-Date: Thu, 14 Mar 2013 16:07:21 -0700
+On 03/15/2013 01:37 AM, Rafa? Mi?ecki wrote:
+>
+> OK, so after early tests, this card doesn't support full-addressing at all.
+>
+> I'll give this patch a try during the weekend.
 
-> I believe these error messages are already logged
-> on allocation failure by warn_alloc_failed and so
-> get a dump_stack on OOM.
-> 
-> Remove the unnecessary additional error logging.
-> 
-> Around these deletions:
-> 
-> o Alignment neatening.
-> o Remove unnecessary casts of dma_alloc_coherent.
-> o Hoist assigns from ifs.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+Please follow Michael's suggestion, and change
 
-Applied, thanks Joe.
+		if (slot == firstused + 2) {
+
+into
+
+		if (slot == next_slot(ring, next_slot(ring, firstused))) {
+
+This change is needed just in case "firstused + 2" wraps around.
+
+Thanks,
+
+Larry
