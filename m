@@ -1,27 +1,33 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 14 Mar 2013 21:07:33 -0500
-Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
-In-Reply-To: <2065763.l9B10YbWFg@wks001.ise.net>
-References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
- <2065763.l9B10YbWFg@wks001.ise.net>
-Message-ID: <51428265.1090202@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 15 Mar 2013 07:33:27 +0100
+Subject: [RFT][PATCH] b43: DMA: debug rings alignment
+In-Reply-To: <2764885.SxiT7ALNty@wks001.ise.net>
+References: <1363293681-23385-1-git-send-email-zajec5@gmail.com>
+ <8990870.3kQAHQdGWn@wks001.ise.net>
+ <2764885.SxiT7ALNty@wks001.ise.net>
+Message-ID: <CACna6rw=q_KaD7Wa9=9V49TNRq7g7=huV5yf+aQ-vsHTP=2ZBQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: isedev@gmail.com
-Cc: Michael Buesch <mb@bu3sch.de>, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On 03/14/2013 07:09 PM, ISE Development wrote:
-> On Thursday 14 Mar 2013 13:46:19 Larry Finger wrote:
->> +                       if (unlikely(!skip))
->> +                               txstat = status;
->> +                       else
->> +                               txstat = &fake;
+2013/3/14 ISE Development <isedev@gmail.com>:
+> On Thursday 14 Mar 2013 21:58:18 ISE Development wrote:
+>> Will start testing now...
 >
-> The logic should probably be reversed. It's more unlikely to skip than not to
-> do so (hopefully!)...
+> Here's the output:
+>
+> [38667.424687] b43-phy0 debug: [DBG] Testing TX on ring 0x200: 0x0
+> [38667.424733] b43-phy0 debug: [DBG] Testing TX on ring 0x240: 0x0
+> [38667.424787] b43-phy0 debug: [DBG] Testing TX on ring 0x280: 0x0
+> [38667.424840] b43-phy0 debug: [DBG] Testing TX on ring 0x2C0: 0x0
+> [38667.424894] b43-phy0 debug: [DBG] Testing TX on ring 0x300: 0x0
+> [38667.424948] b43-phy0 debug: [DBG] Testing RX on ring 0x200: 0x0
 
-Yes, you are correct.
+Whoops, so this hardware doesn't support unaligned addressing (address
+based, not index based). My alternative solution won't even apply in
+this case. Thanks for testing.
 
-Larry
+-- 
+Rafa?
