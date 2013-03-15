@@ -1,74 +1,24 @@
 From: ISE Development <isedev@gmail.com>
-Date: Fri, 15 Mar 2013 00:46:59 +0100
-Subject: [RFT][PATCH] b43: DMA: debug rings alignment
-In-Reply-To: <2764885.SxiT7ALNty@wks001.ise.net>
-References: <1363293681-23385-1-git-send-email-zajec5@gmail.com>
- <8990870.3kQAHQdGWn@wks001.ise.net> <2764885.SxiT7ALNty@wks001.ise.net>
-Message-ID: <1837145.o3uEt4olKQ@wks001.ise.net>
+Date: Fri, 15 Mar 2013 01:09:19 +0100
+Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
+In-Reply-To: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
+References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
+Message-ID: <2065763.l9B10YbWFg@wks001.ise.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Michael Buesch <mb@bu3sch.de>, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Thursday 14 Mar 2013 23:32:23 ISE Development wrote:
-> On Thursday 14 Mar 2013 21:58:18 ISE Development wrote:
-> > On Thursday 14 Mar 2013 21:41:21 Rafa? Mi?ecki wrote:
-> > > index 38bc5a7..30da6ce 100644
-> > > --- a/drivers/net/wireless/b43/dma.c
-> > > +++ b/drivers/net/wireless/b43/dma.c
-> > > @@ -915,6 +915,21 @@ struct b43_dmaring *b43_setup_dmaring(struct
-> > > b43_wldev
-> > > *dev, ring->last_injected_overflow = jiffies;
-> > > 
-> > >  #endif
-> > > 
-> > > +       if (type == B43_DMA_64BIT) {
-> > > +               u32 tmp;
-> > > +               if (for_tx) {
-> > > +                       b43_write32(dev, ring->mmio_base +
-> > > B43_DMA64_TXRINGLO, 0xff0); 
-> > > +                       tmp = b43_read32(dev, ring->mmio_base +
-> > > B43_DMA64_TXRINGLO);
-> > > +                       pr_info("[DBG] Testing TX on ring 0x%X: 0x%X\n",
-> > > ring->mmio_base, tmp); 
-> > > +               } else {
-> > > +                       b43_write32(dev, ring->mmio_base +
-> > > B43_DMA64_RXRINGLO, 0xff0);
-> > > +                       tmp = b43_read32(dev, ring->mmio_base +
-> > > B43_DMA64_RXRINGLO);
-> > > +                       pr_info("[DBG] Testing RX on ring 0x%X: 0x%X\n",
-> > > ring->mmio_base, tmp);
-> > > +               }
-> > > +       } else {
-> > > +               pr_err("[DBG] Whoops, it's not 64b DMA engine!\n");
-> > > +       }
-> > > +
-> > > 
-> > >         if (for_tx) {
-> > >         
-> > >                 /* Assumption: B43_TXRING_SLOTS can be divided by
-> > > 
-> > > TX_SLOTS_PER_FRAME */ BUILD_BUG_ON(B43_TXRING_SLOTS % TX_SLOTS_PER_FRAME
-> > > !=
-> > > 0);
-> > 
-> > Will start testing now...
-> 
-> Here's the output:
-> 
-> [38667.424687] b43-phy0 debug: [DBG] Testing TX on ring 0x200: 0x0
-> [38667.424733] b43-phy0 debug: [DBG] Testing TX on ring 0x240: 0x0
-> [38667.424787] b43-phy0 debug: [DBG] Testing TX on ring 0x280: 0x0
-> [38667.424840] b43-phy0 debug: [DBG] Testing TX on ring 0x2C0: 0x0
-> [38667.424894] b43-phy0 debug: [DBG] Testing TX on ring 0x300: 0x0
-> [38667.424948] b43-phy0 debug: [DBG] Testing RX on ring 0x200: 0x0
+On Thursday 14 Mar 2013 13:46:19 Larry Finger wrote:
+> +                       if (unlikely(!skip))
+> +                               txstat = status;
+> +                       else
+> +                               txstat = &fake;
 
-Other than that, similar error sequence:
-
-- hits slot 138 on ring 3, then out of order errors
-- hits slot 208 on ring 1, then out of order errors
-- AP times out connection (to be expected)
+The logic should probably be reversed. It's more unlikely to skip than not to 
+do so (hopefully!)... 
 
 -- 
 -- isedev
