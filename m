@@ -1,33 +1,52 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 15 Mar 2013 07:33:27 +0100
-Subject: [RFT][PATCH] b43: DMA: debug rings alignment
-In-Reply-To: <2764885.SxiT7ALNty@wks001.ise.net>
-References: <1363293681-23385-1-git-send-email-zajec5@gmail.com>
- <8990870.3kQAHQdGWn@wks001.ise.net>
- <2764885.SxiT7ALNty@wks001.ise.net>
-Message-ID: <CACna6rw=q_KaD7Wa9=9V49TNRq7g7=huV5yf+aQ-vsHTP=2ZBQ@mail.gmail.com>
+Date: Fri, 15 Mar 2013 07:37:41 +0100
+Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
+In-Reply-To: <CACna6rzvqo-CdrwkSH0p9=b=Qn+L78jQQSuGcGbgT865_uKvSw@mail.gmail.com>
+References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
+ <CACna6rzvqo-CdrwkSH0p9=b=Qn+L78jQQSuGcGbgT865_uKvSw@mail.gmail.com>
+Message-ID: <CACna6rxAGN5cx6BXrdpM+-q_6QAQAvfb8+qhe-romE4hdxSs3g@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Michael Buesch <mb@bu3sch.de>, isedev@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-2013/3/14 ISE Development <isedev@gmail.com>:
-> On Thursday 14 Mar 2013 21:58:18 ISE Development wrote:
->> Will start testing now...
+2013/3/14 Rafa? Mi?ecki <zajec5@gmail.com>:
+> 2013/3/14 Larry Finger <Larry.Finger@lwfinger.net>:
+>> From: Iestyn C. Elfick <isedev@gmail.com>
+>>
+>> Intermittently, b43 will report "Out of order TX status report on DMA ring".
+>> When this happens, the driver must be reset before communication can resume.
+>> The cause of the problem is believed to be an error in the closed-source
+>> firmware; however, all versions of the firmware are affected.
+>>
+>> This change uses the observation that the expected status is always 2 less
+>> than the observed value, and supplies a fake status report to skip one
+>> header/data pair.
+>>
+>> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+>> Cc: Stable <stable@vger.kernel.org>
+>> ---
+>>
+>> Although this is a hack, it seems to work for the OP. It should not cause any
+>> ill effects on any device that does not have the problem.
+>>
+>> It does need a lot more testing, particularly on systems prone to the out-of-order
+>> status report problem.
+>>
+>> If anyone can think of a cleaner, less intrusive solution, please let us know.
 >
-> Here's the output:
+> I wonder if this is hardware supporting unaligned access with
+> full-addressing for DMA engine. Maybe it support index-based indexes
+> for backward compatibility only, and it's somehow broken?
 >
-> [38667.424687] b43-phy0 debug: [DBG] Testing TX on ring 0x200: 0x0
-> [38667.424733] b43-phy0 debug: [DBG] Testing TX on ring 0x240: 0x0
-> [38667.424787] b43-phy0 debug: [DBG] Testing TX on ring 0x280: 0x0
-> [38667.424840] b43-phy0 debug: [DBG] Testing TX on ring 0x2C0: 0x0
-> [38667.424894] b43-phy0 debug: [DBG] Testing TX on ring 0x300: 0x0
-> [38667.424948] b43-phy0 debug: [DBG] Testing RX on ring 0x200: 0x0
+> Can we test full-addressing first? I'll try to prepare a patch for
+> this during the weekend.
 
-Whoops, so this hardware doesn't support unaligned addressing (address
-based, not index based). My alternative solution won't even apply in
-this case. Thanks for testing.
+OK, so after early tests, this card doesn't support full-addressing at all.
+
+I'll give this patch a try during the weekend.
 
 -- 
 Rafa?
