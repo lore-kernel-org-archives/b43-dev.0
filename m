@@ -1,52 +1,31 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 15 Mar 2013 07:37:41 +0100
-Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
-In-Reply-To: <CACna6rzvqo-CdrwkSH0p9=b=Qn+L78jQQSuGcGbgT865_uKvSw@mail.gmail.com>
-References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
- <CACna6rzvqo-CdrwkSH0p9=b=Qn+L78jQQSuGcGbgT865_uKvSw@mail.gmail.com>
-Message-ID: <CACna6rxAGN5cx6BXrdpM+-q_6QAQAvfb8+qhe-romE4hdxSs3g@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 15 Mar 2013 08:57:39 -0400 (EDT)
+Subject: [PATCH net-next] drivers:net: Remove dma_alloc_coherent OOM
+ messages
+In-Reply-To: <1363302441.2146.30.camel@joe-AO722>
+References: <1363302441.2146.30.camel@joe-AO722>
+Message-ID: <20130315.085739.1428933964050018561.davem@davemloft.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Michael Buesch <mb@bu3sch.de>, isedev@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-2013/3/14 Rafa? Mi?ecki <zajec5@gmail.com>:
-> 2013/3/14 Larry Finger <Larry.Finger@lwfinger.net>:
->> From: Iestyn C. Elfick <isedev@gmail.com>
->>
->> Intermittently, b43 will report "Out of order TX status report on DMA ring".
->> When this happens, the driver must be reset before communication can resume.
->> The cause of the problem is believed to be an error in the closed-source
->> firmware; however, all versions of the firmware are affected.
->>
->> This change uses the observation that the expected status is always 2 less
->> than the observed value, and supplies a fake status report to skip one
->> header/data pair.
->>
->> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
->> Cc: Stable <stable@vger.kernel.org>
->> ---
->>
->> Although this is a hack, it seems to work for the OP. It should not cause any
->> ill effects on any device that does not have the problem.
->>
->> It does need a lot more testing, particularly on systems prone to the out-of-order
->> status report problem.
->>
->> If anyone can think of a cleaner, less intrusive solution, please let us know.
->
-> I wonder if this is hardware supporting unaligned access with
-> full-addressing for DMA engine. Maybe it support index-based indexes
-> for backward compatibility only, and it's somehow broken?
->
-> Can we test full-addressing first? I'll try to prepare a patch for
-> this during the weekend.
+From: Joe Perches <joe@perches.com>
+Date: Thu, 14 Mar 2013 16:07:21 -0700
 
-OK, so after early tests, this card doesn't support full-addressing at all.
+> I believe these error messages are already logged
+> on allocation failure by warn_alloc_failed and so
+> get a dump_stack on OOM.
+> 
+> Remove the unnecessary additional error logging.
+> 
+> Around these deletions:
+> 
+> o Alignment neatening.
+> o Remove unnecessary casts of dma_alloc_coherent.
+> o Hoist assigns from ifs.
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-I'll give this patch a try during the weekend.
-
--- 
-Rafa?
+Applied, thanks Joe.
