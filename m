@@ -1,43 +1,70 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 15 Mar 2013 21:18:21 -0700
-Subject: [PATCH net-next] drivers:net: dma_alloc_coherent: use
- __GFP_ZERO instead of memset(, 0)
-In-Reply-To: <CFEEE81102D91947B9CC368106979EBA3CF55939@ORSMSX102.amr.corp.intel.com>
-References: <dbbfc5e66dba7d2b63549d218407fb0c4031f2ed.1363367992.git.joe@perches.com>
- <CFEEE81102D91947B9CC368106979EBA3CF55939@ORSMSX102.amr.corp.intel.com>
-Message-ID: <1363407501.2030.1.camel@joe-AO722>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 16 Mar 2013 14:50:21 +0100
+Subject: [PATCH 00/13] b43: implement basic TX power mgmt
+In-Reply-To: <1363273116.4853.58.camel@i7.infradead.org>
+References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
+ <1363171283.32099.343.camel@i7.infradead.org>
+ <CACna6ryEBFqg1ORRcbob+FWcFGiMt9fOfQAkAov9wmoR8M4Fxw@mail.gmail.com>
+ <1363273116.4853.58.camel@i7.infradead.org>
+Message-ID: <CACna6ry4bxZROnoBpu7S39e+cDure79nmzhLY8228Zuxecdt3w@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Abodunrin, Akeem G" <akeem.g.abodunrin@intel.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "e1000-devel@lists.sourceforge.net" <e1000-devel@lists.sourceforge.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "users@rt2x00.serialmonkey.com" <users@rt2x00.serialmonkey.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-On Fri, 2013-03-15 at 22:51 +0000, Abodunrin, Akeem G wrote:
-> -----Original Message-----
-> From: netdev-owner at vger.kernel.org [mailto:netdev-owner at vger.kernel.org] On Behalf Of Joe Perches
-[]
-> Reduce the number of calls required to alloc a zeroed block of memory.
-[]
-> diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
-[]
-> @@ -488,7 +487,6 @@ int igbvf_setup_rx_resources(struct igbvf_adapter *adapter,
->  
->  	rx_ring->desc = dma_alloc_coherent(&pdev->dev, rx_ring->size,
->  					   &rx_ring->dma, GFP_KERNEL);
-> -
->  	if (!rx_ring->desc)
->  		goto err;
-> 
-> Hi Joe,
+2013/3/14 David Woodhouse <dwmw2@infradead.org>:
+> On Thu, 2013-03-14 at 00:19 +0100, Rafa? Mi?ecki wrote:
+>>
+>> > If you have a git tree I can pull this from, I'd be happy to give it
+>> > some testing...
+>>
+>> You can try wireless-testing:
+>> http://git.kernel.org/cgit/linux/kernel/git/linville/wireless-testing.git
+>
+> Thanks. This is not an improvement here.
+>
+> Sitting at my desk, about 5m from my WNDR3800 access point with walls
+> and chimney in between them, I was previously seeing a TX rate of 48Mb/s
+> up to 54Mb/s (reported by 'iwconfig wlan0' and also as the RX rate for
+> the corresponding wireless client in OpenWRT's status page).
+>
+> A primitive test copying a 143MiB file to a wired host would take 35
+> seconds, averaging 4.1MiB/s.
+>
+> With these changes I get TX rates of about 18-24Mb/s and copying the
+> same file takes 82 seconds, averaging 1.7MiB/s
 
-Hello Akeem.
+I was thinking about this and analyzing dump a bit more. My theory
+(that makes the most sense for me) is that:
+1) Cards differ by default TX configuration. Your default
+configuration works pretty well in your environment (32.8Mib/s? that's
+really nice!). My card is probably different and in default
+configuration can barely transmit anything).
+2) With the recent changes we put cards in some semi-optimal configuration
+3) To achieve full performance we still have to implement dynamic TX
+power management
 
-> Your changes did not seem to make it to igbvf/netdev.c - I think
-> instead of removing an extra line added for code clarity, you
-> want to add:
-> "tx_ring->desc = dma_alloc_coherent(&pdev->dev, tx_ring->size,
->  					   &tx_ring->dma, GFP_KERNEL| __GFP_ZERO);"
+In your case... well it probably was better to don't touch TX power at
+all ;) Unfortunately it has to be finally implemented, to allow all
+cards work with some acceptable performance.
 
-Not really, there's no memset here so this
-bit is just a whitespace neatening.
+
+> That's comparing the Fedora 3.8.2-206.fc18.x86_64 kernel with current
+> wireless-testing, rather than wireless-testing from before and after
+> your changes. But that shouldn't matter, presumably?
+>
+> Do you want me to do some more specific tests?
+
+To verify my theory, could you try reverting
+4969b41798e512689bba57c8c44d873216eba814, AKA
+b43: HT-PHY: enable basic TX power setup
+? Does reverting this patch brings you back ~4.1MiB/s?
+
+If it doesn't, could you bisect? Two another patches I would suspect;
+b43: HT-PHY: implement spurious tone avoidance
+b43: HT-PHY: implement MAC reclocking
+
+-- 
+Rafa?
