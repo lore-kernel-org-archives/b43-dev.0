@@ -1,114 +1,229 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 17 Mar 2013 19:00:18 +0100
-Subject: [PATCH 1/4] b43: HT-PHY: rename defines addressing cores on the 2059
- radio
+Date: Sun, 17 Mar 2013 19:00:19 +0100
+Subject: [PATCH 2/4] b43: HT-PHY: tables: don't duplicate core-generic regs
 In-Reply-To: <1363543221-10651-1-git-send-email-zajec5@gmail.com>
 References: <1363543221-10651-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1363543221-10651-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1363543221-10651-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-After comparing writes to registers at 0x000, 0x400 and 0x800 it seems
-there are many very similar writes. So 0x000 offset is not for accessing
-something totally different, but probably just the first out of three
-cores.
+Now when we know many radio regs at 0x000 are core-generic, I've noticed
+we duplicate some values in the tables.
 ---
- drivers/net/wireless/b43/phy_ht.c     |   22 +++++++++++-----------
- drivers/net/wireless/b43/radio_2059.h |    6 +++---
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/net/wireless/b43/phy_ht.c     |   33 +++++++++++-----------------
+ drivers/net/wireless/b43/radio_2059.c |   39 ++++++++-------------------------
+ drivers/net/wireless/b43/radio_2059.h |    8 -------
+ 3 files changed, 22 insertions(+), 58 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index b866770..751df2e 100644
+index 751df2e..afb13f2 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -63,7 +63,7 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
- 	b43_radio_write(dev, 0x98, e->radio_syn98);
- 
- 	for (i = 0; i < 2; i++) {
--		routing = i ? R2059_RXRX1 : R2059_TXRX0;
-+		routing = i ? R2059_C3 : R2059_C2;
- 		b43_radio_write(dev, routing | 0x4a, e->radio_rxtx4a);
- 		b43_radio_write(dev, routing | 0x58, e->radio_rxtx58);
- 		b43_radio_write(dev, routing | 0x5a, e->radio_rxtx5a);
-@@ -87,7 +87,7 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
- 
- static void b43_radio_2059_init(struct b43_wldev *dev)
+@@ -37,8 +37,9 @@
+ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
+ 			const struct b43_phy_ht_channeltab_e_radio2059 *e)
  {
--	const u16 routing[] = { R2059_SYN, R2059_TXRX0, R2059_RXRX1 };
-+	const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3 };
- 	const u16 radio_values[3][2] = {
- 		{ 0x61, 0xE9 }, { 0x69, 0xD5 }, { 0x73, 0x99 },
- 	};
-@@ -106,17 +106,17 @@ static void b43_radio_2059_init(struct b43_wldev *dev)
- 	b43_radio_mask(dev, 0xc0, ~0x0080);
++	static const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3, };
++	u16 r;
+ 	u8 i;
+-	u16 routing;
  
- 	if (1) { /* FIXME */
--		b43_radio_set(dev, R2059_RXRX1 | 0x4, 0x1);
-+		b43_radio_set(dev, R2059_C3 | 0x4, 0x1);
- 		udelay(10);
--		b43_radio_set(dev, R2059_RXRX1 | 0x0BF, 0x1);
--		b43_radio_maskset(dev, R2059_RXRX1 | 0x19B, 0x3, 0x2);
-+		b43_radio_set(dev, R2059_C3 | 0x0BF, 0x1);
-+		b43_radio_maskset(dev, R2059_C3 | 0x19B, 0x3, 0x2);
+ 	b43_radio_write(dev, 0x16, e->radio_syn16);
+ 	b43_radio_write(dev, 0x17, e->radio_syn17);
+@@ -53,25 +54,17 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
+ 	b43_radio_write(dev, 0x41, e->radio_syn41);
+ 	b43_radio_write(dev, 0x43, e->radio_syn43);
+ 	b43_radio_write(dev, 0x47, e->radio_syn47);
+-	b43_radio_write(dev, 0x4a, e->radio_syn4a);
+-	b43_radio_write(dev, 0x58, e->radio_syn58);
+-	b43_radio_write(dev, 0x5a, e->radio_syn5a);
+-	b43_radio_write(dev, 0x6a, e->radio_syn6a);
+-	b43_radio_write(dev, 0x6d, e->radio_syn6d);
+-	b43_radio_write(dev, 0x6e, e->radio_syn6e);
+-	b43_radio_write(dev, 0x92, e->radio_syn92);
+-	b43_radio_write(dev, 0x98, e->radio_syn98);
+-
+-	for (i = 0; i < 2; i++) {
+-		routing = i ? R2059_C3 : R2059_C2;
+-		b43_radio_write(dev, routing | 0x4a, e->radio_rxtx4a);
+-		b43_radio_write(dev, routing | 0x58, e->radio_rxtx58);
+-		b43_radio_write(dev, routing | 0x5a, e->radio_rxtx5a);
+-		b43_radio_write(dev, routing | 0x6a, e->radio_rxtx6a);
+-		b43_radio_write(dev, routing | 0x6d, e->radio_rxtx6d);
+-		b43_radio_write(dev, routing | 0x6e, e->radio_rxtx6e);
+-		b43_radio_write(dev, routing | 0x92, e->radio_rxtx92);
+-		b43_radio_write(dev, routing | 0x98, e->radio_rxtx98);
++
++	for (i = 0; i < 3; i++) {
++		r = routing[i];
++		b43_radio_write(dev, r | 0x4a, e->radio_rxtx4a);
++		b43_radio_write(dev, r | 0x58, e->radio_rxtx58);
++		b43_radio_write(dev, r | 0x5a, e->radio_rxtx5a);
++		b43_radio_write(dev, r | 0x6a, e->radio_rxtx6a);
++		b43_radio_write(dev, r | 0x6d, e->radio_rxtx6d);
++		b43_radio_write(dev, r | 0x6e, e->radio_rxtx6e);
++		b43_radio_write(dev, r | 0x92, e->radio_rxtx92);
++		b43_radio_write(dev, r | 0x98, e->radio_rxtx98);
+ 	}
  
--		b43_radio_set(dev, R2059_RXRX1 | 0x4, 0x2);
-+		b43_radio_set(dev, R2059_C3 | 0x4, 0x2);
- 		udelay(100);
--		b43_radio_mask(dev, R2059_RXRX1 | 0x4, ~0x2);
-+		b43_radio_mask(dev, R2059_C3 | 0x4, ~0x2);
+ 	udelay(50);
+diff --git a/drivers/net/wireless/b43/radio_2059.c b/drivers/net/wireless/b43/radio_2059.c
+index d4ce8a1..38e31d8 100644
+--- a/drivers/net/wireless/b43/radio_2059.c
++++ b/drivers/net/wireless/b43/radio_2059.c
+@@ -27,7 +27,7 @@
  
- 		for (i = 0; i < 10000; i++) {
--			if (b43_radio_read(dev, R2059_RXRX1 | 0x145) & 1) {
-+			if (b43_radio_read(dev, R2059_C3 | 0x145) & 1) {
- 				i = 0;
- 				break;
- 			}
-@@ -125,7 +125,7 @@ static void b43_radio_2059_init(struct b43_wldev *dev)
- 		if (i)
- 			b43err(dev->wl, "radio 0x945 timeout\n");
+ #define RADIOREGS(r00, r01, r02, r03, r04, r05, r06, r07, r08, r09, \
+ 		  r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, \
+-		  r20, r21, r22, r23, r24, r25, r26, r27, r28) \
++		  r20) \
+ 	.radio_syn16			= r00,	\
+ 	.radio_syn17			= r01,	\
+ 	.radio_syn22			= r02,	\
+@@ -41,22 +41,14 @@
+ 	.radio_syn41			= r10,	\
+ 	.radio_syn43			= r11,	\
+ 	.radio_syn47			= r12,	\
+-	.radio_syn4a			= r13,	\
+-	.radio_syn58			= r14,	\
+-	.radio_syn5a			= r15,	\
+-	.radio_syn6a			= r16,	\
+-	.radio_syn6d			= r17,	\
+-	.radio_syn6e			= r18,	\
+-	.radio_syn92			= r19,	\
+-	.radio_syn98			= r20,	\
+-	.radio_rxtx4a			= r21,	\
+-	.radio_rxtx58			= r22,	\
+-	.radio_rxtx5a			= r23,	\
+-	.radio_rxtx6a			= r24,	\
+-	.radio_rxtx6d			= r25,	\
+-	.radio_rxtx6e			= r26,	\
+-	.radio_rxtx92			= r27,	\
+-	.radio_rxtx98			= r28
++	.radio_rxtx4a			= r13,	\
++	.radio_rxtx58			= r14,	\
++	.radio_rxtx5a			= r15,	\
++	.radio_rxtx6a			= r16,	\
++	.radio_rxtx6d			= r17,	\
++	.radio_rxtx6e			= r18,	\
++	.radio_rxtx92			= r19,	\
++	.radio_rxtx98			= r20
  
--		b43_radio_mask(dev, R2059_RXRX1 | 0x4, ~0x1);
-+		b43_radio_mask(dev, R2059_C3 | 0x4, ~0x1);
- 		b43_radio_set(dev, 0xa, 0x60);
- 
- 		for (i = 0; i < 3; i++) {
-@@ -397,7 +397,7 @@ static void b43_phy_ht_rssi_select(struct b43_wldev *dev, u8 core_sel,
- 		{ B43_PHY_HT_AFE_C2, B43_PHY_HT_AFE_C2_OVER, },
- 		{ B43_PHY_HT_AFE_C3, B43_PHY_HT_AFE_C3_OVER, },
- 	};
--	static const u16 radio_r[] = { R2059_SYN, R2059_TXRX0, R2059_RXRX1, };
-+	static const u16 radio_r[] = { R2059_C1, R2059_C2, R2059_C3, };
- 	int core;
- 
- 	if (core_sel == 0) {
-@@ -417,7 +417,7 @@ static void b43_phy_ht_rssi_select(struct b43_wldev *dev, u8 core_sel,
- 				b43_phy_set(dev, ctl_regs[core][1], 0x1 << 9);
- 				b43_phy_set(dev, ctl_regs[core][1], 0x1 << 10);
- 
--				b43_radio_set(dev, R2059_RXRX1 | 0xbf, 0x1);
-+				b43_radio_set(dev, R2059_C3 | 0xbf, 0x1);
- 				b43_radio_write(dev, radio_r[core] | 0x159,
- 						0x11);
- 				break;
+ #define PHYREGS(r0, r1, r2, r3, r4, r5)	\
+ 	.phy_regs.bw1	= r0,	\
+@@ -70,91 +62,78 @@ static const struct b43_phy_ht_channeltab_e_radio2059 b43_phy_ht_channeltab_radi
+   {	.freq			= 2412,
+ 	RADIOREGS(0x48, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x6c,
+ 		  0x09, 0x0f, 0x0a, 0x00, 0x0a, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03c9, 0x03c5, 0x03c1, 0x043a, 0x043f, 0x0443),
+   },
+   {	.freq			= 2417,
+ 	RADIOREGS(0x4b, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x71,
+ 		  0x09, 0x0f, 0x0a, 0x00, 0x0a, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03cb, 0x03c7, 0x03c3, 0x0438, 0x043d, 0x0441),
+   },
+   {	.freq			= 2422,
+ 	RADIOREGS(0x4e, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x76,
+ 		  0x09, 0x0f, 0x09, 0x00, 0x09, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03cd, 0x03c9, 0x03c5, 0x0436, 0x043a, 0x043f),
+   },
+   {	.freq			= 2427,
+ 	RADIOREGS(0x52, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x7b,
+ 		  0x09, 0x0f, 0x09, 0x00, 0x09, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03cf, 0x03cb, 0x03c7, 0x0434, 0x0438, 0x043d),
+   },
+   {	.freq			= 2432,
+ 	RADIOREGS(0x55, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x80,
+ 		  0x09, 0x0f, 0x08, 0x00, 0x08, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03d1, 0x03cd, 0x03c9, 0x0431, 0x0436, 0x043a),
+   },
+   {	.freq			= 2437,
+ 	RADIOREGS(0x58, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x85,
+ 		  0x09, 0x0f, 0x08, 0x00, 0x08, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03d3, 0x03cf, 0x03cb, 0x042f, 0x0434, 0x0438),
+   },
+   {	.freq			= 2442,
+ 	RADIOREGS(0x5c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8a,
+ 		  0x09, 0x0f, 0x07, 0x00, 0x07, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03d5, 0x03d1, 0x03cd, 0x042d, 0x0431, 0x0436),
+   },
+   {	.freq			= 2447,
+ 	RADIOREGS(0x5f, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8f,
+ 		  0x09, 0x0f, 0x07, 0x00, 0x07, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03d7, 0x03d3, 0x03cf, 0x042b, 0x042f, 0x0434),
+   },
+   {	.freq			= 2452,
+ 	RADIOREGS(0x62, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x94,
+ 		  0x09, 0x0f, 0x07, 0x00, 0x07, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03d9, 0x03d5, 0x03d1, 0x0429, 0x042d, 0x0431),
+   },
+   {	.freq			= 2457,
+ 	RADIOREGS(0x66, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x99,
+ 		  0x09, 0x0f, 0x06, 0x00, 0x06, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03db, 0x03d7, 0x03d3, 0x0427, 0x042b, 0x042f),
+   },
+   {	.freq			= 2462,
+ 	RADIOREGS(0x69, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x9e,
+ 		  0x09, 0x0f, 0x06, 0x00, 0x06, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03dd, 0x03d9, 0x03d5, 0x0424, 0x0429, 0x042d),
+   },
+   {	.freq			= 2467,
+ 	RADIOREGS(0x6c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa3,
+ 		  0x09, 0x0f, 0x05, 0x00, 0x05, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03df, 0x03db, 0x03d7, 0x0422, 0x0427, 0x042b),
+   },
+   {	.freq			= 2472,
+ 	RADIOREGS(0x70, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa8,
+ 		  0x09, 0x0f, 0x05, 0x00, 0x05, 0x00, 0x61, 0x03,
+-		  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x61, 0x03,
+ 		  0x00, 0x00, 0x00, 0xf0, 0x00),
+ 	PHYREGS(0x03e1, 0x03dd, 0x03d9, 0x0420, 0x0424, 0x0429),
+   },
 diff --git a/drivers/net/wireless/b43/radio_2059.h b/drivers/net/wireless/b43/radio_2059.h
-index e4d69e5..a6a61fb 100644
+index a6a61fb..40a82d7 100644
 --- a/drivers/net/wireless/b43/radio_2059.h
 +++ b/drivers/net/wireless/b43/radio_2059.h
-@@ -5,9 +5,9 @@
- 
- #include "phy_ht.h"
- 
--#define R2059_SYN			0x000
--#define R2059_TXRX0			0x400
--#define R2059_RXRX1			0x800
-+#define R2059_C1			0x000
-+#define R2059_C2			0x400
-+#define R2059_C3			0x800
- #define R2059_ALL			0xC00
- 
- /* Values for various registers uploaded on channel switching */
+@@ -28,14 +28,6 @@ struct b43_phy_ht_channeltab_e_radio2059 {
+ 	u8 radio_syn41;
+ 	u8 radio_syn43;
+ 	u8 radio_syn47;
+-	u8 radio_syn4a;
+-	u8 radio_syn58;
+-	u8 radio_syn5a;
+-	u8 radio_syn6a;
+-	u8 radio_syn6d;
+-	u8 radio_syn6e;
+-	u8 radio_syn92;
+-	u8 radio_syn98;
+ 	u8 radio_rxtx4a;
+ 	u8 radio_rxtx58;
+ 	u8 radio_rxtx5a;
 -- 
 1.7.10.4
