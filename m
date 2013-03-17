@@ -1,30 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 17 Mar 2013 12:50:42 -0400 (EDT)
-Subject: [PATCH net-next] drivers:net: dma_alloc_coherent: use
- __GFP_ZERO instead of memset(, 0)
-In-Reply-To: <dbbfc5e66dba7d2b63549d218407fb0c4031f2ed.1363367992.git.joe@perches.com>
-References: <dbbfc5e66dba7d2b63549d218407fb0c4031f2ed.1363367992.git.joe@perches.com>
-Message-ID: <20130317.125042.778916600527811234.davem@davemloft.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 17 Mar 2013 19:00:17 +0100
+Subject: [PATCH 0/4] more HT-PHY improvements
+Message-ID: <1363543221-10651-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: joe@perches.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, e1000-devel@lists.sourceforge.net, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, users@rt2x00.serialmonkey.com
+To: b43-dev@lists.infradead.org
 
-From: Joe Perches <joe@perches.com>
-Date: Fri, 15 Mar 2013 10:23:58 -0700
+That are patches from my git repo [0] [1], just sending them to see if
+you have any comments. I'll send them to John later, in a bigger pack,
+or maybe will ask him to pull the tree.
 
-> Reduce the number of calls required to alloc
-> a zeroed block of memory.
-> 
-> Trivially reduces overall object size.
-> 
-> Other changes around these removals
-> o Neaten call argument alignment
-> o Remove an unnecessary OOM message after dma_alloc_coherent failure
-> o Remove unnecessary gfp_t stack variable
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+[0] git://git.infradead.org/users/rafal/b43-next.git
+[1] http://git.infradead.org/users/rafal/b43-next.git
 
-Looks good, applied, thanks Joe.
+Rafa? Mi?ecki (4):
+  b43: HT-PHY: rename defines addressing cores on the 2059 radio
+  b43: HT-PHY: tables: don't duplicate core-generic regs
+  b43: HT-PHY: finish calculating values for idle TSSI
+  b43: HT-PHY: do some extra TSSI setup after configuring TX
+
+ drivers/net/wireless/b43/phy_ht.c     |   86 +++++++++++++++++++++------------
+ drivers/net/wireless/b43/radio_2059.c |   39 ++++-----------
+ drivers/net/wireless/b43/radio_2059.h |   14 ++----
+ 3 files changed, 66 insertions(+), 73 deletions(-)
+
+-- 
+1.7.10.4
