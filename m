@@ -1,54 +1,58 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 17 Mar 2013 19:00:21 +0100
-Subject: [PATCH 4/4] b43: HT-PHY: do some extra TSSI setup after configuring TX
-In-Reply-To: <1363543221-10651-1-git-send-email-zajec5@gmail.com>
-References: <1363543221-10651-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1363543221-10651-5-git-send-email-zajec5@gmail.com>
+Date: Mon, 18 Mar 2013 07:45:17 +0100
+Subject: [PATCH 1/2] b43: HT-PHY: define regs for power estimation
+Message-ID: <1363589118-19717-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-After b43_phy_ht_tx_power_ctl_setup there are some extra radio ops:
- radio_read(0x08bf) -> 0x0001
-radio_write(0x08bf) <- 0x0001
-radio_write(0x0159) <- 0x0011
-On N-PHY we write 0x11 to TSSI regs, so it's probably sth similar.
----
- drivers/net/wireless/b43/phy_ht.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+In MMIO dumps of ndiswrapper there are following PHY ops:
+phy_read(0x0118) -> 0x013d
+phy_read(0x01ed) -> 0x993d
+phy_read(0x0119) -> 0x012f
+phy_read(0x01ee) -> 0x992f
+phy_read(0x011a) -> 0x0139
+phy_read(0x0969) -> 0x9939
+It matches the code of wlc_phy_txpower_est_power_nphy (from brcm80211),
+so we know the registers meaning.
 
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index 204b9f0..5c0ec14 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -562,6 +562,18 @@ static void b43_phy_ht_tx_power_ctl_idle_tssi(struct b43_wldev *dev)
- 	}
- }
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_ht.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
+index 9b2408e..6cae370 100644
+--- a/drivers/net/wireless/b43/phy_ht.h
++++ b/drivers/net/wireless/b43/phy_ht.h
+@@ -23,6 +23,9 @@
+ #define B43_PHY_HT_SAMP_WAIT_CNT		0x0C5	/* Sample wait count */
+ #define B43_PHY_HT_SAMP_DEP_CNT			0x0C6	/* Sample depth count */
+ #define B43_PHY_HT_SAMP_STAT			0x0C7	/* Sample status */
++#define B43_PHY_HT_EST_PWR_C1			0x118
++#define B43_PHY_HT_EST_PWR_C2			0x119
++#define B43_PHY_HT_EST_PWR_C3			0x11A
+ #define B43_PHY_HT_TSSIMODE			0x122	/* TSSI mode */
+ #define  B43_PHY_HT_TSSIMODE_EN			0x0001	/* TSSI enable */
+ #define  B43_PHY_HT_TSSIMODE_PDEN		0x0002	/* Power det enable */
+@@ -53,6 +56,8 @@
+ #define  B43_PHY_HT_TXPCTL_TARG_PWR_C1_SHIFT	0
+ #define  B43_PHY_HT_TXPCTL_TARG_PWR_C2		0xFF00	/* Power 1 */
+ #define  B43_PHY_HT_TXPCTL_TARG_PWR_C2_SHIFT	8
++#define B43_PHY_HT_TX_PCTL_STATUS_C1		0x1ED
++#define B43_PHY_HT_TX_PCTL_STATUS_C2		0x1EE
+ #define B43_PHY_HT_TXPCTL_CMD_C2		0x222
+ #define  B43_PHY_HT_TXPCTL_CMD_C2_INIT		0x007F
+ #define B43_PHY_HT_RSSI_C1			0x219
+@@ -97,6 +102,7 @@
+ #define B43_PHY_HT_TXPCTL_TARG_PWR2		B43_PHY_EXTG(0x166)	/* TX power control target power */
+ #define  B43_PHY_HT_TXPCTL_TARG_PWR2_C3		0x00FF
+ #define  B43_PHY_HT_TXPCTL_TARG_PWR2_C3_SHIFT	0
++#define B43_PHY_HT_TX_PCTL_STATUS_C3		B43_PHY_EXTG(0x169)
  
-+static void b43_phy_ht_tssi_setup(struct b43_wldev *dev)
-+{
-+	static const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3, };
-+	u8 i;
-+
-+	/* 0x159 is probably TX_SSI_MUX or TSSIG (by comparing to N-PHY) */
-+	for (i = 0; i < 3; i++) {
-+		b43_radio_set(dev, 0x8bf, 0x1);
-+		b43_radio_write(dev, routing[i] | 0x0159, 0x0011);
-+	}
-+}
-+
- static void b43_phy_ht_tx_power_ctl_setup(struct b43_wldev *dev)
- {
- 	struct b43_phy_ht *phy_ht = dev->phy.ht;
-@@ -955,6 +967,7 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 	b43_phy_ht_tx_power_ctl(dev, false);
- 	b43_phy_ht_tx_power_ctl_idle_tssi(dev);
- 	b43_phy_ht_tx_power_ctl_setup(dev);
-+	b43_phy_ht_tssi_setup(dev);
- 	b43_phy_ht_tx_power_ctl(dev, saved_tx_pwr_ctl);
+ #define B43_PHY_HT_TEST				B43_PHY_N_BMODE(0x00A)
  
- 	return 0;
 -- 
 1.7.10.4
