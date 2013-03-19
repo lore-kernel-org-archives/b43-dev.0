@@ -1,84 +1,47 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 19 Mar 2013 12:52:12 +0100
-Subject: Extracting (boardvendor and) boardtype
-In-Reply-To: <51484FDA.1010706@broadcom.com>
-References: <CACna6rwPvUW89k81kkARbqkN4BgoTwWkmfU234b9Cj5R1-WVsg@mail.gmail.com>
- <51483BB2.4050105@broadcom.com>
- <CACna6rzmuA5=Vhj5CwSmMgg6=segiL6RDq0TCzxgXdGfvP62uA@mail.gmail.com>
- <CAOiHx=ngEQtEiKgW16Ah7pTYqP269s183J-e8NxUpqiK29MQ1w@mail.gmail.com>
- <CACna6rwwqYKdcyjLEecT4-9tXX-8BLm_eOWYtVhjUi+Yid3PKA@mail.gmail.com>
- <51484A79.5090505@broadcom.com>
- <CACna6ryfvb4P2CefYgqyzMmb_GxiMdyL+YiFZ_VrGu631=n2LQ@mail.gmail.com>
- <51484FDA.1010706@broadcom.com>
-Message-ID: <CACna6rwUTJHa772_OhdF8OZSp57DX+H1LwDWSHfWM2Frsg7AmQ@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 19 Mar 2013 13:18:43 +0100
+Subject: [PATCH 1/2] ssb: extract board_type from SPROM
+Message-ID: <1363695524-22064-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-2013/3/19 Arend van Spriel <arend@broadcom.com>:
-> On 03/19/2013 12:37 PM, Rafa? Mi?ecki wrote:
->>
->> 2013/3/19 Arend van Spriel <arend@broadcom.com>:
->>>
->>> On 03/19/2013 12:18 PM, Rafa? Mi?ecki wrote:
->>>>
->>>>
->>>> 2013/3/19 Jonas Gorski <jogo@openwrt.org>:
->>>>>
->>>>>
->>>>> On 19 March 2013 11:36, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->>>>>>
->>>>>>
->>>>>> However take a look at siutils.c you're using internally at Broadcom.
->>>>>> I've found it in:
->>>>>> GPL_RT_AC66U_3004270/asuswrt/release/src-rt-6.x/shared/siutils.c
->>>>>> This file contains si_nvram_process. This function calls that
->>>>>> si_getdevpathintvar and getintvar I'm not sure about. Does
->>>>>> si_nvram_process prefer SPROM's boardtype (offset SROM_SSID==0x2 or
->>>>>> offset SSB_SPROM1_SPID==0x4) if it's available (not 0xFFFF)?
->>>>>
->>>>>
->>>>>
->>>>> The getdevpathintvar and getintvar are for extracting these values
->>>>> from nvram instead of SPROM - remember that embedded bcm47xx devices
->>>>> are "sprom"-less and have these values stored in nvram. Since there is
->>>>> only one global nvram, you need to prefix these values with the
->>>>> "pci/sb" device path to differentiate if you have more than one wifi
->>>>> chip (e.g. "sb/1/boardflags" or "pci/1/boardflags"). But this isn't
->>>>> necessarily done for single wifi devices, hence the getdevpathintvar
->>>>> -> getinvar path (as the fall back).
->>>>
->>>>
->>>>
->>>> So what function does Broadcom use to extract something from SPROM?
->>>
->>>
->>> srom_var_init()
->>
->>
->> OK, so for PCI:
->> 1) srom_var_init calls initvars_srom_pci
->> 2) initvars_srom_pci calls _initvars_srom_pci
->> 3) _initvars_srom_pci calls varbuf_append for every entry
->>
->> After all we end up with varbuf_t variable filled like an NVRAM
->> (foo=bar\0baz=qux\0).
->>
->> So AFAIU getdevpathintvar and getintvar are still used to access SPROM
->> (just in a form common for NVRAM), is that right?
->>
->> If the above is right, in si_nvram_process we access SPROM (with the
->> use of getdevpathintvar/getintvar). So it seems in si_nvram_process we
->> always prefer "boardtype", no matter if it comes from SPROM of NVRAM.
->> Is that correct?
->>
->
-> Yes. Non-volatile variables take precedence to PCI config info regardless
-> from which device, SPROM or flash, it was loaded.
 
-Thanks a lot for your help guys :)
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/pci.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index 63ff69f..99bd5ad 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -369,6 +369,7 @@ static void sprom_extract_r123(struct ssb_sprom *out, const u16 *in)
+ 	SPEX(et0mdcport, SSB_SPROM1_ETHPHY, SSB_SPROM1_ETHPHY_ET0M, 14);
+ 	SPEX(et1mdcport, SSB_SPROM1_ETHPHY, SSB_SPROM1_ETHPHY_ET1M, 15);
+ 	SPEX(board_rev, SSB_SPROM1_BINF, SSB_SPROM1_BINF_BREV, 0);
++	SPEX(board_type, SSB_SPROM1_SPID, 0xFFFF, 0);
+ 	if (out->revision == 1)
+ 		SPEX(country_code, SSB_SPROM1_BINF, SSB_SPROM1_BINF_CCODE,
+ 		     SSB_SPROM1_BINF_CCODE_SHIFT);
+@@ -464,6 +465,7 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
+ 	SPEX(et1phyaddr, SSB_SPROM4_ETHPHY, SSB_SPROM4_ETHPHY_ET1A,
+ 	     SSB_SPROM4_ETHPHY_ET1A_SHIFT);
+ 	SPEX(board_rev, SSB_SPROM4_BOARDREV, 0xFFFF, 0);
++	SPEX(board_type, SSB_SPROM1_SPID, 0xFFFF, 0);
+ 	if (out->revision == 4) {
+ 		SPEX(alpha2[0], SSB_SPROM4_CCODE, 0xff00, 8);
+ 		SPEX(alpha2[1], SSB_SPROM4_CCODE, 0x00ff, 0);
+@@ -535,6 +537,7 @@ static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
+ 	sprom_get_mac(out->il0mac, &in[SPOFF(SSB_SPROM8_IL0MAC)]);
+ 
+ 	SPEX(board_rev, SSB_SPROM8_BOARDREV, 0xFFFF, 0);
++	SPEX(board_type, SSB_SPROM1_SPID, 0xFFFF, 0);
+ 	SPEX(alpha2[0], SSB_SPROM8_CCODE, 0xff00, 8);
+ 	SPEX(alpha2[1], SSB_SPROM8_CCODE, 0x00ff, 0);
+ 	SPEX(boardflags_lo, SSB_SPROM8_BFLLO, 0xFFFF, 0);
 -- 
-Rafa?
+1.7.10.4
