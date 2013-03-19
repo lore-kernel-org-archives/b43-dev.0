@@ -1,87 +1,76 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 19 Mar 2013 16:58:59 +0100
-Subject: [PATCH 2/2] bcma: define board types
-In-Reply-To: <1363708739-25721-1-git-send-email-zajec5@gmail.com>
-References: <1363708739-25721-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1363708739-25721-2-git-send-email-zajec5@gmail.com>
+Date: Tue, 19 Mar 2013 18:14:26 +0100
+Subject: [PATCH] b43: HT-PHY: use enum for RSSI types
+Message-ID: <1363713266-10644-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-Using that IDs we can write workarounds for various cards
-
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- include/linux/bcma/bcma.h |   54 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ drivers/net/wireless/b43/phy_ht.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
-index e0ce311..0ab6712 100644
---- a/include/linux/bcma/bcma.h
-+++ b/include/linux/bcma/bcma.h
-@@ -173,6 +173,60 @@ struct bcma_host_ops {
- #define BCMA_CHIP_ID_BCM53572	53572
- #define  BCMA_PKG_ID_BCM47188	9
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index ccd70ac..b443530 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -30,6 +30,17 @@
+ #include "radio_2059.h"
+ #include "main.h"
  
-+/* Board types (on PCI usually equals to the subsystem dev id) */
-+/* BCM4313 */
-+#define BCMA_BOARD_TYPE_BCM94313BU	0X050F
-+#define BCMA_BOARD_TYPE_BCM94313HM	0X0510
-+#define BCMA_BOARD_TYPE_BCM94313EPA	0X0511
-+#define BCMA_BOARD_TYPE_BCM94313HMG	0X051C
-+/* BCM4716 */
-+#define BCMA_BOARD_TYPE_BCM94716NR2	0X04CD
-+/* BCM43224 */
-+#define BCMA_BOARD_TYPE_BCM943224X21	0X056E
-+#define BCMA_BOARD_TYPE_BCM943224X21_FCC	0X00D1
-+#define BCMA_BOARD_TYPE_BCM943224X21B	0X00E9
-+#define BCMA_BOARD_TYPE_BCM943224M93	0X008B
-+#define BCMA_BOARD_TYPE_BCM943224M93A	0X0090
-+#define BCMA_BOARD_TYPE_BCM943224X16	0X0093
-+#define BCMA_BOARD_TYPE_BCM94322X9	0X008D
-+#define BCMA_BOARD_TYPE_BCM94322M35E	0X008E
-+/* BCM43228 */
-+#define BCMA_BOARD_TYPE_BCM943228BU8	0X0540
-+#define BCMA_BOARD_TYPE_BCM943228BU9	0X0541
-+#define BCMA_BOARD_TYPE_BCM943228BU	0X0542
-+#define BCMA_BOARD_TYPE_BCM943227HM4L	0X0543
-+#define BCMA_BOARD_TYPE_BCM943227HMB	0X0544
-+#define BCMA_BOARD_TYPE_BCM943228HM4L	0X0545
-+#define BCMA_BOARD_TYPE_BCM943228SD	0X0573
-+/* BCM4331 */
-+#define BCMA_BOARD_TYPE_BCM94331X19	0X00D6
-+#define BCMA_BOARD_TYPE_BCM94331X28	0X00E4
-+#define BCMA_BOARD_TYPE_BCM94331X28B	0X010E
-+#define BCMA_BOARD_TYPE_BCM94331PCIEBT3AX	0X00E4
-+#define BCMA_BOARD_TYPE_BCM94331X12_2G	0X00EC
-+#define BCMA_BOARD_TYPE_BCM94331X12_5G	0X00ED
-+#define BCMA_BOARD_TYPE_BCM94331X29B	0X00EF
-+#define BCMA_BOARD_TYPE_BCM94331CSAX	0X00EF
-+#define BCMA_BOARD_TYPE_BCM94331X19C	0X00F5
-+#define BCMA_BOARD_TYPE_BCM94331X33	0X00F4
-+#define BCMA_BOARD_TYPE_BCM94331BU	0X0523
-+#define BCMA_BOARD_TYPE_BCM94331S9BU	0X0524
-+#define BCMA_BOARD_TYPE_BCM94331MC	0X0525
-+#define BCMA_BOARD_TYPE_BCM94331MCI	0X0526
-+#define BCMA_BOARD_TYPE_BCM94331PCIEBT4	0X0527
-+#define BCMA_BOARD_TYPE_BCM94331HM	0X0574
-+#define BCMA_BOARD_TYPE_BCM94331PCIEDUAL	0X059B
-+#define BCMA_BOARD_TYPE_BCM94331MCH5	0X05A9
-+#define BCMA_BOARD_TYPE_BCM94331CS	0X05C6
-+#define BCMA_BOARD_TYPE_BCM94331CD	0X05DA
-+/* BCM53572 */
-+#define BCMA_BOARD_TYPE_BCM953572BU	0X058D
-+#define BCMA_BOARD_TYPE_BCM953572NR2	0X058E
-+#define BCMA_BOARD_TYPE_BCM947188NR2	0X058F
-+#define BCMA_BOARD_TYPE_BCM953572SDRNR2	0X0590
-+/* BCM43142 */
-+#define BCMA_BOARD_TYPE_BCM943142HM	0X05E0
++/* Force values to keep compatibility with wl */
++enum ht_rssi_type {
++	HT_RSSI_W1 = 0,
++	HT_RSSI_W2 = 1,
++	HT_RSSI_NB = 2,
++	HT_RSSI_IQ = 3,
++	HT_RSSI_TSSI_2G = 4,
++	HT_RSSI_TSSI_5G = 5,
++	HT_RSSI_TBD = 6,
++};
 +
- struct bcma_device {
- 	struct bcma_bus *bus;
- 	struct bcma_device_id id;
+ /**************************************************
+  * Radio 2059.
+  **************************************************/
+@@ -383,7 +394,7 @@ static void b43_phy_ht_tx_tone(struct b43_wldev *dev)
+  **************************************************/
+ 
+ static void b43_phy_ht_rssi_select(struct b43_wldev *dev, u8 core_sel,
+-				   u8 rssi_type)
++				   enum ht_rssi_type rssi_type)
+ {
+ 	static const u16 ctl_regs[3][2] = {
+ 		{ B43_PHY_HT_AFE_C1, B43_PHY_HT_AFE_C1_OVER, },
+@@ -404,7 +415,7 @@ static void b43_phy_ht_rssi_select(struct b43_wldev *dev, u8 core_sel,
+ 				continue;
+ 
+ 			switch (rssi_type) {
+-			case 4:
++			case HT_RSSI_TSSI_2G:
+ 				b43_phy_set(dev, ctl_regs[core][0], 0x3 << 8);
+ 				b43_phy_set(dev, ctl_regs[core][0], 0x3 << 10);
+ 				b43_phy_set(dev, ctl_regs[core][1], 0x1 << 9);
+@@ -422,8 +433,8 @@ static void b43_phy_ht_rssi_select(struct b43_wldev *dev, u8 core_sel,
+ 	}
+ }
+ 
+-static void b43_phy_ht_poll_rssi(struct b43_wldev *dev, u8 type, s32 *buf,
+-				 u8 nsamp)
++static void b43_phy_ht_poll_rssi(struct b43_wldev *dev, enum ht_rssi_type type,
++				 s32 *buf, u8 nsamp)
+ {
+ 	u16 phy_regs_values[12];
+ 	static const u16 phy_regs_to_save[] = {
+@@ -549,7 +560,7 @@ static void b43_phy_ht_tx_power_ctl_idle_tssi(struct b43_wldev *dev)
+ 
+ 	b43_phy_ht_tx_tone(dev);
+ 	udelay(20);
+-	b43_phy_ht_poll_rssi(dev, 4, rssi_buf, 1);
++	b43_phy_ht_poll_rssi(dev, HT_RSSI_TSSI_2G, rssi_buf, 1);
+ 	b43_phy_ht_stop_playback(dev);
+ 	b43_phy_ht_reset_cca(dev);
+ 
 -- 
 1.7.10.4
