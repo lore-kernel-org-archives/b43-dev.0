@@ -1,5 +1,5 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Tue, 19 Mar 2013 12:47:12 +0100
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 19 Mar 2013 12:52:12 +0100
 Subject: Extracting (boardvendor and) boardtype
 In-Reply-To: <51484FDA.1010706@broadcom.com>
 References: <CACna6rwPvUW89k81kkARbqkN4BgoTwWkmfU234b9Cj5R1-WVsg@mail.gmail.com>
@@ -10,21 +10,26 @@ References: <CACna6rwPvUW89k81kkARbqkN4BgoTwWkmfU234b9Cj5R1-WVsg@mail.gmail.com>
  <51484A79.5090505@broadcom.com>
  <CACna6ryfvb4P2CefYgqyzMmb_GxiMdyL+YiFZ_VrGu631=n2LQ@mail.gmail.com>
  <51484FDA.1010706@broadcom.com>
-Message-ID: <51485040.20904@broadcom.com>
+Message-ID: <CACna6rwUTJHa772_OhdF8OZSp57DX+H1LwDWSHfWM2Frsg7AmQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 03/19/2013 12:45 PM, Arend van Spriel wrote:
+2013/3/19 Arend van Spriel <arend@broadcom.com>:
 > On 03/19/2013 12:37 PM, Rafa? Mi?ecki wrote:
+>>
 >> 2013/3/19 Arend van Spriel <arend@broadcom.com>:
+>>>
 >>> On 03/19/2013 12:18 PM, Rafa? Mi?ecki wrote:
+>>>>
 >>>>
 >>>> 2013/3/19 Jonas Gorski <jogo@openwrt.org>:
 >>>>>
+>>>>>
 >>>>> On 19 March 2013 11:36, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>>>>>>
 >>>>>>
 >>>>>> However take a look at siutils.c you're using internally at Broadcom.
 >>>>>> I've found it in:
@@ -33,6 +38,7 @@ On 03/19/2013 12:45 PM, Arend van Spriel wrote:
 >>>>>> si_getdevpathintvar and getintvar I'm not sure about. Does
 >>>>>> si_nvram_process prefer SPROM's boardtype (offset SROM_SSID==0x2 or
 >>>>>> offset SSB_SPROM1_SPID==0x4) if it's available (not 0xFFFF)?
+>>>>>
 >>>>>
 >>>>>
 >>>>> The getdevpathintvar and getintvar are for extracting these values
@@ -45,9 +51,12 @@ On 03/19/2013 12:45 PM, Arend van Spriel wrote:
 >>>>> -> getinvar path (as the fall back).
 >>>>
 >>>>
+>>>>
 >>>> So what function does Broadcom use to extract something from SPROM?
 >>>
+>>>
 >>> srom_var_init()
+>>
 >>
 >> OK, so for PCI:
 >> 1) srom_var_init calls initvars_srom_pci
@@ -66,9 +75,10 @@ On 03/19/2013 12:45 PM, Arend van Spriel wrote:
 >> Is that correct?
 >>
 >
-> Yes. Non-volatile variables take precedence to PCI config info
-> regardless from which device, SPROM or flash, it was loaded.
+> Yes. Non-volatile variables take precedence to PCI config info regardless
+> from which device, SPROM or flash, it was loaded.
 
-better: SPROM, OTP, or flash.
+Thanks a lot for your help guys :)
 
-Gr. AvS
+-- 
+Rafa?
