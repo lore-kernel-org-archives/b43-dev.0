@@ -1,33 +1,41 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 19 Mar 2013 13:18:44 +0100
-Subject: [PATCH 2/2] bcma: extract board_type from SPROM
-In-Reply-To: <1363695524-22064-1-git-send-email-zajec5@gmail.com>
-References: <1363695524-22064-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1363695524-22064-2-git-send-email-zajec5@gmail.com>
+Date: Tue, 19 Mar 2013 13:41:31 +0100
+Subject: [RFT][PATCH] b43: HT-PHY: disable TX power control on BCM94331X19
+Message-ID: <1363696891-22522-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+In case of BCM94331X19 default TX state seems to perform better than
+after our configuration. Disable TX power control for now on this card
+(until fixing power control).
 ---
- drivers/bcma/sprom.c |    1 +
- 1 file changed, 1 insertion(+)
+David: could you test this for me, please? Can you see that
+> BCM94331X19 detected, disabling TX power control for better performace
+message in dmesg? Does it brings you back a better perofmrnce?
 
-diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
-index 4adf9ef..8934298 100644
---- a/drivers/bcma/sprom.c
-+++ b/drivers/bcma/sprom.c
-@@ -217,6 +217,7 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
- 	}
+Simply apply it on top of wireless-testing.
+---
+ drivers/net/wireless/b43/phy_ht.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index b866770..e5cbe26 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -807,6 +807,11 @@ static void b43_phy_ht_op_prepare_structs(struct b43_wldev *dev)
  
- 	SPEX(board_rev, SSB_SPROM8_BOARDREV, ~0, 0);
-+	SPEX(board_type, SSB_SPROM1_SPID, ~0, 0);
+ 	for (i = 0; i < 3; i++)
+ 		phy_ht->bb_mult_save[i] = -1;
++
++	if (dev->dev->board_type == 0x00D6) {
++		pr_warn("BCM94331X19 detected, disabling TX power control for better performace\n");
++		phy_ht->tx_pwr_ctl = false;
++	}
+ }
  
- 	SPEX(txpid2g[0], SSB_SPROM4_TXPID2G01, SSB_SPROM4_TXPID2G0,
- 	     SSB_SPROM4_TXPID2G0_SHIFT);
+ static int b43_phy_ht_op_init(struct b43_wldev *dev)
 -- 
 1.7.10.4
