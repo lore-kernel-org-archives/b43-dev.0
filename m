@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 19 Mar 2013 16:58:58 +0100
-Subject: [PATCH 1/2] ssb: define more board types
-Message-ID: <1363708739-25721-1-git-send-email-zajec5@gmail.com>
+Date: Tue, 19 Mar 2013 16:58:59 +0100
+Subject: [PATCH 2/2] bcma: define board types
+In-Reply-To: <1363708739-25721-1-git-send-email-zajec5@gmail.com>
+References: <1363708739-25721-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1363708739-25721-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,80 +11,77 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Using that IDs we can write workarounds for various cards
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- include/linux/ssb/ssb.h |   54 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 51 insertions(+), 3 deletions(-)
+ include/linux/bcma/bcma.h |   54 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
-index 8b13222..c64999f 100644
---- a/include/linux/ssb/ssb.h
-+++ b/include/linux/ssb/ssb.h
-@@ -340,13 +340,61 @@ enum ssb_bustype {
- #define SSB_BOARDVENDOR_DELL	0x1028	/* Dell */
- #define SSB_BOARDVENDOR_HP	0x0E11	/* HP */
- /* board_type */
-+#define SSB_BOARD_BCM94301CB	0x0406
-+#define SSB_BOARD_BCM94301MP	0x0407
-+#define SSB_BOARD_BU4309	0x040A
-+#define SSB_BOARD_BCM94309CB	0x040B
-+#define SSB_BOARD_BCM4309MP	0x040C
-+#define SSB_BOARD_BU4306	0x0416
- #define SSB_BOARD_BCM94306MP	0x0418
- #define SSB_BOARD_BCM4309G	0x0421
- #define SSB_BOARD_BCM4306CB	0x0417
--#define SSB_BOARD_BCM4309MP	0x040C
-+#define SSB_BOARD_BCM94306PC	0x0425	/* pcmcia 3.3v 4306 card */
-+#define SSB_BOARD_BCM94306CBSG	0x042B	/* with SiGe PA */
-+#define SSB_BOARD_PCSG94306	0x042D	/* with SiGe PA */
-+#define SSB_BOARD_BU4704SD	0x042E	/* with sdram */
-+#define SSB_BOARD_BCM94704AGR	0x042F	/* dual 11a/11g Router */
-+#define SSB_BOARD_BCM94308MP	0x0430	/* 11a-only minipci */
-+#define SSB_BOARD_BU4318	0x0447
-+#define SSB_BOARD_CB4318	0x0448
-+#define SSB_BOARD_MPG4318	0x0449
- #define SSB_BOARD_MP4318	0x044A
--#define SSB_BOARD_BU4306	0x0416
--#define SSB_BOARD_BU4309	0x040A
-+#define SSB_BOARD_SD4318	0x044B
-+#define SSB_BOARD_BCM94306P	0x044C	/* with SiGe */
-+#define SSB_BOARD_BCM94303MP	0x044E
-+#define SSB_BOARD_BCM94306MPM	0x0450
-+#define SSB_BOARD_BCM94306MPL	0x0453
-+#define SSB_BOARD_PC4303	0x0454	/* pcmcia */
-+#define SSB_BOARD_BCM94306MPLNA	0x0457
-+#define SSB_BOARD_BCM94306MPH	0x045B
-+#define SSB_BOARD_BCM94306PCIV	0x045C
-+#define SSB_BOARD_BCM94318MPGH	0x0463
-+#define SSB_BOARD_BU4311	0x0464
-+#define SSB_BOARD_BCM94311MC	0x0465
-+#define SSB_BOARD_BCM94311MCAG	0x0466
-+/* 4321 boards */
-+#define SSB_BOARD_BU4321	0x046B
-+#define SSB_BOARD_BU4321E	0x047C
-+#define SSB_BOARD_MP4321	0x046C
-+#define SSB_BOARD_CB2_4321	0x046D
-+#define SSB_BOARD_CB2_4321_AG	0x0066
-+#define SSB_BOARD_MC4321	0x046E
-+/* 4325 boards */
-+#define SSB_BOARD_BCM94325DEVBU	0x0490
-+#define SSB_BOARD_BCM94325BGABU	0x0491
-+#define SSB_BOARD_BCM94325SDGWB	0x0492
-+#define SSB_BOARD_BCM94325SDGMDL	0x04AA
-+#define SSB_BOARD_BCM94325SDGMDL2	0x04C6
-+#define SSB_BOARD_BCM94325SDGMDL3	0x04C9
-+#define SSB_BOARD_BCM94325SDABGWBA	0x04E1
-+/* 4322 boards */
-+#define SSB_BOARD_BCM94322MC	0x04A4
-+#define SSB_BOARD_BCM94322USB	0x04A8	/* dualband */
-+#define SSB_BOARD_BCM94322HM	0x04B0
-+#define SSB_BOARD_BCM94322USB2D	0x04Bf	/* single band discrete front end */
-+/* 4312 boards */
-+#define SSB_BOARD_BU4312	0x048A
-+#define SSB_BOARD_BCM4312MCGSG	0x04B5
- /* chip_package */
- #define SSB_CHIPPACK_BCM4712S	1	/* Small 200pin 4712 */
- #define SSB_CHIPPACK_BCM4712M	2	/* Medium 225pin 4712 */
+diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
+index e0ce311..0ab6712 100644
+--- a/include/linux/bcma/bcma.h
++++ b/include/linux/bcma/bcma.h
+@@ -173,6 +173,60 @@ struct bcma_host_ops {
+ #define BCMA_CHIP_ID_BCM53572	53572
+ #define  BCMA_PKG_ID_BCM47188	9
+ 
++/* Board types (on PCI usually equals to the subsystem dev id) */
++/* BCM4313 */
++#define BCMA_BOARD_TYPE_BCM94313BU	0X050F
++#define BCMA_BOARD_TYPE_BCM94313HM	0X0510
++#define BCMA_BOARD_TYPE_BCM94313EPA	0X0511
++#define BCMA_BOARD_TYPE_BCM94313HMG	0X051C
++/* BCM4716 */
++#define BCMA_BOARD_TYPE_BCM94716NR2	0X04CD
++/* BCM43224 */
++#define BCMA_BOARD_TYPE_BCM943224X21	0X056E
++#define BCMA_BOARD_TYPE_BCM943224X21_FCC	0X00D1
++#define BCMA_BOARD_TYPE_BCM943224X21B	0X00E9
++#define BCMA_BOARD_TYPE_BCM943224M93	0X008B
++#define BCMA_BOARD_TYPE_BCM943224M93A	0X0090
++#define BCMA_BOARD_TYPE_BCM943224X16	0X0093
++#define BCMA_BOARD_TYPE_BCM94322X9	0X008D
++#define BCMA_BOARD_TYPE_BCM94322M35E	0X008E
++/* BCM43228 */
++#define BCMA_BOARD_TYPE_BCM943228BU8	0X0540
++#define BCMA_BOARD_TYPE_BCM943228BU9	0X0541
++#define BCMA_BOARD_TYPE_BCM943228BU	0X0542
++#define BCMA_BOARD_TYPE_BCM943227HM4L	0X0543
++#define BCMA_BOARD_TYPE_BCM943227HMB	0X0544
++#define BCMA_BOARD_TYPE_BCM943228HM4L	0X0545
++#define BCMA_BOARD_TYPE_BCM943228SD	0X0573
++/* BCM4331 */
++#define BCMA_BOARD_TYPE_BCM94331X19	0X00D6
++#define BCMA_BOARD_TYPE_BCM94331X28	0X00E4
++#define BCMA_BOARD_TYPE_BCM94331X28B	0X010E
++#define BCMA_BOARD_TYPE_BCM94331PCIEBT3AX	0X00E4
++#define BCMA_BOARD_TYPE_BCM94331X12_2G	0X00EC
++#define BCMA_BOARD_TYPE_BCM94331X12_5G	0X00ED
++#define BCMA_BOARD_TYPE_BCM94331X29B	0X00EF
++#define BCMA_BOARD_TYPE_BCM94331CSAX	0X00EF
++#define BCMA_BOARD_TYPE_BCM94331X19C	0X00F5
++#define BCMA_BOARD_TYPE_BCM94331X33	0X00F4
++#define BCMA_BOARD_TYPE_BCM94331BU	0X0523
++#define BCMA_BOARD_TYPE_BCM94331S9BU	0X0524
++#define BCMA_BOARD_TYPE_BCM94331MC	0X0525
++#define BCMA_BOARD_TYPE_BCM94331MCI	0X0526
++#define BCMA_BOARD_TYPE_BCM94331PCIEBT4	0X0527
++#define BCMA_BOARD_TYPE_BCM94331HM	0X0574
++#define BCMA_BOARD_TYPE_BCM94331PCIEDUAL	0X059B
++#define BCMA_BOARD_TYPE_BCM94331MCH5	0X05A9
++#define BCMA_BOARD_TYPE_BCM94331CS	0X05C6
++#define BCMA_BOARD_TYPE_BCM94331CD	0X05DA
++/* BCM53572 */
++#define BCMA_BOARD_TYPE_BCM953572BU	0X058D
++#define BCMA_BOARD_TYPE_BCM953572NR2	0X058E
++#define BCMA_BOARD_TYPE_BCM947188NR2	0X058F
++#define BCMA_BOARD_TYPE_BCM953572SDRNR2	0X0590
++/* BCM43142 */
++#define BCMA_BOARD_TYPE_BCM943142HM	0X05E0
++
+ struct bcma_device {
+ 	struct bcma_bus *bus;
+ 	struct bcma_device_id id;
 -- 
 1.7.10.4
