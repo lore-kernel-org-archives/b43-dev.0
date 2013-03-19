@@ -1,35 +1,51 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Mon, 18 Mar 2013 21:30:45 +0000
-Subject: [PATCH 00/13] b43: implement basic TX power mgmt
-In-Reply-To: <CACna6ry4bxZROnoBpu7S39e+cDure79nmzhLY8228Zuxecdt3w@mail.gmail.com>
-References: <1362671247-10766-1-git-send-email-zajec5@gmail.com>
- <1363171283.32099.343.camel@i7.infradead.org>
- <CACna6ryEBFqg1ORRcbob+FWcFGiMt9fOfQAkAov9wmoR8M4Fxw@mail.gmail.com>
- <1363273116.4853.58.camel@i7.infradead.org>
- <CACna6ry4bxZROnoBpu7S39e+cDure79nmzhLY8228Zuxecdt3w@mail.gmail.com>
-Message-ID: <1363642245.26810.24.camel@shinybook.infradead.org>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 19 Mar 2013 07:52:48 +0100
+Subject: [FIX 3.4+][PATCH] b43: N-PHY: increase initial value of "mind" in
+ RSSI calibration
+Message-ID: <1363675968-20433-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, stable@vger.kernel.org
 
-On Sat, 2013-03-16 at 14:50 +0100, Rafa? Mi?ecki wrote:
-> To verify my theory, could you try reverting
-> 4969b41798e512689bba57c8c44d873216eba814, AKA
-> b43: HT-PHY: enable basic TX power setup
-> ? Does reverting this patch brings you back ~4.1MiB/s?
+We're using "mind" variable to find the VCM that got the best polling
+results. For each VCM we calculte "currd" which is compared to the
+"mind". For PHY rev3+ "currd" gets values around 14k-40k. Looking for a
+value smaller than 40 makes no sense, so increase the initial value.
 
-Fairly much, yes.
+This fixes a regression introduced in 3.4 by commit:
+e0c9a0219a8f542e3946fe972a68aacf8c3f906c
+(my BCM4322 performance dropped from 18,4Mb/s to 9,26Mb/s)
 
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Cc: stable at vger.kernel.org
+---
+ drivers/net/wireless/b43/phy_n.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 3c35382..e014a7a 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -1615,7 +1615,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 		}
+ 		for (i = 0; i < 4; i += 2) {
+ 			s32 curr;
+-			s32 mind = 40;
++			s32 mind = 0x100000;
+ 			s32 minpoll = 249;
+ 			u8 minvcm = 0;
+ 			if (2 * core != i)
+@@ -1799,7 +1799,7 @@ static void b43_nphy_rev2_rssi_cal(struct b43_wldev *dev, u8 type)
+ 	}
+ 
+ 	for (i = 0; i < 4; i++) {
+-		s32 mind = 40;
++		s32 mind = 0x100000;
+ 		u8 minvcm = 0;
+ 		s32 minpoll = 249;
+ 		s32 curr;
 -- 
-dwmw2
-
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: smime.p7s
-Type: application/x-pkcs7-signature
-Size: 6171 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130318/48eecab4/attachment.bin>
+1.7.10.4
