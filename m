@@ -1,42 +1,53 @@
-From: ISE Development <isedev@gmail.com>
-Date: Wed, 20 Mar 2013 12:26:23 +0100
+From: Chris Vine <chris@cvine.freeserve.co.uk>
+Date: Wed, 20 Mar 2013 13:43:02 +0000
 Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
-In-Reply-To: <514350EA.2060205@lwfinger.net>
+In-Reply-To: <4518745.W5blfs9sIi@wks001.ise.net>
 References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
  <CACna6rxAGN5cx6BXrdpM+-q_6QAQAvfb8+qhe-romE4hdxSs3g@mail.gmail.com>
- <514350EA.2060205@lwfinger.net>
-Message-ID: <4518745.W5blfs9sIi@wks001.ise.net>
+ <514350EA.2060205@lwfinger.net> <4518745.W5blfs9sIi@wks001.ise.net>
+Message-ID: <20130320134302.26ea16c7@laptop.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: isedev@gmail.com
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Michael Buesch <mb@bu3sch.de>, Larry Finger <Larry.Finger@lwfinger.net>
 
-On Friday 15 Mar 2013 11:48:42 Larry Finger wrote:
-> On 03/15/2013 01:37 AM, Rafa? Mi?ecki wrote:
-> > OK, so after early tests, this card doesn't support full-addressing at
-> > all.
+On Wed, 20 Mar 2013 12:26:23 +0100
+ISE Development <isedev@gmail.com> wrote:
+
+> On Friday 15 Mar 2013 11:48:42 Larry Finger wrote:
+> > On 03/15/2013 01:37 AM, Rafa? Mi?ecki wrote:
+> > > OK, so after early tests, this card doesn't support
+> > > full-addressing at all.
+> > > 
+> > > I'll give this patch a try during the weekend.
 > > 
-> > I'll give this patch a try during the weekend.
+> > Please follow Michael's suggestion, and change
+> > 
+> > 		if (slot == firstused + 2) {
+> > 
+> > into
+> > 
+> > 		if (slot == next_slot(ring, next_slot(ring,
+> > firstused))) {
+> > 
+> > This change is needed just in case "firstused + 2" wraps around.
+> > 
+> > Thanks,
+> > 
+> > Larry
 > 
-> Please follow Michael's suggestion, and change
+> Did you get a chance to validate this patch?
 > 
-> 		if (slot == firstused + 2) {
-> 
-> into
-> 
-> 		if (slot == next_slot(ring, next_slot(ring, firstused))) {
-> 
-> This change is needed just in case "firstused + 2" wraps around.
-> 
-> Thanks,
-> 
-> Larry
+> So far on my system, it has been running for over week without
+> problems (over 15GB of traffic).
 
-Did you get a chance to validate this patch?
+If it helps as a data point, I have run the patch with the wrap-over
+change suggested by Michael Busch and with the unlikely->likely
+branching correction and it has been working fine for the last 5 days
+on the 3.8.2 kernel, with approx 5GB of traffic. Before that, I put
+about 10GB through the previous version of the patch as originally sent
+by isedev.
 
-So far on my system, it has been running for over week without problems (over 
-15GB of traffic).
-
-Iestyn.
+Chris
