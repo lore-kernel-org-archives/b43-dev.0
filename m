@@ -1,153 +1,130 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 20 Mar 2013 19:15:49 +0100
-Subject: [PATCH 3/6] b43: N-PHY: use more friendly variables names in RSSI code
+Date: Wed, 20 Mar 2013 19:15:50 +0100
+Subject: [PATCH 4/6] b43: N-PHY: rename RSSI types to be shorter and more
+ accurate
 In-Reply-To: <1363803352-12459-1-git-send-email-zajec5@gmail.com>
 References: <1363803352-12459-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1363803352-12459-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1363803352-12459-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
+Thanks to Broadcom releasing some code we can use better names.
 ---
- drivers/net/wireless/b43/phy_n.c |   64 +++++++++++++++++++++-----------------
- 1 file changed, 36 insertions(+), 28 deletions(-)
+ drivers/net/wireless/b43/phy_n.c |   38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index efc6012..273eb65 100644
+index 273eb65..1cf86ef 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -1590,7 +1590,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+@@ -69,14 +69,14 @@ enum b43_nphy_rf_sequence {
+ 	B43_RFSEQ_UPDATE_GAINU,
+ };
  
- 	u16 r; /* routing */
- 	u8 rx_core_state;
--	u8 core, i, j;
-+	int core, i, j, vcm;
+-enum b43_nphy_rssi_type {
+-	B43_NPHY_RSSI_X = 0,
+-	B43_NPHY_RSSI_Y,
+-	B43_NPHY_RSSI_Z,
+-	B43_NPHY_RSSI_PWRDET,
+-	B43_NPHY_RSSI_TSSI_I,
+-	B43_NPHY_RSSI_TSSI_Q,
+-	B43_NPHY_RSSI_TBD,
++enum n_rssi_type {
++	N_RSSI_W1 = 0,
++	N_RSSI_W2,
++	N_RSSI_NB,
++	N_RSSI_IQ,
++	N_RSSI_TSSI_2G,
++	N_RSSI_TSSI_5G,
++	N_RSSI_TBD,
+ };
  
- 	class = b43_nphy_classifier(dev, 0, 0);
- 	b43_nphy_classifier(dev, 7, 4);
-@@ -1624,33 +1624,40 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- 		r = core ? B2056_RX1 : B2056_RX0;
- 		b43_nphy_scale_offset_rssi(dev, 0, 0, core + 1, N_RAIL_I, 2);
- 		b43_nphy_scale_offset_rssi(dev, 0, 0, core + 1, N_RAIL_Q, 2);
--		for (i = 0; i < 8; i++) {
-+
-+		/* Grab RSSI results for every possible VCM */
-+		for (vcm = 0; vcm < 8; vcm++) {
- 			b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC, 0xE3,
--					i << 2);
--			b43_nphy_poll_rssi(dev, 2, results[i], 8);
-+					vcm << 2);
-+			b43_nphy_poll_rssi(dev, 2, results[vcm], 8);
- 		}
-+
-+		/* Find out which VCM got the best results */
- 		for (i = 0; i < 4; i += 2) {
--			s32 curr;
-+			s32 currd;
- 			s32 mind = 0x100000;
- 			s32 minpoll = 249;
- 			u8 minvcm = 0;
- 			if (2 * core != i)
- 				continue;
--			for (j = 0; j < 8; j++) {
--				curr = results[j][i] * results[j][i] +
--					results[j][i + 1] * results[j][i];
--				if (curr < mind) {
--					mind = curr;
--					minvcm = j;
-+			for (vcm = 0; vcm < 8; vcm++) {
-+				currd = results[vcm][i] * results[vcm][i] +
-+					results[vcm][i + 1] * results[vcm][i];
-+				if (currd < mind) {
-+					mind = currd;
-+					minvcm = vcm;
- 				}
--				if (results[j][i] < minpoll)
--					minpoll = results[j][i];
-+				if (results[vcm][i] < minpoll)
-+					minpoll = results[vcm][i];
- 			}
- 			vcm_final = minvcm;
- 			results_min[i] = minpoll;
- 		}
-+
-+		/* Select the best VCM */
- 		b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC, 0xE3,
- 				  vcm_final << 2);
-+
- 		for (i = 0; i < 4; i++) {
- 			if (core != i / 2)
- 				continue;
-@@ -1667,6 +1674,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- 						   2);
- 		}
- 	}
-+
- 	for (core = 0; core < 2; core++) {
- 		if (!(rx_core_state & (1 << core)))
- 			continue;
-@@ -1743,7 +1751,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/RSSICal */
- static void b43_nphy_rev2_rssi_cal(struct b43_wldev *dev, u8 type)
+ enum n_rail_type {
+@@ -1214,7 +1214,7 @@ static void b43_nphy_run_samples(struct b43_wldev *dev, u16 samps, u16 loops,
+ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 					s8 offset, u8 core,
+ 				        enum n_rail_type rail,
+-					enum b43_nphy_rssi_type rssi_type)
++					enum n_rssi_type rssi_type)
  {
--	int i, j;
-+	int i, j, vcm;
- 	u8 state[4];
- 	u8 code, val;
- 	u16 class, override;
-@@ -1803,37 +1811,37 @@ static void b43_nphy_rev2_rssi_cal(struct b43_wldev *dev, u8 type)
- 	b43_nphy_scale_offset_rssi(dev, 0, 0, 5, N_RAIL_I, type);
- 	b43_nphy_scale_offset_rssi(dev, 0, 0, 5, N_RAIL_Q, type);
+ 	u16 tmp;
+ 	bool core1or5 = (core == 1) || (core == 5);
+@@ -1224,7 +1224,7 @@ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 	tmp = ((scale & 0x3F) << 8) | (offset & 0x3F);
  
--	for (i = 0; i < 4; i++) {
-+	for (vcm = 0; vcm < 4; vcm++) {
- 		u8 tmp[4];
- 		for (j = 0; j < 4; j++)
--			tmp[j] = i;
-+			tmp[j] = vcm;
- 		if (type != 1)
- 			b43_nphy_set_rssi_2055_vcm(dev, type, tmp);
--		b43_nphy_poll_rssi(dev, type, results[i], 8);
-+		b43_nphy_poll_rssi(dev, type, results[vcm], 8);
- 		if (type < 2)
- 			for (j = 0; j < 2; j++)
--				miniq[i][j] = min(results[i][2 * j],
--						results[i][2 * j + 1]);
-+				miniq[vcm][j] = min(results[vcm][2 * j],
-+						    results[vcm][2 * j + 1]);
+ 	switch (rssi_type) {
+-	case B43_NPHY_RSSI_Z:
++	case N_RSSI_NB:
+ 		if (core1or5 && rail == N_RAIL_I)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_Z, tmp);
+ 		if (core1or5 && rail == N_RAIL_Q)
+@@ -1234,7 +1234,7 @@ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 		if (core2or5 && rail == N_RAIL_Q)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_Z, tmp);
+ 		break;
+-	case B43_NPHY_RSSI_X:
++	case N_RSSI_W1:
+ 		if (core1or5 && rail == N_RAIL_I)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_X, tmp);
+ 		if (core1or5 && rail == N_RAIL_Q)
+@@ -1244,7 +1244,7 @@ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 		if (core2or5 && rail == N_RAIL_Q)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_X, tmp);
+ 		break;
+-	case B43_NPHY_RSSI_Y:
++	case N_RSSI_W2:
+ 		if (core1or5 && rail == N_RAIL_I)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_Y, tmp);
+ 		if (core1or5 && rail == N_RAIL_Q)
+@@ -1254,7 +1254,7 @@ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 		if (core2or5 && rail == N_RAIL_Q)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_Y, tmp);
+ 		break;
+-	case B43_NPHY_RSSI_TBD:
++	case N_RSSI_TBD:
+ 		if (core1or5 && rail == N_RAIL_I)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_TBD, tmp);
+ 		if (core1or5 && rail == N_RAIL_Q)
+@@ -1264,7 +1264,7 @@ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 		if (core2or5 && rail == N_RAIL_Q)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_TBD, tmp);
+ 		break;
+-	case B43_NPHY_RSSI_PWRDET:
++	case N_RSSI_IQ:
+ 		if (core1or5 && rail == N_RAIL_I)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_PWRDET, tmp);
+ 		if (core1or5 && rail == N_RAIL_Q)
+@@ -1274,13 +1274,13 @@ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 		if (core2or5 && rail == N_RAIL_Q)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_PWRDET, tmp);
+ 		break;
+-	case B43_NPHY_RSSI_TSSI_I:
++	case N_RSSI_TSSI_2G:
+ 		if (core1or5)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_TSSI, tmp);
+ 		if (core2or5)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_1I_TSSI, tmp);
+ 		break;
+-	case B43_NPHY_RSSI_TSSI_Q:
++	case N_RSSI_TSSI_5G:
+ 		if (core1or5)
+ 			b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_TSSI, tmp);
+ 		if (core2or5)
+@@ -1921,9 +1921,9 @@ static void b43_nphy_rssi_cal(struct b43_wldev *dev)
+ 	if (dev->phy.rev >= 3) {
+ 		b43_nphy_rev3_rssi_cal(dev);
+ 	} else {
+-		b43_nphy_rev2_rssi_cal(dev, B43_NPHY_RSSI_Z);
+-		b43_nphy_rev2_rssi_cal(dev, B43_NPHY_RSSI_X);
+-		b43_nphy_rev2_rssi_cal(dev, B43_NPHY_RSSI_Y);
++		b43_nphy_rev2_rssi_cal(dev, N_RSSI_NB);
++		b43_nphy_rev2_rssi_cal(dev, N_RSSI_W1);
++		b43_nphy_rev2_rssi_cal(dev, N_RSSI_W2);
  	}
+ }
  
- 	for (i = 0; i < 4; i++) {
- 		s32 mind = 0x100000;
- 		u8 minvcm = 0;
- 		s32 minpoll = 249;
--		s32 curr;
--		for (j = 0; j < 4; j++) {
-+		s32 currd;
-+		for (vcm = 0; vcm < 4; vcm++) {
- 			if (type == 2)
--				curr = abs(results[j][i]);
-+				currd = abs(results[vcm][i]);
- 			else
--				curr = abs(miniq[j][i / 2] - code * 8);
-+				currd = abs(miniq[vcm][i / 2] - code * 8);
- 
--			if (curr < mind) {
--				mind = curr;
--				minvcm = j;
-+			if (currd < mind) {
-+				mind = currd;
-+				minvcm = vcm;
- 			}
- 
--			if (results[j][i] < minpoll)
--				minpoll = results[j][i];
-+			if (results[vcm][i] < minpoll)
-+				minpoll = results[vcm][i];
- 		}
- 		results_min[i] = minpoll;
- 		vcm_final[i] = minvcm;
 -- 
 1.7.10.4
