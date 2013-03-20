@@ -1,43 +1,157 @@
-From: Chris Vine <chris@cvine.freeserve.co.uk>
-Date: Wed, 20 Mar 2013 16:10:49 +0000
-Subject: [RFC/RFT] b43: A fix for DMA transmission sequence errors
-In-Reply-To: <2272126.rjuG7RkCA8@wks001.ise.net>
-References: <51421afb.xUa3KbaBuvmUk4RG%Larry.Finger@lwfinger.net>
- <4518745.W5blfs9sIi@wks001.ise.net> <5149CD68.7070603@lwfinger.net>
- <2272126.rjuG7RkCA8@wks001.ise.net>
-Message-ID: <20130320161049.06f01a7d@laptop.homenet>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 20 Mar 2013 19:15:48 +0100
+Subject: [PATCH 2/6] b43: N-PHY: simplify conditions in RSSI offset scale
+ function
+In-Reply-To: <1363803352-12459-1-git-send-email-zajec5@gmail.com>
+References: <1363803352-12459-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1363803352-12459-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: isedev@gmail.com
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Michael Buesch <mb@bu3sch.de>
+To: b43-dev@lists.infradead.org
 
-On Wed, 20 Mar 2013 16:04:29 +0100
-ISE Development <isedev@gmail.com> wrote:
+---
+ drivers/net/wireless/b43/phy_n.c |  120 +++++++++++++++++++++-----------------
+ 1 file changed, 65 insertions(+), 55 deletions(-)
 
-> On Wednesday 20 Mar 2013 09:53:28 Larry Finger wrote:
-> > On 03/20/2013 06:26 AM, ISE Development wrote:
-> > > Did you get a chance to validate this patch?
-> > > 
-> > > So far on my system, it has been running for over week without
-> > > problems (over 15GB of traffic).
-> > 
-> > I have been using the patch, but I am testing rtlwifi drivers quite
-> > heavily at the moment, thus b43 has had limited usage. In fact, I
-> > was waiting to get a report from you before pushing the patch. It
-> > is ready to go.
-> > 
-> > How frequently do you get the automatic reset?
-> > 
-> > Larry
-> 
-> At least 3 or 4 per second when exceeding 2Mbit/s, otherwise around
-> 1-2 per 10 second interval. The card was literally unusable without
-> the patch.
-
-For me, much less.  At full speed, about one reset per 500MBytes.  In
-fact, the resets seem to depend on the number of bytes passed rather
-than the speed of itself.
-
-Chris
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 0a8165de..efc6012 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -1214,7 +1214,7 @@ static void b43_nphy_run_samples(struct b43_wldev *dev, u16 samps, u16 loops,
+ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 					s8 offset, u8 core,
+ 				        enum n_rail_type rail,
+-					enum b43_nphy_rssi_type type)
++					enum b43_nphy_rssi_type rssi_type)
+ {
+ 	u16 tmp;
+ 	bool core1or5 = (core == 1) || (core == 5);
+@@ -1223,60 +1223,70 @@ static void b43_nphy_scale_offset_rssi(struct b43_wldev *dev, u16 scale,
+ 	offset = clamp_val(offset, -32, 31);
+ 	tmp = ((scale & 0x3F) << 8) | (offset & 0x3F);
+ 
+-	if (core1or5 && (rail == 0) && (type == B43_NPHY_RSSI_Z))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_Z, tmp);
+-	if (core1or5 && (rail == 1) && (type == B43_NPHY_RSSI_Z))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_RSSI_Z, tmp);
+-	if (core2or5 && (rail == 0) && (type == B43_NPHY_RSSI_Z))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1I_RSSI_Z, tmp);
+-	if (core2or5 && (rail == 1) && (type == B43_NPHY_RSSI_Z))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_Z, tmp);
+-
+-	if (core1or5 && (rail == 0) && (type == B43_NPHY_RSSI_X))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_X, tmp);
+-	if (core1or5 && (rail == 1) && (type == B43_NPHY_RSSI_X))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_RSSI_X, tmp);
+-	if (core2or5 && (rail == 0) && (type == B43_NPHY_RSSI_X))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1I_RSSI_X, tmp);
+-	if (core2or5 && (rail == 1) && (type == B43_NPHY_RSSI_X))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_X, tmp);
+-
+-	if (core1or5 && (rail == 0) && (type == B43_NPHY_RSSI_Y))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_Y, tmp);
+-	if (core1or5 && (rail == 1) && (type == B43_NPHY_RSSI_Y))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_RSSI_Y, tmp);
+-	if (core2or5 && (rail == 0) && (type == B43_NPHY_RSSI_Y))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1I_RSSI_Y, tmp);
+-	if (core2or5 && (rail == 1) && (type == B43_NPHY_RSSI_Y))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_Y, tmp);
+-
+-	if (core1or5 && (rail == 0) && (type == B43_NPHY_RSSI_TBD))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0I_TBD, tmp);
+-	if (core1or5 && (rail == 1) && (type == B43_NPHY_RSSI_TBD))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_TBD, tmp);
+-	if (core2or5 && (rail == 0) && (type == B43_NPHY_RSSI_TBD))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1I_TBD, tmp);
+-	if (core2or5 && (rail == 1) && (type == B43_NPHY_RSSI_TBD))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_TBD, tmp);
+-
+-	if (core1or5 && (rail == 0) && (type == B43_NPHY_RSSI_PWRDET))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0I_PWRDET, tmp);
+-	if (core1or5 && (rail == 1) && (type == B43_NPHY_RSSI_PWRDET))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_PWRDET, tmp);
+-	if (core2or5 && (rail == 0) && (type == B43_NPHY_RSSI_PWRDET))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1I_PWRDET, tmp);
+-	if (core2or5 && (rail == 1) && (type == B43_NPHY_RSSI_PWRDET))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_PWRDET, tmp);
+-
+-	if (core1or5 && (type == B43_NPHY_RSSI_TSSI_I))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0I_TSSI, tmp);
+-	if (core2or5 && (type == B43_NPHY_RSSI_TSSI_I))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1I_TSSI, tmp);
+-
+-	if (core1or5 && (type == B43_NPHY_RSSI_TSSI_Q))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_TSSI, tmp);
+-	if (core2or5 && (type == B43_NPHY_RSSI_TSSI_Q))
+-		b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_TSSI, tmp);
++	switch (rssi_type) {
++	case B43_NPHY_RSSI_Z:
++		if (core1or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_Z, tmp);
++		if (core1or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_RSSI_Z, tmp);
++		if (core2or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1I_RSSI_Z, tmp);
++		if (core2or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_Z, tmp);
++		break;
++	case B43_NPHY_RSSI_X:
++		if (core1or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_X, tmp);
++		if (core1or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_RSSI_X, tmp);
++		if (core2or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1I_RSSI_X, tmp);
++		if (core2or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_X, tmp);
++		break;
++	case B43_NPHY_RSSI_Y:
++		if (core1or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_RSSI_Y, tmp);
++		if (core1or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_RSSI_Y, tmp);
++		if (core2or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1I_RSSI_Y, tmp);
++		if (core2or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_RSSI_Y, tmp);
++		break;
++	case B43_NPHY_RSSI_TBD:
++		if (core1or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_TBD, tmp);
++		if (core1or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_TBD, tmp);
++		if (core2or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1I_TBD, tmp);
++		if (core2or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_TBD, tmp);
++		break;
++	case B43_NPHY_RSSI_PWRDET:
++		if (core1or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_PWRDET, tmp);
++		if (core1or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_PWRDET, tmp);
++		if (core2or5 && rail == N_RAIL_I)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1I_PWRDET, tmp);
++		if (core2or5 && rail == N_RAIL_Q)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_PWRDET, tmp);
++		break;
++	case B43_NPHY_RSSI_TSSI_I:
++		if (core1or5)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0I_TSSI, tmp);
++		if (core2or5)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1I_TSSI, tmp);
++		break;
++	case B43_NPHY_RSSI_TSSI_Q:
++		if (core1or5)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_0Q_TSSI, tmp);
++		if (core2or5)
++			b43_phy_write(dev, B43_NPHY_RSSIMC_1Q_TSSI, tmp);
++		break;
++	}
+ }
+ 
+ static void b43_nphy_rev3_rssi_select(struct b43_wldev *dev, u8 code, u8 type)
+-- 
+1.7.10.4
