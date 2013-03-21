@@ -1,166 +1,57 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 20 Mar 2013 14:02:31 -0500
-Subject: [PATCH] b43: A fix for DMA transmission sequence errors
-Message-ID: <514a07c7.ZQz6MhmMaq58WJlA%Larry.Finger@lwfinger.net>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Thu, 21 Mar 2013 20:28:40 +0100
+Subject: [PATCH] b43: remove warning for LP-PHY with sprom < 8
+Message-ID: <1363894120-14563-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John W Linville <linville@tuxdriver.com>
-Cc: isedev@gmail.com, chris@cvine.freeserve.co.uk, Michael Buesch <m@bues.ch>, zajec5@gmail.com, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-From: Iestyn C. Elfick <isedev@gmail.com>
+The BCM5354 SoC has a build in ieee80211 core rev 13 with a LP-PHY on
+it. This devices has a sprom version 3 stored in the nvram. This patch
+removes the warning and uses the opo values from the sprom as mentioned
+in the specs.
 
-Intermittently, b43 will report "Out of order TX status report on DMA ring".
-When this happens, the driver must be reset before communication can resume.
-The cause of the problem is believed to be an error in the closed-source
-firmware; however, all versions of the firmware are affected.
-
-This change uses the observation that the expected status is always 2 less
-than the observed value, and supplies a fake status report to skip one
-header/data pair.
-
-Not all devices suffer from this problem, but it can occur several times
-per second under heavy load. As each occurence kills the unmodified driver,
-this patch makes if possible for the affected devices to function. The patch
-logs only the first instance of the reset operation to prevent spamming
-the logs.
-
-Tested-by: Chris Vine <chris@cvine.freeserve.co.uk>
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
+ drivers/net/wireless/b43/phy_lp.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-John,
-
-If possible, this material should be applied to 3.9.
-
-Thanks,
-
-Larry
----
-
-Index: wireless-testing-save/drivers/net/wireless/b43/dma.c
-===================================================================
---- wireless-testing-save.orig/drivers/net/wireless/b43/dma.c
-+++ wireless-testing-save/drivers/net/wireless/b43/dma.c
-@@ -1487,8 +1487,12 @@ void b43_dma_handle_txstatus(struct b43_
- 	const struct b43_dma_ops *ops;
- 	struct b43_dmaring *ring;
- 	struct b43_dmadesc_meta *meta;
-+	static const struct b43_txstatus fake; /* filled with 0 */
-+	const struct b43_txstatus *txstat;
- 	int slot, firstused;
- 	bool frame_succeed;
-+	int skip;
-+	static u8 err_out1, err_out2;
- 
- 	ring = parse_cookie(dev, status->cookie, &slot);
- 	if (unlikely(!ring))
-@@ -1501,13 +1505,36 @@ void b43_dma_handle_txstatus(struct b43_
- 	firstused = ring->current_slot - ring->used_slots + 1;
- 	if (firstused < 0)
- 		firstused = ring->nr_slots + firstused;
-+
-+	skip = 0;
- 	if (unlikely(slot != firstused)) {
- 		/* This possibly is a firmware bug and will result in
--		 * malfunction, memory leaks and/or stall of DMA functionality. */
--		b43dbg(dev->wl, "Out of order TX status report on DMA ring %d. "
--		       "Expected %d, but got %d\n",
--		       ring->index, firstused, slot);
--		return;
-+		 * malfunction, memory leaks and/or stall of DMA functionality.
-+		 */
-+		if (slot == next_slot(ring, next_slot(ring, firstused))) {
-+			/* If a single header/data pair was missed, skip over
-+			 * the first two slots in an attempt to recover.
-+			 */
-+			slot = firstused;
-+			skip = 2;
-+			if (!err_out1) {
-+				/* Report the error once. */
-+				b43dbg(dev->wl,
-+				       "Skip on DMA ring %d slot %d.\n",
-+				       ring->index, slot);
-+				err_out1 = 1;
-+			}
-+		} else {
-+			/* More than a single header/data pair were missed.
-+			 * Report this error once.
-+			 */
-+			if (!err_out2)
-+				b43dbg(dev->wl,
-+				       "Out of order TX status report on DMA ring %d. Expected %d, but got %d\n",
-+				       ring->index, firstused, slot);
-+			err_out2 = 1;
-+			return;
-+		}
- 	}
- 
- 	ops = ring->ops;
-@@ -1522,11 +1549,13 @@ void b43_dma_handle_txstatus(struct b43_
- 			       slot, firstused, ring->index);
- 			break;
- 		}
-+
- 		if (meta->skb) {
- 			struct b43_private_tx_info *priv_info =
--				b43_get_priv_tx_info(IEEE80211_SKB_CB(meta->skb));
-+			     b43_get_priv_tx_info(IEEE80211_SKB_CB(meta->skb));
- 
--			unmap_descbuffer(ring, meta->dmaaddr, meta->skb->len, 1);
-+			unmap_descbuffer(ring, meta->dmaaddr,
-+					 meta->skb->len, 1);
- 			kfree(priv_info->bouncebuffer);
- 			priv_info->bouncebuffer = NULL;
+diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
+index 3ae2856..5ed352d 100644
+--- a/drivers/net/wireless/b43/phy_lp.c
++++ b/drivers/net/wireless/b43/phy_lp.c
+@@ -104,14 +104,8 @@ static void lpphy_read_band_sprom(struct b43_wldev *dev)
+ 		maxpwr = sprom->maxpwr_bg;
+ 		lpphy->max_tx_pwr_med_band = maxpwr;
+ 		cckpo = sprom->cck2gpo;
+-		/*
+-		 * We don't read SPROM's opo as specs say. On rev8 SPROMs
+-		 * opo == ofdm2gpo and we don't know any SSB with LP-PHY
+-		 * and SPROM rev below 8.
+-		 */
+-		B43_WARN_ON(sprom->revision < 8);
+-		ofdmpo = sprom->ofdm2gpo;
+ 		if (cckpo) {
++			ofdmpo = sprom->ofdm2gpo;
+ 			for (i = 0; i < 4; i++) {
+ 				lpphy->tx_max_rate[i] =
+ 					maxpwr - (ofdmpo & 0xF) * 2;
+@@ -124,11 +118,11 @@ static void lpphy_read_band_sprom(struct b43_wldev *dev)
+ 				ofdmpo >>= 4;
+ 			}
  		} else {
-@@ -1538,8 +1567,9 @@ void b43_dma_handle_txstatus(struct b43_
- 			struct ieee80211_tx_info *info;
- 
- 			if (unlikely(!meta->skb)) {
--				/* This is a scatter-gather fragment of a frame, so
--				 * the skb pointer must not be NULL. */
-+				/* This is a scatter-gather fragment of a frame,
-+				 * so the skb pointer must not be NULL.
-+				 */
- 				b43dbg(dev->wl, "TX status unexpected NULL skb "
- 				       "at slot %d (first=%d) on ring %d\n",
- 				       slot, firstused, ring->index);
-@@ -1550,9 +1580,18 @@ void b43_dma_handle_txstatus(struct b43_
- 
- 			/*
- 			 * Call back to inform the ieee80211 subsystem about
--			 * the status of the transmission.
-+			 * the status of the transmission. When skipping over
-+			 * a missed TX status report, use a status structure
-+			 * filled with zeros to indicate that the frame was not
-+			 * sent (frame_count 0) and not acknowledged
- 			 */
--			frame_succeed = b43_fill_txstatus_report(dev, info, status);
-+			if (unlikely(skip))
-+				txstat = &fake;
-+			else
-+				txstat = status;
-+
-+			frame_succeed = b43_fill_txstatus_report(dev, info,
-+								 txstat);
- #ifdef CONFIG_B43_DEBUG
- 			if (frame_succeed)
- 				ring->nr_succeed_tx_packets++;
-@@ -1580,12 +1619,14 @@ void b43_dma_handle_txstatus(struct b43_
- 		/* Everything unmapped and free'd. So it's not used anymore. */
- 		ring->used_slots--;
- 
--		if (meta->is_last_fragment) {
-+		if (meta->is_last_fragment && !skip) {
- 			/* This is the last scatter-gather
- 			 * fragment of the frame. We are done. */
- 			break;
+-			ofdmpo &= 0xFF;
++			u8 opo = sprom->opo;
+ 			for (i = 0; i < 4; i++)
+ 				lpphy->tx_max_rate[i] = maxpwr;
+ 			for (i = 4; i < 15; i++)
+-				lpphy->tx_max_rate[i] = maxpwr - ofdmpo;
++				lpphy->tx_max_rate[i] = maxpwr - opo;
  		}
- 		slot = next_slot(ring, slot);
-+		if (skip > 0)
-+			--skip;
- 	}
- 	if (ring->stopped) {
- 		B43_WARN_ON(free_slots(ring) < TX_SLOTS_PER_FRAME);
+ 	} else { /* 5GHz */
+ 		lpphy->tx_isolation_low_band = sprom->tri5gl;
+-- 
+1.7.10.4
