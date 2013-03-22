@@ -1,57 +1,55 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 21 Mar 2013 20:28:40 +0100
-Subject: [PATCH] b43: remove warning for LP-PHY with sprom < 8
-Message-ID: <1363894120-14563-1-git-send-email-hauke@hauke-m.de>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 23 Mar 2013 00:27:30 +0100
+Subject: [PATCH] b43: A fix for DMA transmission sequence errors
+In-Reply-To: <514a07c7.ZQz6MhmMaq58WJlA%Larry.Finger@lwfinger.net>
+References: <514a07c7.ZQz6MhmMaq58WJlA%Larry.Finger@lwfinger.net>
+Message-ID: <CACna6rz75ecyy5CdaJfi=dRjrTh_Rg793Ub+-0QdVnCZNyV+Lg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: John W Linville <linville@tuxdriver.com>, isedev@gmail.com, chris@cvine.freeserve.co.uk, Michael Buesch <m@bues.ch>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-The BCM5354 SoC has a build in ieee80211 core rev 13 with a LP-PHY on
-it. This devices has a sprom version 3 stored in the nvram. This patch
-removes the warning and uses the opo values from the sprom as mentioned
-in the specs.
+2013/3/20 Larry Finger <Larry.Finger@lwfinger.net>:
+> From: Iestyn C. Elfick <isedev@gmail.com>
+>
+> Intermittently, b43 will report "Out of order TX status report on DMA ring".
+> When this happens, the driver must be reset before communication can resume.
+> The cause of the problem is believed to be an error in the closed-source
+> firmware; however, all versions of the firmware are affected.
+>
+> This change uses the observation that the expected status is always 2 less
+> than the observed value, and supplies a fake status report to skip one
+> header/data pair.
+>
+> Not all devices suffer from this problem, but it can occur several times
+> per second under heavy load. As each occurence kills the unmodified driver,
+> this patch makes if possible for the affected devices to function. The patch
+> logs only the first instance of the reset operation to prevent spamming
+> the logs.
+>
+> Tested-by: Chris Vine <chris@cvine.freeserve.co.uk>
+> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+> Cc: Stable <stable@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/net/wireless/b43/phy_lp.c |   12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+I promised to perform some tests, unfortunately I didn't find enough
+time last weekend.
 
-diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
-index 3ae2856..5ed352d 100644
---- a/drivers/net/wireless/b43/phy_lp.c
-+++ b/drivers/net/wireless/b43/phy_lp.c
-@@ -104,14 +104,8 @@ static void lpphy_read_band_sprom(struct b43_wldev *dev)
- 		maxpwr = sprom->maxpwr_bg;
- 		lpphy->max_tx_pwr_med_band = maxpwr;
- 		cckpo = sprom->cck2gpo;
--		/*
--		 * We don't read SPROM's opo as specs say. On rev8 SPROMs
--		 * opo == ofdm2gpo and we don't know any SSB with LP-PHY
--		 * and SPROM rev below 8.
--		 */
--		B43_WARN_ON(sprom->revision < 8);
--		ofdmpo = sprom->ofdm2gpo;
- 		if (cckpo) {
-+			ofdmpo = sprom->ofdm2gpo;
- 			for (i = 0; i < 4; i++) {
- 				lpphy->tx_max_rate[i] =
- 					maxpwr - (ofdmpo & 0xF) * 2;
-@@ -124,11 +118,11 @@ static void lpphy_read_band_sprom(struct b43_wldev *dev)
- 				ofdmpo >>= 4;
- 			}
- 		} else {
--			ofdmpo &= 0xFF;
-+			u8 opo = sprom->opo;
- 			for (i = 0; i < 4; i++)
- 				lpphy->tx_max_rate[i] = maxpwr;
- 			for (i = 4; i < 15; i++)
--				lpphy->tx_max_rate[i] = maxpwr - ofdmpo;
-+				lpphy->tx_max_rate[i] = maxpwr - opo;
- 		}
- 	} else { /* 5GHz */
- 		lpphy->tx_isolation_low_band = sprom->tri5gl;
+Today I've plugged my 14e4:4315 and (unfortunately?) it's working
+pretty well. I hoped to reproduce some problems but failed to do so. I
+was transmitting for an hour with average speed 11MiB/s and didn't
+notice any DMA issues.
+
+I was using iperf with interval of 60 seconds and only 3 results
+showed some problems (8.5MiB/s, 2.5MiB/s, 4.5MiB/s). No disconnections
+however and no DMA errors. I just got "Group rekeying completed..." in
+wpa_supplicant.
+
+So as I can't reproduce this, I can't find any other fix for this
+issue, and there's no reason to stop this workaround. I'll just apply
+it and test over weekend to check for any regressions, but they are
+highly unlikely.
+
 -- 
-1.7.10.4
+Rafa?
