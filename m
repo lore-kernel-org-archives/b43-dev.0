@@ -1,51 +1,117 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Tue, 26 Mar 2013 19:38:38 +0100
-Subject: Scanning regression since "cfg80211: use DS or HT operation IEs
- to determine BSS channel"
-In-Reply-To: <CACna6rwdAAsCX76=nwHpj-grVvQznbNCPVnpXL9kP2TkvhR-yw@mail.gmail.com>
- (sfid-20130326_181054_958567_0E045FFC)
-References: <CACna6rwdAAsCX76=nwHpj-grVvQznbNCPVnpXL9kP2TkvhR-yw@mail.gmail.com>
- (sfid-20130326_181054_958567_0E045FFC)
-Message-ID: <1364323118.8319.13.camel@jlt4.sipsolutions.net>
+From: Benjamin Daines <benjamindaines@gmail.com>
+Date: Tue, 26 Mar 2013 15:18:40 -0400
+Subject: Further info on b43 roaming issues
+Message-ID: <2031697.MdoeHcjIok@ben-linux>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On Tue, 2013-03-26 at 18:10 +0100, Rafa? Mi?ecki wrote:
+wpa_cli readout of event
 
-> I've just finished bisecting wireless scanning regression I'm
-> experiencing with my 14e4:432b (BCM4322) and b43 driver.
-
-Hmmm.
-
-> The problem is getting my network visible in scanning results (iw dev
-> wlan0 scan). I've to repeat scanning dozens of time to notice my AP.
-> It's also well visible when using wpa_supplicant. It takes from 20s to
-> 100s before I get the "Trying to authenticate with".
-
-That's strange.
-
-> After going back to the kernel before that commit it takes
-> wpa_supplicant less than 2 seconds to connect to my WiFi network.
-
-> My network is at channel 13, I still have to verify if it matters.
-> 
-> Any thought about that?
-> 
-> 
-> The first bad commit (I've verified manually after bisecting) appears to be:
-
-"verified manually" how? By reverting the commit? But anyway the commit
-is clearly scanning related, so ...
-
-Can you check your channel list? (iw list or iw phy0 info)
-
-Also can you show the full data including beacon data from the AP (iw
-wlan0 scan dump -b) please?
-
-Does reverting just the mac80211 change fix it?
-
-johannes
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 50:a7:33:03:47:78 (SSID='Kardon_Wifi' 
+freq=2412 MHz)
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 50:a7:33:03:47:78 (SSID='Kardon_Wifi' 
+freq=2412 MHz)
+<3>Trying to associate with 50:a7:33:03:47:78 (SSID='Kardon_Wifi' freq=2412 
+MHz)
+<3>Associated with 50:a7:33:03:47:78
+<3>CTRL-EVENT-CONNECTED - Connection to 50:a7:33:03:47:78 completed [id=0 
+id_str=]
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-DISCONNECTED bssid=50:a7:33:03:47:78 reason=4 
+locally_generated=1
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:18:11:d8 (SSID='Kardon_Wifi' 
+freq=2462 MHz)
+<3>Trying to associate with 00:22:7f:18:11:d8 (SSID='Kardon_Wifi' freq=2462 
+MHz)
+<3>Associated with 00:22:7f:18:11:d8
+<3>CTRL-EVENT-CONNECTED - Connection to 00:22:7f:18:11:d8 completed [id=0 
+id_str=]
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:18:11:98 (SSID='Kardon_Wifi' 
+freq=2412 MHz)
+<3>Trying to associate with 00:22:7f:18:11:98 (SSID='Kardon_Wifi' freq=2412 
+MHz)
+<3>Associated with 00:22:7f:18:11:98
+<3>CTRL-EVENT-CONNECTED - Connection to 00:22:7f:18:11:98 completed [id=0 
+id_str=]
+<3>CTRL-EVENT-DISCONNECTED bssid=00:22:7f:18:11:98 reason=3 
+locally_generated=1
+> 'PING' command failed.
+Connection to wpa_supplicant lost - trying to reconnect                                                           
+Connection to wpa_supplicant re-established                                                                       
+<3>CTRL-EVENT-SCAN-RESULTS                                                                                        
+<3>SME: Trying to authenticate with 00:22:7f:18:11:98 (SSID='Kardon_Wifi' 
+freq=2412 MHz)                          
+<3>Trying to associate with 00:22:7f:18:11:98 (SSID='Kardon_Wifi' freq=2412 
+MHz)                                  
+<3>Associated with 00:22:7f:18:11:98
+<3>CTRL-EVENT-CONNECTED - Connection to 00:22:7f:18:11:98 completed [id=0 
+id_str=]
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-DISCONNECTED bssid=00:22:7f:18:11:98 reason=4 
+locally_generated=1
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 50:a7:33:03:47:78 (SSID='Kardon_Wifi' 
+freq=2412 MHz)
+<3>Trying to associate with 50:a7:33:03:47:78 (SSID='Kardon_Wifi' freq=2412 
+MHz)
+<3>Associated with 50:a7:33:03:47:78
+<3>CTRL-EVENT-CONNECTED - Connection to 50:a7:33:03:47:78 completed [id=0 
+id_str=]
+<3>CTRL-EVENT-DISCONNECTED bssid=50:a7:33:03:47:78 reason=4 
+locally_generated=1
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:18:11:d8 (SSID='Kardon_Wifi' 
+freq=2462 MHz)
+<3>Trying to associate with 00:22:7f:18:11:d8 (SSID='Kardon_Wifi' freq=2462 
+MHz)
+<3>Associated with 00:22:7f:18:11:d8
+<3>CTRL-EVENT-CONNECTED - Connection to 00:22:7f:18:11:d8 completed [id=0 
+id_str=]
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:11:51:38 (SSID='Kardon_Wifi' 
+freq=2432 MHz)
+<3>Trying to associate with 00:22:7f:11:51:38 (SSID='Kardon_Wifi' freq=2432 
+MHz)
+<3>Associated with 00:22:7f:11:51:38
+<3>CTRL-EVENT-CONNECTED - Connection to 00:22:7f:11:51:38 completed [id=0 
+id_str=]
+<3>CTRL-EVENT-DISCONNECTED bssid=00:22:7f:11:51:38 reason=4 
+locally_generated=1
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:0f:9c:28 (SSID='Kardon_Wifi' 
+freq=2432 MHz)
+<3>Trying to associate with 00:22:7f:0f:9c:28 (SSID='Kardon_Wifi' freq=2432 
+MHz)
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:11:51:38 (SSID='Kardon_Wifi' 
+freq=2432 MHz)
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:18:11:98 (SSID='Kardon_Wifi' 
+freq=2412 MHz)
+<3>Trying to associate with 00:22:7f:18:11:98 (SSID='Kardon_Wifi' freq=2412 
+MHz)
+<3>CTRL-EVENT-DISCONNECTED bssid=00:22:7f:18:11:98 reason=3 
+locally_generated=1
+<4>Failed to initiate AP scan
+<4>Failed to initiate AP scan
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>SME: Trying to authenticate with 00:22:7f:18:11:98 (SSID='Kardon_Wifi' 
+freq=2412 MHz)
+<3>SME: Authentication request to the driver failed
