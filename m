@@ -1,45 +1,64 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 26 Mar 2013 23:13:28 +0100
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Tue, 26 Mar 2013 23:26:39 +0100
 Subject: Scanning regression since "cfg80211: use DS or HT operation IEs
  to determine BSS channel"
 In-Reply-To: <CACna6rxpiPp_FR8jF=jKHbd6XrYndfFZC5O4g6=fvioK=e8vEg@mail.gmail.com>
+ (sfid-20130326_225853_266498_DCDE7415)
 References: <CACna6rwdAAsCX76=nwHpj-grVvQznbNCPVnpXL9kP2TkvhR-yw@mail.gmail.com>
  <1364323118.8319.13.camel@jlt4.sipsolutions.net>
  <CACna6rxpiPp_FR8jF=jKHbd6XrYndfFZC5O4g6=fvioK=e8vEg@mail.gmail.com>
-Message-ID: <CACna6ry+km7_epXz5NQ84D_jKQ9e6iFjtrmzHKb1Gxc1ywjtmw@mail.gmail.com>
+ (sfid-20130326_225853_266498_DCDE7415)
+Message-ID: <1364336799.14191.3.camel@jlt4.sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-2013/3/26 Rafa? Mi?ecki <zajec5@gmail.com>:
-> 2013/3/26 Johannes Berg <johannes@sipsolutions.net>:
->> Can you check your channel list? (iw list or iw phy0 info)
->
+
+On Tue, 2013-03-26 at 22:58 +0100, Rafa? Mi?ecki wrote:
+> > Can you check your channel list? (iw list or iw phy0 info)
+> 
 > Sure, attaching iw.list.log.
 
-Hm, after some recompilations, rmmod, modprobe... now I can see
-> * 2472 MHz [13] (20.0 dBm) (passive scanning, no IBSS)
-(I didn't have "passive" for channel 13 earlier). Not sure what could
-change that. I've to do more experiments with different channels.
+This is after the scan, presumably? Is channel 13 also marked as
+passive/no-ibss before scanning?
 
+> > Also can you show the full data including beacon data from the AP (iw
+> > wlan0 scan dump -b) please?
+> 
+> Hm, first of all, above command doesn't seem to perform real scanning.
 
->> Does reverting just the mac80211 change fix it?
->
+True, you can remove the "dump" part if you wanted to.
+
+> It returns too quick to actually scan anything. It's result is empty
+> as long as I don't use standard "iw dev wlan0 scan".  After scanning a
+> normal way once ("iw dev wlan0 scan"), executing "dump -b" results in
+> the output at the one produced by "iw dev wlan0 scan" (only TSF and
+> last seen differ).
+
+Really? It should have printed more if you'd ever received a beacon.
+That's curious. It means you never received a beacon? But then how did
+the channel get activated (i.e. no longer be passive)? That should have
+been by receiving a beacon ...
+
+> > Does reverting just the mac80211 change fix it?
+> 
 > Yes. Reverting just a change in net/mac80211/scan.c fixes the problem
 > for me. I've tested this with the latest wireless-testing.
 
-Just to make it clear: I've modified scan.c as you can see in attached
-0001-mac80211-fix.patch (application/octet-stream) 2 KB
+Sounds to me like you have issues receiving beacons. Channel 13 is
+marked passive, thus no probe requests would get sent. Before the
+change, it's possible that your probe response on channel 11 was
+received by the AP on channel 13 (in particular since the AP is
+configured to HT40-) and the probe response was received on channel 11.
 
--- 
-Rafa?
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: 0001-mac80211-fix.patch
-Type: application/octet-stream
-Size: 1229 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130326/dda774b7/attachment-0001.obj>
+I'm not really sure what difference this change makes though ... channel
+13 is still present and not disabled, so the frame, if received,
+wouldn't be dropped either way??
+
+Or was the channel marked disabled before scanning? But then you could
+never connect to the AP anyway ... hmm.
+
+johannes
