@@ -1,52 +1,51 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 27 Mar 2013 08:37:08 +0100
-Subject: [FIX 3.4+][PATCH] b43: N-PHY: use more bits for offset in RSSI
- calibration
-Message-ID: <1364369828-3831-1-git-send-email-zajec5@gmail.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Wed, 27 Mar 2013 17:15:51 +0100
+Subject: [PATCH 2/2] b43: make struct b2056_inittabs_pts const
+In-Reply-To: <1364400951-25488-1-git-send-email-hauke@hauke-m.de>
+References: <1364400951-25488-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <1364400951-25488-2-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, stable@vger.kernel.org
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-When calculating "offset" for final RSSI calibration we're using numbers
-bigger than s8 can hold. We have for example:
-offset[j] = 232 - poll_results[j];
-formula. If poll_results[j] is small enough (it usually is) we treat
-number's bit as a sign bit. For example 232 - 1 becomes:
-0xE8 - 0x1 = 0xE7, which is not 231 but -25.
-
-This code was introduced in e0c9a0219a8f542e3946fe972a68aacf8c3f906c
-and caused stability regression on some cards, for ex. BCM4322.
-
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-Cc: stable at vger.kernel.org
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/net/wireless/b43/phy_n.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/b43/radio_2056.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 3c35382..4c96a7c 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -1564,7 +1564,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- 	u16 clip_off[2] = { 0xFFFF, 0xFFFF };
+diff --git a/drivers/net/wireless/b43/radio_2056.c b/drivers/net/wireless/b43/radio_2056.c
+index ab1f55f..b4fd934 100644
+--- a/drivers/net/wireless/b43/radio_2056.c
++++ b/drivers/net/wireless/b43/radio_2056.c
+@@ -2980,7 +2980,7 @@ static const struct b2056_inittab_entry b2056_inittab_rev8_rx[] = {
+ 	.rx		= prefix##_rx,			\
+ 	.rx_length	= ARRAY_SIZE(prefix##_rx)
  
- 	u8 vcm_final = 0;
--	s8 offset[4];
-+	s32 offset[4];
- 	s32 results[8][4] = { };
- 	s32 results_min[4] = { };
- 	s32 poll_results[4] = { };
-@@ -1732,7 +1732,7 @@ static void b43_nphy_rev2_rssi_cal(struct b43_wldev *dev, u8 type)
- 	u8 regs_save_radio[2];
- 	u16 regs_save_phy[2];
+-static struct b2056_inittabs_pts b2056_inittabs[] = {
++static const struct b2056_inittabs_pts b2056_inittabs[] = {
+ 	[3] = { INITTABSPTS(b2056_inittab_rev3) },
+ 	[4] = { INITTABSPTS(b2056_inittab_rev4) },
+ 	[5] = { INITTABSPTS(b2056_inittab_rev5) },
+@@ -9035,7 +9035,7 @@ static void b2056_upload_inittab(struct b43_wldev *dev, bool ghz5,
+ void b2056_upload_inittabs(struct b43_wldev *dev,
+ 			   bool ghz5, bool ignore_uploadflag)
+ {
+-	struct b2056_inittabs_pts *pts;
++	const struct b2056_inittabs_pts *pts;
  
--	s8 offset[4];
-+	s32 offset[4];
- 	u8 core;
- 	u8 rail;
+ 	if (dev->phy.rev >= ARRAY_SIZE(b2056_inittabs)) {
+ 		B43_WARN_ON(1);
+@@ -9057,7 +9057,7 @@ void b2056_upload_inittabs(struct b43_wldev *dev,
  
+ void b2056_upload_syn_pll_cp2(struct b43_wldev *dev, bool ghz5)
+ {
+-	struct b2056_inittabs_pts *pts;
++	const struct b2056_inittabs_pts *pts;
+ 	const struct b2056_inittab_entry *e;
+ 
+ 	if (dev->phy.rev >= ARRAY_SIZE(b2056_inittabs)) {
 -- 
 1.7.10.4
