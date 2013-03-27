@@ -1,64 +1,52 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Tue, 26 Mar 2013 23:26:39 +0100
-Subject: Scanning regression since "cfg80211: use DS or HT operation IEs
- to determine BSS channel"
-In-Reply-To: <CACna6rxpiPp_FR8jF=jKHbd6XrYndfFZC5O4g6=fvioK=e8vEg@mail.gmail.com>
- (sfid-20130326_225853_266498_DCDE7415)
-References: <CACna6rwdAAsCX76=nwHpj-grVvQznbNCPVnpXL9kP2TkvhR-yw@mail.gmail.com>
- <1364323118.8319.13.camel@jlt4.sipsolutions.net>
- <CACna6rxpiPp_FR8jF=jKHbd6XrYndfFZC5O4g6=fvioK=e8vEg@mail.gmail.com>
- (sfid-20130326_225853_266498_DCDE7415)
-Message-ID: <1364336799.14191.3.camel@jlt4.sipsolutions.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Wed, 27 Mar 2013 08:37:08 +0100
+Subject: [FIX 3.4+][PATCH] b43: N-PHY: use more bits for offset in RSSI
+ calibration
+Message-ID: <1364369828-3831-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, stable@vger.kernel.org
 
+When calculating "offset" for final RSSI calibration we're using numbers
+bigger than s8 can hold. We have for example:
+offset[j] = 232 - poll_results[j];
+formula. If poll_results[j] is small enough (it usually is) we treat
+number's bit as a sign bit. For example 232 - 1 becomes:
+0xE8 - 0x1 = 0xE7, which is not 231 but -25.
 
-On Tue, 2013-03-26 at 22:58 +0100, Rafa? Mi?ecki wrote:
-> > Can you check your channel list? (iw list or iw phy0 info)
-> 
-> Sure, attaching iw.list.log.
+This code was introduced in e0c9a0219a8f542e3946fe972a68aacf8c3f906c
+and caused stability regression on some cards, for ex. BCM4322.
 
-This is after the scan, presumably? Is channel 13 also marked as
-passive/no-ibss before scanning?
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Cc: stable at vger.kernel.org
+---
+ drivers/net/wireless/b43/phy_n.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > Also can you show the full data including beacon data from the AP (iw
-> > wlan0 scan dump -b) please?
-> 
-> Hm, first of all, above command doesn't seem to perform real scanning.
-
-True, you can remove the "dump" part if you wanted to.
-
-> It returns too quick to actually scan anything. It's result is empty
-> as long as I don't use standard "iw dev wlan0 scan".  After scanning a
-> normal way once ("iw dev wlan0 scan"), executing "dump -b" results in
-> the output at the one produced by "iw dev wlan0 scan" (only TSF and
-> last seen differ).
-
-Really? It should have printed more if you'd ever received a beacon.
-That's curious. It means you never received a beacon? But then how did
-the channel get activated (i.e. no longer be passive)? That should have
-been by receiving a beacon ...
-
-> > Does reverting just the mac80211 change fix it?
-> 
-> Yes. Reverting just a change in net/mac80211/scan.c fixes the problem
-> for me. I've tested this with the latest wireless-testing.
-
-Sounds to me like you have issues receiving beacons. Channel 13 is
-marked passive, thus no probe requests would get sent. Before the
-change, it's possible that your probe response on channel 11 was
-received by the AP on channel 13 (in particular since the AP is
-configured to HT40-) and the probe response was received on channel 11.
-
-I'm not really sure what difference this change makes though ... channel
-13 is still present and not disabled, so the frame, if received,
-wouldn't be dropped either way??
-
-Or was the channel marked disabled before scanning? But then you could
-never connect to the AP anyway ... hmm.
-
-johannes
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 3c35382..4c96a7c 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -1564,7 +1564,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 	u16 clip_off[2] = { 0xFFFF, 0xFFFF };
+ 
+ 	u8 vcm_final = 0;
+-	s8 offset[4];
++	s32 offset[4];
+ 	s32 results[8][4] = { };
+ 	s32 results_min[4] = { };
+ 	s32 poll_results[4] = { };
+@@ -1732,7 +1732,7 @@ static void b43_nphy_rev2_rssi_cal(struct b43_wldev *dev, u8 type)
+ 	u8 regs_save_radio[2];
+ 	u16 regs_save_phy[2];
+ 
+-	s8 offset[4];
++	s32 offset[4];
+ 	u8 core;
+ 	u8 rail;
+ 
+-- 
+1.7.10.4
