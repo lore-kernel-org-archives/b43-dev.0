@@ -1,135 +1,99 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 28 Mar 2013 12:37:30 +0100
-Subject: [PATCH v2 1/2] b43: mark some functions and structs static
-Message-ID: <1364470651-1345-1-git-send-email-hauke@hauke-m.de>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 28 Mar 2013 17:18:02 +0100
+Subject: [FIX 3.3+][PATCH] ssb: implement spurious tone avoidance
+Message-ID: <1364487482-14642-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Stable <stable@vger.kernel.org>
 
-This fixes some sparse warnings.
+And make use of it in b43. This fixes a regression introduced with
+49d55cef5b1925a5c1efb6aaddaa40fc7c693335
+b43: N-PHY: implement spurious tone avoidance
+This commit made BCM4322 use only MCS 0 on channel 13, which of course
+resulted in performance drop (down to 0.7Mb/s).
 
-b43_nphy_set_rxantenna() was not used anywhere.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Reported-by: Stefan Br?ns <stefan.bruens@rwth-aachen.de>
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Cc: Stable <stable@vger.kernel.org>
 ---
- drivers/net/wireless/b43/phy_n.c          |    6 +-----
- drivers/net/wireless/b43/radio_2056.c     |    2 +-
- drivers/net/wireless/b43/sdio.h           |    4 ++--
- drivers/net/wireless/b43/tables_nphy.c    |    4 ++--
- drivers/net/wireless/b43/tables_phy_lcn.c |    6 +++---
- 5 files changed, 9 insertions(+), 13 deletions(-)
+John:
+While this is fix, unfortunately it's not a one-liner. I wish to see it
+in 3.9 and backported to stable kernels, but if you think it's too big,
+well, just take it for the next.
+---
+ drivers/net/wireless/b43/phy_n.c          |    3 ++-
+ drivers/ssb/driver_chipcommon_pmu.c       |   25 +++++++++++++++++++++++++
+ include/linux/ssb/ssb_driver_chipcommon.h |    2 ++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index f2325ee..55a4a8a 100644
+index e8486c1..b70f220 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -2789,10 +2789,6 @@ static void b43_nphy_iq_cal_gain_params(struct b43_wldev *dev, u16 core,
-  * Tx and Rx
-  **************************************************/
- 
--void b43_nphy_set_rxantenna(struct b43_wldev *dev, int antenna)
--{//TODO
--}
--
- static void b43_nphy_op_adjust_txpower(struct b43_wldev *dev)
- {//TODO
+@@ -5165,7 +5165,8 @@ static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
+ #endif
+ #ifdef CONFIG_B43_SSB
+ 	case B43_BUS_SSB:
+-		/* FIXME */
++		ssb_pmu_spuravoid_pllupdate(&dev->dev->sdev->bus->chipco,
++					    avoid);
+ 		break;
+ #endif
+ 	}
+diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
+index 791da2c..8af4c20 100644
+--- a/drivers/ssb/driver_chipcommon_pmu.c
++++ b/drivers/ssb/driver_chipcommon_pmu.c
+@@ -670,3 +670,28 @@ u32 ssb_pmu_get_controlclock(struct ssb_chipcommon *cc)
+ 		return 0;
+ 	}
  }
-@@ -4892,7 +4888,7 @@ static void b43_nphy_superswitch_init(struct b43_wldev *dev, bool init)
- }
++
++void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid)
++{
++	u32 pmu_ctl = 0;
++
++	switch (cc->dev->bus->chip_id) {
++	case 0x4322:
++		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11100070);
++		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x1014140a);
++		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888854);
++		if (spuravoid == 1)
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x05201828);
++		else
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x05001828);
++		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
++		break;
++	default:
++		ssb_err("Unknown spuravoidance settings for chip 0x%04X, not changing PLL\n",
++			cc->dev->bus->chip_id);
++		return;
++	}
++
++	chipco_set32(cc, SSB_CHIPCO_PMU_CTL, pmu_ctl);
++}
++EXPORT_SYMBOL_GPL(ssb_pmu_spuravoid_pllupdate);
+diff --git a/include/linux/ssb/ssb_driver_chipcommon.h b/include/linux/ssb/ssb_driver_chipcommon.h
+index 9e492be..6fcfe99 100644
+--- a/include/linux/ssb/ssb_driver_chipcommon.h
++++ b/include/linux/ssb/ssb_driver_chipcommon.h
+@@ -219,6 +219,7 @@
+ #define SSB_CHIPCO_PMU_CTL			0x0600 /* PMU control */
+ #define  SSB_CHIPCO_PMU_CTL_ILP_DIV		0xFFFF0000 /* ILP div mask */
+ #define  SSB_CHIPCO_PMU_CTL_ILP_DIV_SHIFT	16
++#define  SSB_CHIPCO_PMU_CTL_PLL_UPD		0x00000400
+ #define  SSB_CHIPCO_PMU_CTL_NOILPONW		0x00000200 /* No ILP on wait */
+ #define  SSB_CHIPCO_PMU_CTL_HTREQEN		0x00000100 /* HT req enable */
+ #define  SSB_CHIPCO_PMU_CTL_ALPREQEN		0x00000080 /* ALP req enable */
+@@ -667,5 +668,6 @@ enum ssb_pmu_ldo_volt_id {
+ void ssb_pmu_set_ldo_voltage(struct ssb_chipcommon *cc,
+ 			     enum ssb_pmu_ldo_volt_id id, u32 voltage);
+ void ssb_pmu_set_ldo_paref(struct ssb_chipcommon *cc, bool on);
++void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid);
  
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/Init/N */
--int b43_phy_initn(struct b43_wldev *dev)
-+static int b43_phy_initn(struct b43_wldev *dev)
- {
- 	struct ssb_sprom *sprom = dev->dev->bus_sprom;
- 	struct b43_phy *phy = &dev->phy;
-diff --git a/drivers/net/wireless/b43/radio_2056.c b/drivers/net/wireless/b43/radio_2056.c
-index ce037fb..ab1f55f 100644
---- a/drivers/net/wireless/b43/radio_2056.c
-+++ b/drivers/net/wireless/b43/radio_2056.c
-@@ -2980,7 +2980,7 @@ static const struct b2056_inittab_entry b2056_inittab_rev8_rx[] = {
- 	.rx		= prefix##_rx,			\
- 	.rx_length	= ARRAY_SIZE(prefix##_rx)
- 
--struct b2056_inittabs_pts b2056_inittabs[] = {
-+static struct b2056_inittabs_pts b2056_inittabs[] = {
- 	[3] = { INITTABSPTS(b2056_inittab_rev3) },
- 	[4] = { INITTABSPTS(b2056_inittab_rev4) },
- 	[5] = { INITTABSPTS(b2056_inittab_rev5) },
-diff --git a/drivers/net/wireless/b43/sdio.h b/drivers/net/wireless/b43/sdio.h
-index fb63309..1e93926 100644
---- a/drivers/net/wireless/b43/sdio.h
-+++ b/drivers/net/wireless/b43/sdio.h
-@@ -25,12 +25,12 @@ void b43_sdio_exit(void);
- #else /* CONFIG_B43_SDIO */
- 
- 
--int b43_sdio_request_irq(struct b43_wldev *dev,
-+static inline int b43_sdio_request_irq(struct b43_wldev *dev,
- 			 void (*handler)(struct b43_wldev *dev))
- {
- 	return -ENODEV;
- }
--void b43_sdio_free_irq(struct b43_wldev *dev)
-+static inline void b43_sdio_free_irq(struct b43_wldev *dev)
- {
- }
- static inline int b43_sdio_init(void)
-diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
-index aaca60c..110510d 100644
---- a/drivers/net/wireless/b43/tables_nphy.c
-+++ b/drivers/net/wireless/b43/tables_nphy.c
-@@ -2800,7 +2800,7 @@ static const struct nphy_rf_control_override_rev7
- 	{ 0x0010, 0x344, 0x345, 0x0010, 4 },
- };
- 
--struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_wa_phy6_radio11_ghz2 = {
-+static struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_wa_phy6_radio11_ghz2 = {
- 	{ 10, 14, 19, 27 },
- 	{ -5, 6, 10, 15 },
- 	{ 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA, 0xA },
-@@ -2811,7 +2811,7 @@ struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_wa_phy6_radio11_ghz2 = {
- 	0x18, 0x18, 0x18,
- 	0x01D0, 0x5,
- };
--struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][4] = {
-+static struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][4] = {
- 	{ /* 2GHz */
- 		{ /* PHY rev 3 */
- 			{ 7, 11, 16, 23 },
-diff --git a/drivers/net/wireless/b43/tables_phy_lcn.c b/drivers/net/wireless/b43/tables_phy_lcn.c
-index 5176363..e347b8d 100644
---- a/drivers/net/wireless/b43/tables_phy_lcn.c
-+++ b/drivers/net/wireless/b43/tables_phy_lcn.c
-@@ -313,7 +313,7 @@ static const u32 b43_lcntab_0x18[] = {
-  * TX gain.
-  **************************************************/
- 
--const struct b43_lcntab_tx_gain_tbl_entry
-+static const struct b43_lcntab_tx_gain_tbl_entry
- 	b43_lcntab_tx_gain_tbl_2ghz_ext_pa_rev0[B43_LCNTAB_TX_GAIN_SIZE] = {
- 	{ 0x03, 0x00, 0x1f, 0x0, 0x48 },
- 	{ 0x03, 0x00, 0x1f, 0x0, 0x46 },
-@@ -449,7 +449,7 @@ const struct b43_lcntab_tx_gain_tbl_entry
-  * SW control.
-  **************************************************/
- 
--const u16 b43_lcntab_sw_ctl_4313_epa_rev0[] = {
-+static const u16 b43_lcntab_sw_ctl_4313_epa_rev0[] = {
- 	0x0002, 0x0008, 0x0004, 0x0001, 0x0002, 0x0008,
- 	0x0004, 0x0001, 0x0002, 0x0008, 0x0004, 0x0001,
- 	0x0002, 0x0008, 0x0004, 0x0001, 0x0002, 0x0008,
-@@ -631,7 +631,7 @@ static void b43_phy_lcn_upload_static_tables(struct b43_wldev *dev)
- 	lcntab_upload(dev, B43_LCNTAB32(0x18, 0), b43_lcntab_0x18);
- }
- 
--void b43_phy_lcn_load_tx_gain_tab(struct b43_wldev *dev,
-+static void b43_phy_lcn_load_tx_gain_tab(struct b43_wldev *dev,
- 			const struct b43_lcntab_tx_gain_tbl_entry *gain_table)
- {
- 	u32 i;
+ #endif /* LINUX_SSB_CHIPCO_H_ */
 -- 
 1.7.10.4
