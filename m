@@ -1,99 +1,64 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 28 Mar 2013 17:18:02 +0100
-Subject: [FIX 3.3+][PATCH] ssb: implement spurious tone avoidance
-Message-ID: <1364487482-14642-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 31 Mar 2013 00:46:20 +0100
+Subject: [PATCH 1/6] b43: use defines for board_type
+Message-ID: <1364687185-27329-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Stable <stable@vger.kernel.org>
+To: b43-dev@lists.infradead.org
 
-And make use of it in b43. This fixes a regression introduced with
-49d55cef5b1925a5c1efb6aaddaa40fc7c693335
-b43: N-PHY: implement spurious tone avoidance
-This commit made BCM4322 use only MCS 0 on channel 13, which of course
-resulted in performance drop (down to 0.7Mb/s).
-
-Reported-by: Stefan Br?ns <stefan.bruens@rwth-aachen.de>
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-Cc: Stable <stable@vger.kernel.org>
 ---
-John:
-While this is fix, unfortunately it's not a one-liner. I wish to see it
-in 3.9 and backported to stable kernels, but if you think it's too big,
-well, just take it for the next.
----
- drivers/net/wireless/b43/phy_n.c          |    3 ++-
- drivers/ssb/driver_chipcommon_pmu.c       |   25 +++++++++++++++++++++++++
- include/linux/ssb/ssb_driver_chipcommon.h |    2 ++
- 3 files changed, 29 insertions(+), 1 deletion(-)
+ drivers/net/wireless/b43/phy_lp.c |    4 ++--
+ drivers/net/wireless/b43/phy_n.c  |    6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
+index 5ed352d..a316579 100644
+--- a/drivers/net/wireless/b43/phy_lp.c
++++ b/drivers/net/wireless/b43/phy_lp.c
+@@ -281,8 +281,8 @@ static void lpphy_baseband_rev0_1_init(struct b43_wldev *dev)
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_8, 0xFFC0, 0x000A);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_8, 0xC0FF, 0x0B00);
+ 	} else if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ ||
+-		  (dev->dev->board_type == 0x048A) || ((dev->phy.rev == 0) &&
+-		  (sprom->boardflags_lo & B43_BFL_FEM))) {
++		   dev->dev->board_type == SSB_BOARD_BU4312 ||
++		   (dev->phy.rev == 0 && (sprom->boardflags_lo & B43_BFL_FEM))) {
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0xFFC0, 0x0001);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_1, 0xC0FF, 0x0400);
+ 		b43_phy_maskset(dev, B43_LPPHY_TR_LOOKUP_2, 0xFFC0, 0x0001);
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index e8486c1..b70f220 100644
+index 9ec6e0c..efc3f9d 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -5165,7 +5165,8 @@ static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
- #endif
- #ifdef CONFIG_B43_SSB
- 	case B43_BUS_SSB:
--		/* FIXME */
-+		ssb_pmu_spuravoid_pllupdate(&dev->dev->sdev->bus->chipco,
-+					    avoid);
- 		break;
- #endif
- 	}
-diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
-index 791da2c..8af4c20 100644
---- a/drivers/ssb/driver_chipcommon_pmu.c
-+++ b/drivers/ssb/driver_chipcommon_pmu.c
-@@ -670,3 +670,28 @@ u32 ssb_pmu_get_controlclock(struct ssb_chipcommon *cc)
- 		return 0;
- 	}
- }
-+
-+void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid)
-+{
-+	u32 pmu_ctl = 0;
-+
-+	switch (cc->dev->bus->chip_id) {
-+	case 0x4322:
-+		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11100070);
-+		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x1014140a);
-+		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888854);
-+		if (spuravoid == 1)
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x05201828);
-+		else
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x05001828);
-+		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
-+		break;
-+	default:
-+		ssb_err("Unknown spuravoidance settings for chip 0x%04X, not changing PLL\n",
-+			cc->dev->bus->chip_id);
-+		return;
-+	}
-+
-+	chipco_set32(cc, SSB_CHIPCO_PMU_CTL, pmu_ctl);
-+}
-+EXPORT_SYMBOL_GPL(ssb_pmu_spuravoid_pllupdate);
-diff --git a/include/linux/ssb/ssb_driver_chipcommon.h b/include/linux/ssb/ssb_driver_chipcommon.h
-index 9e492be..6fcfe99 100644
---- a/include/linux/ssb/ssb_driver_chipcommon.h
-+++ b/include/linux/ssb/ssb_driver_chipcommon.h
-@@ -219,6 +219,7 @@
- #define SSB_CHIPCO_PMU_CTL			0x0600 /* PMU control */
- #define  SSB_CHIPCO_PMU_CTL_ILP_DIV		0xFFFF0000 /* ILP div mask */
- #define  SSB_CHIPCO_PMU_CTL_ILP_DIV_SHIFT	16
-+#define  SSB_CHIPCO_PMU_CTL_PLL_UPD		0x00000400
- #define  SSB_CHIPCO_PMU_CTL_NOILPONW		0x00000200 /* No ILP on wait */
- #define  SSB_CHIPCO_PMU_CTL_HTREQEN		0x00000100 /* HT req enable */
- #define  SSB_CHIPCO_PMU_CTL_ALPREQEN		0x00000080 /* ALP req enable */
-@@ -667,5 +668,6 @@ enum ssb_pmu_ldo_volt_id {
- void ssb_pmu_set_ldo_voltage(struct ssb_chipcommon *cc,
- 			     enum ssb_pmu_ldo_volt_id id, u32 voltage);
- void ssb_pmu_set_ldo_paref(struct ssb_chipcommon *cc, bool on);
-+void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid);
+@@ -1016,7 +1016,7 @@ static void b43_radio_init2055_post(struct b43_wldev *dev)
  
- #endif /* LINUX_SSB_CHIPCO_H_ */
+ 	if (sprom->revision < 4)
+ 		workaround = (dev->dev->board_vendor != PCI_VENDOR_ID_BROADCOM
+-			      && dev->dev->board_type == 0x46D
++			      && dev->dev->board_type == SSB_BOARD_CB2_4321
+ 			      && dev->dev->board_rev >= 0x41);
+ 	else
+ 		workaround =
+@@ -2616,7 +2616,7 @@ static void b43_nphy_workarounds_rev1_2(struct b43_wldev *dev)
+ 	u8 delays2[7] = { 0x8, 0x6, 0x2, 0x4, 0x4, 0x6, 0x1 };
+ 
+ 	if (sprom->boardflags2_lo & B43_BFL2_SKWRKFEM_BRD ||
+-	    dev->dev->board_type == 0x8B) {
++	    dev->dev->board_type == BCMA_BOARD_TYPE_BCM943224M93) {
+ 		delays1[0] = 0x1;
+ 		delays1[5] = 0x14;
+ 	}
+@@ -5006,7 +5006,7 @@ int b43_phy_initn(struct b43_wldev *dev)
+ 
+ 	if (sprom->boardflags2_lo & B43_BFL2_SKWRKFEM_BRD ||
+ 	    (dev->dev->board_vendor == PCI_VENDOR_ID_APPLE &&
+-	     dev->dev->board_type == 0x8B))
++	     dev->dev->board_type == BCMA_BOARD_TYPE_BCM943224M93))
+ 		b43_phy_write(dev, B43_NPHY_TXREALFD, 0xA0);
+ 	else
+ 		b43_phy_write(dev, B43_NPHY_TXREALFD, 0xB8);
 -- 
 1.7.10.4
