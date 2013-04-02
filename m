@@ -1,18 +1,18 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Mon, 01 Apr 2013 23:36:37 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 2 Apr 2013 15:56:49 +0200
 Subject: [FIX 3.3+][PATCH] ssb: implement spurious tone avoidance
 In-Reply-To: <20130401200156.GF3526@tuxdriver.com>
 References: <1364487482-14642-1-git-send-email-zajec5@gmail.com>
  <20130401200156.GF3526@tuxdriver.com>
-Message-ID: <5159FDE5.6060803@hauke-m.de>
+Message-ID: <CACna6rz0apBzEFKVw3EK=hfKVADFZKzM2G6D20BOtD97-NGCJA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Stable <stable@vger.kernel.org>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Stable <stable@vger.kernel.org>
 
-On 04/01/2013 10:01 PM, John W. Linville wrote:
+2013/4/1 John W. Linville <linville@tuxdriver.com>:
 > On Thu, Mar 28, 2013 at 05:18:02PM +0100, Rafa? Mi?ecki wrote:
 >> And make use of it in b43. This fixes a regression introduced with
 >> 49d55cef5b1925a5c1efb6aaddaa40fc7c693335
@@ -28,25 +28,19 @@ On 04/01/2013 10:01 PM, John W. Linville wrote:
 >> While this is fix, unfortunately it's not a one-liner. I wish to see it
 >> in 3.9 and backported to stable kernels, but if you think it's too big,
 >> well, just take it for the next.
-> 
+>
 >   CC      drivers/ssb/driver_chipcommon_pmu.o
 > drivers/ssb/driver_chipcommon_pmu.c: In function ?ssb_pmu_spuravoid_pllupdate?:
 > drivers/ssb/driver_chipcommon_pmu.c:695:3: error: implicit declaration of function ?ssb_err? [-Werror=implicit-function-declaration]
 > cc1: some warnings being treated as errors
 > make[1]: *** [drivers/ssb/driver_chipcommon_pmu.o] Error 1
 > make: *** [drivers/ssb/] Error 2
-> 
+>
 > When building in wireless.git...
 
-ssb_err is only in wireless-next, it was added in this commit:
-commit 33a606ac8020b47292bcfda30c7888c1ab5233e2
-Author: Joe Perches <joe@perches.com>
-Date:   Wed Feb 20 12:16:13 2013 -0800
+I'm sorry for that. Tree wireless.git is based on 3.9-rc1, which
+contains nouveau regression and I was too lazy to backport fix and
+test it well. I could at least try compiling it :|
 
-    ssb: Convert ssb_printk to ssb_<level>
-
-This version should go into wireless-next for kernel 3.10 and an other
-version using ssb_printk(KERN_ERR PFX " instated should go into 3.9 and
-stable.
-
-Hauke
+-- 
+Rafa?
