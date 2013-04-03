@@ -1,52 +1,59 @@
-From: Dag Wieers <dag@wieers.com>
-Date: Wed, 3 Apr 2013 11:16:07 +0200 (CEST)
-Subject: BCM4321 (b43) on AppleTV (1st gen)
-In-Reply-To: <CACna6rwrq1qF4Rmf81OhO7jrXouUdjcAvnMtJcnCb4s=zm7a2w@mail.gmail.com>
-References: <alpine.LRH.2.02.1302072238200.2736@pikachu.3ti.be>
- <CACna6rwrq1qF4Rmf81OhO7jrXouUdjcAvnMtJcnCb4s=zm7a2w@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1304031105330.26996@pikachu.3ti.be>
+From: Stone mosaic and Glass mosaic and Metal mosaic Supply <37@export-trades.tk>
+Date: Wed, 03 Apr 2013 10:19:34 +0000
+Subject: =?GB2312?B?U3RvbmUgbW9zYWljIGFuZCBHbGFzcyBtb3NhaWMgYW5kIE1ldGFsIG1vc2FpYyBTdXBwbA==?=
+ =?GB2312?B?edPrxPq5ss/twcvP4LLhoaM=?=
+Message-ID: <bcaec51b12a1caae3c04d97230a4@google.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On Wed, 3 Apr 2013, Rafa? Mi?ecki wrote:
-
-> It's terribly late reply, but only recently I've time to plug in my
-> old BCM4321/BCM4322 cards and test them. There were few regressions
-> affecting BCM4322, but nothing BCM4321 related (there are many
-> differences between them).
->
-> In my env I can't get more than 22Mb/s using my BCM4322. It's
-> 2,75MB/s, so your 3MB/s is even better result than mine. The problem
-> is that b43 doesn't support 802.11n features, so it can't work any
-> faster. Values around 2-3MB/s is maximum you can get from 802.11g.
-
-I can see from the access point that it often indicates the system to be 
-connected at 54Mbps, but I never seem to get that throughput. However the 
-numbers I indicate are SFTP transfers with some overhead, but also 
-buffering (so it usually starts off quite fast and then the number drops 
-rapidly). Not very scientific so it might as well be 2.75MB/s :)
+My dear friend,
 
 
-> I plan to add support for new devices, then 5GHz, then maybe I'll take
-> a look at 802.11n standard. So unfortunately there's a long way before
-> we can support higher speeds :(
-
-If it helps, I can offer two of this mini PCI adapters to any developer 
-interested in improving the support of the BCM4321.
+How?s your business recently?
 
 
-> P.S.
-> I suggest Cc-ing b43 mailing list in the future ;)
+We are writing to update you our new designs in 2013, we are special in  
+manufacturing and designing the mosaic tiles, including the marble stone  
+mosaic and glass mosaic and metal mosaic, ect.
 
-Done :)
 
-Thanks for the feedback,
--- 
--- dag wieers, dag at wieers.com, http://dag.wieers.com/
--- dagit linux solutions, info at dagit.net, http://dagit.net/
+With more than 10 years production and export experience, we have  
+successfully developed thousands of mosaic designs to meet the need of  
+different market! And we can also make it according to your own designs or  
+requirements!
 
-[Any errors in spelling, tact or fact are transmission errors]
+
+If you are interested in our mosaics, we would like to send you our  
+catalogue and pricelist for your reference, we are expecting your kind  
+prompt reply and feedback! Thanks in advance!
+
+
+
+---
+Thanks & best regards
+Sabrina Law
+General manager
+Mosaic Factory
+Add.: Foshan Guangdong China
+
+https://picasaweb.google.com/lh/sredir?uname=109284505710055987673&target=ALBUM&id=5858968927759139825&authkey=Gv1sRgCMin5pmx3f3FwAE&invite=CNrs3swO&feat=email
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130403/55528dc7/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: picasaweblogo-zh_CN.gif
+Type: image/gif
+Size: 1646 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130403/55528dc7/attachment.gif>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: email.jpg
+Type: image/jpeg
+Size: 8735 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130403/55528dc7/attachment.jpg>
