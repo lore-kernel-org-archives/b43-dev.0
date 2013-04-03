@@ -1,112 +1,52 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue,  2 Apr 2013 15:57:26 +0200
-Subject: [PATCH V2] ssb: implement spurious tone avoidance
-In-Reply-To: <1364487482-14642-1-git-send-email-zajec5@gmail.com>
-References: <1364487482-14642-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1364911046-5732-1-git-send-email-zajec5@gmail.com>
+From: Dag Wieers <dag@wieers.com>
+Date: Wed, 3 Apr 2013 11:16:07 +0200 (CEST)
+Subject: BCM4321 (b43) on AppleTV (1st gen)
+In-Reply-To: <CACna6rwrq1qF4Rmf81OhO7jrXouUdjcAvnMtJcnCb4s=zm7a2w@mail.gmail.com>
+References: <alpine.LRH.2.02.1302072238200.2736@pikachu.3ti.be>
+ <CACna6rwrq1qF4Rmf81OhO7jrXouUdjcAvnMtJcnCb4s=zm7a2w@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1304031105330.26996@pikachu.3ti.be>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Stable <stable@vger.kernel.org>
+To: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-And make use of it in b43. This fixes a regression introduced with
-49d55cef5b1925a5c1efb6aaddaa40fc7c693335
-b43: N-PHY: implement spurious tone avoidance
-This commit made BCM4322 use only MCS 0 on channel 13, which of course
-resulted in performance drop (down to 0.7Mb/s).
+On Wed, 3 Apr 2013, Rafa? Mi?ecki wrote:
 
-Reported-by: Stefan Br?ns <stefan.bruens@rwth-aachen.de>
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-Cc: Stable <stable@vger.kernel.org>
----
-V2: use ssb_printk instead of non-existing ssb_err
-    add BCM43222 case to don't flood dmesg on this chipset
+> It's terribly late reply, but only recently I've time to plug in my
+> old BCM4321/BCM4322 cards and test them. There were few regressions
+> affecting BCM4322, but nothing BCM4321 related (there are many
+> differences between them).
+>
+> In my env I can't get more than 22Mb/s using my BCM4322. It's
+> 2,75MB/s, so your 3MB/s is even better result than mine. The problem
+> is that b43 doesn't support 802.11n features, so it can't work any
+> faster. Values around 2-3MB/s is maximum you can get from 802.11g.
 
-Support for BCM43222 wasn't implemented in this patch, because I don't
-own that hardware and I don't dare to send not tested code for "fix" and
-stable. I'll implement this in separated patch that will be send for
-next tree.
+I can see from the access point that it often indicates the system to be 
+connected at 54Mbps, but I never seem to get that throughput. However the 
+numbers I indicate are SFTP transfers with some overhead, but also 
+buffering (so it usually starts off quite fast and then the number drops 
+rapidly). Not very scientific so it might as well be 2.75MB/s :)
 
-This patch was tested with BCM4322 using wireless git tree (not
-wireless-testing!), I've also applied and tested it using kernels 3.4.38
-and 3.8.5.
----
- drivers/net/wireless/b43/phy_n.c          |    3 ++-
- drivers/ssb/driver_chipcommon_pmu.c       |   29 +++++++++++++++++++++++++++++
- include/linux/ssb/ssb_driver_chipcommon.h |    2 ++
- 3 files changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index e8486c1..b70f220 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -5165,7 +5165,8 @@ static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
- #endif
- #ifdef CONFIG_B43_SSB
- 	case B43_BUS_SSB:
--		/* FIXME */
-+		ssb_pmu_spuravoid_pllupdate(&dev->dev->sdev->bus->chipco,
-+					    avoid);
- 		break;
- #endif
- 	}
-diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
-index 4c0f6d8..7b0bce9 100644
---- a/drivers/ssb/driver_chipcommon_pmu.c
-+++ b/drivers/ssb/driver_chipcommon_pmu.c
-@@ -675,3 +675,32 @@ u32 ssb_pmu_get_controlclock(struct ssb_chipcommon *cc)
- 		return 0;
- 	}
- }
-+
-+void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid)
-+{
-+	u32 pmu_ctl = 0;
-+
-+	switch (cc->dev->bus->chip_id) {
-+	case 0x4322:
-+		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11100070);
-+		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x1014140a);
-+		ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888854);
-+		if (spuravoid == 1)
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x05201828);
-+		else
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x05001828);
-+		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
-+		break;
-+	case 43222:
-+		/* TODO: BCM43222 requires updating PLLs too */
-+		return;
-+	default:
-+		ssb_printk(KERN_ERR PFX
-+			   "Unknown spuravoidance settings for chip 0x%04X, not changing PLL\n",
-+			   cc->dev->bus->chip_id);
-+		return;
-+	}
-+
-+	chipco_set32(cc, SSB_CHIPCO_PMU_CTL, pmu_ctl);
-+}
-+EXPORT_SYMBOL_GPL(ssb_pmu_spuravoid_pllupdate);
-diff --git a/include/linux/ssb/ssb_driver_chipcommon.h b/include/linux/ssb/ssb_driver_chipcommon.h
-index 9e492be..6fcfe99 100644
---- a/include/linux/ssb/ssb_driver_chipcommon.h
-+++ b/include/linux/ssb/ssb_driver_chipcommon.h
-@@ -219,6 +219,7 @@
- #define SSB_CHIPCO_PMU_CTL			0x0600 /* PMU control */
- #define  SSB_CHIPCO_PMU_CTL_ILP_DIV		0xFFFF0000 /* ILP div mask */
- #define  SSB_CHIPCO_PMU_CTL_ILP_DIV_SHIFT	16
-+#define  SSB_CHIPCO_PMU_CTL_PLL_UPD		0x00000400
- #define  SSB_CHIPCO_PMU_CTL_NOILPONW		0x00000200 /* No ILP on wait */
- #define  SSB_CHIPCO_PMU_CTL_HTREQEN		0x00000100 /* HT req enable */
- #define  SSB_CHIPCO_PMU_CTL_ALPREQEN		0x00000080 /* ALP req enable */
-@@ -667,5 +668,6 @@ enum ssb_pmu_ldo_volt_id {
- void ssb_pmu_set_ldo_voltage(struct ssb_chipcommon *cc,
- 			     enum ssb_pmu_ldo_volt_id id, u32 voltage);
- void ssb_pmu_set_ldo_paref(struct ssb_chipcommon *cc, bool on);
-+void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid);
- 
- #endif /* LINUX_SSB_CHIPCO_H_ */
+> I plan to add support for new devices, then 5GHz, then maybe I'll take
+> a look at 802.11n standard. So unfortunately there's a long way before
+> we can support higher speeds :(
+
+If it helps, I can offer two of this mini PCI adapters to any developer 
+interested in improving the support of the BCM4321.
+
+
+> P.S.
+> I suggest Cc-ing b43 mailing list in the future ;)
+
+Done :)
+
+Thanks for the feedback,
 -- 
-1.7.10.4
+-- dag wieers, dag at wieers.com, http://dag.wieers.com/
+-- dagit linux solutions, info at dagit.net, http://dagit.net/
+
+[Any errors in spelling, tact or fact are transmission errors]
