@@ -1,47 +1,124 @@
-From: Matteo <matteo.danieletto@gmail.com>
-Date: Wed, 10 Apr 2013 01:05:53 -0700
-Subject: [b43] Station statistics 
-Message-ID: <10F448AB-C01E-4E57-906A-A702DB343AAA@gmail.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Thu, 11 Apr 2013 14:39:13 +0200
+Subject: [PATCH] b43: use bcma_pmu_spuravoid_pllupdate()
+Message-ID: <1365683953-3430-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Cc: b43-dev@lists.infradead.org
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-Hi all,
-I am trying to find some data link statistics  like tx/rx packets, tx/rx
-byte and
-tx retries.
+Do not implement this in b43, but use bcma_pmu_spuravoid_pllupdate().
 
-I found to use iw wlan0 station dump some interesting values, but I have a
-doubt.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/net/wireless/b43/phy_n.c |   86 +++++++-------------------------------
+ 1 file changed, 14 insertions(+), 72 deletions(-)
 
-do you know why the #packets and bytes found with iw wlan0 station dump are different
-if compared with cat /proc/net/dev ?
-
-inactive time:    948 ms
-   rx bytes:    12793798
-   rx packets:    55705
-   tx bytes:    72610
-   tx packets:    377
-   tx retries:    20
-   tx failed:    2
-   signal:      -33 dBm
-   signal avg:    -33 dBm
-   tx bitrate:    36.0 MBit/s
-   authorized:    yes
-   authenticated:    yes
-   preamble:    long
-   WMM/WME:    yes
-   MFP:        no
-   TDLS peer:        no
-
-
-Inter-|   Receive                                                |  Transmit
-face |bytes    packets errs drop fifo frame compressed multicast|bytes
-packets errs drop fifo colls carrier compressed
-   lo:  243244    1758    0    0    0     0          0         0
-243244    1758    0    0    0     0       0          0
-wlan0: 103605454  473003    0    0    0     0          0         0
-1089910    6540    0    0    0     0       0          0
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 7b557ad..05945da 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -5097,77 +5097,6 @@ static void b43_chantab_phy_upload(struct b43_wldev *dev,
+ 	b43_phy_write(dev, B43_NPHY_BW6, e->phy_bw6);
+ }
+ 
+-/* http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid */
+-static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
+-{
+-	struct bcma_drv_cc __maybe_unused *cc;
+-	u32 __maybe_unused pmu_ctl;
+-
+-	switch (dev->dev->bus_type) {
+-#ifdef CONFIG_B43_BCMA
+-	case B43_BUS_BCMA:
+-		cc = &dev->dev->bdev->bus->drv_cc;
+-		if (dev->dev->chip_id == 43224 || dev->dev->chip_id == 43225) {
+-			if (avoid) {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11500010);
+-				bcma_chipco_pll_write(cc, 0x1, 0x000C0C06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x0F600a08);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x2001E920);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			} else {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11100010);
+-				bcma_chipco_pll_write(cc, 0x1, 0x000c0c06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x03000a08);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x200005c0);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			}
+-			pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD;
+-		} else if (dev->dev->chip_id == 0x4716) {
+-			if (avoid) {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11500060);
+-				bcma_chipco_pll_write(cc, 0x1, 0x080C0C06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x0F600000);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x2001E924);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			} else {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11100060);
+-				bcma_chipco_pll_write(cc, 0x1, 0x080c0c06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x03000000);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x200005c0);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			}
+-			pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD |
+-				  BCMA_CC_PMU_CTL_NOILPONW;
+-		} else if (dev->dev->chip_id == 0x4322 ||
+-			   dev->dev->chip_id == 0x4340 ||
+-			   dev->dev->chip_id == 0x4341) {
+-			bcma_chipco_pll_write(cc, 0x0, 0x11100070);
+-			bcma_chipco_pll_write(cc, 0x1, 0x1014140a);
+-			bcma_chipco_pll_write(cc, 0x5, 0x88888854);
+-			if (avoid)
+-				bcma_chipco_pll_write(cc, 0x2, 0x05201828);
+-			else
+-				bcma_chipco_pll_write(cc, 0x2, 0x05001828);
+-			pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD;
+-		} else {
+-			return;
+-		}
+-		bcma_cc_set32(cc, BCMA_CC_PMU_CTL, pmu_ctl);
+-		break;
+-#endif
+-#ifdef CONFIG_B43_SSB
+-	case B43_BUS_SSB:
+-		ssb_pmu_spuravoid_pllupdate(&dev->dev->sdev->bus->chipco,
+-					    avoid);
+-		break;
+-#endif
+-	}
+-}
+-
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/ChanspecSetup */
+ static void b43_nphy_channel_setup(struct b43_wldev *dev,
+ 				const struct b43_phy_n_sfo_cfg *e,
+@@ -5229,7 +5158,20 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
+ 				avoid = dev->dev->chip_id == 0x4716;
+ 		}
+ 
+-		b43_nphy_pmu_spur_avoid(dev, avoid);
++		switch (dev->dev->bus_type) {
++#ifdef CONFIG_B43_BCMA
++		case B43_BUS_BCMA:
++			bcma_pmu_spuravoid_pllupdate(&dev->dev->bdev->bus->drv_cc,
++						     avoid);
++			break;
++#endif
++#ifdef CONFIG_B43_SSB
++		case B43_BUS_SSB:
++			ssb_pmu_spuravoid_pllupdate(&dev->dev->sdev->bus->chipco,
++						    avoid);
++			break;
++#endif
++		}
+ 
+ 		if (dev->dev->chip_id == 43222 || dev->dev->chip_id == 43224 ||
+ 		    dev->dev->chip_id == 43225) {
+-- 
+1.7.10.4
