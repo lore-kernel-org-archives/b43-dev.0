@@ -1,48 +1,40 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 11 Apr 2013 14:40:13 +0200
-Subject: [PATCH] ssb: implement ssb spuravoid for chipid BCM43222
-Message-ID: <1365684013-3483-1-git-send-email-hauke@hauke-m.de>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 12 Apr 2013 08:26:58 +0200
+Subject: [PATCH] b43: use bcma_pmu_spuravoid_pllupdate()
+In-Reply-To: <1365683953-3430-1-git-send-email-hauke@hauke-m.de>
+References: <1365683953-3430-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <CACna6rxteO-uMCXNO0xh8t3Pkry3NnDkPJGcYuwRSSYEZue8=Q@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/ssb/driver_chipcommon_pmu.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+2013/4/11 Hauke Mehrtens <hauke@hauke-m.de>:
+> Do not implement this in b43, but use bcma_pmu_spuravoid_pllupdate().
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+>  drivers/net/wireless/b43/phy_n.c |   86 +++++++-------------------------------
+>  1 file changed, 14 insertions(+), 72 deletions(-)
+>
+> diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+> index 7b557ad..05945da 100644
+> --- a/drivers/net/wireless/b43/phy_n.c
+> +++ b/drivers/net/wireless/b43/phy_n.c
+> @@ -5097,77 +5097,6 @@ static void b43_chantab_phy_upload(struct b43_wldev *dev,
+>         b43_phy_write(dev, B43_NPHY_BW6, e->phy_bw6);
+>  }
+>
+> -/* http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid */
+> -static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
+> -{
 
-diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
-index 23c5dbf..1173a09 100644
---- a/drivers/ssb/driver_chipcommon_pmu.c
-+++ b/drivers/ssb/driver_chipcommon_pmu.c
-@@ -687,8 +687,23 @@ void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid)
- 		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
- 		break;
- 	case 43222:
--		/* TODO: BCM43222 requires updating PLLs too */
--		return;
-+		if (spuravoid == 1) {
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11500008);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x0C000C06);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x0F600a08);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL3, 0x00000000);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL4, 0x2001E920);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888815);
-+		} else {
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11100008);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x0c000c06);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x03000a08);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL3, 0x00000000);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL4, 0x200005c0);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888855);
-+		}
-+		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
-+		break;
- 	default:
- 		ssb_printk(KERN_ERR PFX
- 			   "Unknown spuravoidance settings for chip 0x%04X, not changing PLL\n",
+I think it may be better to keep b43_nphy_pmu_spur_avoid, as some
+chipsets may need additional workarounds (that AFAIR can't be handled
+in ssb/bcma). I mean workarounds related to the spurious avoidance
+ofc, so it would be a good idea to put them in separated function.
+
 -- 
-1.7.10.4
+Rafa?
