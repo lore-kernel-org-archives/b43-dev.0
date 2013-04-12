@@ -1,9 +1,9 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 12 Apr 2013 08:26:58 +0200
-Subject: [PATCH] b43: use bcma_pmu_spuravoid_pllupdate()
-In-Reply-To: <1365683953-3430-1-git-send-email-hauke@hauke-m.de>
-References: <1365683953-3430-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <CACna6rxteO-uMCXNO0xh8t3Pkry3NnDkPJGcYuwRSSYEZue8=Q@mail.gmail.com>
+Date: Fri, 12 Apr 2013 08:29:13 +0200
+Subject: [PATCH] ssb: implement ssb spuravoid for chipid BCM43222
+In-Reply-To: <1365684013-3483-1-git-send-email-hauke@hauke-m.de>
+References: <1365684013-3483-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <CACna6rwC3BSd_tAzVZRo3DCCk39509PxgG60oReqT2Q-SOFZgA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,29 +12,9 @@ To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
 2013/4/11 Hauke Mehrtens <hauke@hauke-m.de>:
-> Do not implement this in b43, but use bcma_pmu_spuravoid_pllupdate().
->
 > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> ---
->  drivers/net/wireless/b43/phy_n.c |   86 +++++++-------------------------------
->  1 file changed, 14 insertions(+), 72 deletions(-)
->
-> diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-> index 7b557ad..05945da 100644
-> --- a/drivers/net/wireless/b43/phy_n.c
-> +++ b/drivers/net/wireless/b43/phy_n.c
-> @@ -5097,77 +5097,6 @@ static void b43_chantab_phy_upload(struct b43_wldev *dev,
->         b43_phy_write(dev, B43_NPHY_BW6, e->phy_bw6);
->  }
->
-> -/* http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid */
-> -static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
-> -{
 
-I think it may be better to keep b43_nphy_pmu_spur_avoid, as some
-chipsets may need additional workarounds (that AFAIR can't be handled
-in ssb/bcma). I mean workarounds related to the spurious avoidance
-ofc, so it would be a good idea to put them in separated function.
+Ack
 
 -- 
 Rafa?
