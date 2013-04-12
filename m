@@ -1,43 +1,90 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Fri, 12 Apr 2013 14:34:46 +0200
-Subject: [PATCH] b43: use bcma_pmu_spuravoid_pllupdate()
-In-Reply-To: <CACna6rxteO-uMCXNO0xh8t3Pkry3NnDkPJGcYuwRSSYEZue8=Q@mail.gmail.com>
-References: <1365683953-3430-1-git-send-email-hauke@hauke-m.de>
- <CACna6rxteO-uMCXNO0xh8t3Pkry3NnDkPJGcYuwRSSYEZue8=Q@mail.gmail.com>
-Message-ID: <5167FF66.7050003@hauke-m.de>
+Date: Fri, 12 Apr 2013 17:08:58 +0200
+Subject: [PATCH v3] b43: use bcma_pmu_spuravoid_pllupdate()
+Message-ID: <1365779338-8224-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-On 04/12/2013 08:26 AM, Rafa? Mi?ecki wrote:
-> 2013/4/11 Hauke Mehrtens <hauke@hauke-m.de>:
->> Do not implement this in b43, but use bcma_pmu_spuravoid_pllupdate().
->>
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
->>  drivers/net/wireless/b43/phy_n.c |   86 +++++++-------------------------------
->>  1 file changed, 14 insertions(+), 72 deletions(-)
->>
->> diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
->> index 7b557ad..05945da 100644
->> --- a/drivers/net/wireless/b43/phy_n.c
->> +++ b/drivers/net/wireless/b43/phy_n.c
->> @@ -5097,77 +5097,6 @@ static void b43_chantab_phy_upload(struct b43_wldev *dev,
->>         b43_phy_write(dev, B43_NPHY_BW6, e->phy_bw6);
->>  }
->>
->> -/* http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid */
->> -static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
->> -{
-> 
-> I think it may be better to keep b43_nphy_pmu_spur_avoid, as some
-> chipsets may need additional workarounds (that AFAIR can't be handled
-> in ssb/bcma). I mean workarounds related to the spurious avoidance
-> ofc, so it would be a good idea to put them in separated function.
-> 
-Ok, I will send a new version of this patch.
+Do not implement this in b43, but use bcma_pmu_spuravoid_pllupdate().
 
-Hauke
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/net/wireless/b43/phy_n.c |   56 ++------------------------------------
+ 1 file changed, 2 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 7b557ad..7ed39e9 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -5100,63 +5100,11 @@ static void b43_chantab_phy_upload(struct b43_wldev *dev,
+ /* http://bcm-v4.sipsolutions.net/802.11/PmuSpurAvoid */
+ static void b43_nphy_pmu_spur_avoid(struct b43_wldev *dev, bool avoid)
+ {
+-	struct bcma_drv_cc __maybe_unused *cc;
+-	u32 __maybe_unused pmu_ctl;
+-
+ 	switch (dev->dev->bus_type) {
+ #ifdef CONFIG_B43_BCMA
+ 	case B43_BUS_BCMA:
+-		cc = &dev->dev->bdev->bus->drv_cc;
+-		if (dev->dev->chip_id == 43224 || dev->dev->chip_id == 43225) {
+-			if (avoid) {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11500010);
+-				bcma_chipco_pll_write(cc, 0x1, 0x000C0C06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x0F600a08);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x2001E920);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			} else {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11100010);
+-				bcma_chipco_pll_write(cc, 0x1, 0x000c0c06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x03000a08);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x200005c0);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			}
+-			pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD;
+-		} else if (dev->dev->chip_id == 0x4716) {
+-			if (avoid) {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11500060);
+-				bcma_chipco_pll_write(cc, 0x1, 0x080C0C06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x0F600000);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x2001E924);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			} else {
+-				bcma_chipco_pll_write(cc, 0x0, 0x11100060);
+-				bcma_chipco_pll_write(cc, 0x1, 0x080c0c06);
+-				bcma_chipco_pll_write(cc, 0x2, 0x03000000);
+-				bcma_chipco_pll_write(cc, 0x3, 0x00000000);
+-				bcma_chipco_pll_write(cc, 0x4, 0x200005c0);
+-				bcma_chipco_pll_write(cc, 0x5, 0x88888815);
+-			}
+-			pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD |
+-				  BCMA_CC_PMU_CTL_NOILPONW;
+-		} else if (dev->dev->chip_id == 0x4322 ||
+-			   dev->dev->chip_id == 0x4340 ||
+-			   dev->dev->chip_id == 0x4341) {
+-			bcma_chipco_pll_write(cc, 0x0, 0x11100070);
+-			bcma_chipco_pll_write(cc, 0x1, 0x1014140a);
+-			bcma_chipco_pll_write(cc, 0x5, 0x88888854);
+-			if (avoid)
+-				bcma_chipco_pll_write(cc, 0x2, 0x05201828);
+-			else
+-				bcma_chipco_pll_write(cc, 0x2, 0x05001828);
+-			pmu_ctl = BCMA_CC_PMU_CTL_PLL_UPD;
+-		} else {
+-			return;
+-		}
+-		bcma_cc_set32(cc, BCMA_CC_PMU_CTL, pmu_ctl);
++		bcma_pmu_spuravoid_pllupdate(&dev->dev->bdev->bus->drv_cc,
++					     avoid);
+ 		break;
+ #endif
+ #ifdef CONFIG_B43_SSB
+-- 
+1.7.10.4
