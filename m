@@ -1,23 +1,157 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sat, 13 Apr 2013 02:14:25 +0200
-Subject: [PATCH v3] b43: use bcma_pmu_spuravoid_pllupdate()
-In-Reply-To: <1365779338-8224-1-git-send-email-hauke@hauke-m.de>
-References: <1365779338-8224-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <CACna6ry+2jpgSKKR4VFE58JV1ezXmmSaJe2eZzOuOxh2sSet1g@mail.gmail.com>
+From: Thommy Jakobsson <thommyj@gmail.com>
+Date: Mon, 15 Apr 2013 10:02:05 +0200
+Subject: [PATCH] b43: use rx desc underrun interrupt
+Message-ID: <CAOTQ16KW-0Z9XHYhDCFuYdSjJtcEC26ZBZRS_OXZdyGfpcHsoQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-2013/4/12 Hauke Mehrtens <hauke@hauke-m.de>:
-> Do not implement this in b43, but use bcma_pmu_spuravoid_pllupdate().
+Hi,
 
-John: I've applied this patch to my git tree, so according to your
-preferences you may just drop it and take a look at:
-pull request: b43-next 2013-04-13
-I've just send.
+long user of b43 driver under openwrt. Not sure if it has been posted
+previously but using slow and old hardware (as routers running openwrt
+most of the time is), the CPU is sometimes slower than the NIC. So
+recently I, and several others, has had problem of wifi going down.
+See ticket 7552 at openwrt for more info
+(https://dev.openwrt.org/ticket/7552)
 
--- 
-Rafa?
+I have tracked down the problem to the nic getting into a rx
+descriptor underrun. Since the driver don't listen to that (or take
+care of it in any other way), the Wifi seemingly just dies. The CPU is
+waiting for data from the nic and the nic is waiting for a
+confirmation that it can keep sending.
+
+I created a patch for handling of that interrupt. I have tested it by
+reducing the number of rx slots to 16 and sending a couple of 100GB of
+data. Previously Wifi went down within a minute when maxing out the
+uplink (so rx for AP), now it has been working flawless for a 1.5week.
+
+BR,
+Thommy Jakobsson
+
+Index: drivers/net/wireless/b43/dma.c
+===================================================================
+--- compat-wireless-2012-09-07.orig/drivers/net/wireless/b43/dma.c
+2013-04-09 17:33:54.325322046 +0200
++++ compat-wireless-2012-09-07/drivers/net/wireless/b43/dma.c
+2013-04-09 17:34:43.473565843 +0200
+@@ -1688,6 +1688,21 @@
+         b43_poison_rx_buffer(ring, skb);
+         sync_descbuffer_for_device(ring, dmaaddr, ring->rx_buffersize);
+ }
++void b43_dma_rx_discard(struct b43_dmaring *ring)
++{
++   B43_WARN_ON(ring->tx);
++
++    /* Device has filled all buffers, drop all packets in buffers
++     * and let TCP decrease speed.
++     * Set index to one desc after the last one (which is marked)
++     * so the device will see all slots as free again
++     */
++    /*
++     *TODO: How to increase rx_drop in mac80211
++     */
++   b43_dma_write(ring, B43_DMA32_RXINDEX, ring->nr_slots *
++                                     sizeof(struct b43_dmadesc32));
++}
+
+ void b43_dma_rx(struct b43_dmaring *ring)
+ {
+
+Index: drivers/net/wireless/b43/dma.h
+===================================================================
+--- compat-wireless-2012-09-07.orig/drivers/net/wireless/b43/dma.h
+2013-04-09 17:34:09.561397686 +0200
++++ compat-wireless-2012-09-07/drivers/net/wireless/b43/dma.h
+2013-04-09 17:34:43.461565780 +0200
+@@ -10,7 +10,8 @@
+ #define B43_DMAIRQ_FATALMASK    ((1 << 10) | (1 << 11) | (1 << 12) \
+                                          | (1 << 14) | (1 << 15))
+ #define B43_DMAIRQ_NONFATALMASK (1 << 13)
+-#define B43_DMAIRQ_RX_DONE              (1 << 16)
++#define B43_DMAIRQ_RX_DONE      (1 << 16)
++#define B43_DMAIRQ_RDESC_UFLOW  (1 << 13)
+
+ /*** 32-bit DMA Engine. ***/
+
+@@ -295,6 +296,8 @@
+ void b43_dma_handle_txstatus(struct b43_wldev *dev,
+                              const struct b43_txstatus *status);
+
++void b43_dma_rx_discard(struct b43_dmaring *ring);
++
+ void b43_dma_rx(struct b43_dmaring *ring);
+
+ void b43_dma_direct_fifo_rx(struct b43_wldev *dev,
+
+Index: drivers/net/wireless/b43/main.c
+===================================================================
+--- compat-wireless-2012-09-07.orig/drivers/net/wireless/b43/main.c
+2013-04-09 17:33:54.325322046 +0200
++++ compat-wireless-2012-09-07/drivers/net/wireless/b43/main.c
+2013-04-09 18:08:01.011471215 +0200
+@@ -1894,14 +1894,6 @@
+                         b43_controller_restart(dev, "DMA error");
+                         return;
+                 }
+-                if (merged_dma_reason & B43_DMAIRQ_NONFATALMASK) {
+-                        b43err(dev->wl, "DMA error: "
+-                               "0x%08X, 0x%08X, 0x%08X, "
+-                               "0x%08X, 0x%08X, 0x%08X\n",
+-                               dma_reason[0], dma_reason[1],
+-                               dma_reason[2], dma_reason[3],
+-                               dma_reason[4], dma_reason[5]);
+-                }
+         }
+
+         if (unlikely(reason & B43_IRQ_UCODE_DEBUG))
+@@ -1920,6 +1912,14 @@
+                 handle_irq_noise(dev);
+
+         /* Check the DMA reason registers for received data. */
++        if (dma_reason[0] & B43_DMAIRQ_RDESC_UFLOW) {
++           //only print 256 time to not flood log
++           if(!(dev->stats.rxdesc_underruns++&0xFF)){
++                        b43warn(dev->wl, "Rx descriptor underrun
+(high cpu load?), throwing packets\n");
++           }
++           b43_dma_rx_discard(dev->dma.rx_ring);
++
++        }
+         if (dma_reason[0] & B43_DMAIRQ_RX_DONE) {
+                 if (b43_using_pio_transfers(dev))
+                         b43_pio_rx(dev->pio.rx_queue);
+@@ -1977,7 +1977,7 @@
+                 return IRQ_NONE;
+
+         dev->dma_reason[0] = b43_read32(dev, B43_MMIO_DMA0_REASON)
+-            & 0x0001DC00;
++            & 0x0001FC00;
+         dev->dma_reason[1] = b43_read32(dev, B43_MMIO_DMA1_REASON)
+             & 0x0000DC00;
+         dev->dma_reason[2] = b43_read32(dev, B43_MMIO_DMA2_REASON)
+@@ -3081,7 +3081,7 @@
+                 b43_write32(dev, 0x018C, 0x02000000);
+         }
+         b43_write32(dev, B43_MMIO_GEN_IRQ_REASON, 0x00004000);
+-        b43_write32(dev, B43_MMIO_DMA0_IRQ_MASK, 0x0001DC00);
++        b43_write32(dev, B43_MMIO_DMA0_IRQ_MASK, 0x0001FC00);
+         b43_write32(dev, B43_MMIO_DMA1_IRQ_MASK, 0x0000DC00);
+         b43_write32(dev, B43_MMIO_DMA2_IRQ_MASK, 0x0000DC00);
+         b43_write32(dev, B43_MMIO_DMA3_IRQ_MASK, 0x0001DC00);
+
+===================================================================
+--- compat-wireless-2012-09-07.orig/drivers/net/wireless/b43/b43.h
+2013-04-09 17:04:51.552680190 +0200
++++ compat-wireless-2012-09-07/drivers/net/wireless/b43/b43.h
+2013-04-09 17:46:08.472962612 +0200
+@@ -671,6 +671,7 @@
+
+ struct b43_stats {
+         u8 link_noise;
++        u32 rxdesc_underruns;
+ };
+
+ struct b43_key {
