@@ -1,7 +1,7 @@
-From: Thommy Jakobsson <thommyj@gmail.com>
-Date: Sun, 21 Apr 2013 17:11:23 +0200 (CEST)
+From: Piotras <piotras@gmail.com>
+Date: Sun, 21 Apr 2013 16:24:18 +0100
 Subject: [PATCH] b43: use rx desc underrun interrupt
-In-Reply-To: <CAFzhf4pETgKBFQ+6J1cp5Lr0VLipOw2MbRtev5nXc9VEdBASyA@mail.gmail.com>
+In-Reply-To: <20130421165951.59bc58c8@milhouse>
 References: <CAOTQ16KW-0Z9XHYhDCFuYdSjJtcEC26ZBZRS_OXZdyGfpcHsoQ@mail.gmail.com>
  <CAOiHx=mJ+6Fkxx_fooA+QhUb+Kmodp_Fhr+K=uQjhM1VVfE9fQ@mail.gmail.com>
  <alpine.DEB.2.02.1304201603220.15944@kelly.ryd.net>
@@ -20,49 +20,74 @@ References: <CAOTQ16KW-0Z9XHYhDCFuYdSjJtcEC26ZBZRS_OXZdyGfpcHsoQ@mail.gmail.com>
  <20130421112118.627a1f7f@milhouse>
  <alpine.DEB.2.02.1304211410460.19161@kelly.ryd.net>
  <CAFzhf4pETgKBFQ+6J1cp5Lr0VLipOw2MbRtev5nXc9VEdBASyA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.02.1304211657110.19161@kelly.ryd.net>
+ <20130421165951.59bc58c8@milhouse>
+Message-ID: <CAFzhf4rio-z1VSefBRWgm1yHhJ90tQM9K9pm6Q=--o6-ncS1Fg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
+On Sun, Apr 21, 2013 at 3:59 PM, Michael B?sch <m@bues.ch> wrote:
+> On Sun, 21 Apr 2013 15:46:03 +0100
+> Piotras <piotras@gmail.com> wrote:
+>
+>> On Sun, Apr 21, 2013 at 1:12 PM, Thommy Jakobsson <thommyj@gmail.com> wrote:
+>> >
+>> >
+>> > On Sun, 21 Apr 2013, Michael B?sch wrote:
+>> >
+>> >> On Sun, 21 Apr 2013 11:01:11 +0200 (CEST)
+>> >> Thommy Jakobsson <thommyj@gmail.com> wrote:
+>> >>
+>> >> > Why is it set to to beyond the ring when it is initilised?
+>> >>
+>> >> That's what broadcom does in their implementation. I guess that's the only reason.
+>> >>
+>> > Check, I'll give index-1 a go. It should be quite obvious if it works or
+>> > not.
+>>
+>> Thommy,
+>>
+>> I had the same thought, but notice that you also need to update
+>> ring->current_slot in b43_dma_rx_discard.
+>
+> I don't think so.
+> We don't modify the descriptor pointer, but the stop index.
+
+Yes.
+
+My code was incorrect as I should ensure that ring->current_slot is
+equal ops->get_current_rxslot(ring). As we are in the RX underflow,
+B43_DMA32_RXSTATUS, B43_DMA32_RXINDEX and ring->current_slot should
+already point to the same descriptor, so only set_current_rxslot is
+needed.
 
 
-> I had the same thought, but notice that you also need to update
-> ring->current_slot in b43_dma_rx_discard.
-> 
-> When ring->current_slot update is missing (as in your original
-> patch), you will introduce the same problem I hit by removing
-> ops->set_current_rxslot(ring, slot) from b43_dma_rx (disabling
-> RX underflow detection). Basically we break assumptions about
-> ownership of descriptors (which descriptors are exclusively used
-> by host and which can be written by DMA processor). So next time
-> b43_dma_rx is called it may process descriptors that are updated
-> by DMA processor at the same time (race condition).
-Why would I update ring->current_slot? That should point where we are in 
-the ring from the drivers perspective. Since that i always updated 
-together with the rx index (set_current_rxslot) it will always be the same 
-as the current index in hw (get_current_rxslot) in the b43_rx_discard. 
-That is also where it should be.
+>
+>> I guess the following could be used to mark all descriptors for DMA
+>> use from RX underflow interrupt or whenever we decide that number of
+>> free descriptors is too low (not tested):
+>>
+>>   slot = prev_slot(ring, ops->get_current_rxslot(ring));
+>>   wmb();
+>>   ops->set_current_rxslot(ring, slot);
+>
+> get_current_rxslot() reads a different register than set_current_rxslot().
+>
+> get_current_rxslot() returns the descriptor pointer that the device is pointing to.
+> set_current_rxslot() sets the _stop_ index.
+> Yes, at least the last one is misnamed.
+>
+>> Not sure if FIFO overruns are really an issue and how to prevent them.
+>> Maybe RX underflow should be handled in top half and reprogram device
+>> to suspend receives (is this possible)?
+>
+> What is "top half"?
 
-It is true that I'll introduce a possibility for ownership problem with 
-the original patch, but that will only last until the next time b43_dma_rx 
-is called. Which is just after the b43_dma_rx_discard has 
-exited since you always will get a rx interrupt at the same time as the 
-underflow interrupt. This is also the case at each startup since rx index 
-is initilised to the same thing as I used.
+Top half interrupt handler (b43_do_interrupt).
 
-I have tested the index-1 that me and michael talked about, from the 
-initial test is working just fine. Im running with only 8 rxslots to try 
-to find any corner cases, so I see a lot of traffic drops though. This 
-would also fix the ownership problem.
 
-BTW, it is confusing that set and get current_rxslot doesn't updated and 
-read the same register. 
-
-About the FIFO errors I haven't looked at those at all. I did get some 
-other errors when I pumped data at link speed into my router, but that was 
-for TX.
-
-//Thommy
+>
+> --
+> Michael
