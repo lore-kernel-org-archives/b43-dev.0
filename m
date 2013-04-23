@@ -1,69 +1,77 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 23 Apr 2013 08:22:35 +0200
-Subject: [PATCH] b43: use rx desc underrun interrupt
-In-Reply-To: <20130422120047.257c3348@milhouse>
-References: <CAOTQ16KW-0Z9XHYhDCFuYdSjJtcEC26ZBZRS_OXZdyGfpcHsoQ@mail.gmail.com>
- <20130420211223.640b7c5b@milhouse>
- <alpine.DEB.2.02.1304202136260.19161@kelly.ryd.net>
- <20130420215056.3d0b0dbb@milhouse>
- <alpine.DEB.2.02.1304202154540.19161@kelly.ryd.net>
- <CAFzhf4rSUO9mn_RKw4Vehw2LKggFdC_W0v-K_KKCZJez1AwynQ@mail.gmail.com>
- <alpine.DEB.2.02.1304202252460.19161@kelly.ryd.net>
- <alpine.DEB.2.02.1304202305470.19161@kelly.ryd.net>
- <alpine.DEB.2.02.1304202314190.19161@kelly.ryd.net>
- <20130421083822.5d6599e3@milhouse>
- <alpine.DEB.2.02.1304211006190.19161@kelly.ryd.net>
- <20130421104440.48a3e006@milhouse>
- <alpine.DEB.2.02.1304211951130.13040@kelly.ryd.net>
- <20130421202601.179eaf44@milhouse>
- <CAOTQ16LCWpAOndQsHBxN1-X_8SLpcU8V=mM41gvcNRocA=GhsA@mail.gmail.com>
- <20130421204439.2fa95ecf@milhouse>
- <alpine.DEB.2.02.1304212205360.13040@kelly.ryd.net>
- <20130421235313.22d47edb@milhouse>
- <alpine.DEB.2.02.1304221003000.13040@kelly.ryd.net>
- <20130422120047.257c3348@milhouse>
-Message-ID: <20130423082235.5336c34f@milhouse>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Tue, 23 Apr 2013 15:49:51 +0200
+Subject: pull request: b43-next 2013-04-23
+Message-ID: <CACna6rxOfr7jWKHfrGWC09Sw6XKShdexpkRKLeVhfuON5d7Bgw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: John Linville <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
+Cc: b43-dev <b43-dev@lists.infradead.org>
 
-On Mon, 22 Apr 2013 12:00:47 +0200
-Michael B?sch <m@bues.ch> wrote:
+Hi John,
 
-> On Mon, 22 Apr 2013 10:11:41 +0200 (CEST)
-> Thommy Jakobsson <thommyj@gmail.com> wrote:
-> 
-> > On Sun, 21 Apr 2013, Michael B?sch wrote:
-> > 
-> > > >  struct b43_stats {
-> > > >  	u8 link_noise;
-> > > > +	u32 rxdesc_underruns;
-> > > 
-> > > Why do we add that? It's not incremented and used anywhere.
-> > > 
-> > Sorry, seems like I dont do that of a good joob revewing my own patches. 
-> > It slipped in from one of my debug builts. Should I send in this to John 
-> > or do you think we have to test it further? It has been running during the 
-> > entire night with high load on my device. So that seems to work, but that 
-> > is only on one device of course.
-> 
-> Please remove rxdesc_underruns and send the patch (properly signed-off)
-> to John Linville. Cc the linux-wireless mailinglist, b43-dev mailinglist
-> and probably everybody involved in the review discussion.
+Let me ask you once again for pulling my b43-next tree. I didn't add any new
+patches since the last pull request, I just dropped ssb patch you already
+pushed into your tree.
 
-whoops I forgot. Please also add
-Cc: stable at vger.kernel.org
-to the signed-off list
+Let me remind the changes for b43:
+> Changes include:
+> 1) Minor improvements for HT-PHY code (BCM4331)
+> 2) Code cleaning for HT-PHY and N-PHY
+
+Sorry for the problem with the previous pull request. Your wireless-next was
+slighlty too old for me (nouveau regression in 3.9-rc1) so I've based my tree
+on wireless-testing. That wasn't too bright idea.
+
+To rebase the tree I've simply used:
+git rebase --onto wireless-next/master master~21 master
 
 
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130423/e1c123eb/attachment.sig>
+The following changes since commit c43933e61ea9b630521bf0d5cf06c155478308a7:
+
+  mwifiex: remove redundant initialization for bss_descriptor
+(2013-04-22 15:38:36 -0400)
+
+are available in the git repository at:
+
+  git://git.infradead.org/users/rafal/b43-next.git master
+
+for you to fetch changes up to 0c201cfbfd47c40ee0cedbcd96e4fbaa85c5fc50:
+
+  b43: N-PHY: don't use deprecated b43_radio_foo16 (2013-04-23 12:27:58 +0200)
+
+----------------------------------------------------------------
+Rafa? Mi?ecki (21):
+      b43: HT-PHY: rename defines addressing cores on the 2059 radio
+      b43: HT-PHY: tables: don't duplicate core-generic regs
+      b43: HT-PHY: finish calculating values for idle TSSI
+      b43: HT-PHY: do some extra TSSI setup after configuring TX
+      b43: HT-PHY: define regs for power estimation
+      b43: HT-PHY: store TX power state before disabling it
+      b43: HT-PHY: use enum for RSSI types
+      b43: N-PHY: use enum for RAIL type
+      b43: N-PHY: simplify conditions in RSSI offset scale function
+      b43: N-PHY: use more friendly variables names in RSSI code
+      b43: N-PHY: rename RSSI types to be shorter and more accurate
+      b43: N-PHY: use enum for RSSI type everywhere we use it
+      b43: N-PHY: fix "NB" RSSI calibration on PHYs rev2-
+      b43: use defines for board_type
+      b43: N-PHY: define missing registers
+      b43: N-PHY: use enum for INTC override function argument
+      b43: N-PHY: use shortcut "ctl" in functions names
+      b43: N-PHY: use defines for (re)storing VCM config
+      b43: N-PHY: move tables init function to tables file
+      b43: N-PHY: clean init tables
+      b43: N-PHY: don't use deprecated b43_radio_foo16
+
+ drivers/net/wireless/b43/phy_ht.c      |  119 +++---
+ drivers/net/wireless/b43/phy_ht.h      |    6 +
+ drivers/net/wireless/b43/phy_lp.c      |    4 +-
+ drivers/net/wireless/b43/phy_n.c       |  649 +++++++++++++++++---------------
+ drivers/net/wireless/b43/phy_n.h       |  146 +++++++
+ drivers/net/wireless/b43/radio_2059.c  |   39 +-
+ drivers/net/wireless/b43/radio_2059.h  |   14 +-
+ drivers/net/wireless/b43/tables_nphy.c |   97 ++---
+ drivers/net/wireless/b43/tables_nphy.h |   29 +-
+ 9 files changed, 661 insertions(+), 442 deletions(-)
