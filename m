@@ -1,25 +1,49 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed, 24 Apr 2013 19:29:21 +0200
-Subject: [PATCH] ssb: implement ssb spuravoid for chipid BCM43222
-In-Reply-To: <CACna6rwC3BSd_tAzVZRo3DCCk39509PxgG60oReqT2Q-SOFZgA@mail.gmail.com>
-References: <1365684013-3483-1-git-send-email-hauke@hauke-m.de>
- <CACna6rwC3BSd_tAzVZRo3DCCk39509PxgG60oReqT2Q-SOFZgA@mail.gmail.com>
-Message-ID: <51781671.4070106@hauke-m.de>
+Date: Wed, 24 Apr 2013 21:30:54 +0200
+Subject: [PATCH v2] ssb: implement ssb spuravoid for chipid BCM43222
+Message-ID: <1366831854-19634-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linville@tuxdriver.com
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-On 04/12/2013 08:29 AM, Rafa? Mi?ecki wrote:
-> 2013/4/11 Hauke Mehrtens <hauke@hauke-m.de>:
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> 
-> Ack
-> 
-Hi John,
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Acked-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/driver_chipcommon_pmu.c |   19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-is there any problem with this patch?
-
-Hauke
+diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
+index 23c5dbf..1173a09 100644
+--- a/drivers/ssb/driver_chipcommon_pmu.c
++++ b/drivers/ssb/driver_chipcommon_pmu.c
+@@ -687,8 +687,23 @@ void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid)
+ 		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
+ 		break;
+ 	case 43222:
+-		/* TODO: BCM43222 requires updating PLLs too */
+-		return;
++		if (spuravoid == 1) {
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11500008);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x0C000C06);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x0F600a08);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL3, 0x00000000);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL4, 0x2001E920);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888815);
++		} else {
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11100008);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x0c000c06);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x03000a08);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL3, 0x00000000);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL4, 0x200005c0);
++			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888855);
++		}
++		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
++		break;
+ 	default:
+ 		ssb_printk(KERN_ERR PFX
+ 			   "Unknown spuravoidance settings for chip 0x%04X, not changing PLL\n",
+-- 
+1.7.10.4
