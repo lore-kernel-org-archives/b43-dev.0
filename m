@@ -1,49 +1,40 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Wed, 24 Apr 2013 21:30:54 +0200
-Subject: [PATCH v2] ssb: implement ssb spuravoid for chipid BCM43222
-Message-ID: <1366831854-19634-1-git-send-email-hauke@hauke-m.de>
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Thu, 2 May 2013 15:06:03 +0200
+Subject: [PATCH] B43: Handle DMA RX descriptor underrun
+In-Reply-To: <alpine.DEB.2.02.1304231851040.1513@kelly.ryd.net>
+References: <alpine.DEB.2.02.1304231851040.1513@kelly.ryd.net>
+Message-ID: <20130502150603.2ac36385@milhouse>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: Thommy Jakobsson <thommyj@gmail.com>
+Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Larry.Finger@lwfinger.net
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Acked-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/ssb/driver_chipcommon_pmu.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+On Tue, 23 Apr 2013 21:45:11 +0200 (CEST)
+Thommy Jakobsson <thommyj@gmail.com> wrote:
 
-diff --git a/drivers/ssb/driver_chipcommon_pmu.c b/drivers/ssb/driver_chipcommon_pmu.c
-index 23c5dbf..1173a09 100644
---- a/drivers/ssb/driver_chipcommon_pmu.c
-+++ b/drivers/ssb/driver_chipcommon_pmu.c
-@@ -687,8 +687,23 @@ void ssb_pmu_spuravoid_pllupdate(struct ssb_chipcommon *cc, int spuravoid)
- 		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
- 		break;
- 	case 43222:
--		/* TODO: BCM43222 requires updating PLLs too */
--		return;
-+		if (spuravoid == 1) {
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11500008);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x0C000C06);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x0F600a08);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL3, 0x00000000);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL4, 0x2001E920);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888815);
-+		} else {
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL0, 0x11100008);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL1, 0x0c000c06);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL2, 0x03000a08);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL3, 0x00000000);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL4, 0x200005c0);
-+			ssb_chipco_pll_write(cc, SSB_PMU1_PLLCTL5, 0x88888855);
-+		}
-+		pmu_ctl = SSB_CHIPCO_PMU_CTL_PLL_UPD;
-+		break;
- 	default:
- 		ssb_printk(KERN_ERR PFX
- 			   "Unknown spuravoidance settings for chip 0x%04X, not changing PLL\n",
+> From: Thommy Jakobsson <thommyj@gmail.com>
+> 
+> Add handling of rx descriptor underflow. This fixes a fault that could
+> happen on slow machines, where data is received faster than the CPU can
+> handle. In such a case the device will use up all rx descriptors and
+> refuse to send any more data before confirming that it is ok. This
+> patch enables necessary interrupt to discover such a situation and will
+> handle them by dropping everything in the ring buffer.
+> 
+> Reviewed-by: Michael Buesch <m@bues.ch>
+> Signed-off-by: Thommy Jakobsson <thommyj@gmail.com>
+> Cc: stable <stable@vger.kernel.org>
+
+Anybody interested in porting this to b43legacy (and testing)?
+
 -- 
-1.7.10.4
+Michael
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130502/f4fe2e27/attachment.sig>
