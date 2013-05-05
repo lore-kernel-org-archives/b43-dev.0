@@ -1,26 +1,78 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 05 May 2013 14:22:46 -0500
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sun, 5 May 2013 21:50:33 +0200
 Subject: [PATCH] B43: Handle DMA RX descriptor underrun
-In-Reply-To: <CACna6rwk0akD0x+sWTmjDDoaQqF0Y=NQ58rzqgZH92GCug6CeQ@mail.gmail.com>
+In-Reply-To: <20130505192405.0cf4350e@milhouse>
 References: <alpine.DEB.2.02.1304231851040.1513@kelly.ryd.net>
  <CACna6rxWPOqQPNUaASaj=v=O+Wjt0okjX4jNwE3tv-=etfATCg@mail.gmail.com>
  <CACna6rwk0akD0x+sWTmjDDoaQqF0Y=NQ58rzqgZH92GCug6CeQ@mail.gmail.com>
-Message-ID: <5186B186.7090703@lwfinger.net>
+ <CACna6ry+F45PhCXahPpJtzu-w+vLE29ksHo9njXfTcfY3Av6LA@mail.gmail.com>
+ <20130505192405.0cf4350e@milhouse>
+Message-ID: <CACna6rz+PsN1GyniJL7JZJmb7T6Fnk_g101M8DeePr29LsAXaA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Thommy Jakobsson <thommyj@gmail.com>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, m@bues.ch, piotras@gmail.com
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
+Cc: Thommy Jakobsson <thommyj@gmail.com>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, piotras@gmail.com, Larry.Finger@lwfinger.net
 
-On 05/05/2013 10:43 AM, Rafa? Mi?ecki wrote:
+2013/5/5 Michael B?sch <m@bues.ch>:
+> On Sun, 5 May 2013 18:31:20 +0200
+> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 >
-> Interesting part is that they write amount of slots + slot index to
-> the B43_DMA32_RXINDEX (like 0x120 instead of 0x20). May be worth
-> investigating.
+>> Still worth considering is my previous e-mail. Why writing (for
+>> example) 1 to RXSTOPINDEX doesn't stop firmware from using slot 1?
+>
+> What makes you think this register does not work?
 
-Getting that behavior from wl might be useful, but their response to an 
-interrupt with bit 13 set will not be of much help. Whenever that occurs, they 
-reinitialize the device, and do not try a recovery.
+Take a look at this:
 
-Larry
+[  327.224976] [DBG] old current:5      new current:6
+[  327.224982] [DBG] reading slot 5
+[  327.224997] [DBG] writing stop slot 6
+
+In above ring->slot was 5, but IRQ was generated, and we read new
+"current" using get_current_rxslot. It appeared to be 6. So we read
+packet from slot 5 and then called
+ops->set_current_rxslot(ring, 6);
+AFAIU hardware shouldn't use slot 6, right? But take a look at what
+happens next:
+
+[  327.319582] [DBG] old current:6      new current:7
+[  327.319590] [DBG] reading slot 6
+[  327.319619] [DBG] writing stop slot 7
+
+Hardware generated IRQ and we get_current_rxslot returned 7. It means
+we're allowed to read slots up to 7 (excluding). It other words it
+means firmware used slot 6... but 100ms earlier we forbid firmware to
+use slot 6!
+
+This is part I don't understand. It looks like firmware ignores what
+we set with the ops->set_current_rxslot
+
+
+> Do you write a 1 to the register, or do you mean "the offset that
+> corresponds to slot 1"?
+
+I mean "the offset that corresponds to slot 1". In code it's:
+ops->set_current_rxslot(ring, 1);
+
+
+>> Can it be because it's "too late"? For example:
+>> 1) Firmware writes to slot 0, changes "curr descr" to 1
+>> 2) Firmware grabs slot 1
+>> 3) Firmware generates IRQ
+>> 4) Driver reads slot 0
+>> 5) Driver writes RX stop index 1
+>
+> The stop index is the index that the firmware does _not_ write to.
+> If you set it _after_ it already wrote, you clearly are too late (for
+> this ring wrapping).
+
+Take a look at above log. First we forbid firmware to use slot 6:
+[  327.224997] [DBG] writing stop slot 6
+but 100ms later firmware used that slot:
+[  327.319582] [DBG] old current:6      new current:7
+(it filled slot 6 and bumped value in B43_DMA64_RXSTATUS)
+
+-- 
+Rafa?
