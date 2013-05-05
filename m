@@ -1,5 +1,5 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 5 May 2013 21:58:00 +0200
+From: Thommy Jakobsson <thommyj@gmail.com>
+Date: Sun, 5 May 2013 21:59:53 +0200 (CEST)
 Subject: [PATCH] B43: Handle DMA RX descriptor underrun
 In-Reply-To: <CACna6rz+PsN1GyniJL7JZJmb7T6Fnk_g101M8DeePr29LsAXaA@mail.gmail.com>
 References: <alpine.DEB.2.02.1304231851040.1513@kelly.ryd.net>
@@ -8,16 +8,17 @@ References: <alpine.DEB.2.02.1304231851040.1513@kelly.ryd.net>
  <CACna6ry+F45PhCXahPpJtzu-w+vLE29ksHo9njXfTcfY3Av6LA@mail.gmail.com>
  <20130505192405.0cf4350e@milhouse>
  <CACna6rz+PsN1GyniJL7JZJmb7T6Fnk_g101M8DeePr29LsAXaA@mail.gmail.com>
-Message-ID: <20130505215800.65ae7aea@milhouse>
+Message-ID: <alpine.DEB.2.02.1305052153410.1469@kelly.ryd.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Thommy Jakobsson <thommyj@gmail.com>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, piotras@gmail.com, Larry.Finger@lwfinger.net
+To: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+Cc: =?ISO-8859-15?Q?Michael_B=FCsch?= <m@bues.ch>, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, piotras@gmail.com, Larry.Finger@lwfinger.net
 
-On Sun, 5 May 2013 21:50:33 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+
+
+On Sun, 5 May 2013, Rafa? Mi?ecki wrote:
 
 > 2013/5/5 Michael B?sch <m@bues.ch>:
 > > On Sun, 5 May 2013 18:31:20 +0200
@@ -49,16 +50,12 @@ Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 > we're allowed to read slots up to 7 (excluding). It other words it
 > means firmware used slot 6... but 100ms earlier we forbid firmware to
 > use slot 6!
+> 
+> This is part I don't understand. It looks like firmware ignores what
+> we set with the ops->set_current_rxslot
+As I wrote before, you cannot remove a slot that the device already marked 
+as next. The register that you write to with set_current_rxslot is only 
+checked when the firmware steps up the current descriptor register. At 
+least thats what I have seen from my testing.
 
-I'd rather say that this is a race condition between your testing code
-and the firmware.
-
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130505/c7734559/attachment-0001.sig>
+//Thommy
