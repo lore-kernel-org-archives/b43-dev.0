@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 13 May 2013 22:07:51 +0200
-Subject: [PATCH 1/3] bcma: don't hardcode SPROM length
-Message-ID: <1368475673-27587-1-git-send-email-zajec5@gmail.com>
+Date: Mon, 13 May 2013 22:07:52 +0200
+Subject: [PATCH 2/3] bcma: prepare for supporting more SPROM sizes
+In-Reply-To: <1368475673-27587-1-git-send-email-zajec5@gmail.com>
+References: <1368475673-27587-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1368475673-27587-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,106 +11,84 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Pass it as an argument to all functions. This is requires as newer SPROM
-revisions have different lengths.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/bcma/sprom.c |   30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/bcma/sprom.c |   35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
-index 8934298..5386cdd 100644
+index 5386cdd..c96f71c 100644
 --- a/drivers/bcma/sprom.c
 +++ b/drivers/bcma/sprom.c
-@@ -72,12 +72,12 @@ fail:
-  * R/W ops.
-  **************************************************/
- 
--static void bcma_sprom_read(struct bcma_bus *bus, u16 offset, u16 *sprom)
-+static void bcma_sprom_read(struct bcma_bus *bus, u16 offset, u16 *sprom,
-+			    size_t words)
+@@ -502,7 +502,6 @@ static bool bcma_sprom_onchip_available(struct bcma_bus *bus)
+ 	case BCMA_CHIP_ID_BCM4331:
+ 		present = chip_status & BCMA_CC_CHIPST_4331_OTP_PRESENT;
+ 		break;
+-
+ 	case BCMA_CHIP_ID_BCM43224:
+ 	case BCMA_CHIP_ID_BCM43225:
+ 		/* for these chips OTP is always available */
+@@ -550,7 +549,8 @@ int bcma_sprom_get(struct bcma_bus *bus)
  {
- 	int i;
--	for (i = 0; i < SSB_SPROMSIZE_WORDS_R4; i++)
--		sprom[i] = bcma_read16(bus->drv_cc.core,
--				       offset + (i * 2));
-+	for (i = 0; i < words; i++)
-+		sprom[i] = bcma_read16(bus->drv_cc.core, offset + (i * 2));
- }
+ 	u16 offset = BCMA_CC_SPROM;
+ 	u16 *sprom;
+-	int err = 0;
++	size_t sprom_sizes[] = { SSB_SPROMSIZE_WORDS_R4, };
++	int i, err = 0;
  
- /**************************************************
-@@ -124,29 +124,29 @@ static inline u8 bcma_crc8(u8 crc, u8 data)
- 	return t[crc ^ data];
- }
- 
--static u8 bcma_sprom_crc(const u16 *sprom)
-+static u8 bcma_sprom_crc(const u16 *sprom, size_t words)
- {
- 	int word;
- 	u8 crc = 0xFF;
- 
--	for (word = 0; word < SSB_SPROMSIZE_WORDS_R4 - 1; word++) {
-+	for (word = 0; word < words - 1; word++) {
- 		crc = bcma_crc8(crc, sprom[word] & 0x00FF);
- 		crc = bcma_crc8(crc, (sprom[word] & 0xFF00) >> 8);
+ 	if (!bus->drv_cc.core)
+ 		return -EOPNOTSUPP;
+@@ -579,32 +579,37 @@ int bcma_sprom_get(struct bcma_bus *bus)
+ 		}
  	}
--	crc = bcma_crc8(crc, sprom[SSB_SPROMSIZE_WORDS_R4 - 1] & 0x00FF);
-+	crc = bcma_crc8(crc, sprom[words - 1] & 0x00FF);
- 	crc ^= 0xFF;
  
- 	return crc;
- }
- 
--static int bcma_sprom_check_crc(const u16 *sprom)
-+static int bcma_sprom_check_crc(const u16 *sprom, size_t words)
- {
- 	u8 crc;
- 	u8 expected_crc;
- 	u16 tmp;
- 
--	crc = bcma_sprom_crc(sprom);
--	tmp = sprom[SSB_SPROMSIZE_WORDS_R4 - 1] & SSB_SPROM_REVISION_CRC;
-+	crc = bcma_sprom_crc(sprom, words);
-+	tmp = sprom[words - 1] & SSB_SPROM_REVISION_CRC;
- 	expected_crc = tmp >> SSB_SPROM_REVISION_CRC_SHIFT;
- 	if (crc != expected_crc)
- 		return -EPROTO;
-@@ -154,16 +154,16 @@ static int bcma_sprom_check_crc(const u16 *sprom)
- 	return 0;
- }
- 
--static int bcma_sprom_valid(const u16 *sprom)
-+static int bcma_sprom_valid(const u16 *sprom, size_t words)
- {
- 	u16 revision;
- 	int err;
- 
--	err = bcma_sprom_check_crc(sprom);
-+	err = bcma_sprom_check_crc(sprom, words);
- 	if (err)
- 		return err;
- 
--	revision = sprom[SSB_SPROMSIZE_WORDS_R4 - 1] & SSB_SPROM_REVISION_REV;
-+	revision = sprom[words - 1] & SSB_SPROM_REVISION_REV;
- 	if (revision != 8 && revision != 9) {
- 		pr_err("Unsupported SPROM revision: %d\n", revision);
- 		return -ENOENT;
-@@ -589,13 +589,13 @@ int bcma_sprom_get(struct bcma_bus *bus)
+-	sprom = kcalloc(SSB_SPROMSIZE_WORDS_R4, sizeof(u16),
+-			GFP_KERNEL);
+-	if (!sprom)
+-		return -ENOMEM;
+-
+ 	if (bus->chipinfo.id == BCMA_CHIP_ID_BCM4331 ||
+ 	    bus->chipinfo.id == BCMA_CHIP_ID_BCM43431)
  		bcma_chipco_bcm4331_ext_pa_lines_ctl(&bus->drv_cc, false);
  
  	bcma_debug(bus, "SPROM offset 0x%x\n", offset);
--	bcma_sprom_read(bus, offset, sprom);
-+	bcma_sprom_read(bus, offset, sprom, SSB_SPROMSIZE_WORDS_R4);
+-	bcma_sprom_read(bus, offset, sprom, SSB_SPROMSIZE_WORDS_R4);
++	for (i = 0; i < ARRAY_SIZE(sprom_sizes); i++) {
++		size_t words = sprom_sizes[i];
++
++		sprom = kcalloc(words, sizeof(u16), GFP_KERNEL);
++		if (!sprom)
++			return -ENOMEM;
++
++		bcma_sprom_read(bus, offset, sprom, words);
++		err = bcma_sprom_valid(sprom, words);
++		if (!err)
++			break;
++
++		kfree(sprom);
++	}
  
  	if (bus->chipinfo.id == BCMA_CHIP_ID_BCM4331 ||
  	    bus->chipinfo.id == BCMA_CHIP_ID_BCM43431)
  		bcma_chipco_bcm4331_ext_pa_lines_ctl(&bus->drv_cc, true);
  
--	err = bcma_sprom_valid(sprom);
-+	err = bcma_sprom_valid(sprom, SSB_SPROMSIZE_WORDS_R4);
+-	err = bcma_sprom_valid(sprom, SSB_SPROMSIZE_WORDS_R4);
  	if (err) {
- 		bcma_warn(bus, "invalid sprom read from the PCIe card, try to use fallback sprom\n");
+-		bcma_warn(bus, "invalid sprom read from the PCIe card, try to use fallback sprom\n");
++		bcma_warn(bus, "Invalid SPROM read from the PCIe card, trying to use fallback SPROM\n");
  		err = bcma_fill_sprom_with_fallback(bus, &bus->sprom);
+-		goto out;
++	} else {
++		bcma_sprom_extract_r8(bus, sprom);
++		kfree(sprom);
+ 	}
+ 
+-	bcma_sprom_extract_r8(bus, sprom);
+-
+-out:
+-	kfree(sprom);
+ 	return err;
+ }
 -- 
 1.7.10.4
