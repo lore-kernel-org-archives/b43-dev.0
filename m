@@ -1,33 +1,27 @@
-From: John W. Linville <linville@tuxdriver.com>
-Date: Fri, 24 May 2013 12:49:22 -0400
+From: Thommy Jakobsson <thommyj@gmail.com>
+Date: Sat, 25 May 2013 21:02:55 +0200 (CEST)
 Subject: [PATCH] B43: Handle DMA RX descriptor underrun
-In-Reply-To: <alpine.DEB.2.02.1305132025560.1278@kelly.ryd.net>
+In-Reply-To: <20130524164922.GA2175@tuxdriver.com>
 References: <alpine.DEB.2.02.1304231851040.1513@kelly.ryd.net>
  <CACna6rxWPOqQPNUaASaj=v=O+Wjt0okjX4jNwE3tv-=etfATCg@mail.gmail.com>
  <alpine.DEB.2.02.1305132025560.1278@kelly.ryd.net>
-Message-ID: <20130524164922.GA2175@tuxdriver.com>
+ <20130524164922.GA2175@tuxdriver.com>
+Message-ID: <alpine.DEB.2.02.1305252058060.1282@kelly.ryd.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, m@bues.ch, piotras@gmail.com, Larry.Finger@lwfinger.net, Thommy Jakobsson <thommyj@gmail.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, m@bues.ch, piotras@gmail.com, Larry.Finger@lwfinger.net, Thommy Jakobsson <thommyj@gmail.com>
 
-On Mon, May 13, 2013 at 08:27:08PM +0200, Thommy Jakobsson wrote:
-> 
-> 
-> On Sun, 5 May 2013, Rafa? Mi?ecki wrote:
-> 
-> > I think we may want turning this interrupt anyway, but I wonder if
-> > there is another issue we just hide a bit better.
-> > 
-> Any news on the testing Rafael? Did you have any more questions about the 
-> solution? Just let me know if I can help
-> 
-> //Thommy
 
-Ping?  Should I drop this one?
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville at tuxdriver.com			might be all we have.  Be ready.
+On Fri, 24 May 2013, John W. Linville wrote:
+
+> Ping?  Should I drop this one?
+> 
+Still working great on my device, so from that I think we should go for 
+it. But it would be great if Rafal (or someone) tested it on some other 
+hardware as well. 
+
+//Thommy
