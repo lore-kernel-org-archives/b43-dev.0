@@ -1,17 +1,50 @@
-From: Arch Zealot <mylife4aur@yahoo.gr>
-Date: Thu, 6 Jun 2013 07:34:17 +0100 (BST)
-Subject: poor signal detection radius
-Message-ID: <1370500457.94824.YahooMailClassic@web171605.mail.ir2.yahoo.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun,  9 Jun 2013 18:53:58 +0200
+Subject: [PATCH 3.1+] b43: ensue that BCMA is "y" when B43 is "y"
+Message-ID: <1370796838-5067-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linville@tuxdriver.com
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, rdunlap@infradead.org, Hauke Mehrtens <hauke@hauke-m.de>, stable@vger.kernel.org
 
-I have a Broadcom BCM4312 802.11b/g LP-PHY [14e4:4315] (rev 01) wifi card which i'm using with the b43 driver (Archlinux). 
+When b43 gets build into the kernel and it should use bcma we have to
+ensure that bcma was also build into the kernel and not as a module.
+In this patch this is also done for SSB, although you can not
+build b43 without ssb support for now.
 
-It has a very limited signal detection radius compared to the broadcom-wl driver (tested on Ubuntu, same machine).
-	
-Is there a way to boost the signal detection radius?
+This fixes a build problem reported by Randy Dunlap in
+5187EB95.2060605 at infradead.org
 
-Thanks.
+Reported-By: Randy Dunlap <rdunlap@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/net/wireless/b43/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index 83cfaf5..3f21e0b 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -28,7 +28,7 @@ config B43
+ 
+ config B43_BCMA
+ 	bool "Support for BCMA bus"
+-	depends on B43 && BCMA
++	depends on B43 && (BCMA = y || BCMA = B43)
+ 	default y
+ 
+ config B43_BCMA_EXTRA
+@@ -39,7 +39,7 @@ config B43_BCMA_EXTRA
+ 
+ config B43_SSB
+ 	bool
+-	depends on B43 && SSB
++	depends on B43 && (SSB = y || SSB = B43)
+ 	default y
+ 
+ # Auto-select SSB PCI-HOST support, if possible
+-- 
+1.7.10.4
