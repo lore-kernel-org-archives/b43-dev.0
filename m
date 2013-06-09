@@ -1,50 +1,43 @@
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sun,  9 Jun 2013 18:53:58 +0200
-Subject: [PATCH 3.1+] b43: ensue that BCMA is "y" when B43 is "y"
-Message-ID: <1370796838-5067-1-git-send-email-hauke@hauke-m.de>
+Date: Sun,  9 Jun 2013 18:59:43 +0200
+Subject: [PATCH 2/2] b43: activate N-PHY and HT-PHY support by default
+In-Reply-To: <1370797183-5510-1-git-send-email-hauke@hauke-m.de>
+References: <1370797183-5510-1-git-send-email-hauke@hauke-m.de>
+Message-ID: <1370797183-5510-2-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, rdunlap@infradead.org, Hauke Mehrtens <hauke@hauke-m.de>, stable@vger.kernel.org
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
 
-When b43 gets build into the kernel and it should use bcma we have to
-ensure that bcma was also build into the kernel and not as a module.
-In this patch this is also done for SSB, although you can not
-build b43 without ssb support for now.
+N-PHY and HT-PHY support is more or less stable and should be activated
+by default.
 
-This fixes a build problem reported by Randy Dunlap in
-5187EB95.2060605 at infradead.org
-
-Reported-By: Randy Dunlap <rdunlap@infradead.org>
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- drivers/net/wireless/b43/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/b43/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
-index 83cfaf5..3f21e0b 100644
+index 078e6f3..83cfaf5 100644
 --- a/drivers/net/wireless/b43/Kconfig
 +++ b/drivers/net/wireless/b43/Kconfig
-@@ -28,7 +28,7 @@ config B43
+@@ -111,6 +111,7 @@ config B43_PIO
+ config B43_PHY_N
+ 	bool "Support for 802.11n (N-PHY) devices"
+ 	depends on B43
++	default y
+ 	---help---
+ 	  Support for the N-PHY.
  
- config B43_BCMA
- 	bool "Support for BCMA bus"
--	depends on B43 && BCMA
-+	depends on B43 && (BCMA = y || BCMA = B43)
- 	default y
+@@ -132,6 +133,7 @@ config B43_PHY_LP
+ config B43_PHY_HT
+ 	bool "Support for HT-PHY (high throughput) devices"
+ 	depends on B43 && B43_BCMA
++	default y
+ 	---help---
+ 	  Support for the HT-PHY.
  
- config B43_BCMA_EXTRA
-@@ -39,7 +39,7 @@ config B43_BCMA_EXTRA
- 
- config B43_SSB
- 	bool
--	depends on B43 && SSB
-+	depends on B43 && (SSB = y || SSB = B43)
- 	default y
- 
- # Auto-select SSB PCI-HOST support, if possible
 -- 
 1.7.10.4
