@@ -1,21 +1,33 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 10 Jun 2013 11:44:08 +0200
-Subject: [PATCH 1/2] bcma: activate PCI host option by default
-In-Reply-To: <1370797183-5510-1-git-send-email-hauke@hauke-m.de>
-References: <1370797183-5510-1-git-send-email-hauke@hauke-m.de>
-Message-ID: <CACna6rxBDFNXG2P4cg60DRYsTHrWMWvuL+L58zWM5k+T36ctFQ@mail.gmail.com>
+From: =?UTF-8?B?RnJhbsOnb2lz?= Ravaillac <neutrino.nuovo@yahoo.com>
+Date: Mon, 10 Jun 2013 18:23:17 +0400
+Subject: [DEFECT] iw: No output if passive scanning is requested
+Message-ID: <20130610182317.3beb2841@lenovo-laptop>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: linux-wireless <linux-wireless@vger.kernel.org>
+Cc: b43-dev <b43-dev@lists.infradead.org>
 
-2013/6/9 Hauke Mehrtens <hauke@hauke-m.de>:
-> Most users are using bcma with a PCIe card, activate support for
-> this by default.
 
-Both look sane, thanks.
+Using b43 driver with newer kernels (namely, 3.8-1-686-pae from Debian
+and 3.10.0-rc4 from git) it isn't possible to perform passive scanning
+(in 2.4GHz band) using 'iw' tool. The command 'iw dev wlan0 scan
+passive' doesn't print any output. At the same time, a usual scan with
+sending probe requests ('iw wlan0 scan' or 'iwlist wlan0 scan') does
+work as expected.
 
--- 
-Rafa?
+The radio module I'm using is
+05:00.0 Network controller [0280]: Broadcom Corporation BCM4312
+802.11b/g LP-PHY [14e4:4315] (rev 01)
+
+Copy of dmesg, lspci, lsmod, 'iw phy0 info' outputs and kernel config file
+is attached.
+
+
+P.S. I'm not a developer nor programmer, but I'm ready to help to make
+linux better :)
+
+--
+
+Ravaillac
