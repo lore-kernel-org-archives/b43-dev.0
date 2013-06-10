@@ -1,40 +1,30 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 10 Jun 2013 19:00:35 +0200
+From: Ma Xiaojun <damage3025@gmail.com>
+Date: Tue, 11 Jun 2013 01:39:22 +0800
 Subject: b43 licensing
-In-Reply-To: <CACna6rzUAxD=BgGkSGmDLij8+1q2bX0MhB33MU3rMkdmBa0jSQ@mail.gmail.com>
+In-Reply-To: <20130610190035.4b81072b@milhouse>
 References: <CAGVx7UVsJfUH3E4WZwFpZgXyAqTQrnzbvRvy8oDmOo+u=rFW4w@mail.gmail.com>
  <CACna6rzUAxD=BgGkSGmDLij8+1q2bX0MhB33MU3rMkdmBa0jSQ@mail.gmail.com>
-Message-ID: <20130610190035.4b81072b@milhouse>
+ <20130610190035.4b81072b@milhouse>
+Message-ID: <CAGVx7UWLUKyKAuTvJKFWrQVVrPwyA9L0AxR=hHGgSWcuTMO-Zw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, 10 Jun 2013 18:53:15 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+On Tue, Jun 11, 2013 at 1:00 AM, Michael B?sch <m@bues.ch> wrote:
+> haha. Ubuntu people complaining about nonfree firmware. How many nonfree packages
+> do they ship?
 
-> 2013/6/10 Ma Xiaojun <damage3025@gmail.com>:
-> > I'm was too annoyed by someone say FUD on b43's legal status.
-> >
-> > Can anyone help to inspire pitti?
-> > https://bugs.launchpad.net/ubuntu/+source/ubuntu-drivers-common/+bug/1186779/comments/1
-> 
-> Well, I'm afraid of it becoming a flamewar, but posted my comment.
-> Just don't expect me/us to play in some dumb flamewar if it starts.
+The difference is:
+http://packages.ubuntu.com/search?keywords=bcmwl-kernel-source
+http://packages.ubuntu.com/search?keywords=linux-firmware-nonfree
 
-haha. Ubuntu people complaining about nonfree firmware. How many nonfree packages
-do they ship?
-That made my day.
+You see restricted VS multiverse.
 
-PS: Rafa?, b43-fwcutter is even BSD licensed.
+Probably when Canonical get some law suit, they are argue that
+multiverse stuff is done by the community so that they don't need to
+take the blame.
 
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130610/5b6c1320/attachment.sig>
+The graphical driver helper tools created for Ubuntu has policy of
+pull stuff in main or restricted section IIRC.
