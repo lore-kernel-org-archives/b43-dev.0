@@ -1,33 +1,24 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Sun,  9 Jun 2013 18:59:42 +0200
-Subject: [PATCH 1/2] bcma: activate PCI host option by default
-Message-ID: <1370797183-5510-1-git-send-email-hauke@hauke-m.de>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 10 Jun 2013 11:37:44 +0200
+Subject: poor signal detection radius
+In-Reply-To: <1370500457.94824.YahooMailClassic@web171605.mail.ir2.yahoo.com>
+References: <1370500457.94824.YahooMailClassic@web171605.mail.ir2.yahoo.com>
+Message-ID: <CACna6ry17jTEjb7bQLb19j=isPLHJ8Q18E2gWEmMF4_7XAYqnQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: b43-dev@lists.infradead.org
 
-Most users are using bcma with a PCIe card, activate support for
-this by default.
+2013/6/6 Arch Zealot <mylife4aur@yahoo.gr>:
+> I have a Broadcom BCM4312 802.11b/g LP-PHY [14e4:4315] (rev 01) wifi card which i'm using with the b43 driver (Archlinux).
+>
+> It has a very limited signal detection radius compared to the broadcom-wl driver (tested on Ubuntu, same machine).
+>
+> Is there a way to boost the signal detection radius?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- drivers/bcma/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Probably by implementing some power-management, but noone is working
+on this, most attention is paid to the newer hardware.
 
-diff --git a/drivers/bcma/Kconfig b/drivers/bcma/Kconfig
-index 8b4221c..380a200 100644
---- a/drivers/bcma/Kconfig
-+++ b/drivers/bcma/Kconfig
-@@ -26,6 +26,7 @@ config BCMA_HOST_PCI_POSSIBLE
- config BCMA_HOST_PCI
- 	bool "Support for BCMA on PCI-host bus"
- 	depends on BCMA_HOST_PCI_POSSIBLE
-+	default y
- 
- config BCMA_DRIVER_PCI_HOSTMODE
- 	bool "Driver for PCI core working in hostmode"
 -- 
-1.7.10.4
+Rafa?
