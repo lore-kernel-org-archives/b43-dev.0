@@ -1,33 +1,26 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 11 Jun 2013 17:18:26 +0200
+From: Werner Almesberger <werner@almesberger.net>
+Date: Tue, 11 Jun 2013 12:30:52 -0300
 Subject: BCM43362 support - possible ?
-In-Reply-To: <20130611150518.GA5722@ws>
+In-Reply-To: <CACna6rwCSxqNdO80=LLJU865wvicjTr3uxcwA49rep=jTOPd3Q@mail.gmail.com>
 References: <20130611150518.GA5722@ws>
-Message-ID: <CACna6rwCSxqNdO80=LLJU865wvicjTr3uxcwA49rep=jTOPd3Q@mail.gmail.com>
+ <CACna6rwCSxqNdO80=LLJU865wvicjTr3uxcwA49rep=jTOPd3Q@mail.gmail.com>
+Message-ID: <20130611153052.GA18389@ws>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-2013/6/11 Werner Almesberger <werner@almesberger.net>:
-> I have a client who is quite enthralled by some BCM43362-based
-> modules and wants to use them with a Free operating system
-> (probably FreeRTOS, but Linux may be a possibility as well, and
-> even more so as an intermediate development step). This chip is
-> from the WICED series.
+Rafa? Mi?ecki wrote:
+> WICED doesn't say much. Is that full mac device?
 
-WICED doesn't say much. Is that full mac device?
+Yes, as far as I can tell (public information on it is scarce),
+it's a FullMAC with an SDIO interface.
 
+> I don't know. What about asking brcmfmac developers?
+> http://wireless.kernel.org/en/users/Drivers/brcm80211
 
-> As far as I can tell, the BCM43362 is not supported by Linux
-> at the moment and hasn't even been mentioned in that context.
-> So I wonder whether the existing brcmfmac driver could be made
-> to work with the BCM43362 or whether there are major technical
-> or licensing issues.
+Oh, I see. I thought b43* and b43-legacy were the only
+branches of that tree. Sorry about that.
 
-I don't know. What about asking brcmfmac developers?
-http://wireless.kernel.org/en/users/Drivers/brcm80211
-
--- 
-Rafa?
+- Werner
