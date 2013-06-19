@@ -1,19 +1,20 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 19 Jun 2013 21:30:33 +0200
+From: Arend van Spriel <arend@broadcom.com>
+Date: Wed, 19 Jun 2013 22:58:36 +0200
 Subject: BCM4331 deauthenticates every five minutes
 In-Reply-To: <20130619175850.GD4784@cmadams.net>
-References: <20130619160911.GB4784@cmadams.net> <51C1DDEB.3090701@lwfinger.net>
- <20130619164227.GC4784@cmadams.net>
+References: <20130619160911.GB4784@cmadams.net>
+ <51C1DDEB.3090701@lwfinger.net> <20130619164227.GC4784@cmadams.net>
  <CACna6rzbTHnyqs5SzTuYL7r_SW3iCNh0qqbnvfsF7Wspyhp1WA@mail.gmail.com>
  <20130619175850.GD4784@cmadams.net>
-Message-ID: <CACna6ryFzp_g2tOGguqjvFiEcU6q8KqF4rk_BBxmS=bNRWjY7A@mail.gmail.com>
+Message-ID: <51C21B7C.2030005@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, b43-dev@lists.infradead.org, linux-wireless <linux-wireless@vger.kernel.org>
+To: Chris Adams <cma@cmadams.net>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, b43-dev@lists.infradead.org, linux-wireless <linux-wireless@vger.kernel.org>
 
-2013/6/19 Chris Adams <cma@cmadams.net>:
+On 06/19/2013 07:58 PM, Chris Adams wrote:
 > Once upon a time, Rafa? Mi?ecki <zajec5@gmail.com> said:
 >> I don't know how/if driver can be responsible for such reconnects.
 >> Over all it just TX and RX packets, right? Loosing a signal is
@@ -32,19 +33,8 @@ To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Fin
 > OS X) that don't appear to be having any trouble either.
 >
 > The AP appears to be an Adtran (don't know the model).
+>
 
-Thanks for info/testing. I still wonder how driver's code can cause
-any disconnections happening exactly every 5 minutes... Any idea
-anyone?
+Can you make a capture using a wireless sniffer (using your thinkpad maybe)?
 
-One bug that was recently discovered and that sits in b43's code is
-passive scanning. For some reason it seems b43 doesn't do passive
-scanning, I didn't have time to debug that yet. I wonder if this can
-affect connection stability anyhow.
-
-Perhaps you could try performing manual scanning every ~minute? It's
-really just a crazy guess, I don't have any idea why it could help.
-But it's so trivial you may want to give it a try.
-
--- 
-Rafa?
+Gr. AvS
