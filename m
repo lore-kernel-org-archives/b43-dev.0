@@ -1,19 +1,21 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Tue, 27 Aug 2013 09:07:47 -0400
+From: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Date: Tue, 27 Aug 2013 12:34:33 -0700
 Subject: [PATCH net-next] drivers:net: Convert
  dma_alloc_coherent(...__GFP_ZERO) to dma_zalloc_coherent
 In-Reply-To: <1377582323.2658.10.camel@joe-AO722>
 References: <dbbfc5e66dba7d2b63549d218407fb0c4031f2ed.1363367992.git.joe@perches.com>
  <1377582323.2658.10.camel@joe-AO722>
-Message-ID: <20130827130747.GA7619@hmsreliant.think-freely.org>
+Message-ID: <20130827123433.00002cb7@unknown>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Joe Perches <joe@perches.com>
-Cc: netdev@vger.kernel.org, e1000-devel@lists.sourceforge.net, users@rt2x00.serialmonkey.com, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, e1000-devel@lists.sourceforge.net, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, users@rt2x00.serialmonkey.com, jesse.brandeburg@intel.com
 
-On Mon, Aug 26, 2013 at 10:45:23PM -0700, Joe Perches wrote:
+On Mon, 26 Aug 2013 22:45:23 -0700
+Joe Perches <joe@perches.com> wrote:
+
 > __GFP_ZERO is an uncommon flag and perhaps is better
 > not used.  static inline dma_zalloc_coherent exists
 > so convert the uses of dma_alloc_coherent with __GFP_ZERO
@@ -28,4 +30,7 @@ On Mon, Aug 26, 2013 at 10:45:23PM -0700, Joe Perches wrote:
 > Realign arguments as appropriate.
 > 
 > Signed-off-by: Joe Perches <joe@perches.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+
+e1000 and ixgb bits:
+
+Acked-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
