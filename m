@@ -1,34 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 29 Aug 2013 22:09:26 -0400 (EDT)
+From: Joe Perches <joe@perches.com>
+Date: Thu, 29 Aug 2013 21:14:32 -0700
 Subject: [PATCH net-next] drivers:net: Convert
  dma_alloc_coherent(...__GFP_ZERO) to dma_zalloc_coherent
-In-Reply-To: <1377582323.2658.10.camel@joe-AO722>
+In-Reply-To: <20130829.220926.226210132086755040.davem@davemloft.net>
 References: <dbbfc5e66dba7d2b63549d218407fb0c4031f2ed.1363367992.git.joe@perches.com>
  <1377582323.2658.10.camel@joe-AO722>
-Message-ID: <20130829.220926.226210132086755040.davem@davemloft.net>
+ <20130829.220926.226210132086755040.davem@davemloft.net>
+Message-ID: <1377836072.1928.137.camel@joe-AO722>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: joe@perches.com
+To: David Miller <davem@davemloft.net>
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, e1000-devel@lists.sourceforge.net, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, users@rt2x00.serialmonkey.com
 
-From: Joe Perches <joe@perches.com>
-Date: Mon, 26 Aug 2013 22:45:23 -0700
+On Thu, 2013-08-29 at 22:09 -0400, David Miller wrote:
+> Applied, thanks a lot Joe.
 
-> __GFP_ZERO is an uncommon flag and perhaps is better
-> not used.  static inline dma_zalloc_coherent exists
-> so convert the uses of dma_alloc_coherent with __GFP_ZERO
-> to the more common kernel style with zalloc.
-> 
-> Remove memset from the static inline dma_zalloc_coherent
-> and add just one use of __GFP_ZERO instead.
-> 
-> Trivially reduces the size of the existing uses of
-> dma_zalloc_coherent.
-> 
-> Realign arguments as appropriate.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+Too bad I didn't know there was a dma_zalloc_coherent
+the first time...
 
-Applied, thanks a lot Joe.
+cheers, Joe
