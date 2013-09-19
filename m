@@ -1,97 +1,159 @@
-From: Sandro Santilli <strk@keybit.net>
-Date: Sat, 7 Sep 2013 15:07:38 +0200
-Subject: BCM4301 noise
-In-Reply-To: <522A4422.7040605@lwfinger.net>
-References: <20130906174847.GA19004@ks356603.kimsufi.com>
- <522A3871.3090103@lwfinger.net> <20130906205107.GA15678@gnash>
- <522A4422.7040605@lwfinger.net>
-Message-ID: <20130907130738.GA16740@gnash>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Date: Thu, 19 Sep 2013 22:22:35 +0100
+Subject: [PATCH 00/51] DMA mask changes
+Message-ID: <20130919212235.GD12758@n2100.arm.linux.org.uk>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
 
-On Fri, Sep 06, 2013 at 04:07:46PM -0500, Larry Finger wrote:
+This started out as a request to look at the DMA mask situation, and how
+to solve the issues which we have on ARM - notably how the DMA mask
+should be setup.
 
-> The offending module is usually marked with a P in the
-> modules-loaded list that comes with the oops/warning output. No
-> modules had this annotation, which could happen if the offending
-> module was loaded and unloaded before the dump happened. Have you
-> loaded any other module since the last reboot?
+However, I started off reviewing how the dma_mask and coherent_dma_mask
+was being used, and what I found was rather messy, and in some cases
+rather buggy.  I tried to get some of the bug fixes in before the last
+merge window, but it seems that the maintainers preferred to have the
+full solution rather than a simple -rc suitable bug fix.
 
-Not that I'm aware of. But this is what I found in kern.log, which
-looks like the same warning prduced by a non-tained version, very
-early on boot time, followed (no other logs in between) by a tainted
-report:
+So, this is an attempt to clean things up.
 
-Sep  6 19:11:38 xtp kernel: [   10.763686] EXT3-fs (sda1): mounted filesystem with ordered data mode
-Sep  6 19:11:41 xtp kernel: [   18.458931] b43legacy ssb0:0: firmware: agent loaded b43legacy/ucode2.fw into memory
-Sep  6 19:11:41 xtp kernel: [   18.620387] b43legacy ssb0:0: firmware: agent loaded b43legacy/pcm4.fw into memory
-Sep  6 19:11:41 xtp kernel: [   18.746451] b43legacy ssb0:0: firmware: agent loaded b43legacy/b0g0initvals2.fw into memory
-Sep  6 19:11:42 xtp kernel: [   18.856054] b43legacy-phy0: Loading firmware version 0x127, patch level 14 (2005-04-18 02:36:27)
-Sep  6 19:11:42 xtp kernel: [   18.913047] b43legacy-phy0 debug: Chip initialized
-Sep  6 19:11:42 xtp kernel: [   18.913488] b43legacy-phy0 debug: 30-bit DMA initialized
-Sep  6 19:11:42 xtp kernel: [   18.914875] b43legacy-phy0 debug: Wireless interface started
-Sep  6 19:11:42 xtp kernel: [   18.914925] b43legacy-phy0 debug: Adding Interface type 2
-Sep  6 19:11:42 xtp kernel: [   19.232044] b43legacy-phy0 ERROR: MAC suspend failed
-Sep  6 19:11:42 xtp kernel: [   19.252140] ADDRCONF(NETDEV_UP): wlan0: link is not ready
-Sep  6 19:11:42 xtp kernel: [   19.263143] skge 0000:00:0d.0: eth0: enabling interface
-Sep  6 19:11:44 xtp kernel: [   21.480649] ------------[ cut here ]------------
-Sep  6 19:11:44 xtp kernel: [   21.480675] WARNING: at /build/linux-ppSMWv/linux-3.2.46/debian/build/source_rt/drivers/net/wireless/b43legacy/debugfs.c:485 b43legacy_debugfs_log_txstat+0x2a/0x71 [b43legacy]()
-Sep  6 19:11:44 xtp kernel: [   21.480680] Hardware name: L5C
-Sep  6 19:11:44 xtp kernel: [   21.480684] Modules linked in: radeon joydev i2c_sis96x arc4 ttm snd_intel8x0m snd_intel8x0 drm_kms_helper b43legacy snd_ac97_codec drm snd_pcm i2c_algo_bit snd_page_alloc snd_seq snd_seq_device snd_timer snd i2c_core mac80211 shpchp yenta_socket pcmcia_rsrc psmouse pcspkr serio_raw evdev soundcore ac97_bus cfg80211 rng_core battery ac power_supply asus_laptop sparse_keymap rfkill button input_polldev processor ext3 mbcache jbd sg sr_mod sd_mod cdrom crc_t10dif ata_generic cb710_mmc floppy fan thermal thermal_sys pata_sis libata ohci_hcd ssb mmc_core skge ehci_hcd usbcore scsi_mod pcmcia pcmcia_core cb710 firewire_ohci usb_common firewire_core crc_itu_t [last unloaded: scsi_wait_scan]
-Sep  6 19:11:44 xtp kernel: [   21.480751] Pid: 1955, comm: irq/17-b43legac Not tainted 3.2.0-4-rt-686-pae #1 Debian 3.2.46-1+deb7u1
-Sep  6 19:11:44 xtp kernel: [   21.480755] Call Trace:
-Sep  6 19:11:44 xtp kernel: [   21.480768]  [<c103029a>] ? warn_slowpath_common+0x68/0x79
-Sep  6 19:11:44 xtp kernel: [   21.480776]  [<e0ae953c>] ? b43legacy_debugfs_log_txstat+0x2a/0x71 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.480783]  [<c10302b8>] ? warn_slowpath_null+0xd/0x10
-Sep  6 19:11:44 xtp kernel: [   21.480791]  [<e0ae953c>] ? b43legacy_debugfs_log_txstat+0x2a/0x71 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.480801]  [<e0ae865e>] ? b43legacy_handle_txstatus+0xb/0x54 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.480810]  [<e0ae8710>] ? b43legacy_handle_hwtxstatus+0x69/0x6e [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.480818]  [<e0aead85>] ? b43legacy_dma_rx+0x119/0x2b5 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.480827]  [<e0adf2de>] ? b43legacy_interrupt_tasklet+0x40b/0x505 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.480835]  [<c10261c1>] ? enqueue_task_rt+0xf0/0x1cd
-Sep  6 19:11:44 xtp kernel: [   21.480844]  [<c1021b29>] ? test_tsk_need_resched+0xd/0x16
-Sep  6 19:11:44 xtp kernel: [   21.480851]  [<c12c46f3>] ? sub_preempt_count+0x74/0x80
-Sep  6 19:11:44 xtp kernel: [   21.480857]  [<c1035048>] ? __tasklet_action.isra.4+0x7c/0xd6
-Sep  6 19:11:44 xtp kernel: [   21.480862]  [<c10352de>] ? __do_softirq_common+0xb2/0x174
-Sep  6 19:11:44 xtp kernel: [   21.480868]  [<c10356d8>] ? local_bh_enable+0x97/0x101
-Sep  6 19:11:44 xtp kernel: [   21.480875]  [<c107361d>] ? irq_forced_thread_fn+0x34/0x3a
-Sep  6 19:11:44 xtp kernel: [   21.480880]  [<c10734aa>] ? irq_thread+0xbf/0x1db
-Sep  6 19:11:44 xtp kernel: [   21.480884]  [<c10735e9>] ? irq_thread_fn+0x23/0x23
-Sep  6 19:11:44 xtp kernel: [   21.480890]  [<c10733eb>] ? irq_finalize_oneshot+0x88/0x88
-Sep  6 19:11:44 xtp kernel: [   21.480897]  [<c1046758>] ? kthread+0x63/0x68
-Sep  6 19:11:44 xtp kernel: [   21.480903]  [<c10466f5>] ? rcu_read_unlock_sched_notrace+0x1e/0x1e
-Sep  6 19:11:44 xtp kernel: [   21.480909]  [<c12c623e>] ? kernel_thread_helper+0x6/0xd
-Sep  6 19:11:44 xtp kernel: [   21.480912] ---[ end trace 0000000000000002 ]---
-Sep  6 19:11:44 xtp kernel: [   21.480916] ------------[ cut here ]------------
-Sep  6 19:11:44 xtp kernel: [   21.480924] WARNING: at /build/linux-ppSMWv/linux-3.2.46/debian/build/source_rt/drivers/net/wireless/b43legacy/dma.c:1212 b43legacy_dma_handle_txstatus+0xca/0x2a6 [b43legacy]()
-Sep  6 19:11:44 xtp kernel: [   21.480929] Hardware name: L5C
-Sep  6 19:11:44 xtp kernel: [   21.480931] Modules linked in: radeon joydev i2c_sis96x arc4 ttm snd_intel8x0m snd_intel8x0 drm_kms_helper b43legacy snd_ac97_codec drm snd_pcm i2c_algo_bit snd_page_alloc snd_seq snd_seq_device snd_timer snd i2c_core mac80211 shpchp yenta_socket pcmcia_rsrc psmouse pcspkr serio_raw evdev soundcore ac97_bus cfg80211 rng_core battery ac power_supply asus_laptop sparse_keymap rfkill button input_polldev processor ext3 mbcache jbd sg sr_mod sd_mod cdrom crc_t10dif ata_generic cb710_mmc floppy fan thermal thermal_sys pata_sis libata ohci_hcd ssb mmc_core skge ehci_hcd usbcore scsi_mod pcmcia pcmcia_core cb710 firewire_ohci usb_common firewire_core crc_itu_t [last unloaded: scsi_wait_scan]
-Sep  6 19:11:44 xtp kernel: [   21.480978] Pid: 1955, comm: irq/17-b43legac Tainted: G        W    3.2.0-4-rt-686-pae #1 Debian 3.2.46-1+deb7u1
-Sep  6 19:11:44 xtp kernel: [   21.480982] Call Trace:
-Sep  6 19:11:44 xtp kernel: [   21.480988]  [<c103029a>] ? warn_slowpath_common+0x68/0x79
-Sep  6 19:11:44 xtp kernel: [   21.480997]  [<e0aeaa90>] ? b43legacy_dma_handle_txstatus+0xca/0x2a6 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.481003]  [<c10302b8>] ? warn_slowpath_null+0xd/0x10
-Sep  6 19:11:44 xtp kernel: [   21.481012]  [<e0aeaa90>] ? b43legacy_dma_handle_txstatus+0xca/0x2a6 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.481019]  [<c102aeae>] ? migrate_enable+0x120/0x132
-Sep  6 19:11:44 xtp kernel: [   21.481028]  [<e0ae8710>] ? b43legacy_handle_hwtxstatus+0x69/0x6e [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.481037]  [<e0aead85>] ? b43legacy_dma_rx+0x119/0x2b5 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.481046]  [<e0adf2de>] ? b43legacy_interrupt_tasklet+0x40b/0x505 [b43legacy]
-Sep  6 19:11:44 xtp kernel: [   21.481052]  [<c10261c1>] ? enqueue_task_rt+0xf0/0x1cd
-Sep  6 19:11:44 xtp kernel: [   21.481058]  [<c1021b29>] ? test_tsk_need_resched+0xd/0x16
-Sep  6 19:11:44 xtp kernel: [   21.481063]  [<c12c46f3>] ? sub_preempt_count+0x74/0x80
-Sep  6 19:11:44 xtp kernel: [   21.481069]  [<c1035048>] ? __tasklet_action.isra.4+0x7c/0xd6
-Sep  6 19:11:44 xtp kernel: [   21.481074]  [<c10352de>] ? __do_softirq_common+0xb2/0x174
-Sep  6 19:11:44 xtp kernel: [   21.481080]  [<c10356d8>] ? local_bh_enable+0x97/0x101
-Sep  6 19:11:44 xtp kernel: [   21.481085]  [<c107361d>] ? irq_forced_thread_fn+0x34/0x3a
-Sep  6 19:11:44 xtp kernel: [   21.481090]  [<c10734aa>] ? irq_thread+0xbf/0x1db
-Sep  6 19:11:44 xtp kernel: [   21.481095]  [<c10735e9>] ? irq_thread_fn+0x23/0x23
-Sep  6 19:11:44 xtp kernel: [   21.481100]  [<c10733eb>] ? irq_finalize_oneshot+0x88/0x88
-Sep  6 19:11:44 xtp kernel: [   21.481106]  [<c1046758>] ? kthread+0x63/0x68
-Sep  6 19:11:44 xtp kernel: [   21.481112]  [<c10466f5>] ? rcu_read_unlock_sched_notrace+0x1e/0x1e
-Sep  6 19:11:44 xtp kernel: [   21.481117]  [<c12c623e>] ? kernel_thread_helper+0x6/0xd
-Sep  6 19:11:44 xtp kernel: [   21.481121] ---[ end trace 0000000000000003 ]---
+The first point here is that drivers performing DMA should be calling
+dma_set_mask()/dma_set_coherent_mask() in their probe function to verify
+that DMA can be performed.  Lots of ARM drivers omit this step; please
+refer to the DMA API documentation on this subject.
 
---strk;
+What this means is that the DMA mask provided by bus code is a default
+value - nothing more.  It doesn't have to accurately reflect what the
+device is actually capable of.  Apart from the storage for dev->dma_mask
+being initialised for any device which is DMA capable, there is no other
+initialisation which is strictly necessary at device creation time.
+
+Now, these cleanups address two major areas:
+1. The setting of DMA masks, particularly when both the coherent and
+   streaming DMA masks are set together.
+
+2. The initialisation of DMA masks by drivers - this seems to be becoming
+   a popular habbit, one which may not be entirely the right solution.
+   Rather than having this scattered throughout the tree, I've pulled
+   that into a central location (and called it coercing the DMA mask -
+   because it really is about forcing the DMA mask to be that value.)
+
+3. Finally, addressing the long held misbelief that DMA masks somehow
+   correspond with physical addresses.  We already have established
+   long ago that dma_addr_t values returned from the DMA API are the
+   values which you program into the DMA controller, and so are the
+   bus addresses.  It is _only_ sane that DMA masks are also bus
+   related too, and not related to physical address spaces.
+
+(3) is a very important point for LPAE systems, which may still have
+less than 4GB of memory, but this memory is all located above the 4GB
+physical boundary.  This means with the current model, any device
+using a 32-bit DMA mask fails - even though the DMA controller is
+still only a 32-bit DMA controller but the 32-bit bus addresses map
+to system memory.  To put it another way, the bus addresses have a
+4GB physical offset on them.
+
+This email is only being sent to the mailing lists in question, not to
+anyone personally.  The list of individuals is far to great to do that.
+I'm hoping no mailing lists reject the patches based on the number of
+recipients.
+
+Patches based on v3.12-rc1.
+
+ Documentation/DMA-API-HOWTO.txt                   |   37 +++++++++------
+ Documentation/DMA-API.txt                         |    8 +++
+ arch/arm/include/asm/dma-mapping.h                |    8 +++
+ arch/arm/mm/dma-mapping.c                         |   49 ++++++++++++++++++--
+ arch/arm/mm/init.c                                |   12 +++---
+ arch/arm/mm/mm.h                                  |    2 +
+ arch/powerpc/kernel/vio.c                         |    3 +-
+ block/blk-settings.c                              |    8 ++--
+ drivers/amba/bus.c                                |    6 +--
+ drivers/ata/pata_ixp4xx_cf.c                      |    5 ++-
+ drivers/ata/pata_octeon_cf.c                      |    5 +-
+ drivers/block/nvme-core.c                         |   10 ++---
+ drivers/crypto/ixp4xx_crypto.c                    |   48 ++++++++++----------
+ drivers/dma/amba-pl08x.c                          |    5 ++
+ drivers/dma/dw/platform.c                         |    8 +--
+ drivers/dma/edma.c                                |    6 +--
+ drivers/dma/pl330.c                               |    4 ++
+ drivers/firmware/dcdbas.c                         |   23 +++++-----
+ drivers/firmware/google/gsmi.c                    |   13 +++--
+ drivers/gpu/drm/exynos/exynos_drm_drv.c           |    6 ++-
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c          |    5 +-
+ drivers/media/platform/omap3isp/isp.c             |    6 +-
+ drivers/media/platform/omap3isp/isp.h             |    3 -
+ drivers/mmc/card/queue.c                          |    3 +-
+ drivers/mmc/host/sdhci-acpi.c                     |    5 +-
+ drivers/net/ethernet/broadcom/b44.c               |    3 +-
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c  |    8 +---
+ drivers/net/ethernet/brocade/bna/bnad.c           |   13 ++----
+ drivers/net/ethernet/emulex/benet/be_main.c       |   12 +----
+ drivers/net/ethernet/intel/e1000/e1000_main.c     |    9 +---
+ drivers/net/ethernet/intel/e1000e/netdev.c        |   18 +++-----
+ drivers/net/ethernet/intel/igb/igb_main.c         |   18 +++-----
+ drivers/net/ethernet/intel/igbvf/netdev.c         |   18 +++-----
+ drivers/net/ethernet/intel/ixgb/ixgb_main.c       |   16 ++-----
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c     |   15 ++----
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |   15 ++----
+ drivers/net/ethernet/nxp/lpc_eth.c                |    6 ++-
+ drivers/net/ethernet/octeon/octeon_mgmt.c         |    5 +-
+ drivers/net/ethernet/sfc/efx.c                    |   12 +-----
+ drivers/net/wireless/b43/dma.c                    |    9 +---
+ drivers/net/wireless/b43legacy/dma.c              |    9 +---
+ drivers/of/platform.c                             |    3 -
+ drivers/parport/parport_pc.c                      |    8 +++-
+ drivers/scsi/scsi_lib.c                           |    2 +-
+ drivers/staging/dwc2/platform.c                   |    5 +-
+ drivers/staging/et131x/et131x.c                   |   17 +------
+ drivers/staging/imx-drm/imx-drm-core.c            |    8 +++-
+ drivers/staging/imx-drm/ipuv3-crtc.c              |    4 +-
+ drivers/staging/media/dt3155v4l/dt3155v4l.c       |    5 +--
+ drivers/usb/chipidea/ci_hdrc_imx.c                |    7 +--
+ drivers/usb/dwc3/dwc3-exynos.c                    |    7 +--
+ drivers/usb/gadget/lpc32xx_udc.c                  |    4 +-
+ drivers/usb/host/bcma-hcd.c                       |    3 +-
+ drivers/usb/host/ehci-atmel.c                     |    7 +--
+ drivers/usb/host/ehci-octeon.c                    |    4 +-
+ drivers/usb/host/ehci-omap.c                      |   10 ++--
+ drivers/usb/host/ehci-orion.c                     |    7 +--
+ drivers/usb/host/ehci-platform.c                  |   10 ++--
+ drivers/usb/host/ehci-s5p.c                       |    7 +--
+ drivers/usb/host/ehci-spear.c                     |    7 +--
+ drivers/usb/host/ehci-tegra.c                     |    7 +--
+ drivers/usb/host/ohci-at91.c                      |    9 ++--
+ drivers/usb/host/ohci-exynos.c                    |    7 +--
+ drivers/usb/host/ohci-nxp.c                       |    5 +-
+ drivers/usb/host/ohci-octeon.c                    |    5 +-
+ drivers/usb/host/ohci-omap3.c                     |   10 ++--
+ drivers/usb/host/ohci-pxa27x.c                    |    8 ++--
+ drivers/usb/host/ohci-sa1111.c                    |    6 +++
+ drivers/usb/host/ohci-spear.c                     |    7 +--
+ drivers/usb/host/ssb-hcd.c                        |    3 +-
+ drivers/usb/host/uhci-platform.c                  |    7 +--
+ drivers/usb/musb/am35x.c                          |   50 +++++++--------------
+ drivers/usb/musb/da8xx.c                          |   49 +++++++-------------
+ drivers/usb/musb/davinci.c                        |   48 +++++++-------------
+ drivers/usb/musb/tusb6010.c                       |   49 +++++++-------------
+ drivers/video/amba-clcd.c                         |    5 ++
+ include/linux/amba/bus.h                          |    2 -
+ include/linux/dma-mapping.h                       |   31 +++++++++++++
+ sound/arm/pxa2xx-pcm.c                            |    9 +---
+ sound/soc/atmel/atmel-pcm.c                       |   11 ++---
+ sound/soc/blackfin/bf5xx-ac97-pcm.c               |   11 ++---
+ sound/soc/blackfin/bf5xx-i2s-pcm.c                |   10 ++---
+ sound/soc/davinci/davinci-pcm.c                   |    9 +---
+ sound/soc/fsl/fsl_dma.c                           |    9 +---
+ sound/soc/fsl/mpc5200_dma.c                       |   10 ++---
+ sound/soc/jz4740/jz4740-pcm.c                     |   12 ++---
+ sound/soc/kirkwood/kirkwood-dma.c                 |    9 +---
+ sound/soc/nuc900/nuc900-pcm.c                     |    9 ++--
+ sound/soc/omap/omap-pcm.c                         |   11 ++---
+ sound/soc/pxa/pxa2xx-pcm.c                        |   11 ++---
+ sound/soc/s6000/s6000-pcm.c                       |    9 +---
+ sound/soc/samsung/dma.c                           |   11 ++---
+ sound/soc/samsung/idma.c                          |   11 ++---
+ 93 files changed, 493 insertions(+), 566 deletions(-)
