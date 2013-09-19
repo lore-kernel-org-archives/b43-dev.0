@@ -1,37 +1,41 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Fri, 20 Sep 2013 15:12:44 +0100
-Subject: [PATCH 01/51] DMA-API: provide a helper to set both DMA and
- coherent DMA masks
-In-Reply-To: <1379640097.2500.4.camel@bwh-desktop.uk.level5networks.com>
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+Date: Thu, 19 Sep 2013 22:48:01 +0100
+Subject: [PATCH 23/51] DMA-API: dma: pl08x: add dma_set_mask_and_coherent()
+ call
+In-Reply-To: <20130919212235.GD12758@n2100.arm.linux.org.uk>
 References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMlja-0007fA-HU@rmk-PC.arm.linux.org.uk>
- <1379640097.2500.4.camel@bwh-desktop.uk.level5networks.com>
-Message-ID: <20130920141244.GQ25647@n2100.arm.linux.org.uk>
+Message-ID: <E1VMm4v-0007hz-RC@rmk-PC.arm.linux.org.uk>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Hutchings <bhutchings-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>
 
-On Fri, Sep 20, 2013 at 02:21:37AM +0100, Ben Hutchings wrote:
-> On Thu, 2013-09-19 at 22:25 +0100, Russell King wrote:
-> [...]
-> > -dma_set_coherent_mask() will always be able to set the same or a
-> > -smaller mask as dma_set_mask(). However for the rare case that a
-> > +The coherent coherent mask will always be able to set the same or a
-> > +smaller mask as the streaming mask. However for the rare case that a
-> [...]
-> 
-> The new wording doesn't make sense; a mask doesn't set itself.  I would
-> suggest:
-> 
-> "The coherent mask can always be set to the same or a smaller mask than
-> the streaming mask."
+The DMA API requires drivers to call the appropriate dma_set_mask()
+functions before doing any DMA mapping.  Add this required call to
+the AMBA PL08x driver.
 
-Yes, the original sentence is not particularly good, but I think even
-your modified version can be interpreted as "a mask setting itself"
-for all the same reasons that the original can be (which mask does "same"
-refer to?)
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ drivers/dma/amba-pl08x.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-Even so, I prefer your version.  Thanks. :)
+diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+index fce46c5..e51a983 100644
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@ -2055,6 +2055,11 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
+ 	if (ret)
+ 		return ret;
+ 
++	/* Ensure that we can do DMA */
++	ret = dma_set_mask_and_coherent(&adev->dev, DMA_BIT_MASK(32));
++	if (ret)
++		goto out_no_pl08x;
++
+ 	/* Create the driver state holder */
+ 	pl08x = kzalloc(sizeof(*pl08x), GFP_KERNEL);
+ 	if (!pl08x) {
+-- 
+1.7.4.4
