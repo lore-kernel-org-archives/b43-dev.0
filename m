@@ -1,51 +1,43 @@
 From: Russell King <rmk+kernel@arm.linux.org.uk>
-Date: Thu, 19 Sep 2013 22:52:02 +0100
-Subject: [PATCH 27/51] DMA-API: provide a helper to setup DMA masks
+Date: Thu, 19 Sep 2013 22:54:02 +0100
+Subject: [PATCH 29/51] DMA-API: ata: pata_octeon_cf: convert to use
+ dma_coerce_mask_and_coherent()
 In-Reply-To: <20130919212235.GD12758@n2100.arm.linux.org.uk>
 References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
-Message-ID: <E1VMm8o-0007iV-Ac@rmk-PC.arm.linux.org.uk>
+Message-ID: <E1VMmAk-0007iq-IU@rmk-PC.arm.linux.org.uk>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org
-Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+To: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
+Cc: Tejun Heo <tj@kernel.org>
 
-Many drivers contain code such as:
-
-	dev->dma_mask = &dev->coherent_dma_mask;
-	dev->coherent_dma_mask = MASK;
-
-Let's move this pattern out of drivers and have the DMA API provide a
-helper for it.  This helper uses dma_set_mask_and_coherent() to allow
-platform issues to be properly dealt with via dma_set_mask()/
-dma_is_supported().
+Convert this code sequence:
+	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(64);
+	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+to use dma_coerce_mask_and_coherent() to avoid bypassing the architecture
+check on the DMA mask.
 
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- include/linux/dma-mapping.h |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+ drivers/ata/pata_octeon_cf.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index ec951f9..27d1421 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -111,6 +111,16 @@ static inline int dma_set_mask_and_coherent(struct device *dev, u64 mask)
- 	return rc;
- }
+diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
+index c51bbb9..6231d43 100644
+--- a/drivers/ata/pata_octeon_cf.c
++++ b/drivers/ata/pata_octeon_cf.c
+@@ -1014,8 +1014,9 @@ static int octeon_cf_probe(struct platform_device *pdev)
+ 	}
+ 	cf_port->c0 = ap->ioaddr.ctl_addr;
  
-+/*
-+ * Similar to the above, except it deals with the case where the device
-+ * does not have dev->dma_mask appropriately setup.
-+ */
-+static inline int dma_coerce_mask_and_coherent(struct device *dev, u64 mask)
-+{
-+	dev->dma_mask = &dev->coherent_dma_mask;
-+	return dma_set_mask_and_coherent(dev, mask);
-+}
-+
- extern u64 dma_get_required_mask(struct device *dev);
+-	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(64);
+-	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
++	rv = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (rv)
++		return ret;
  
- static inline unsigned int dma_get_max_seg_size(struct device *dev)
+ 	ata_port_desc(ap, "cmd %p ctl %p", base, ap->ioaddr.ctl_addr);
+ 
 -- 
 1.7.4.4
