@@ -1,56 +1,84 @@
 From: Russell King <rmk+kernel@arm.linux.org.uk>
-Date: Thu, 19 Sep 2013 22:42:00 +0100
-Subject: [PATCH 17/51] DMA-API: block: nvme-core: replace
- dma_set_mask()+dma_set_coherent_mask() with new helper
+Date: Fri, 20 Sep 2013 00:16:39 +0100
+Subject: [PATCH 44/51] DMA-API: dcdbas: update DMA mask handing
 In-Reply-To: <20130919212235.GD12758@n2100.arm.linux.org.uk>
 References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
-Message-ID: <E1VMlz6-0007h9-WF@rmk-PC.arm.linux.org.uk>
+Message-ID: <E1VMnSh-0007sm-5t@rmk-PC.arm.linux.org.uk>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
-Cc: Matthew Wilcox <willy@linux.intel.com>
+To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org
+Cc: Doug Warzecha <Douglas_Warzecha-8PEkshWhKlo@public.gmane.org>
 
-Replace the following sequence:
+dcdbas was explicitly initializing DMA masks thusly:
+	dcdbas_pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+	dcdbas_pdev->dev.dma_mask = &dcdbas_pdev->dev.coherent_dma_mask;
+which bypasses the architecture check.  Moreover, it is creating the
+dcdbas_pdev device itself, and using the platform_device_register_full()
+avoids some of this explicit initialization.
 
-	dma_set_mask(dev, mask);
-	dma_set_coherent_mask(dev, mask);
-
-with a call to the new helper dma_set_mask_and_coherent().
+Convert the driver to use platform_device_register_full(), and as it
+makes use of coherent DMA, also call dma_set_coherent_mask() to ensure
+that the architecture gets to check the mask.
 
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- drivers/block/nvme-core.c |   10 ++++------
- 1 files changed, 4 insertions(+), 6 deletions(-)
+ drivers/firmware/dcdbas.c |   23 ++++++++++++-----------
+ 1 files changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/block/nvme-core.c b/drivers/block/nvme-core.c
-index da52092..26d03fa 100644
---- a/drivers/block/nvme-core.c
-+++ b/drivers/block/nvme-core.c
-@@ -1949,12 +1949,9 @@ static int nvme_dev_map(struct nvme_dev *dev)
- 	if (pci_request_selected_regions(pdev, bars, "nvme"))
- 		goto disable_pci;
+diff --git a/drivers/firmware/dcdbas.c b/drivers/firmware/dcdbas.c
+index ff080ee..a85fda2 100644
+--- a/drivers/firmware/dcdbas.c
++++ b/drivers/firmware/dcdbas.c
+@@ -549,8 +549,9 @@ static int dcdbas_probe(struct platform_device *dev)
+ 	 * BIOS SMI calls require buffer addresses be in 32-bit address space.
+ 	 * This is done by setting the DMA mask below.
+ 	 */
+-	dcdbas_pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+-	dcdbas_pdev->dev.dma_mask = &dcdbas_pdev->dev.coherent_dma_mask;
++	error = dma_set_coherent_mask(&dcdbas_pdev->dev, DMA_BIT_MASK(32));
++	if (error)
++		return error;
  
--	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64)))
--		dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
--	else if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(32)))
--		dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
--	else
--		goto disable_pci;
-+	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64)) &&
-+	    dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32)))
-+		goto disable;
+ 	error = sysfs_create_group(&dev->dev.kobj, &dcdbas_attr_group);
+ 	if (error)
+@@ -581,6 +582,12 @@ static struct platform_driver dcdbas_driver = {
+ 	.remove		= dcdbas_remove,
+ };
  
- 	pci_set_drvdata(pdev, dev);
- 	dev->bar = ioremap(pci_resource_start(pdev, 0), 8192);
-@@ -2168,6 +2165,7 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	INIT_LIST_HEAD(&dev->namespaces);
- 	dev->pci_dev = pdev;
++static const struct platform_device_info dcdbas_dev_info __initdata = {
++	.name		= DRIVER_NAME,
++	.id		= -1,
++	.dma_mask	= DMA_BIT_MASK(32),
++};
 +
- 	result = nvme_set_instance(dev);
- 	if (result)
- 		goto free;
+ /**
+  * dcdbas_init: initialize driver
+  */
+@@ -592,20 +599,14 @@ static int __init dcdbas_init(void)
+ 	if (error)
+ 		return error;
+ 
+-	dcdbas_pdev = platform_device_alloc(DRIVER_NAME, -1);
+-	if (!dcdbas_pdev) {
+-		error = -ENOMEM;
++	dcdbas_pdev = platform_device_register_full(&dcdbas_dev_info);
++	if (IS_ERR(dcdbas_pdev)) {
++		error = PTR_ERR(dcdbas_pdev);
+ 		goto err_unregister_driver;
+ 	}
+ 
+-	error = platform_device_add(dcdbas_pdev);
+-	if (error)
+-		goto err_free_device;
+-
+ 	return 0;
+ 
+- err_free_device:
+-	platform_device_put(dcdbas_pdev);
+  err_unregister_driver:
+ 	platform_driver_unregister(&dcdbas_driver);
+ 	return error;
 -- 
 1.7.4.4
