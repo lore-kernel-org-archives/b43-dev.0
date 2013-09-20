@@ -1,41 +1,56 @@
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Date: Thu, 19 Sep 2013 22:48:01 +0100
-Subject: [PATCH 23/51] DMA-API: dma: pl08x: add dma_set_mask_and_coherent()
- call
-In-Reply-To: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+From: Felipe Balbi <balbi@ti.com>
+Date: Fri, 20 Sep 2013 10:15:52 -0500
+Subject: [PATCH 42/51] DMA-API: usb: musb: use
+ platform_device_register_full() to avoid directly messing with dma masks
+In-Reply-To: <20130920134938.GO25647@n2100.arm.linux.org.uk>
 References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
-Message-ID: <E1VMm4v-0007hz-RC@rmk-PC.arm.linux.org.uk>
+ <E1VMnQk-0007sX-Ty@rmk-PC.arm.linux.org.uk>
+ <20130920131125.GO26101@radagast>
+ <20130920134938.GO25647@n2100.arm.linux.org.uk>
+Message-ID: <20130920151552.GQ26101@radagast>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-crypto@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, uclinux-dist-devel@blackfin.uclinux.org, linuxppc-dev@lists.ozlabs.org
 
-The DMA API requires drivers to call the appropriate dma_set_mask()
-functions before doing any DMA mapping.  Add this required call to
-the AMBA PL08x driver.
+Hi,
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- drivers/dma/amba-pl08x.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+On Fri, Sep 20, 2013 at 02:49:38PM +0100, Russell King - ARM Linux wrote:
+> On Fri, Sep 20, 2013 at 08:11:25AM -0500, Felipe Balbi wrote:
+> > Hi,
+> > 
+> > On Fri, Sep 20, 2013 at 12:14:38AM +0100, Russell King wrote:
+> > > Use platform_device_register_full() for those drivers which can, to
+> > > avoid messing directly with DMA masks.  This can only be done when
+> > > the driver does not need to access the allocated musb platform device
+> > > from within its callbacks, which may be called during the musb
+> > > device probing.
+> > > 
+> > > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> > 
+> > you want me to carry this one through my tree or you prefer getting my
+> > Acked-by ? Either way works for me:
+> > 
+> > Acked-by: Felipe Balbi <balbi@ti.com>
+> > 
+> > there's also the third option of me setting up a branch with only this
+> > patch and we both merge it, that'd also work.
+> 
+> I think this patch is sufficiently stand-alone that it should be fine
+> if you want to take it through your tree.  That may be better in the
+> long run to avoid conflicts with this patch and any future work in
+> this area during this cycle.
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index fce46c5..e51a983 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -2055,6 +2055,11 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
- 	if (ret)
- 		return ret;
- 
-+	/* Ensure that we can do DMA */
-+	ret = dma_set_mask_and_coherent(&adev->dev, DMA_BIT_MASK(32));
-+	if (ret)
-+		goto out_no_pl08x;
-+
- 	/* Create the driver state holder */
- 	pl08x = kzalloc(sizeof(*pl08x), GFP_KERNEL);
- 	if (!pl08x) {
+awesome, i'll take this one early next week.
+
 -- 
-1.7.4.4
+balbi
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: Digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130920/77a49f82/attachment.sig>
