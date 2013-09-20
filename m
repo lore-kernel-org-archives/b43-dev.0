@@ -1,56 +1,43 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Fri, 20 Sep 2013 10:15:52 -0500
-Subject: [PATCH 42/51] DMA-API: usb: musb: use
- platform_device_register_full() to avoid directly messing with dma masks
-In-Reply-To: <20130920134938.GO25647@n2100.arm.linux.org.uk>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Date: Fri, 20 Sep 2013 19:26:27 +0200
+Subject: [PATCH 24/51] DMA-API: dma: pl330: add
+ dma_set_mask_and_coherent() call
+In-Reply-To: <E1VMm5t-0007i5-V7@rmk-PC.arm.linux.org.uk>
 References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMnQk-0007sX-Ty@rmk-PC.arm.linux.org.uk>
- <20130920131125.GO26101@radagast>
- <20130920134938.GO25647@n2100.arm.linux.org.uk>
-Message-ID: <20130920151552.GQ26101@radagast>
+ <E1VMm5t-0007i5-V7@rmk-PC.arm.linux.org.uk>
+Message-ID: <201309201926.29084.heiko@sntech.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-crypto@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, uclinux-dist-devel@blackfin.uclinux.org, linuxppc-dev@lists.ozlabs.org
+To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 
-Hi,
+Am Donnerstag, 19. September 2013, 23:49:01 schrieb Russell King:
+> The DMA API requires drivers to call the appropriate dma_set_mask()
+> functions before doing any DMA mapping.  Add this required call to
+> the AMBA PL08x driver.
+			^--- copy and paste error - should of course be PL330
 
-On Fri, Sep 20, 2013 at 02:49:38PM +0100, Russell King - ARM Linux wrote:
-> On Fri, Sep 20, 2013 at 08:11:25AM -0500, Felipe Balbi wrote:
-> > Hi,
-> > 
-> > On Fri, Sep 20, 2013 at 12:14:38AM +0100, Russell King wrote:
-> > > Use platform_device_register_full() for those drivers which can, to
-> > > avoid messing directly with DMA masks.  This can only be done when
-> > > the driver does not need to access the allocated musb platform device
-> > > from within its callbacks, which may be called during the musb
-> > > device probing.
-> > > 
-> > > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > 
-> > you want me to carry this one through my tree or you prefer getting my
-> > Acked-by ? Either way works for me:
-> > 
-> > Acked-by: Felipe Balbi <balbi@ti.com>
-> > 
-> > there's also the third option of me setting up a branch with only this
-> > patch and we both merge it, that'd also work.
+
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  drivers/dma/pl330.c |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
 > 
-> I think this patch is sufficiently stand-alone that it should be fine
-> if you want to take it through your tree.  That may be better in the
-> long run to avoid conflicts with this patch and any future work in
-> this area during this cycle.
-
-awesome, i'll take this one early next week.
-
--- 
-balbi
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: Digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130920/77a49f82/attachment.sig>
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index a562d24..df8b10f 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -2903,6 +2903,10 @@ pl330_probe(struct amba_device *adev, const struct
+> amba_id *id)
+> 
+>  	pdat = dev_get_platdata(&adev->dev);
+> 
+> +	ret = dma_set_mask_and_coherent(&adev->dev, DMA_BIT_MASK(32));
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Allocate a new DMAC and its Channels */
+>  	pdmac = devm_kzalloc(&adev->dev, sizeof(*pdmac), GFP_KERNEL);
+>  	if (!pdmac) {
