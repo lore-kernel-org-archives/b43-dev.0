@@ -1,113 +1,45 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Mon, 23 Sep 2013 12:37:55 +0100
-Subject: [alsa-devel] [PATCH 43/51] DMA-API: dma: edma.c: no need to
- explicitly initialize DMA masks
-In-Reply-To: <20130923102533.GI17188@intel.com>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMnRj-0007sg-1Z@rmk-PC.arm.linux.org.uk>
- <20130923102533.GI17188@intel.com>
-Message-ID: <20130923113755.GT25647@n2100.arm.linux.org.uk>
+From: Larry Johnson <keepitsimpleengineer@gmail.com>
+Date: Tue, 24 Sep 2013 12:16:09 -0700
+Subject: Unable to transfer data over wireless connection
+Message-ID: <CABb0tkdTXWKK9VFMTAsU_LdaXRzJXV8RMWfVG8ZaATJe6x5byQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, linux-crypto@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org, linuxppc-dev@lists.ozlabs.org
+To: b43-dev@lists.infradead.org
 
-On Mon, Sep 23, 2013 at 03:55:33PM +0530, Vinod Koul wrote:
-> On Fri, Sep 20, 2013 at 12:15:39AM +0100, Russell King wrote:
-> > register_platform_device_full() can setup the DMA mask provided the
-> > appropriate member is set in struct platform_device_info.  So lets
-> > make that be the case.  This avoids a direct reference to the DMA
-> > masks by this driver.
-> > 
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> Acked-by: Vinod Koul <vinod.koul@intel.com>
-> 
-> This also brings me question that should we force the driver to use the
-> dma_set_mask_and_coherent() API or they have below flexiblity too?
-
-There's two issues here:
-1. dma_set_mask_and_coherent() will only work if dev->dma_mask points at
-   some storage for the mask.  This needs to have .dma_mask in the
-   platform_device_info initialised.
-
-2. Yes, this driver should also be calling the appropriate DMA mask setting
-   functions in addition to having the mask initialized at device creation
-   time.
-
-Here's a replacement patch, though maybe it would be better to roll all
-the additions of dma_set_mask_and_coherent() in drivers/dma into one
-patch?  In other words, combine the addition of this with these two
-patches:
-
-	dma: pl330: add dma_set_mask_and_coherent() call
-	dma: pl08x: add dma_set_mask_and_coherent() call
-
-8<=====
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH] DMA-API: dma: edma.c: no need to explicitly initialize DMA
- masks
-
-register_platform_device_full() can setup the DMA mask provided the
-appropriate member is set in struct platform_device_info.  So lets
-make that be the case.  This avoids a direct reference to the DMA
-masks by this driver.
-
-While here, add the dma_set_mask_and_coherent() call which the DMA API
-requires DMA-using drivers to call.
-
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- drivers/dma/edma.c |   10 ++++++----
- 1 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/dma/edma.c b/drivers/dma/edma.c
-index ff50ff4..fd5e48c 100644
---- a/drivers/dma/edma.c
-+++ b/drivers/dma/edma.c
-@@ -631,6 +631,10 @@ static int edma_probe(struct platform_device *pdev)
- 	struct edma_cc *ecc;
- 	int ret;
- 
-+	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-+	if (ret)
-+		return ret;
-+
- 	ecc = devm_kzalloc(&pdev->dev, sizeof(*ecc), GFP_KERNEL);
- 	if (!ecc) {
- 		dev_err(&pdev->dev, "Can't allocate controller\n");
-@@ -702,11 +706,13 @@ static struct platform_device *pdev0, *pdev1;
- static const struct platform_device_info edma_dev_info0 = {
- 	.name = "edma-dma-engine",
- 	.id = 0,
-+	.dma_mask = DMA_BIT_MASK(32),
- };
- 
- static const struct platform_device_info edma_dev_info1 = {
- 	.name = "edma-dma-engine",
- 	.id = 1,
-+	.dma_mask = DMA_BIT_MASK(32),
- };
- 
- static int edma_init(void)
-@@ -720,8 +726,6 @@ static int edma_init(void)
- 			ret = PTR_ERR(pdev0);
- 			goto out;
- 		}
--		pdev0->dev.dma_mask = &pdev0->dev.coherent_dma_mask;
--		pdev0->dev.coherent_dma_mask = DMA_BIT_MASK(32);
- 	}
- 
- 	if (EDMA_CTLRS == 2) {
-@@ -731,8 +735,6 @@ static int edma_init(void)
- 			platform_device_unregister(pdev0);
- 			ret = PTR_ERR(pdev1);
- 		}
--		pdev1->dev.dma_mask = &pdev1->dev.coherent_dma_mask;
--		pdev1->dev.coherent_dma_mask = DMA_BIT_MASK(32);
- 	}
- 
- out:
--- 
-1.7.4.4
+Problem: Under Linux WiFi keeps dropping, unusable (recent behavoir).
+It happens every time the connection is used.  When running WinXP, no
+wireless problems this hardware.  No problem other wireless clients.
+?
+LenovoS12?AP?Router
+Access Point is Linksys WRT54GL V1.1 running Firmware: DD-WRT v24-sp2
+(07/22/09) voip. Security is WPA2 AES
+DHCP from Router Untangle Build:
+9.4.2~svn20130830r35759release9.4-1lenny, Kernel:
+2.6.26-2-untangle-686 as a bastion firewall.
+?
+Linux KISE-007 3.11.1-1-ARCH #1 SMP PREEMPT Sat Sep 14 20:31:35 CEST
+2013 i686 GNU/Linux
+?
+03:00.0 0280: 14e4:4315 (rev 01)
+        Subsystem: 14e4:04b5
+        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
+ParErr- Stepping- SERR- FastB2B- DisINTx-
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0, Cache Line Size: 64 bytes
+        Interrupt: pin A routed to IRQ 17
+        Region 0: Memory@f8000000 (64-bit, non-prefetchable) [size=16K]
+        Capabilities: [40] Power Management version 3
+--
+        Kernel driver in use: b43-pci-bridge
+        Kernel modules: ssb
+?
+dmesg ? http://pastebin.com/z8G8A1XJ
+system info ? http://pastebin.com/BvGThw6g
+archlinux forum this problem ?
+https://bbs.archlinux.org/viewtopic.php?pid=1328829#p1328829
+?
+Tried previous two kernels, no help.  Tried previous wicd, no help.
+?Larry Johnson, the keepitsimpleengineer
