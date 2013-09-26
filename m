@@ -1,45 +1,31 @@
-From: Larry Johnson <keepitsimpleengineer@gmail.com>
-Date: Tue, 24 Sep 2013 12:16:09 -0700
-Subject: Unable to transfer data over wireless connection
-Message-ID: <CABb0tkdTXWKK9VFMTAsU_LdaXRzJXV8RMWfVG8ZaATJe6x5byQ@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 26 Sep 2013 22:23:08 +0200
+Subject: [PATCH 00/51] DMA mask changes
+In-Reply-To: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+Message-ID: <CACna6rxkpYzdD8_Jfi22vA2suUa3k-JM65_gCySQpp4crVCoPg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, b43-dev <b43-dev@lists.infradead.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, devicetree@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, e1000-devel@lists.sourceforge.net, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linux ppc dev <linuxppc-dev@lists.ozlabs.org>, linux-samsung-soc@vger.kernel.org, Linux SCSI List <linux-scsi@vger.kernel.org>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, Solarflare linux maintainers <linux-ne>
 
-Problem: Under Linux WiFi keeps dropping, unusable (recent behavoir).
-It happens every time the connection is used.  When running WinXP, no
-wireless problems this hardware.  No problem other wireless clients.
-?
-LenovoS12?AP?Router
-Access Point is Linksys WRT54GL V1.1 running Firmware: DD-WRT v24-sp2
-(07/22/09) voip. Security is WPA2 AES
-DHCP from Router Untangle Build:
-9.4.2~svn20130830r35759release9.4-1lenny, Kernel:
-2.6.26-2-untangle-686 as a bastion firewall.
-?
-Linux KISE-007 3.11.1-1-ARCH #1 SMP PREEMPT Sat Sep 14 20:31:35 CEST
-2013 i686 GNU/Linux
-?
-03:00.0 0280: 14e4:4315 (rev 01)
-        Subsystem: 14e4:04b5
-        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
-ParErr- Stepping- SERR- FastB2B- DisINTx-
-        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-        Latency: 0, Cache Line Size: 64 bytes
-        Interrupt: pin A routed to IRQ 17
-        Region 0: Memory@f8000000 (64-bit, non-prefetchable) [size=16K]
-        Capabilities: [40] Power Management version 3
---
-        Kernel driver in use: b43-pci-bridge
-        Kernel modules: ssb
-?
-dmesg ? http://pastebin.com/z8G8A1XJ
-system info ? http://pastebin.com/BvGThw6g
-archlinux forum this problem ?
-https://bbs.archlinux.org/viewtopic.php?pid=1328829#p1328829
-?
-Tried previous two kernels, no help.  Tried previous wicd, no help.
-?Larry Johnson, the keepitsimpleengineer
+2013/9/19 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> This email is only being sent to the mailing lists in question, not to
+> anyone personally.  The list of individuals is far to great to do that.
+> I'm hoping no mailing lists reject the patches based on the number of
+> recipients.
+
+Huh, I think it was enough to send only 3 patches to the b43-dev at . Like:
+[PATCH 01/51] DMA-API: provide a helper to set both DMA and coherent DMA masks
+[PATCH 14/51] DMA-API: net: b43: (...)
+[PATCH 15/51] DMA-API: net: b43legacy: (...)
+;)
+
+I believe Joe has some nice script for doing it that way. When fixing
+some coding style / formatting, he sends only related patches to the
+given ML.
+
+-- 
+Rafa?
