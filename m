@@ -1,37 +1,23 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Fri, 27 Sep 2013 09:27:04 +0100
-Subject: [PATCH 00/51] DMA mask changes
-In-Reply-To: <CACna6rxkpYzdD8_Jfi22vA2suUa3k-JM65_gCySQpp4crVCoPg@mail.gmail.com>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <CACna6rxkpYzdD8_Jfi22vA2suUa3k-JM65_gCySQpp4crVCoPg@mail.gmail.com>
-Message-ID: <20130927082703.GZ25647@n2100.arm.linux.org.uk>
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Fri, 27 Sep 2013 11:33:31 +0100
+Subject: Bluetooth coexistence on B4331
+Message-ID: <1380278011.28494.167.camel@i7.infradead.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, linux-samsung-soc@vger.kernel.org, Linux SCSI List <linux-scsi@vger.kernel.org>, e1000-devel@lists.sourceforge.net, b43-dev <b43-dev@lists.infradead.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, Network Development <netdev@vger.kernel.org>, linux-usb@vger.kernel.org, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, linux-crypto@vger.kernel.org, uclinux-dist-devel@black
+To: b43-dev@lists.infradead.org
 
-On Thu, Sep 26, 2013 at 10:23:08PM +0200, Rafa? Mi?ecki wrote:
-> 2013/9/19 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> > This email is only being sent to the mailing lists in question, not to
-> > anyone personally.  The list of individuals is far to great to do that.
-> > I'm hoping no mailing lists reject the patches based on the number of
-> > recipients.
-> 
-> Huh, I think it was enough to send only 3 patches to the b43-dev at . Like:
-> [PATCH 01/51] DMA-API: provide a helper to set both DMA and coherent DMA masks
-> [PATCH 14/51] DMA-API: net: b43: (...)
-> [PATCH 15/51] DMA-API: net: b43legacy: (...)
-> ;)
-> 
-> I believe Joe has some nice script for doing it that way. When fixing
-> some coding style / formatting, he sends only related patches to the
-> given ML.
+I have to turn the wifi off if I want to use Bluetooth on my MacBook.
 
-If I did that, then the mailing lists would not get the first patch,
-because almost none of the lists would be referred to by patch 1.
+Is this expected? Anything I can do to assist in fixing it?
 
-Moreover, people complain when they don't have access to the full
-patch series - they assume patches are missing for some reason, and
-they ask for the rest of the series.
+-- 
+dwmw2
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 5745 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20130927/9d95f183/attachment.bin>
