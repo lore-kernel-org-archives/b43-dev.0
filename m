@@ -1,43 +1,57 @@
-From: Ruben De Smet <ruben.de.smet@telenet.be>
-Date: Fri, 01 Nov 2013 10:55:40 +0100
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Fri, 01 Nov 2013 10:31:20 -0500
 Subject: BCM43228
-Message-ID: <52737A9C.3020404@telenet.be>
+In-Reply-To: <52737A9C.3020404@telenet.be>
+References: <52737A9C.3020404@telenet.be>
+Message-ID: <5273C948.9060409@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Ruben De Smet <ruben.de.smet@telenet.be>, b43-dev@lists.infradead.org, linux-wireless <linux-wireless@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On 11/01/2013 04:55 AM, Ruben De Smet wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+> Hi folks,
+>
+> I'm currently running Broamcoms prorietary wl drivers, which were
+> running fine until I found a bug in the bluetooth part of it, which
+> panics the kernel at a certain position.
+> I don't know if it's a part in the GPL part of the kernel which
+> panics, or if it's in the Broadcom part, as the kernel is tainted by
+> the wireless driver and cannot be debugged that way.
+>
+> lspci shows me this:
+> 03:00.0 Network controller: Broadcom Corporation BCM43228 802.11a/b/g/n
+>
+> My question: will b43 ever support this chip? If so, I'd be able to
+> give someone access to this computer for debugging purposes.
+> I'd give any help possible, though kernels and modules aren't my
+> domain yet.
 
-Hi folks,
+The short answer is "probably not". The reverse engineering process is very time 
+consuming and boring. What seems to work best is to find a MIPS driver and 
+disassemble it to form the kind of "specs" that are seen at 
+http://bcm-v4.sipsolutions.net/. Next a different person needs to take that 
+prescription and turn it into code. To preserve the clean-room setting, those 
+two parts must be done by separate people. The process worked reasonably well 
+for 802.11g devices, but  the code gets very complicated for 802.11n. Further 
+complicating the issue is that at least one of two BCM43228 units has an LCNXN 
+PHY, and we have done little with that although the web site shows WIP for that 
+PHY with a BCM43227. The 2.4 GHz part of the 227 probably matches that of the 
+228. Note that b43 has never worked well with the 5 GHz radio in any of the chips.
 
-I'm currently running Broamcoms prorietary wl drivers, which were
-running fine until I found a bug in the bluetooth part of it, which
-panics the kernel at a certain position.
-I don't know if it's a part in the GPL part of the kernel which
-panics, or if it's in the Broadcom part, as the kernel is tainted by
-the wireless driver and cannot be debugged that way.
+Of course, if the RE is done perfectly, then you end up with all the bugs of wl. :)
 
-lspci shows me this:
-03:00.0 Network controller: Broadcom Corporation BCM43228 802.11a/b/g/n
+One other possibility is that the device might eventually be supported by 
+brcmsmac. That set of authors has the advantage of having access to the Broadcom 
+documentation and the wl sources. In case that is a possibility, I added the 
+linux-wireless mailing list to this reply.
 
-My question: will b43 ever support this chip? If so, I'd be able to
-give someone access to this computer for debugging purposes.
-I'd give any help possible, though kernels and modules aren't my
-domain yet.
+As shown at http://wireless.kernel.org/en/users/Drivers/b43#Supported_devices, 
+there are two different PCI IDs that are called BCM43228. When you ask this kind 
+of question, you should include the output of 'lspci -nn' so that the ID is listed.
 
-Ruben De Smet
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQEcBAEBAgAGBQJSc3qcAAoJEPgmWogSE9wQHLwH/0RYHsHaZUML+nLcMM32OwkI
-DmhXTKibCgPEmTfzsMF01sBeru6O2rYeXl2VY5tx6yoAS3fcje4p6EV9OlH4yzYv
-Evi/XDZM8J/Xvjqhhgh1+UYsM1P7q+mejXAzDSvtkmdHD/PnOXY0Q+u3ezMGYEi0
-9oX1PeSOnZSzAC6pahdN1ecE+GgrGEYEXPt5an8V42H5X1TGgqh8L1bWgWxs7jko
-jzUZTjP5KcvTUdtAWJkBp9WbNhVEFlBeklYXtFC4sZberFNOE8ynk1m7CSbtscrj
-lcEMbXehxtTXKY8UQDtg/A+KE6XFJTme/dn9PrpIGQF2hIu3QGtWfMTFBHvswRo=
-=N7Qs
------END PGP SIGNATURE-----
+Larry
