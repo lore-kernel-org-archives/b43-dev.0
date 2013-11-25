@@ -1,17 +1,18 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 25 Nov 2013 13:29:23 -0600
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 25 Nov 2013 20:54:20 +0100
 Subject: b43 / LCN PHY
 In-Reply-To: <CAAeT8m-Gs-bJx46iMaQ7gNzm4e4XU7m30wZRF78Hr-jCSNEuag@mail.gmail.com>
-References: <CAAeT8m84k1iqQk+4nch=DG2+8FPn=Kmues2LuqCwScUmAbfqRQ@mail.gmail.com>	<5293353E.7010202@hauke-m.de>	<52937DF9.9060204@lwfinger.net>
+References: <CAAeT8m84k1iqQk+4nch=DG2+8FPn=Kmues2LuqCwScUmAbfqRQ@mail.gmail.com>
+ <5293353E.7010202@hauke-m.de> <52937DF9.9060204@lwfinger.net>
  <CAAeT8m-Gs-bJx46iMaQ7gNzm4e4XU7m30wZRF78Hr-jCSNEuag@mail.gmail.com>
-Message-ID: <5293A513.8010601@lwfinger.net>
+Message-ID: <CACna6rxME2V_ZNNuF9+qQV2G-8f1Zkda86ea7h6XKVmdjBpNVQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 11/25/2013 11:06 AM, Christopher Horler wrote:
+2013/11/25 Christopher Horler <cshorler@googlemail.com>:
 > On 25 November 2013 16:42, Larry Finger <Larry.Finger@lwfinger.net> wrote:
 >> On 11/25/2013 05:32 AM, Hauke Mehrtens wrote:
 >>>
@@ -56,9 +57,8 @@ On 11/25/2013 11:06 AM, Christopher Horler wrote:
 >
 > Things still seem to work correctly if I blacklist b43.
 
-As long as both b43 and brcmsmac claim that PCI ID, both will be loaded in the 
-absence of any blacklist info. They will likely interfere with each other, and 
-blacklisting b43 is the correct step. You could also blacklist ssb, but that 
-won't make much difference.
+This is weird, even if b43 claims 802.11 device on your card, it
+should simply exit after detecting unsupported hardware. That should
+let brcmsmac load and work just fine.
 
-Larry
+If that doesn't work that way, I think it's something wrong there.
