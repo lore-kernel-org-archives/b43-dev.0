@@ -1,144 +1,70 @@
-From: =?UTF-8?B?Q2hyaXN0b3BoIFLDvMOfbGVy?= <christoph.ruessler@googlemail.com>
-Date: Tue, 03 Dec 2013 09:49:37 +0100
-Subject: Bug in the b43 driver (BCM4311 on Ubuntu 3.11.0-13-generic)?
-In-Reply-To: <529656EE.9080105@lwfinger.net>
-References: <1719878.PqRfnC143k@christoph> <529656EE.9080105@lwfinger.net>
-Message-ID: <529D9B21.5000501@gmail.com>
+From: Cedric Sodhi <manday@gmx.net>
+Date: Sun, 8 Dec 2013 11:29:22 +0100
+Subject: BCM43228 (14e4:4359) with broadcom-sta "system busy", connection
+ unstable
+Message-ID: <20131208102921.GD3040@slate>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Am 27.11.2013 21:32, schrieb Larry Finger:
-> On 11/27/2013 09:21 AM, Christoph R??ler wrote:
->> Hello,
->>
->> I have a Broadcom BCM4311 wifi card and I'm using the b43 kernel
->> driver with it
->> (Ubuntu 3.11.0-13-generic). Unfortunately my system seems to have
->> problems
->> loading the driver correctly at boot time. In most cases it does not
->> properly
->> load the driver on boot making it necessary to use the radio
->> killswitch to
->> manually stop and restart the wifi which then works perfectly and
->> without any
->> further disruptions.
->>
->> The bug is not reproducible in a way that that I am not able to
->> predict if it
->> will happen after the next boot. I am also not able to reproduce it
->> once I
->> have successfully enabled the wifi after a failed boot. Since I only
->> started
->> using the b43 driver with the kernel I'm still using I do not know if
->> it would
->> have worked with previous kernels which were using the Broadcom driver.
->>
->> The only hint I have so far found in debugging is a small difference
->> in the
->> dmesg output between working and non-working boot sequences. When the
->> wifi
->> fails to start dmesg contains the following lines:
->>> [   16.169637] b43-phy0: Broadcom 4311 WLAN found (core revision 13)
->> [?]
->>> [   16.217018] b43-phy0: Found PHY: Analog 4, Type 2 (G), Revision 9
->> [?]
->>> [   16.246721] Broadcom 43xx driver loaded [ Features: PNL ]
->>
->> Using the radio killswitch under these circumstances yields the following
->> output:
->>> [  496.421727] pci 0000:30:00.0: [14e4:4312] type 00 class 0x028000
->>> [  496.421782] pci 0000:30:00.0: reg 0x10: [mem 0x00000000-0x00003fff
->>> 64bit]
->>> [  496.421930] pci 0000:30:00.0: supports D1 D2
->>> [  496.422004] pci 0000:30:00.0: System wakeup disabled by ACPI
->>> [  496.428993] pci 0000:30:00.0: BAR 0: assigned [mem
->>> 0xc8000000-0xc8003fff
->> 64bit]
->>> [  496.577397] b43-pci-bridge 0000:30:00.0: enabling device (0000 ->
->>> 0002)
->>> [  496.596096] ssb: Found chip with id 0x4311, rev 0x02 and package 0x00
->>> [  496.596111] ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x13, vendor
->> 0x4243)
->>> [  496.596123] ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x0D,
->>> vendor
->> 0x4243)
->>> [  496.596136] ssb: Core 2 found: USB 1.1 Host (cc 0x817, rev 0x04,
->>> vendor
->> 0x4243)
->>> [  496.596148] ssb: Core 3 found: PCI-E (cc 0x820, rev 0x05, vendor
->>> 0x4243)
->>> [  496.660259] b43-phy1: Broadcom 4311 WLAN found (core revision 13)
->>> [  496.704083] b43-phy1: Found PHY: Analog 4, Type 2 (G), Revision 9
->>> [  496.728352] ssb: Sonics Silicon Backplane found on PCI device
->> 0000:30:00.0
->>> [  496.729194] ieee80211 phy1: Selected rate control algorithm
->>> 'minstrel_ht'
->>> [  496.972075] b43-phy1: Loading firmware version 666.2 (2011-02-23
->>> 01:15:07)
->>
->> When everything is working as expected I can find the following in the
->> dmesg
->> output:
->>> [   16.115666] b43-phy0: Broadcom 4311 WLAN found (core revision 13)
->> [?]
->>> [   16.160089] b43-phy0: Found PHY: Analog 4, Type 2 (G), Revision 9
->> [?]
->>> [   16.184214] Broadcom 43xx driver loaded [ Features: PNL ]
->> [?]
->>> [   24.738141] pci 0000:30:00.0: [14e4:4312] type 00 class 0x028000
->>> [   24.738203] pci 0000:30:00.0: reg 0x10: [mem 0x00000000-0x00003fff
->>> 64bit]
->>> [   24.738350] pci 0000:30:00.0: supports D1 D2
->>> [   24.738425] pci 0000:30:00.0: System wakeup disabled by ACPI
->>> [   24.755897] pci 0000:30:00.0: BAR 0: assigned [mem
->>> 0xc8000000-0xc8003fff
->> 64bit]
->>> [   24.809549] b43-pci-bridge 0000:30:00.0: enabling device (0000 ->
->>> 0002)
->>> [   24.896511] ssb: Found chip with id 0x4311, rev 0x02 and package 0x00
->>> [   24.896538] ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x13, vendor
->> 0x4243)
->>> [   24.896551] ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x0D,
->>> vendor
->> 0x4243)
->>> [   24.896563] ssb: Core 2 found: USB 1.1 Host (cc 0x817, rev 0x04,
->>> vendor
->> 0x4243)
->>> [   24.896574] ssb: Core 3 found: PCI-E (cc 0x820, rev 0x05, vendor
->>> 0x4243)
->>> [   24.960281] b43-phy1: Broadcom 4311 WLAN found (core revision 13)
->>> [   25.004095] b43-phy1: Found PHY: Analog 4, Type 2 (G), Revision 9
->>> [   25.028328] ssb: Sonics Silicon Backplane found on PCI device
->> 0000:30:00.0
->>> [   25.029050] ieee80211 phy1: Selected rate control algorithm
->>> 'minstrel_ht'
->>> [   25.236092] b43-phy1: Loading firmware version 666.2 (2011-02-23
->>> 01:15:07)
->>
->> Am I right in suspecting that this may be a bug in the driver? What
->> can I do
->> in order to help debugging? And if it's not a bug in the driver what
->> could be
->> the reason for this behaviour?
-> 
-> I do not see this problem with b43 on my BCM4311. What is probably
-> different is that I use openSUSE (12.2, 12.3, and 13.1) with
-> NetworkManager. I suspect that you are getting a timing error between
-> the initial attempt to bring the interface up, and the availability of
-> the user-space code needed to load the firmware.
-> 
-> Larry
-> 
-> 
+Hello, I originally had trouble with the "official" broadcom-sta package
+(on Gentoo) because the interface was neither appropriately named (it
+was called ethX among other things) nor did it work. I then found a
+solution for Gentoo in a separate ebuild which contained a couple of
+handmade patches. That was about a year ago.
 
-Thanks for the suggestion, that seems very plausible. As I am using
-NetworkManager too, could this be a NetworkManager problem? If I
-understand it correctly this is a case where my wifi should "just work".
-Anyway, I will try to delay NetworkManager's startup on boot to give the
-device more time to be ready.
+As of recently, the custom ebuild did no longer work (the source tarball
+was no longer available) so I gave the "official" broadcom-sta another
+try. As opposed to a year ago, it compiled and after reboot, "wlan0"
+became available.
 
-Thanks again,
-Christoph
+However, and that is the problem, the interface is not usable. On dmesg
+there are recurring chunks of
+
+cfg80211: Calling CRDA to update world regulatory domain
+cfg80211: World regulatory domain updated:
+cfg80211:   (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp)
+cfg80211:   (2402000 KHz - 2472000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+cfg80211:   (2457000 KHz - 2482000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+cfg80211:   (2474000 KHz - 2494000 KHz @ 20000 KHz), (300 mBi, 2000 mBm)
+cfg80211:   (5170000 KHz - 5250000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+cfg80211:   (5735000 KHz - 5835000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+INFO @wl_cfg80211_scan : system busy : scan for "NetworkA" canceled
+INFO @wl_cfg80211_scan : system busy : scan for "NetworkB" canceled
+INFO @wl_cfg80211_scan : system busy : scan for "NetworkC" canceled
+
+and `wpa_cli` says 
+
+<3>CTRL-EVENT-DISCONNECTED bssid=20:2b:c1:e9:db:85 reason=0
+<3>CTRL-EVENT-SCAN-RESULTS
+<3>Trying to associate with 20:2b:c1:e9:db:85 (SSID='NetworkA' freq=2447 MHz)
+<3>Association request to the driver failed
+<3>Authentication with 20:2b:c1:e9:db:85 timed out.
+<3>CTRL-EVENT-DISCONNECTED bssid=20:2b:c1:e9:db:85 reason=3 locally_generated=1
+<4>Failed to initiate AP scan
+<3>CTRL-EVENT-SCAN-RESULTS
+<3>Trying to associate with 20:2b:c1:e9:db:85 (SSID='NetworkA' freq=2447 MHz)
+<3>Association request to the driver failed
+<3>Authentication with 20:2b:c1:e9:db:85 timed out.
+<3>CTRL-EVENT-DISCONNECTED bssid=20:2b:c1:e9:db:85 reason=3 locally_generated=1
+<4>Failed to initiate AP scan
+<3>CTRL-EVENT-SCAN-RESULTS 
+<3>Trying to associate with 20:2b:c1:e9:db:85 (SSID='NetworkA' freq=2447 MHz)
+<3>Association request to the driver failed
+<3>Authentication with 20:2b:c1:e9:db:85 timed out.
+<3>CTRL-EVENT-DISCONNECTED bssid=20:2b:c1:e9:db:85 reason=3 locally_generated=1
+
+in rapid repetition.
+
+In fact, I just noticed that while the connection was unstable for the
+first 10 minutes after boot, it is almost completely dead now. Kernel is
+
+3.10.17-gentoo with
+
+CONFIG_CFG80211=m
+CONFIG_CFG80211_WEXT=y
+# CONFIG_MAC80211 is not set
+
+Thank you
