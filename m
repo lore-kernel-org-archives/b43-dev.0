@@ -1,63 +1,107 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Date: Fri, 17 Jan 2014 09:56:45 +0100
-Subject: [PATCH 1/2] b43: fix the wrong assignment of status.freq in
- b43_rx()
+From: ZHAO Gang <gamerh2o@gmail.com>
+Date: Fri, 17 Jan 2014 17:11:46 +0800
+Subject: [PATCH v2] b43: use kernel api to replace b43 specific helper function
 In-Reply-To: <CACna6rzkKGxBxReQJ0Y=TscY8GJ+r=S+6Cs+g+B0=7k1FFxW2w@mail.gmail.com>
-References: <a8aa052ea196de8256dcdc5b3ae81cfa64d3f9ff.1389935084.git.gamerh2o@gmail.com>
- <1389939896.8062.53.camel@porter.coelho.fi>
- <CACna6rzkKGxBxReQJ0Y=TscY8GJ+r=S+6Cs+g+B0=7k1FFxW2w@mail.gmail.com>
-Message-ID: <CAOiHx=nui0nVGiCLoukRovB3zY5jiKAt__Numo4y4bQv0dzOcQ@mail.gmail.com>
+References: <CACna6rzkKGxBxReQJ0Y=TscY8GJ+r=S+6Cs+g+B0=7k1FFxW2w@mail.gmail.com>
+Message-ID: <8b96c31da0f8a23b8e99ed790e462bd933925041.1389947627.git.gamerh2o@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Luca Coelho <luca@coelho.fi>, ZHAO Gang <gamerh2o@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Stefano Brivio <stefano.brivio@polimi.it>
+To: Stefano Brivio <stefano.brivio@polimi.it>
+Cc: Luca Coelho <luca@coelho.fi>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-On Fri, Jan 17, 2014 at 8:11 AM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> 2014/1/17 Luca Coelho <luca@coelho.fi>:
->> On Fri, 2014-01-17 at 13:27 +0800, ZHAO Gang wrote:
->>> In following patch, replace b43 specific helper function with kernel
->>> api to reduce code duplication.
->>>
->>> Signed-off-by: ZHAO Gang <gamerh2o@gmail.com>
->>> ---
->>>  drivers/net/wireless/b43/xmit.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
->>> index 4ae63f4..50e5ddb 100644
->>> --- a/drivers/net/wireless/b43/xmit.c
->>> +++ b/drivers/net/wireless/b43/xmit.c
->>> @@ -821,10 +821,10 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
->>>                * channel number in b43. */
->>>               if (chanstat & B43_RX_CHAN_5GHZ) {
->>>                       status.band = IEEE80211_BAND_5GHZ;
->>> -                     status.freq = b43_freq_to_channel_5ghz(chanid);
->>> +                     status.freq = b43_channel_to_freq_5ghz(chanid);
->>>               } else {
->>>                       status.band = IEEE80211_BAND_2GHZ;
->>> -                     status.freq = b43_freq_to_channel_2ghz(chanid);
->>> +                     status.freq = b43_channel_to_freq_2ghz(chanid);
->>>               }
->>>               break;
->>>       default:
->>
->> Why do you need this patch if you're going to remove these calls in the
->> next patch anyway?
->
-> I was thinking about this for a moment too. You could just make a one
-> patch and note in commit message that "translation" was reversed.
+The b43_freq_to_channel_{2,5}ghz() should be changed to
+b43_channel_to_freq{2,5}ghz() if we want to use b43 helper function,
+but a better way is to use kernel api ieee80211_channel_to_frequency()
+and remove these unnecessary helper function.
 
-That would mean mixing fixes and improvements, which is something you
-are not supposed to do, so IMHO having these split into two is
-correct. Think about stable maintainers wanting the fix but not the
-other change because it might introduce unknown side effects.
+Signed-off-by: ZHAO Gang <gamerh2o@gmail.com>
+---
+v2: combine two patches to one.
+    suggested by Luca Coelho and Rafa? Mi?ecki
 
+ drivers/net/wireless/b43/main.h | 35 -----------------------------------
+ drivers/net/wireless/b43/xmit.c | 12 ++++++------
+ 2 files changed, 6 insertions(+), 41 deletions(-)
 
-Jonas
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev at lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
+diff --git a/drivers/net/wireless/b43/main.h b/drivers/net/wireless/b43/main.h
+index abac25e..f476fc3 100644
+--- a/drivers/net/wireless/b43/main.h
++++ b/drivers/net/wireless/b43/main.h
+@@ -58,41 +58,6 @@ enum b43_verbosity {
+ #endif
+ };
+ 
+-
+-/* Lightweight function to convert a frequency (in Mhz) to a channel number. */
+-static inline u8 b43_freq_to_channel_5ghz(int freq)
+-{
+-	return ((freq - 5000) / 5);
+-}
+-static inline u8 b43_freq_to_channel_2ghz(int freq)
+-{
+-	u8 channel;
+-
+-	if (freq == 2484)
+-		channel = 14;
+-	else
+-		channel = (freq - 2407) / 5;
+-
+-	return channel;
+-}
+-
+-/* Lightweight function to convert a channel number to a frequency (in Mhz). */
+-static inline int b43_channel_to_freq_5ghz(u8 channel)
+-{
+-	return (5000 + (5 * channel));
+-}
+-static inline int b43_channel_to_freq_2ghz(u8 channel)
+-{
+-	int freq;
+-
+-	if (channel == 14)
+-		freq = 2484;
+-	else
+-		freq = 2407 + (5 * channel);
+-
+-	return freq;
+-}
+-
+ static inline int b43_is_cck_rate(int rate)
+ {
+ 	return (rate == B43_CCK_RATE_1MB ||
+diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
+index 4ae63f4..218a0f3 100644
+--- a/drivers/net/wireless/b43/xmit.c
++++ b/drivers/net/wireless/b43/xmit.c
+@@ -806,7 +806,8 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
+ 		B43_WARN_ON(1);
+ 		/* FIXME: We don't really know which value the "chanid" contains.
+ 		 *        So the following assignment might be wrong. */
+-		status.freq = b43_channel_to_freq_5ghz(chanid);
++		status.freq =
++			ieee80211_channel_to_frequency(chanid, status.band);
+ 		break;
+ 	case B43_PHYTYPE_G:
+ 		status.band = IEEE80211_BAND_2GHZ;
+@@ -819,13 +820,12 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
+ 	case B43_PHYTYPE_HT:
+ 		/* chanid is the SHM channel cookie. Which is the plain
+ 		 * channel number in b43. */
+-		if (chanstat & B43_RX_CHAN_5GHZ) {
++		if (chanstat & B43_RX_CHAN_5GHZ)
+ 			status.band = IEEE80211_BAND_5GHZ;
+-			status.freq = b43_freq_to_channel_5ghz(chanid);
+-		} else {
++		else
+ 			status.band = IEEE80211_BAND_2GHZ;
+-			status.freq = b43_freq_to_channel_2ghz(chanid);
+-		}
++		status.freq =
++			ieee80211_channel_to_frequency(chanid, status.band);
+ 		break;
+ 	default:
+ 		B43_WARN_ON(1);
+-- 
+1.8.4.2
