@@ -1,5 +1,5 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Date: Fri, 17 Jan 2014 10:19:55 +0100
+From: ZHAO Gang <gamerh2o@gmail.com>
+Date: Fri, 17 Jan 2014 17:29:24 +0800
 Subject: [PATCH 1/2] b43: fix the wrong assignment of status.freq in
  b43_rx()
 In-Reply-To: <1389949304.8062.55.camel@porter.coelho.fi>
@@ -8,15 +8,15 @@ References: <a8aa052ea196de8256dcdc5b3ae81cfa64d3f9ff.1389935084.git.gamerh2o@gm
  <CACna6rzkKGxBxReQJ0Y=TscY8GJ+r=S+6Cs+g+B0=7k1FFxW2w@mail.gmail.com>
  <CAOiHx=nui0nVGiCLoukRovB3zY5jiKAt__Numo4y4bQv0dzOcQ@mail.gmail.com>
  <1389949304.8062.55.camel@porter.coelho.fi>
-Message-ID: <CAOiHx==S9-A4z7wNcK10FsCjyRTFWcSj7Ei8O95xo1mOjC-dCg@mail.gmail.com>
+Message-ID: <CAAb+SYYyQF54Cib3Wae18orzH31RJ-vYoTEOBidMEPwVYYRv=g@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Luca Coelho <luca@coelho.fi>
-Cc: ZHAO Gang <gamerh2o@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Stefano Brivio <stefano.brivio@polimi.it>
+Cc: Jonas Gorski <jogo@openwrt.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Stefano Brivio <stefano.brivio@polimi.it>
 
-On Fri, Jan 17, 2014 at 10:01 AM, Luca Coelho <luca@coelho.fi> wrote:
+On Fri, Jan 17, 2014 at 5:01 PM, Luca Coelho <luca@coelho.fi> wrote:
 > On Fri, 2014-01-17 at 09:56 +0100, Jonas Gorski wrote:
 >> On Fri, Jan 17, 2014 at 8:11 AM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 >> > 2014/1/17 Luca Coelho <luca@coelho.fi>:
@@ -61,11 +61,14 @@ On Fri, Jan 17, 2014 at 10:01 AM, Luca Coelho <luca@coelho.fi> wrote:
 > Makes sense.  In such case, the first patch should be clearly marked as
 > a bug fix, so at least the commit message should be changed (ie.
 > mentioning the next patch in the series is useless).
+>
 
-Well, it uses "fix" in the subject ;-). But I agree about the commit
-message; it should describe the changes of this patch and the impact
-of the fixed defect, so it's easier to decide whether to backport the
-fix or not.
+I am OK to send this fix either in one patch or two, actually I have
+sent a version 2 which is a one patch version :-)
 
+I'm not sure if this patch is needed for stable, yes, as you said, if
+it's for stable, the commit message should be changed.
 
-Jonas
+> --
+> Luca.
+>
