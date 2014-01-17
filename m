@@ -1,53 +1,103 @@
-From: kpj <kpjkpjkpjkpjkpjkpj@gmail.com>
-Date: Thu, 16 Jan 2014 00:25:25 +0100
-Subject: Concerning the promiscuous mode
-Message-ID: <20140115232524.GA2961@archer.lan>
+From: ZHAO Gang <gamerh2o@gmail.com>
+Date: Fri, 17 Jan 2014 13:27:34 +0800
+Subject: [PATCH 2/2] b43: use kernel api to replace b43 specific helper
+ function
+In-Reply-To: <a8aa052ea196de8256dcdc5b3ae81cfa64d3f9ff.1389935084.git.gamerh2o@gmail.com>
+References: <a8aa052ea196de8256dcdc5b3ae81cfa64d3f9ff.1389935084.git.gamerh2o@gmail.com>
+Message-ID: <c7ed453b30f30ee193ec0969904da001bef5dc3e.1389935084.git.gamerh2o@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Stefano Brivio <stefano.brivio@polimi.it>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-Hello,
-I have noticed quite a strange behaviour when trying to enable the promiscuous mode (PM) with Wireshark (version 1.10.5):
-Wireshark itself is saying that PM is enabled ("Capture Options/Capture List/Prom. Mode" says enabled). Accordingly dmesg tells me about it: "[..] device wlan0 entered promiscuous mode".
-However, netstat and ip don't seem as convinced:
-$ ip l
-..
-2: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> ..
-..
-(yes, wlan0 is the correct interface)
+Use ieee80211_channel_to_frequency() to replace b43_channel_to_freq_{2,5}ghz(),
+and remove unused b43_freq_to_channel_{2,5}ghz().
 
-$ netstat -i
-wlan0 ? ? 1500 ? 336406 ? ? ?0 ? 3985 0 ? ? ? ? 70978 ? ? ?0 ? ? ?0 ? ? ?0 BMRU
-(BMRU are the flags, P is not amongst them)
-I am also not convinced, since I am not able to see any other packets than the ones directed at me or broadcasted ones.
+Signed-off-by: ZHAO Gang <gamerh2o@gmail.com>
+---
+ drivers/net/wireless/b43/main.h | 35 -----------------------------------
+ drivers/net/wireless/b43/xmit.c | 12 ++++++------
+ 2 files changed, 6 insertions(+), 41 deletions(-)
 
-Some information about my system:
-$ uname -a
-Linux . 3.12.7-1-ARCH #1 SMP PREEMPT Fri Jan 10 08:50:35 CET 2014 x86_64 GNU/Linux
-
-$ lspci -vvn|grep 43 -A7
-04:00.0 0280: 14e4:432b (rev 01)
-? ? ? ? Subsystem: 106b:008d
-? ? ? ? Physical Slot: 3
-? ? ? ? Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
-? ? ? ? Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-? ? ? ? Latency: 0, Cache Line Size: 256 bytes
-? ? ? ? Interrupt: pin A routed to IRQ 18
-? ? ? ? Region 0: Memory@df200000 (64-bit, non-prefetchable) [size=16K]
---
-? ? ? ? Kernel driver in use: b43-pci-bridge
-? ? ? ? Kernel modules: ssb
-?
-05:00.0 0c00: 11c1:5901 (rev 07) (prog-if 10 [OHCI])
-? ? ? ? Subsystem: 11c1:5900
-? ? ? ? Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
-? ? ? ? Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-? ? ? ? Latency: 0, Cache Line Size: 256 bytes
-(see http://pastebin.com/puVahU19)
-
-The wiki (http://wireless.kernel.org/en/users/Drivers/b43) mentiones that my chip (Broadcom Corporation BCM4322, 14e4:432b) is only ?partially supported (in 2.6.39+). Could this be the reason for this strange behaviour or am I simply missing something.
-
-Thanks in advance for any advice,
-kpj
+diff --git a/drivers/net/wireless/b43/main.h b/drivers/net/wireless/b43/main.h
+index abac25e..f476fc3 100644
+--- a/drivers/net/wireless/b43/main.h
++++ b/drivers/net/wireless/b43/main.h
+@@ -58,41 +58,6 @@ enum b43_verbosity {
+ #endif
+ };
+ 
+-
+-/* Lightweight function to convert a frequency (in Mhz) to a channel number. */
+-static inline u8 b43_freq_to_channel_5ghz(int freq)
+-{
+-	return ((freq - 5000) / 5);
+-}
+-static inline u8 b43_freq_to_channel_2ghz(int freq)
+-{
+-	u8 channel;
+-
+-	if (freq == 2484)
+-		channel = 14;
+-	else
+-		channel = (freq - 2407) / 5;
+-
+-	return channel;
+-}
+-
+-/* Lightweight function to convert a channel number to a frequency (in Mhz). */
+-static inline int b43_channel_to_freq_5ghz(u8 channel)
+-{
+-	return (5000 + (5 * channel));
+-}
+-static inline int b43_channel_to_freq_2ghz(u8 channel)
+-{
+-	int freq;
+-
+-	if (channel == 14)
+-		freq = 2484;
+-	else
+-		freq = 2407 + (5 * channel);
+-
+-	return freq;
+-}
+-
+ static inline int b43_is_cck_rate(int rate)
+ {
+ 	return (rate == B43_CCK_RATE_1MB ||
+diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
+index 50e5ddb..218a0f3 100644
+--- a/drivers/net/wireless/b43/xmit.c
++++ b/drivers/net/wireless/b43/xmit.c
+@@ -806,7 +806,8 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
+ 		B43_WARN_ON(1);
+ 		/* FIXME: We don't really know which value the "chanid" contains.
+ 		 *        So the following assignment might be wrong. */
+-		status.freq = b43_channel_to_freq_5ghz(chanid);
++		status.freq =
++			ieee80211_channel_to_frequency(chanid, status.band);
+ 		break;
+ 	case B43_PHYTYPE_G:
+ 		status.band = IEEE80211_BAND_2GHZ;
+@@ -819,13 +820,12 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
+ 	case B43_PHYTYPE_HT:
+ 		/* chanid is the SHM channel cookie. Which is the plain
+ 		 * channel number in b43. */
+-		if (chanstat & B43_RX_CHAN_5GHZ) {
++		if (chanstat & B43_RX_CHAN_5GHZ)
+ 			status.band = IEEE80211_BAND_5GHZ;
+-			status.freq = b43_channel_to_freq_5ghz(chanid);
+-		} else {
++		else
+ 			status.band = IEEE80211_BAND_2GHZ;
+-			status.freq = b43_channel_to_freq_2ghz(chanid);
+-		}
++		status.freq =
++			ieee80211_channel_to_frequency(chanid, status.band);
+ 		break;
+ 	default:
+ 		B43_WARN_ON(1);
+-- 
+1.8.4.2
