@@ -1,47 +1,53 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 05 Feb 2014 19:50:45 -0600
+From: grarpamp <grarpamp@gmail.com>
+Date: Wed, 5 Feb 2014 23:34:46 -0500
 Subject: Need to match driver to microcode?
-In-Reply-To: <CAD2Ti2_KU5p-F=ipdfrBEAh3-6=i6m_6fWNqLJzR5gJdhWsZ6w@mail.gmail.com>
+In-Reply-To: <52F2EA75.3080400@lwfinger.net>
 References: <CAD2Ti2-Q8-km40GPZ+pZ2v4cBkUN3vLM_a+2mCLOOtgZ=jdOxg@mail.gmail.com>
  <52F2CFEB.6000307@lwfinger.net>
  <CAD2Ti2_KU5p-F=ipdfrBEAh3-6=i6m_6fWNqLJzR5gJdhWsZ6w@mail.gmail.com>
-Message-ID: <52F2EA75.3080400@lwfinger.net>
+ <52F2EA75.3080400@lwfinger.net>
+Message-ID: <CAD2Ti2-k3YXeugqjTT+O_Gj71=rviUtuUzBs8GRCOane+c-qYQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 02/05/2014 06:54 PM, grarpamp wrote:
-> On Wed, Feb 5, 2014 at 6:57 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
->> Throughout the life of the b43 driver, there have been changes in the
->> microcode that required changes in the driver; however all of them predate
->> version 478.104.
+On Wed, Feb 5, 2014 at 8:50 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> If you had one of the newer cores, then you needed newer firmware to get the
+> correct file, but the older ones worked. However, I should never trust my
+> memory.
+
+Correct my understanding... 'cores' refers to physical hardware
+devices/revisions from Broadcom? So if I 'had newer cores', I'd need
+to find newer 'firmware aka: microcode' to support them. Because
+'older ones aka: firmware files' would not in fact work for me
+since they would not have support for the new physical core
+I posess? ie: I see newer files from say Linksys have more
+ucodeN.fw N'umbers' available inside them than their older files..
+
+> The TX and RX headers changed with firmware version 598.314.
+
+598.314 is not now in fwcutter, was it at one time present and
+then removed?
+
+> change in the driver was introduced with commit 17030f4 in such a way that
+> the older firmware versions still worked.
 >
-> So from 478.104 through 666.2 b43 driver stayed
-> the same in relation to simply cutting, dropping
-> in and working with any of the 7 new microcodes
-> post 478.104?
+> The two commits are at the bottom of the page
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/drivers/net/wireless/b43?ofs=200.
 
-If you had one of the newer cores, then you needed newer firmware to get the 
-correct file, but the older ones worked. However, I should never trust my 
-memory. The TX and RX headers changed with firmware version 598.314. The change 
-in the driver was introduced with commit 17030f4 in such a way that the older 
-firmware versions still worked.
+Looking them over.
 
-> Can you link to a pre 478.104 example from the repo?
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/drivers/net/wireless/b43
+> Ah, I know it by a different number.
 
-The two commits are at the bottom of the page 
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/drivers/net/wireless/b43?ofs=200.
->
->> With that said, I have not tested anything newer than
->> 666.x. Where did you get version 784.2?
->
-> You added it to fwcutter here... :)
->
-> http://bues.ch/gitweb?p=b43-tools.git;a=commit;h=f9ea2d59b33b552994a9c7ad3ca8fa1ef9992b95
+What number is that?
+How does something like '6.30.102.9 (r366174)' on the wrapper
+relate to its corresponding internal '784.2'? What are those
+strings each describing?
 
-Ah, I know it by a different number.
+And is there a supposed changelog, perhaps but
+not necessarily from Broadcom, for what changed
+in the different firmwares that we find?
 
-Larry
+Thanks.
