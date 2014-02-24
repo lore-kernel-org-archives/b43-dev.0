@@ -1,101 +1,214 @@
-From: Zhao, Gang <gamerh2o@gmail.com>
-Date: Sun, 16 Feb 2014 22:31:38 +0800
-Subject: [PATCH 2/2] b43: return true / false instead of numbers in functions
- which return bool value
-In-Reply-To: <fe0bba2d6b5b1d3b5021755aa8dc169d8e8f4655.1392560760.git.gamerh2o@gmail.com>
-References: <fe0bba2d6b5b1d3b5021755aa8dc169d8e8f4655.1392560760.git.gamerh2o@gmail.com>
-Message-ID: <b71acbe0697d6aad7a894efd84e4f931702d7b33.1392560760.git.gamerh2o@gmail.com>
+From: crquan <crquan@gmail.com>
+Date: Mon, 24 Feb 2014 00:23:20 -0800
+Subject: b43 slow performance of high packet loss, linux-3.13 running on
+ macbook10,1, is there anyway to reduce packet loss / improve performance ?
+Message-ID: <CAH5vBdKfpEgeK0Kv_abnzWDUm+qca7V_atcqgV0tgMy4DyzPDw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-Signed-off-by: Zhao, Gang <gamerh2o@gmail.com>
----
- drivers/net/wireless/b43/debugfs.h    |  2 +-
- drivers/net/wireless/b43/phy_common.c |  4 ++--
- drivers/net/wireless/b43/pio.c        | 10 +++++-----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+hi, all
 
-diff --git a/drivers/net/wireless/b43/debugfs.h b/drivers/net/wireless/b43/debugfs.h
-index 822aad88..50517b8 100644
---- a/drivers/net/wireless/b43/debugfs.h
-+++ b/drivers/net/wireless/b43/debugfs.h
-@@ -86,7 +86,7 @@ void b43_debugfs_log_txstat(struct b43_wldev *dev,
- 
- static inline bool b43_debug(struct b43_wldev *dev, enum b43_dyndbg feature)
- {
--	return 0;
-+	return false;
- }
- 
- static inline void b43_debugfs_init(void)
-diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index f01676a..dbaa518 100644
---- a/drivers/net/wireless/b43/phy_common.c
-+++ b/drivers/net/wireless/b43/phy_common.c
-@@ -133,9 +133,9 @@ void b43_phy_exit(struct b43_wldev *dev)
- bool b43_has_hardware_pctl(struct b43_wldev *dev)
- {
- 	if (!dev->phy.hardware_power_control)
--		return 0;
-+		return false;
- 	if (!dev->phy.ops->supports_hwpctl)
--		return 0;
-+		return false;
- 	return dev->phy.ops->supports_hwpctl(dev);
- }
- 
-diff --git a/drivers/net/wireless/b43/pio.c b/drivers/net/wireless/b43/pio.c
-index a73ff8c..a4ff5e2 100644
---- a/drivers/net/wireless/b43/pio.c
-+++ b/drivers/net/wireless/b43/pio.c
-@@ -637,7 +637,7 @@ static bool pio_rx_frame(struct b43_pio_rxqueue *q)
- 
- 		ctl = b43_piorx_read32(q, B43_PIO8_RXCTL);
- 		if (!(ctl & B43_PIO8_RXCTL_FRAMERDY))
--			return 0;
-+			return false;
- 		b43_piorx_write32(q, B43_PIO8_RXCTL,
- 				  B43_PIO8_RXCTL_FRAMERDY);
- 		for (i = 0; i < 10; i++) {
-@@ -651,7 +651,7 @@ static bool pio_rx_frame(struct b43_pio_rxqueue *q)
- 
- 		ctl = b43_piorx_read16(q, B43_PIO_RXCTL);
- 		if (!(ctl & B43_PIO_RXCTL_FRAMERDY))
--			return 0;
-+			return false;
- 		b43_piorx_write16(q, B43_PIO_RXCTL,
- 				  B43_PIO_RXCTL_FRAMERDY);
- 		for (i = 0; i < 10; i++) {
-@@ -662,7 +662,7 @@ static bool pio_rx_frame(struct b43_pio_rxqueue *q)
- 		}
- 	}
- 	b43dbg(q->dev->wl, "PIO RX timed out\n");
--	return 1;
-+	return true;
- data_ready:
- 
- 	/* Get the preamble (RX header) */
-@@ -759,7 +759,7 @@ data_ready:
- 
- 	b43_rx(q->dev, skb, rxhdr);
- 
--	return 1;
-+	return true;
- 
- rx_error:
- 	if (err_msg)
-@@ -769,7 +769,7 @@ rx_error:
- 	else
- 		b43_piorx_write16(q, B43_PIO_RXCTL, B43_PIO_RXCTL_DATARDY);
- 
--	return 1;
-+	return true;
- }
- 
- void b43_pio_rx(struct b43_pio_rxqueue *q)
--- 
-1.8.5.3
+I'm running Linux mint on macbook10,1 it has broadcom wireless, I have
+followed this guide, installed b43 firmware,
+The kernel from mint 16 default and I've also tried 3.13.0 built from
+scratch, and actually I have tried a couple of latest upstream kernel
+since 3.10, there is not much difference, packet loss rate always
+varies from 10% ~ 30% with ping results, and tcp applications suffered
+a lot,
+
+http://wireless.kernel.org/en/users/Drivers/b43
+
+In that table, it has my device 14e4:4331 supported b/g only, I tried
+to setup my wifi router to be b/g only but seems didn't help, is there
+anything else (or iw commands) I can try ?
+
+14e4:4331   yes (3.2-rc3+)   BCM4331     b/g    HT (r1)           wl
+
+
+mint ~ # uname -a
+Linux mint 3.13.0 #6 SMP Thu Feb 20 23:49:27 PST 2014 x86_64 x86_64
+x86_64 GNU/Linux
+
+mint ~ # lspci -D -nn -k -d 14e4:4331
+0000:04:00.0 Network controller [0280]: Broadcom Corporation BCM4331
+802.11a/b/g/n [14e4:4331] (rev 02)
+	Subsystem: Apple Inc. AirPort Extreme [106b:00ef]
+	Kernel driver in use: bcma-pci-bridge
+
+mint ~ # lspci -vvn|grep 43 -A7
+04:00.0 0280: 14e4:4331 (rev 02)
+	Subsystem: 106b:00ef
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
+Stepping- SERR- FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 256 bytes
+	Interrupt: pin A routed to IRQ 17
+	Region 0: Memory@c1900000 (64-bit, non-prefetchable) [size=16K]
+	Capabilities: [40] Power Management version 3
+
+mint ~ # dmesg |tail
+
+[83539.481059] wlan0: authenticate with cc:7d:37:7d:0c:c0
+[83539.491466] wlan0: send auth to cc:7d:37:7d:0c:c0 (try 1/3)
+[83539.493218] wlan0: authenticated
+[83539.494178] wlan0: associate with cc:7d:37:7d:0c:c0 (try 1/3)
+[83539.496837] wlan0: RX AssocResp from cc:7d:37:7d:0c:c0 (capab=0x411
+status=0 aid=3)
+[83539.497379] wlan0: associated
+
+mint ~ # iw event -f -t
+1393229857.081699: wlan0 (phy #0): scan started
+1393229862.942196: wlan0 (phy #0): scan finished: 2412 2417 2422 2427
+2432 2437 2442 2447 2452 2457 2462 2467 2472 2484, ""
+1393229863.783188: wlan0 (phy #0): connection quality monitor event:
+RSSI went below threshold
+1393229865.787153: wlan0 (phy #0): connection quality monitor event:
+RSSI went below threshold
+1393229866.785220: wlan0 (phy #0): connection quality monitor event:
+RSSI went below threshold
+
+mint ~ # iw phy
+Wiphy phy0
+	Band 1:
+		Frequencies:
+			* 2412 MHz [1] (20.0 dBm)
+			* 2417 MHz [2] (20.0 dBm)
+			* 2422 MHz [3] (20.0 dBm)
+			* 2427 MHz [4] (20.0 dBm)
+			* 2432 MHz [5] (20.0 dBm)
+			* 2437 MHz [6] (20.0 dBm)
+			* 2442 MHz [7] (20.0 dBm)
+			* 2447 MHz [8] (20.0 dBm)
+			* 2452 MHz [9] (20.0 dBm)
+			* 2457 MHz [10] (20.0 dBm)
+			* 2462 MHz [11] (20.0 dBm)
+			* 2467 MHz [12] (20.0 dBm) (passive scanning, no IBSS)
+			* 2472 MHz [13] (20.0 dBm) (passive scanning, no IBSS)
+			* 2484 MHz [14] (20.0 dBm) (passive scanning, no IBSS)
+		Bitrates (non-HT):
+			* 1.0 Mbps
+			* 2.0 Mbps (short preamble supported)
+			* 5.5 Mbps (short preamble supported)
+			* 11.0 Mbps (short preamble supported)
+			* 6.0 Mbps
+			* 9.0 Mbps
+			* 12.0 Mbps
+			* 18.0 Mbps
+			* 24.0 Mbps
+			* 36.0 Mbps
+			* 48.0 Mbps
+			* 54.0 Mbps
+	max # scan SSIDs: 4
+	max scan IEs length: 2285 bytes
+	Coverage class: 0 (up to 0m)
+	Supported Ciphers:
+		* WEP40 (00-0f-ac:1)
+		* WEP104 (00-0f-ac:5)
+		* TKIP (00-0f-ac:2)
+		* CCMP (00-0f-ac:4)
+	Available Antennas: TX 0 RX 0
+	Supported interface modes:
+		 * IBSS
+		 * managed
+		 * AP
+		 * AP/VLAN
+		 * WDS
+		 * monitor
+	software interface modes (can always be added):
+		 * AP/VLAN
+		 * monitor
+	interface combinations are not supported
+	Supported commands:
+		 * new_interface
+		 * set_interface
+		 * new_key
+		 * new_beacon
+		 * new_station
+		 * set_bss
+		 * authenticate
+		 * associate
+		 * deauthenticate
+		 * disassociate
+		 * join_ibss
+		 * set_tx_bitrate_mask
+		 * action
+		 * frame_wait_cancel
+		 * set_wiphy_netns
+		 * set_channel
+		 * set_wds_peer
+		 * Unknown command (84)
+		 * Unknown command (87)
+		 * Unknown command (85)
+		 * Unknown command (89)
+		 * Unknown command (92)
+		 * connect
+		 * disconnect
+	Supported TX frame types:
+		 * IBSS: 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90 0xa0 0xb0
+0xc0 0xd0 0xe0 0xf0
+		 * managed: 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90 0xa0
+0xb0 0xc0 0xd0 0xe0 0xf0
+		 * AP: 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90 0xa0 0xb0
+0xc0 0xd0 0xe0 0xf0
+		 * AP/VLAN: 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90 0xa0
+0xb0 0xc0 0xd0 0xe0 0xf0
+		 * mesh point: 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90
+0xa0 0xb0 0xc0 0xd0 0xe0 0xf0
+		 * P2P-client: 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90
+0xa0 0xb0 0xc0 0xd0 0xe0 0xf0
+		 * P2P-GO: 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90 0xa0
+0xb0 0xc0 0xd0 0xe0 0xf0
+		 * Unknown mode (10): 0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80
+0x90 0xa0 0xb0 0xc0 0xd0 0xe0 0xf0
+	Supported RX frame types:
+		 * IBSS: 0x40 0xb0 0xc0 0xd0
+		 * managed: 0x40 0xd0
+		 * AP: 0x00 0x20 0x40 0xa0 0xb0 0xc0 0xd0
+		 * AP/VLAN: 0x00 0x20 0x40 0xa0 0xb0 0xc0 0xd0
+		 * mesh point: 0xb0 0xc0 0xd0
+		 * P2P-client: 0x40 0xd0
+		 * P2P-GO: 0x00 0x20 0x40 0xa0 0xb0 0xc0 0xd0
+		 * Unknown mode (10): 0x40 0xd0
+	Device supports RSN-IBSS.
+	HT Capability overrides:
+		 * MCS: ff ff ff ff ff ff ff ff ff ff
+		 * maximum A-MSDU length
+		 * supported channel width
+		 * short GI for 40 MHz
+		 * max A-MPDU length exponent
+		 * min MPDU start spacing
+	Device supports TX status socket option.
+	Device supports HT-IBSS.
+
+
+mint ~ # ping -c20 192.168.1.254
+PING 192.168.1.254 (192.168.1.254) 56(84) bytes of data.
+64 bytes from 192.168.1.254: icmp_seq=1 ttl=64 time=60.8 ms
+64 bytes from 192.168.1.254: icmp_seq=2 ttl=64 time=5.00 ms
+64 bytes from 192.168.1.254: icmp_seq=3 ttl=64 time=6.96 ms
+64 bytes from 192.168.1.254: icmp_seq=4 ttl=64 time=4.94 ms
+64 bytes from 192.168.1.254: icmp_seq=5 ttl=64 time=9.13 ms
+64 bytes from 192.168.1.254: icmp_seq=6 ttl=64 time=3.49 ms
+64 bytes from 192.168.1.254: icmp_seq=7 ttl=64 time=4.81 ms
+64 bytes from 192.168.1.254: icmp_seq=8 ttl=64 time=11.7 ms
+64 bytes from 192.168.1.254: icmp_seq=9 ttl=64 time=3.40 ms
+64 bytes from 192.168.1.254: icmp_seq=10 ttl=64 time=4.83 ms
+64 bytes from 192.168.1.254: icmp_seq=11 ttl=64 time=3.82 ms
+64 bytes from 192.168.1.254: icmp_seq=12 ttl=64 time=17.4 ms
+64 bytes from 192.168.1.254: icmp_seq=13 ttl=64 time=6.51 ms
+64 bytes from 192.168.1.254: icmp_seq=14 ttl=64 time=64.4 ms
+64 bytes from 192.168.1.254: icmp_seq=15 ttl=64 time=3.71 ms
+64 bytes from 192.168.1.254: icmp_seq=16 ttl=64 time=24.3 ms
+64 bytes from 192.168.1.254: icmp_seq=17 ttl=64 time=14.2 ms
+
+--- 192.168.1.254 ping statistics ---
+20 packets transmitted, 17 received, 15% packet loss, time 19025ms
+rtt min/avg/max/mdev = 3.400/14.687/64.412/18.385 ms
+
+
+
+Thanks,
