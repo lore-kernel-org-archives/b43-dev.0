@@ -1,52 +1,187 @@
-From: crquan <crquan@gmail.com>
-Date: Sun, 9 Mar 2014 22:36:45 -0700
-Subject: b43 slow performance of high packet loss, linux-3.13 running on
- macbook10,1, is there anyway to reduce packet loss / improve performance ?
-In-Reply-To: <CACna6rwpLNNT2njE24q36P0T+T9nD6nZ0TLZQ8MTHmAAcX+2vg@mail.gmail.com>
-References: <CAH5vBdKfpEgeK0Kv_abnzWDUm+qca7V_atcqgV0tgMy4DyzPDw@mail.gmail.com>
- <CACna6rwpLNNT2njE24q36P0T+T9nD6nZ0TLZQ8MTHmAAcX+2vg@mail.gmail.com>
-Message-ID: <CAH5vBdKFotdLm3jfmuvyN_NZrOupn5RevkKot5mdhc2Yzbck=Q@mail.gmail.com>
+From: Giri Prasad <g_pr23@yahoo.com>
+Date: Thu, 13 Mar 2014 21:40:54 +0800 (SGT)
+Subject: Dell vostro 1550, BCM 4313 wireless, not connecting to net
+Message-ID: <1394718054.58386.YahooMailNeo@web194006.mail.sg3.yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Mon, Feb 24, 2014 at 12:46 AM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> 2014-02-24 9:23 GMT+01:00 crquan <crquan@gmail.com>:
->> In that table, it has my device 14e4:4331 supported b/g only, I tried
->> to setup my wifi router to be b/g only but seems didn't help, is there
->> anything else (or iw commands) I can try ?
->>
->> 14e4:4331   yes (3.2-rc3+)   BCM4331     b/g    HT (r1)           wl
->
-> Unfortunately, no. b43 has only basic support for BCM4331. I've
-> managed to connect BCM4331 (with it's ugly modified mini PCIe
-> connector) to my PC, but I still didn't manage to find antenna
-> connectors (W.FL2).
+Hello All,
 
-While, do you know anyway we can improve this?
-I have some experience at kernel drivers level, but not with wireless devices,
-could you tell if I can help on improving this?
+?I have a Dell Vostro 1550 laptop. i3 core, 64 bit, 8gb ram etc etc. I had a nic interface, but some how the wired nic is not working. So I am trying to use the BCM 4313 wireless chip, of this system, to connect to the internet.
 
-I tested the same macbook bcm4331 in different WLANs, felt in company
-wifi network
-(that's provided with cisco enterprise wlan controllers I think) the
-wifi connection is not bad,
+?I have Cent os 6.5 (64 bit) installed with the required libraries and kernel sources, headers etc.
 
-at home with wifi modem provided by at&t, each wifi session cannot work stably
-over 5 minutes, since some point the long time ping doesn't get
-response anymore,
-even worse is NetworkManager doesn't detect the failure doesn't auto reconnect,
-I have to choose from menu to connect same hotspot again to continue wifi,
+I got the source code of the driver, hybrid-v35_64-nodebug-pcoem-6_30_223_141.tar.gz. Extracted the tar, and compiled.
 
-at some coffee bars each wifi session neither work stably over a
-couple of minutes,
+Normal compilation errors:
+# make?????????????????????????????????????? ## Errors
+# make API=CFG80211????????? ## Errors
 
-Do you think is it possible bcm4331 has compatibility issue with some
-wifi routers?
-I'm going to buy a different wifi router to try, do you have any idea
-which wifi router or brand better to try?
+# make API=WEXT???? ---------> Compiles fine.
+
+# rmmod bcma
+
+echo "blacklist bcma" >> /etc/modprobe.d/blacklist.conf
+
+# modprobe lib80211
+# modprobe cfg80211
+# insmod wl.ko
+
+Network Manager shows all surrounding wireless network, and I select my wifi network and enter the key.
 
 
-Thanks,
+Authentication required by wireless network (Dialog Box)
+
+Passwords or encryption keys are required to access the wireless network 'giri'
+
+
+Wireless security :? WEP 40/128-bit key (HEX or ASCII)
+
+Key? :?????????????? *********************
+
+When I hit the <Connect> button of this dialog box, the network manager shows the rotating signal in the network connection at the top of the Linux desktop status bar. But after a few seconds, once again this dialog-box "Authentication required by wireless network" pops up, and keeps asking me for the key/password.
+
+Rhel 6 (64 bit), I built the same driver, and make (only just make - without parameters) for compiling the driver, created the driver, without any problems. Insmod the driver, and upon selecting the wifi network and entering the key, rhel 6 64 bit version, perfectly connected to the net, on this same laptop.
+
+Can anyone let me know, why the centos 6.5 kernel/Network Manager is asking for the (wireless security) key every few seconds, again and again, and not connecting to the internet.? And if someone can please inform why a make without parameters and make API=CFG80211, fails to compile, that will be very helpful.
+
+
+
+Thanks in advance.
+
+Regards,
+Giri
+
+[root at localhost hybrid_wl]#
+[root at localhost hybrid_wl]# lspci | grep -i Broad
+09:00.0 Network controller: Broadcom Corporation BCM4313 802.11bgn Wireless Network Adapter (rev 01)
+
+
+[root at localhost hybrid_wl]# make
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:726: error: ?struct cfg80211_ibss_params? has no member named ?channel?
+
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1092: error: parameter 2 (?type?) has incomplete type
+
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1103: error: ?TX_POWER_AUTOMATIC? undeclared (first use in this function)
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1103: error: (Each undeclared identifier is reported only once
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1103: error: for each function it appears in.)
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1105: error: ?TX_POWER_LIMITED? undeclared (first use in this function)
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1111: error: ?TX_POWER_FIXED? undeclared (first use in this function)
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c: At top level:
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1589: warning: initialization from incompatible pointer type
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1594: warning: initialization from incompatible pointer type
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1595: warning: initialization from incompatible pointer type
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1596: warning: initialization from incompatible pointer type
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1597: warning: initialization from incompatible pointer type
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1598: warning: initialization from incompatible pointer type
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1599: warning: initialization from incompatible pointer type
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c: In function ?wl_inform_single_bss?:
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1764: error: too few arguments to function ?ieee80211_channel_to_frequency?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1793: warning: passing argument 1 of ?cfg80211_put_bss? from incompatible pointer type
+include/net/cfg80211.h:3380: note: expected ?struct wiphy *? but argument is of type ?struct cfg80211_bss *?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:1793: error: too few arguments to function ?cfg80211_put_bss?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c: In function ?wl_update_bss_info?:
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2046: error: ?struct cfg80211_bss? has no member named ?information_elements?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2047: error: ?struct cfg80211_bss? has no member named ?len_information_elements?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2052: warning: passing argument 1 of ?cfg80211_put_bss? from incompatible pointer type
+include/net/cfg80211.h:3380: note: expected ?struct wiphy *? but argument is of type ?struct cfg80211_bss *?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2052: error: too few arguments to function ?cfg80211_put_bss?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c: In function ?wl_bss_roaming_done?:
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2090: warning: passing argument 2 of ?cfg80211_roamed? from incompatible pointer type
+include/net/cfg80211.h:3726: note: expected ?struct ieee80211_channel *? but argument is of type ?u8 *?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2090: warning: passing argument 4 of ?cfg80211_roamed? makes pointer from integer without a cast
+include/net/cfg80211.h:3726: note: expected ?const u8 *? but argument is of type ?s32?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2090: warning: passing argument 5 of ?cfg80211_roamed? makes integer from pointer without a cast
+include/net/cfg80211.h:3726: note: expected ?size_t? but argument is of type ?u8 *?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2090: warning: passing argument 6 of ?cfg80211_roamed? makes pointer from integer without a cast
+include/net/cfg80211.h:3726: note: expected ?const u8 *? but argument is of type ?s32?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2090: error: too few arguments to function ?cfg80211_roamed?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c: In function ?wl_bss_connect_done?:
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2122: warning: passing argument 2 of ?cfg80211_roamed? from incompatible pointer type
+include/net/cfg80211.h:3726: note: expected ?struct ieee80211_channel *? but argument is of type ?u8 *?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2122: warning: passing argument 4 of ?cfg80211_roamed? makes pointer from integer without a cast
+include/net/cfg80211.h:3726: note: expected ?const u8 *? but argument is of type ?s32?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2122: warning: passing argument 5 of ?cfg80211_roamed? makes integer from pointer without a cast
+include/net/cfg80211.h:3726: note: expected ?size_t? but argument is of type ?u8 *?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2122: warning: passing argument 6 of ?cfg80211_roamed? makes pointer from integer without a cast
+include/net/cfg80211.h:3726: note: expected ?const u8 *? but argument is of type ?s32?
+/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.c:2122: error: too few arguments to function ?cfg80211_roamed?
+make[2]: *** [/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl/src/wl/sys/wl_cfg80211_hybrid.o] Error 1
+make[1]: *** [_module_/root/Desktop/linux-wireless1/linux-wireless/bcm-4313/hybrid_wl] Error 2
+make[1]: Leaving directory `/usr/src/kernels/2.6.32-431.el6.x86_64'
+make: *** [all] Error 2
+
+[root at localhost hybrid_wl]# dmesg | tail -20
+wl 0000:09:00.0: setting latency timer to 64
+lib80211_crypt: registered algorithm 'TKIP'
+eth0: Broadcom BCM4727 802.11 Hybrid Wireless Controller 6.30.223.141 (r415941)
+wl 0000:09:00.0: PCI INT A disabled
+lib80211_crypt: unregistered algorithm 'TKIP'
+lib80211_crypt: unregistered algorithm 'NULL'
+lib80211: common routines for IEEE802.11 drivers
+lib80211_crypt: registered algorithm 'NULL'
+cfg80211: Calling CRDA to update world regulatory domain
+cfg80211: World regulatory domain updated:
+cfg80211:?? (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp)
+cfg80211:?? (2402000 KHz - 2472000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (2457000 KHz - 2482000 KHz @ 20000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (2474000 KHz - 2494000 KHz @ 20000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (5170000 KHz - 5250000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (5735000 KHz - 5835000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+wl 0000:09:00.0: PCI INT A -> GSI 19 (level, low) -> IRQ 19
+wl 0000:09:00.0: setting latency timer to 64
+lib80211_crypt: registered algorithm 'TKIP'
+eth0: Broadcom BCM4727 802.11 Hybrid Wireless Controller 6.30.223.141 (r415941)
+
+[root at localhost hybrid_wl]# lsmod
+Module????????????????? Size? Used by
+lib80211_crypt_tkip???? 9470? 0
+wl?????????????????? 4176734? 0
+cfg80211????????????? 619515? 0
+lib80211??????????????? 5127? 2 lib80211_crypt_tkip,wl
+vfat?????????????????? 10584? 1
+
+
+[root at localhost hybrid_wl]# iwconfig
+lo??????? no wireless extensions.
+
+p1p1????? no wireless extensions.
+
+pan0????? no wireless extensions.
+
+eth0????? IEEE 802.11? ESSID:""? Nickname:""
+????????? Mode:Managed? Frequency:2.462 GHz? Access Point: Not-Associated? 
+????????? Bit Rate:72 Mb/s?? Tx-Power:24 dBm? 
+????????? Retry min limit:7?? RTS thr:off?? Fragment thr:off
+????????? Encryption key:off
+????????? Power Managementmode:All packets received
+????????? Link Quality=5/5? Signal level=0 dBm? Noise level=-94 dBm
+????????? Rx invalid nwid:0? Rx invalid crypt:0? Rx invalid frag:0
+????????? Tx excessive retries:0? Invalid misc:0?? Missed beacon:0
+
+
+
+[root at localhost hybrid_wl]# dmesg | tail -20
+wl 0000:09:00.0: setting latency timer to 64
+lib80211_crypt: registered algorithm 'TKIP'
+eth0: Broadcom BCM4727 802.11 Hybrid Wireless Controller 6.30.223.141 (r415941)
+wl 0000:09:00.0: PCI INT A disabled
+lib80211_crypt: unregistered algorithm 'TKIP'
+lib80211_crypt: unregistered algorithm 'NULL'
+lib80211: common routines for IEEE802.11 drivers
+lib80211_crypt: registered algorithm 'NULL'
+cfg80211: Calling CRDA to update world regulatory domain
+cfg80211: World regulatory domain updated:
+cfg80211:?? (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp)
+cfg80211:?? (2402000 KHz - 2472000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (2457000 KHz - 2482000 KHz @ 20000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (2474000 KHz - 2494000 KHz @ 20000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (5170000 KHz - 5250000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+cfg80211:?? (5735000 KHz - 5835000 KHz @ 40000 KHz), (300 mBi, 2000 mBm)
+wl 0000:09:00.0: PCI INT A -> GSI 19 (level, low) -> IRQ 19
+wl 0000:09:00.0: setting latency timer to 64
+lib80211_crypt: registered algorithm 'TKIP'
+eth0: Broadcom BCM4727 802.11 Hybrid Wireless Controller 6.30.223.141 (r415941)
