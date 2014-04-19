@@ -1,71 +1,67 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat,  5 Apr 2014 18:08:25 +0200
-Subject: [PATCH V2][FIX 3.15] b43: Fix machine check error due to improper
- access of B43_MMIO_PSM_PHY_HDR
-In-Reply-To: <1396708524-12199-1-git-send-email-zajec5@gmail.com>
-References: <1396708524-12199-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1396714105-13093-1-git-send-email-zajec5@gmail.com>
+Date: Sat, 19 Apr 2014 23:10:05 +0200
+Subject: [PATCH][next] b43: G-PHY: fix random mistakes to match specs
+Message-ID: <1397941805-1695-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Stable <stable@vger.kernel.org>
-
-Register B43_MMIO_PSM_PHY_HDR is 16 bit one, so accessing it with 32b
-functions isn't safe. On my machine it causes delayed (!) CPU exception:
-
-Disabling lock debugging due to kernel taint
-mce: [Hardware Error]: CPU 0: Machine Check Exception: 4 Bank 4: b200000000070f0f
-mce: [Hardware Error]: TSC 164083803dc
-mce: [Hardware Error]: PROCESSOR 2:20fc2 TIME 1396650505 SOCKET 0 APIC 0 microcode 0
-mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-mce: [Hardware Error]: Machine check: Processor context corrupt
-Kernel panic - not syncing: Fatal machine check on current CPU
-Kernel Offset: 0x0 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffff9fffffff)
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Stable <stable@vger.kernel.org> [2.6.35+]
 ---
-V2: Change commit message as Larry suggested, no code changes
+That are pretty minor changes, but I have them queued for years, so I
+guess it's finally time to do some cleaning.
 ---
- drivers/net/wireless/b43/phy_n.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/wireless/b43/phy_g.c | 6 +++---
+ drivers/net/wireless/b43/wa.c    | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 05ee7f1..24ccbe9 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -5176,22 +5176,22 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
- 	int ch = new_channel->hw_value;
+diff --git a/drivers/net/wireless/b43/phy_g.c b/drivers/net/wireless/b43/phy_g.c
+index 12f467b..8f5c14b 100644
+--- a/drivers/net/wireless/b43/phy_g.c
++++ b/drivers/net/wireless/b43/phy_g.c
+@@ -1587,6 +1587,7 @@ static void b43_phy_initb5(struct b43_wldev *dev)
+ 	b43_write16(dev, 0x03E4, (b43_read16(dev, 0x03E4) & 0xFFC0) | 0x0004);
+ }
  
- 	u16 old_band_5ghz;
--	u32 tmp32;
-+	u16 tmp16;
- 
- 	old_band_5ghz =
- 		b43_phy_read(dev, B43_NPHY_BANDCTL) & B43_NPHY_BANDCTL_5GHZ;
- 	if (new_channel->band == IEEE80211_BAND_5GHZ && !old_band_5ghz) {
--		tmp32 = b43_read32(dev, B43_MMIO_PSM_PHY_HDR);
--		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32 | 4);
-+		tmp16 = b43_read16(dev, B43_MMIO_PSM_PHY_HDR);
-+		b43_write16(dev, B43_MMIO_PSM_PHY_HDR, tmp16 | 4);
- 		b43_phy_set(dev, B43_PHY_B_BBCFG, 0xC000);
--		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32);
-+		b43_write16(dev, B43_MMIO_PSM_PHY_HDR, tmp16);
- 		b43_phy_set(dev, B43_NPHY_BANDCTL, B43_NPHY_BANDCTL_5GHZ);
- 	} else if (new_channel->band == IEEE80211_BAND_2GHZ && old_band_5ghz) {
- 		b43_phy_mask(dev, B43_NPHY_BANDCTL, ~B43_NPHY_BANDCTL_5GHZ);
--		tmp32 = b43_read32(dev, B43_MMIO_PSM_PHY_HDR);
--		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32 | 4);
-+		tmp16 = b43_read16(dev, B43_MMIO_PSM_PHY_HDR);
-+		b43_write16(dev, B43_MMIO_PSM_PHY_HDR, tmp16 | 4);
- 		b43_phy_mask(dev, B43_PHY_B_BBCFG, 0x3FFF);
--		b43_write32(dev, B43_MMIO_PSM_PHY_HDR, tmp32);
-+		b43_write16(dev, B43_MMIO_PSM_PHY_HDR, tmp16);
++/* http://bcm-v4.sipsolutions.net/802.11/PHY/Init/B6 */
+ static void b43_phy_initb6(struct b43_wldev *dev)
+ {
+ 	struct b43_phy *phy = &dev->phy;
+@@ -1670,7 +1671,7 @@ static void b43_phy_initb6(struct b43_wldev *dev)
+ 		b43_radio_write16(dev, 0x50, 0x20);
  	}
+ 	if (phy->radio_rev <= 2) {
+-		b43_radio_write16(dev, 0x7C, 0x20);
++		b43_radio_write16(dev, 0x50, 0x20);
+ 		b43_radio_write16(dev, 0x5A, 0x70);
+ 		b43_radio_write16(dev, 0x5B, 0x7B);
+ 		b43_radio_write16(dev, 0x5C, 0xB0);
+@@ -1686,9 +1687,8 @@ static void b43_phy_initb6(struct b43_wldev *dev)
+ 		b43_phy_write(dev, 0x2A, 0x8AC0);
+ 	b43_phy_write(dev, 0x0038, 0x0668);
+ 	b43_set_txpower_g(dev, &gphy->bbatt, &gphy->rfatt, gphy->tx_control);
+-	if (phy->radio_rev <= 5) {
++	if (phy->radio_rev == 4 || phy->radio_rev == 5)
+ 		b43_phy_maskset(dev, 0x5D, 0xFF80, 0x0003);
+-	}
+ 	if (phy->radio_rev <= 2)
+ 		b43_radio_write16(dev, 0x005D, 0x000D);
  
- 	b43_chantab_phy_upload(dev, e);
+diff --git a/drivers/net/wireless/b43/wa.c b/drivers/net/wireless/b43/wa.c
+index 9b1a038..c218c08 100644
+--- a/drivers/net/wireless/b43/wa.c
++++ b/drivers/net/wireless/b43/wa.c
+@@ -441,7 +441,7 @@ static void b43_wa_altagc(struct b43_wldev *dev)
+ 
+ static void b43_wa_tr_ltov(struct b43_wldev *dev) /* TR Lookup Table Original Values */
+ {
+-	b43_gtab_write(dev, B43_GTAB_ORIGTR, 0, 0xC480);
++	b43_gtab_write(dev, B43_GTAB_ORIGTR, 0, 0x7654);
+ }
+ 
+ static void b43_wa_cpll_nonpilot(struct b43_wldev *dev)
 -- 
 1.8.4.5
