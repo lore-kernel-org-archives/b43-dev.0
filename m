@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 20 Apr 2014 13:05:45 +0200
-Subject: [PATCH 3/9] b43: N-PHY: random updates and typo fixes all around
+Date: Sun, 20 Apr 2014 13:05:46 +0200
+Subject: [PATCH 4/9] b43: N-PHY: implement reading support for radio 0x2057
 In-Reply-To: <1397991951-13478-1-git-send-email-zajec5@gmail.com>
 References: <1397991951-13478-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1397991951-13478-4-git-send-email-zajec5@gmail.com>
+Message-ID: <1397991951-13478-5-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,86 +11,32 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Bit 0x200 has been noticed in the following log:
+ radio_read(0x02ca) -> 0x0000
+radio_write(0x00ca) <- 0x0080
+
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/wireless/b43/phy_n.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index e9658ee..cbeb299 100644
+index cbeb299..3d13e73 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -419,7 +419,8 @@ static void b43_nphy_stay_in_carrier_search(struct b43_wldev *dev, bool enable)
- 		static const u16 clip[] = { 0xFFFF, 0xFFFF };
- 		if (nphy->deaf_count++ == 0) {
- 			nphy->classifier_state = b43_nphy_classifier(dev, 0, 0);
--			b43_nphy_classifier(dev, 0x7, 0);
-+			b43_nphy_classifier(dev, 0x7,
-+					    B43_NPHY_CLASSCTL_WAITEDEN);
- 			b43_nphy_read_clip_detection(dev, nphy->clip_state);
- 			b43_nphy_write_clip_detection(dev, clip);
- 		}
-@@ -1164,23 +1165,20 @@ static void b43_nphy_run_samples(struct b43_wldev *dev, u16 samps, u16 loops,
- 	u16 seq_mode;
- 	u32 tmp;
- 
--	if (nphy->hang_avoid)
--		b43_nphy_stay_in_carrier_search(dev, true);
-+	b43_nphy_stay_in_carrier_search(dev, true);
- 
- 	if ((nphy->bb_mult_save & 0x80000000) == 0) {
- 		tmp = b43_ntab_read(dev, B43_NTAB16(15, 87));
- 		nphy->bb_mult_save = (tmp & 0xFFFF) | 0x80000000;
- 	}
- 
-+	/* TODO: add modify_bbmult argument */
- 	if (!dev->phy.is_40mhz)
- 		tmp = 0x6464;
- 	else
- 		tmp = 0x4747;
- 	b43_ntab_write(dev, B43_NTAB16(15, 87), tmp);
- 
--	if (nphy->hang_avoid)
--		b43_nphy_stay_in_carrier_search(dev, false);
--
- 	b43_phy_write(dev, B43_NPHY_SAMP_DEPCNT, (samps - 1));
- 
- 	if (loops != 0xFFFF)
-@@ -1213,6 +1211,8 @@ static void b43_nphy_run_samples(struct b43_wldev *dev, u16 samps, u16 loops,
- 		b43err(dev->wl, "run samples timeout\n");
- 
- 	b43_phy_write(dev, B43_NPHY_RFSEQMODE, seq_mode);
+@@ -5522,8 +5522,11 @@ static u16 b43_nphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+ {
+ 	/* Register 1 is a 32-bit register. */
+ 	B43_WARN_ON(reg == 1);
+-	/* N-PHY needs 0x100 for read access */
+-	reg |= 0x100;
 +
-+	b43_nphy_stay_in_carrier_search(dev, false);
- }
++	if (dev->phy.rev >= 7)
++		reg |= 0x200; /* Radio 0x2057 */
++	else
++		reg |= 0x100;
  
- /**************************************************
-@@ -1736,7 +1736,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- 
- 	b43_phy_set(dev, B43_NPHY_RFCTL_OVER, 0x1);
- 	b43_phy_set(dev, B43_NPHY_RFCTL_CMD, B43_NPHY_RFCTL_CMD_RXTX);
--	b43_phy_mask(dev, B43_NPHY_TXF_40CO_B1S1, ~0x1);
-+	b43_phy_mask(dev, B43_NPHY_RFCTL_OVER, ~0x1);
- 
- 	for (i = 0; i < ARRAY_SIZE(regs_to_store); i++)
- 		b43_phy_write(dev, regs_to_store[i], saved_regs_phy[i]);
-@@ -2681,7 +2681,7 @@ static void b43_nphy_workarounds_rev3plus(struct b43_wldev *dev)
- 	/* Dropped probably-always-true condition */
- 	b43_phy_write(dev, B43_NPHY_ED_CRS40ASSERTTHRESH0, 0x03eb);
- 	b43_phy_write(dev, B43_NPHY_ED_CRS40ASSERTTHRESH1, 0x03eb);
--	b43_phy_write(dev, B43_NPHY_ED_CRS40DEASSERTTHRESH1, 0x0341);
-+	b43_phy_write(dev, B43_NPHY_ED_CRS40DEASSERTTHRESH0, 0x0341);
- 	b43_phy_write(dev, B43_NPHY_ED_CRS40DEASSERTTHRESH1, 0x0341);
- 	b43_phy_write(dev, B43_NPHY_ED_CRS20LASSERTTHRESH0, 0x042b);
- 	b43_phy_write(dev, B43_NPHY_ED_CRS20LASSERTTHRESH1, 0x042b);
-@@ -5205,7 +5205,7 @@ static int b43_phy_initn(struct b43_wldev *dev)
- 	b43_phy_write(dev, B43_NPHY_TXMACIF_HOLDOFF, 0x0015);
- 	b43_phy_write(dev, B43_NPHY_TXMACDELAY, 0x0320);
- 	if (phy->rev >= 3 && phy->rev <= 6)
--		b43_phy_write(dev, B43_NPHY_PLOAD_CSENSE_EXTLEN, 0x0014);
-+		b43_phy_write(dev, B43_NPHY_PLOAD_CSENSE_EXTLEN, 0x0032);
- 	b43_nphy_tx_lp_fbw(dev);
- 	if (phy->rev >= 3)
- 		b43_nphy_spur_workaround(dev);
+ 	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_RADIO_DATA_LOW);
 -- 
 1.8.4.5
