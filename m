@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 20 Apr 2014 13:05:47 +0200
-Subject: [PATCH 5/9] b43: N-PHY: implement RF control INTC for revs 7+
+Date: Sun, 20 Apr 2014 13:05:48 +0200
+Subject: [PATCH 6/9] b43: N-PHY: prepare for rev 7+ RSSI calibration
 In-Reply-To: <1397991951-13478-1-git-send-email-zajec5@gmail.com>
 References: <1397991951-13478-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1397991951-13478-6-git-send-email-zajec5@gmail.com>
+Message-ID: <1397991951-13478-7-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,103 +11,146 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Mostly just add place for future code
+
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-This patch cause a small "line over 80 characters" warning that I think
-we can accept to keep code cleaner.
+Empty code of conditional blocks makes checkpatch suspect some mistake,
+but this is intended to be that way. It gives a good hint on further
+implementation.
 ---
- drivers/net/wireless/b43/phy_n.c | 72 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ drivers/net/wireless/b43/phy_n.c | 72 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 54 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 3d13e73..0d4067e 100644
+index 0d4067e..291b38c 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -257,6 +257,72 @@ static void b43_nphy_rf_ctl_override(struct b43_wldev *dev, u16 field,
- 	}
- }
+@@ -1660,8 +1660,8 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 	struct b43_phy_n *nphy = dev->phy.n;
  
-+static void b43_nphy_rf_ctl_intc_override_rev7(struct b43_wldev *dev,
-+					       enum n_intc_override intc_override,
-+					       u16 value, u8 core_sel)
-+{
-+	u16 reg, tmp, tmp2, val;
-+	int core;
-+
-+	for (core = 0; core < 2; core++) {
-+		if ((core_sel == 1 && core != 0) ||
-+		    (core_sel == 2 && core != 1))
-+			continue;
-+
-+		reg = (core == 0) ? B43_NPHY_RFCTL_INTC1 : B43_NPHY_RFCTL_INTC2;
-+
-+		switch (intc_override) {
-+		case N_INTC_OVERRIDE_OFF:
-+			b43_phy_write(dev, reg, 0);
-+			b43_nphy_force_rf_sequence(dev, B43_RFSEQ_RESET2RX);
-+			break;
-+		case N_INTC_OVERRIDE_TRSW:
-+			b43_phy_maskset(dev, reg, ~0xC0, value << 6);
-+			b43_phy_set(dev, reg, 0x400);
-+
-+			b43_phy_mask(dev, 0x2ff, ~0xC000 & 0xFFFF);
-+			b43_phy_set(dev, 0x2ff, 0x2000);
-+			b43_phy_set(dev, 0x2ff, 0x0001);
-+			break;
-+		case N_INTC_OVERRIDE_PA:
-+			tmp = 0x0030;
-+			if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ)
-+				val = value << 5;
-+			else
-+				val = value << 4;
-+			b43_phy_maskset(dev, reg, ~tmp, val);
-+			b43_phy_set(dev, reg, 0x1000);
-+			break;
-+		case N_INTC_OVERRIDE_EXT_LNA_PU:
-+			if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
-+				tmp = 0x0001;
-+				tmp2 = 0x0004;
-+				val = value;
-+			} else {
-+				tmp = 0x0004;
-+				tmp2 = 0x0001;
-+				val = value << 2;
-+			}
-+			b43_phy_maskset(dev, reg, ~tmp, val);
-+			b43_phy_mask(dev, reg, ~tmp2);
-+			break;
-+		case N_INTC_OVERRIDE_EXT_LNA_GAIN:
-+			if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
-+				tmp = 0x0002;
-+				tmp2 = 0x0008;
-+				val = value << 1;
-+			} else {
-+				tmp = 0x0008;
-+				tmp2 = 0x0002;
-+				val = value << 3;
-+			}
-+			b43_phy_maskset(dev, reg, ~tmp, val);
-+			b43_phy_mask(dev, reg, ~tmp2);
-+			break;
-+		}
-+	}
-+}
-+
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/RFCtrlIntcOverride */
- static void b43_nphy_rf_ctl_intc_override(struct b43_wldev *dev,
- 					  enum n_intc_override intc_override,
-@@ -265,6 +331,12 @@ static void b43_nphy_rf_ctl_intc_override(struct b43_wldev *dev,
- 	u8 i, j;
- 	u16 reg, tmp, val;
+ 	u16 saved_regs_phy_rfctl[2];
+-	u16 saved_regs_phy[13];
+-	u16 regs_to_store[] = {
++	u16 saved_regs_phy[22];
++	u16 regs_to_store_rev3[] = {
+ 		B43_NPHY_AFECTL_OVER1, B43_NPHY_AFECTL_OVER,
+ 		B43_NPHY_AFECTL_C1, B43_NPHY_AFECTL_C2,
+ 		B43_NPHY_TXF_40CO_B1S1, B43_NPHY_RFCTL_OVER,
+@@ -1670,6 +1670,20 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 		B43_NPHY_RFCTL_LUT_TRSW_UP1, B43_NPHY_RFCTL_LUT_TRSW_UP2,
+ 		B43_NPHY_RFCTL_RSSIO1, B43_NPHY_RFCTL_RSSIO2
+ 	};
++	u16 regs_to_store_rev7[] = {
++		B43_NPHY_AFECTL_OVER1, B43_NPHY_AFECTL_OVER,
++		B43_NPHY_AFECTL_C1, B43_NPHY_AFECTL_C2,
++		B43_NPHY_TXF_40CO_B1S1, B43_NPHY_RFCTL_OVER,
++		0x342, 0x343, 0x346, 0x347,
++		0x2ff,
++		B43_NPHY_TXF_40CO_B1S0, B43_NPHY_TXF_40CO_B32S1,
++		B43_NPHY_RFCTL_CMD,
++		B43_NPHY_RFCTL_LUT_TRSW_UP1, B43_NPHY_RFCTL_LUT_TRSW_UP2,
++		0x340, 0x341, 0x344, 0x345,
++		B43_NPHY_RFCTL_RSSIO1, B43_NPHY_RFCTL_RSSIO2
++	};
++	u16 *regs_to_store;
++	int regs_amount;
+ 
+ 	u16 class;
+ 
+@@ -1689,6 +1703,15 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 	u8 rx_core_state;
+ 	int core, i, j, vcm;
  
 +	if (dev->phy.rev >= 7) {
-+		b43_nphy_rf_ctl_intc_override_rev7(dev, intc_override, value,
-+						   core);
-+		return;
++		regs_to_store = regs_to_store_rev7;
++		regs_amount = ARRAY_SIZE(regs_to_store_rev7);
++	} else {
++		regs_to_store = regs_to_store_rev3;
++		regs_amount = ARRAY_SIZE(regs_to_store_rev3);
 +	}
++	BUG_ON(regs_amount > ARRAY_SIZE(saved_regs_phy));
 +
- 	B43_WARN_ON(dev->phy.rev < 3);
+ 	class = b43_nphy_classifier(dev, 0, 0);
+ 	b43_nphy_classifier(dev, 7, 4);
+ 	b43_nphy_read_clip_detection(dev, clip_state);
+@@ -1696,22 +1719,29 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
  
- 	for (i = 0; i < 2; i++) {
+ 	saved_regs_phy_rfctl[0] = b43_phy_read(dev, B43_NPHY_RFCTL_INTC1);
+ 	saved_regs_phy_rfctl[1] = b43_phy_read(dev, B43_NPHY_RFCTL_INTC2);
+-	for (i = 0; i < ARRAY_SIZE(regs_to_store); i++)
++	for (i = 0; i < regs_amount; i++)
+ 		saved_regs_phy[i] = b43_phy_read(dev, regs_to_store[i]);
+ 
+ 	b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_OFF, 0, 7);
+ 	b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW, 1, 7);
+-	b43_nphy_rf_ctl_override(dev, 0x1, 0, 0, false);
+-	b43_nphy_rf_ctl_override(dev, 0x2, 1, 0, false);
+-	b43_nphy_rf_ctl_override(dev, 0x80, 1, 0, false);
+-	b43_nphy_rf_ctl_override(dev, 0x40, 1, 0, false);
+-
+-	if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
+-		b43_nphy_rf_ctl_override(dev, 0x20, 0, 0, false);
+-		b43_nphy_rf_ctl_override(dev, 0x10, 1, 0, false);
++
++	if (dev->phy.rev >= 7) {
++		/* TODO */
++		if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
++		} else {
++		}
+ 	} else {
+-		b43_nphy_rf_ctl_override(dev, 0x10, 0, 0, false);
+-		b43_nphy_rf_ctl_override(dev, 0x20, 1, 0, false);
++		b43_nphy_rf_ctl_override(dev, 0x1, 0, 0, false);
++		b43_nphy_rf_ctl_override(dev, 0x2, 1, 0, false);
++		b43_nphy_rf_ctl_override(dev, 0x80, 1, 0, false);
++		b43_nphy_rf_ctl_override(dev, 0x40, 1, 0, false);
++		if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
++			b43_nphy_rf_ctl_override(dev, 0x20, 0, 0, false);
++			b43_nphy_rf_ctl_override(dev, 0x10, 1, 0, false);
++		} else {
++			b43_nphy_rf_ctl_override(dev, 0x10, 0, 0, false);
++			b43_nphy_rf_ctl_override(dev, 0x20, 1, 0, false);
++		}
+ 	}
+ 
+ 	rx_core_state = b43_nphy_get_rx_core_state(dev);
+@@ -1726,8 +1756,11 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 
+ 		/* Grab RSSI results for every possible VCM */
+ 		for (vcm = 0; vcm < 8; vcm++) {
+-			b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC, 0xE3,
+-					vcm << 2);
++			if (dev->phy.rev >= 7)
++				;
++			else
++				b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC,
++						  0xE3, vcm << 2);
+ 			b43_nphy_poll_rssi(dev, N_RSSI_NB, results[vcm], 8);
+ 		}
+ 
+@@ -1754,8 +1787,11 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 		}
+ 
+ 		/* Select the best VCM */
+-		b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC, 0xE3,
+-				  vcm_final << 2);
++		if (dev->phy.rev >= 7)
++			;
++		else
++			b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC,
++					  0xE3, vcm_final << 2);
+ 
+ 		for (i = 0; i < 4; i++) {
+ 			if (core != i / 2)
+@@ -1810,7 +1846,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 	b43_phy_set(dev, B43_NPHY_RFCTL_CMD, B43_NPHY_RFCTL_CMD_RXTX);
+ 	b43_phy_mask(dev, B43_NPHY_RFCTL_OVER, ~0x1);
+ 
+-	for (i = 0; i < ARRAY_SIZE(regs_to_store); i++)
++	for (i = 0; i < regs_amount; i++)
+ 		b43_phy_write(dev, regs_to_store[i], saved_regs_phy[i]);
+ 
+ 	/* Store for future configuration */
 -- 
 1.8.4.5
