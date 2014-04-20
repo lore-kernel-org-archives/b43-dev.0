@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 20 Apr 2014 13:05:43 +0200
-Subject: [PATCH 1/9] b43: N-PHY: drop second noise variance table
+Date: Sun, 20 Apr 2014 13:05:44 +0200
+Subject: [PATCH 2/9] b43: N-PHY: rev3+: complete workarounds
 In-Reply-To: <1397991951-13478-1-git-send-email-zajec5@gmail.com>
 References: <1397991951-13478-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1397991951-13478-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1397991951-13478-3-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,118 +11,122 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-New Broadcom drivers don't upload it anymore. It was probably a copy & paste
-mistake in early N-PHY rev 3+ days.
-
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/tables_nphy.c | 72 +---------------------------------
- drivers/net/wireless/b43/tables_nphy.h |  3 +-
- 2 files changed, 3 insertions(+), 72 deletions(-)
+ drivers/net/wireless/b43/phy_n.c | 87 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 84 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
-index 94c755f..50d03ff 100644
---- a/drivers/net/wireless/b43/tables_nphy.c
-+++ b/drivers/net/wireless/b43/tables_nphy.c
-@@ -1627,74 +1627,7 @@ static const u32 b43_ntab_tdtrn_r3[] = {
- 	0xfa58fc00, 0x0b64fc7e, 0x0800f7b6, 0x00f006be,
- };
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 24ccbe9..e9658ee 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -2494,8 +2494,8 @@ static void b43_nphy_workarounds_rev3plus(struct b43_wldev *dev)
+ 	struct ssb_sprom *sprom = dev->dev->bus_sprom;
  
--static const u32 b43_ntab_noisevar0_r3[] = {
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
--};
--
--static const u32 b43_ntab_noisevar1_r3[] = {
-+static const u32 b43_ntab_noisevar_r3[] = {
- 	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
- 	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
- 	0x02110211, 0x0000014d, 0x02110211, 0x0000014d,
-@@ -3114,8 +3047,7 @@ static void b43_nphy_tables_init_rev3(struct b43_wldev *dev)
- 	ntab_upload(dev, B43_NTAB_TMAP_R3, b43_ntab_tmap_r3);
- 	ntab_upload(dev, B43_NTAB_INTLEVEL_R3, b43_ntab_intlevel_r3);
- 	ntab_upload(dev, B43_NTAB_TDTRN_R3, b43_ntab_tdtrn_r3);
--	ntab_upload(dev, B43_NTAB_NOISEVAR0_R3, b43_ntab_noisevar0_r3);
--	ntab_upload(dev, B43_NTAB_NOISEVAR1_R3, b43_ntab_noisevar1_r3);
-+	ntab_upload(dev, B43_NTAB_NOISEVAR_R3, b43_ntab_noisevar_r3);
- 	ntab_upload(dev, B43_NTAB_MCS_R3, b43_ntab_mcs_r3);
- 	ntab_upload(dev, B43_NTAB_TDI20A0_R3, b43_ntab_tdi20a0_r3);
- 	ntab_upload(dev, B43_NTAB_TDI20A1_R3, b43_ntab_tdi20a1_r3);
-diff --git a/drivers/net/wireless/b43/tables_nphy.h b/drivers/net/wireless/b43/tables_nphy.h
-index 9ff33ad..3a58aee 100644
---- a/drivers/net/wireless/b43/tables_nphy.h
-+++ b/drivers/net/wireless/b43/tables_nphy.h
-@@ -143,8 +143,7 @@ struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
- #define B43_NTAB_TMAP_R3		B43_NTAB32(12,   0) /* TM AP  */
- #define B43_NTAB_INTLEVEL_R3		B43_NTAB32(13,   0) /* INT LV  */
- #define B43_NTAB_TDTRN_R3		B43_NTAB32(14,   0) /* TD TRN  */
--#define B43_NTAB_NOISEVAR0_R3		B43_NTAB32(16,   0) /* noise variance 0  */
--#define B43_NTAB_NOISEVAR1_R3		B43_NTAB32(16, 128) /* noise variance 1  */
-+#define B43_NTAB_NOISEVAR_R3		B43_NTAB32(16,   0) /* noise variance */
- #define B43_NTAB_MCS_R3			B43_NTAB16(18,   0) /* MCS  */
- #define B43_NTAB_TDI20A0_R3		B43_NTAB32(19, 128) /* TDI 20/0  */
- #define B43_NTAB_TDI20A1_R3		B43_NTAB32(19, 256) /* TDI 20/1  */
+ 	/* TX to RX */
+-	u8 tx2rx_events[8] = { 0x4, 0x3, 0x6, 0x5, 0x2, 0x1, 0x8, 0x1F };
+-	u8 tx2rx_delays[8] = { 8, 4, 2, 2, 4, 4, 6, 1 };
++	u8 tx2rx_events[7] = { 0x4, 0x3, 0x5, 0x2, 0x1, 0x8, 0x1F };
++	u8 tx2rx_delays[7] = { 8, 4, 4, 4, 4, 6, 1 };
+ 	/* RX to TX */
+ 	u8 rx2tx_events_ipa[9] = { 0x0, 0x1, 0x2, 0x8, 0x5, 0x6, 0xF, 0x3,
+ 					0x1F };
+@@ -2503,6 +2503,23 @@ static void b43_nphy_workarounds_rev3plus(struct b43_wldev *dev)
+ 	u8 rx2tx_events[9] = { 0x0, 0x1, 0x2, 0x8, 0x5, 0x6, 0x3, 0x4, 0x1F };
+ 	u8 rx2tx_delays[9] = { 8, 6, 6, 4, 4, 18, 42, 1, 1 };
+ 
++	u16 vmids[5][4] = {
++		{ 0xa2, 0xb4, 0xb4, 0x89, }, /* 0 */
++		{ 0xb4, 0xb4, 0xb4, 0x24, }, /* 1 */
++		{ 0xa2, 0xb4, 0xb4, 0x74, }, /* 2 */
++		{ 0xa2, 0xb4, 0xb4, 0x270, }, /* 3 */
++		{ 0xa2, 0xb4, 0xb4, 0x00, }, /* 4 and 5 */
++	};
++	u16 gains[5][4] = {
++		{ 0x02, 0x02, 0x02, 0x00, }, /* 0 */
++		{ 0x02, 0x02, 0x02, 0x02, }, /* 1 */
++		{ 0x02, 0x02, 0x02, 0x04, }, /* 2 */
++		{ 0x02, 0x02, 0x02, 0x00, }, /* 3 */
++		{ 0x02, 0x02, 0x02, 0x00, }, /* 4 and 5 */
++	};
++	u16 *vmid, *gain;
++
++	u8 pdet_range;
+ 	u16 tmp16;
+ 	u32 tmp32;
+ 
+@@ -2561,7 +2578,71 @@ static void b43_nphy_workarounds_rev3plus(struct b43_wldev *dev)
+ 	b43_ntab_write(dev, B43_NTAB16(8, 0), 2);
+ 	b43_ntab_write(dev, B43_NTAB16(8, 16), 2);
+ 
+-	/* TODO */
++	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
++		pdet_range = sprom->fem.ghz2.pdet_range;
++	else
++		pdet_range = sprom->fem.ghz5.pdet_range;
++	vmid = vmids[min_t(u16, pdet_range, 4)];
++	gain = gains[min_t(u16, pdet_range, 4)];
++	switch (pdet_range) {
++	case 3:
++		if (!(dev->phy.rev >= 4 &&
++		      b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ))
++			break;
++		/* FALL THROUGH */
++	case 0:
++	case 1:
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x08), 4, vmid);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x18), 4, vmid);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x0c), 4, gain);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x1c), 4, gain);
++		break;
++	case 2:
++		if (dev->phy.rev >= 6) {
++			if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
++				vmid[3] = 0x94;
++			else
++				vmid[3] = 0x8e;
++			gain[3] = 3;
++		} else if (dev->phy.rev == 5) {
++			vmid[3] = 0x84;
++			gain[3] = 2;
++		}
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x08), 4, vmid);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x18), 4, vmid);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x0c), 4, gain);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x1c), 4, gain);
++		break;
++	case 4:
++	case 5:
++		if (b43_current_band(dev->wl) != IEEE80211_BAND_2GHZ) {
++			if (pdet_range == 4) {
++				vmid[3] = 0x8e;
++				tmp16 = 0x96;
++				gain[3] = 0x2;
++			} else {
++				vmid[3] = 0x89;
++				tmp16 = 0x89;
++				gain[3] = 0;
++			}
++		} else {
++			if (pdet_range == 4) {
++				vmid[3] = 0x89;
++				tmp16 = 0x8b;
++				gain[3] = 0x2;
++			} else {
++				vmid[3] = 0x74;
++				tmp16 = 0x70;
++				gain[3] = 0;
++			}
++		}
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x08), 4, vmid);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x0c), 4, gain);
++		vmid[3] = tmp16;
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x18), 4, vmid);
++		b43_ntab_write_bulk(dev, B43_NTAB16(8, 0x1c), 4, gain);
++		break;
++	}
+ 
+ 	b43_radio_write(dev, B2056_RX0 | B2056_RX_MIXA_MAST_BIAS, 0x00);
+ 	b43_radio_write(dev, B2056_RX1 | B2056_RX_MIXA_MAST_BIAS, 0x00);
 -- 
 1.8.4.5
