@@ -1,8 +1,10 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 20 Apr 2014 20:30:58 +0200
-Subject: [wireless-next][PATCH 1/2] b43: ssb: refuse to support more than IEEE
- 802.11 core
-Message-ID: <1398018659-17263-1-git-send-email-zajec5@gmail.com>
+Date: Sun, 20 Apr 2014 20:30:59 +0200
+Subject: [wireless-next][PATCH 2/2] b43: remove leftover code for dual-core
+ devices support
+In-Reply-To: <1398018659-17263-1-git-send-email-zajec5@gmail.com>
+References: <1398018659-17263-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1398018659-17263-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,88 +12,129 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Some ancient Broadcom devices had one core per band, e.g.:
-ssb: Found chip with id 0x4306, rev 0x02 and package 0x00
-ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x02, vendor 0x4243)
-ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x04, vendor 0x4243)
-ssb: Core 2 found: PCMCIA (cc 0x80D, rev 0x01, vendor 0x4243)
-ssb: Core 3 found: V90 (cc 0x807, rev 0x01, vendor 0x4243)
-ssb: Core 4 found: PCI (cc 0x804, rev 0x07, vendor 0x4243)
-ssb: Core 5 found: IEEE 802.11 (cc 0x812, rev 0x04, vendor 0x4243)
-
-This hardware model was dropped for newer devices handled by b43.
-
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-With this patchset I'm still able to use my BCM4321, so I guess it's
-alright & safe :)
----
- drivers/net/wireless/b43/main.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ drivers/net/wireless/b43/b43.h  |  4 ----
+ drivers/net/wireless/b43/main.c | 52 +++++++++++++++--------------------------
+ 2 files changed, 19 insertions(+), 37 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 54376fd..4113b69 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -915,10 +915,6 @@ struct b43_wl {
+ 	char rng_name[30 + 1];
+ #endif /* CONFIG_B43_HWRNG */
+ 
+-	/* List of all wireless devices on this chip */
+-	struct list_head devlist;
+-	u8 nr_devs;
+-
+ 	bool radiotap_enabled;
+ 	bool radio_enabled;
+ 
 diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 69fc3d6..cf84cf2 100644
+index cf84cf2..07024c6 100644
 --- a/drivers/net/wireless/b43/main.c
 +++ b/drivers/net/wireless/b43/main.c
-@@ -5486,39 +5486,42 @@ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
- 	struct b43_bus_dev *dev;
- 	struct b43_wl *wl;
+@@ -3735,40 +3735,35 @@ static int b43_switch_band(struct b43_wl *wl, struct ieee80211_channel *chan)
+ {
+ 	struct b43_wldev *up_dev = NULL;
+ 	struct b43_wldev *down_dev;
+-	struct b43_wldev *d;
  	int err;
--	int first = 0;
+ 	bool uninitialized_var(gmode);
+ 	int prev_status;
  
- 	dev = b43_bus_dev_ssb_init(sdev);
- 	if (!dev)
- 		return -ENOMEM;
- 
- 	wl = ssb_get_devtypedata(sdev);
--	if (!wl) {
--		/* Probing the first core. Must setup common struct b43_wl */
--		first = 1;
--		b43_sprom_fixup(sdev->bus);
--		wl = b43_wireless_init(dev);
--		if (IS_ERR(wl)) {
--			err = PTR_ERR(wl);
--			goto out;
--		}
--		ssb_set_devtypedata(sdev, wl);
--		B43_WARN_ON(ssb_get_devtypedata(sdev) != wl);
-+	if (wl) {
-+		b43err(NULL, "Dual-core devices are not supported\n");
-+		err = -ENOTSUPP;
-+		goto err_ssb_kfree_dev;
+ 	/* Find a device and PHY which supports the band. */
+-	list_for_each_entry(d, &wl->devlist, list) {
+-		switch (chan->band) {
+-		case IEEE80211_BAND_5GHZ:
+-			if (d->phy.supports_5ghz) {
+-				up_dev = d;
+-				gmode = false;
+-			}
+-			break;
+-		case IEEE80211_BAND_2GHZ:
+-			if (d->phy.supports_2ghz) {
+-				up_dev = d;
+-				gmode = true;
+-			}
+-			break;
+-		default:
+-			B43_WARN_ON(1);
+-			return -EINVAL;
++	switch (chan->band) {
++	case IEEE80211_BAND_5GHZ:
++		if (wl->current_dev->phy.supports_5ghz) {
++			up_dev = wl->current_dev;
++			gmode = false;
+ 		}
+-		if (up_dev)
+-			break;
++		break;
++	case IEEE80211_BAND_2GHZ:
++		if (wl->current_dev->phy.supports_2ghz) {
++			up_dev = wl->current_dev;
++			gmode = true;
++		}
++		break;
++	default:
++		B43_WARN_ON(1);
++		return -EINVAL;
  	}
 +
-+	b43_sprom_fixup(sdev->bus);
-+
-+	wl = b43_wireless_init(dev);
-+	if (IS_ERR(wl)) {
-+		err = PTR_ERR(wl);
-+		goto err_ssb_kfree_dev;
-+	}
-+	ssb_set_devtypedata(sdev, wl);
-+	B43_WARN_ON(ssb_get_devtypedata(sdev) != wl);
-+
- 	err = b43_one_core_attach(dev, wl);
+ 	if (!up_dev) {
+ 		b43err(wl, "Could not find a device for %s-GHz band operation\n",
+ 		       band_to_string(chan->band));
+ 		return -ENODEV;
+ 	}
+-	if ((up_dev == wl->current_dev) &&
+-	    (!!wl->current_dev->phy.gmode == !!gmode)) {
++	if (!!wl->current_dev->phy.gmode == !!gmode) {
+ 		/* This device is already running. */
+ 		return 0;
+ 	}
+@@ -5270,7 +5265,6 @@ static void b43_one_core_detach(struct b43_bus_dev *dev)
+ 	b43_debugfs_remove_device(wldev);
+ 	b43_wireless_core_detach(wldev);
+ 	list_del(&wldev->list);
+-	wl->nr_devs--;
+ 	b43_bus_set_wldev(dev, NULL);
+ 	kfree(wldev);
+ }
+@@ -5295,8 +5289,6 @@ static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
  	if (err)
--		goto err_wireless_exit;
-+		goto err_ssb_wireless_exit;
+ 		goto err_kfree_wldev;
  
- 	/* setup and start work to load firmware */
- 	INIT_WORK(&wl->firmware_load, b43_request_firmware);
- 	schedule_work(&wl->firmware_load);
+-	list_add(&wldev->list, &wl->devlist);
+-	wl->nr_devs++;
+ 	b43_bus_set_wldev(dev, wldev);
+ 	b43_debugfs_add_device(wldev);
  
--      out:
- 	return err;
+@@ -5386,7 +5378,6 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ 	wl->hw = hw;
+ 	mutex_init(&wl->mutex);
+ 	spin_lock_init(&wl->hardirq_lock);
+-	INIT_LIST_HEAD(&wl->devlist);
+ 	INIT_WORK(&wl->beacon_update_trigger, b43_beacon_update_trigger_work);
+ 	INIT_WORK(&wl->txpower_adjust_work, b43_phy_txpower_adjust_work);
+ 	INIT_WORK(&wl->tx_work, b43_tx_work);
+@@ -5549,13 +5540,8 @@ static void b43_ssb_remove(struct ssb_device *sdev)
+ 	/* Unregister HW RNG driver */
+ 	b43_rng_exit(wl);
  
--      err_wireless_exit:
--	if (first)
+-	if (list_empty(&wl->devlist)) {
+-		b43_leds_unregister(wl);
+-		/* Last core on the chip unregistered.
+-		 * We can destroy common struct b43_wl.
+-		 */
 -		b43_wireless_exit(dev, wl);
-+err_ssb_wireless_exit:
+-	}
++	b43_leds_unregister(wl);
 +	b43_wireless_exit(dev, wl);
-+err_ssb_kfree_dev:
-+	kfree(dev);
- 	return err;
  }
  
+ static struct ssb_driver b43_ssb_driver = {
 -- 
 1.8.4.5
