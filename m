@@ -1,36 +1,97 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 20 Apr 2014 12:09:36 -0500
-Subject: Looking for dual core (IEEE 802.11) device supported by b43
-In-Reply-To: <20140420185830.1445bdbd@wiggum>
-References: <CACna6rw3sLia7+Ky=EYvOb54=csigt_x-=HAOW6g-wzkke+8cg@mail.gmail.com>
- <20140420185830.1445bdbd@wiggum>
-Message-ID: <5353FF50.8070507@lwfinger.net>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 20 Apr 2014 20:30:58 +0200
+Subject: [wireless-next][PATCH 1/2] b43: ssb: refuse to support more than IEEE
+ 802.11 core
+Message-ID: <1398018659-17263-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 04/20/2014 11:58 AM, Michael B?sch wrote:
-> On Sun, 20 Apr 2014 18:17:17 +0200
-> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->
->> I was wondering if we need support for core switching in b43. Is there
->> any device supported by b43 that has two IEEE 802.11 ssb cores?
->>
->> I was searching for examples of such devices and they always are ssb
->> chipsets 0x4306 with two IEEE 802.11 cores rev 0x04. As you know, revs
->> 0x02 and 0x04 are supported by b43legacy.
->>
->> Maybe some uncommon PCMCIA/SDIO devices? Anyone recalling them?
->
->
-> There never was a supported device that required coreswitching.
-> So it's completely untested.
-> As of my knowledge only a few of the very early A-PHY devices
-> required this.
-> Feel free to remove it from b43.
+Some ancient Broadcom devices had one core per band, e.g.:
+ssb: Found chip with id 0x4306, rev 0x02 and package 0x00
+ssb: Core 0 found: ChipCommon (cc 0x800, rev 0x02, vendor 0x4243)
+ssb: Core 1 found: IEEE 802.11 (cc 0x812, rev 0x04, vendor 0x4243)
+ssb: Core 2 found: PCMCIA (cc 0x80D, rev 0x01, vendor 0x4243)
+ssb: Core 3 found: V90 (cc 0x807, rev 0x01, vendor 0x4243)
+ssb: Core 4 found: PCI (cc 0x804, rev 0x07, vendor 0x4243)
+ssb: Core 5 found: IEEE 802.11 (cc 0x812, rev 0x04, vendor 0x4243)
 
-I agree.
+This hardware model was dropped for newer devices handled by b43.
 
-Larry
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+With this patchset I'm still able to use my BCM4321, so I guess it's
+alright & safe :)
+---
+ drivers/net/wireless/b43/main.c | 37 ++++++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 69fc3d6..cf84cf2 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -5486,39 +5486,42 @@ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
+ 	struct b43_bus_dev *dev;
+ 	struct b43_wl *wl;
+ 	int err;
+-	int first = 0;
+ 
+ 	dev = b43_bus_dev_ssb_init(sdev);
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+ 	wl = ssb_get_devtypedata(sdev);
+-	if (!wl) {
+-		/* Probing the first core. Must setup common struct b43_wl */
+-		first = 1;
+-		b43_sprom_fixup(sdev->bus);
+-		wl = b43_wireless_init(dev);
+-		if (IS_ERR(wl)) {
+-			err = PTR_ERR(wl);
+-			goto out;
+-		}
+-		ssb_set_devtypedata(sdev, wl);
+-		B43_WARN_ON(ssb_get_devtypedata(sdev) != wl);
++	if (wl) {
++		b43err(NULL, "Dual-core devices are not supported\n");
++		err = -ENOTSUPP;
++		goto err_ssb_kfree_dev;
+ 	}
++
++	b43_sprom_fixup(sdev->bus);
++
++	wl = b43_wireless_init(dev);
++	if (IS_ERR(wl)) {
++		err = PTR_ERR(wl);
++		goto err_ssb_kfree_dev;
++	}
++	ssb_set_devtypedata(sdev, wl);
++	B43_WARN_ON(ssb_get_devtypedata(sdev) != wl);
++
+ 	err = b43_one_core_attach(dev, wl);
+ 	if (err)
+-		goto err_wireless_exit;
++		goto err_ssb_wireless_exit;
+ 
+ 	/* setup and start work to load firmware */
+ 	INIT_WORK(&wl->firmware_load, b43_request_firmware);
+ 	schedule_work(&wl->firmware_load);
+ 
+-      out:
+ 	return err;
+ 
+-      err_wireless_exit:
+-	if (first)
+-		b43_wireless_exit(dev, wl);
++err_ssb_wireless_exit:
++	b43_wireless_exit(dev, wl);
++err_ssb_kfree_dev:
++	kfree(dev);
+ 	return err;
+ }
+ 
+-- 
+1.8.4.5
