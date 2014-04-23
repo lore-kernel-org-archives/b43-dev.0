@@ -1,54 +1,36 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 22 Apr 2014 13:54:36 +0200
-Subject: [PATCH 2/3] b43: use b43_software_rfkill helper
-In-Reply-To: <1398167677-9207-1-git-send-email-zajec5@gmail.com>
-References: <1398167677-9207-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1398167677-9207-2-git-send-email-zajec5@gmail.com>
+From: David Binderman <dcb314@hotmail.com>
+Date: Wed, 23 Apr 2014 12:53:02 +0000
+Subject: bcm43xx-fwcutter bug report
+Message-ID: <DUB130-W5FA86F300757E1CF667AB9C580@phx.gbl>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-This removes dealing with pointers directly and allows tracking radio
-state with radio_on variable.
+Hello there,
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/phy_common.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[fwcutter.c:497]: (error) Dangerous usage of 'shortname' (strncpy doesn't always null-terminate it).
 
-diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index dbaa518..3e45989 100644
---- a/drivers/net/wireless/b43/phy_common.c
-+++ b/drivers/net/wireless/b43/phy_common.c
-@@ -96,7 +96,7 @@ int b43_phy_init(struct b43_wldev *dev)
- 
- 	phy->channel = ops->get_default_chan(dev);
- 
--	ops->software_rfkill(dev, false);
-+	b43_software_rfkill(dev, false);
- 	err = ops->init(dev);
- 	if (err) {
- 		b43err(dev->wl, "PHY init failed\n");
-@@ -116,7 +116,7 @@ err_phy_exit:
- 	if (ops->exit)
- 		ops->exit(dev);
- err_block_rf:
--	ops->software_rfkill(dev, true);
-+	b43_software_rfkill(dev, true);
- 
- 	return err;
- }
-@@ -125,7 +125,7 @@ void b43_phy_exit(struct b43_wldev *dev)
- {
- 	const struct b43_phy_operations *ops = dev->phy.ops;
- 
--	ops->software_rfkill(dev, true);
-+	b43_software_rfkill(dev, true);
- 	if (ops->exit)
- 		ops->exit(dev);
- }
--- 
-1.8.4.5
+Source code is
+
+??? if (strlen(file->name)> 20) {
+??????? strncpy(shortname, file->name, 18);
+??????? snprintf(filename, sizeof(filename), "%s..", shortname);
+??? } else
+??????? strcpy (filename, file->name);
+
+Maybe better code
+
+??? if (strlen(file->name)> 20) {
+??????? strncpy(shortname, file->name, 18);
+??????? shortname[18] = '\0';
+??????? snprintf(filename, sizeof(filename), "%s..", shortname);
+??? } else
+??????? strcpy (filename, file->name);
+
+Regards
+
+David Binderman
+
+ 		 	   		  
