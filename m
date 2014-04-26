@@ -1,53 +1,108 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Wed, 23 Apr 2014 16:21:49 +0200
-Subject: bcm43xx-fwcutter bug report
-In-Reply-To: <DUB130-W5FA86F300757E1CF667AB9C580@phx.gbl>
-References: <DUB130-W5FA86F300757E1CF667AB9C580@phx.gbl>
-Message-ID: <20140423162149.3573beb5@wiggum>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sat, 26 Apr 2014 20:56:05 +0200
+Subject: [PATCH] b43: N-PHY: complete radio 0x2056 setup
+Message-ID: <1398538565-28188-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Wed, 23 Apr 2014 12:53:02 +0000
-David Binderman <dcb314@hotmail.com> wrote:
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c | 32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
-> [fwcutter.c:497]: (error) Dangerous usage of 'shortname' (strncpy doesn't always null-terminate it).
-> 
-> Source code is
-> 
-> ??? if (strlen(file->name)> 20) {
-> ??????? strncpy(shortname, file->name, 18);
-> ??????? snprintf(filename, sizeof(filename), "%s..", shortname);
-> ??? } else
-> ??????? strcpy (filename, file->name);
-
-Please upgrade to a non-ancient version of fwcutter.
-http://bues.ch/b43/fwcutter/
-
-Current versions do this:
-
->	if (strlen(file->name) > 20) {
->		strncpy(shortname, file->name, 20);
->		shortname[20] = '\0';
->		snprintf(filename, sizeof(filename), "%s..", shortname);
->	} else
->		strcpy (filename, file->name);
-
-
-
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 482b312..41dab89 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -807,9 +807,16 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
+ 	u16 bias, cbias;
+ 	u16 pag_boost, padg_boost, pgag_boost, mixg_boost;
+ 	u16 paa_boost, pada_boost, pgaa_boost, mixa_boost;
++	bool is_pkg_fab_smic;
+ 
+ 	B43_WARN_ON(dev->phy.rev < 3);
+ 
++	is_pkg_fab_smic =
++		((dev->dev->chip_id == BCMA_CHIP_ID_BCM43224 ||
++		  dev->dev->chip_id == BCMA_CHIP_ID_BCM43225 ||
++		  dev->dev->chip_id == BCMA_CHIP_ID_BCM43421) &&
++		 dev->dev->chip_pkg == BCMA_PKG_ID_BCM43224_FAB_SMIC);
++
+ 	b43_chantab_radio_2056_upload(dev, e);
+ 	b2056_upload_syn_pll_cp2(dev, band == IEEE80211_BAND_5GHZ);
+ 
+@@ -817,7 +824,8 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
+ 	    b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
+ 		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER1, 0x1F);
+ 		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER2, 0x1F);
+-		if (dev->dev->chip_id == 0x4716) {
++		if (dev->dev->chip_id == BCMA_CHIP_ID_BCM4716 ||
++		    dev->dev->chip_id == BCMA_CHIP_ID_BCM47162) {
+ 			b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER4, 0x14);
+ 			b43_radio_write(dev, B2056_SYN_PLL_CP2, 0);
+ 		} else {
+@@ -825,6 +833,13 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
+ 			b43_radio_write(dev, B2056_SYN_PLL_CP2, 0x14);
+ 		}
+ 	}
++	if (sprom->boardflags2_hi & B43_BFH2_GPLL_WAR2 &&
++	    b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
++		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER1, 0x1f);
++		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER2, 0x1f);
++		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER4, 0x0b);
++		b43_radio_write(dev, B2056_SYN_PLL_CP2, 0x20);
++	}
+ 	if (sprom->boardflags2_lo & B43_BFL2_APLL_WAR &&
+ 	    b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
+ 		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER1, 0x1F);
+@@ -840,7 +855,8 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
+ 				b43_radio_write(dev,
+ 					offset | B2056_TX_PADG_IDAC, 0xcc);
+ 
+-				if (dev->dev->chip_id == 0x4716) {
++				if (dev->dev->chip_id == BCMA_CHIP_ID_BCM4716 ||
++				    dev->dev->chip_id == BCMA_CHIP_ID_BCM47162) {
+ 					bias = 0x40;
+ 					cbias = 0x45;
+ 					pag_boost = 0x5;
+@@ -849,6 +865,10 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
+ 				} else {
+ 					bias = 0x25;
+ 					cbias = 0x20;
++					if (is_pkg_fab_smic) {
++						bias = 0x2a;
++						cbias = 0x38;
++					}
+ 					pag_boost = 0x4;
+ 					pgag_boost = 0x03;
+ 					mixg_boost = 0x65;
+@@ -917,6 +937,8 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
+ 			mixa_boost = 0xF;
+ 		}
+ 
++		cbias = is_pkg_fab_smic ? 0x35 : 0x30;
++
+ 		for (i = 0; i < 2; i++) {
+ 			offset = i ? B2056_TX1 : B2056_TX0;
+ 
+@@ -935,11 +957,11 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
+ 			b43_radio_write(dev,
+ 				offset | B2056_TX_PADA_CASCBIAS, 0x03);
+ 			b43_radio_write(dev,
+-				offset | B2056_TX_INTPAA_IAUX_STAT, 0x50);
++				offset | B2056_TX_INTPAA_IAUX_STAT, 0x30);
+ 			b43_radio_write(dev,
+-				offset | B2056_TX_INTPAA_IMAIN_STAT, 0x50);
++				offset | B2056_TX_INTPAA_IMAIN_STAT, 0x30);
+ 			b43_radio_write(dev,
+-				offset | B2056_TX_INTPAA_CASCBIAS, 0x30);
++				offset | B2056_TX_INTPAA_CASCBIAS, cbias);
+ 		}
+ 	}
+ 
 -- 
-Michael.
-
-----
-Please use PGP/GPG encryption.
-Key-ID: F532BE1D908D8B0E
---------
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20140423/ed094624/attachment.sig>
+1.8.4.5
