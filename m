@@ -1,108 +1,74 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 26 Apr 2014 20:56:05 +0200
-Subject: [PATCH] b43: N-PHY: complete radio 0x2056 setup
-Message-ID: <1398538565-28188-1-git-send-email-zajec5@gmail.com>
+From: Crazybob <crazybob2@arcor.de>
+Date: Thu, 01 May 2014 10:19:01 +0200
+Subject: archlinux kernel 3.14.1-1 Broadcom BCM4312 firmware-file not found
+Message-ID: <53620375.1050109@arcor.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/phy_n.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+Hello List,
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 482b312..41dab89 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -807,9 +807,16 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
- 	u16 bias, cbias;
- 	u16 pag_boost, padg_boost, pgag_boost, mixg_boost;
- 	u16 paa_boost, pada_boost, pgaa_boost, mixa_boost;
-+	bool is_pkg_fab_smic;
- 
- 	B43_WARN_ON(dev->phy.rev < 3);
- 
-+	is_pkg_fab_smic =
-+		((dev->dev->chip_id == BCMA_CHIP_ID_BCM43224 ||
-+		  dev->dev->chip_id == BCMA_CHIP_ID_BCM43225 ||
-+		  dev->dev->chip_id == BCMA_CHIP_ID_BCM43421) &&
-+		 dev->dev->chip_pkg == BCMA_PKG_ID_BCM43224_FAB_SMIC);
-+
- 	b43_chantab_radio_2056_upload(dev, e);
- 	b2056_upload_syn_pll_cp2(dev, band == IEEE80211_BAND_5GHZ);
- 
-@@ -817,7 +824,8 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
- 	    b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
- 		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER1, 0x1F);
- 		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER2, 0x1F);
--		if (dev->dev->chip_id == 0x4716) {
-+		if (dev->dev->chip_id == BCMA_CHIP_ID_BCM4716 ||
-+		    dev->dev->chip_id == BCMA_CHIP_ID_BCM47162) {
- 			b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER4, 0x14);
- 			b43_radio_write(dev, B2056_SYN_PLL_CP2, 0);
- 		} else {
-@@ -825,6 +833,13 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
- 			b43_radio_write(dev, B2056_SYN_PLL_CP2, 0x14);
- 		}
- 	}
-+	if (sprom->boardflags2_hi & B43_BFH2_GPLL_WAR2 &&
-+	    b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
-+		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER1, 0x1f);
-+		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER2, 0x1f);
-+		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER4, 0x0b);
-+		b43_radio_write(dev, B2056_SYN_PLL_CP2, 0x20);
-+	}
- 	if (sprom->boardflags2_lo & B43_BFL2_APLL_WAR &&
- 	    b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
- 		b43_radio_write(dev, B2056_SYN_PLL_LOOPFILTER1, 0x1F);
-@@ -840,7 +855,8 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
- 				b43_radio_write(dev,
- 					offset | B2056_TX_PADG_IDAC, 0xcc);
- 
--				if (dev->dev->chip_id == 0x4716) {
-+				if (dev->dev->chip_id == BCMA_CHIP_ID_BCM4716 ||
-+				    dev->dev->chip_id == BCMA_CHIP_ID_BCM47162) {
- 					bias = 0x40;
- 					cbias = 0x45;
- 					pag_boost = 0x5;
-@@ -849,6 +865,10 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
- 				} else {
- 					bias = 0x25;
- 					cbias = 0x20;
-+					if (is_pkg_fab_smic) {
-+						bias = 0x2a;
-+						cbias = 0x38;
-+					}
- 					pag_boost = 0x4;
- 					pgag_boost = 0x03;
- 					mixg_boost = 0x65;
-@@ -917,6 +937,8 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
- 			mixa_boost = 0xF;
- 		}
- 
-+		cbias = is_pkg_fab_smic ? 0x35 : 0x30;
-+
- 		for (i = 0; i < 2; i++) {
- 			offset = i ? B2056_TX1 : B2056_TX0;
- 
-@@ -935,11 +957,11 @@ static void b43_radio_2056_setup(struct b43_wldev *dev,
- 			b43_radio_write(dev,
- 				offset | B2056_TX_PADA_CASCBIAS, 0x03);
- 			b43_radio_write(dev,
--				offset | B2056_TX_INTPAA_IAUX_STAT, 0x50);
-+				offset | B2056_TX_INTPAA_IAUX_STAT, 0x30);
- 			b43_radio_write(dev,
--				offset | B2056_TX_INTPAA_IMAIN_STAT, 0x50);
-+				offset | B2056_TX_INTPAA_IMAIN_STAT, 0x30);
- 			b43_radio_write(dev,
--				offset | B2056_TX_INTPAA_CASCBIAS, 0x30);
-+				offset | B2056_TX_INTPAA_CASCBIAS, cbias);
- 		}
- 	}
- 
--- 
-1.8.4.5
+my Netbook:
+Packard Bell DOT M
+Intel Z520 1.33G
+1GB RAM
+Broadcom BCM4312 802.11b/g LP-PHY (rev 01)
+
+arch 32-bit fully updated.
+
+uname -a:
+Linux laptop 3.14.1-1-ARCH #1  SMP PREEMPT Mon 14 April 21:01:08 CEST
+2014 i686 GNU/Linux
+
+With Kernel 3.13.8-1 and b43-firmware-5.100.130 all works very well.
+
+After Upgrade my System with Kernel 3.14.1-1 with same package of
+Firmware installed and a reboot, i got this message on every boot:
+
+
+Apr 30 15:50:47 laptop kernel: b43-pci-bridge 0000:03:00.0: enabling
+device (0004 -> 0006)
+Apr 30 15:50:47 laptop kernel: ssb: Found chip with id 0x4312, rev 0x01
+and package 0x00
+Apr 30 15:50:47 laptop kernel: ssb: Core 0 found: ChipCommon (cc 0x800,
+rev 0x16, vendor 0x4243)
+Apr 30 15:50:47 laptop kernel: ssb: Core 1 found: IEEE 802.11 (cc 0x812,
+rev 0x0F, vendor 0x4243)
+Apr 30 15:50:47 laptop kernel: ssb: Core 2 found: PCMCIA (cc 0x80D, rev
+0x0A, vendor 0x4243)
+Apr 30 15:50:47 laptop kernel: ssb: Core 3 found: PCI-E (cc 0x820, rev
+0x09, vendor 0x4243)
+Apr 30 15:50:47 laptop kernel: ssb: Sonics Silicon Backplane found on
+PCI device 0000:03:00.0
+Apr 30 15:50:47 laptop kernel: b43-phy0: Broadcom 4312 WLAN found (core
+revision 15)
+Apr 30 15:50:47 laptop kernel: b43-phy0: Found PHY: Analog 6, Type 5
+(LP), Revision 1
+Apr 30 15:50:47 laptop kernel: b43-phy0 ERROR: Firmware file
+"b43/lp0initvals15.fw" not found
+Apr 30 15:50:47 laptop kernel: Broadcom 43xx driver loaded [ Features:
+PMNLS ]
+Apr 30 15:50:47 laptop kernel: b43-phy0 ERROR: Firmware file
+"b43-open/ucode15.fw" not found
+Apr 30 15:50:47 laptop kernel: b43-phy0 ERROR: You must go to
+http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and
+download the correct firmware for this driver version. Please carefully
+read all instructions on this website.
+
+
+The files are propper installed under /usr/lib/firmware/b43/
+
+
+What have i done:
+rebuild and reinstalled firmware b43-firmware-5.100.130 by using Kernel
+3.14.1-1 - no success.
+
+Updating to b43-firmware-6.30.163.46 using Kernel 3.14.1-1 - no success.
+
+Downgrading to Kernel 3.13.8-1 both firmware versions works as expected.
+
+Sorry for my bad english.
+
+Regards
