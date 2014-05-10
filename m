@@ -1,87 +1,86 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 10 May 2014 16:44:48 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Sat, 10 May 2014 17:17:21 +0200
 Subject: [RFC][PATCH] b43: drop SSB dependency
-Message-ID: <1399733088-26607-1-git-send-email-zajec5@gmail.com>
+In-Reply-To: <1399733088-26607-1-git-send-email-zajec5@gmail.com>
+References: <1399733088-26607-1-git-send-email-zajec5@gmail.com>
+Message-ID: <20140510171721.54b21a63@wiggum>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-This adds choice submenu "Supported bus types" as two simple bool
-configs would allow user to compile b43 without any bus support
-(prety useless).
+On Sat, 10 May 2014 16:44:48 +0200
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-I'm far from being a Kconfig expert, so a detailed review is more than welcome.
----
- drivers/net/wireless/b43/Kconfig | 36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+>  config B43_BCMA
+> -	bool "Support for BCMA bus"
+> -	depends on B43 && (BCMA = y || BCMA = B43)
+> -	default y
+> +	bool
+> +	depends on B43
 
-diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
-index ce937a9..9c5898d 100644
---- a/drivers/net/wireless/b43/Kconfig
-+++ b/drivers/net/wireless/b43/Kconfig
-@@ -1,7 +1,6 @@
- config B43
- 	tristate "Broadcom 43xx wireless support (mac80211 stack)"
--	depends on SSB_POSSIBLE && MAC80211 && HAS_DMA
--	select SSB
-+	depends on (BCMA_POSSIBLE || SSB_POSSIBLE) && MAC80211 && HAS_DMA
- 	select FW_LOADER
- 	---help---
- 	  b43 is a driver for the Broadcom 43xx series wireless devices.
-@@ -27,14 +26,35 @@ config B43
- 	  If unsure, say M.
- 
- config B43_BCMA
--	bool "Support for BCMA bus"
--	depends on B43 && (BCMA = y || BCMA = B43)
--	default y
-+	bool
-+	depends on B43
- 
- config B43_SSB
- 	bool
--	depends on B43 && (SSB = y || SSB = B43)
--	default y
-+	depends on B43
-+
-+choice
-+	prompt "Supported bus types"
-+	depends on B43
-+	default B43_BCMA_AND_SSB
-+
-+config B43_BUSES_BCMA_AND_SSB
-+	bool "BCMA and SSB"
-+	depends on BCMA_POSSIBLE && SSB_POSSIBLE
-+	select B43_BCMA
-+	select B43_SSB
-+
-+config B43_BUSES_BCMA
-+	bool "BCMA only"
-+	depends on BCMA_POSSIBLE
-+	select B43_BCMA
-+
-+config B43_BUSES_SSB
-+	bool "SSB only"
-+	depends on SSB_POSSIBLE
-+	select B43_SSB
-+
-+endchoice
- 
- # Auto-select SSB PCI-HOST support, if possible
- config B43_PCI_AUTOSELECT
-@@ -98,7 +118,7 @@ config B43_BCMA_PIO
- 
- config B43_PIO
- 	bool
--	depends on B43
-+	depends on B43 && B43_SSB
- 	select SSB_BLOCKIO
- 	default y
- 
+A dependency on a purely selected option is ignored.
+So I think you can remove this one as well.
+
+>  config B43_SSB
+>  	bool
+> -	depends on B43 && (SSB = y || SSB = B43)
+> -	default y
+> +	depends on B43
+
+Same here.
+
+> +choice
+> +	prompt "Supported bus types"
+> +	depends on B43
+> +	default B43_BCMA_AND_SSB
+> +
+> +config B43_BUSES_BCMA_AND_SSB
+> +	bool "BCMA and SSB"
+> +	depends on BCMA_POSSIBLE && SSB_POSSIBLE
+
+I think this needs to be:
+
+	depends on (BCMA_POSSIBLE && (BCMA = y || BCMA = B43)) && (SSB_POSSIBLE && (SSB = y || SSB = B43))
+
+to avoid the case where b43 is y and ssb or bcma is m.
+Or did I miss something and this is caught elsewhere?
+
+> +	select B43_BCMA
+> +	select B43_SSB
+> +
+> +config B43_BUSES_BCMA
+> +	bool "BCMA only"
+> +	depends on BCMA_POSSIBLE
+
+Similar here.
+
+> +	select B43_BCMA
+> +
+> +config B43_BUSES_SSB
+> +	bool "SSB only"
+> +	depends on SSB_POSSIBLE
+
+And here.
+
+> +	select B43_SSB
+> +
+> +endchoice
+
+
 -- 
-1.8.4.5
+Michael.
+
+----
+Please use PGP/GPG encryption.
+Key-ID: F532BE1D908D8B0E
+--------
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20140510/bfdab95b/attachment.sig>
