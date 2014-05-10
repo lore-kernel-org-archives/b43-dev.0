@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 10 May 2014 16:14:04 +0200
-Subject: [PATCH] b43: adjust code to compile without SSB
-Message-ID: <1399731244-18743-1-git-send-email-zajec5@gmail.com>
+Date: Sat, 10 May 2014 16:40:34 +0200
+Subject: [PATCH V2] b43: adjust code to compile without SSB
+In-Reply-To: <1399731244-18743-1-git-send-email-zajec5@gmail.com>
+References: <1399731244-18743-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1399732834-26509-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,10 +16,15 @@ This is hopefully the last code patch for dropping SSB dependency.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
+V2: Replace
+#ifdef CONFIG_SSB_DRIVER_PCICORE
+with
+#if defined(CONFIG_B43_SSB) && defined(CONFIG_SSB_DRIVER_PCICORE)
+---
  drivers/net/wireless/b43/Kconfig |  2 +-
  drivers/net/wireless/b43/bus.h   | 10 ++++++++++
- drivers/net/wireless/b43/main.c  | 15 +++++++++++++++
- 3 files changed, 26 insertions(+), 1 deletion(-)
+ drivers/net/wireless/b43/main.c  | 17 ++++++++++++++++-
+ 3 files changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
 index 088d544..ce937a9 100644
@@ -69,7 +76,7 @@ index 184c956..f3205c6 100644
  
  struct b43_bus_dev *b43_bus_dev_bcma_init(struct bcma_device *core);
 diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 4439d25..9aab7e3 100644
+index 4439d25..be46439 100644
 --- a/drivers/net/wireless/b43/main.c
 +++ b/drivers/net/wireless/b43/main.c
 @@ -1197,6 +1197,7 @@ static void b43_bcma_wireless_core_reset(struct b43_wldev *dev, bool gmode)
@@ -134,6 +141,15 @@ index 4439d25..9aab7e3 100644
  
  	bus = dev->dev->sdev->bus;
  
+@@ -4675,7 +4688,7 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
+ 	}
+ 	if (sprom->boardflags_lo & B43_BFL_XTAL_NOSLOW)
+ 		hf |= B43_HF_DSCRQ; /* Disable slowclock requests from ucode. */
+-#ifdef CONFIG_SSB_DRIVER_PCICORE
++#if defined(CONFIG_B43_SSB) && defined(CONFIG_SSB_DRIVER_PCICORE)
+ 	if (dev->dev->bus_type == B43_BUS_SSB &&
+ 	    dev->dev->sdev->bus->bustype == SSB_BUSTYPE_PCI &&
+ 	    dev->dev->sdev->bus->pcicore.dev->id.revision <= 10)
 @@ -5247,6 +5260,7 @@ static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
  	(pdev->subsystem_vendor == PCI_VENDOR_ID_##_subvendor) &&	\
  	(pdev->subsystem_device == _subdevice)				)
