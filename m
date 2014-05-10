@@ -1,40 +1,154 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 6 May 2014 00:07:20 +0200
-Subject: Cover songs
-In-Reply-To: <1420777.k4tKhlLpsf@kohni>
-References: <5363D4F0.9000905@t-online.de> <1913588.QhJJy1Sd1t@kohni>
- <1420777.k4tKhlLpsf@kohni>
-Message-ID: <20140506000720.7899bfc5@wiggum>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sat, 10 May 2014 16:14:04 +0200
+Subject: [PATCH] b43: adjust code to compile without SSB
+Message-ID: <1399731244-18743-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Mon, 05 May 2014 23:46:39 +0200
-Jan Kohnert <jan@the-pojs.de> wrote:
+Users of new (BCMA based) wireless chipsets may not want to enable SSB.
+This is hopefully the last code patch for dropping SSB dependency.
 
-> oh my god, my MUA is fooling me? :(
-> 
-> Please excuse the noise and enjoy the music, if you like? :)
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/Kconfig |  2 +-
+ drivers/net/wireless/b43/bus.h   | 10 ++++++++++
+ drivers/net/wireless/b43/main.c  | 15 +++++++++++++++
+ 3 files changed, 26 insertions(+), 1 deletion(-)
 
-
-Oh dang.
-I was so excited reading the subject.
-So now a song about b43, please ;)
-
-
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index 088d544..ce937a9 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -116,7 +116,7 @@ config B43_PHY_N
+ 
+ config B43_PHY_LP
+ 	bool "Support for low-power (LP-PHY) devices"
+-	depends on B43
++	depends on B43 && B43_SSB
+ 	default y
+ 	---help---
+ 	  Support for the LP-PHY.
+diff --git a/drivers/net/wireless/b43/bus.h b/drivers/net/wireless/b43/bus.h
+index 184c956..f3205c6 100644
+--- a/drivers/net/wireless/b43/bus.h
++++ b/drivers/net/wireless/b43/bus.h
+@@ -5,7 +5,9 @@ enum b43_bus_type {
+ #ifdef CONFIG_B43_BCMA
+ 	B43_BUS_BCMA,
+ #endif
++#ifdef CONFIG_B43_SSB
+ 	B43_BUS_SSB,
++#endif
+ };
+ 
+ struct b43_bus_dev {
+@@ -52,13 +54,21 @@ struct b43_bus_dev {
+ 
+ static inline bool b43_bus_host_is_pcmcia(struct b43_bus_dev *dev)
+ {
++#ifdef CONFIG_B43_SSB
+ 	return (dev->bus_type == B43_BUS_SSB &&
+ 		dev->sdev->bus->bustype == SSB_BUSTYPE_PCMCIA);
++#else
++	return false;
++#endif
+ }
+ static inline bool b43_bus_host_is_sdio(struct b43_bus_dev *dev)
+ {
++#ifdef CONFIG_B43_SSB
+ 	return (dev->bus_type == B43_BUS_SSB &&
+ 		dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO);
++#else
++	return false;
++#endif
+ }
+ 
+ struct b43_bus_dev *b43_bus_dev_bcma_init(struct bcma_device *core);
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 4439d25..9aab7e3 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -1197,6 +1197,7 @@ static void b43_bcma_wireless_core_reset(struct b43_wldev *dev, bool gmode)
+ }
+ #endif
+ 
++#ifdef CONFIG_B43_SSB
+ static void b43_ssb_wireless_core_reset(struct b43_wldev *dev, bool gmode)
+ {
+ 	u32 flags = 0;
+@@ -1212,6 +1213,7 @@ static void b43_ssb_wireless_core_reset(struct b43_wldev *dev, bool gmode)
+ 
+ 	b43_phy_take_out_of_reset(dev);
+ }
++#endif
+ 
+ void b43_wireless_core_reset(struct b43_wldev *dev, bool gmode)
+ {
+@@ -2715,6 +2717,8 @@ static int b43_upload_initvals_band(struct b43_wldev *dev)
+ /* Initialize the GPIOs
+  * http://bcm-specs.sipsolutions.net/GPIO
+  */
++
++#ifdef CONFIG_B43_SSB
+ static struct ssb_device *b43_ssb_gpio_dev(struct b43_wldev *dev)
+ {
+ 	struct ssb_bus *bus = dev->dev->sdev->bus;
+@@ -2725,10 +2729,13 @@ static struct ssb_device *b43_ssb_gpio_dev(struct b43_wldev *dev)
+ 	return bus->chipco.dev;
+ #endif
+ }
++#endif
+ 
+ static int b43_gpio_init(struct b43_wldev *dev)
+ {
++#ifdef CONFIG_B43_SSB
+ 	struct ssb_device *gpiodev;
++#endif
+ 	u32 mask, set;
+ 
+ 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_GPOUTSMSK, 0);
+@@ -2787,7 +2794,9 @@ static int b43_gpio_init(struct b43_wldev *dev)
+ /* Turn off all GPIO stuff. Call this on module unload, for example. */
+ static void b43_gpio_cleanup(struct b43_wldev *dev)
+ {
++#ifdef CONFIG_B43_SSB
+ 	struct ssb_device *gpiodev;
++#endif
+ 
+ 	switch (dev->dev->bus_type) {
+ #ifdef CONFIG_B43_BCMA
+@@ -4519,8 +4528,12 @@ static void b43_imcfglo_timeouts_workaround(struct b43_wldev *dev)
+ 	struct ssb_bus *bus;
+ 	u32 tmp;
+ 
++#ifdef CONFIG_B43_SSB
+ 	if (dev->dev->bus_type != B43_BUS_SSB)
+ 		return;
++#else
++	return;
++#endif
+ 
+ 	bus = dev->dev->sdev->bus;
+ 
+@@ -5247,6 +5260,7 @@ static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
+ 	(pdev->subsystem_vendor == PCI_VENDOR_ID_##_subvendor) &&	\
+ 	(pdev->subsystem_device == _subdevice)				)
+ 
++#ifdef CONFIG_B43_SSB
+ static void b43_sprom_fixup(struct ssb_bus *bus)
+ {
+ 	struct pci_dev *pdev;
+@@ -5278,6 +5292,7 @@ static void b43_wireless_exit(struct b43_bus_dev *dev, struct b43_wl *wl)
+ 	ssb_set_devtypedata(dev->sdev, NULL);
+ 	ieee80211_free_hw(hw);
+ }
++#endif
+ 
+ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ {
 -- 
-Michael.
-
-----
-Please use PGP/GPG encryption.
-Key-ID: F532BE1D908D8B0E
---------
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 836 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20140506/30d3a9f3/attachment.sig>
+1.8.4.5
