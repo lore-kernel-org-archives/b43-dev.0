@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 10 May 2014 16:40:34 +0200
-Subject: [PATCH V2] b43: adjust code to compile without SSB
-In-Reply-To: <1399731244-18743-1-git-send-email-zajec5@gmail.com>
-References: <1399731244-18743-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1399732834-26509-1-git-send-email-zajec5@gmail.com>
+Date: Sat, 10 May 2014 16:44:48 +0200
+Subject: [RFC][PATCH] b43: drop SSB dependency
+Message-ID: <1399733088-26607-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,160 +9,79 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Users of new (BCMA based) wireless chipsets may not want to enable SSB.
-This is hopefully the last code patch for dropping SSB dependency.
+This adds choice submenu "Supported bus types" as two simple bool
+configs would allow user to compile b43 without any bus support
+(prety useless).
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-V2: Replace
-#ifdef CONFIG_SSB_DRIVER_PCICORE
-with
-#if defined(CONFIG_B43_SSB) && defined(CONFIG_SSB_DRIVER_PCICORE)
+I'm far from being a Kconfig expert, so a detailed review is more than welcome.
 ---
- drivers/net/wireless/b43/Kconfig |  2 +-
- drivers/net/wireless/b43/bus.h   | 10 ++++++++++
- drivers/net/wireless/b43/main.c  | 17 ++++++++++++++++-
- 3 files changed, 27 insertions(+), 2 deletions(-)
+ drivers/net/wireless/b43/Kconfig | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
-index 088d544..ce937a9 100644
+index ce937a9..9c5898d 100644
 --- a/drivers/net/wireless/b43/Kconfig
 +++ b/drivers/net/wireless/b43/Kconfig
-@@ -116,7 +116,7 @@ config B43_PHY_N
+@@ -1,7 +1,6 @@
+ config B43
+ 	tristate "Broadcom 43xx wireless support (mac80211 stack)"
+-	depends on SSB_POSSIBLE && MAC80211 && HAS_DMA
+-	select SSB
++	depends on (BCMA_POSSIBLE || SSB_POSSIBLE) && MAC80211 && HAS_DMA
+ 	select FW_LOADER
+ 	---help---
+ 	  b43 is a driver for the Broadcom 43xx series wireless devices.
+@@ -27,14 +26,35 @@ config B43
+ 	  If unsure, say M.
  
- config B43_PHY_LP
- 	bool "Support for low-power (LP-PHY) devices"
+ config B43_BCMA
+-	bool "Support for BCMA bus"
+-	depends on B43 && (BCMA = y || BCMA = B43)
+-	default y
++	bool
++	depends on B43
+ 
+ config B43_SSB
+ 	bool
+-	depends on B43 && (SSB = y || SSB = B43)
+-	default y
++	depends on B43
++
++choice
++	prompt "Supported bus types"
++	depends on B43
++	default B43_BCMA_AND_SSB
++
++config B43_BUSES_BCMA_AND_SSB
++	bool "BCMA and SSB"
++	depends on BCMA_POSSIBLE && SSB_POSSIBLE
++	select B43_BCMA
++	select B43_SSB
++
++config B43_BUSES_BCMA
++	bool "BCMA only"
++	depends on BCMA_POSSIBLE
++	select B43_BCMA
++
++config B43_BUSES_SSB
++	bool "SSB only"
++	depends on SSB_POSSIBLE
++	select B43_SSB
++
++endchoice
+ 
+ # Auto-select SSB PCI-HOST support, if possible
+ config B43_PCI_AUTOSELECT
+@@ -98,7 +118,7 @@ config B43_BCMA_PIO
+ 
+ config B43_PIO
+ 	bool
 -	depends on B43
 +	depends on B43 && B43_SSB
+ 	select SSB_BLOCKIO
  	default y
- 	---help---
- 	  Support for the LP-PHY.
-diff --git a/drivers/net/wireless/b43/bus.h b/drivers/net/wireless/b43/bus.h
-index 184c956..f3205c6 100644
---- a/drivers/net/wireless/b43/bus.h
-+++ b/drivers/net/wireless/b43/bus.h
-@@ -5,7 +5,9 @@ enum b43_bus_type {
- #ifdef CONFIG_B43_BCMA
- 	B43_BUS_BCMA,
- #endif
-+#ifdef CONFIG_B43_SSB
- 	B43_BUS_SSB,
-+#endif
- };
  
- struct b43_bus_dev {
-@@ -52,13 +54,21 @@ struct b43_bus_dev {
- 
- static inline bool b43_bus_host_is_pcmcia(struct b43_bus_dev *dev)
- {
-+#ifdef CONFIG_B43_SSB
- 	return (dev->bus_type == B43_BUS_SSB &&
- 		dev->sdev->bus->bustype == SSB_BUSTYPE_PCMCIA);
-+#else
-+	return false;
-+#endif
- }
- static inline bool b43_bus_host_is_sdio(struct b43_bus_dev *dev)
- {
-+#ifdef CONFIG_B43_SSB
- 	return (dev->bus_type == B43_BUS_SSB &&
- 		dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO);
-+#else
-+	return false;
-+#endif
- }
- 
- struct b43_bus_dev *b43_bus_dev_bcma_init(struct bcma_device *core);
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 4439d25..be46439 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -1197,6 +1197,7 @@ static void b43_bcma_wireless_core_reset(struct b43_wldev *dev, bool gmode)
- }
- #endif
- 
-+#ifdef CONFIG_B43_SSB
- static void b43_ssb_wireless_core_reset(struct b43_wldev *dev, bool gmode)
- {
- 	u32 flags = 0;
-@@ -1212,6 +1213,7 @@ static void b43_ssb_wireless_core_reset(struct b43_wldev *dev, bool gmode)
- 
- 	b43_phy_take_out_of_reset(dev);
- }
-+#endif
- 
- void b43_wireless_core_reset(struct b43_wldev *dev, bool gmode)
- {
-@@ -2715,6 +2717,8 @@ static int b43_upload_initvals_band(struct b43_wldev *dev)
- /* Initialize the GPIOs
-  * http://bcm-specs.sipsolutions.net/GPIO
-  */
-+
-+#ifdef CONFIG_B43_SSB
- static struct ssb_device *b43_ssb_gpio_dev(struct b43_wldev *dev)
- {
- 	struct ssb_bus *bus = dev->dev->sdev->bus;
-@@ -2725,10 +2729,13 @@ static struct ssb_device *b43_ssb_gpio_dev(struct b43_wldev *dev)
- 	return bus->chipco.dev;
- #endif
- }
-+#endif
- 
- static int b43_gpio_init(struct b43_wldev *dev)
- {
-+#ifdef CONFIG_B43_SSB
- 	struct ssb_device *gpiodev;
-+#endif
- 	u32 mask, set;
- 
- 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_GPOUTSMSK, 0);
-@@ -2787,7 +2794,9 @@ static int b43_gpio_init(struct b43_wldev *dev)
- /* Turn off all GPIO stuff. Call this on module unload, for example. */
- static void b43_gpio_cleanup(struct b43_wldev *dev)
- {
-+#ifdef CONFIG_B43_SSB
- 	struct ssb_device *gpiodev;
-+#endif
- 
- 	switch (dev->dev->bus_type) {
- #ifdef CONFIG_B43_BCMA
-@@ -4519,8 +4528,12 @@ static void b43_imcfglo_timeouts_workaround(struct b43_wldev *dev)
- 	struct ssb_bus *bus;
- 	u32 tmp;
- 
-+#ifdef CONFIG_B43_SSB
- 	if (dev->dev->bus_type != B43_BUS_SSB)
- 		return;
-+#else
-+	return;
-+#endif
- 
- 	bus = dev->dev->sdev->bus;
- 
-@@ -4675,7 +4688,7 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
- 	}
- 	if (sprom->boardflags_lo & B43_BFL_XTAL_NOSLOW)
- 		hf |= B43_HF_DSCRQ; /* Disable slowclock requests from ucode. */
--#ifdef CONFIG_SSB_DRIVER_PCICORE
-+#if defined(CONFIG_B43_SSB) && defined(CONFIG_SSB_DRIVER_PCICORE)
- 	if (dev->dev->bus_type == B43_BUS_SSB &&
- 	    dev->dev->sdev->bus->bustype == SSB_BUSTYPE_PCI &&
- 	    dev->dev->sdev->bus->pcicore.dev->id.revision <= 10)
-@@ -5247,6 +5260,7 @@ static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
- 	(pdev->subsystem_vendor == PCI_VENDOR_ID_##_subvendor) &&	\
- 	(pdev->subsystem_device == _subdevice)				)
- 
-+#ifdef CONFIG_B43_SSB
- static void b43_sprom_fixup(struct ssb_bus *bus)
- {
- 	struct pci_dev *pdev;
-@@ -5278,6 +5292,7 @@ static void b43_wireless_exit(struct b43_bus_dev *dev, struct b43_wl *wl)
- 	ssb_set_devtypedata(dev->sdev, NULL);
- 	ieee80211_free_hw(hw);
- }
-+#endif
- 
- static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
- {
 -- 
 1.8.4.5
