@@ -1,31 +1,32 @@
 From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 18 May 2014 12:18:34 +0200
-Subject: [PATCH] ssb: sprom: add dev_id field for value overriding
- standard ID
-In-Reply-To: <537880A4.1040102@hauke-m.de>
-References: <1400365358-19604-1-git-send-email-zajec5@gmail.com>
- <537880A4.1040102@hauke-m.de>
-Message-ID: <CACna6ryoHtc7tLNUwynJKP70VyqGtKk0PsMqw83cfDzsRnOg3A@mail.gmail.com>
+Date: Sun, 18 May 2014 13:13:43 +0200
+Subject: [wireless-next:master 83/118] sdio.c:undefined reference to
+ `ssb_bus_unregister'
+In-Reply-To: <20140518091708.GA23402@localhost>
+References: <53781383.4VhTkq6xna8cylNO%fengguang.wu@intel.com>
+ <CACna6rz6GQ62RL0eZufvp=f=zp93WRdRQduVn9vaO5d-MVEBWg@mail.gmail.com>
+ <20140518091708.GA23402@localhost>
+Message-ID: <CACna6rwbovBgXO0UgY3jnU=gV9a=WVq=urMp0k5UBnG2xs_+Og@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, b43-dev <b43-dev@lists.infradead.org>
+To: b43-dev@lists.infradead.org
 
-On 18 May 2014 11:43, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> There is also a vendid var which should be used. See this code from
-> brcmsmac:
-> http://lxr.free-electrons.com/source/drivers/staging/brcm80211/brcmsmac/wlc_bmac.c?v=3.0#L660
+On 18 May 2014 11:17, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> On Sun, May 18, 2014 at 11:01:09AM +0200, Rafa? Mi?ecki wrote:
+>> Fengguang: please attach your bot's config.
+>
+> Rafa?, the original email should have the .config attached.
 
-You're right, but is this used anywhere?
+Oh, of course, I've no idea how I missed it. Sorry.
 
-I can't reliably follow brcmsmac code, it copies the same data over
-and over. Simple grepping for "vendorid" shows copying from "vendorid"
-to "vendorid" of various structs, no real usage.
-The one exception is "sha_params.vid = wlc_hw->vendorid;. However grepping with:
-grep -R "\.vid" ./*
-grep -R "\->vid" ./*
-doesn't reveal any usage neither.
+Btw. it seems your bot compiles kernel on DOS/Windows, or e-mail
+attachments are converted to DOS new line:
+./.config: line 40: $'\r': command not found
+make: *** [vmlinux] Error 127
 
-Seems like a dead code.
+Thanks for your bot/report, I've reproduced this issue!
+
+-- 
+Rafa?
