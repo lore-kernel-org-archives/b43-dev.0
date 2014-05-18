@@ -1,41 +1,51 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 18 May 2014 13:23:17 +0200
-Subject: [wireless-next:master 83/118] sdio.c:undefined reference to
- `ssb_bus_unregister'
-In-Reply-To: <CACna6rz6GQ62RL0eZufvp=f=zp93WRdRQduVn9vaO5d-MVEBWg@mail.gmail.com>
-References: <53781383.4VhTkq6xna8cylNO%fengguang.wu@intel.com>
- <CACna6rz6GQ62RL0eZufvp=f=zp93WRdRQduVn9vaO5d-MVEBWg@mail.gmail.com>
-Message-ID: <CACna6rw8vSmrAFWJSDRiwYv9-Ywws8v6NMLYWE45F0r_4xtziA@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Sun, 18 May 2014 13:41:33 +0200
+Subject: [PATCH] b43: make B43_PCMCIA and B43_SDIO depend on B43_SSB
+Message-ID: <1400413293-25973-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Fengguang Wu <fengguang.wu@intel.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 18 May 2014 11:01, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> On 18 May 2014 03:57, kbuild test robot <fengguang.wu@intel.com> wrote:
->> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next.git master
->> head:   f8b8a47e06a0d07219629c83de2a3b7ff1d5aa65
->> commit: fbe057d8a185d4b588bd5dc18ea43fd12ce3d689 [83/118] b43: drop SSB dependency
->> config: x86_64-randconfig-iv0-05180939 (attached as .config)
->>
->> All error/warnings:
->>
->>    drivers/built-in.o: In function `b43_sdio_remove':
->>>> sdio.c:(.text+0x1460ff): undefined reference to `ssb_bus_unregister'
->>    drivers/built-in.o: In function `b43_sdio_probe':
->>>> sdio.c:(.text+0x1462af): undefined reference to `ssb_bus_sdiobus_register'
->
-> I don't understand what's going on there :(
-> 1) sdio.c is compiled if we have CONFIG_B43_SDIO
-> 2) a) B43_SDIO depends on SSB_SDIOHOST_POSSIBLE
-> 2) b) SSB_SDIOHOST_POSSIBLE depends on SSB
-> 3) a) B43_SDIO selects SSB_SDIOHOST
-> 3) b) SSB_SDIOHOST gives us ssb_bus_sdiobus_register
-
-Oh, there goes an answer:
+These are extra configs specific to the SSB. Lack of this dependency and
 CONFIG_B43=y
+CONFIG_B43_BUSES_BCMA=y
 CONFIG_SSB=m
+would result in:
+> drivers/built-in.o: In function `b43_sdio_remove':
+> sdio.c:(.text+0x14657f): undefined reference to `ssb_bus_unregister'
+> drivers/built-in.o: In function `b43_sdio_probe':
+> sdio.c:(.text+0x14672f): undefined reference to `ssb_bus_sdiobus_register'
 
-Above was possible because of:
-# CONFIG_B43_BUSES_SSB is not set
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index 1c7d27b..e3f67b8 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -73,7 +73,7 @@ config B43_PCICORE_AUTOSELECT
+ 
+ config B43_PCMCIA
+ 	bool "Broadcom 43xx PCMCIA device support"
+-	depends on B43 && SSB_PCMCIAHOST_POSSIBLE
++	depends on B43 && B43_SSB && SSB_PCMCIAHOST_POSSIBLE
+ 	select SSB_PCMCIAHOST
+ 	---help---
+ 	  Broadcom 43xx PCMCIA device support.
+@@ -93,7 +93,7 @@ config B43_PCMCIA
+ 
+ config B43_SDIO
+ 	bool "Broadcom 43xx SDIO device support"
+-	depends on B43 && SSB_SDIOHOST_POSSIBLE
++	depends on B43 && B43_SSB && SSB_SDIOHOST_POSSIBLE
+ 	select SSB_SDIOHOST
+ 	---help---
+ 	  Broadcom 43xx device support for Soft-MAC SDIO devices.
+-- 
+1.8.4.5
