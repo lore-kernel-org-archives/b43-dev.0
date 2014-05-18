@@ -1,43 +1,79 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 18 May 2014 17:17:08 +0800
-Subject: [wireless-next:master 83/118] sdio.c:undefined reference to
- `ssb_bus_unregister'
-In-Reply-To: <CACna6rz6GQ62RL0eZufvp=f=zp93WRdRQduVn9vaO5d-MVEBWg@mail.gmail.com>
-References: <53781383.4VhTkq6xna8cylNO%fengguang.wu@intel.com>
- <CACna6rz6GQ62RL0eZufvp=f=zp93WRdRQduVn9vaO5d-MVEBWg@mail.gmail.com>
-Message-ID: <20140518091708.GA23402@localhost>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 18 May 2014 11:43:00 +0200
+Subject: [PATCH] ssb: sprom: add dev_id field for value overriding standard
+ ID
+In-Reply-To: <1400365358-19604-1-git-send-email-zajec5@gmail.com>
+References: <1400365358-19604-1-git-send-email-zajec5@gmail.com>
+Message-ID: <537880A4.1040102@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org
 
-On Sun, May 18, 2014 at 11:01:09AM +0200, Rafa? Mi?ecki wrote:
-> On 18 May 2014 03:57, kbuild test robot <fengguang.wu@intel.com> wrote:
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next.git master
-> > head:   f8b8a47e06a0d07219629c83de2a3b7ff1d5aa65
-> > commit: fbe057d8a185d4b588bd5dc18ea43fd12ce3d689 [83/118] b43: drop SSB dependency
-> > config: x86_64-randconfig-iv0-05180939 (attached as .config)
-> >
-> > All error/warnings:
-> >
-> >    drivers/built-in.o: In function `b43_sdio_remove':
-> >>> sdio.c:(.text+0x1460ff): undefined reference to `ssb_bus_unregister'
-> >    drivers/built-in.o: In function `b43_sdio_probe':
-> >>> sdio.c:(.text+0x1462af): undefined reference to `ssb_bus_sdiobus_register'
+On 05/18/2014 12:22 AM, Rafa? Mi?ecki wrote:
+> Some devices may have different features despite sharing the same ID
+> (e.g. PCI ID). For example 14e4:4331 is usually a dual band, but this
+> can be "limited". Device with "pci/x/y/devid=0x4332" supports 2.4 GHz
+> only. Similarly 0x4333 will mean support for 5 GHz only.
+> Add entry in SPROM so info described above can be extracted and stored.
 > 
-> I don't understand what's going on there :(
-> 1) sdio.c is compiled if we have CONFIG_B43_SDIO
-> 2) a) B43_SDIO depends on SSB_SDIOHOST_POSSIBLE
-> 2) b) SSB_SDIOHOST_POSSIBLE depends on SSB
-> 3) a) B43_SDIO selects SSB_SDIOHOST
-> 3) b) SSB_SDIOHOST gives us ssb_bus_sdiobus_register
-> 
-> Does anyone has any idea what could go wrong?
-> 
-> Fengguang: please attach your bot's config.
+> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-Rafa?, the original email should have the .config attached.
+This patch is ok, I missed that when adding BCM4716 support to brcmsmac.
+There is also a vendid var which should be used. See this code from
+brcmsmac:
+http://lxr.free-electrons.com/source/drivers/staging/brcm80211/brcmsmac/wlc_bmac.c?v=3.0#L660
 
-Thanks,
-Fengguang
+Hauke
+
+> ---
+> I managed to find "devid" on every common SPROM rev:
+> pci/1/1/sromrev=2
+> pci/1/1/devid=0x4318
+> 
+> pci/1/1/sromrev=4
+> pci/1/1/devid=0x4329
+> 
+> pci/1/1/sromrev=8
+> pci/1/1/devid=0x432d
+> 
+> pci/1/1/sromrev=9
+> pci/1/1/devid=0x4332
+> 
+> pci/1/1/sromrev=11
+> pci/1/1/devid=0x43a1
+> 
+> So it makes the most sense to always try to extract it.
+> ---
+>  arch/mips/bcm47xx/sprom.c | 1 +
+>  include/linux/ssb/ssb.h   | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/arch/mips/bcm47xx/sprom.c b/arch/mips/bcm47xx/sprom.c
+> index a8b5408..da4cdb1 100644
+> --- a/arch/mips/bcm47xx/sprom.c
+> +++ b/arch/mips/bcm47xx/sprom.c
+> @@ -168,6 +168,7 @@ static void nvram_read_alpha2(const char *prefix, const char *name,
+>  static void bcm47xx_fill_sprom_r1234589(struct ssb_sprom *sprom,
+>  					const char *prefix, bool fallback)
+>  {
+> +	nvram_read_u16(prefix, NULL, "devid", &sprom->dev_id, 0, fallback);
+>  	nvram_read_u8(prefix, NULL, "ledbh0", &sprom->gpio0, 0xff, fallback);
+>  	nvram_read_u8(prefix, NULL, "ledbh1", &sprom->gpio1, 0xff, fallback);
+>  	nvram_read_u8(prefix, NULL, "ledbh2", &sprom->gpio2, 0xff, fallback);
+> diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+> index 07ef9b8..4568a5c 100644
+> --- a/include/linux/ssb/ssb.h
+> +++ b/include/linux/ssb/ssb.h
+> @@ -33,6 +33,7 @@ struct ssb_sprom {
+>  	u8 et1phyaddr;		/* MII address for enet1 */
+>  	u8 et0mdcport;		/* MDIO for enet0 */
+>  	u8 et1mdcport;		/* MDIO for enet1 */
+> +	u16 dev_id;		/* Device ID overriding e.g. PCI ID */
+>  	u16 board_rev;		/* Board revision number from SPROM. */
+>  	u16 board_num;		/* Board number from SPROM. */
+>  	u16 board_type;		/* Board type from SPROM. */
+> 
