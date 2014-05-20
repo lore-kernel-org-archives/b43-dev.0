@@ -1,52 +1,45 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 20 May 2014 09:27:18 +0200
-Subject: [PATCH V2] b43: xmit: set 5 GHz bit depending on current band
-In-Reply-To: <1400568385-26182-1-git-send-email-zajec5@gmail.com>
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Tue, 20 May 2014 10:18:25 +0200
+Subject: [PATCH] b43: xmit: set 5 GHz bit depending on current band
+In-Reply-To: <CACna6ryTSKim3ckZsJnE_1zrXW-JFabZSaJrLrOFL+JgXzLLjQ@mail.gmail.com>
 References: <1400568385-26182-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1400570838-27060-1-git-send-email-zajec5@gmail.com>
+ <537AFAA0.3070401@meshcoding.com>
+ <CACna6rwa6zKX=ngSQhmWTrZcy_W7fjMrTmQ-A8XURZCVMX1nrA@mail.gmail.com>
+ <537AFFEB.1040707@meshcoding.com>
+ <CACna6ryTSKim3ckZsJnE_1zrXW-JFabZSaJrLrOFL+JgXzLLjQ@mail.gmail.com>
+Message-ID: <20140520101825.3d928446@wiggum>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Antonio Quartulli <antonio@meshcoding.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-PHYs other than A may also work in 5 GHz mode.
+On Tue, 20 May 2014 09:23:28 +0200
+Rafa? Mi?ecki <zajec5@gmail.com> wrote:
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-V2: Update comment about "gmode" in phy_common.h
-    Thanks Antonio.
----
- drivers/net/wireless/b43/phy_common.h | 2 +-
- drivers/net/wireless/b43/xmit.c       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> You're probably right. It's just a bit historical, it matches bcm47xx
+> specs, Broadcom's public code, Broadcom headers and probably their
+> internal specs. That's why I didn't decide to really touch it, to
+> avoid confusion when comparing specs with the code.
 
-diff --git a/drivers/net/wireless/b43/phy_common.h b/drivers/net/wireless/b43/phy_common.h
-index 4c80b09..47b5585 100644
---- a/drivers/net/wireless/b43/phy_common.h
-+++ b/drivers/net/wireless/b43/phy_common.h
-@@ -231,7 +231,7 @@ struct b43_phy {
- 	/* HT info */
- 	bool is_40mhz;
- 
--	/* GMODE bit enabled? */
-+	/* Is GMODE (2 GHz mode) bit enabled? */
- 	bool gmode;
- 
- 	/* Analog Type */
-diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
-index 31adb8c..4f38f19 100644
---- a/drivers/net/wireless/b43/xmit.c
-+++ b/drivers/net/wireless/b43/xmit.c
-@@ -408,7 +408,7 @@ int b43_generate_txhdr(struct b43_wldev *dev,
- 		mac_ctl |= B43_TXH_MAC_HWSEQ;
- 	if (info->flags & IEEE80211_TX_CTL_FIRST_FRAGMENT)
- 		mac_ctl |= B43_TXH_MAC_STMSDU;
--	if (phy->type == B43_PHYTYPE_A)
-+	if (!phy->gmode)
- 		mac_ctl |= B43_TXH_MAC_5GHZ;
- 
- 	/* Overwrite rates[0].count to make the retry calculation
+
+The thing is that the actual hardware bit is called GMODE.
+I guess we could rename that variable and add a comment, if it's really an issue.
+But not the #define for the hardware bit.
+
+
 -- 
-1.8.4.5
+Michael.
+
+----
+Please use PGP/GPG encryption.
+Key-ID: F532BE1D908D8B0E
+--------
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 836 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20140520/155208da/attachment.sig>
