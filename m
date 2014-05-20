@@ -1,33 +1,37 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 20 May 2014 08:46:25 +0200
+From: Antonio Quartulli <antonio@meshcoding.com>
+Date: Tue, 20 May 2014 08:48:00 +0200
 Subject: [PATCH] b43: xmit: set 5 GHz bit depending on current band
-Message-ID: <1400568385-26182-1-git-send-email-zajec5@gmail.com>
+In-Reply-To: <1400568385-26182-1-git-send-email-zajec5@gmail.com>
+References: <1400568385-26182-1-git-send-email-zajec5@gmail.com>
+Message-ID: <537AFAA0.3070401@meshcoding.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, b43-dev@lists.infradead.org
 
-PHYs other than A may also work in 5 GHz mode.
+Hi,
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/xmit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 20/05/14 08:46, Rafa? Mi?ecki wrote:
+> --- a/drivers/net/wireless/b43/xmit.c
+> +++ b/drivers/net/wireless/b43/xmit.c
+> -	if (phy->type == B43_PHYTYPE_A)
+> +	if (!phy->gmode)
+>  		mac_ctl |= B43_TXH_MAC_5GHZ;
 
-diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
-index 31adb8c..4f38f19 100644
---- a/drivers/net/wireless/b43/xmit.c
-+++ b/drivers/net/wireless/b43/xmit.c
-@@ -408,7 +408,7 @@ int b43_generate_txhdr(struct b43_wldev *dev,
- 		mac_ctl |= B43_TXH_MAC_HWSEQ;
- 	if (info->flags & IEEE80211_TX_CTL_FIRST_FRAGMENT)
- 		mac_ctl |= B43_TXH_MAC_STMSDU;
--	if (phy->type == B43_PHYTYPE_A)
-+	if (!phy->gmode)
- 		mac_ctl |= B43_TXH_MAC_5GHZ;
- 
- 	/* Overwrite rates[0].count to make the retry calculation
+I am not familiar with this driver, but wouldn't 11b mode fall in this
+case as well ?
+
+Cheers,
+
 -- 
-1.8.4.5
+Antonio Quartulli
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 901 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20140520/6df9551c/attachment.sig>
