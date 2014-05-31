@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 31 May 2014 20:49:36 +0200
-Subject: [PATCH 4/9] b43: PHY: don't force default channel during init
+Date: Sat, 31 May 2014 20:49:37 +0200
+Subject: [PATCH 5/9] b43: b43_op_config: set channel info before switching band
 In-Reply-To: <1401562181-14608-1-git-send-email-zajec5@gmail.com>
 References: <1401562181-14608-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1401562181-14608-5-git-send-email-zajec5@gmail.com>
+Message-ID: <1401562181-14608-6-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,37 +11,46 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-PHY may need to be re-initialized during runtime (e.g. on band switch).
+Band switching code needs to know what channel we switch to.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_common.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/wireless/b43/main.c       | 3 ++-
+ drivers/net/wireless/b43/phy_common.c | 1 -
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 59aa4fd..5e4eed3 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -3808,6 +3808,7 @@ static int b43_op_config(struct ieee80211_hw *hw, u32 changed)
+ 	b43_mac_suspend(dev);
+ 
+ 	if (changed & IEEE80211_CONF_CHANGE_CHANNEL) {
++		phy->channel = conf->chandef.chan->hw_value;
+ 		if (conf_is_ht(conf))
+ 			phy->is_40mhz = conf_is_ht40_minus(conf) ||
+ 					conf_is_ht40_plus(conf);
+@@ -3822,7 +3823,7 @@ static int b43_op_config(struct ieee80211_hw *hw, u32 changed)
+ 		/* Switch to the requested channel.
+ 		 * The firmware takes care of races with the TX handler.
+ 		 */
+-		b43_switch_channel(dev, conf->chandef.chan->hw_value);
++		b43_switch_channel(dev, phy->channel);
+ 	}
+ 
+ 	if (changed & IEEE80211_CONF_CHANGE_RETRY_LIMITS)
 diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index ac4cf2b..3bfb795 100644
+index 3bfb795..b465011 100644
 --- a/drivers/net/wireless/b43/phy_common.c
 +++ b/drivers/net/wireless/b43/phy_common.c
-@@ -94,7 +94,8 @@ int b43_phy_init(struct b43_wldev *dev)
- 	const struct b43_phy_operations *ops = phy->ops;
- 	int err;
+@@ -424,7 +424,6 @@ int b43_switch_channel(struct b43_wldev *dev, unsigned int new_channel)
+ 	if (err)
+ 		goto err_restore_cookie;
  
--	phy->channel = ops->get_default_chan(dev);
-+	if (!phy->channel)
-+		phy->channel = ops->get_default_chan(dev);
+-	dev->phy.channel = new_channel;
+ 	/* Wait for the radio to tune to the channel and stabilize. */
+ 	msleep(8);
  
- 	phy->ops->switch_analog(dev, true);
- 	b43_software_rfkill(dev, false);
-@@ -106,9 +107,7 @@ int b43_phy_init(struct b43_wldev *dev)
- 	}
- 	phy->do_full_init = false;
- 
--	/* Make sure to switch hardware and firmware (SHM) to
--	 * the default channel. */
--	err = b43_switch_channel(dev, ops->get_default_chan(dev));
-+	err = b43_switch_channel(dev, phy->channel);
- 	if (err) {
- 		b43err(dev->wl, "PHY init: Channel switch to default failed\n");
- 		goto err_phy_exit;
 -- 
 1.8.4.5
