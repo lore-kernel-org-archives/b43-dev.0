@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 31 May 2014 19:40:45 +0200
-Subject: [FIX for 3.16][PATCH] b43: disable 5 GHz on G-PHY
-Message-ID: <1401558045-12273-1-git-send-email-zajec5@gmail.com>
+Date: Sat, 31 May 2014 20:49:32 +0200
+Subject: [PATCH 0/9] b43: clean channel handling
+Message-ID: <1401562181-14608-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,38 +9,45 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-This fixes regression introduced by adding some G-PHY devices to the
-list of dual band devices. There is simply no support for 5 GHz on
-G-PHY devices in b43. It results in:
-WARNING: CPU: 0 PID: 79 at drivers/net/wireless/b43/phy_g.c:75 b43_gphy_channel_switch+0x125/0x130 [b43]()
-b43-phy1 ERROR: PHY init: Channel switch to default failed
+This patchset cleans channel handling in the driver which became a bit
+messy recently. We get rid of too many variables in PHY struct switching
+to a simple struct cfg80211_chan_def (unsigned int channel is still
+there because a lot of code depends on it).
 
-Regression was introduced by the following commit:
+This also slightly changes PHY ops to make PHY re-init possible with
+the current channel (this will be needed for band switching).
 
-commit 773cfc508f4d64c14547ff8751b5cbd473124364
-Author: Rafa? Mi?ecki <zajec5@gmail.com>
-Date:   Mon May 19 23:18:55 2014 +0200
+This has been basically tested for regressions on the following cards:
+14e4:4312 BCM4311 G-PHY rev 8
+14e4:4315 BCM4312 LP-PHY rev 1
+14e4:4328 BCM4321 N-PHY rev 2
+14e4:432b BCM4322 N-PHY rev 4
+14e4:4353 BCM43224 N-PHY rev 6
+(note 14e4:4312 was never working correctly for me).
 
-    b43: add more devices to the bands database
+John: it's the last "big thing" I wanted for 3.16. It's a bit late, so
+to minimalize a risk I gave it some testing on many devices. If you
+manage to get it for 3.16, that will be cool for me. Still, it's up to
+you, not a big pressure.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
-This fixes regression present in wireless-next.
----
- drivers/net/wireless/b43/main.c | 1 +
- 1 file changed, 1 insertion(+)
+Rafa? Mi?ecki (9):
+  b43: drop B43_DEFAULT_CHANNEL
+  b43: b43_op_config: drop check for core change
+  b43: b43_op_config: use IEEE80211_CONF_CHANGE_CHANNEL
+  b43: PHY: don't force default channel during init
+  b43: b43_op_config: set channel info before switching band
+  b43: store current channel using struct cfg80211_chan_def
+  b43: PHY: drop own channel_freq (get it from chandef when needed)
+  b43: PHY: drop is_40mhz (get width info from chandef)
+  b43: PHY: drop channel_type (we can get this info from chandef)
 
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 3cb8da7..aeb7e39 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -5202,6 +5202,7 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
- 	/* We don't support 5 GHz on some PHYs yet */
- 	switch (dev->phy.type) {
- 	case B43_PHYTYPE_A:
-+	case B43_PHYTYPE_G:
- 	case B43_PHYTYPE_N:
- 	case B43_PHYTYPE_LP:
- 	case B43_PHYTYPE_HT:
+ drivers/net/wireless/b43/main.c        | 46 ++++++------------
+ drivers/net/wireless/b43/phy_common.c  | 21 ++++----
+ drivers/net/wireless/b43/phy_common.h  | 12 +----
+ drivers/net/wireless/b43/phy_ht.c      |  2 +-
+ drivers/net/wireless/b43/phy_n.c       | 88 ++++++++++++++++++----------------
+ drivers/net/wireless/b43/tables_nphy.c |  2 +-
+ 6 files changed, 75 insertions(+), 96 deletions(-)
+
 -- 
 1.8.4.5
