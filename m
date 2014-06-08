@@ -1,35 +1,30 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu,  5 Jun 2014 20:20:44 +0200
-Subject: [PATCH] bcma: gpio: register all 32 GPIOs on BCM53572
-Message-ID: <1401992444-4121-1-git-send-email-zajec5@gmail.com>
+From: H.H. Sheikh Mansour Bin Zayed Al Nahyan <mansour.binzayed.alnahyan.adug@gmail.com>
+Date: Sun, 08 Jun 2014 09:29:07 -0400
+Subject: financial partner
+Message-ID: <E1Wtd9n-0001HW-2P@pw3.digitalproserver.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: b43-dev@lists.infradead.org
 
-I've here a device detected as:
-bcma: bus0: Found chip with id 0xD144, rev 0x01 and package 0x08
-I couldn't find GPIO handling hw button until trying GPIO 20. It seems
-BCM53572 also has 32 GPIOs.
+Dear partner,
+I represent International petroleum  Investment company (www.ipic.ae)
+base in Abu Dhabi,UAE.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/bcma/driver_gpio.c | 1 +
- 1 file changed, 1 insertion(+)
+My group is ready to facilitate and fund any business that is capable
+of generating 5% annual return on investment (AROI).
 
-diff --git a/drivers/bcma/driver_gpio.c b/drivers/bcma/driver_gpio.c
-index d7f81ad..aec9f85 100644
---- a/drivers/bcma/driver_gpio.c
-+++ b/drivers/bcma/driver_gpio.c
-@@ -220,6 +220,7 @@ int bcma_gpio_init(struct bcma_drv_cc *cc)
- #endif
- 	switch (cc->core->bus->chipinfo.id) {
- 	case BCMA_CHIP_ID_BCM5357:
-+	case BCMA_CHIP_ID_BCM53572:
- 		chip->ngpio	= 32;
- 		break;
- 	default:
--- 
-1.8.4.5
+JV partnership and loan financing and crude oil deals can also be considered.
+Please contact us,for a possible business collaboration.
+Thank you.
+
+H.H. Sheikh Mansour Bin Zayed Al Nahyan
+chairman,
+International Petroleum Investment Company
+Member of the Emirates Investment Authority
+Sheikh Zayed the 1" Street
+Abu Dhabi, United Arab Emirates.
+Phone: 971 2 633 6555
+private Email: mansour.binzayed.alnahyan at abudhabiunitedgroup.url.ph
+www.ipic.ae
