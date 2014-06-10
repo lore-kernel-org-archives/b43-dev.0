@@ -1,29 +1,33 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Date: Tue, 10 Jun 2014 13:21:02 +0200
-Subject: b43: B43_BCMA_AND_SSB?
-Message-ID: <1402399262.3798.16.camel@x220>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 10 Jun 2014 13:32:05 +0200
+Subject: [3.16 FIX][PATCH] b43: fix typo in Kconfig (make
+ B43_BUSES_BCMA_AND_SSB the default for real)
+Message-ID: <1402399925-23096-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, Paul Bolle <pebolle@tiscali.nl>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Rafa?, John,
+Reported-by: Paul Bolle <pebolle@tiscali.nl>
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-0) linux-next includes your commit fbe057d8a185 ("b43: drop SSB
-dependency"). It was first included in next-20140514. It added this
-default for the (new) choice "Supported bus types":
-    default B43_BCMA_AND_SSB
-
-1) That symbol doesn't exist. It seems this line should have read:
-    default B43_BUSES_BCMA_AND_SSB
-
-(No one noticed because a choice with a bogus default will, apparently,
-default to its first entry, which happened to be
-B43_BUSES_BCMA_AND_SSB.)
-
-2) Is the (trivial) patch to fix that typo queued somewhere?
-
-
-Paul Bolle
+diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
+index e3f67b8..40fd9b7 100644
+--- a/drivers/net/wireless/b43/Kconfig
++++ b/drivers/net/wireless/b43/Kconfig
+@@ -36,7 +36,7 @@ config B43_SSB
+ choice
+ 	prompt "Supported bus types"
+ 	depends on B43
+-	default B43_BCMA_AND_SSB
++	default B43_BUSES_BCMA_AND_SSB
+ 
+ config B43_BUSES_BCMA_AND_SSB
+ 	bool "BCMA and SSB"
+-- 
+1.8.4.5
