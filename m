@@ -1,30 +1,29 @@
-From: H.H. Sheikh Mansour Bin Zayed Al Nahyan <mansour.binzayed.alnahyan.adug@gmail.com>
-Date: Sun, 08 Jun 2014 09:29:07 -0400
-Subject: financial partner
-Message-ID: <E1Wtd9n-0001HW-2P@pw3.digitalproserver.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Date: Tue, 10 Jun 2014 13:21:02 +0200
+Subject: b43: B43_BCMA_AND_SSB?
+Message-ID: <1402399262.3798.16.camel@x220>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-Dear partner,
-I represent International petroleum  Investment company (www.ipic.ae)
-base in Abu Dhabi,UAE.
+Rafa?, John,
 
-My group is ready to facilitate and fund any business that is capable
-of generating 5% annual return on investment (AROI).
+0) linux-next includes your commit fbe057d8a185 ("b43: drop SSB
+dependency"). It was first included in next-20140514. It added this
+default for the (new) choice "Supported bus types":
+    default B43_BCMA_AND_SSB
 
-JV partnership and loan financing and crude oil deals can also be considered.
-Please contact us,for a possible business collaboration.
-Thank you.
+1) That symbol doesn't exist. It seems this line should have read:
+    default B43_BUSES_BCMA_AND_SSB
 
-H.H. Sheikh Mansour Bin Zayed Al Nahyan
-chairman,
-International Petroleum Investment Company
-Member of the Emirates Investment Authority
-Sheikh Zayed the 1" Street
-Abu Dhabi, United Arab Emirates.
-Phone: 971 2 633 6555
-private Email: mansour.binzayed.alnahyan at abudhabiunitedgroup.url.ph
-www.ipic.ae
+(No one noticed because a choice with a bogus default will, apparently,
+default to its first entry, which happened to be
+B43_BUSES_BCMA_AND_SSB.)
+
+2) Is the (trivial) patch to fix that typo queued somewhere?
+
+
+Paul Bolle
