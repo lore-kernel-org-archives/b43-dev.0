@@ -1,33 +1,36 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 10 Jun 2014 13:32:05 +0200
-Subject: [3.16 FIX][PATCH] b43: fix typo in Kconfig (make
- B43_BUSES_BCMA_AND_SSB the default for real)
-Message-ID: <1402399925-23096-1-git-send-email-zajec5@gmail.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+Date: Thu, 12 Jun 2014 02:05:13 +0300
+Subject: Linux 3.15: WLAN regression on WRL54GL/B43?
+Message-ID: <20140611230513.GC913@drone.musicnaut.iki.fi>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, Paul Bolle <pebolle@tiscali.nl>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-Reported-by: Paul Bolle <pebolle@tiscali.nl>
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
-index e3f67b8..40fd9b7 100644
---- a/drivers/net/wireless/b43/Kconfig
-+++ b/drivers/net/wireless/b43/Kconfig
-@@ -36,7 +36,7 @@ config B43_SSB
- choice
- 	prompt "Supported bus types"
- 	depends on B43
--	default B43_BCMA_AND_SSB
-+	default B43_BUSES_BCMA_AND_SSB
- 
- config B43_BUSES_BCMA_AND_SSB
- 	bool "BCMA and SSB"
--- 
-1.8.4.5
+While testing the final 3.15, I noticed that "iwlist wlan0 scanning"
+cannot find anything on my WRT54GL router anymore:
+
+	# iwlist wlan0 scanning
+	wlan0     No scan results
+
+I bisected this to:
+
+	3afc2167f60a327a2c1e1e2600ef209a3c2b75b7 is the first bad commit
+	commit 3afc2167f60a327a2c1e1e2600ef209a3c2b75b7
+	Author: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+	Date:   Tue Mar 4 16:50:13 2014 +0200
+
+	    cfg80211/mac80211: ignore signal if the frame was heard on wrong channel
+
+Test case: I simply test it after the boot as follows:
+
+	modprobe b43
+	ifconfig wlan0 up
+	iwlist wlan0 scanning
+
+Any ideas?
+
+A.
