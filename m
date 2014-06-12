@@ -1,38 +1,50 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 12 Jun 2014 08:21:55 +0200
-Subject: Linux 3.15: WLAN regression on WRL54GL/B43?
-In-Reply-To: <CACna6rwaxzyY+vqQa+vJETA_g+8zLmwWQb9uYhFOvTy57A15rw@mail.gmail.com>
-References: <20140611230513.GC913@drone.musicnaut.iki.fi>
- <CACna6rwaxzyY+vqQa+vJETA_g+8zLmwWQb9uYhFOvTy57A15rw@mail.gmail.com>
-Message-ID: <CACna6rwjyiz0c791G4sJRGZoDLPTijfQeCeuD0PVgL0fvLtYBQ@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Thu, 12 Jun 2014 09:28:38 +0200
+Subject: [RFC: which stable kernels?] b43: fix frequency reported on G-PHY
+ with /new/ firmware
+Message-ID: <1402558118-25777-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 12 June 2014 07:44, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> On 12 June 2014 01:05, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
->> While testing the final 3.15, I noticed that "iwlist wlan0 scanning"
->> cannot find anything on my WRT54GL router anymore:
->
-> I believe it's BCM5352E SoC wth G-PHY rev 7 and radio 0x2050 rev 2. Is
-> that correct? Provide us a boot log.
+---
+This bug was there for years, however didn't cause any problems. It was
+exposed recently by the 3.15 release by the:
 
-I've reproduced this on my G-PHY rev 8. This is a bug caused by the:
-status.freq = chanid + 2400;
+commit 3afc2167f60a327a2c1e1e2600ef209a3c2b75b7
+Author: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Date:   Tue Mar 4 16:50:13 2014 +0200
 
-It results in the:
-[ 1500.651877] Got chanid:3 set freq:2403
-[ 1500.719688] Got chanid:4 set freq:2404
-[ 1500.788645] Got chanid:5 set freq:2405
-[ 1500.857630] Got chanid:6 set freq:2406
-[ 1500.936061] Got chanid:7 set freq:2407
-[ 1500.973772] Got chanid:8 set freq:2408
-[ 1501.084351] Got chanid:9 set freq:2409
+    cfg80211/mac80211: ignore signal if the frame was heard on wrong channel
 
-I'll submit a fix.
+Should we mark it for stable for 3.15 only? Or all olders kernels as well?
+---
+ drivers/net/wireless/b43/xmit.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/xmit.c b/drivers/net/wireless/b43/xmit.c
+index 4f38f19..6e6ef3f 100644
+--- a/drivers/net/wireless/b43/xmit.c
++++ b/drivers/net/wireless/b43/xmit.c
+@@ -811,9 +811,13 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
+ 		break;
+ 	case B43_PHYTYPE_G:
+ 		status.band = IEEE80211_BAND_2GHZ;
+-		/* chanid is the radio channel cookie value as used
+-		 * to tune the radio. */
+-		status.freq = chanid + 2400;
++		/* Somewhere between 478.104 and 508.1084 firmware for G-PHY
++		 * has been modified to be compatible with N-PHY and others.
++		 */
++		if (dev->fw.rev >= 508)
++			status.freq = ieee80211_channel_to_frequency(chanid, status.band);
++		else
++			status.freq = chanid + 2400;
+ 		break;
+ 	case B43_PHYTYPE_N:
+ 	case B43_PHYTYPE_LP:
 -- 
-Rafa?
+1.8.4.5
