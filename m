@@ -1,37 +1,70 @@
-From: Geoff <capsthorne@yahoo.co.uk>
-Date: Fri, 20 Jun 2014 16:19:12 +0100
-Subject: BCM 4311 cannot connect to router under kernel 3.15
-In-Reply-To: <CACna6rzC2EHmOuR1FFM4kWKAPqUBQij1EX=EXTz3k38BpX911w@mail.gmail.com>
-References: <20140620141352.cf66d6cf355510c0148a4d00@yahoo.co.uk>
- <CACna6rzC2EHmOuR1FFM4kWKAPqUBQij1EX=EXTz3k38BpX911w@mail.gmail.com>
-Message-ID: <20140620161912.309525c4fd62328f7fa8aca6@yahoo.co.uk>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Fri, 20 Jun 2014 17:22:00 +0200
+Subject: [PATCH 1/2] b43: remove leftover code from old devices support
+Message-ID: <1403277721-25302-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Fri, 20 Jun 2014 15:46:36 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+Old devices (A-PHY or B-PHY) are supposed to be supported by b43legacy.
+We keep phy_a.c as it's needed for G-PHY which shares some design.
 
-<snip>
-> Fixed by:
-> [1] b43: fix frequency reported on G-PHY with /new/ firmware
-> 
-> The patch has yet to hit Linus's tree, then I'll be applied to older
-> (stable) trees. So hopefully you will see this fix in 3.15.2 or
-> 3.15.3.
-> 
-> For now you have to stick to 3.14, or temporarily replace your
-> firmware (in /lib/firmware/b43) with the older version 478.104 (if you
-> know how).
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/main.c       | 9 ---------
+ drivers/net/wireless/b43/phy_a.h      | 4 ----
+ drivers/net/wireless/b43/phy_common.c | 3 ---
+ 3 files changed, 16 deletions(-)
 
-<snip>
-
-Many thanks for the prompt response Rafa?. I had read the list archive, but I
-could not tell if that was my issue, and I had no idea that reverting to older
-firmware was a possible fix.  That is probably within my capabilities (I used
-to do many such things when running Linux From Scratch, until Arch made
-me lazy), I will give it a try.
-
-Geoff
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 4b662d0..4164afa 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4306,15 +4306,6 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+ 	phy_type = (tmp & B43_PHYVER_TYPE) >> B43_PHYVER_TYPE_SHIFT;
+ 	phy_rev = (tmp & B43_PHYVER_VERSION);
+ 	switch (phy_type) {
+-	case B43_PHYTYPE_A:
+-		if (phy_rev >= 4)
+-			unsupported = 1;
+-		break;
+-	case B43_PHYTYPE_B:
+-		if (phy_rev != 2 && phy_rev != 4 && phy_rev != 6
+-		    && phy_rev != 7)
+-			unsupported = 1;
+-		break;
+ 	case B43_PHYTYPE_G:
+ 		if (phy_rev > 9)
+ 			unsupported = 1;
+diff --git a/drivers/net/wireless/b43/phy_a.h b/drivers/net/wireless/b43/phy_a.h
+index 5cfaab7..f7d0d92 100644
+--- a/drivers/net/wireless/b43/phy_a.h
++++ b/drivers/net/wireless/b43/phy_a.h
+@@ -123,8 +123,4 @@ struct b43_phy_a {
+  */
+ void b43_phy_inita(struct b43_wldev *dev);
+ 
+-
+-struct b43_phy_operations;
+-extern const struct b43_phy_operations b43_phyops_a;
+-
+ #endif /* LINUX_B43_PHY_A_H_ */
+diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
+index 2d05b59..ce486ee 100644
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -45,9 +45,6 @@ int b43_phy_allocate(struct b43_wldev *dev)
+ 	phy->ops = NULL;
+ 
+ 	switch (phy->type) {
+-	case B43_PHYTYPE_A:
+-		phy->ops = &b43_phyops_a;
+-		break;
+ 	case B43_PHYTYPE_G:
+ 		phy->ops = &b43_phyops_g;
+ 		break;
+-- 
+1.8.4.5
