@@ -1,48 +1,28 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Mon, 30 Jun 2014 12:54:03 +0200
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 30 Jun 2014 13:04:38 +0200
 Subject: [PATCH] b43: treat LCNXN-PHY as extra N-PHY devices
-In-Reply-To: <1404071205-12568-1-git-send-email-zajec5@gmail.com>
+In-Reply-To: <53B141CB.7010000@broadcom.com>
 References: <1404071205-12568-1-git-send-email-zajec5@gmail.com>
-Message-ID: <53B141CB.7010000@broadcom.com>
+ <53B141CB.7010000@broadcom.com>
+Message-ID: <CACna6rzisWW9YGQpOz9-PVD5bFg5ApzVfNSLbWmVJOYXgssqkQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, b43-dev <b43-dev@lists.infradead.org>
 
-On 29-06-14 21:46, Rafa? Mi?ecki wrote:
-> LCNXN is simply a continuation of N, e.g. code handling LCNXN revs 0 and
-> 1 is mostly the same as for N-PHY revs 7+.
+On 30 June 2014 12:54, Arend van Spriel <arend@broadcom.com> wrote:
+> On 29-06-14 21:46, Rafa? Mi?ecki wrote:
+>> LCNXN is simply a continuation of N, e.g. code handling LCNXN revs 0 and
+>> 1 is mostly the same as for N-PHY revs 7+.
+>
+> Hi Rafa?,
+>
+> LCNXN is actually a LCN phy with 2 streams (mimo).
 
-Hi Rafa?,
+Err, I don't think so. Could you take a closer look at this? I'm
+pretty sure LCNXN is continuation of N.
 
-LCNXN is actually a LCN phy with 2 streams (mimo).
-
-Regards,
-Arend
-
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> ---
->  drivers/net/wireless/b43/main.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-> index 3e4333c..0b1aac4 100644
-> --- a/drivers/net/wireless/b43/main.c
-> +++ b/drivers/net/wireless/b43/main.c
-> @@ -4331,6 +4331,13 @@ static int b43_phy_versioning(struct b43_wldev *dev)
->  	analog_type = (tmp & B43_PHYVER_ANALOG) >> B43_PHYVER_ANALOG_SHIFT;
->  	phy_type = (tmp & B43_PHYVER_TYPE) >> B43_PHYVER_TYPE_SHIFT;
->  	phy_rev = (tmp & B43_PHYVER_VERSION);
-> +
-> +	/* LCNXN is continuation of N which run out of revisions */
-> +	if (phy_type == B43_PHYTYPE_LCNXN) {
-> +		phy_type = B43_PHYTYPE_N;
-> +		phy_rev += 16;
-> +	}
-> +
->  	switch (phy_type) {
->  #ifdef CONFIG_B43_PHY_G
->  	case B43_PHYTYPE_G:
-> 
+Maybe you were thinking about LCN40? I don't know much about LCN40,
+maybe it's a variation of LCN?
