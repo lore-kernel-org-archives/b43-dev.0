@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat,  5 Jul 2014 02:48:30 +0200
-Subject: [RFC][PATCH] bcma: support for PCIe Gen 2 as host platform
-Message-ID: <1404521310-502-1-git-send-email-zajec5@gmail.com>
+Date: Sun,  6 Jul 2014 13:11:43 +0200
+Subject: [PATCH] bcma: support for PCIe Gen 2 as host platform
+Message-ID: <1404645103-26100-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,26 +9,22 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-I dumped LNKCAP on most of my devices and it seems we can use
-PCI_EXP_LNKCAP_SLS_5_0GB to determine if device is PCIe 2.0.
-
-PCIe Gen 1:
-14e4:4331	0x00176C11 (hint: PCI_EXP_LNKCAP_SLS_2_5GB)
-14e4:4353	0x00176C11 (hint: PCI_EXP_LNKCAP_SLS_2_5GB)
-14e4:4359	0x00176811 (hint: PCI_EXP_LNKCAP_SLS_2_5GB)
-14e4:4365	0x00076C11 (hint: PCI_EXP_LNKCAP_SLS_2_5GB)
-14e4:4727	0x00176C11 (hint: PCI_EXP_LNKCAP_SLS_2_5GB)
-
-PCIe Gen 2:
-14e4:4360	0x0046DC12 (hint: PCI_EXP_LNKCAP_SLS_5_0GB)
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/bcma/host_pci.c        | 10 ++++++++--
+I got reply from Bjorn, that we should *not* depend on PCI_EXP_LNKCAP:
+http://marc.info/?l=linux-pci&m=140457671930896&w=2
+
+So the change since RFC is adding a list of PCIe 1.0 and 2.0 devices.
+Use PCI_EXP_LNKCAP only as a fallback, in case someone tries sth like:
+echo "14e4 4360" > /sys/bus/pci/drivers/bcma-pci-bridge/new_id
+---
+ drivers/bcma/host_pci.c        | 32 ++++++++++++++++++++++++++++++--
  include/linux/bcma/bcma.h      |  1 +
  include/linux/bcma/bcma_regs.h |  2 ++
- 3 files changed, 11 insertions(+), 2 deletions(-)
+ 3 files changed, 33 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
-index e3333053..5328d05 100644
+index e3333053..df20a50 100644
 --- a/drivers/bcma/host_pci.c
 +++ b/drivers/bcma/host_pci.c
 @@ -13,10 +13,12 @@
@@ -46,13 +42,35 @@ index e3333053..5328d05 100644
  	core->bus->mapped_core = core;
  	bcma_debug(core->bus, "Switched to core: 0x%X\n", core->id.id);
  }
-@@ -194,6 +196,10 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
+@@ -194,6 +196,32 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
  		goto err_pci_release_regions;
  	}
  
 +	/* PCIe Gen 2 has some regs different */
-+	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &val);
-+	bus->host_is_pcie2 = !!(val & PCI_EXP_LNKCAP_SLS_5_0GB);
++	switch (dev->device) {
++	case 0x0576:
++	case 0x4313:
++	case 43224:
++	case 0x4331:
++	case 0x4353:
++	case 0x4357:
++	case 0x4358:
++	case 0x4359:
++	case 0x4365:
++	case 0x4727:
++		bus->host_is_pcie2 = false;
++		break;
++	case 0x4360:
++	case 0x43a0:
++	case 0x43b1:
++		bus->host_is_pcie2 = true;
++		break;
++	default:
++		/* Fallback, e.g. if someone uses bcma-pci-bridge/new_id */
++		pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &val);
++		bus->host_is_pcie2 = !!(val & PCI_EXP_LNKCAP_SLS_5_0GB);
++		break;
++	}
 +
  	/* Map MMIO */
  	err = -ENOMEM;
