@@ -1,10 +1,8 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue,  8 Jul 2014 15:11:09 +0200
-Subject: [PATCH 6/7] b43: N-PHY: implement channel switching of radio 0x2057
- rev 5
-In-Reply-To: <1404825070-5243-1-git-send-email-zajec5@gmail.com>
-References: <1404825070-5243-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1404825070-5243-6-git-send-email-zajec5@gmail.com>
+Date: Tue,  8 Jul 2014 15:11:04 +0200
+Subject: [PATCH 1/7] b43: N-PHY: drop reg 0x1 access restriction on new PHY
+ revs
+Message-ID: <1404825070-5243-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,164 +10,34 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Initialization of N-PHY radio revs 5 and 7 requires writing to 0x1.
+
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/radio_2057.c | 129 ++++++++++++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
+ drivers/net/wireless/b43/phy_n.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/radio_2057.c b/drivers/net/wireless/b43/radio_2057.c
-index 941cf3d..ca22faa 100644
---- a/drivers/net/wireless/b43/radio_2057.c
-+++ b/drivers/net/wireless/b43/radio_2057.c
-@@ -149,6 +149,27 @@ static u16 r2057_rev9_init[][2] = {
- 	.radio_lna2g_tune_core1			= r26,	\
- 	.radio_lna5g_tune_core1			= r27
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 50ca6f8..1dba640 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -5834,7 +5834,7 @@ static void b43_nphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
+ static u16 b43_nphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+ {
+ 	/* Register 1 is a 32-bit register. */
+-	B43_WARN_ON(reg == 1);
++	B43_WARN_ON(dev->phy.rev < 7 && reg == 1);
  
-+#define RADIOREGS7_2G(r00, r01, r02, r03, r04, r05, r06, r07, r08, r09, \
-+		      r10, r11, r12, r13, r14, r15, r16, r17) \
-+	.radio_vcocal_countval0			= r00,	\
-+	.radio_vcocal_countval1			= r01,	\
-+	.radio_rfpll_refmaster_sparextalsize	= r02,	\
-+	.radio_rfpll_loopfilter_r1		= r03,	\
-+	.radio_rfpll_loopfilter_c2		= r04,	\
-+	.radio_rfpll_loopfilter_c1		= r05,	\
-+	.radio_cp_kpd_idac			= r06,	\
-+	.radio_rfpll_mmd0			= r07,	\
-+	.radio_rfpll_mmd1			= r08,	\
-+	.radio_vcobuf_tune			= r09,	\
-+	.radio_logen_mx2g_tune			= r10,	\
-+	.radio_logen_indbuf2g_tune		= r11,	\
-+	.radio_lna2g_tune_core0			= r12,	\
-+	.radio_txmix2g_tune_boost_pu_core0	= r13,	\
-+	.radio_pad2g_tune_pus_core0		= r14,	\
-+	.radio_lna2g_tune_core1			= r15,	\
-+	.radio_txmix2g_tune_boost_pu_core1	= r16,	\
-+	.radio_pad2g_tune_pus_core1		= r17
-+
- #define PHYREGS(r0, r1, r2, r3, r4, r5)	\
- 	.phy_regs.phy_bw1a	= r0,	\
- 	.phy_regs.phy_bw2	= r1,	\
-@@ -157,6 +178,108 @@ static u16 r2057_rev9_init[][2] = {
- 	.phy_regs.phy_bw5	= r4,	\
- 	.phy_regs.phy_bw6	= r5
+ 	if (dev->phy.rev >= 7)
+ 		reg |= 0x200; /* Radio 0x2057 */
+@@ -5848,7 +5848,7 @@ static u16 b43_nphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+ static void b43_nphy_op_radio_write(struct b43_wldev *dev, u16 reg, u16 value)
+ {
+ 	/* Register 1 is a 32-bit register. */
+-	B43_WARN_ON(reg == 1);
++	B43_WARN_ON(dev->phy.rev < 7 && reg == 1);
  
-+/* Copied from brcmsmac (5.75.11): chan_info_nphyrev8_2057_rev5 */
-+static const struct b43_nphy_chantabent_rev7_2g b43_nphy_chantab_phy_rev8_radio_rev5[] = {
-+	{
-+		.freq			= 2412,
-+		RADIOREGS7_2G(0x48, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x6c,
-+			      0x09, 0x0d, 0x08, 0x0e, 0x61, 0x03, 0xff, 0x61,
-+			      0x03, 0xff),
-+		PHYREGS(0x03c9, 0x03c5, 0x03c1, 0x043a, 0x043f, 0x0443),
-+	},
-+	{
-+		.freq			= 2417,
-+		RADIOREGS7_2G(0x4b, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x71,
-+			      0x09, 0x0d, 0x08, 0x0e, 0x61, 0x03, 0xff, 0x61,
-+			      0x03, 0xff),
-+		PHYREGS(0x03cb, 0x03c7, 0x03c3, 0x0438, 0x043d, 0x0441),
-+	},
-+	{
-+		.freq			= 2422,
-+		RADIOREGS7_2G(0x4e, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x76,
-+			      0x09, 0x0d, 0x08, 0x0e, 0x61, 0x03, 0xef, 0x61,
-+			      0x03, 0xef),
-+		PHYREGS(0x03cd, 0x03c9, 0x03c5, 0x0436, 0x043a, 0x043f),
-+	},
-+	{
-+		.freq			= 2427,
-+		RADIOREGS7_2G(0x52, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x7b,
-+			      0x09, 0x0c, 0x08, 0x0e, 0x61, 0x03, 0xdf, 0x61,
-+			      0x03, 0xdf),
-+		PHYREGS(0x03cf, 0x03cb, 0x03c7, 0x0434, 0x0438, 0x043d),
-+	},
-+	{
-+		.freq			= 2432,
-+		RADIOREGS7_2G(0x55, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x80,
-+			      0x09, 0x0c, 0x07, 0x0d, 0x61, 0x03, 0xcf, 0x61,
-+			      0x03, 0xcf),
-+		PHYREGS(0x03d1, 0x03cd, 0x03c9, 0x0431, 0x0436, 0x043a),
-+	},
-+	{
-+		.freq			= 2437,
-+		RADIOREGS7_2G(0x58, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x85,
-+			      0x09, 0x0c, 0x07, 0x0d, 0x61, 0x03, 0xbf, 0x61,
-+			      0x03, 0xbf),
-+		PHYREGS(0x03d3, 0x03cf, 0x03cb, 0x042f, 0x0434, 0x0438),
-+	},
-+	{
-+		.freq			= 2442,
-+		RADIOREGS7_2G(0x5c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8a,
-+			      0x09, 0x0b, 0x07, 0x0d, 0x61, 0x03, 0xaf, 0x61,
-+			      0x03, 0xaf),
-+		PHYREGS(0x03d5, 0x03d1, 0x03cd, 0x042d, 0x0431, 0x0436),
-+	},
-+	{
-+		.freq			= 2447,
-+		RADIOREGS7_2G(0x5f, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8f,
-+			      0x09, 0x0b, 0x07, 0x0d, 0x61, 0x03, 0x9f, 0x61,
-+			      0x03, 0x9f),
-+		PHYREGS(0x03d7, 0x03d3, 0x03cf, 0x042b, 0x042f, 0x0434),
-+	},
-+	{
-+		.freq			= 2452,
-+		RADIOREGS7_2G(0x62, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x94,
-+			      0x09, 0x0b, 0x07, 0x0d, 0x61, 0x03, 0x8f, 0x61,
-+			      0x03, 0x8f),
-+		PHYREGS(0x03d9, 0x03d5, 0x03d1, 0x0429, 0x042d, 0x0431),
-+	},
-+	{
-+		.freq			= 2457,
-+		RADIOREGS7_2G(0x66, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x99,
-+			      0x09, 0x0b, 0x07, 0x0c, 0x61, 0x03, 0x7f, 0x61,
-+			      0x03, 0x7f),
-+		PHYREGS(0x03db, 0x03d7, 0x03d3, 0x0427, 0x042b, 0x042f),
-+	},
-+	{
-+		.freq			= 2462,
-+		RADIOREGS7_2G(0x69, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x9e,
-+			      0x09, 0x0b, 0x07, 0x0c, 0x61, 0x03, 0x6f, 0x61,
-+			      0x03, 0x6f),
-+		PHYREGS(0x03dd, 0x03d9, 0x03d5, 0x0424, 0x0429, 0x042d),
-+	},
-+	{
-+		.freq			= 2467,
-+		RADIOREGS7_2G(0x6c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa3,
-+			      0x09, 0x0b, 0x06, 0x0c, 0x61, 0x03, 0x5f, 0x61,
-+			      0x03, 0x5f),
-+		PHYREGS(0x03df, 0x03db, 0x03d7, 0x0422, 0x0427, 0x042b),
-+	},
-+	{
-+		.freq			= 2472,
-+		RADIOREGS7_2G(0x70, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa8,
-+			      0x09, 0x0a, 0x06, 0x0b, 0x61, 0x03, 0x4f, 0x61,
-+			      0x03, 0x4f),
-+		PHYREGS(0x03e1, 0x03dd, 0x03d9, 0x0420, 0x0424, 0x0429),
-+	},
-+	{
-+		.freq			= 2484,
-+		RADIOREGS7_2G(0x78, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xb4,
-+			      0x09, 0x0a, 0x06, 0x0b, 0x61, 0x03, 0x3f, 0x61,
-+			      0x03, 0x3f),
-+		PHYREGS(0x03e6, 0x03e2, 0x03de, 0x041b, 0x041f, 0x0424),
-+	}
-+};
-+
- /* Extracted from MMIO dump of 6.30.223.141 */
- static const struct b43_nphy_chantabent_rev7 b43_nphy_chantab_phy_rev16_radio_rev9[] = {
- 	{
-@@ -377,6 +500,12 @@ void r2057_get_chantabent_rev7(struct b43_wldev *dev, u16 freq,
- 
- 	/* TODO */
- 	switch (phy->rev) {
-+	case 8:
-+		if (phy->radio_rev == 5) {
-+			e_r7_2g = b43_nphy_chantab_phy_rev8_radio_rev5;
-+			len = ARRAY_SIZE(b43_nphy_chantab_phy_rev8_radio_rev5);
-+		}
-+		break;
- 	case 16:
- 		if (phy->radio_rev == 9) {
- 			e_r7 = b43_nphy_chantab_phy_rev16_radio_rev9;
+ 	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_RADIO_DATA_LOW, value);
 -- 
 1.8.4.5
