@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 12 Jul 2014 12:34:46 +0200
-Subject: [PATCH] b43: N-PHY: add missing TX gain table for radio 0x2057 rev 5
-Message-ID: <1405161286-11586-1-git-send-email-zajec5@gmail.com>
+Date: Sat, 12 Jul 2014 16:42:09 +0200
+Subject: [PATCH 1/2] ssb: make code for antenna gain extraction more generic
+Message-ID: <1405176130-15908-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,103 +11,50 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-John: this patch has been developed on top of:
-[PATCH 7/7] b43: enable radio 0x2057 rev 9 (AKA BCM43228) support
----
- drivers/net/wireless/b43/tables_nphy.c | 58 +++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 8 deletions(-)
+ drivers/ssb/pci.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
-index 3a5cd90..b39a8dd 100644
---- a/drivers/net/wireless/b43/tables_nphy.c
-+++ b/drivers/net/wireless/b43/tables_nphy.c
-@@ -2692,6 +2692,42 @@ static const u32 b43_ntab_tx_gain_ipa_rev6_2g[] = {
- 	0x00f70028, 0x00f70027, 0x00f70026, 0x00f70025,
- };
- 
-+/* Copied from brcmsmac (5.75.11): nphy_tpc_txgain_ipa_2g_2057rev5 */
-+static const u32 b43_ntab_tx_gain_ipa_2057_rev5_2g[] = {
-+	0x30ff0031, 0x30e70031, 0x30e7002e, 0x30cf002e,
-+	0x30bf002e, 0x30af002e, 0x309f002f, 0x307f0033,
-+	0x307f0031, 0x307f002e, 0x3077002e, 0x306f002e,
-+	0x3067002e, 0x305f002f, 0x30570030, 0x3057002d,
-+	0x304f002e, 0x30470031, 0x3047002e, 0x3047002c,
-+	0x30470029, 0x303f002c, 0x303f0029, 0x3037002d,
-+	0x3037002a, 0x30370028, 0x302f002c, 0x302f002a,
-+	0x302f0028, 0x302f0026, 0x3027002c, 0x30270029,
-+	0x30270027, 0x30270025, 0x30270023, 0x301f002c,
-+	0x301f002a, 0x301f0028, 0x301f0025, 0x301f0024,
-+	0x301f0022, 0x301f001f, 0x3017002d, 0x3017002b,
-+	0x30170028, 0x30170026, 0x30170024, 0x30170022,
-+	0x30170020, 0x3017001e, 0x3017001d, 0x3017001b,
-+	0x3017001a, 0x30170018, 0x30170017, 0x30170015,
-+	0x300f002c, 0x300f0029, 0x300f0027, 0x300f0024,
-+	0x300f0022, 0x300f0021, 0x300f001f, 0x300f001d,
-+	0x300f001b, 0x300f001a, 0x300f0018, 0x300f0017,
-+	0x300f0016, 0x300f0015, 0x300f0115, 0x300f0215,
-+	0x300f0315, 0x300f0415, 0x300f0515, 0x300f0615,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+	0x300f0715, 0x300f0715, 0x300f0715, 0x300f0715,
-+};
-+
- /* Extracted from MMIO dump of 6.30.223.141 */
- static const u32 b43_ntab_tx_gain_ipa_2057_rev9_2g[] = {
- 	0x60ff0031, 0x60e7002c, 0x60cf002a, 0x60c70029,
-@@ -3550,6 +3586,11 @@ static const u32 *b43_nphy_get_ipa_gain_table(struct b43_wldev *dev)
- 		case 16:
- 			if (phy->radio_rev == 9)
- 				return b43_ntab_tx_gain_ipa_2057_rev9_2g;
-+			break;
-+		case 8:
-+			if (phy->radio_rev == 5)
-+				return b43_ntab_tx_gain_ipa_2057_rev5_2g;
-+			break;
- 		case 6:
- 			if (dev->dev->chip_id == BCMA_CHIP_ID_BCM47162)
- 				return b43_ntab_tx_gain_ipa_rev5_2g;
-@@ -3559,23 +3600,24 @@ static const u32 *b43_nphy_get_ipa_gain_table(struct b43_wldev *dev)
- 		case 4:
- 		case 3:
- 			return b43_ntab_tx_gain_ipa_rev3_2g;
--		default:
--			b43err(dev->wl,
--			       "No 2GHz IPA gain table available for this device\n");
--			return NULL;
- 		}
-+
-+		b43err(dev->wl,
-+		       "No 2GHz IPA gain table available for this device\n");
-+		return NULL;
- 	} else {
- 		switch (phy->rev) {
- 		case 16:
- 			if (phy->radio_rev == 9)
- 				return b43_ntab_tx_gain_ipa_2057_rev9_5g;
-+			break;
- 		case 3 ... 6:
- 			return b43_ntab_tx_gain_ipa_rev3_5g;
--		default:
--			b43err(dev->wl,
--			       "No 5GHz IPA gain table available for this device\n");
--			return NULL;
- 		}
-+
-+		b43err(dev->wl,
-+		       "No 5GHz IPA gain table available for this device\n");
-+		return NULL;
- 	}
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index a8dc95e..ca973d1 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -326,13 +326,13 @@ err_ctlreg:
+ 	return err;
  }
  
+-static s8 r123_extract_antgain(u8 sprom_revision, const u16 *in,
+-			       u16 mask, u16 shift)
++static s8 sprom_extract_antgain(u8 sprom_revision, const u16 *in, u16 offset,
++				u16 mask, u16 shift)
+ {
+ 	u16 v;
+ 	u8 gain;
+ 
+-	v = in[SPOFF(SSB_SPROM1_AGAIN)];
++	v = in[SPOFF(offset)];
+ 	gain = (v & mask) >> shift;
+ 	if (gain == 0xFF)
+ 		gain = 2; /* If unset use 2dBm */
+@@ -416,12 +416,14 @@ static void sprom_extract_r123(struct ssb_sprom *out, const u16 *in)
+ 	SPEX(alpha2[1], SSB_SPROM1_CCODE, 0x00ff, 0);
+ 
+ 	/* Extract the antenna gain values. */
+-	out->antenna_gain.a0 = r123_extract_antgain(out->revision, in,
+-						    SSB_SPROM1_AGAIN_BG,
+-						    SSB_SPROM1_AGAIN_BG_SHIFT);
+-	out->antenna_gain.a1 = r123_extract_antgain(out->revision, in,
+-						    SSB_SPROM1_AGAIN_A,
+-						    SSB_SPROM1_AGAIN_A_SHIFT);
++	out->antenna_gain.a0 = sprom_extract_antgain(out->revision, in,
++						     SSB_SPROM1_AGAIN,
++						     SSB_SPROM1_AGAIN_BG,
++						     SSB_SPROM1_AGAIN_BG_SHIFT);
++	out->antenna_gain.a1 = sprom_extract_antgain(out->revision, in,
++						     SSB_SPROM1_AGAIN,
++						     SSB_SPROM1_AGAIN_A,
++						     SSB_SPROM1_AGAIN_A_SHIFT);
+ 	if (out->revision >= 2)
+ 		sprom_extract_r23(out, in);
+ }
 -- 
 1.8.4.5
