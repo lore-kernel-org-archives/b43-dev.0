@@ -1,182 +1,133 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Mon, 14 Jul 2014 22:20:37 +0200
-Subject: [RFC][PATCH 2/2] b43: N-PHY: support setting TX power
-In-Reply-To: <1405369237-3012-1-git-send-email-zajec5@gmail.com>
-References: <1405369237-3012-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1405369237-3012-2-git-send-email-zajec5@gmail.com>
+Date: Tue, 15 Jul 2014 16:18:57 +0200
+Subject: [PATCH] ssb: extract power info from SPROM revs 4 and 5
+Message-ID: <1405433937-17355-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
-Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
----
-So far it was tested on BCM43228 only. I can say that changing TX power
-definitely affects performance, but I have to check for regressions.
----
- drivers/net/wireless/b43/b43.h   |  1 +
- drivers/net/wireless/b43/phy_n.c | 81 ++++++++++++++++++++++++++++++++++------
- drivers/net/wireless/b43/phy_n.h |  3 ++
- 3 files changed, 73 insertions(+), 12 deletions(-)
+This is needed to properly handle early 802.11n devices like BCM4321.
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index 6cfd86d..9b8feb9 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -457,6 +457,7 @@ enum {
- #define B43_MACCTL_RADIOLOCK		0x00080000	/* Radio lock */
- #define B43_MACCTL_BEACPROMISC		0x00100000	/* Beacon Promiscuous */
- #define B43_MACCTL_KEEP_BADPLCP		0x00200000	/* Keep frames with bad PLCP */
-+#define B43_MACCTL_PHY_LOCK		0x00200000
- #define B43_MACCTL_KEEP_CTL		0x00400000	/* Keep control frames */
- #define B43_MACCTL_KEEP_BAD		0x00800000	/* Keep bad frames (FCS) */
- #define B43_MACCTL_PROMISC		0x01000000	/* Promiscuous mode */
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 479cda8..b60ac1f 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -34,6 +34,7 @@
- #include "radio_2056.h"
- #include "radio_2057.h"
- #include "main.h"
-+#include "ppr.h"
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/ssb/pci.c            | 45 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/ssb/ssb_regs.h | 37 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index 6318364..0f28c08 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -470,7 +470,15 @@ static void sprom_extract_r458(struct ssb_sprom *out, const u16 *in)
  
- struct nphy_txgains {
- 	u16 tx_lpf[2];
-@@ -3396,16 +3397,6 @@ static void b43_nphy_iq_cal_gain_params(struct b43_wldev *dev, u16 core,
-  * Tx and Rx
-  **************************************************/
- 
--static void b43_nphy_op_adjust_txpower(struct b43_wldev *dev)
--{//TODO
--}
--
--static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
--							bool ignore_tssi)
--{//TODO
--	return B43_TXPWR_RES_DONE;
--}
--
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/TxPwrCtrlEnable */
- static void b43_nphy_tx_power_ctrl(struct b43_wldev *dev, bool enable)
+ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
  {
-@@ -3936,7 +3927,11 @@ static void b43_nphy_tx_power_ctl_setup(struct b43_wldev *dev)
- 			b1[0] = b1[1] = -1393;
- 		}
- 	}
--	/* target[0] = target[1] = nphy->tx_power_max; */
++	static const u16 pwr_info_offset[] = {
++		SSB_SPROM4_PWR_INFO_CORE0, SSB_SPROM4_PWR_INFO_CORE1,
++		SSB_SPROM4_PWR_INFO_CORE2, SSB_SPROM4_PWR_INFO_CORE3
++	};
+ 	u16 il0mac_offset;
++	int i;
 +
-+	if (nphy->tx_pwr_max_ppr) {
-+		target[0] = b43_ppr_get_max(dev, nphy->tx_pwr_max_ppr);
-+		target[1] = target[0];
++	BUILD_BUG_ON(ARRAY_SIZE(pwr_info_offset) !=
++		     ARRAY_SIZE(out->core_pwr_info));
+ 
+ 	if (out->revision == 4)
+ 		il0mac_offset = SSB_SPROM4_IL0MAC;
+@@ -543,6 +551,43 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
+ 						     SSB_SPROM4_AGAIN3,
+ 						     SSB_SPROM4_AGAIN3_SHIFT);
+ 
++	/* Extract cores power info info */
++	for (i = 0; i < ARRAY_SIZE(pwr_info_offset); i++) {
++		u16 o = pwr_info_offset[i];
++
++		SPEX(core_pwr_info[i].itssi_2g, o + SSB_SPROM4_2G_MAXP_ITSSI,
++			SSB_SPROM4_2G_ITSSI, SSB_SPROM4_2G_ITSSI_SHIFT);
++		SPEX(core_pwr_info[i].maxpwr_2g, o + SSB_SPROM4_2G_MAXP_ITSSI,
++			SSB_SPROM4_2G_MAXP, 0);
++
++		SPEX(core_pwr_info[i].pa_2g[0], o + SSB_SPROM4_2G_PA_0, ~0, 0);
++		SPEX(core_pwr_info[i].pa_2g[1], o + SSB_SPROM4_2G_PA_1, ~0, 0);
++		SPEX(core_pwr_info[i].pa_2g[2], o + SSB_SPROM4_2G_PA_2, ~0, 0);
++		SPEX(core_pwr_info[i].pa_2g[3], o + SSB_SPROM4_2G_PA_3, ~0, 0);
++
++		SPEX(core_pwr_info[i].itssi_5g, o + SSB_SPROM4_5G_MAXP_ITSSI,
++			SSB_SPROM4_5G_ITSSI, SSB_SPROM4_5G_ITSSI_SHIFT);
++		SPEX(core_pwr_info[i].maxpwr_5g, o + SSB_SPROM4_5G_MAXP_ITSSI,
++			SSB_SPROM4_5G_MAXP, 0);
++		SPEX(core_pwr_info[i].maxpwr_5gh, o + SSB_SPROM4_5GHL_MAXP,
++			SSB_SPROM4_5GH_MAXP, 0);
++		SPEX(core_pwr_info[i].maxpwr_5gl, o + SSB_SPROM4_5GHL_MAXP,
++			SSB_SPROM4_5GL_MAXP, SSB_SPROM4_5GL_MAXP_SHIFT);
++
++		SPEX(core_pwr_info[i].pa_5gl[0], o + SSB_SPROM4_5GL_PA_0, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5gl[1], o + SSB_SPROM4_5GL_PA_1, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5gl[2], o + SSB_SPROM4_5GL_PA_2, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5gl[3], o + SSB_SPROM4_5GL_PA_3, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5g[0], o + SSB_SPROM4_5G_PA_0, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5g[1], o + SSB_SPROM4_5G_PA_1, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5g[2], o + SSB_SPROM4_5G_PA_2, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5g[3], o + SSB_SPROM4_5G_PA_3, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5gh[0], o + SSB_SPROM4_5GH_PA_0, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5gh[1], o + SSB_SPROM4_5GH_PA_1, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5gh[2], o + SSB_SPROM4_5GH_PA_2, ~0, 0);
++		SPEX(core_pwr_info[i].pa_5gh[3], o + SSB_SPROM4_5GH_PA_3, ~0, 0);
 +	}
++
+ 	sprom_extract_r458(out, in);
  
- 	if (dev->phy.rev >= 3) {
- 		if (sprom->fem.ghz2.tssipos)
-@@ -5642,6 +5637,67 @@ static void b43_nphy_set_rx_core_state(struct b43_wldev *dev, u8 mask)
- 	b43_mac_enable(dev);
- }
- 
-+static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
-+							bool ignore_tssi)
-+{
-+	struct b43_phy *phy = &dev->phy;
-+	struct b43_phy_n *nphy = dev->phy.n;
-+	struct ssb_sprom *sprom = dev->dev->bus_sprom;
-+	struct ieee80211_channel *channel = dev->wl->hw->conf.chandef.chan;
-+	u8 max; /* qdBm */
-+	int hw_gain; /* qdBm */
-+	bool tx_pwr_state;
+ 	/* TODO - get remaining rev 4 stuff needed */
+diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
+index f9f931c..f7b9100 100644
+--- a/include/linux/ssb/ssb_regs.h
++++ b/include/linux/ssb/ssb_regs.h
+@@ -345,6 +345,43 @@
+ #define  SSB_SPROM4_TXPID5GH2_SHIFT	0
+ #define  SSB_SPROM4_TXPID5GH3		0xFF00
+ #define  SSB_SPROM4_TXPID5GH3_SHIFT	8
 +
-+	if (nphy->tx_pwr_last_recalc_freq == channel->center_freq &&
-+	    nphy->tx_pwr_last_recalc_limit == phy->desired_txpower)
-+		return B43_TXPWR_RES_DONE;
++/* There are 4 blocks with power info sharing the same layout */
++#define SSB_SPROM4_PWR_INFO_CORE0	0x0080
++#define SSB_SPROM4_PWR_INFO_CORE1	0x00AE
++#define SSB_SPROM4_PWR_INFO_CORE2	0x00DC
++#define SSB_SPROM4_PWR_INFO_CORE3	0x010A
 +
-+	if (!nphy->tx_pwr_max_ppr) {
-+		nphy->tx_pwr_max_ppr = b43_ppr_alloc(dev);
-+		if (WARN_ON(!nphy->tx_pwr_max_ppr))
-+			return B43_TXPWR_RES_DONE;
-+	} else {
-+		b43_ppr_clear(dev, nphy->tx_pwr_max_ppr);
-+	}
++#define SSB_SPROM4_2G_MAXP_ITSSI	0x00	/* 2 GHz ITSSI and 2 GHz Max Power */
++#define  SSB_SPROM4_2G_MAXP		0x00FF
++#define  SSB_SPROM4_2G_ITSSI		0xFF00
++#define  SSB_SPROM4_2G_ITSSI_SHIFT	8
++#define SSB_SPROM4_2G_PA_0		0x02	/* 2 GHz power amp */
++#define SSB_SPROM4_2G_PA_1		0x04
++#define SSB_SPROM4_2G_PA_2		0x06
++#define SSB_SPROM4_2G_PA_3		0x08
++#define SSB_SPROM4_5G_MAXP_ITSSI	0x0A	/* 5 GHz ITSSI and 5.3 GHz Max Power */
++#define  SSB_SPROM4_5G_MAXP		0x00FF
++#define  SSB_SPROM4_5G_ITSSI		0xFF00
++#define  SSB_SPROM4_5G_ITSSI_SHIFT	8
++#define SSB_SPROM4_5GHL_MAXP		0x0C	/* 5.2 GHz and 5.8 GHz Max Power */
++#define  SSB_SPROM4_5GH_MAXP		0x00FF
++#define  SSB_SPROM4_5GL_MAXP		0xFF00
++#define  SSB_SPROM4_5GL_MAXP_SHIFT	8
++#define SSB_SPROM4_5G_PA_0		0x0E	/* 5.3 GHz power amp */
++#define SSB_SPROM4_5G_PA_1		0x10
++#define SSB_SPROM4_5G_PA_2		0x12
++#define SSB_SPROM4_5G_PA_3		0x14
++#define SSB_SPROM4_5GL_PA_0		0x16	/* 5.2 GHz power amp */
++#define SSB_SPROM4_5GL_PA_1		0x18
++#define SSB_SPROM4_5GL_PA_2		0x1A
++#define SSB_SPROM4_5GL_PA_3		0x1C
++#define SSB_SPROM4_5GH_PA_0		0x1E	/* 5.8 GHz power amp */
++#define SSB_SPROM4_5GH_PA_1		0x20
++#define SSB_SPROM4_5GH_PA_2		0x22
++#define SSB_SPROM4_5GH_PA_3		0x24
 +
-+	/* HW limitations */
-+	b43_ppr_load_max_from_sprom(dev, nphy->tx_pwr_max_ppr, B43_BAND_2G);
-+
-+	/* Regulatory & user settings */
-+	max = INT_TO_Q52(phy->chandef->chan->max_power);
-+	max = min_t(u8, max, INT_TO_Q52(phy->desired_txpower));
-+	b43_ppr_apply_max(dev, nphy->tx_pwr_max_ppr, max);
-+
-+	/* Some extra gains */
-+	hw_gain = 6; /* N-PHY specific */
-+	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-+		hw_gain += sprom->antenna_gain.a0;
-+	else
-+		hw_gain += sprom->antenna_gain.a1;
-+	b43_ppr_add(dev, nphy->tx_pwr_max_ppr, -hw_gain);
-+
-+	/* Make sure we didn't go too low */
-+	b43_ppr_apply_min(dev, nphy->tx_pwr_max_ppr, INT_TO_Q52(8));
-+
-+	/* Apply */
-+	tx_pwr_state = nphy->txpwrctrl;
-+	b43_mac_suspend(dev);
-+	b43_nphy_tx_power_ctl_setup(dev);
-+	if (dev->dev->core_rev == 11 || dev->dev->core_rev == 12) {
-+		b43_maskset32(dev, B43_MMIO_MACCTL, ~0, B43_MACCTL_PHY_LOCK);
-+		b43_read32(dev, B43_MMIO_MACCTL);
-+		udelay(1);
-+	}
-+	b43_nphy_tx_power_ctrl(dev, nphy->txpwrctrl);
-+	if (dev->dev->core_rev == 11 || dev->dev->core_rev == 12)
-+		b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_PHY_LOCK, 0);
-+	b43_mac_enable(dev);
-+
-+	nphy->tx_pwr_last_recalc_freq = channel->center_freq;
-+	nphy->tx_pwr_last_recalc_limit = phy->desired_txpower;
-+	return B43_TXPWR_RES_DONE;
-+}
-+
- /**************************************************
-  * N-PHY init
-  **************************************************/
-@@ -6158,6 +6214,7 @@ static int b43_nphy_op_allocate(struct b43_wldev *dev)
- 	nphy = kzalloc(sizeof(*nphy), GFP_KERNEL);
- 	if (!nphy)
- 		return -ENOMEM;
-+
- 	dev->phy.n = nphy;
- 
- 	return 0;
-@@ -6221,6 +6278,7 @@ static void b43_nphy_op_free(struct b43_wldev *dev)
- 	struct b43_phy *phy = &dev->phy;
- 	struct b43_phy_n *nphy = phy->n;
- 
-+	kfree(nphy->tx_pwr_max_ppr);
- 	kfree(nphy);
- 	phy->n = NULL;
- }
-@@ -6413,5 +6471,4 @@ const struct b43_phy_operations b43_phyops_n = {
- 	.switch_channel		= b43_nphy_op_switch_channel,
- 	.get_default_chan	= b43_nphy_op_get_default_chan,
- 	.recalc_txpower		= b43_nphy_op_recalc_txpower,
--	.adjust_txpower		= b43_nphy_op_adjust_txpower,
- };
-diff --git a/drivers/net/wireless/b43/phy_n.h b/drivers/net/wireless/b43/phy_n.h
-index 7fd5d5f..2f934da 100644
---- a/drivers/net/wireless/b43/phy_n.h
-+++ b/drivers/net/wireless/b43/phy_n.h
-@@ -963,6 +963,9 @@ struct b43_phy_n {
- 	struct b43_phy_n_txpwrindex txpwrindex[2];
- 	struct b43_phy_n_pwr_ctl_info pwr_ctl_info[2];
- 	struct b43_chanspec txiqlocal_chanspec;
-+	struct b43_ppr *tx_pwr_max_ppr;
-+	u16 tx_pwr_last_recalc_freq;
-+	int tx_pwr_last_recalc_limit;
- 
- 	u8 txrx_chain;
- 	u16 tx_rx_cal_phy_saveregs[11];
++/* TODO: Make it deprecated */
+ #define SSB_SPROM4_MAXP_BG		0x0080  /* Max Power BG in path 1 */
+ #define  SSB_SPROM4_MAXP_BG_MASK	0x00FF  /* Mask for Max Power BG */
+ #define  SSB_SPROM4_ITSSI_BG		0xFF00	/* Mask for path 1 itssi_bg */
 -- 
 1.8.4.5
