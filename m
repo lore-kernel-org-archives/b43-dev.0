@@ -1,133 +1,137 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue, 15 Jul 2014 16:18:57 +0200
-Subject: [PATCH] ssb: extract power info from SPROM revs 4 and 5
-Message-ID: <1405433937-17355-1-git-send-email-zajec5@gmail.com>
+Date: Tue, 15 Jul 2014 16:54:47 +0200
+Subject: [PATCH] bcma: extract antenna gains from SPROM correctly
+Message-ID: <1405436087-17695-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: b43-dev@lists.infradead.org, brcm80211-dev-list@broadcom.com, Brett Rudley <brudley@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-This is needed to properly handle early 802.11n devices like BCM4321.
+Just like in case of SSB SPROMs they are encoded in a bit tricky way.
+SPROM struct already uses s8 type and it's supposed to store decoded
+values.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/ssb/pci.c            | 45 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/ssb/ssb_regs.h | 37 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
+ drivers/bcma/sprom.c                           | 41 +++++++++++++++++++++-----
+ drivers/net/wireless/brcm80211/brcmsmac/main.c | 37 -----------------------
+ 2 files changed, 33 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
-index 6318364..0f28c08 100644
---- a/drivers/ssb/pci.c
-+++ b/drivers/ssb/pci.c
-@@ -470,7 +470,15 @@ static void sprom_extract_r458(struct ssb_sprom *out, const u16 *in)
+diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
+index 72bf454..a9dfb1a 100644
+--- a/drivers/bcma/sprom.c
++++ b/drivers/bcma/sprom.c
+@@ -201,6 +201,23 @@ static int bcma_sprom_valid(struct bcma_bus *bus, const u16 *sprom,
+ 		SPEX(_field[7], _offset + 14, _mask, _shift);	\
+ 	} while (0)
  
- static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
- {
-+	static const u16 pwr_info_offset[] = {
-+		SSB_SPROM4_PWR_INFO_CORE0, SSB_SPROM4_PWR_INFO_CORE1,
-+		SSB_SPROM4_PWR_INFO_CORE2, SSB_SPROM4_PWR_INFO_CORE3
-+	};
- 	u16 il0mac_offset;
-+	int i;
++static s8 sprom_extract_antgain(const u16 *in, u16 offset, u16 mask, u16 shift)
++{
++	u16 v;
++	u8 gain;
 +
-+	BUILD_BUG_ON(ARRAY_SIZE(pwr_info_offset) !=
-+		     ARRAY_SIZE(out->core_pwr_info));
- 
- 	if (out->revision == 4)
- 		il0mac_offset = SSB_SPROM4_IL0MAC;
-@@ -543,6 +551,43 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
- 						     SSB_SPROM4_AGAIN3,
- 						     SSB_SPROM4_AGAIN3_SHIFT);
- 
-+	/* Extract cores power info info */
-+	for (i = 0; i < ARRAY_SIZE(pwr_info_offset); i++) {
-+		u16 o = pwr_info_offset[i];
-+
-+		SPEX(core_pwr_info[i].itssi_2g, o + SSB_SPROM4_2G_MAXP_ITSSI,
-+			SSB_SPROM4_2G_ITSSI, SSB_SPROM4_2G_ITSSI_SHIFT);
-+		SPEX(core_pwr_info[i].maxpwr_2g, o + SSB_SPROM4_2G_MAXP_ITSSI,
-+			SSB_SPROM4_2G_MAXP, 0);
-+
-+		SPEX(core_pwr_info[i].pa_2g[0], o + SSB_SPROM4_2G_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_2g[1], o + SSB_SPROM4_2G_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_2g[2], o + SSB_SPROM4_2G_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_2g[3], o + SSB_SPROM4_2G_PA_3, ~0, 0);
-+
-+		SPEX(core_pwr_info[i].itssi_5g, o + SSB_SPROM4_5G_MAXP_ITSSI,
-+			SSB_SPROM4_5G_ITSSI, SSB_SPROM4_5G_ITSSI_SHIFT);
-+		SPEX(core_pwr_info[i].maxpwr_5g, o + SSB_SPROM4_5G_MAXP_ITSSI,
-+			SSB_SPROM4_5G_MAXP, 0);
-+		SPEX(core_pwr_info[i].maxpwr_5gh, o + SSB_SPROM4_5GHL_MAXP,
-+			SSB_SPROM4_5GH_MAXP, 0);
-+		SPEX(core_pwr_info[i].maxpwr_5gl, o + SSB_SPROM4_5GHL_MAXP,
-+			SSB_SPROM4_5GL_MAXP, SSB_SPROM4_5GL_MAXP_SHIFT);
-+
-+		SPEX(core_pwr_info[i].pa_5gl[0], o + SSB_SPROM4_5GL_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gl[1], o + SSB_SPROM4_5GL_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gl[2], o + SSB_SPROM4_5GL_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gl[3], o + SSB_SPROM4_5GL_PA_3, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[0], o + SSB_SPROM4_5G_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[1], o + SSB_SPROM4_5G_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[2], o + SSB_SPROM4_5G_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5g[3], o + SSB_SPROM4_5G_PA_3, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[0], o + SSB_SPROM4_5GH_PA_0, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[1], o + SSB_SPROM4_5GH_PA_1, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[2], o + SSB_SPROM4_5GH_PA_2, ~0, 0);
-+		SPEX(core_pwr_info[i].pa_5gh[3], o + SSB_SPROM4_5GH_PA_3, ~0, 0);
++	v = in[SPOFF(offset)];
++	gain = (v & mask) >> shift;
++	if (gain == 0xFF) {
++		gain = 8; /* If unset use 2dBm */
++	} else {
++		/* Q5.2 Fractional part is stored in 0xC0 */
++		gain = ((gain & 0xC0) >> 6) | ((gain & 0x3F) << 2);
 +	}
 +
- 	sprom_extract_r458(out, in);
++	return (s8)gain;
++}
++
+ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
+ {
+ 	u16 v, o;
+@@ -381,14 +398,22 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
+ 	SPEX32(ofdm5ghpo, SSB_SPROM8_OFDM5GHPO, ~0, 0);
  
- 	/* TODO - get remaining rev 4 stuff needed */
-diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
-index f9f931c..f7b9100 100644
---- a/include/linux/ssb/ssb_regs.h
-+++ b/include/linux/ssb/ssb_regs.h
-@@ -345,6 +345,43 @@
- #define  SSB_SPROM4_TXPID5GH2_SHIFT	0
- #define  SSB_SPROM4_TXPID5GH3		0xFF00
- #define  SSB_SPROM4_TXPID5GH3_SHIFT	8
-+
-+/* There are 4 blocks with power info sharing the same layout */
-+#define SSB_SPROM4_PWR_INFO_CORE0	0x0080
-+#define SSB_SPROM4_PWR_INFO_CORE1	0x00AE
-+#define SSB_SPROM4_PWR_INFO_CORE2	0x00DC
-+#define SSB_SPROM4_PWR_INFO_CORE3	0x010A
-+
-+#define SSB_SPROM4_2G_MAXP_ITSSI	0x00	/* 2 GHz ITSSI and 2 GHz Max Power */
-+#define  SSB_SPROM4_2G_MAXP		0x00FF
-+#define  SSB_SPROM4_2G_ITSSI		0xFF00
-+#define  SSB_SPROM4_2G_ITSSI_SHIFT	8
-+#define SSB_SPROM4_2G_PA_0		0x02	/* 2 GHz power amp */
-+#define SSB_SPROM4_2G_PA_1		0x04
-+#define SSB_SPROM4_2G_PA_2		0x06
-+#define SSB_SPROM4_2G_PA_3		0x08
-+#define SSB_SPROM4_5G_MAXP_ITSSI	0x0A	/* 5 GHz ITSSI and 5.3 GHz Max Power */
-+#define  SSB_SPROM4_5G_MAXP		0x00FF
-+#define  SSB_SPROM4_5G_ITSSI		0xFF00
-+#define  SSB_SPROM4_5G_ITSSI_SHIFT	8
-+#define SSB_SPROM4_5GHL_MAXP		0x0C	/* 5.2 GHz and 5.8 GHz Max Power */
-+#define  SSB_SPROM4_5GH_MAXP		0x00FF
-+#define  SSB_SPROM4_5GL_MAXP		0xFF00
-+#define  SSB_SPROM4_5GL_MAXP_SHIFT	8
-+#define SSB_SPROM4_5G_PA_0		0x0E	/* 5.3 GHz power amp */
-+#define SSB_SPROM4_5G_PA_1		0x10
-+#define SSB_SPROM4_5G_PA_2		0x12
-+#define SSB_SPROM4_5G_PA_3		0x14
-+#define SSB_SPROM4_5GL_PA_0		0x16	/* 5.2 GHz power amp */
-+#define SSB_SPROM4_5GL_PA_1		0x18
-+#define SSB_SPROM4_5GL_PA_2		0x1A
-+#define SSB_SPROM4_5GL_PA_3		0x1C
-+#define SSB_SPROM4_5GH_PA_0		0x1E	/* 5.8 GHz power amp */
-+#define SSB_SPROM4_5GH_PA_1		0x20
-+#define SSB_SPROM4_5GH_PA_2		0x22
-+#define SSB_SPROM4_5GH_PA_3		0x24
-+
-+/* TODO: Make it deprecated */
- #define SSB_SPROM4_MAXP_BG		0x0080  /* Max Power BG in path 1 */
- #define  SSB_SPROM4_MAXP_BG_MASK	0x00FF  /* Mask for Max Power BG */
- #define  SSB_SPROM4_ITSSI_BG		0xFF00	/* Mask for path 1 itssi_bg */
+ 	/* Extract the antenna gain values. */
+-	SPEX(antenna_gain.a0, SSB_SPROM8_AGAIN01,
+-	     SSB_SPROM8_AGAIN0, SSB_SPROM8_AGAIN0_SHIFT);
+-	SPEX(antenna_gain.a1, SSB_SPROM8_AGAIN01,
+-	     SSB_SPROM8_AGAIN1, SSB_SPROM8_AGAIN1_SHIFT);
+-	SPEX(antenna_gain.a2, SSB_SPROM8_AGAIN23,
+-	     SSB_SPROM8_AGAIN2, SSB_SPROM8_AGAIN2_SHIFT);
+-	SPEX(antenna_gain.a3, SSB_SPROM8_AGAIN23,
+-	     SSB_SPROM8_AGAIN3, SSB_SPROM8_AGAIN3_SHIFT);
++	bus->sprom.antenna_gain.a0 = sprom_extract_antgain(sprom,
++							   SSB_SPROM8_AGAIN01,
++							   SSB_SPROM8_AGAIN0,
++							   SSB_SPROM8_AGAIN0_SHIFT);
++	bus->sprom.antenna_gain.a1 = sprom_extract_antgain(sprom,
++							   SSB_SPROM8_AGAIN01,
++							   SSB_SPROM8_AGAIN1,
++							   SSB_SPROM8_AGAIN1_SHIFT);
++	bus->sprom.antenna_gain.a2 = sprom_extract_antgain(sprom,
++							   SSB_SPROM8_AGAIN23,
++							   SSB_SPROM8_AGAIN2,
++							   SSB_SPROM8_AGAIN2_SHIFT);
++	bus->sprom.antenna_gain.a3 = sprom_extract_antgain(sprom,
++							   SSB_SPROM8_AGAIN23,
++							   SSB_SPROM8_AGAIN3,
++							   SSB_SPROM8_AGAIN3_SHIFT);
+ 
+ 	SPEX(leddc_on_time, SSB_SPROM8_LEDDC, SSB_SPROM8_LEDDC_ON,
+ 	     SSB_SPROM8_LEDDC_ON_SHIFT);
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/main.c b/drivers/net/wireless/brcm80211/brcmsmac/main.c
+index af8ba64..1b47482 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/main.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/main.c
+@@ -4707,41 +4707,6 @@ static int brcms_b_attach(struct brcms_c_info *wlc, struct bcma_device *core,
+ 	return err;
+ }
+ 
+-static void brcms_c_attach_antgain_init(struct brcms_c_info *wlc)
+-{
+-	uint unit;
+-	unit = wlc->pub->unit;
+-
+-	if ((wlc->band->antgain == -1) && (wlc->pub->sromrev == 1)) {
+-		/* default antenna gain for srom rev 1 is 2 dBm (8 qdbm) */
+-		wlc->band->antgain = 8;
+-	} else if (wlc->band->antgain == -1) {
+-		wiphy_err(wlc->wiphy, "wl%d: %s: Invalid antennas available in"
+-			  " srom, using 2dB\n", unit, __func__);
+-		wlc->band->antgain = 8;
+-	} else {
+-		s8 gain, fract;
+-		/* Older sroms specified gain in whole dbm only.  In order
+-		 * be able to specify qdbm granularity and remain backward
+-		 * compatible the whole dbms are now encoded in only
+-		 * low 6 bits and remaining qdbms are encoded in the hi 2 bits.
+-		 * 6 bit signed number ranges from -32 - 31.
+-		 *
+-		 * Examples:
+-		 * 0x1 = 1 db,
+-		 * 0xc1 = 1.75 db (1 + 3 quarters),
+-		 * 0x3f = -1 (-1 + 0 quarters),
+-		 * 0x7f = -.75 (-1 + 1 quarters) = -3 qdbm.
+-		 * 0xbf = -.50 (-1 + 2 quarters) = -2 qdbm.
+-		 */
+-		gain = wlc->band->antgain & 0x3f;
+-		gain <<= 2;	/* Sign extend */
+-		gain >>= 2;
+-		fract = (wlc->band->antgain & 0xc0) >> 6;
+-		wlc->band->antgain = 4 * gain + fract;
+-	}
+-}
+-
+ static bool brcms_c_attach_stf_ant_init(struct brcms_c_info *wlc)
+ {
+ 	int aa;
+@@ -4780,8 +4745,6 @@ static bool brcms_c_attach_stf_ant_init(struct brcms_c_info *wlc)
+ 	else
+ 		wlc->band->antgain = sprom->antenna_gain.a0;
+ 
+-	brcms_c_attach_antgain_init(wlc);
+-
+ 	return true;
+ }
+ 
 -- 
 1.8.4.5
