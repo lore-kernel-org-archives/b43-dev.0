@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 19 Jul 2014 12:52:45 +0200
-Subject: [PATCH 5/7] b43: N-PHY: add rev7+ workarounds for radio revs 9 and 14
+Date: Sat, 19 Jul 2014 12:52:46 +0200
+Subject: [PATCH 6/7] b43: N-PHY: final fixes to rev7+ workarounds
 In-Reply-To: <1405767167-30315-1-git-send-email-zajec5@gmail.com>
 References: <1405767167-30315-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1405767167-30315-5-git-send-email-zajec5@gmail.com>
+Message-ID: <1405767167-30315-6-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,127 +13,75 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c | 79 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 77 insertions(+), 2 deletions(-)
+ drivers/net/wireless/b43/phy_n.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 376dcf9..1052540 100644
+index 1052540..11d7543 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -2722,9 +2722,9 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
- 
- 	u16 lpf_ofdm_20mhz[2], lpf_ofdm_40mhz[2], lpf_11b[2];
- 	u16 bcap_val;
--	u16 bcap_val_11b[2], bcap_val_11n_20[2], bcap_val_11n_40[2];
-+	s16 bcap_val_11b[2], bcap_val_11n_20[2], bcap_val_11n_40[2];
- 	u16 scap_val;
--	u16 scap_val_11b[2], scap_val_11n_20[2], scap_val_11n_40[2];
-+	s16 scap_val_11b[2], scap_val_11n_20[2], scap_val_11n_40[2];
- 	bool rccal_ovrd = false;
+@@ -2729,6 +2729,8 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
  
  	u16 bias, conv, filt;
-@@ -2799,6 +2799,8 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
- 	scap_val = b43_radio_read(dev, R2057_RCCAL_SCAP_VAL);
  
- 	if (b43_nphy_ipa(dev)) {
-+		bool ghz2 = b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ;
++	u32 noise_tbl[2];
 +
- 		switch (phy->radio_rev) {
- 		case 5:
- 			/* Check radio version (to be 0) by PHY rev for now */
-@@ -2840,6 +2842,58 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
+ 	u32 tmp32;
+ 	u8 core;
  
- 			rccal_ovrd = true;
- 			break;
-+		case 9:
-+			for (core = 0; core < 2; core++) {
-+				bcap_val_11b[core] = bcap_val;
-+				scap_val_11b[core] = scap_val;
-+				lpf_11b[core] = 1;
-+
-+				if (ghz2) {
-+					bcap_val_11n_20[core] = bcap_val + 13;
-+					scap_val_11n_20[core] = scap_val + 15;
-+				} else {
-+					bcap_val_11n_20[core] = bcap_val + 14;
-+					scap_val_11n_20[core] = scap_val + 15;
-+				}
-+				lpf_ofdm_20mhz[core] = 4;
-+
-+				if (ghz2) {
-+					bcap_val_11n_40[core] = bcap_val - 7;
-+					scap_val_11n_40[core] = scap_val - 5;
-+				} else {
-+					bcap_val_11n_40[core] = bcap_val + 2;
-+					scap_val_11n_40[core] = scap_val + 4;
-+				}
-+				lpf_ofdm_40mhz[core] = 4;
-+			}
-+
-+			rccal_ovrd = true;
-+			break;
-+		case 14:
-+			for (core = 0; core < 2; core++) {
-+				bcap_val_11b[core] = bcap_val;
-+				scap_val_11b[core] = scap_val;
-+				lpf_11b[core] = 1;
-+			}
-+
-+			bcap_val_11n_20[0] = bcap_val + 20;
-+			scap_val_11n_20[0] = scap_val + 20;
-+			lpf_ofdm_20mhz[0] = 3;
-+
-+			bcap_val_11n_20[1] = bcap_val + 16;
-+			scap_val_11n_20[1] = scap_val + 16;
-+			lpf_ofdm_20mhz[1] = 3;
-+
-+			bcap_val_11n_40[0] = bcap_val + 20;
-+			scap_val_11n_40[0] = scap_val + 20;
-+			lpf_ofdm_40mhz[0] = 4;
-+
-+			bcap_val_11n_40[1] = bcap_val + 10;
-+			scap_val_11n_40[1] = scap_val + 10;
-+			lpf_ofdm_40mhz[1] = 4;
-+
-+			rccal_ovrd = true;
-+			break;
+@@ -2955,9 +2957,10 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
+ 			b43_ntab_write(dev, B43_NTAB16(7, 0x159 + core * 16),
+ 				       rx2tx_lut_40_11n[core]);
  		}
- 	} else {
- 		if (phy->radio_rev == 5) {
-@@ -2862,6 +2916,13 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
- 		u8 rx2tx_lut_extra = 1;
+-		b43_nphy_rf_ctl_override_rev7(dev, 16, 1, 3, false, 2);
+ 	}
++
+ 	b43_phy_write(dev, 0x32F, 0x3);
++
+ 	if (phy->radio_rev == 4 || phy->radio_rev == 6)
+ 		b43_nphy_rf_ctl_override_rev7(dev, 4, 1, 3, false, 0);
  
- 		for (core = 0; core < 2; core++) {
-+			bcap_val_11b[core] = clamp_val(bcap_val_11b[core], 0, 0x1f);
-+			scap_val_11b[core] = clamp_val(scap_val_11b[core], 0, 0x1f);
-+			bcap_val_11n_20[core] = clamp_val(bcap_val_11n_20[core], 0, 0x1f);
-+			scap_val_11n_20[core] = clamp_val(scap_val_11n_20[core], 0, 0x1f);
-+			bcap_val_11n_40[core] = clamp_val(bcap_val_11n_40[core], 0, 0x1f);
-+			scap_val_11n_40[core] = clamp_val(scap_val_11n_40[core], 0, 0x1f);
+@@ -3104,8 +3107,8 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
+ 		b43_phy_set(dev, B43_NPHY_AFECTL_OVER1, 0x1);
+ 		b43_phy_mask(dev, B43_NPHY_AFECTL_C2, ~0x1);
+ 		b43_phy_set(dev, B43_NPHY_AFECTL_OVER, 0x1);
+-		b43_ntab_write(dev, B43_NTAB16(8, 0x05), 0x20);
+-		b43_ntab_write(dev, B43_NTAB16(8, 0x15), 0x20);
++		b43_ntab_write(dev, B43_NTAB16(8, 0x05), 0);
++		b43_ntab_write(dev, B43_NTAB16(8, 0x15), 0);
+ 
+ 		b43_phy_mask(dev, B43_NPHY_AFECTL_C1, ~0x4);
+ 		b43_phy_mask(dev, B43_NPHY_AFECTL_OVER1, ~0x4);
+@@ -3116,20 +3119,20 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
+ 	b43_phy_write(dev, B43_NPHY_ENDROP_TLEN, 0x2);
+ 
+ 	b43_ntab_write(dev, B43_NTAB32(16, 0x100), 20);
+-	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x138), 2, ntab7_138_146);
++	b43_ntab_write_bulk(dev, B43_NTAB8(7, 0x138), 2, ntab7_138_146);
+ 	b43_ntab_write(dev, B43_NTAB16(7, 0x141), 0x77);
+-	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x133), 3, ntab7_133);
+-	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x146), 2, ntab7_138_146);
++	b43_ntab_write_bulk(dev, B43_NTAB8(7, 0x133), 3, ntab7_133);
++	b43_ntab_write_bulk(dev, B43_NTAB8(7, 0x146), 2, ntab7_138_146);
+ 	b43_ntab_write(dev, B43_NTAB16(7, 0x123), 0x77);
+ 	b43_ntab_write(dev, B43_NTAB16(7, 0x12A), 0x77);
+ 
+-	if (!b43_is_40mhz(dev)) {
+-		b43_ntab_write(dev, B43_NTAB32(16, 0x03), 0x18D);
+-		b43_ntab_write(dev, B43_NTAB32(16, 0x7F), 0x18D);
+-	} else {
+-		b43_ntab_write(dev, B43_NTAB32(16, 0x03), 0x14D);
+-		b43_ntab_write(dev, B43_NTAB32(16, 0x7F), 0x14D);
+-	}
++	b43_ntab_read_bulk(dev, B43_NTAB32(16, 0x02), 1, noise_tbl);
++	noise_tbl[1] = b43_is_40mhz(dev) ? 0x14D : 0x18D;
++	b43_ntab_write_bulk(dev, B43_NTAB32(16, 0x02), 2, noise_tbl);
 +
- 			rx2tx_lut_20_11b[core] = (rx2tx_lut_extra << 13) |
- 						 (bcap_val_11b[core] << 8) |
- 						 (scap_val_11b[core] << 3) |
-@@ -2982,6 +3043,20 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
- 					b43_radio_write(dev, 0xE8, 0x16);
- 				}
- 				break;
-+			case 14:
-+				for (core = 0; core < 2; core++) {
-+					int o = core ? 0x85 : 0;
-+
-+					b43_radio_write(dev, o + R2057_IPA2G_CASCONV_CORE0, 0x13);
-+					b43_radio_write(dev, o + R2057_TXMIX2G_TUNE_BOOST_PU_CORE0, 0x21);
-+					b43_radio_write(dev, o + R2057_IPA2G_BIAS_FILTER_CORE0, 0xff);
-+					b43_radio_write(dev, o + R2057_PAD2G_IDACS_CORE0, 0x88);
-+					b43_radio_write(dev, o + R2057_PAD2G_TUNE_PUS_CORE0, 0x23);
-+					b43_radio_write(dev, o + R2057_IPA2G_IMAIN_CORE0, 0x16);
-+					b43_radio_write(dev, o + R2057_PAD_BIAS_FILTER_BWS_CORE0, 0x3e);
-+					b43_radio_write(dev, o + R2057_BACKUP1_CORE0, 0x10);
-+				}
-+				break;
- 			}
- 		} else {
- 			u16 freq = phy->chandef->chan->center_freq;
++	b43_ntab_read_bulk(dev, B43_NTAB32(16, 0x7E), 1, noise_tbl);
++	noise_tbl[1] = b43_is_40mhz(dev) ? 0x14D : 0x18D;
++	b43_ntab_write_bulk(dev, B43_NTAB32(16, 0x7E), 2, noise_tbl);
+ 
+ 	b43_nphy_gain_ctl_workarounds(dev);
+ 
 -- 
 1.8.4.5
