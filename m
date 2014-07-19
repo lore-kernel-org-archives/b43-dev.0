@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sat, 19 Jul 2014 12:52:46 +0200
-Subject: [PATCH 6/7] b43: N-PHY: final fixes to rev7+ workarounds
+Date: Sat, 19 Jul 2014 12:52:47 +0200
+Subject: [PATCH 7/7] b43: enable radio 0x2057 rev 14 support (AKA BCM43217)
 In-Reply-To: <1405767167-30315-1-git-send-email-zajec5@gmail.com>
 References: <1405767167-30315-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1405767167-30315-6-git-send-email-zajec5@gmail.com>
+Message-ID: <1405767167-30315-7-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,75 +13,32 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ drivers/net/wireless/b43/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 1052540..11d7543 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -2729,6 +2729,8 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 3e127be..73f629c 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4512,7 +4512,8 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+ 		if (radio_ver != 0x2055 && radio_ver != 0x2056 &&
+ 		    radio_ver != 0x2057)
+ 			unsupported = 1;
+-		if (radio_ver == 0x2057 && !(radio_rev == 9))
++		if (radio_ver == 0x2057 &&
++		    !(radio_rev == 9 || radio_rev == 14))
+ 			unsupported = 1;
+ 		break;
+ 	case B43_PHYTYPE_LP:
+@@ -5152,7 +5153,8 @@ static int b43_setup_bands(struct b43_wldev *dev,
+ 	bool limited_2g;
  
- 	u16 bias, conv, filt;
+ 	/* We don't support all 2 GHz channels on some devices */
+-	limited_2g = phy->radio_ver == 0x2057 && phy->radio_rev == 9;
++	limited_2g = phy->radio_ver == 0x2057 &&
++		     (phy->radio_rev == 9 || phy->radio_rev == 14);
  
-+	u32 noise_tbl[2];
-+
- 	u32 tmp32;
- 	u8 core;
- 
-@@ -2955,9 +2957,10 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
- 			b43_ntab_write(dev, B43_NTAB16(7, 0x159 + core * 16),
- 				       rx2tx_lut_40_11n[core]);
- 		}
--		b43_nphy_rf_ctl_override_rev7(dev, 16, 1, 3, false, 2);
- 	}
-+
- 	b43_phy_write(dev, 0x32F, 0x3);
-+
- 	if (phy->radio_rev == 4 || phy->radio_rev == 6)
- 		b43_nphy_rf_ctl_override_rev7(dev, 4, 1, 3, false, 0);
- 
-@@ -3104,8 +3107,8 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
- 		b43_phy_set(dev, B43_NPHY_AFECTL_OVER1, 0x1);
- 		b43_phy_mask(dev, B43_NPHY_AFECTL_C2, ~0x1);
- 		b43_phy_set(dev, B43_NPHY_AFECTL_OVER, 0x1);
--		b43_ntab_write(dev, B43_NTAB16(8, 0x05), 0x20);
--		b43_ntab_write(dev, B43_NTAB16(8, 0x15), 0x20);
-+		b43_ntab_write(dev, B43_NTAB16(8, 0x05), 0);
-+		b43_ntab_write(dev, B43_NTAB16(8, 0x15), 0);
- 
- 		b43_phy_mask(dev, B43_NPHY_AFECTL_C1, ~0x4);
- 		b43_phy_mask(dev, B43_NPHY_AFECTL_OVER1, ~0x4);
-@@ -3116,20 +3119,20 @@ static void b43_nphy_workarounds_rev7plus(struct b43_wldev *dev)
- 	b43_phy_write(dev, B43_NPHY_ENDROP_TLEN, 0x2);
- 
- 	b43_ntab_write(dev, B43_NTAB32(16, 0x100), 20);
--	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x138), 2, ntab7_138_146);
-+	b43_ntab_write_bulk(dev, B43_NTAB8(7, 0x138), 2, ntab7_138_146);
- 	b43_ntab_write(dev, B43_NTAB16(7, 0x141), 0x77);
--	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x133), 3, ntab7_133);
--	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x146), 2, ntab7_138_146);
-+	b43_ntab_write_bulk(dev, B43_NTAB8(7, 0x133), 3, ntab7_133);
-+	b43_ntab_write_bulk(dev, B43_NTAB8(7, 0x146), 2, ntab7_138_146);
- 	b43_ntab_write(dev, B43_NTAB16(7, 0x123), 0x77);
- 	b43_ntab_write(dev, B43_NTAB16(7, 0x12A), 0x77);
- 
--	if (!b43_is_40mhz(dev)) {
--		b43_ntab_write(dev, B43_NTAB32(16, 0x03), 0x18D);
--		b43_ntab_write(dev, B43_NTAB32(16, 0x7F), 0x18D);
--	} else {
--		b43_ntab_write(dev, B43_NTAB32(16, 0x03), 0x14D);
--		b43_ntab_write(dev, B43_NTAB32(16, 0x7F), 0x14D);
--	}
-+	b43_ntab_read_bulk(dev, B43_NTAB32(16, 0x02), 1, noise_tbl);
-+	noise_tbl[1] = b43_is_40mhz(dev) ? 0x14D : 0x18D;
-+	b43_ntab_write_bulk(dev, B43_NTAB32(16, 0x02), 2, noise_tbl);
-+
-+	b43_ntab_read_bulk(dev, B43_NTAB32(16, 0x7E), 1, noise_tbl);
-+	noise_tbl[1] = b43_is_40mhz(dev) ? 0x14D : 0x18D;
-+	b43_ntab_write_bulk(dev, B43_NTAB32(16, 0x7E), 2, noise_tbl);
- 
- 	b43_nphy_gain_ctl_workarounds(dev);
- 
+ 	if (have_2ghz_phy)
+ 		hw->wiphy->bands[IEEE80211_BAND_2GHZ] = limited_2g ?
 -- 
 1.8.4.5
