@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 17 Jul 2014 19:31:06 +0200
-Subject: [PATCH 6/6] b43: N-PHY: update spur avoidance to support newer devices
-In-Reply-To: <1405618266-20200-1-git-send-email-zajec5@gmail.com>
-References: <1405618266-20200-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1405618266-20200-6-git-send-email-zajec5@gmail.com>
+Date: Sat, 19 Jul 2014 12:52:41 +0200
+Subject: [PATCH 1/7] b43: N-PHY: add helper for setting digital filters
+Message-ID: <1405767167-30315-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -13,70 +11,76 @@ Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@g
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c | 43 +++++++++++++++++++++++++++++-----------
- 1 file changed, 31 insertions(+), 12 deletions(-)
+ drivers/net/wireless/b43/phy_n.c | 39 ++++++++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 0f0c130..92bfe35 100644
+index 92bfe35..b5c8a81 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -6099,26 +6099,45 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
+@@ -4809,41 +4809,46 @@ static void b43_nphy_update_tx_cal_ladder(struct b43_wldev *dev, u16 core)
+ 	}
+ }
  
- 	if (dev->phy.rev >= 3 &&
- 	    dev->phy.n->spur_avoid != B43_SPUR_AVOID_DISABLE) {
--		bool avoid = false;
-+		u8 spuravoid = 0;
++static void b43_nphy_pa_set_tx_dig_filter(struct b43_wldev *dev, u16 offset,
++					  const s16 *filter)
++{
++	int i;
 +
- 		if (dev->phy.n->spur_avoid == B43_SPUR_AVOID_FORCE) {
--			avoid = true;
--		} else if (!b43_is_40mhz(dev)) {
--			if ((ch >= 5 && ch <= 8) || ch == 13 || ch == 14)
--				avoid = true;
--		} else { /* 40MHz */
--			if (nphy->aband_spurwar_en &&
--			    (ch == 38 || ch == 102 || ch == 118))
--				avoid = dev->dev->chip_id == 0x4716;
-+			spuravoid = 1;
-+		} else if (phy->rev >= 19) {
-+			/* TODO */
-+		} else if (phy->rev >= 18) {
-+			/* TODO */
-+		} else if (phy->rev >= 17) {
-+			/* TODO: Off for channels 1-11, but check 12-14! */
-+		} else if (phy->rev >= 16) {
-+			/* TODO: Off for 2 GHz, but check 5 GHz! */
-+		} else if (phy->rev >= 7) {
-+			if (!b43_is_40mhz(dev)) { /* 20MHz */
-+				if (ch == 13 || ch == 14 || ch == 153)
-+					spuravoid = 1;
-+			} else { /* 40 MHz */
-+				if (ch == 54)
-+					spuravoid = 1;
-+			}
-+		} else {
-+			if (!b43_is_40mhz(dev)) { /* 20MHz */
-+				if ((ch >= 5 && ch <= 8) || ch == 13 || ch == 14)
-+					spuravoid = 1;
-+			} else { /* 40MHz */
-+				if (nphy->aband_spurwar_en &&
-+				    (ch == 38 || ch == 102 || ch == 118))
-+					spuravoid = dev->dev->chip_id == 0x4716;
-+			}
- 		}
++	offset = B43_PHY_N(offset);
++
++	for (i = 0; i < 15; i++, offset++)
++		b43_phy_write(dev, offset, filter[i]);
++}
++
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/ExtPaSetTxDigiFilts */
+ static void b43_nphy_ext_pa_set_tx_dig_filters(struct b43_wldev *dev)
+ {
+-	int i;
+-	for (i = 0; i < 15; i++)
+-		b43_phy_write(dev, B43_PHY_N(0x2C5 + i),
+-				tbl_tx_filter_coef_rev4[2][i]);
++	b43_nphy_pa_set_tx_dig_filter(dev, 0x2C5,
++				      tbl_tx_filter_coef_rev4[2]);
+ }
  
--		b43_nphy_pmu_spur_avoid(dev, avoid);
-+		b43_nphy_pmu_spur_avoid(dev, spuravoid);
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/IpaSetTxDigiFilts */
+ static void b43_nphy_int_pa_set_tx_dig_filters(struct b43_wldev *dev)
+ {
+-	int i, j;
+ 	/* B43_NPHY_TXF_20CO_S0A1, B43_NPHY_TXF_40CO_S0A1, unknown */
+ 	static const u16 offset[] = { 0x186, 0x195, 0x2C5 };
++	int i;
  
--		b43_mac_switch_freq(dev, avoid);
-+		b43_mac_switch_freq(dev, spuravoid);
+ 	for (i = 0; i < 3; i++)
+-		for (j = 0; j < 15; j++)
+-			b43_phy_write(dev, B43_PHY_N(offset[i] + j),
+-					tbl_tx_filter_coef_rev4[i][j]);
++		b43_nphy_pa_set_tx_dig_filter(dev, offset[i],
++					      tbl_tx_filter_coef_rev4[i]);
  
- 		if (dev->phy.rev == 3 || dev->phy.rev == 4)
- 			; /* TODO: reset PLL */
+ 	if (b43_is_40mhz(dev)) {
+-		for (j = 0; j < 15; j++)
+-			b43_phy_write(dev, B43_PHY_N(offset[0] + j),
+-					tbl_tx_filter_coef_rev4[3][j]);
++		b43_nphy_pa_set_tx_dig_filter(dev, 0x186,
++					      tbl_tx_filter_coef_rev4[3]);
+ 	} else if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
+-		for (j = 0; j < 15; j++)
+-			b43_phy_write(dev, B43_PHY_N(offset[0] + j),
+-					tbl_tx_filter_coef_rev4[5][j]);
++		b43_nphy_pa_set_tx_dig_filter(dev, 0x186,
++					      tbl_tx_filter_coef_rev4[5]);
+ 	}
  
--		if (avoid)
-+		if (spuravoid)
- 			b43_phy_set(dev, B43_NPHY_BBCFG, B43_NPHY_BBCFG_RSTRX);
- 		else
- 			b43_phy_mask(dev, B43_NPHY_BBCFG,
+ 	if (dev->phy.channel == 14)
+-		for (j = 0; j < 15; j++)
+-			b43_phy_write(dev, B43_PHY_N(offset[0] + j),
+-					tbl_tx_filter_coef_rev4[6][j]);
++		b43_nphy_pa_set_tx_dig_filter(dev, 0x186,
++					      tbl_tx_filter_coef_rev4[6]);
+ }
+ 
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/GetTxGain */
 -- 
 1.8.4.5
