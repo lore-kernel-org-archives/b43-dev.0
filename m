@@ -1,52 +1,116 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Date: Sun, 20 Jul 2014 14:10:29 +0200
-Subject: [PATCH 2/2] b43: N-PHY: support setting custom TX power
-In-Reply-To: <CACna6rw=VWjTEmQTeKzWtqhfejFEExnvqHMhWU3hjJ3m0CWGvw@mail.gmail.com>
-References: <1405854022-11833-1-git-send-email-zajec5@gmail.com>
- <1405854022-11833-2-git-send-email-zajec5@gmail.com>
- <CAOiHx=mi0jJQycjJSNjJ3rXrjQEB2N6JP3yg6vqcDN82tZHjzg@mail.gmail.com>
- <CACna6rw=VWjTEmQTeKzWtqhfejFEExnvqHMhWU3hjJ3m0CWGvw@mail.gmail.com>
-Message-ID: <CAOiHx=mR0NKdpXuGKvSXVm-71vhor3eSiSF58+mY43MAddfwSA@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Date: Tue, 22 Jul 2014 21:31:05 +0200
+Subject: [PATCH] b43: N-PHY: fix rev7+ typos at random places
+Message-ID: <1406057465-24264-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, b43-dev <b43-dev@lists.infradead.org>
+To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On Sun, Jul 20, 2014 at 1:53 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
-> On 20 July 2014 13:49, Jonas Gorski <jogo@openwrt.org> wrote:
->> On Sun, Jul 20, 2014 at 1:00 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->>> diff --git a/drivers/net/wireless/b43/phy_n.h b/drivers/net/wireless/b43/phy_n.h
->>> index 30bec81..252d843 100644
->>> --- a/drivers/net/wireless/b43/phy_n.h
->>> +++ b/drivers/net/wireless/b43/phy_n.h
->>> @@ -967,6 +967,9 @@ struct b43_phy_n {
->>>         struct b43_phy_n_txpwrindex txpwrindex[2];
->>>         struct b43_phy_n_pwr_ctl_info pwr_ctl_info[2];
->>>         struct b43_chanspec txiqlocal_chanspec;
->>> +       struct b43_ppr *tx_pwr_max_ppr;
->>
->> Why not just make this a struct member? As far as I can tell, it will
->> always be allocated, and you would lose one alloc/free call, and
->> probably one pointer dereference.
->
-> My idea was to prevent driver parts from knowing PPR implementation
-> details. Just to don't mess with its internals and allow redesigning
-> in the future. That is why I put "struct b43_ppr_rates" in .c file and
-> all other driver parts use a pointer only.
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/phy_n.c       | 19 ++++++++++---------
+ drivers/net/wireless/b43/tables_nphy.c |  4 ++--
+ 2 files changed, 12 insertions(+), 11 deletions(-)
 
-If this were a library used by several drivers I could understand. But
-hiding things from yourself? Seriously? ;P
-
->
-> Seriously, I doubt in the sense of posting RFCs :P
-
-I know that feel :p. I usually try to do a thorough code review if I
-review, and was missing the time when you posted the RFC. Also I'm
-usually a bit more lenient with RFCs as I assume this is usually a
-request for commenting on the intend of the code, and less for finding
-nitpicks/bugs.
-
-
-Jonas
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 11d7543..44bb58b 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -225,13 +225,13 @@ static void b43_nphy_rf_ctl_override_one_to_many(struct b43_wldev *dev,
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x2, value, core, off, 1);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x1, value, core, off, 1);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x2, value, core, off, 2);
+-		b43_nphy_rf_ctl_override_rev7(dev, 0x0800, value, core, off, 1);
++		b43_nphy_rf_ctl_override_rev7(dev, 0x0800, 0, core, off, 1);
+ 		break;
+ 	case N_RF_CTL_OVER_CMD_TX_PU:
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x4, value, core, off, 0);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x2, value, core, off, 1);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x1, value, core, off, 2);
+-		b43_nphy_rf_ctl_override_rev7(dev, 0x0800, value, core, off, 1);
++		b43_nphy_rf_ctl_override_rev7(dev, 0x0800, 1, core, off, 1);
+ 		break;
+ 	case N_RF_CTL_OVER_CMD_RX_GAIN:
+ 		tmp = value & 0xFF;
+@@ -343,6 +343,7 @@ static void b43_nphy_rf_ctl_intc_override_rev7(struct b43_wldev *dev,
+ 		switch (intc_override) {
+ 		case N_INTC_OVERRIDE_OFF:
+ 			b43_phy_write(dev, reg, 0);
++			b43_phy_mask(dev, 0x2ff, ~0x2000);
+ 			b43_nphy_force_rf_sequence(dev, B43_RFSEQ_RESET2RX);
+ 			break;
+ 		case N_INTC_OVERRIDE_TRSW:
+@@ -1596,7 +1597,7 @@ static void b43_nphy_run_samples(struct b43_wldev *dev, u16 samps, u16 loops,
+ 		bool lpf_bw3, lpf_bw4;
+ 
+ 		lpf_bw3 = b43_phy_read(dev, B43_NPHY_REV7_RF_CTL_OVER3) & 0x80;
+-		lpf_bw4 = b43_phy_read(dev, B43_NPHY_REV7_RF_CTL_OVER3) & 0x80;
++		lpf_bw4 = b43_phy_read(dev, B43_NPHY_REV7_RF_CTL_OVER4) & 0x80;
+ 
+ 		if (lpf_bw3 || lpf_bw4) {
+ 			/* TODO */
+@@ -2117,7 +2118,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 						     N_RF_CTL_OVER_CMD_RX_PU,
+ 						     1, 0, false);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x80, 1, 0, false, 0);
+-		b43_nphy_rf_ctl_override_rev7(dev, 0x80, 1, 0, false, 0);
++		b43_nphy_rf_ctl_override_rev7(dev, 0x40, 1, 0, false, 0);
+ 		if (b43_current_band(dev->wl) == IEEE80211_BAND_5GHZ) {
+ 			b43_nphy_rf_ctl_override_rev7(dev, 0x20, 0, 0, false,
+ 						      0);
+@@ -3543,7 +3544,7 @@ static void b43_nphy_stop_playback(struct b43_wldev *dev)
+ 		nphy->bb_mult_save = 0;
+ 	}
+ 
+-	if (phy->rev >= 7) {
++	if (phy->rev >= 7 && nphy->lpf_bw_overrode_for_sample_play) {
+ 		if (phy->rev >= 19)
+ 			b43_nphy_rf_ctl_override_rev19(dev, 0x80, 0, 0, true,
+ 						       1);
+@@ -3962,9 +3963,9 @@ static void b43_nphy_tx_power_ctl_idle_tssi(struct b43_wldev *dev)
+ 		b43_nphy_ipa_internal_tssi_setup(dev);
+ 
+ 	if (phy->rev >= 19)
+-		b43_nphy_rf_ctl_override_rev19(dev, 0x2000, 0, 3, false, 0);
++		b43_nphy_rf_ctl_override_rev19(dev, 0x1000, 0, 3, false, 0);
+ 	else if (phy->rev >= 7)
+-		b43_nphy_rf_ctl_override_rev7(dev, 0x2000, 0, 3, false, 0);
++		b43_nphy_rf_ctl_override_rev7(dev, 0x1000, 0, 3, false, 0);
+ 	else if (phy->rev >= 3)
+ 		b43_nphy_rf_ctl_override(dev, 0x2000, 0, 3, false);
+ 
+@@ -3977,9 +3978,9 @@ static void b43_nphy_tx_power_ctl_idle_tssi(struct b43_wldev *dev)
+ 	b43_nphy_rssi_select(dev, 0, N_RSSI_W1);
+ 
+ 	if (phy->rev >= 19)
+-		b43_nphy_rf_ctl_override_rev19(dev, 0x2000, 0, 3, true, 0);
++		b43_nphy_rf_ctl_override_rev19(dev, 0x1000, 0, 3, true, 0);
+ 	else if (phy->rev >= 7)
+-		b43_nphy_rf_ctl_override_rev7(dev, 0x2000, 0, 3, true, 0);
++		b43_nphy_rf_ctl_override_rev7(dev, 0x1000, 0, 3, true, 0);
+ 	else if (phy->rev >= 3)
+ 		b43_nphy_rf_ctl_override(dev, 0x2000, 0, 3, true);
+ 
+diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
+index ab27c2d..4b58850 100644
+--- a/drivers/net/wireless/b43/tables_nphy.c
++++ b/drivers/net/wireless/b43/tables_nphy.c
+@@ -3109,11 +3109,11 @@ static const struct nphy_rf_control_override_rev7
+ 	{ 0x0010, 0x07A, 0x07D, 0x0010, 4 },
+ 	{ 0x0020, 0x07A, 0x07D, 0x0020, 5 },
+ 	{ 0x0040, 0x07A, 0x07D, 0x0040, 6 },
+-	{ 0x0080, 0x0F8, 0x0FA, 0x0080, 7 },
++	{ 0x0080, 0x07A, 0x07D, 0x0080, 7 },
+ 	{ 0x0400, 0x0F8, 0x0FA, 0x0070, 4 },
+ 	{ 0x0800, 0x07B, 0x07E, 0xFFFF, 0 },
+ 	{ 0x1000, 0x07C, 0x07F, 0xFFFF, 0 },
+-	{ 0x6000, 0x348, 0x349, 0xFFFF, 0 },
++	{ 0x6000, 0x348, 0x349, 0x00FF, 0 },
+ 	{ 0x2000, 0x348, 0x349, 0x000F, 0 },
+ };
+ 
+-- 
+1.8.4.5
