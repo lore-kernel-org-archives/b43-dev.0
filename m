@@ -1,8 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 30 Jul 2014 23:02:30 +0200
-Subject: [FIX][PATCH 3.17] b43: N-PHY: fix "Data bus error" while working in 5
- GHz
-Message-ID: <1406754150-25752-1-git-send-email-zajec5@gmail.com>
+Date: Wed, 30 Jul 2014 23:21:06 +0200
+Subject: [PATCH] bcma: use NS prefix for names of Northstar specific cores
+Message-ID: <1406755266-26859-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,31 +9,80 @@ Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 Cc: Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-When switching from one 5 GHz channel to another 5 GHz channel we need
-to make sure BPHY is still in a reset. However to access BPHY register
-we have to switch to 2 GHz mode for a moment. Otherwise this may result
-in "Data bus error" (noticed by Hauke with BCM43224 connected to the
-SoC).
+It's cleaner and we don't have quite identical names like
+BCMA_CORE_PCIEG2 and BCMA_CORE_PCIE2.
 
-Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_n.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/bcma/scan.c       | 22 +++++++++++-----------
+ include/linux/bcma/bcma.h | 22 +++++++++++-----------
+ 2 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 1eead7a..e2a3f0d 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -6217,6 +6217,9 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
- 	u16 tmp16;
- 
- 	if (new_channel->band == IEEE80211_BAND_5GHZ) {
-+		/* Switch to 2 GHz for a moment to access B43_PHY_B_BBCFG */
-+		b43_phy_mask(dev, B43_NPHY_BANDCTL, ~B43_NPHY_BANDCTL_5GHZ);
-+
- 		tmp16 = b43_read16(dev, B43_MMIO_PSM_PHY_HDR);
- 		b43_write16(dev, B43_MMIO_PSM_PHY_HDR, tmp16 | 4);
- 		/* Put BPHY in the reset */
+diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
+index 3776840..b4764c6 100644
+--- a/drivers/bcma/scan.c
++++ b/drivers/bcma/scan.c
+@@ -32,17 +32,17 @@ static const struct bcma_device_id_name bcma_bcm_device_names[] = {
+ 	{ BCMA_CORE_4706_CHIPCOMMON, "BCM4706 ChipCommon" },
+ 	{ BCMA_CORE_4706_SOC_RAM, "BCM4706 SOC RAM" },
+ 	{ BCMA_CORE_4706_MAC_GBIT, "BCM4706 GBit MAC" },
+-	{ BCMA_CORE_PCIEG2, "PCIe Gen 2" },
+-	{ BCMA_CORE_DMA, "DMA" },
+-	{ BCMA_CORE_SDIO3, "SDIO3" },
+-	{ BCMA_CORE_USB20, "USB 2.0" },
+-	{ BCMA_CORE_USB30, "USB 3.0" },
+-	{ BCMA_CORE_A9JTAG, "ARM Cortex A9 JTAG" },
+-	{ BCMA_CORE_DDR23, "Denali DDR2/DDR3 memory controller" },
+-	{ BCMA_CORE_ROM, "ROM" },
+-	{ BCMA_CORE_NAND, "NAND flash controller" },
+-	{ BCMA_CORE_QSPI, "SPI flash controller" },
+-	{ BCMA_CORE_CHIPCOMMON_B, "Chipcommon B" },
++	{ BCMA_CORE_NS_PCIEG2, "PCIe Gen 2" },
++	{ BCMA_CORE_NS_DMA, "DMA" },
++	{ BCMA_CORE_NS_SDIO3, "SDIO3" },
++	{ BCMA_CORE_NS_USB20, "USB 2.0" },
++	{ BCMA_CORE_NS_USB30, "USB 3.0" },
++	{ BCMA_CORE_NS_A9JTAG, "ARM Cortex A9 JTAG" },
++	{ BCMA_CORE_NS_DDR23, "Denali DDR2/DDR3 memory controller" },
++	{ BCMA_CORE_NS_ROM, "ROM" },
++	{ BCMA_CORE_NS_NAND, "NAND flash controller" },
++	{ BCMA_CORE_NS_QSPI, "SPI flash controller" },
++	{ BCMA_CORE_NS_CHIPCOMMON_B, "Chipcommon B" },
+ 	{ BCMA_CORE_ARMCA9, "ARM Cortex A9 core (ihost)" },
+ 	{ BCMA_CORE_AMEMC, "AMEMC (DDR)" },
+ 	{ BCMA_CORE_ALTA, "ALTA (I2S)" },
+diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
+index 70b8d88..0272e49 100644
+--- a/include/linux/bcma/bcma.h
++++ b/include/linux/bcma/bcma.h
+@@ -73,17 +73,17 @@ struct bcma_host_ops {
+ /* Core-ID values. */
+ #define BCMA_CORE_OOB_ROUTER		0x367	/* Out of band */
+ #define BCMA_CORE_4706_CHIPCOMMON	0x500
+-#define BCMA_CORE_PCIEG2		0x501
+-#define BCMA_CORE_DMA			0x502
+-#define BCMA_CORE_SDIO3			0x503
+-#define BCMA_CORE_USB20			0x504
+-#define BCMA_CORE_USB30			0x505
+-#define BCMA_CORE_A9JTAG		0x506
+-#define BCMA_CORE_DDR23			0x507
+-#define BCMA_CORE_ROM			0x508
+-#define BCMA_CORE_NAND			0x509
+-#define BCMA_CORE_QSPI			0x50A
+-#define BCMA_CORE_CHIPCOMMON_B		0x50B
++#define BCMA_CORE_NS_PCIEG2		0x501
++#define BCMA_CORE_NS_DMA		0x502
++#define BCMA_CORE_NS_SDIO3		0x503
++#define BCMA_CORE_NS_USB20		0x504
++#define BCMA_CORE_NS_USB30		0x505
++#define BCMA_CORE_NS_A9JTAG		0x506
++#define BCMA_CORE_NS_DDR23		0x507
++#define BCMA_CORE_NS_ROM		0x508
++#define BCMA_CORE_NS_NAND		0x509
++#define BCMA_CORE_NS_QSPI		0x50A
++#define BCMA_CORE_NS_CHIPCOMMON_B	0x50B
+ #define BCMA_CORE_4706_SOC_RAM		0x50E
+ #define BCMA_CORE_ARMCA9		0x510
+ #define BCMA_CORE_4706_MAC_GBIT		0x52D
 -- 
 1.8.4.5
