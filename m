@@ -1,70 +1,40 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 30 Jul 2014 15:38:00 +0200
-Subject: [PATCH] b43: update PHY descriptions in Kconfig
-Message-ID: <1406727480-19952-1-git-send-email-zajec5@gmail.com>
+Date: Wed, 30 Jul 2014 23:02:30 +0200
+Subject: [FIX][PATCH 3.17] b43: N-PHY: fix "Data bus error" while working in 5
+ GHz
+Message-ID: <1406754150-25752-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Add lists of chipsets, so people can enable support for their device
-easier (at least after checking lspci).
+When switching from one 5 GHz channel to another 5 GHz channel we need
+to make sure BPHY is still in a reset. However to access BPHY register
+we have to switch to 2 GHz mode for a moment. Otherwise this may result
+in "Data bus error" (noticed by Hauke with BCM43224 connected to the
+SoC).
 
+Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/Kconfig | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/net/wireless/b43/phy_n.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/b43/Kconfig b/drivers/net/wireless/b43/Kconfig
-index d4c6ae3..64a5b67 100644
---- a/drivers/net/wireless/b43/Kconfig
-+++ b/drivers/net/wireless/b43/Kconfig
-@@ -132,35 +132,31 @@ config B43_PHY_G
- 	  SoC: BCM4712, BCM5352E
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index 1eead7a..e2a3f0d 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -6217,6 +6217,9 @@ static void b43_nphy_channel_setup(struct b43_wldev *dev,
+ 	u16 tmp16;
  
- config B43_PHY_N
--	bool "Support for 802.11n (N-PHY) devices"
-+	bool "Support for N-PHY (the main 802.11n series) devices"
- 	depends on B43
- 	default y
- 	---help---
--	  Support for the N-PHY.
--
--	  This enables support for devices with N-PHY.
--
--	  Say N if you expect high stability and performance. Saying Y will not
--	  affect other devices support and may provide support for basic needs.
-+	  This PHY type can be found in the following chipsets:
-+	  PCI: BCM4321, BCM4322,
-+	       BCM43222, BCM43224, BCM43225,
-+	       BCM43131, BCM43217, BCM43227, BCM43228
-+	  SoC: BCM4716, BCM4717, BCM4718, BCM5356, BCM5357, BCM5358
- 
- config B43_PHY_LP
--	bool "Support for low-power (LP-PHY) devices"
-+	bool "Support for LP-PHY (low-power 802.11g) devices"
- 	depends on B43 && B43_SSB
- 	default y
- 	---help---
--	  Support for the LP-PHY.
- 	  The LP-PHY is a low-power PHY built into some notebooks
- 	  and embedded devices. It supports 802.11a/b/g
- 	  (802.11a support is optional, and currently disabled).
- 
- config B43_PHY_HT
--	bool "Support for HT-PHY (high throughput) devices"
-+	bool "Support for HT-PHY (high throughput 802.11n) devices"
- 	depends on B43 && B43_BCMA
- 	default y
- 	---help---
--	  Support for the HT-PHY.
--
--	  Enables support for BCM4331 and possibly other chipsets with that PHY.
-+	  This PHY type with 3x3:3 MIMO can be found in the BCM4331 PCI chipset.
- 
- config B43_PHY_LCN
- 	bool "Support for LCN-PHY devices (BROKEN)"
+ 	if (new_channel->band == IEEE80211_BAND_5GHZ) {
++		/* Switch to 2 GHz for a moment to access B43_PHY_B_BBCFG */
++		b43_phy_mask(dev, B43_NPHY_BANDCTL, ~B43_NPHY_BANDCTL_5GHZ);
++
+ 		tmp16 = b43_read16(dev, B43_MMIO_PSM_PHY_HDR);
+ 		b43_write16(dev, B43_MMIO_PSM_PHY_HDR, tmp16 | 4);
+ 		/* Put BPHY in the reset */
 -- 
 1.8.4.5
