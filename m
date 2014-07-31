@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 31 Jul 2014 21:59:43 +0200
-Subject: [PATCH 3.18 2/7] b43: don't duplicate common PHY read/write ops
+Date: Thu, 31 Jul 2014 21:59:45 +0200
+Subject: [PATCH 3.18 4/7] b43: N-PHY: update rev3+ gain control workarounds
 In-Reply-To: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
 References: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1406836788-23704-3-git-send-email-zajec5@gmail.com>
+Message-ID: <1406836788-23704-5-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,180 +11,106 @@ Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Most of the PHYs use the same way of accessing registers, so move that
-code to the shared place. An exception is G-PHY which sometimes access
-A-PHY regs and requires special handling.
+This fixes workarounds on rev 6+ and cleans code slightly.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_common.c | 14 ++++++++++++--
- drivers/net/wireless/b43/phy_ht.c     | 14 --------------
- drivers/net/wireless/b43/phy_lcn.c    | 14 --------------
- drivers/net/wireless/b43/phy_lp.c     | 14 --------------
- drivers/net/wireless/b43/phy_n.c      | 16 ----------------
- 5 files changed, 12 insertions(+), 60 deletions(-)
+ drivers/net/wireless/b43/tables_nphy.c | 61 +++++++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index c868748..08ca524 100644
---- a/drivers/net/wireless/b43/phy_common.c
-+++ b/drivers/net/wireless/b43/phy_common.c
-@@ -274,7 +274,12 @@ u16 b43_phy_read(struct b43_wldev *dev, u16 reg)
+diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
+index 4b58850..f449cff 100644
+--- a/drivers/net/wireless/b43/tables_nphy.c
++++ b/drivers/net/wireless/b43/tables_nphy.c
+@@ -3197,7 +3197,7 @@ static struct nphy_gain_ctl_workaround_entry nphy_gain_ctl_workaround[2][4] = {
+ 			{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
+ 			0x527E, /* invalid for external LNA! */
+ 			{ 0x513F, 0x513F, 0x513F, 0x513F }, /* invalid for external LNA! */
+-			0x1076, 0x0066, 0x0000, /* low is invalid (the last one) */
++			0x007E, 0x0066, 0x0000, /* low is invalid (the last one) */
+ 			0x18, 0x18, 0x18,
+ 			0x01D0, 0x5,
+ 		},
+@@ -3711,6 +3711,7 @@ const u32 *b43_nphy_get_tx_gain_table(struct b43_wldev *dev)
+ struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
+ 	struct b43_wldev *dev, bool ghz5, bool ext_lna)
  {
- 	assert_mac_suspended(dev);
- 	dev->phy.writes_counter = 0;
--	return dev->phy.ops->phy_read(dev, reg);
-+
-+	if (dev->phy.ops->phy_read)
-+		return dev->phy.ops->phy_read(dev, reg);
-+
-+	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
-+	return b43_read16(dev, B43_MMIO_PHY_DATA);
- }
++	struct b43_phy *phy = &dev->phy;
+ 	struct nphy_gain_ctl_workaround_entry *e;
+ 	u8 phy_idx;
  
- void b43_phy_write(struct b43_wldev *dev, u16 reg, u16 value)
-@@ -285,7 +290,12 @@ void b43_phy_write(struct b43_wldev *dev, u16 reg, u16 value)
- 		b43_read16(dev, B43_MMIO_PHY_VER);
- 		dev->phy.writes_counter = 1;
+@@ -3729,37 +3730,49 @@ struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
+ 	e = &nphy_gain_ctl_workaround[ghz5][phy_idx];
+ 
+ 	/* Some workarounds to the workarounds... */
+-	if (ghz5 && dev->phy.rev >= 6) {
+-		if (dev->phy.radio_rev == 11 &&
+-		    !b43_is_40mhz(dev))
+-			e->cliplo_gain = 0x2d;
+-	} else if (!ghz5 && dev->phy.rev >= 5) {
+-		static const int gain_data[] = {0x0062, 0x0064, 0x006a, 0x106a,
+-						0x106c, 0x1074, 0x107c, 0x207c};
++	if (!ghz5) {
+ 		u8 tr_iso = dev->dev->bus_sprom->fem.ghz2.tr_iso;
+ 
+-		if (ext_lna) {
++		if (tr_iso > 7)
++			tr_iso = 3;
++
++		if (phy->rev >= 6) {
++			static const int gain_data[] = { 0x106a, 0x106c, 0x1074,
++							 0x107c, 0x007e, 0x107e,
++							 0x207e, 0x307e, };
++
++			e->cliplo_gain = gain_data[tr_iso];
++		} else if (phy->rev == 5) {
++			static const int gain_data[] = { 0x0062, 0x0064, 0x006a,
++							 0x106a, 0x106c, 0x1074,
++							 0x107c, 0x207c, };
++
++			e->cliplo_gain = gain_data[tr_iso];
++		}
++
++		if (phy->rev >= 5 && ext_lna) {
+ 			e->rfseq_init[0] &= ~0x4000;
+ 			e->rfseq_init[1] &= ~0x4000;
+ 			e->rfseq_init[2] &= ~0x4000;
+ 			e->rfseq_init[3] &= ~0x4000;
+ 			e->init_gain &= ~0x4000;
+ 		}
+-		if (tr_iso > 7)
+-			tr_iso = 3;
+-		e->cliplo_gain = gain_data[tr_iso];
+-
+-	} else if (ghz5 && dev->phy.rev == 4 && ext_lna) {
+-		e->rfseq_init[0] &= ~0x4000;
+-		e->rfseq_init[1] &= ~0x4000;
+-		e->rfseq_init[2] &= ~0x4000;
+-		e->rfseq_init[3] &= ~0x4000;
+-		e->init_gain &= ~0x4000;
+-		e->rfseq_init[0] |= 0x1000;
+-		e->rfseq_init[1] |= 0x1000;
+-		e->rfseq_init[2] |= 0x1000;
+-		e->rfseq_init[3] |= 0x1000;
+-		e->init_gain |= 0x1000;
++	} else {
++		if (phy->rev >= 6) {
++			if (phy->radio_rev == 11 && !b43_is_40mhz(dev))
++				e->crsminu = 0x2d;
++		} else if (phy->rev == 4 && ext_lna) {
++			e->rfseq_init[0] &= ~0x4000;
++			e->rfseq_init[1] &= ~0x4000;
++			e->rfseq_init[2] &= ~0x4000;
++			e->rfseq_init[3] &= ~0x4000;
++			e->init_gain &= ~0x4000;
++			e->rfseq_init[0] |= 0x1000;
++			e->rfseq_init[1] |= 0x1000;
++			e->rfseq_init[2] |= 0x1000;
++			e->rfseq_init[3] |= 0x1000;
++			e->init_gain |= 0x1000;
++		}
  	}
--	dev->phy.ops->phy_write(dev, reg, value);
-+
-+	if (dev->phy.ops->phy_write)
-+		return dev->phy.ops->phy_write(dev, reg, value);
-+
-+	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
-+	b43_write16(dev, B43_MMIO_PHY_DATA, value);
- }
  
- void b43_phy_copy(struct b43_wldev *dev, u16 destreg, u16 srcreg)
-diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index f2974c6..8b0b4b6 100644
---- a/drivers/net/wireless/b43/phy_ht.c
-+++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -1071,18 +1071,6 @@ static unsigned int b43_phy_ht_op_get_default_chan(struct b43_wldev *dev)
-  * R/W ops.
-  **************************************************/
- 
--static u16 b43_phy_ht_op_read(struct b43_wldev *dev, u16 reg)
--{
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	return b43_read16(dev, B43_MMIO_PHY_DATA);
--}
--
--static void b43_phy_ht_op_write(struct b43_wldev *dev, u16 reg, u16 value)
--{
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	b43_write16(dev, B43_MMIO_PHY_DATA, value);
--}
--
- static void b43_phy_ht_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
- 				 u16 set)
- {
-@@ -1126,8 +1114,6 @@ const struct b43_phy_operations b43_phyops_ht = {
- 	.free			= b43_phy_ht_op_free,
- 	.prepare_structs	= b43_phy_ht_op_prepare_structs,
- 	.init			= b43_phy_ht_op_init,
--	.phy_read		= b43_phy_ht_op_read,
--	.phy_write		= b43_phy_ht_op_write,
- 	.phy_maskset		= b43_phy_ht_op_maskset,
- 	.radio_read		= b43_phy_ht_op_radio_read,
- 	.radio_write		= b43_phy_ht_op_radio_write,
-diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
-index e76bbdf..bf29c3e 100644
---- a/drivers/net/wireless/b43/phy_lcn.c
-+++ b/drivers/net/wireless/b43/phy_lcn.c
-@@ -810,18 +810,6 @@ static void b43_phy_lcn_op_adjust_txpower(struct b43_wldev *dev)
-  * R/W ops.
-  **************************************************/
- 
--static u16 b43_phy_lcn_op_read(struct b43_wldev *dev, u16 reg)
--{
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	return b43_read16(dev, B43_MMIO_PHY_DATA);
--}
--
--static void b43_phy_lcn_op_write(struct b43_wldev *dev, u16 reg, u16 value)
--{
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	b43_write16(dev, B43_MMIO_PHY_DATA, value);
--}
--
- static void b43_phy_lcn_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
- 				   u16 set)
- {
-@@ -855,8 +843,6 @@ const struct b43_phy_operations b43_phyops_lcn = {
- 	.free			= b43_phy_lcn_op_free,
- 	.prepare_structs	= b43_phy_lcn_op_prepare_structs,
- 	.init			= b43_phy_lcn_op_init,
--	.phy_read		= b43_phy_lcn_op_read,
--	.phy_write		= b43_phy_lcn_op_write,
- 	.phy_maskset		= b43_phy_lcn_op_maskset,
- 	.radio_read		= b43_phy_lcn_op_radio_read,
- 	.radio_write		= b43_phy_lcn_op_radio_write,
-diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
-index 92190da..1e9bae6 100644
---- a/drivers/net/wireless/b43/phy_lp.c
-+++ b/drivers/net/wireless/b43/phy_lp.c
-@@ -1985,18 +1985,6 @@ static void lpphy_calibration(struct b43_wldev *dev)
- 	b43_mac_enable(dev);
- }
- 
--static u16 b43_lpphy_op_read(struct b43_wldev *dev, u16 reg)
--{
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	return b43_read16(dev, B43_MMIO_PHY_DATA);
--}
--
--static void b43_lpphy_op_write(struct b43_wldev *dev, u16 reg, u16 value)
--{
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	b43_write16(dev, B43_MMIO_PHY_DATA, value);
--}
--
- static void b43_lpphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
- 				 u16 set)
- {
-@@ -2713,8 +2701,6 @@ const struct b43_phy_operations b43_phyops_lp = {
- 	.free			= b43_lpphy_op_free,
- 	.prepare_structs	= b43_lpphy_op_prepare_structs,
- 	.init			= b43_lpphy_op_init,
--	.phy_read		= b43_lpphy_op_read,
--	.phy_write		= b43_lpphy_op_write,
- 	.phy_maskset		= b43_lpphy_op_maskset,
- 	.radio_read		= b43_lpphy_op_radio_read,
- 	.radio_write		= b43_lpphy_op_radio_write,
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index b04aa34..5565318 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -6497,20 +6497,6 @@ static inline void check_phyreg(struct b43_wldev *dev, u16 offset)
- #endif /* B43_DEBUG */
- }
- 
--static u16 b43_nphy_op_read(struct b43_wldev *dev, u16 reg)
--{
--	check_phyreg(dev, reg);
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	return b43_read16(dev, B43_MMIO_PHY_DATA);
--}
--
--static void b43_nphy_op_write(struct b43_wldev *dev, u16 reg, u16 value)
--{
--	check_phyreg(dev, reg);
--	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
--	b43_write16(dev, B43_MMIO_PHY_DATA, value);
--}
--
- static void b43_nphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
- 				 u16 set)
- {
-@@ -6653,8 +6639,6 @@ const struct b43_phy_operations b43_phyops_n = {
- 	.free			= b43_nphy_op_free,
- 	.prepare_structs	= b43_nphy_op_prepare_structs,
- 	.init			= b43_nphy_op_init,
--	.phy_read		= b43_nphy_op_read,
--	.phy_write		= b43_nphy_op_write,
- 	.phy_maskset		= b43_nphy_op_maskset,
- 	.radio_read		= b43_nphy_op_radio_read,
- 	.radio_write		= b43_nphy_op_radio_write,
+ 	return e;
 -- 
 1.8.4.5
