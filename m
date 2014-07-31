@@ -1,88 +1,46 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 30 Jul 2014 23:21:06 +0200
-Subject: [PATCH] bcma: use NS prefix for names of Northstar specific cores
-Message-ID: <1406755266-26859-1-git-send-email-zajec5@gmail.com>
+Date: Thu, 31 Jul 2014 21:59:41 +0200
+Subject: [PATCH 3.18 0/7] b43: first series for 3.18
+Message-ID: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-It's cleaner and we don't have quite identical names like
-BCMA_CORE_PCIEG2 and BCMA_CORE_PCIE2.
+John, this patchset continues improvements for b43. It doesn't fix any
+particular bug/issue, so please queue it for 3.18. There is nothing
+important enough to risk breaking wireless-next for 3.17.
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/bcma/scan.c       | 22 +++++++++++-----------
- include/linux/bcma/bcma.h | 22 +++++++++++-----------
- 2 files changed, 22 insertions(+), 22 deletions(-)
+Rafa? Mi?ecki (7):
+  b43: update flushing many writes performed in a row
+  b43: don't duplicate common PHY read/write ops
+  b43: flush some writes on Broadcom MIPS SoCs
+  b43: N-PHY: update rev3+ gain control workarounds
+  b43: N-PHY: add RF power tables for radio 0x2057 revs 9 & 14
+  b43: implement PPR (Power Per Rate) management/API
+  b43: N-PHY: support setting custom TX power
 
-diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
-index 3776840..b4764c6 100644
---- a/drivers/bcma/scan.c
-+++ b/drivers/bcma/scan.c
-@@ -32,17 +32,17 @@ static const struct bcma_device_id_name bcma_bcm_device_names[] = {
- 	{ BCMA_CORE_4706_CHIPCOMMON, "BCM4706 ChipCommon" },
- 	{ BCMA_CORE_4706_SOC_RAM, "BCM4706 SOC RAM" },
- 	{ BCMA_CORE_4706_MAC_GBIT, "BCM4706 GBit MAC" },
--	{ BCMA_CORE_PCIEG2, "PCIe Gen 2" },
--	{ BCMA_CORE_DMA, "DMA" },
--	{ BCMA_CORE_SDIO3, "SDIO3" },
--	{ BCMA_CORE_USB20, "USB 2.0" },
--	{ BCMA_CORE_USB30, "USB 3.0" },
--	{ BCMA_CORE_A9JTAG, "ARM Cortex A9 JTAG" },
--	{ BCMA_CORE_DDR23, "Denali DDR2/DDR3 memory controller" },
--	{ BCMA_CORE_ROM, "ROM" },
--	{ BCMA_CORE_NAND, "NAND flash controller" },
--	{ BCMA_CORE_QSPI, "SPI flash controller" },
--	{ BCMA_CORE_CHIPCOMMON_B, "Chipcommon B" },
-+	{ BCMA_CORE_NS_PCIEG2, "PCIe Gen 2" },
-+	{ BCMA_CORE_NS_DMA, "DMA" },
-+	{ BCMA_CORE_NS_SDIO3, "SDIO3" },
-+	{ BCMA_CORE_NS_USB20, "USB 2.0" },
-+	{ BCMA_CORE_NS_USB30, "USB 3.0" },
-+	{ BCMA_CORE_NS_A9JTAG, "ARM Cortex A9 JTAG" },
-+	{ BCMA_CORE_NS_DDR23, "Denali DDR2/DDR3 memory controller" },
-+	{ BCMA_CORE_NS_ROM, "ROM" },
-+	{ BCMA_CORE_NS_NAND, "NAND flash controller" },
-+	{ BCMA_CORE_NS_QSPI, "SPI flash controller" },
-+	{ BCMA_CORE_NS_CHIPCOMMON_B, "Chipcommon B" },
- 	{ BCMA_CORE_ARMCA9, "ARM Cortex A9 core (ihost)" },
- 	{ BCMA_CORE_AMEMC, "AMEMC (DDR)" },
- 	{ BCMA_CORE_ALTA, "ALTA (I2S)" },
-diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
-index 70b8d88..0272e49 100644
---- a/include/linux/bcma/bcma.h
-+++ b/include/linux/bcma/bcma.h
-@@ -73,17 +73,17 @@ struct bcma_host_ops {
- /* Core-ID values. */
- #define BCMA_CORE_OOB_ROUTER		0x367	/* Out of band */
- #define BCMA_CORE_4706_CHIPCOMMON	0x500
--#define BCMA_CORE_PCIEG2		0x501
--#define BCMA_CORE_DMA			0x502
--#define BCMA_CORE_SDIO3			0x503
--#define BCMA_CORE_USB20			0x504
--#define BCMA_CORE_USB30			0x505
--#define BCMA_CORE_A9JTAG		0x506
--#define BCMA_CORE_DDR23			0x507
--#define BCMA_CORE_ROM			0x508
--#define BCMA_CORE_NAND			0x509
--#define BCMA_CORE_QSPI			0x50A
--#define BCMA_CORE_CHIPCOMMON_B		0x50B
-+#define BCMA_CORE_NS_PCIEG2		0x501
-+#define BCMA_CORE_NS_DMA		0x502
-+#define BCMA_CORE_NS_SDIO3		0x503
-+#define BCMA_CORE_NS_USB20		0x504
-+#define BCMA_CORE_NS_USB30		0x505
-+#define BCMA_CORE_NS_A9JTAG		0x506
-+#define BCMA_CORE_NS_DDR23		0x507
-+#define BCMA_CORE_NS_ROM		0x508
-+#define BCMA_CORE_NS_NAND		0x509
-+#define BCMA_CORE_NS_QSPI		0x50A
-+#define BCMA_CORE_NS_CHIPCOMMON_B	0x50B
- #define BCMA_CORE_4706_SOC_RAM		0x50E
- #define BCMA_CORE_ARMCA9		0x510
- #define BCMA_CORE_4706_MAC_GBIT		0x52D
+ drivers/net/wireless/b43/Makefile      |   1 +
+ drivers/net/wireless/b43/b43.h         |  16 +++
+ drivers/net/wireless/b43/bus.h         |  14 +++
+ drivers/net/wireless/b43/main.c        |  17 ++-
+ drivers/net/wireless/b43/phy_a.c       |   4 +-
+ drivers/net/wireless/b43/phy_common.c  |  25 ++++-
+ drivers/net/wireless/b43/phy_g.c       |   8 +-
+ drivers/net/wireless/b43/phy_ht.c      |  20 +---
+ drivers/net/wireless/b43/phy_lcn.c     |  20 +---
+ drivers/net/wireless/b43/phy_lp.c      |  20 +---
+ drivers/net/wireless/b43/phy_n.c       | 128 +++++++++++++++------
+ drivers/net/wireless/b43/phy_n.h       |   4 +
+ drivers/net/wireless/b43/ppr.c         | 199 +++++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/ppr.h         |  45 ++++++++
+ drivers/net/wireless/b43/tables_nphy.c | 128 +++++++++++++++++----
+ drivers/net/wireless/b43/tables_nphy.h |   2 +
+ 16 files changed, 523 insertions(+), 128 deletions(-)
+ create mode 100644 drivers/net/wireless/b43/ppr.c
+ create mode 100644 drivers/net/wireless/b43/ppr.h
+
 -- 
 1.8.4.5
