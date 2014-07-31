@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 31 Jul 2014 21:59:42 +0200
-Subject: [PATCH 3.18 1/7] b43: update flushing many writes performed in a row
+Date: Thu, 31 Jul 2014 21:59:44 +0200
+Subject: [PATCH 3.18 3/7] b43: flush some writes on Broadcom MIPS SoCs
 In-Reply-To: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
 References: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1406836788-23704-2-git-send-email-zajec5@gmail.com>
+Message-ID: <1406836788-23704-4-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,92 +11,290 @@ Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Flush radio writes as well and add some tiny optimizations (e.g.
-masksetting PHY reg involves reading it, so reset the counter).
+Access to PHY and radio registers is indirect on Broadcom hardware and
+it seems that addressing on MIPS SoCs may require flushing. Broadcom
+code does that unconditionally on MIPS, so let's do the same to make
+sure hardware won't miss anything important.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/bus.h        | 14 ++++++++++++++
- drivers/net/wireless/b43/phy_common.c | 13 ++++++++++---
- drivers/net/wireless/b43/phy_n.c      |  1 +
- 3 files changed, 25 insertions(+), 3 deletions(-)
+ drivers/net/wireless/b43/b43.h        |  8 ++++++++
+ drivers/net/wireless/b43/main.c       | 17 ++++++++---------
+ drivers/net/wireless/b43/phy_a.c      |  4 ++--
+ drivers/net/wireless/b43/phy_common.c |  4 ++--
+ drivers/net/wireless/b43/phy_g.c      |  8 ++++----
+ drivers/net/wireless/b43/phy_ht.c     |  6 +++---
+ drivers/net/wireless/b43/phy_lcn.c    |  6 +++---
+ drivers/net/wireless/b43/phy_lp.c     |  6 +++---
+ drivers/net/wireless/b43/phy_n.c      |  6 +++---
+ 9 files changed, 36 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/net/wireless/b43/bus.h b/drivers/net/wireless/b43/bus.h
-index f3205c6..460d9d9 100644
---- a/drivers/net/wireless/b43/bus.h
-+++ b/drivers/net/wireless/b43/bus.h
-@@ -60,7 +60,21 @@ static inline bool b43_bus_host_is_pcmcia(struct b43_bus_dev *dev)
- #else
- 	return false;
- #endif
-+};
-+
-+static inline bool b43_bus_host_is_pci(struct b43_bus_dev *dev)
-+{
-+#ifdef CONFIG_B43_BCMA
-+	if (dev->bus_type == B43_BUS_BCMA)
-+		return (dev->bdev->bus->hosttype == BCMA_HOSTTYPE_PCI);
-+#endif
-+#ifdef CONFIG_B43_SSB
-+	if (dev->bus_type == B43_BUS_SSB)
-+		return (dev->sdev->bus->bustype == SSB_BUSTYPE_PCI);
-+#endif
-+	return false;
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 4113b69..ff0c666 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -1012,6 +1012,14 @@ static inline void b43_write16(struct b43_wldev *dev, u16 offset, u16 value)
+ 	dev->dev->write16(dev->dev, offset, value);
  }
+ 
++static inline void b43_write16f(struct b43_wldev *dev, u16 offset, u16 value)
++{
++	b43_write16(dev, offset, value);
++#if defined(CONFIG_BCM47XX) || defined(CONFIG_BCM63XX)
++	b43_read16(dev, offset);
++#endif
++}
 +
- static inline bool b43_bus_host_is_sdio(struct b43_bus_dev *dev)
+ static inline void b43_maskset16(struct b43_wldev *dev, u16 offset, u16 mask,
+ 				 u16 set)
  {
- #ifdef CONFIG_B43_SSB
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 2af1ac3..66ff718 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4466,10 +4466,10 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+ 	if (core_rev == 40 || core_rev == 42) {
+ 		radio_manuf = 0x17F;
+ 
+-		b43_write16(dev, B43_MMIO_RADIO24_CONTROL, 0);
++		b43_write16f(dev, B43_MMIO_RADIO24_CONTROL, 0);
+ 		radio_rev = b43_read16(dev, B43_MMIO_RADIO24_DATA);
+ 
+-		b43_write16(dev, B43_MMIO_RADIO24_CONTROL, 1);
++		b43_write16f(dev, B43_MMIO_RADIO24_CONTROL, 1);
+ 		radio_id = b43_read16(dev, B43_MMIO_RADIO24_DATA);
+ 
+ 		radio_ver = 0; /* Is there version somewhere? */
+@@ -4477,7 +4477,7 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+ 		u16 radio24[3];
+ 
+ 		for (tmp = 0; tmp < 3; tmp++) {
+-			b43_write16(dev, B43_MMIO_RADIO24_CONTROL, tmp);
++			b43_write16f(dev, B43_MMIO_RADIO24_CONTROL, tmp);
+ 			radio24[tmp] = b43_read16(dev, B43_MMIO_RADIO24_DATA);
+ 		}
+ 
+@@ -4494,13 +4494,12 @@ static int b43_phy_versioning(struct b43_wldev *dev)
+ 			else
+ 				tmp = 0x5205017F;
+ 		} else {
+-			b43_write16(dev, B43_MMIO_RADIO_CONTROL,
+-				    B43_RADIOCTL_ID);
++			b43_write16f(dev, B43_MMIO_RADIO_CONTROL,
++				     B43_RADIOCTL_ID);
+ 			tmp = b43_read16(dev, B43_MMIO_RADIO_DATA_LOW);
+-			b43_write16(dev, B43_MMIO_RADIO_CONTROL,
+-				    B43_RADIOCTL_ID);
+-			tmp |= (u32)b43_read16(dev, B43_MMIO_RADIO_DATA_HIGH)
+-				<< 16;
++			b43_write16f(dev, B43_MMIO_RADIO_CONTROL,
++				     B43_RADIOCTL_ID);
++			tmp |= b43_read16(dev, B43_MMIO_RADIO_DATA_HIGH) << 16;
+ 		}
+ 		radio_manuf = (tmp & 0x00000FFF);
+ 		radio_id = (tmp & 0x0FFFF000) >> 12;
+diff --git a/drivers/net/wireless/b43/phy_a.c b/drivers/net/wireless/b43/phy_a.c
+index 25e4043..99c036f 100644
+--- a/drivers/net/wireless/b43/phy_a.c
++++ b/drivers/net/wireless/b43/phy_a.c
+@@ -444,14 +444,14 @@ static inline u16 adjust_phyreg(struct b43_wldev *dev, u16 offset)
+ static u16 b43_aphy_op_read(struct b43_wldev *dev, u16 reg)
+ {
+ 	reg = adjust_phyreg(dev, reg);
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_PHY_DATA);
+ }
+ 
+ static void b43_aphy_op_write(struct b43_wldev *dev, u16 reg, u16 value)
+ {
+ 	reg = adjust_phyreg(dev, reg);
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_PHY_DATA, value);
+ }
+ 
 diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
-index 3cbef21..c868748 100644
+index 08ca524..1dfc682 100644
 --- a/drivers/net/wireless/b43/phy_common.c
 +++ b/drivers/net/wireless/b43/phy_common.c
-@@ -222,12 +222,18 @@ static inline void assert_mac_suspended(struct b43_wldev *dev)
- u16 b43_radio_read(struct b43_wldev *dev, u16 reg)
- {
- 	assert_mac_suspended(dev);
-+	dev->phy.writes_counter = 0;
- 	return dev->phy.ops->radio_read(dev, reg);
+@@ -278,7 +278,7 @@ u16 b43_phy_read(struct b43_wldev *dev, u16 reg)
+ 	if (dev->phy.ops->phy_read)
+ 		return dev->phy.ops->phy_read(dev, reg);
+ 
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_PHY_DATA);
  }
  
- void b43_radio_write(struct b43_wldev *dev, u16 reg, u16 value)
- {
- 	assert_mac_suspended(dev);
-+	if (b43_bus_host_is_pci(dev->dev) &&
-+	    ++dev->phy.writes_counter > B43_MAX_WRITES_IN_ROW) {
-+		b43_read32(dev, B43_MMIO_MACCTL);
-+		dev->phy.writes_counter = 1;
-+	}
- 	dev->phy.ops->radio_write(dev, reg, value);
+@@ -294,7 +294,7 @@ void b43_phy_write(struct b43_wldev *dev, u16 reg, u16 value)
+ 	if (dev->phy.ops->phy_write)
+ 		return dev->phy.ops->phy_write(dev, reg, value);
+ 
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_PHY_DATA, value);
  }
  
-@@ -274,11 +280,12 @@ u16 b43_phy_read(struct b43_wldev *dev, u16 reg)
- void b43_phy_write(struct b43_wldev *dev, u16 reg, u16 value)
+diff --git a/drivers/net/wireless/b43/phy_g.c b/drivers/net/wireless/b43/phy_g.c
+index 8f5c14b..727ce6e 100644
+--- a/drivers/net/wireless/b43/phy_g.c
++++ b/drivers/net/wireless/b43/phy_g.c
+@@ -2555,13 +2555,13 @@ static void b43_gphy_op_exit(struct b43_wldev *dev)
+ 
+ static u16 b43_gphy_op_read(struct b43_wldev *dev, u16 reg)
  {
- 	assert_mac_suspended(dev);
--	dev->phy.ops->phy_write(dev, reg, value);
--	if (++dev->phy.writes_counter == B43_MAX_WRITES_IN_ROW) {
-+	if (b43_bus_host_is_pci(dev->dev) &&
-+	    ++dev->phy.writes_counter > B43_MAX_WRITES_IN_ROW) {
- 		b43_read16(dev, B43_MMIO_PHY_VER);
--		dev->phy.writes_counter = 0;
-+		dev->phy.writes_counter = 1;
- 	}
-+	dev->phy.ops->phy_write(dev, reg, value);
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_PHY_DATA);
  }
  
- void b43_phy_copy(struct b43_wldev *dev, u16 destreg, u16 srcreg)
+ static void b43_gphy_op_write(struct b43_wldev *dev, u16 reg, u16 value)
+ {
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_PHY_DATA, value);
+ }
+ 
+@@ -2572,7 +2572,7 @@ static u16 b43_gphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+ 	/* G-PHY needs 0x80 for read access. */
+ 	reg |= 0x80;
+ 
+-	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_RADIO_DATA_LOW);
+ }
+ 
+@@ -2581,7 +2581,7 @@ static void b43_gphy_op_radio_write(struct b43_wldev *dev, u16 reg, u16 value)
+ 	/* Register 1 is a 32-bit register. */
+ 	B43_WARN_ON(reg == 1);
+ 
+-	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_RADIO_DATA_LOW, value);
+ }
+ 
+diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
+index 8b0b4b6..c4dc8b0 100644
+--- a/drivers/net/wireless/b43/phy_ht.c
++++ b/drivers/net/wireless/b43/phy_ht.c
+@@ -1074,7 +1074,7 @@ static unsigned int b43_phy_ht_op_get_default_chan(struct b43_wldev *dev)
+ static void b43_phy_ht_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
+ 				 u16 set)
+ {
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_PHY_DATA,
+ 		    (b43_read16(dev, B43_MMIO_PHY_DATA) & mask) | set);
+ }
+@@ -1084,14 +1084,14 @@ static u16 b43_phy_ht_op_radio_read(struct b43_wldev *dev, u16 reg)
+ 	/* HT-PHY needs 0x200 for read access */
+ 	reg |= 0x200;
+ 
+-	b43_write16(dev, B43_MMIO_RADIO24_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO24_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_RADIO24_DATA);
+ }
+ 
+ static void b43_phy_ht_op_radio_write(struct b43_wldev *dev, u16 reg,
+ 				      u16 value)
+ {
+-	b43_write16(dev, B43_MMIO_RADIO24_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO24_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_RADIO24_DATA, value);
+ }
+ 
+diff --git a/drivers/net/wireless/b43/phy_lcn.c b/drivers/net/wireless/b43/phy_lcn.c
+index bf29c3e..97461cc 100644
+--- a/drivers/net/wireless/b43/phy_lcn.c
++++ b/drivers/net/wireless/b43/phy_lcn.c
+@@ -813,7 +813,7 @@ static void b43_phy_lcn_op_adjust_txpower(struct b43_wldev *dev)
+ static void b43_phy_lcn_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
+ 				   u16 set)
+ {
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_PHY_DATA,
+ 		    (b43_read16(dev, B43_MMIO_PHY_DATA) & mask) | set);
+ }
+@@ -823,14 +823,14 @@ static u16 b43_phy_lcn_op_radio_read(struct b43_wldev *dev, u16 reg)
+ 	/* LCN-PHY needs 0x200 for read access */
+ 	reg |= 0x200;
+ 
+-	b43_write16(dev, B43_MMIO_RADIO24_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO24_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_RADIO24_DATA);
+ }
+ 
+ static void b43_phy_lcn_op_radio_write(struct b43_wldev *dev, u16 reg,
+ 				       u16 value)
+ {
+-	b43_write16(dev, B43_MMIO_RADIO24_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO24_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_RADIO24_DATA, value);
+ }
+ 
+diff --git a/drivers/net/wireless/b43/phy_lp.c b/drivers/net/wireless/b43/phy_lp.c
+index 1e9bae6..058a9f2 100644
+--- a/drivers/net/wireless/b43/phy_lp.c
++++ b/drivers/net/wireless/b43/phy_lp.c
+@@ -1988,7 +1988,7 @@ static void lpphy_calibration(struct b43_wldev *dev)
+ static void b43_lpphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
+ 				 u16 set)
+ {
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_PHY_DATA,
+ 		    (b43_read16(dev, B43_MMIO_PHY_DATA) & mask) | set);
+ }
+@@ -2004,7 +2004,7 @@ static u16 b43_lpphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+ 	} else
+ 		reg |= 0x200;
+ 
+-	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_RADIO_DATA_LOW);
+ }
+ 
+@@ -2013,7 +2013,7 @@ static void b43_lpphy_op_radio_write(struct b43_wldev *dev, u16 reg, u16 value)
+ 	/* Register 1 is a 32-bit register. */
+ 	B43_WARN_ON(reg == 1);
+ 
+-	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_RADIO_DATA_LOW, value);
+ }
+ 
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index e2a3f0d..b04aa34 100644
+index 5565318..df64032 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -6517,6 +6517,7 @@ static void b43_nphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
+@@ -6501,7 +6501,7 @@ static void b43_nphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
+ 				 u16 set)
+ {
  	check_phyreg(dev, reg);
- 	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
+-	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_PHY_CONTROL, reg);
  	b43_maskset16(dev, B43_MMIO_PHY_DATA, mask, set);
-+	dev->phy.writes_counter = 1;
+ 	dev->phy.writes_counter = 1;
+ }
+@@ -6516,7 +6516,7 @@ static u16 b43_nphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+ 	else
+ 		reg |= 0x100;
+ 
+-	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	return b43_read16(dev, B43_MMIO_RADIO_DATA_LOW);
  }
  
- static u16 b43_nphy_op_radio_read(struct b43_wldev *dev, u16 reg)
+@@ -6525,7 +6525,7 @@ static void b43_nphy_op_radio_write(struct b43_wldev *dev, u16 reg, u16 value)
+ 	/* Register 1 is a 32-bit register. */
+ 	B43_WARN_ON(dev->phy.rev < 7 && reg == 1);
+ 
+-	b43_write16(dev, B43_MMIO_RADIO_CONTROL, reg);
++	b43_write16f(dev, B43_MMIO_RADIO_CONTROL, reg);
+ 	b43_write16(dev, B43_MMIO_RADIO_DATA_LOW, value);
+ }
+ 
 -- 
 1.8.4.5
