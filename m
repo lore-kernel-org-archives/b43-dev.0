@@ -1,7 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 31 Jul 2014 21:59:41 +0200
-Subject: [PATCH 3.18 0/7] b43: first series for 3.18
-Message-ID: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
+Date: Thu, 31 Jul 2014 21:59:42 +0200
+Subject: [PATCH 3.18 1/7] b43: update flushing many writes performed in a row
+In-Reply-To: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
+References: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
+Message-ID: <1406836788-23704-2-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,38 +11,92 @@ Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-John, this patchset continues improvements for b43. It doesn't fix any
-particular bug/issue, so please queue it for 3.18. There is nothing
-important enough to risk breaking wireless-next for 3.17.
+Flush radio writes as well and add some tiny optimizations (e.g.
+masksetting PHY reg involves reading it, so reset the counter).
 
-Rafa? Mi?ecki (7):
-  b43: update flushing many writes performed in a row
-  b43: don't duplicate common PHY read/write ops
-  b43: flush some writes on Broadcom MIPS SoCs
-  b43: N-PHY: update rev3+ gain control workarounds
-  b43: N-PHY: add RF power tables for radio 0x2057 revs 9 & 14
-  b43: implement PPR (Power Per Rate) management/API
-  b43: N-PHY: support setting custom TX power
+Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
+---
+ drivers/net/wireless/b43/bus.h        | 14 ++++++++++++++
+ drivers/net/wireless/b43/phy_common.c | 13 ++++++++++---
+ drivers/net/wireless/b43/phy_n.c      |  1 +
+ 3 files changed, 25 insertions(+), 3 deletions(-)
 
- drivers/net/wireless/b43/Makefile      |   1 +
- drivers/net/wireless/b43/b43.h         |  16 +++
- drivers/net/wireless/b43/bus.h         |  14 +++
- drivers/net/wireless/b43/main.c        |  17 ++-
- drivers/net/wireless/b43/phy_a.c       |   4 +-
- drivers/net/wireless/b43/phy_common.c  |  25 ++++-
- drivers/net/wireless/b43/phy_g.c       |   8 +-
- drivers/net/wireless/b43/phy_ht.c      |  20 +---
- drivers/net/wireless/b43/phy_lcn.c     |  20 +---
- drivers/net/wireless/b43/phy_lp.c      |  20 +---
- drivers/net/wireless/b43/phy_n.c       | 128 +++++++++++++++------
- drivers/net/wireless/b43/phy_n.h       |   4 +
- drivers/net/wireless/b43/ppr.c         | 199 +++++++++++++++++++++++++++++++++
- drivers/net/wireless/b43/ppr.h         |  45 ++++++++
- drivers/net/wireless/b43/tables_nphy.c | 128 +++++++++++++++++----
- drivers/net/wireless/b43/tables_nphy.h |   2 +
- 16 files changed, 523 insertions(+), 128 deletions(-)
- create mode 100644 drivers/net/wireless/b43/ppr.c
- create mode 100644 drivers/net/wireless/b43/ppr.h
-
+diff --git a/drivers/net/wireless/b43/bus.h b/drivers/net/wireless/b43/bus.h
+index f3205c6..460d9d9 100644
+--- a/drivers/net/wireless/b43/bus.h
++++ b/drivers/net/wireless/b43/bus.h
+@@ -60,7 +60,21 @@ static inline bool b43_bus_host_is_pcmcia(struct b43_bus_dev *dev)
+ #else
+ 	return false;
+ #endif
++};
++
++static inline bool b43_bus_host_is_pci(struct b43_bus_dev *dev)
++{
++#ifdef CONFIG_B43_BCMA
++	if (dev->bus_type == B43_BUS_BCMA)
++		return (dev->bdev->bus->hosttype == BCMA_HOSTTYPE_PCI);
++#endif
++#ifdef CONFIG_B43_SSB
++	if (dev->bus_type == B43_BUS_SSB)
++		return (dev->sdev->bus->bustype == SSB_BUSTYPE_PCI);
++#endif
++	return false;
+ }
++
+ static inline bool b43_bus_host_is_sdio(struct b43_bus_dev *dev)
+ {
+ #ifdef CONFIG_B43_SSB
+diff --git a/drivers/net/wireless/b43/phy_common.c b/drivers/net/wireless/b43/phy_common.c
+index 3cbef21..c868748 100644
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -222,12 +222,18 @@ static inline void assert_mac_suspended(struct b43_wldev *dev)
+ u16 b43_radio_read(struct b43_wldev *dev, u16 reg)
+ {
+ 	assert_mac_suspended(dev);
++	dev->phy.writes_counter = 0;
+ 	return dev->phy.ops->radio_read(dev, reg);
+ }
+ 
+ void b43_radio_write(struct b43_wldev *dev, u16 reg, u16 value)
+ {
+ 	assert_mac_suspended(dev);
++	if (b43_bus_host_is_pci(dev->dev) &&
++	    ++dev->phy.writes_counter > B43_MAX_WRITES_IN_ROW) {
++		b43_read32(dev, B43_MMIO_MACCTL);
++		dev->phy.writes_counter = 1;
++	}
+ 	dev->phy.ops->radio_write(dev, reg, value);
+ }
+ 
+@@ -274,11 +280,12 @@ u16 b43_phy_read(struct b43_wldev *dev, u16 reg)
+ void b43_phy_write(struct b43_wldev *dev, u16 reg, u16 value)
+ {
+ 	assert_mac_suspended(dev);
+-	dev->phy.ops->phy_write(dev, reg, value);
+-	if (++dev->phy.writes_counter == B43_MAX_WRITES_IN_ROW) {
++	if (b43_bus_host_is_pci(dev->dev) &&
++	    ++dev->phy.writes_counter > B43_MAX_WRITES_IN_ROW) {
+ 		b43_read16(dev, B43_MMIO_PHY_VER);
+-		dev->phy.writes_counter = 0;
++		dev->phy.writes_counter = 1;
+ 	}
++	dev->phy.ops->phy_write(dev, reg, value);
+ }
+ 
+ void b43_phy_copy(struct b43_wldev *dev, u16 destreg, u16 srcreg)
+diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
+index e2a3f0d..b04aa34 100644
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -6517,6 +6517,7 @@ static void b43_nphy_op_maskset(struct b43_wldev *dev, u16 reg, u16 mask,
+ 	check_phyreg(dev, reg);
+ 	b43_write16(dev, B43_MMIO_PHY_CONTROL, reg);
+ 	b43_maskset16(dev, B43_MMIO_PHY_DATA, mask, set);
++	dev->phy.writes_counter = 1;
+ }
+ 
+ static u16 b43_nphy_op_radio_read(struct b43_wldev *dev, u16 reg)
 -- 
 1.8.4.5
