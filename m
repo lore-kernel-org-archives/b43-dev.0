@@ -1,9 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 31 Jul 2014 21:59:48 +0200
-Subject: [PATCH V2 3.18 7/7] b43: N-PHY: support setting custom TX power
+Date: Thu, 31 Jul 2014 21:59:47 +0200
+Subject: [PATCH V2 3.18 6/7] b43: implement PPR (Power Per Rate) management/API
 In-Reply-To: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
 References: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1406836788-23704-8-git-send-email-zajec5@gmail.com>
+Message-ID: <1406836788-23704-7-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,186 +11,318 @@ Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+Broadcom hardware supports auto-adjustment of TX power depending on the
+currently used rate. So far all calculations were handled without any
+helpers (API) using big arrays and magic offsets.
+It seems Broadcom recently decided to clean this up by developing PPR.
+Their wlc_ppr.h can be found in open parts of the SDK.
+As we plan to implement support for rate-based TX power it makes sense
+to also implement our version of PPR as well.
+
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-Notes: I still need to implement helper for B43_MACCTL_PHY_LOCK, but
-this may require wider changes, so will be handled in another patch.
+Notes: I compile it unconditionally, other PHYs should use it as well. I
+already started working on HT-PHY.
 
-V2: Make struct b43_ppr part of struct b43_phy_n
+V2: Drop unneeded __packed
+    Added Copyright/GPL header
+    Dropped some unneeded pointer (u32 replaced it)
+    Replaced BUG_ON with WARN_ON_ONCE
+    Fix indexing some array (use 4 + i)
 ---
- drivers/net/wireless/b43/b43.h   |  1 +
- drivers/net/wireless/b43/phy_n.c | 84 ++++++++++++++++++++++++++++++++++------
- drivers/net/wireless/b43/phy_n.h |  4 ++
- 3 files changed, 77 insertions(+), 12 deletions(-)
+ drivers/net/wireless/b43/Makefile |   1 +
+ drivers/net/wireless/b43/b43.h    |   7 ++
+ drivers/net/wireless/b43/ppr.c    | 199 ++++++++++++++++++++++++++++++++++++++
+ drivers/net/wireless/b43/ppr.h    |  45 +++++++++
+ 4 files changed, 252 insertions(+)
+ create mode 100644 drivers/net/wireless/b43/ppr.c
+ create mode 100644 drivers/net/wireless/b43/ppr.h
 
+diff --git a/drivers/net/wireless/b43/Makefile b/drivers/net/wireless/b43/Makefile
+index 6e00b88..9f7965a 100644
+--- a/drivers/net/wireless/b43/Makefile
++++ b/drivers/net/wireless/b43/Makefile
+@@ -18,6 +18,7 @@ b43-y				+= xmit.o
+ b43-y				+= dma.o
+ b43-y				+= pio.o
+ b43-y				+= rfkill.o
++b43-y				+= ppr.o
+ b43-$(CONFIG_B43_LEDS)		+= leds.o
+ b43-$(CONFIG_B43_PCMCIA)	+= pcmcia.o
+ b43-$(CONFIG_B43_SDIO)		+= sdio.o
 diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index d55bd86..c0dda0b 100644
+index ff0c666..d55bd86 100644
 --- a/drivers/net/wireless/b43/b43.h
 +++ b/drivers/net/wireless/b43/b43.h
-@@ -457,6 +457,7 @@ enum {
- #define B43_MACCTL_RADIOLOCK		0x00080000	/* Radio lock */
- #define B43_MACCTL_BEACPROMISC		0x00100000	/* Beacon Promiscuous */
- #define B43_MACCTL_KEEP_BADPLCP		0x00200000	/* Keep frames with bad PLCP */
-+#define B43_MACCTL_PHY_LOCK		0x00200000
- #define B43_MACCTL_KEEP_CTL		0x00400000	/* Keep control frames */
- #define B43_MACCTL_KEEP_BAD		0x00800000	/* Keep bad frames (FCS) */
- #define B43_MACCTL_PROMISC		0x01000000	/* Promiscuous mode */
-diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index 57a3ab2..cf625d8 100644
---- a/drivers/net/wireless/b43/phy_n.c
-+++ b/drivers/net/wireless/b43/phy_n.c
-@@ -34,6 +34,7 @@
- #include "radio_2056.h"
- #include "radio_2057.h"
- #include "main.h"
+@@ -791,6 +791,13 @@ struct b43_firmware {
+ 	bool pcm_request_failed;
+ };
+ 
++enum b43_band {
++	B43_BAND_2G = 0,
++	B43_BAND_5G_LO = 1,
++	B43_BAND_5G_MI = 2,
++	B43_BAND_5G_HI = 3,
++};
++
+ /* Device (802.11 core) initialization status. */
+ enum {
+ 	B43_STAT_UNINIT = 0,	/* Uninitialized. */
+diff --git a/drivers/net/wireless/b43/ppr.c b/drivers/net/wireless/b43/ppr.c
+new file mode 100644
+index 0000000..f609cc5
+--- /dev/null
++++ b/drivers/net/wireless/b43/ppr.c
+@@ -0,0 +1,199 @@
++/*
++ * Broadcom B43 wireless driver
++ * PPR (Power Per Rate) management
++ *
++ * Copyright (c) 2014 Rafa? Mi?ecki <zajec5@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
 +#include "ppr.h"
- 
- struct nphy_txgains {
- 	u16 tx_lpf[2];
-@@ -3606,16 +3607,6 @@ static void b43_nphy_iq_cal_gain_params(struct b43_wldev *dev, u16 core,
-  * Tx and Rx
-  **************************************************/
- 
--static void b43_nphy_op_adjust_txpower(struct b43_wldev *dev)
--{//TODO
--}
--
--static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
--							bool ignore_tssi)
--{//TODO
--	return B43_TXPWR_RES_DONE;
--}
--
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/TxPwrCtrlEnable */
- static void b43_nphy_tx_power_ctrl(struct b43_wldev *dev, bool enable)
- {
-@@ -4069,6 +4060,7 @@ static void b43_nphy_tx_power_ctl_setup(struct b43_wldev *dev)
- 
- 	s16 a1[2], b0[2], b1[2];
- 	u8 idle[2];
-+	u8 ppr_max;
- 	s8 target[2];
- 	s32 num, den, pwr;
- 	u32 regval[64];
-@@ -4147,7 +4139,12 @@ static void b43_nphy_tx_power_ctl_setup(struct b43_wldev *dev)
- 			b1[0] = b1[1] = -1393;
- 		}
- 	}
--	/* target[0] = target[1] = nphy->tx_power_max; */
++#include "b43.h"
 +
-+	ppr_max = b43_ppr_get_max(dev, &nphy->tx_pwr_max_ppr);
-+	if (ppr_max) {
-+		target[0] = ppr_max;
-+		target[1] = ppr_max;
-+	}
- 
- 	if (dev->phy.rev >= 3) {
- 		if (sprom->fem.ghz2.tssipos)
-@@ -5889,6 +5886,69 @@ static void b43_nphy_set_rx_core_state(struct b43_wldev *dev, u8 mask)
- 	b43_mac_enable(dev);
- }
- 
-+static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
-+							bool ignore_tssi)
++#define ppr_for_each_entry(ppr, i, entry)				\
++	for (i = 0, entry = &(ppr)->__all_rates[i];			\
++	     i < B43_PPR_RATES_NUM;					\
++	     i++, entry++)
++
++void b43_ppr_clear(struct b43_wldev *dev, struct b43_ppr *ppr)
 +{
-+	struct b43_phy *phy = &dev->phy;
-+	struct b43_phy_n *nphy = dev->phy.n;
-+	struct ieee80211_channel *channel = dev->wl->hw->conf.chandef.chan;
-+	struct b43_ppr *ppr = &nphy->tx_pwr_max_ppr;
-+	u8 max; /* qdBm */
-+	bool tx_pwr_state;
++	memset(ppr, 0, sizeof(*ppr));
 +
-+	if (nphy->tx_pwr_last_recalc_freq == channel->center_freq &&
-+	    nphy->tx_pwr_last_recalc_limit == phy->desired_txpower)
-+		return B43_TXPWR_RES_DONE;
-+
-+	/* Make sure we have a clean PPR */
-+	b43_ppr_clear(dev, ppr);
-+
-+	/* HW limitations */
-+	b43_ppr_load_max_from_sprom(dev, ppr, B43_BAND_2G);
-+
-+	/* Regulatory & user settings */
-+	max = INT_TO_Q52(phy->chandef->chan->max_power);
-+	if (phy->desired_txpower)
-+		max = min_t(u8, max, INT_TO_Q52(phy->desired_txpower));
-+	b43_ppr_apply_max(dev, ppr, max);
-+	if (b43_debug(dev, B43_DBG_XMITPOWER))
-+		b43dbg(dev->wl, "Calculated TX power: " Q52_FMT "\n",
-+		       Q52_ARG(b43_ppr_get_max(dev, ppr)));
-+
-+	/* TODO: Enable this once we get gains working */
-+#if 0
-+	/* Some extra gains */
-+	hw_gain = 6; /* N-PHY specific */
-+	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-+		hw_gain += sprom->antenna_gain.a0;
-+	else
-+		hw_gain += sprom->antenna_gain.a1;
-+	b43_ppr_add(dev, ppr, -hw_gain);
-+#endif
-+
-+	/* Make sure we didn't go too low */
-+	b43_ppr_apply_min(dev, ppr, INT_TO_Q52(8));
-+
-+	/* Apply */
-+	tx_pwr_state = nphy->txpwrctrl;
-+	b43_mac_suspend(dev);
-+	b43_nphy_tx_power_ctl_setup(dev);
-+	if (dev->dev->core_rev == 11 || dev->dev->core_rev == 12) {
-+		b43_maskset32(dev, B43_MMIO_MACCTL, ~0, B43_MACCTL_PHY_LOCK);
-+		b43_read32(dev, B43_MMIO_MACCTL);
-+		udelay(1);
-+	}
-+	b43_nphy_tx_power_ctrl(dev, nphy->txpwrctrl);
-+	if (dev->dev->core_rev == 11 || dev->dev->core_rev == 12)
-+		b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_PHY_LOCK, 0);
-+	b43_mac_enable(dev);
-+
-+	nphy->tx_pwr_last_recalc_freq = channel->center_freq;
-+	nphy->tx_pwr_last_recalc_limit = phy->desired_txpower;
-+
-+	return B43_TXPWR_RES_DONE;
++	/* Compile-time PPR check */
++	BUILD_BUG_ON(sizeof(struct b43_ppr) != B43_PPR_RATES_NUM * sizeof(u8));
 +}
 +
- /**************************************************
-  * N-PHY init
-  **************************************************/
-@@ -6422,6 +6482,7 @@ static int b43_nphy_op_allocate(struct b43_wldev *dev)
- 	nphy = kzalloc(sizeof(*nphy), GFP_KERNEL);
- 	if (!nphy)
- 		return -ENOMEM;
++void b43_ppr_add(struct b43_wldev *dev, struct b43_ppr *ppr, int diff)
++{
++	int i;
++	u8 *rate;
 +
- 	dev->phy.n = nphy;
- 
- 	return 0;
-@@ -6662,5 +6723,4 @@ const struct b43_phy_operations b43_phyops_n = {
- 	.switch_channel		= b43_nphy_op_switch_channel,
- 	.get_default_chan	= b43_nphy_op_get_default_chan,
- 	.recalc_txpower		= b43_nphy_op_recalc_txpower,
--	.adjust_txpower		= b43_nphy_op_adjust_txpower,
- };
-diff --git a/drivers/net/wireless/b43/phy_n.h b/drivers/net/wireless/b43/phy_n.h
-index 30bec81..a6da2c3 100644
---- a/drivers/net/wireless/b43/phy_n.h
-+++ b/drivers/net/wireless/b43/phy_n.h
-@@ -2,6 +2,7 @@
- #define B43_NPHY_H_
- 
- #include "phy_common.h"
-+#include "ppr.h"
- 
- 
- /* N-PHY registers. */
-@@ -967,6 +968,9 @@ struct b43_phy_n {
- 	struct b43_phy_n_txpwrindex txpwrindex[2];
- 	struct b43_phy_n_pwr_ctl_info pwr_ctl_info[2];
- 	struct b43_chanspec txiqlocal_chanspec;
-+	struct b43_ppr tx_pwr_max_ppr;
-+	u16 tx_pwr_last_recalc_freq;
-+	int tx_pwr_last_recalc_limit;
- 
- 	u8 txrx_chain;
- 	u16 tx_rx_cal_phy_saveregs[11];
++	ppr_for_each_entry(ppr, i, rate) {
++		*rate = clamp_val(*rate + diff, 0, 127);
++	}
++}
++
++void b43_ppr_apply_max(struct b43_wldev *dev, struct b43_ppr *ppr, u8 max)
++{
++	int i;
++	u8 *rate;
++
++	ppr_for_each_entry(ppr, i, rate) {
++		*rate = min(*rate, max);
++	}
++}
++
++void b43_ppr_apply_min(struct b43_wldev *dev, struct b43_ppr *ppr, u8 min)
++{
++	int i;
++	u8 *rate;
++
++	ppr_for_each_entry(ppr, i, rate) {
++		*rate = max(*rate, min);
++	}
++}
++
++u8 b43_ppr_get_max(struct b43_wldev *dev, struct b43_ppr *ppr)
++{
++	u8 res = 0;
++	int i;
++	u8 *rate;
++
++	ppr_for_each_entry(ppr, i, rate) {
++		res = max(*rate, res);
++	}
++
++	return res;
++}
++
++bool b43_ppr_load_max_from_sprom(struct b43_wldev *dev, struct b43_ppr *ppr,
++				 enum b43_band band)
++{
++	struct b43_ppr_rates *rates = &ppr->rates;
++	struct ssb_sprom *sprom = dev->dev->bus_sprom;
++	struct b43_phy *phy = &dev->phy;
++	u8 maxpwr, off;
++	u32 sprom_ofdm_po;
++	u16 *sprom_mcs_po;
++	u8 extra_cdd_po, extra_stbc_po;
++	int i;
++
++	switch (band) {
++	case B43_BAND_2G:
++		maxpwr = min(sprom->core_pwr_info[0].maxpwr_2g,
++			     sprom->core_pwr_info[1].maxpwr_2g);
++		sprom_ofdm_po = sprom->ofdm2gpo;
++		sprom_mcs_po = sprom->mcs2gpo;
++		extra_cdd_po = (sprom->cddpo >> 0) & 0xf;
++		extra_stbc_po = (sprom->stbcpo >> 0) & 0xf;
++		break;
++	case B43_BAND_5G_LO:
++		maxpwr = min(sprom->core_pwr_info[0].maxpwr_5gl,
++			     sprom->core_pwr_info[1].maxpwr_5gl);
++		sprom_ofdm_po = sprom->ofdm5glpo;
++		sprom_mcs_po = sprom->mcs5glpo;
++		extra_cdd_po = (sprom->cddpo >> 8) & 0xf;
++		extra_stbc_po = (sprom->stbcpo >> 8) & 0xf;
++		break;
++	case B43_BAND_5G_MI:
++		maxpwr = min(sprom->core_pwr_info[0].maxpwr_5g,
++			     sprom->core_pwr_info[1].maxpwr_5g);
++		sprom_ofdm_po = sprom->ofdm5gpo;
++		sprom_mcs_po = sprom->mcs5gpo;
++		extra_cdd_po = (sprom->cddpo >> 4) & 0xf;
++		extra_stbc_po = (sprom->stbcpo >> 4) & 0xf;
++		break;
++	case B43_BAND_5G_HI:
++		maxpwr = min(sprom->core_pwr_info[0].maxpwr_5gh,
++			     sprom->core_pwr_info[1].maxpwr_5gh);
++		sprom_ofdm_po = sprom->ofdm5ghpo;
++		sprom_mcs_po = sprom->mcs5ghpo;
++		extra_cdd_po = (sprom->cddpo >> 12) & 0xf;
++		extra_stbc_po = (sprom->stbcpo >> 12) & 0xf;
++		break;
++	default:
++		WARN_ON_ONCE(1);
++		return false;
++	}
++
++	if (band == B43_BAND_2G) {
++		for (i = 0; i < 4; i++) {
++			off = ((sprom->cck2gpo >> (i * 4)) & 0xf) * 2;
++			rates->cck[i] = maxpwr - off;
++		}
++	}
++
++	/* OFDM */
++	for (i = 0; i < 8; i++) {
++		off = ((sprom_ofdm_po >> (i * 4)) & 0xf) * 2;
++		rates->ofdm[i] = maxpwr - off;
++	}
++
++	/* MCS 20 SISO */
++	rates->mcs_20[0] = rates->ofdm[0];
++	rates->mcs_20[1] = rates->ofdm[2];
++	rates->mcs_20[2] = rates->ofdm[3];
++	rates->mcs_20[3] = rates->ofdm[4];
++	rates->mcs_20[4] = rates->ofdm[5];
++	rates->mcs_20[5] = rates->ofdm[6];
++	rates->mcs_20[6] = rates->ofdm[7];
++	rates->mcs_20[7] = rates->ofdm[7];
++
++	/* MCS 20 CDD */
++	for (i = 0; i < 4; i++) {
++		off = ((sprom_mcs_po[0] >> (i * 4)) & 0xf) * 2;
++		rates->mcs_20_cdd[i] = maxpwr - off;
++		if (phy->type == B43_PHYTYPE_N && phy->rev >= 3)
++			rates->mcs_20_cdd[i] -= extra_cdd_po;
++	}
++	for (i = 0; i < 4; i++) {
++		off = ((sprom_mcs_po[1] >> (i * 4)) & 0xf) * 2;
++		rates->mcs_20_cdd[4 + i] = maxpwr - off;
++		if (phy->type == B43_PHYTYPE_N && phy->rev >= 3)
++			rates->mcs_20_cdd[4 + i] -= extra_cdd_po;
++	}
++
++	/* OFDM 20 CDD */
++	rates->ofdm_20_cdd[0] = rates->mcs_20_cdd[0];
++	rates->ofdm_20_cdd[1] = rates->mcs_20_cdd[0];
++	rates->ofdm_20_cdd[2] = rates->mcs_20_cdd[1];
++	rates->ofdm_20_cdd[3] = rates->mcs_20_cdd[2];
++	rates->ofdm_20_cdd[4] = rates->mcs_20_cdd[3];
++	rates->ofdm_20_cdd[5] = rates->mcs_20_cdd[4];
++	rates->ofdm_20_cdd[6] = rates->mcs_20_cdd[5];
++	rates->ofdm_20_cdd[7] = rates->mcs_20_cdd[6];
++
++	/* MCS 20 STBC */
++	for (i = 0; i < 4; i++) {
++		off = ((sprom_mcs_po[0] >> (i * 4)) & 0xf) * 2;
++		rates->mcs_20_stbc[i] = maxpwr - off;
++		if (phy->type == B43_PHYTYPE_N && phy->rev >= 3)
++			rates->mcs_20_stbc[i] -= extra_stbc_po;
++	}
++	for (i = 0; i < 4; i++) {
++		off = ((sprom_mcs_po[1] >> (i * 4)) & 0xf) * 2;
++		rates->mcs_20_stbc[4 + i] = maxpwr - off;
++		if (phy->type == B43_PHYTYPE_N && phy->rev >= 3)
++			rates->mcs_20_stbc[4 + i] -= extra_stbc_po;
++	}
++
++	/* MCS 20 SDM */
++	for (i = 0; i < 4; i++) {
++		off = ((sprom_mcs_po[2] >> (i * 4)) & 0xf) * 2;
++		rates->mcs_20_sdm[i] = maxpwr - off;
++	}
++	for (i = 0; i < 4; i++) {
++		off = ((sprom_mcs_po[3] >> (i * 4)) & 0xf) * 2;
++		rates->mcs_20_sdm[4 + i] = maxpwr - off;
++	}
++
++	return true;
++}
+diff --git a/drivers/net/wireless/b43/ppr.h b/drivers/net/wireless/b43/ppr.h
+new file mode 100644
+index 0000000..24d7447
+--- /dev/null
++++ b/drivers/net/wireless/b43/ppr.h
+@@ -0,0 +1,45 @@
++#ifndef LINUX_B43_PPR_H_
++#define LINUX_B43_PPR_H_
++
++#include <linux/types.h>
++
++#define B43_PPR_CCK_RATES_NUM		4
++#define B43_PPR_OFDM_RATES_NUM		8
++#define B43_PPR_MCS_RATES_NUM		8
++
++#define B43_PPR_RATES_NUM	(B43_PPR_CCK_RATES_NUM +	\
++				 B43_PPR_OFDM_RATES_NUM * 2 +	\
++				 B43_PPR_MCS_RATES_NUM * 4)
++
++struct b43_ppr_rates {
++	u8 cck[B43_PPR_CCK_RATES_NUM];
++	u8 ofdm[B43_PPR_OFDM_RATES_NUM];
++	u8 ofdm_20_cdd[B43_PPR_OFDM_RATES_NUM];
++	u8 mcs_20[B43_PPR_MCS_RATES_NUM]; /* SISO */
++	u8 mcs_20_cdd[B43_PPR_MCS_RATES_NUM];
++	u8 mcs_20_stbc[B43_PPR_MCS_RATES_NUM];
++	u8 mcs_20_sdm[B43_PPR_MCS_RATES_NUM];
++};
++
++struct b43_ppr {
++	/* All powers are in qdbm (Q5.2) */
++	union {
++		u8 __all_rates[B43_PPR_RATES_NUM];
++		struct b43_ppr_rates rates;
++	};
++};
++
++struct b43_wldev;
++enum b43_band;
++
++void b43_ppr_clear(struct b43_wldev *dev, struct b43_ppr *ppr);
++
++void b43_ppr_add(struct b43_wldev *dev, struct b43_ppr *ppr, int diff);
++void b43_ppr_apply_max(struct b43_wldev *dev, struct b43_ppr *ppr, u8 max);
++void b43_ppr_apply_min(struct b43_wldev *dev, struct b43_ppr *ppr, u8 min);
++u8 b43_ppr_get_max(struct b43_wldev *dev, struct b43_ppr *ppr);
++
++bool b43_ppr_load_max_from_sprom(struct b43_wldev *dev, struct b43_ppr *ppr,
++				 enum b43_band band);
++
++#endif /* LINUX_B43_PPR_H_ */
 -- 
 1.8.4.5
