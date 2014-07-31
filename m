@@ -1,10 +1,9 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Thu, 31 Jul 2014 21:59:46 +0200
-Subject: [PATCH 3.18 5/7] b43: N-PHY: add RF power tables for radio 0x2057
- revs 9 & 14
+Date: Thu, 31 Jul 2014 21:59:48 +0200
+Subject: [PATCH V2 3.18 7/7] b43: N-PHY: support setting custom TX power
 In-Reply-To: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
 References: <1406836788-23704-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1406836788-23704-6-git-send-email-zajec5@gmail.com>
+Message-ID: <1406836788-23704-8-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,208 +11,186 @@ Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-Don't write them as we don't have gains configured correctly yet.
-
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-These magic tables I add here may deserve some explanation. The problem
-with fetching these tables was that wl.ko doesn't write them directly.
-Instead it uses values from another table, extracts some bits from them
-and then picks a proper value. This is why I couldn't get all values by
-simply looking at MMIO dump and I had to guess few.
+Notes: I still need to implement helper for B43_MACCTL_PHY_LOCK, but
+this may require wider changes, so will be handled in another patch.
 
-First I found writes of proper tables in MMIO dump:
-
-1) Writing "txpwr" 32b values (cut to 5 out of 128)
-phy_write(0x0072) <- 0x68c0	// This is (26 << 10) | 0xC0
-phy_write(0x0074) <- 0x60ff
-phy_write(0x0073) <- 0x0031	// This was 0x60ff0031 value
-phy_write(0x0074) <- 0x60e7
-phy_write(0x0073) <- 0x002c	// This was 0x60e7002c value
-phy_write(0x0074) <- 0x60cf
-phy_write(0x0073) <- 0x002a	// This was 0x60cf002a value
-phy_write(0x0074) <- 0x60c7
-phy_write(0x0073) <- 0x0029	// This was 0x60c70029 value
-phy_write(0x0074) <- 0x60b7
-phy_write(0x0073) <- 0x0029	// This was 0x60b70029 value
-(...)
-
-2) Writing RF power offset values (cut to 5 out of 128)
-phy_write(0x0072) <- 0x6a40	// This is ((26 << 10) | 0x240) + 0
-phy_write(0x0074) <- 0x0000
-phy_write(0x0073) <- 0x0000
-phy_write(0x0072) <- 0x6a41	// This is ((26 << 10) | 0x240) + 1
-phy_write(0x0074) <- 0xffff
-phy_write(0x0073) <- 0xfffd
-phy_write(0x0072) <- 0x6a42	// This is ((26 << 10) | 0x240) + 2
-phy_write(0x0074) <- 0xffff
-phy_write(0x0073) <- 0xfff9
-phy_write(0x0072) <- 0x6a43	// This is ((26 << 10) | 0x240) + 3
-phy_write(0x0074) <- 0xffff
-phy_write(0x0073) <- 0xfff7
-phy_write(0x0072) <- 0x6a44	// This is ((26 << 10) | 0x240) + 4
-phy_write(0x0074) <- 0xffff
-phy_write(0x0073) <- 0xfff4
-(...)
-
-Then from every "txpwr" value I extracted "pad_gain" value using:
-((table[i] >> 19) & 0x1f) and put corresponding write to the second
-table next to it. Then I had to change hex value into signed int. It
-went like this:
-txpwr:0x60ff0031 pad_gain:31	0x00000000 0
-txpwr:0x60e7002c pad_gain:28	0xfffffffd -3
-txpwr:0x60cf002a pad_gain:25	0xfffffff9 -7
-txpwr:0x60c70029 pad_gain:24	0xfffffff7 -9
-txpwr:0x60b70029 pad_gain:22	0xfffffff4 -12
-(...)
+V2: Make struct b43_ppr part of struct b43_phy_n
 ---
- drivers/net/wireless/b43/phy_n.c       | 21 +++++++++--
- drivers/net/wireless/b43/tables_nphy.c | 67 ++++++++++++++++++++++++++++++++++
- drivers/net/wireless/b43/tables_nphy.h |  2 +
- 3 files changed, 87 insertions(+), 3 deletions(-)
+ drivers/net/wireless/b43/b43.h   |  1 +
+ drivers/net/wireless/b43/phy_n.c | 84 ++++++++++++++++++++++++++++++++++------
+ drivers/net/wireless/b43/phy_n.h |  4 ++
+ 3 files changed, 77 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index d55bd86..c0dda0b 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -457,6 +457,7 @@ enum {
+ #define B43_MACCTL_RADIOLOCK		0x00080000	/* Radio lock */
+ #define B43_MACCTL_BEACPROMISC		0x00100000	/* Beacon Promiscuous */
+ #define B43_MACCTL_KEEP_BADPLCP		0x00200000	/* Keep frames with bad PLCP */
++#define B43_MACCTL_PHY_LOCK		0x00200000
+ #define B43_MACCTL_KEEP_CTL		0x00400000	/* Keep control frames */
+ #define B43_MACCTL_KEEP_BAD		0x00800000	/* Keep bad frames (FCS) */
+ #define B43_MACCTL_PROMISC		0x01000000	/* Promiscuous mode */
 diff --git a/drivers/net/wireless/b43/phy_n.c b/drivers/net/wireless/b43/phy_n.c
-index df64032..57a3ab2 100644
+index 57a3ab2..cf625d8 100644
 --- a/drivers/net/wireless/b43/phy_n.c
 +++ b/drivers/net/wireless/b43/phy_n.c
-@@ -4235,8 +4235,9 @@ static void b43_nphy_tx_gain_table_upload(struct b43_wldev *dev)
+@@ -34,6 +34,7 @@
+ #include "radio_2056.h"
+ #include "radio_2057.h"
+ #include "main.h"
++#include "ppr.h"
  
- 	const u32 *table = NULL;
- 	u32 rfpwr_offset;
--	u8 pga_gain;
-+	u8 pga_gain, pad_gain;
- 	int i;
-+	const s16 *uninitialized_var(rf_pwr_offset_table);
+ struct nphy_txgains {
+ 	u16 tx_lpf[2];
+@@ -3606,16 +3607,6 @@ static void b43_nphy_iq_cal_gain_params(struct b43_wldev *dev, u16 core,
+  * Tx and Rx
+  **************************************************/
  
- 	table = b43_nphy_get_tx_gain_table(dev);
- 	if (!table)
-@@ -4252,13 +4253,27 @@ static void b43_nphy_tx_gain_table_upload(struct b43_wldev *dev)
- 	nphy->gmval = (table[0] >> 16) & 0x7000;
- #endif
+-static void b43_nphy_op_adjust_txpower(struct b43_wldev *dev)
+-{//TODO
+-}
+-
+-static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
+-							bool ignore_tssi)
+-{//TODO
+-	return B43_TXPWR_RES_DONE;
+-}
+-
+ /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/TxPwrCtrlEnable */
+ static void b43_nphy_tx_power_ctrl(struct b43_wldev *dev, bool enable)
+ {
+@@ -4069,6 +4060,7 @@ static void b43_nphy_tx_power_ctl_setup(struct b43_wldev *dev)
  
-+	if (phy->rev >= 19) {
-+		return;
-+	} else if (phy->rev >= 7) {
-+		rf_pwr_offset_table = b43_ntab_get_rf_pwr_offset_table(dev);
-+		if (!rf_pwr_offset_table)
-+			return;
-+		/* TODO: Enable this once we have gains configured */
-+		return;
-+	}
-+
- 	for (i = 0; i < 128; i++) {
- 		if (phy->rev >= 19) {
- 			/* TODO */
- 			return;
- 		} else if (phy->rev >= 7) {
--			/* TODO */
--			return;
-+			pga_gain = (table[i] >> 24) & 0xf;
-+			pad_gain = (table[i] >> 19) & 0x1f;
-+			if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-+				rfpwr_offset = rf_pwr_offset_table[pad_gain];
-+			else
-+				rfpwr_offset = rf_pwr_offset_table[pga_gain];
- 		} else {
- 			pga_gain = (table[i] >> 24) & 0xF;
- 			if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
-diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
-index f449cff..25d1cbd 100644
---- a/drivers/net/wireless/b43/tables_nphy.c
-+++ b/drivers/net/wireless/b43/tables_nphy.c
-@@ -2878,6 +2878,40 @@ const s8 b43_ntab_papd_pga_gain_delta_ipa_2g[] = {
- 	-54, -46, -39, -31, -23, -15, -8, 0
- };
- 
-+/* Extracted from MMIO dump of 6.30.223.248
-+ * Entries: 0, 15, 17, 21, 24, 26, 27, 29, 30 were guessed
-+ */
-+static const s16 b43_ntab_rf_pwr_offset_2057_rev9_2g[] = {
-+	-133, -133, -107, -92, -81,
-+	-73, -66, -61, -56, -52,
-+	-48, -44, -41, -37, -34,
-+	-31, -28, -25, -22, -19,
-+	-17, -14, -12, -10, -9,
-+	-7, -5, -4, -3, -2,
-+	-1, 0,
-+};
-+
-+/* Extracted from MMIO dump of 6.30.223.248 */
-+static const s16 b43_ntab_rf_pwr_offset_2057_rev9_5g[] = {
-+	-101, -94, -86, -79, -72,
-+	-65, -57, -50, -42, -35,
-+	-28, -21, -16, -9, -4,
-+	0,
-+};
-+
-+/* Extracted from MMIO dump of 6.30.223.248
-+ * Entries: 0, 26, 28, 29, 30, 31 were guessed
-+ */
-+static const s16 b43_ntab_rf_pwr_offset_2057_rev14_2g[] = {
-+	-111, -111, -111, -84, -70,
-+	-59, -52, -45, -40, -36,
-+	-32, -29, -26, -23, -21,
-+	-18, -16, -15, -13, -11,
-+	-10, -8, -7, -6, -5,
-+	-4, -4, -3, -3, -2,
-+	-2, -1,
-+};
-+
- const u16 tbl_iqcal_gainparams[2][9][8] = {
- 	{
- 		{ 0x000, 0, 0, 2, 0x69, 0x69, 0x69, 0x69 },
-@@ -3708,6 +3742,39 @@ const u32 *b43_nphy_get_tx_gain_table(struct b43_wldev *dev)
+ 	s16 a1[2], b0[2], b1[2];
+ 	u8 idle[2];
++	u8 ppr_max;
+ 	s8 target[2];
+ 	s32 num, den, pwr;
+ 	u32 regval[64];
+@@ -4147,7 +4139,12 @@ static void b43_nphy_tx_power_ctl_setup(struct b43_wldev *dev)
+ 			b1[0] = b1[1] = -1393;
+ 		}
  	}
+-	/* target[0] = target[1] = nphy->tx_power_max; */
++
++	ppr_max = b43_ppr_get_max(dev, &nphy->tx_pwr_max_ppr);
++	if (ppr_max) {
++		target[0] = ppr_max;
++		target[1] = ppr_max;
++	}
+ 
+ 	if (dev->phy.rev >= 3) {
+ 		if (sprom->fem.ghz2.tssipos)
+@@ -5889,6 +5886,69 @@ static void b43_nphy_set_rx_core_state(struct b43_wldev *dev, u8 mask)
+ 	b43_mac_enable(dev);
  }
  
-+const s16 *b43_ntab_get_rf_pwr_offset_table(struct b43_wldev *dev)
++static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
++							bool ignore_tssi)
 +{
 +	struct b43_phy *phy = &dev->phy;
++	struct b43_phy_n *nphy = dev->phy.n;
++	struct ieee80211_channel *channel = dev->wl->hw->conf.chandef.chan;
++	struct b43_ppr *ppr = &nphy->tx_pwr_max_ppr;
++	u8 max; /* qdBm */
++	bool tx_pwr_state;
 +
-+	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ) {
-+		switch (phy->rev) {
-+		case 17:
-+			if (phy->radio_rev == 14)
-+				return b43_ntab_rf_pwr_offset_2057_rev14_2g;
-+			break;
-+		case 16:
-+			if (phy->radio_rev == 9)
-+				return b43_ntab_rf_pwr_offset_2057_rev9_2g;
-+			break;
-+		}
++	if (nphy->tx_pwr_last_recalc_freq == channel->center_freq &&
++	    nphy->tx_pwr_last_recalc_limit == phy->desired_txpower)
++		return B43_TXPWR_RES_DONE;
 +
-+		b43err(dev->wl,
-+		       "No 2GHz RF power table available for this device\n");
-+		return NULL;
-+	} else {
-+		switch (phy->rev) {
-+		case 16:
-+			if (phy->radio_rev == 9)
-+				return b43_ntab_rf_pwr_offset_2057_rev9_5g;
-+			break;
-+		}
++	/* Make sure we have a clean PPR */
++	b43_ppr_clear(dev, ppr);
 +
-+		b43err(dev->wl,
-+		       "No 5GHz RF power table available for this device\n");
-+		return NULL;
++	/* HW limitations */
++	b43_ppr_load_max_from_sprom(dev, ppr, B43_BAND_2G);
++
++	/* Regulatory & user settings */
++	max = INT_TO_Q52(phy->chandef->chan->max_power);
++	if (phy->desired_txpower)
++		max = min_t(u8, max, INT_TO_Q52(phy->desired_txpower));
++	b43_ppr_apply_max(dev, ppr, max);
++	if (b43_debug(dev, B43_DBG_XMITPOWER))
++		b43dbg(dev->wl, "Calculated TX power: " Q52_FMT "\n",
++		       Q52_ARG(b43_ppr_get_max(dev, ppr)));
++
++	/* TODO: Enable this once we get gains working */
++#if 0
++	/* Some extra gains */
++	hw_gain = 6; /* N-PHY specific */
++	if (b43_current_band(dev->wl) == IEEE80211_BAND_2GHZ)
++		hw_gain += sprom->antenna_gain.a0;
++	else
++		hw_gain += sprom->antenna_gain.a1;
++	b43_ppr_add(dev, ppr, -hw_gain);
++#endif
++
++	/* Make sure we didn't go too low */
++	b43_ppr_apply_min(dev, ppr, INT_TO_Q52(8));
++
++	/* Apply */
++	tx_pwr_state = nphy->txpwrctrl;
++	b43_mac_suspend(dev);
++	b43_nphy_tx_power_ctl_setup(dev);
++	if (dev->dev->core_rev == 11 || dev->dev->core_rev == 12) {
++		b43_maskset32(dev, B43_MMIO_MACCTL, ~0, B43_MACCTL_PHY_LOCK);
++		b43_read32(dev, B43_MMIO_MACCTL);
++		udelay(1);
 +	}
++	b43_nphy_tx_power_ctrl(dev, nphy->txpwrctrl);
++	if (dev->dev->core_rev == 11 || dev->dev->core_rev == 12)
++		b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_PHY_LOCK, 0);
++	b43_mac_enable(dev);
++
++	nphy->tx_pwr_last_recalc_freq = channel->center_freq;
++	nphy->tx_pwr_last_recalc_limit = phy->desired_txpower;
++
++	return B43_TXPWR_RES_DONE;
 +}
 +
- struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
- 	struct b43_wldev *dev, bool ghz5, bool ext_lna)
- {
-diff --git a/drivers/net/wireless/b43/tables_nphy.h b/drivers/net/wireless/b43/tables_nphy.h
-index 3ce2e6f..b51f386 100644
---- a/drivers/net/wireless/b43/tables_nphy.h
-+++ b/drivers/net/wireless/b43/tables_nphy.h
-@@ -191,6 +191,8 @@ void b43_nphy_tables_init(struct b43_wldev *dev);
- 
- const u32 *b43_nphy_get_tx_gain_table(struct b43_wldev *dev);
- 
-+const s16 *b43_ntab_get_rf_pwr_offset_table(struct b43_wldev *dev);
+ /**************************************************
+  * N-PHY init
+  **************************************************/
+@@ -6422,6 +6482,7 @@ static int b43_nphy_op_allocate(struct b43_wldev *dev)
+ 	nphy = kzalloc(sizeof(*nphy), GFP_KERNEL);
+ 	if (!nphy)
+ 		return -ENOMEM;
 +
- extern const s8 b43_ntab_papd_pga_gain_delta_ipa_2g[];
+ 	dev->phy.n = nphy;
  
- extern const u16 tbl_iqcal_gainparams[2][9][8];
+ 	return 0;
+@@ -6662,5 +6723,4 @@ const struct b43_phy_operations b43_phyops_n = {
+ 	.switch_channel		= b43_nphy_op_switch_channel,
+ 	.get_default_chan	= b43_nphy_op_get_default_chan,
+ 	.recalc_txpower		= b43_nphy_op_recalc_txpower,
+-	.adjust_txpower		= b43_nphy_op_adjust_txpower,
+ };
+diff --git a/drivers/net/wireless/b43/phy_n.h b/drivers/net/wireless/b43/phy_n.h
+index 30bec81..a6da2c3 100644
+--- a/drivers/net/wireless/b43/phy_n.h
++++ b/drivers/net/wireless/b43/phy_n.h
+@@ -2,6 +2,7 @@
+ #define B43_NPHY_H_
+ 
+ #include "phy_common.h"
++#include "ppr.h"
+ 
+ 
+ /* N-PHY registers. */
+@@ -967,6 +968,9 @@ struct b43_phy_n {
+ 	struct b43_phy_n_txpwrindex txpwrindex[2];
+ 	struct b43_phy_n_pwr_ctl_info pwr_ctl_info[2];
+ 	struct b43_chanspec txiqlocal_chanspec;
++	struct b43_ppr tx_pwr_max_ppr;
++	u16 tx_pwr_last_recalc_freq;
++	int tx_pwr_last_recalc_limit;
+ 
+ 	u8 txrx_chain;
+ 	u16 tx_rx_cal_phy_saveregs[11];
 -- 
 1.8.4.5
