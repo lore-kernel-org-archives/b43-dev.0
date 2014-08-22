@@ -1,45 +1,34 @@
-From: Brandon Enochs <enochs.brandon@gmail.com>
-Date: Wed, 20 Aug 2014 09:09:10 -0400
-Subject: Radiotap Channel Bug
-In-Reply-To: <CAP-AUygR-351cngtV5f5NUyitdAay3+az4=_zkWij61wh7iByw@mail.gmail.com>
-References: <CAP-AUygR-351cngtV5f5NUyitdAay3+az4=_zkWij61wh7iByw@mail.gmail.com>
-Message-ID: <CAP-AUyhM2gg-Etuy=hCi+18J88Teb7_jkD9yEOuFduGUyb0L_A@mail.gmail.com>
+From: Igor Korot <ikorot01@gmail.com>
+Date: Thu, 21 Aug 2014 20:20:47 -0700
+Subject: B43 driver problem
+Message-ID: <CA+FnnTyEX5c07N12vX98xkxje8SFk43w9kvokUsvrzBJTbkVQg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Thanks,  I've submitted a bug report to the CentOS team to request a back port.
+Hi, ALL,
+I hope this list is still alive. ;-)
+I'm using Gentoo and recently I acquired a DELL laptop with the
+Broadcom wireless card.
 
-On Tue, Aug 19, 2014 at 7:36 PM, Brandon Enochs
-<enochs.brandon@gmail.com> wrote:
-> With CentOS 6.5, the LP phy type currently suffers from a calculation
-> error in the way that it reports the channel on which a frame was
-> received up through the mac80211 stack.  It should use the
-> b43_channel_to_freq_2ghz function; however, it uses the
-> b43_freq_to_channel_2ghz instead.  As a result, the radiotap header
-> provides nonsensical values for the channel field.  The following
-> patch fixes this issue
->
-> Sincerely,
-> Brandon Enochs
->
-> diff -rupN ../linux-2.6.32-431.23.3.el6/drivers/net/wireless/b43/xmit.c
-> drivers/net/wireless/b43/xmit.c
-> --- ../linux-2.6.32-431.23.3.el6/drivers/net/wireless/b43/xmit.c
-> 2014-07-16 05:33:22.000000000 -0400
-> +++ drivers/net/wireless/b43/xmit.c 2014-08-19 19:19:20.607959455 -0400
-> @@ -821,10 +821,10 @@ void b43_rx(struct b43_wldev *dev, struc
->    * channel number in b43. */
->   if (chanstat & B43_RX_CHAN_5GHZ) {
->   status.band = IEEE80211_BAND_5GHZ;
-> - status.freq = b43_freq_to_channel_5ghz(chanid);
-> + status.freq = b43_channel_to_freq_5ghz(chanid);
->   } else {
->   status.band = IEEE80211_BAND_2GHZ;
-> - status.freq = b43_freq_to_channel_2ghz(chanid);
-> + status.freq = b43_channel_to_freq_2ghz(chanid);
->   }
->   break;
->   default:
+I successfully installed the system on it (using kernel version
+3.12.20), but I can't make the Broadcom driver work.
+
+This is what I have:
+
+[code]
+dmesg | grep -i -e b43 -e broad -e firm | less:
+[    1.346589] b43-phy0: Broadcom 4312 WLAN found (core revision 15)
+[    1.363251] b43-phy0 ERROR: FOUND UNSUPPORTED PHY (Analog 6, Type 5
+(LP), Revision 1)
+[    1.364925] b43: probe of ssb0:0 failed with error -95
+[    1.366477] Broadcom 43xx driver loaded [ Features: PL ]
+[/code]
+
+Now does this card supported by linux or it is work in progress or?
+I can upgrade the kernel as its not a big deal, I just want to make
+sure that I will have a working environment.
+
+Thank you.
