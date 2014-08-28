@@ -1,71 +1,49 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 24 Aug 2014 09:20:21 +0200
-Subject: B43 driver problem
-In-Reply-To: <CA+FnnTzG_dWyVfA1s+AOXV9VpzhbmE5YkHX-nUg5RTYbKQNxtQ@mail.gmail.com>
-References: <CA+FnnTyEX5c07N12vX98xkxje8SFk43w9kvokUsvrzBJTbkVQg@mail.gmail.com>
- <53F75312.60200@lwfinger.net>
- <CA+FnnTw=KFJrQNzK0sphH5bmr26uaQx39UUkVV6Pu+NMJ8JpyA@mail.gmail.com>
- <53F8B222.3080406@lwfinger.net>
- <CA+FnnTzG_dWyVfA1s+AOXV9VpzhbmE5YkHX-nUg5RTYbKQNxtQ@mail.gmail.com>
-Message-ID: <20140824092021.6bfb718b@wiggum>
+From: Ruben De Smet <ruben.de.smet@telenet.be>
+Date: Thu, 28 Aug 2014 14:33:46 +0200
+Subject: Looking for someone with BCM43227 and (maybe) compilation skill
+ ; )
+In-Reply-To: <CACna6rx+EkoCPQ06qDTbaDFEJ1hrn_CYSbrPmosF0ikhkqDxpA@mail.gmail.com>
+References: <CACna6rxVjnpMgQx9+d_LbROYNnnjnuMEGo-38MPwjsPtxYdN8w@mail.gmail.com>
+ <CACna6rx+EkoCPQ06qDTbaDFEJ1hrn_CYSbrPmosF0ikhkqDxpA@mail.gmail.com>
+Message-ID: <53FF21AA.5040406@telenet.be>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, b43-dev <b43-dev@lists.infradead.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Sat, 23 Aug 2014 20:56:17 -0700
-Igor Korot <ikorot01@gmail.com> wrote:
-
-> [    1.419227] b43-phy0 ERROR: FOUND UNSUPPORTED PHY (Analog 6, Type 5
-> (LP), Revision 1)
-> [    1.420925] b43: probe of ssb0:0 failed with error -95
+On 07/03/2014 02:50 PM, Rafa? Mi?ecki wrote:
+> On 3 July 2014 14:32, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>> I want to add support for BCM43227 in b43, however I need help of some
+>> BCM43227 owner. Well, I could buy one by myself (less than 10$ on
+>> eBay), but I don't want to wait a month to receive it.
+>>
+>> So I need someone with:
+>> 1) BCM43227 ;)
+>> 2) Kernel with CONFIG_MMIOTRACE=y*
+>> 3) Broadcom Linux STA driver 6.30.223.141
+>>
+>> So? Is there anyone around with BCM43227 willing to help?
 > 
-> What is "error -95"?
+> I'd need someone to:
+> 1) Disable NetworkManager & blacklist wl
+> 2) Make a cold boot (power off for 3 seconds)
+> 3) Run attached script
+> 4) Provide me /tmp/dump.txt (preferably compressed)
+> 
 
--EOPNOTSUPP
-See below.
+Still needed? I have
+03:00.0 Network controller: Broadcom Corporation BCM43228 802.11a/b/g/n
+That is one iteration higher.
 
-> Maybe I have wrong firmware?
+Ruben
 
+(I'm not subscribed to the list anymore, so please keep me in CC)
 
-No. You are using the wrong kernel.
-
-The relevant code section, that throws the error is:
-
->	int unsupported = 0;
->...
-> 	switch (phy_type) {
->...
-> #ifdef CONFIG_B43_PHY_LP
-> 	case B43_PHYTYPE_LP:
-> 		if (phy_rev > 2)
-> 			unsupported = 1;
-> 		break;
-> #endif
->...
-> 	default:
-> 		unsupported = 1;
-> 	}
-> 	if (unsupported) {
-> 		b43err(dev->wl, "FOUND UNSUPPORTED PHY (Analog %u, Type %d (%s), Revision %u)\n",
-> 		       analog_type, phy_type, b43_phy_name(dev, phy_type),
-> 		       phy_rev);
-> 		return -EOPNOTSUPP;
-> 	}
-
-So for this error to trigger, you would have to have revision 3 or later, which you don't,
-or you would have to have a kernel without LP support compiled in.
-
-Make sure you installed your kernel _and_ initramfs correctly.
-Also make sure to boot the correct kernel.
-
--- 
-Michael
 -------------- next part --------------
 A non-text attachment was scrubbed...
 Name: signature.asc
 Type: application/pgp-signature
-Size: 819 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20140824/d1507799/attachment.sig>
+Size: 473 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20140828/c10df736/attachment.sig>
