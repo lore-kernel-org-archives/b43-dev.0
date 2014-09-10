@@ -1,9 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Tue,  9 Sep 2014 21:17:08 +0200
-Subject: [PATCH 3/4] b43: HT-PHY: Define some regs for 0x2059 radio
-In-Reply-To: <1410290229-7033-1-git-send-email-zajec5@gmail.com>
-References: <1410290229-7033-1-git-send-email-zajec5@gmail.com>
-Message-ID: <1410290229-7033-3-git-send-email-zajec5@gmail.com>
+Date: Wed, 10 Sep 2014 09:07:13 +0200
+Subject: [PATCH] b43: HT-PHY: Set MAC frequency to correct values
+Message-ID: <1410332833-4568-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,143 +9,104 @@ Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
+I misunderstood original Broadcom comment and used wrong values.
+
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
- drivers/net/wireless/b43/phy_ht.c     | 55 ++++++++++++++++++++++-------------
- drivers/net/wireless/b43/radio_2059.h | 12 ++++++++
- 2 files changed, 46 insertions(+), 21 deletions(-)
+Comment in original brcm80211 patch was like this:
++ * HTPHY Formula is 2^26/freq(MHz) e.g.
++ * For spuron2 - 126MHz -> 2^26/126 = 532610.0
++ *  - 532610 = 0x82082 => tsf_clk_frac_h = 0x8, tsf_clk_frac_l = 0x2082
++ * For spuron: 123MHz -> 2^26/123    = 545600.5
++ *  - 545601 = 0x85341 => tsf_clk_frac_h = 0x8, tsf_clk_frac_l = 0x5341
++ * For spur off: 120MHz -> 2^26/120    = 559240.5
++ *  - 559241 = 0x88889 => tsf_clk_frac_h = 0x8, tsf_clk_frac_l = 0x8889
 
+But it appears BCM4331 uses 168, 164 and 160 MHz freqs. MMIO dump proof:
+
+[spuravoid == 0]
+write32 0xf7c03660 <- 0x00000000
+write32 0xf7c03664 <- 0x11100014 ? this means spuravoid 0
+write32 0xf7c03660 <- 0x00000002
+write32 0xf7c03664 <- 0x03000a08 ? this means spuravoid 0
+(...)
+write16 0xf7c0062e <- 0x6666	B43_MMIO_TSF_CLK_FRAC_LOW
+write16 0xf7c00630 <- 0x0006	B43_MMIO_TSF_CLK_FRAC_HIGH
+
+[spuravoid == 1]
+write32 0xf7c03660 <- 0x00000000
+write32 0xf7c03664 <- 0x11500014 ? this means spuravoid 1 or 2
+write32 0xf7c03660 <- 0x00000002
+write32 0xf7c03664 <- 0x0f600a08 ? this means spuravoid 1
+ (...)
+write16 0xf7c0062e <- 0x3e70	B43_MMIO_TSF_CLK_FRAC_LOW
+write16 0xf7c00630 <- 0x0006	B43_MMIO_TSF_CLK_FRAC_HIGH
+---
+ drivers/net/wireless/b43/main.c   | 17 ++++++++++++++++-
+ drivers/net/wireless/b43/phy_ht.c | 16 +---------------
+ 2 files changed, 17 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 66ff718..165dbc3 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -2985,7 +2985,22 @@ void b43_mac_switch_freq(struct b43_wldev *dev, u8 spurmode)
+ {
+ 	u16 chip_id = dev->dev->chip_id;
+ 
+-	if (chip_id == BCMA_CHIP_ID_BCM43131 ||
++	if (chip_id == BCMA_CHIP_ID_BCM4331) {
++		switch (spurmode) {
++		case 2: /* 168 Mhz: 2^26/168 = 0x61862 */
++			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, 0x1862);
++			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x6);
++			break;
++		case 1: /* 164 Mhz: 2^26/164 = 0x63e70 */
++			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, 0x3e70);
++			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x6);
++			break;
++		default: /* 160 Mhz: 2^26/160 = 0x66666 */
++			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, 0x6666);
++			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x6);
++			break;
++		}
++	} else if (chip_id == BCMA_CHIP_ID_BCM43131 ||
+ 	    chip_id == BCMA_CHIP_ID_BCM43217 ||
+ 	    chip_id == BCMA_CHIP_ID_BCM43222 ||
+ 	    chip_id == BCMA_CHIP_ID_BCM43224 ||
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index ff31c20..d346053 100644
+index de52d48..a379602 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -81,10 +81,10 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
- 	udelay(50);
- 
- 	/* Calibration */
--	b43_radio_mask(dev, 0x2b, ~0x1);
--	b43_radio_mask(dev, 0x2e, ~0x4);
--	b43_radio_set(dev, 0x2e, 0x4);
--	b43_radio_set(dev, 0x2b, 0x1);
-+	b43_radio_mask(dev, R2059_RFPLL_MISC_EN, ~0x1);
-+	b43_radio_mask(dev, R2059_RFPLL_MISC_CAL_RESETN, ~0x4);
-+	b43_radio_set(dev, R2059_RFPLL_MISC_CAL_RESETN, 0x4);
-+	b43_radio_set(dev, R2059_RFPLL_MISC_EN, 0x1);
- 
- 	udelay(300);
- }
-@@ -92,20 +92,27 @@ static void b43_radio_2059_channel_setup(struct b43_wldev *dev,
- /* Calibrate resistors in LPF of PLL? */
- static void b43_radio_2059_rcal(struct b43_wldev *dev)
+@@ -728,7 +728,6 @@ static void b43_phy_ht_spur_avoid(struct b43_wldev *dev,
  {
--	b43_radio_set(dev, R2059_C3 | 0x4, 0x1);
-+	/* Enable */
-+	b43_radio_set(dev, R2059_C3 | R2059_RCAL_CONFIG, 0x1);
- 	usleep_range(10, 20);
-+
- 	b43_radio_set(dev, R2059_C3 | 0x0BF, 0x1);
- 	b43_radio_maskset(dev, R2059_C3 | 0x19B, 0x3, 0x2);
+ 	struct bcma_device *core = dev->dev->bdev;
+ 	int spuravoid = 0;
+-	u16 tmp;
  
--	b43_radio_set(dev, R2059_C3 | 0x4, 0x2);
-+	/* Start */
-+	b43_radio_set(dev, R2059_C3 | R2059_RCAL_CONFIG, 0x2);
- 	usleep_range(100, 200);
--	b43_radio_mask(dev, R2059_C3 | 0x4, ~0x2);
+ 	/* Check for 13 and 14 is just a guess, we don't have enough logs. */
+ 	if (new_channel->hw_value == 13 || new_channel->hw_value == 14)
+@@ -741,20 +740,7 @@ static void b43_phy_ht_spur_avoid(struct b43_wldev *dev,
+ 			  B43_BCMA_CLKCTLST_80211_PLL_ST |
+ 			  B43_BCMA_CLKCTLST_PHY_PLL_ST, false);
  
--	if (!b43_radio_wait_value(dev, R2059_C3 | 0x145, 1, 1, 100,
-+	/* Stop */
-+	b43_radio_mask(dev, R2059_C3 | R2059_RCAL_CONFIG, ~0x2);
-+
-+	if (!b43_radio_wait_value(dev, R2059_C3 | R2059_RCAL_STATUS, 1, 1, 100,
- 				  1000000))
- 		b43err(dev->wl, "Radio 0x2059 rcal timeout\n");
+-	/* Values has been taken from wlc_bmac_switch_macfreq comments */
+-	switch (spuravoid) {
+-	case 2: /* 126MHz */
+-		tmp = 0x2082;
+-		break;
+-	case 1: /* 123MHz */
+-		tmp = 0x5341;
+-		break;
+-	default: /* 120MHz */
+-		tmp = 0x8889;
+-	}
+-
+-	b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, tmp);
+-	b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x8);
++	b43_mac_switch_freq(dev, spuravoid);
  
--	b43_radio_mask(dev, R2059_C3 | 0x4, ~0x1);
-+	/* Disable */
-+	b43_radio_mask(dev, R2059_C3 | R2059_RCAL_CONFIG, ~0x1);
-+
- 	b43_radio_set(dev, 0xa, 0x60);
- }
+ 	/* TODO: reset PLL */
  
-@@ -118,19 +125,23 @@ static void b43_radio_2057_rccal(struct b43_wldev *dev)
- 	int i;
- 
- 	for (i = 0; i < 3; i++) {
--		b43_radio_write(dev, 0x17F, radio_values[i][0]);
--		b43_radio_write(dev, 0x13D, 0x6E);
--		b43_radio_write(dev, 0x13E, radio_values[i][1]);
--		b43_radio_write(dev, 0x13C, 0x55);
-+		b43_radio_write(dev, R2059_RCCAL_MASTER, radio_values[i][0]);
-+		b43_radio_write(dev, R2059_RCCAL_X1, 0x6E);
-+		b43_radio_write(dev, R2059_RCCAL_TRC0, radio_values[i][1]);
- 
--		if (!b43_radio_wait_value(dev, 0x140, 2, 2,
-+		/* Start */
-+		b43_radio_write(dev, R2059_RCCAL_START_R1_Q1_P1, 0x55);
-+
-+		/* Wait */
-+		if (!b43_radio_wait_value(dev, R2059_RCCAL_DONE_OSCCAP, 2, 2,
- 					  500, 5000000))
- 			b43err(dev->wl, "Radio 0x2059 rccal timeout\n");
- 
--		b43_radio_write(dev, 0x13C, 0x15);
-+		/* Stop */
-+		b43_radio_write(dev, R2059_RCCAL_START_R1_Q1_P1, 0x15);
- 	}
- 
--	b43_radio_mask(dev, 0x17F, ~0x1);
-+	b43_radio_mask(dev, R2059_RCCAL_MASTER, ~0x1);
- }
- 
- static void b43_radio_2059_init_pre(struct b43_wldev *dev)
-@@ -155,18 +166,20 @@ static void b43_radio_2059_init(struct b43_wldev *dev)
- 	for (i = 0; i < ARRAY_SIZE(routing); i++)
- 		b43_radio_set(dev, routing[i] | 0x146, 0x3);
- 
--	b43_radio_set(dev, 0x2e, 0x0078);
--	b43_radio_set(dev, 0xc0, 0x0080);
-+	/* Post init starts below */
-+
-+	b43_radio_set(dev, R2059_RFPLL_MISC_CAL_RESETN, 0x0078);
-+	b43_radio_set(dev, R2059_XTAL_CONFIG2, 0x0080);
- 	msleep(2);
--	b43_radio_mask(dev, 0x2e, ~0x0078);
--	b43_radio_mask(dev, 0xc0, ~0x0080);
-+	b43_radio_mask(dev, R2059_RFPLL_MISC_CAL_RESETN, ~0x0078);
-+	b43_radio_mask(dev, R2059_XTAL_CONFIG2, ~0x0080);
- 
- 	if (1) { /* FIXME */
- 		b43_radio_2059_rcal(dev);
- 		b43_radio_2057_rccal(dev);
- 	}
- 
--	b43_radio_mask(dev, 0x11, ~0x0008);
-+	b43_radio_mask(dev, R2059_RFPLL_MASTER, ~0x0008);
- }
- 
- /**************************************************
-diff --git a/drivers/net/wireless/b43/radio_2059.h b/drivers/net/wireless/b43/radio_2059.h
-index 40a82d7..9d828d5 100644
---- a/drivers/net/wireless/b43/radio_2059.h
-+++ b/drivers/net/wireless/b43/radio_2059.h
-@@ -10,6 +10,18 @@
- #define R2059_C3			0x800
- #define R2059_ALL			0xC00
- 
-+#define R2059_RCAL_CONFIG			0x004
-+#define R2059_RFPLL_MASTER			0x011
-+#define R2059_RFPLL_MISC_EN			0x02b
-+#define R2059_RFPLL_MISC_CAL_RESETN		0x02e
-+#define R2059_XTAL_CONFIG2			0x0c0
-+#define R2059_RCCAL_START_R1_Q1_P1		0x13c
-+#define R2059_RCCAL_X1				0x13d
-+#define R2059_RCCAL_TRC0			0x13e
-+#define R2059_RCCAL_DONE_OSCCAP			0x140
-+#define R2059_RCAL_STATUS			0x145
-+#define R2059_RCCAL_MASTER			0x17f
-+
- /* Values for various registers uploaded on channel switching */
- struct b43_phy_ht_channeltab_e_radio2059 {
- 	/* The channel frequency in MHz */
 -- 
 1.8.4.5
