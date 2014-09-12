@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Wed, 10 Sep 2014 09:07:13 +0200
-Subject: [PATCH] b43: HT-PHY: Set MAC frequency to correct values
-Message-ID: <1410332833-4568-1-git-send-email-zajec5@gmail.com>
+Date: Fri, 12 Sep 2014 10:24:10 +0200
+Subject: [PATCH 1/2] b43: HT-PHY: Implement band switching
+Message-ID: <1410510251-5645-1-git-send-email-zajec5@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,104 +9,101 @@ Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
 Cc: b43-dev@lists.infradead.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-I misunderstood original Broadcom comment and used wrong values.
+It works pretty much the same way as in N-PHY.
 
 Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
 ---
-Comment in original brcm80211 patch was like this:
-+ * HTPHY Formula is 2^26/freq(MHz) e.g.
-+ * For spuron2 - 126MHz -> 2^26/126 = 532610.0
-+ *  - 532610 = 0x82082 => tsf_clk_frac_h = 0x8, tsf_clk_frac_l = 0x2082
-+ * For spuron: 123MHz -> 2^26/123    = 545600.5
-+ *  - 545601 = 0x85341 => tsf_clk_frac_h = 0x8, tsf_clk_frac_l = 0x5341
-+ * For spur off: 120MHz -> 2^26/120    = 559240.5
-+ *  - 559241 = 0x88889 => tsf_clk_frac_h = 0x8, tsf_clk_frac_l = 0x8889
+ drivers/net/wireless/b43/b43.h    |  5 +++++
+ drivers/net/wireless/b43/phy_ht.c | 38 ++++++++++++++++++++++++++++++++------
+ drivers/net/wireless/b43/phy_ht.h |  3 +++
+ 3 files changed, 40 insertions(+), 6 deletions(-)
 
-But it appears BCM4331 uses 168, 164 and 160 MHz freqs. MMIO dump proof:
-
-[spuravoid == 0]
-write32 0xf7c03660 <- 0x00000000
-write32 0xf7c03664 <- 0x11100014 ? this means spuravoid 0
-write32 0xf7c03660 <- 0x00000002
-write32 0xf7c03664 <- 0x03000a08 ? this means spuravoid 0
-(...)
-write16 0xf7c0062e <- 0x6666	B43_MMIO_TSF_CLK_FRAC_LOW
-write16 0xf7c00630 <- 0x0006	B43_MMIO_TSF_CLK_FRAC_HIGH
-
-[spuravoid == 1]
-write32 0xf7c03660 <- 0x00000000
-write32 0xf7c03664 <- 0x11500014 ? this means spuravoid 1 or 2
-write32 0xf7c03660 <- 0x00000002
-write32 0xf7c03664 <- 0x0f600a08 ? this means spuravoid 1
- (...)
-write16 0xf7c0062e <- 0x3e70	B43_MMIO_TSF_CLK_FRAC_LOW
-write16 0xf7c00630 <- 0x0006	B43_MMIO_TSF_CLK_FRAC_HIGH
----
- drivers/net/wireless/b43/main.c   | 17 ++++++++++++++++-
- drivers/net/wireless/b43/phy_ht.c | 16 +---------------
- 2 files changed, 17 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 66ff718..165dbc3 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -2985,7 +2985,22 @@ void b43_mac_switch_freq(struct b43_wldev *dev, u8 spurmode)
- {
- 	u16 chip_id = dev->dev->chip_id;
+diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
+index 95a9433..a980595 100644
+--- a/drivers/net/wireless/b43/b43.h
++++ b/drivers/net/wireless/b43/b43.h
+@@ -476,6 +476,11 @@ enum {
+ #define B43_MACCMD_CCA			0x00000008	/* Clear channel assessment */
+ #define B43_MACCMD_BGNOISE		0x00000010	/* Background noise */
  
--	if (chip_id == BCMA_CHIP_ID_BCM43131 ||
-+	if (chip_id == BCMA_CHIP_ID_BCM4331) {
-+		switch (spurmode) {
-+		case 2: /* 168 Mhz: 2^26/168 = 0x61862 */
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, 0x1862);
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x6);
-+			break;
-+		case 1: /* 164 Mhz: 2^26/164 = 0x63e70 */
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, 0x3e70);
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x6);
-+			break;
-+		default: /* 160 Mhz: 2^26/160 = 0x66666 */
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, 0x6666);
-+			b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x6);
-+			break;
-+		}
-+	} else if (chip_id == BCMA_CHIP_ID_BCM43131 ||
- 	    chip_id == BCMA_CHIP_ID_BCM43217 ||
- 	    chip_id == BCMA_CHIP_ID_BCM43222 ||
- 	    chip_id == BCMA_CHIP_ID_BCM43224 ||
++/* B43_MMIO_PSM_PHY_HDR bits */
++#define B43_PSM_HDR_MAC_PHY_RESET	0x00000001
++#define B43_PSM_HDR_MAC_PHY_CLOCK_EN	0x00000002
++#define B43_PSM_HDR_MAC_PHY_FORCE_CLK	0x00000004
++
+ /* See BCMA_CLKCTLST_EXTRESREQ and BCMA_CLKCTLST_EXTRESST */
+ #define B43_BCMA_CLKCTLST_80211_PLL_REQ	0x00000100
+ #define B43_BCMA_CLKCTLST_PHY_PLL_REQ	0x00000200
 diff --git a/drivers/net/wireless/b43/phy_ht.c b/drivers/net/wireless/b43/phy_ht.c
-index de52d48..a379602 100644
+index a379602..6a0140a 100644
 --- a/drivers/net/wireless/b43/phy_ht.c
 +++ b/drivers/net/wireless/b43/phy_ht.c
-@@ -728,7 +728,6 @@ static void b43_phy_ht_spur_avoid(struct b43_wldev *dev,
+@@ -321,6 +321,26 @@ static void b43_phy_ht_bphy_init(struct b43_wldev *dev)
+ 	b43_phy_write(dev, B43_PHY_N_BMODE(0x38), 0x668);
+ }
+ 
++static void b43_phy_ht_bphy_reset(struct b43_wldev *dev, bool reset)
++{
++	u16 tmp;
++
++	tmp = b43_read16(dev, B43_MMIO_PSM_PHY_HDR);
++	b43_write16(dev, B43_MMIO_PSM_PHY_HDR,
++		    tmp | B43_PSM_HDR_MAC_PHY_FORCE_CLK);
++
++	/* Put BPHY in or take it out of the reset */
++	if (reset)
++		b43_phy_set(dev, B43_PHY_B_BBCFG,
++			    B43_PHY_B_BBCFG_RSTCCA | B43_PHY_B_BBCFG_RSTRX);
++	else
++		b43_phy_mask(dev, B43_PHY_B_BBCFG,
++			     (u16)~(B43_PHY_B_BBCFG_RSTCCA |
++				    B43_PHY_B_BBCFG_RSTRX));
++
++	b43_write16(dev, B43_MMIO_PSM_PHY_HDR, tmp);
++}
++
+ /**************************************************
+  * Samples
+  **************************************************/
+@@ -757,13 +777,19 @@ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+ 				const struct b43_phy_ht_channeltab_e_phy *e,
+ 				struct ieee80211_channel *new_channel)
  {
- 	struct bcma_device *core = dev->dev->bdev;
- 	int spuravoid = 0;
--	u16 tmp;
+-	bool old_band_5ghz;
++	if (new_channel->band == IEEE80211_BAND_5GHZ) {
++		/* Switch to 2 GHz for a moment to access B-PHY regs */
++		b43_phy_mask(dev, B43_PHY_HT_BANDCTL, ~B43_PHY_HT_BANDCTL_5GHZ);
++
++		b43_phy_ht_bphy_reset(dev, true);
++
++		/* Switch to 5 GHz */
++		b43_phy_set(dev, B43_PHY_HT_BANDCTL, B43_PHY_HT_BANDCTL_5GHZ);
++	} else {
++		/* Switch to 2 GHz */
++		b43_phy_mask(dev, B43_PHY_HT_BANDCTL, ~B43_PHY_HT_BANDCTL_5GHZ);
  
- 	/* Check for 13 and 14 is just a guess, we don't have enough logs. */
- 	if (new_channel->hw_value == 13 || new_channel->hw_value == 14)
-@@ -741,20 +740,7 @@ static void b43_phy_ht_spur_avoid(struct b43_wldev *dev,
- 			  B43_BCMA_CLKCTLST_80211_PLL_ST |
- 			  B43_BCMA_CLKCTLST_PHY_PLL_ST, false);
+-	old_band_5ghz = b43_phy_read(dev, B43_PHY_HT_BANDCTL) & 0; /* FIXME */
+-	if (new_channel->band == IEEE80211_BAND_5GHZ && !old_band_5ghz) {
+-		/* TODO */
+-	} else if (new_channel->band == IEEE80211_BAND_2GHZ && old_band_5ghz) {
+-		/* TODO */
++		b43_phy_ht_bphy_reset(dev, false);
+ 	}
  
--	/* Values has been taken from wlc_bmac_switch_macfreq comments */
--	switch (spuravoid) {
--	case 2: /* 126MHz */
--		tmp = 0x2082;
--		break;
--	case 1: /* 123MHz */
--		tmp = 0x5341;
--		break;
--	default: /* 120MHz */
--		tmp = 0x8889;
--	}
--
--	b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_LOW, tmp);
--	b43_write16(dev, B43_MMIO_TSF_CLK_FRAC_HIGH, 0x8);
-+	b43_mac_switch_freq(dev, spuravoid);
+ 	b43_phy_write(dev, B43_PHY_HT_BW1, e->bw1);
+diff --git a/drivers/net/wireless/b43/phy_ht.h b/drivers/net/wireless/b43/phy_ht.h
+index 67b208e..c086f56 100644
+--- a/drivers/net/wireless/b43/phy_ht.h
++++ b/drivers/net/wireless/b43/phy_ht.h
+@@ -106,6 +106,9 @@
+ #define  B43_PHY_HT_TXPCTL_TARG_PWR2_C3_SHIFT	0
+ #define B43_PHY_HT_TX_PCTL_STATUS_C3		B43_PHY_EXTG(0x169)
  
- 	/* TODO: reset PLL */
++#define B43_PHY_B_BBCFG				B43_PHY_N_BMODE(0x001)
++#define  B43_PHY_B_BBCFG_RSTCCA			0x4000 /* Reset CCA */
++#define  B43_PHY_B_BBCFG_RSTRX			0x8000 /* Reset RX */
+ #define B43_PHY_HT_TEST				B43_PHY_N_BMODE(0x00A)
+ 
  
 -- 
 1.8.4.5
