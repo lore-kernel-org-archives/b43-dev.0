@@ -1,167 +1,64 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 1 Dec 2014 22:10:23 +0100
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Date: Tue, 2 Dec 2014 23:01:29 +0300
 Subject: [PATCH] SSB / B44: fix WOL for BCM4401
-In-Reply-To: <1417466798-15735-1-git-send-email-Andrej.Skvortzov@gmail.com>
+In-Reply-To: <20141201221023.79ffb40d@wiggum>
 References: <20141201111125.GA11974@localhost.localdomain>
  <1417466798-15735-1-git-send-email-Andrej.Skvortzov@gmail.com>
-Message-ID: <20141201221023.79ffb40d@wiggum>
+ <20141201221023.79ffb40d@wiggum>
+Message-ID: <20141202200129.GA4580@crion89>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Gary Zambrano <zambrano@broadcom.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>
+To: Michael =?utf-8?B?QsO8c2No?= <m@bues.ch>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Gary.Zambrano@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>
 
-On Mon,  1 Dec 2014 23:46:38 +0300
-Andrey Skvortsov <andrej.skvortzov@gmail.com> wrote:
-
-> Wake On Lan was not working on laptop DELL Vostro 1500.
-> If WOL was turned on, BCM4401 was powered up in suspend mode. LEDs blinked.
-> But the laptop could not be woken up with the Magic Packet. The reason for
-> that was that PCIE was not enabled as a system wakeup source and
-> therefore the host PCI bridge was not powered up in suspend mode.
-> PCIE was not enabled in suspend by PM because no child devices were
-> registered as wakeup source during suspend process.
-> On laptop BCM4401 is connected through the SSB bus, that is connected to the
-> PCI-Express bus. SSB and B44 did not use standard PM wakeup functions
-> and did not forward wakeup settings to their parents.
-> To fix that B44 driver enables PM wakeup and registers new wakeup source
-> using device_set_wakeup_enable(). Wakeup is automatically reported to the parent SSB
-> bus via power.wakeup_path. SSB bus enables wakeup for the parent PCI bridge, if there is any
-> child devices with enabled wakeup functionality. All other steps are
-> done by PM core code.
-
-Thanks, this looks good.
-I assume you tested this (I currently don't have a device to test this).
-
-Larry, Rafa?, any other b43 user:
-Can you please test whether this doesn't cause regressions for suspend/resume on b43?
-(Patch is attached as reference)
-
-
-> Signed-off-by: Andrey Skvortsov <Andrej.Skvortzov@gmail.com>
-> ---
->  drivers/net/ethernet/broadcom/b44.c |    2 ++
->  drivers/ssb/pcihost_wrapper.c       |   33 ++++++++++++++++++++++-----------
->  2 files changed, 24 insertions(+), 11 deletions(-)
+On Mon, Dec 01, 2014 at 10:10:23PM +0100, Michael B?sch wrote:
+> On Mon,  1 Dec 2014 23:46:38 +0300
+> Andrey Skvortsov <andrej.skvortzov@gmail.com> wrote:
 > 
-> diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
-> index 416620f..ffeaf47 100644
-> --- a/drivers/net/ethernet/broadcom/b44.c
-> +++ b/drivers/net/ethernet/broadcom/b44.c
-> @@ -2104,6 +2104,7 @@ static int b44_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
->  		bp->flags &= ~B44_FLAG_WOL_ENABLE;
->  	spin_unlock_irq(&bp->lock);
->  
-> +	device_set_wakeup_enable(bp->sdev->dev, wol->wolopts & WAKE_MAGIC);
->  	return 0;
->  }
->  
-> @@ -2452,6 +2453,7 @@ static int b44_init_one(struct ssb_device *sdev,
->  		}
->  	}
->  
-> +	device_set_wakeup_capable(sdev->dev, true);
->  	netdev_info(dev, "%s %pM\n", DRV_DESCRIPTION, dev->dev_addr);
->  
->  	return 0;
-> diff --git a/drivers/ssb/pcihost_wrapper.c b/drivers/ssb/pcihost_wrapper.c
-> index 69161bb..410215c 100644
-> --- a/drivers/ssb/pcihost_wrapper.c
-> +++ b/drivers/ssb/pcihost_wrapper.c
-> @@ -11,15 +11,17 @@
->   * Licensed under the GNU/GPL. See COPYING for details.
->   */
->  
-> +#include <linux/pm.h>
->  #include <linux/pci.h>
->  #include <linux/export.h>
->  #include <linux/slab.h>
->  #include <linux/ssb/ssb.h>
->  
->  
-> -#ifdef CONFIG_PM
-> -static int ssb_pcihost_suspend(struct pci_dev *dev, pm_message_t state)
-> +#ifdef CONFIG_PM_SLEEP
-> +static int ssb_pcihost_suspend(struct device *d)
->  {
-> +	struct pci_dev *dev = to_pci_dev(d);
->  	struct ssb_bus *ssb = pci_get_drvdata(dev);
->  	int err;
->  
-> @@ -28,17 +30,23 @@ static int ssb_pcihost_suspend(struct pci_dev *dev, pm_message_t state)
->  		return err;
->  	pci_save_state(dev);
->  	pci_disable_device(dev);
-> -	pci_set_power_state(dev, pci_choose_state(dev, state));
-> +
-> +	/* if there is a wakeup enabled child device on ssb bus,
-> +	   enable pci wakeup posibility. */
-> +	device_set_wakeup_enable(d, d->power.wakeup_path);
-> +
-> +	pci_prepare_to_sleep(dev);
->  
->  	return 0;
->  }
->  
-> -static int ssb_pcihost_resume(struct pci_dev *dev)
-> +static int ssb_pcihost_resume(struct device *d)
->  {
-> +	struct pci_dev *dev = to_pci_dev(d);
->  	struct ssb_bus *ssb = pci_get_drvdata(dev);
->  	int err;
->  
-> -	pci_set_power_state(dev, PCI_D0);
-> +	pci_back_from_sleep(dev);
->  	err = pci_enable_device(dev);
->  	if (err)
->  		return err;
-> @@ -49,10 +57,12 @@ static int ssb_pcihost_resume(struct pci_dev *dev)
->  
->  	return 0;
->  }
-> -#else /* CONFIG_PM */
-> -# define ssb_pcihost_suspend	NULL
-> -# define ssb_pcihost_resume	NULL
-> -#endif /* CONFIG_PM */
-> +
-> +static const struct dev_pm_ops ssb_pcihost_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(ssb_pcihost_suspend, ssb_pcihost_resume)
-> +};
-> +
-> +#endif /* CONFIG_PM_SLEEP */
->  
->  static int ssb_pcihost_probe(struct pci_dev *dev,
->  			     const struct pci_device_id *id)
-> @@ -115,8 +125,9 @@ int ssb_pcihost_register(struct pci_driver *driver)
->  {
->  	driver->probe = ssb_pcihost_probe;
->  	driver->remove = ssb_pcihost_remove;
-> -	driver->suspend = ssb_pcihost_suspend;
-> -	driver->resume = ssb_pcihost_resume;
-> +#ifdef CONFIG_PM_SLEEP
-> +	driver->driver.pm = &ssb_pcihost_pm_ops;
-> +#endif
->  
->  	return pci_register_driver(driver);
->  }
+> > Wake On Lan was not working on laptop DELL Vostro 1500.
+> > If WOL was turned on, BCM4401 was powered up in suspend mode. LEDs blinked.
+> > But the laptop could not be woken up with the Magic Packet. The reason for
+> > that was that PCIE was not enabled as a system wakeup source and
+> > therefore the host PCI bridge was not powered up in suspend mode.
+> > PCIE was not enabled in suspend by PM because no child devices were
+> > registered as wakeup source during suspend process.
+> > On laptop BCM4401 is connected through the SSB bus, that is connected to the
+> > PCI-Express bus. SSB and B44 did not use standard PM wakeup functions
+> > and did not forward wakeup settings to their parents.
+> > To fix that B44 driver enables PM wakeup and registers new wakeup source
+> > using device_set_wakeup_enable(). Wakeup is automatically reported to the parent SSB
+> > bus via power.wakeup_path. SSB bus enables wakeup for the parent PCI bridge, if there is any
+> > child devices with enabled wakeup functionality. All other steps are
+> > done by PM core code.
+> 
+> Thanks, this looks good.
+> I assume you tested this (I currently don't have a device to test this).
 
+Sure, I've tested it. WOL from suspend is working and after resume from hibernate Ethernet is working too.
 
+> Larry, Rafa?, any other b43 user:
+> Can you please test whether this doesn't cause regressions for suspend/resume on b43?
+> (Patch is attached as reference)
+> 
+> 
+> > Signed-off-by: Andrey Skvortsov <Andrej.Skvortzov@gmail.com>
+> > ---
+> >  drivers/net/ethernet/broadcom/b44.c |    2 ++
+> >  drivers/ssb/pcihost_wrapper.c       |   33 ++++++++++++++++++++++-----------
+> >  2 files changed, 24 insertions(+), 11 deletions(-)
 
 
 -- 
-Michael
+Best regards,
+Andrey Skvortsov
+
+PGP Key ID: 0x57A3AEAD
 -------------- next part --------------
 A non-text attachment was scrubbed...
-Name: b44_wol.patch
-Type: text/x-patch
-Size: 4228 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20141201/af183d99/attachment.bin>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
+Name: signature.asc
 Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20141201/af183d99/attachment.sig>
+Size: 836 bytes
+Desc: Digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20141202/1806ce02/attachment.sig>
