@@ -1,31 +1,65 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 14 Dec 2014 23:05:36 +0100
-Subject: B43 much slower that Broadcom STA's on a BCM4311
-In-Reply-To: <CAK6Z60cG7kRZPhz1wMZ2Jeqozf+JEuP8DX8Rv4ZMcNthpPhsoA@mail.gmail.com>
-References: <CAK6Z60cG7kRZPhz1wMZ2Jeqozf+JEuP8DX8Rv4ZMcNthpPhsoA@mail.gmail.com>
-Message-ID: <CACna6rxXO-q_TJ5eYugPr3BWH5DhfOPfWr-k9hUTjpp145ZL+w@mail.gmail.com>
+From: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+Date: Thu,  1 Jan 2015 16:46:10 +0100
+Subject: [PATCH] net: wireless: b43legacy: radio.c:  Remove unused function
+Message-ID: <1420127170-28421-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Stefano Brivio <stefano.brivio@polimi.it>
+Cc: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Kalle Valo <kvalo@adurom.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 14 December 2014 at 22:32, Nico Schl?mer <nico.schloemer@gmail.com> wrote:
-> I recently installed Ubuntu 14.10 on my Macbook 8,1 which features a
-> BMC4311 wifi chip.
-> I tried Broadcom's own STA driver which works alright, but produces
-> kernel failures all the time (I only see those in the logs, no actual
-> crashes). Comparing to the B43 driver, which I'm running right now,
-> the STA driver achieves MUCH greater connection speeds.
-> Is this a know phenomenon? What can I do to find out if this is a
-> configuration error on my side?
+Remove the function b43legacy_radio_set_tx_iq() that is not used anywhere.
 
-Well, we may be missing some adjustments or initialization bits. Hard to track.
+This was partially found by using a static code analysis program called cppcheck.
 
-Did you measure speed with something reliable like an iperf? What
-results did you get for both drivers?
+Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+---
+ drivers/net/wireless/b43legacy/radio.c |   19 -------------------
+ drivers/net/wireless/b43legacy/radio.h |    1 -
+ 2 files changed, 20 deletions(-)
 
-Also share your "dmesg | grep b43"
-
+diff --git a/drivers/net/wireless/b43legacy/radio.c b/drivers/net/wireless/b43legacy/radio.c
+index 8961776..9501420 100644
+--- a/drivers/net/wireless/b43legacy/radio.c
++++ b/drivers/net/wireless/b43legacy/radio.c
+@@ -1743,25 +1743,6 @@ u16 freq_r3A_value(u16 frequency)
+ 	return value;
+ }
+ 
+-void b43legacy_radio_set_tx_iq(struct b43legacy_wldev *dev)
+-{
+-	static const u8 data_high[5] = { 0x00, 0x40, 0x80, 0x90, 0xD0 };
+-	static const u8 data_low[5]  = { 0x00, 0x01, 0x05, 0x06, 0x0A };
+-	u16 tmp = b43legacy_radio_read16(dev, 0x001E);
+-	int i;
+-	int j;
+-
+-	for (i = 0; i < 5; i++) {
+-		for (j = 0; j < 5; j++) {
+-			if (tmp == (data_high[i] | data_low[j])) {
+-				b43legacy_phy_write(dev, 0x0069, (i - j) << 8 |
+-						    0x00C0);
+-				return;
+-			}
+-		}
+-	}
+-}
+-
+ int b43legacy_radio_selectchannel(struct b43legacy_wldev *dev,
+ 				  u8 channel,
+ 				  int synthetic_pu_workaround)
+diff --git a/drivers/net/wireless/b43legacy/radio.h b/drivers/net/wireless/b43legacy/radio.h
+index bccb3d7..dd2976d 100644
+--- a/drivers/net/wireless/b43legacy/radio.h
++++ b/drivers/net/wireless/b43legacy/radio.h
+@@ -92,7 +92,6 @@ void b43legacy_nrssi_hw_write(struct b43legacy_wldev *dev, u16 offset, s16 val);
+ void b43legacy_nrssi_hw_update(struct b43legacy_wldev *dev, u16 val);
+ void b43legacy_nrssi_mem_update(struct b43legacy_wldev *dev);
+ 
+-void b43legacy_radio_set_tx_iq(struct b43legacy_wldev *dev);
+ u16 b43legacy_radio_calibrationvalue(struct b43legacy_wldev *dev);
+ 
+ #endif /* B43legacy_RADIO_H_ */
 -- 
-Rafa?
+1.7.10.4
