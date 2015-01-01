@@ -1,7 +1,7 @@
 From: Hong Xu <hong@topbug.net>
-Date: Thu, 01 Jan 2015 13:41:03 -0800
+Date: Thu, 01 Jan 2015 14:04:41 -0800
 Subject: Wireless link unstable (BCM4331)
-Message-ID: <87wq56tc0g.fsf@topbug.net>
+Message-ID: <87k316f98m.fsf@home.hong.me>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -60,17 +60,18 @@ dmesg output is attached.
 Thanks!
 Hong
 
+
 -------------- next part --------------
 A non-text attachment was scrubbed...
 Name: b43.dmesg
 Type: application/octet-stream
 Size: 122946 bytes
 Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20150101/35b74943/attachment-0001.obj>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20150101/a1b577d5/attachment-0001.obj>
 -------------- next part --------------
 A non-text attachment was scrubbed...
 Name: signature.asc
 Type: application/pgp-signature
-Size: 472 bytes
+Size: 818 bytes
 Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20150101/35b74943/attachment-0001.sig>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20150101/a1b577d5/attachment-0001.sig>
