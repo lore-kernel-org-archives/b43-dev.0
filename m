@@ -1,58 +1,64 @@
-From: nick <xerofoify@gmail.com>
-Date: Fri, 02 Jan 2015 12:13:33 -0500
-Subject: [PATCH] drivers:net:wireless: Add proper locking for the function, 
- b43_op_beacon_set_tim in main.c
-In-Reply-To: <20150102102727.3918a684@wiggum>
-References: <1420184041-6788-1-git-send-email-xerofoify@gmail.com>
- <20150102102727.3918a684@wiggum>
-Message-ID: <54A6D1BD.40805@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 2 Jan 2015 22:34:47 +0100
+Subject: [PATCH] net: wireless: b43legacy: radio.c: Remove unused function
+In-Reply-To: <CAKXHbyO70WdWekSYCY9spMbX2+_kdKTp3JoreDKpCdUBzFwYqw@mail.gmail.com>
+References: <1420127170-28421-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
+ <CACna6rznUcqGTK0t1k=kjn0NVLycq865780ozyB+VYu78d_BSg@mail.gmail.com>
+ <CACna6rxbGRdw7XSYvHAJGxJvMVwjVbAL4ynBM3m9rNggh7gCVQ@mail.gmail.com>
+ <CA+icZUWOXMEyobZkudW9BEfkaWFTXQL9XF26g7oJMCzt=4==6g@mail.gmail.com>
+ <CAKXHbyO70WdWekSYCY9spMbX2+_kdKTp3JoreDKpCdUBzFwYqw@mail.gmail.com>
+Message-ID: <CACna6rxTYUWvxvu0rFydWxkjbYdHfhV=o+9A+ViCpbV-LFx7fw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?windows-1252?Q?Michael_B=FCsch?= <m@bues.ch>
-Cc: stefano.brivio-hl5o88x/ua9eoWH0uzbU5w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+To: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Stefano Brivio <stefano.brivio@polimi.it>, Network Development <netdev@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-Michael,
-My fault I wasn't aware we were in atomic context, however if we are then why
-not just remove the comment. If you want I can send in a patch explaining why
-this comment is no longer needed.
-Regards,
-Nick
+On 2 January 2015 at 18:46, Rickard Strandqvist
+<rickard_strandqvist@spectrumdigital.se> wrote:
+> 2015-01-02 13:14 GMT+01:00 Sedat Dilek <sedat.dilek@gmail.com>:
+>>
+>> On Fri, Jan 2, 2015 at 1:06 PM, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>> > On 2 January 2015 at 13:05, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>> >> On 1 January 2015 at 16:46, Rickard Strandqvist
+>> >> <rickard_strandqvist@spectrumdigital.se> wrote:
+>> >>> Remove the function b43legacy_radio_set_tx_iq() that is not used
+>> >>> anywhere.
+>> >>>
+>> >>> This was partially found by using a static code analysis program
+>> >>> called cppcheck.
+>> >>
+>> >> It seems to be for A-PHY based hardware (with 0x2060 radio id) which
+>> >> is not handled by b43legacy. Should be safe to drop this code (we
+>> >> won't likely need it).
+>> >>
+>> >> Ack
+>> >
+>> > For future, we prefix patches with just a driver name. So this could
+>> > be simply called
+>> > b43legacy: radio.c: Remove unused function
+>> >
+>>
+>> Alternatively...
+>>
+>> "b43legacy: Remove unused function in radio.c"
+>>
+>> BTW, as Arnd Bergmann pointed out [1] how did you test with cppcheck
+>> to get such stuff?
+>>
+>> - Sedat -
+>>
+>> [1] https://lkml.org/lkml/2015/1/2/51
+>
+>
+>
+> Hi Rafal and Sedat
+>
+> Rafal do you mean I should remove the entire b43legacy part?
 
-On 2015-01-02 04:27 AM, Michael B?sch wrote:
-> On Fri,  2 Jan 2015 02:34:01 -0500
-> Nicholas Krause <xerofoify@gmail.com> wrote:
-> 
->> This adds proper locking for the function, b43_op_beacon_set_tim in main.c by using the mutex lock
->> in the structure pointer wl, as embedded into this pointer as a mutex in order to protect against
->> multiple access to the pointer wl when updating the templates for this pointer in the function,
->> b43_update_templates internally in the function, b43_op_beacon_set_tim.
->>
->> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
->> ---
->>  drivers/net/wireless/b43/main.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
->> index 47731cb..d568fc8 100644
->> --- a/drivers/net/wireless/b43/main.c
->> +++ b/drivers/net/wireless/b43/main.c
->> @@ -5094,8 +5094,9 @@ static int b43_op_beacon_set_tim(struct ieee80211_hw *hw,
->>  {
->>  	struct b43_wl *wl = hw_to_b43_wl(hw);
->>  
->> -	/* FIXME: add locking */
->> +	mutex_lock(&wl->mutex);
->>  	b43_update_templates(wl);
->> +	mutex_unlock(&wl->mutex);
->>  
->>  	return 0;
->>  }
-> 
-> Thanks for the patch.
-> 
-> However, this does not work. We are in atomic context here.
-> Please see the b43-dev mailing list archives for a recent thread about that.
-> I'm also pretty sure that this is safe without lock, due to the higher level locks in mac80211.
-> 
+1) I gave you Ack for the changes
+2) You could drop "net: wireless: " or better use something Sedat proposed
+
+-- 
+Rafa?
