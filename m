@@ -1,7 +1,7 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Sat, 3 Jan 2015 15:51:30 +0100
+From: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+Date: Sat, 3 Jan 2015 16:41:44 +0100
 Subject: [PATCH] net: wireless: b43legacy: radio.c: Remove unused function
-In-Reply-To: <CAKXHbyPm+2gy3E_FAVY82ggvJhWe-E_xtrhgeAPxUyRS-FutaA@mail.gmail.com>
+In-Reply-To: <CA+icZUUfFr2PQjp4ppMNj5UQE3U7-ArmO1LSDoZZf5c1Y85OMw@mail.gmail.com>
 References: <1420127170-28421-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
  <CACna6rznUcqGTK0t1k=kjn0NVLycq865780ozyB+VYu78d_BSg@mail.gmail.com>
  <CACna6rxbGRdw7XSYvHAJGxJvMVwjVbAL4ynBM3m9rNggh7gCVQ@mail.gmail.com>
@@ -11,68 +11,82 @@ References: <1420127170-28421-1-git-send-email-rickard_strandqvist@spectrumdigit
  <CAKXHbyMqTk=k7eieBNtAD+n6+4w3weL82twHBo-o8ebm_3+wvg@mail.gmail.com>
  <CA+icZUUJfemKC85=p7Huyw7xwfUdXBhePseJCnUKLx9edgpT4w@mail.gmail.com>
  <CAKXHbyPm+2gy3E_FAVY82ggvJhWe-E_xtrhgeAPxUyRS-FutaA@mail.gmail.com>
-Message-ID: <CA+icZUUfFr2PQjp4ppMNj5UQE3U7-ArmO1LSDoZZf5c1Y85OMw@mail.gmail.com>
+ <CA+icZUUfFr2PQjp4ppMNj5UQE3U7-ArmO1LSDoZZf5c1Y85OMw@mail.gmail.com>
+Message-ID: <CAKXHbyN2Vud5skK38KHFNo+FEG9at4SAQh8X5QYYK7qD3-34YQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+To: Sedat Dilek <sedat.dilek@gmail.com>
 Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Stefano Brivio <stefano.brivio@polimi.it>, Network Development <netdev@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-On Sat, Jan 3, 2015 at 3:45 PM, Rickard Strandqvist
-<rickard_strandqvist@spectrumdigital.se> wrote:
-[ ... ]
->> > I just got one more complaining about my subject-line in "net: wireless: "
->> > I use some sed call for this, so it's easy to fix. I will now remove that
->> > part hereinafter.
->> > I check in Documentation/ but did not find any clear info for this.
->> >
+2015-01-03 15:51 GMT+01:00 Sedat Dilek <sedat.dilek@gmail.com>:
+> On Sat, Jan 3, 2015 at 3:45 PM, Rickard Strandqvist
+> <rickard_strandqvist@spectrumdigital.se> wrote:
+> [ ... ]
+>>> > I just got one more complaining about my subject-line in "net: wireless: "
+>>> > I use some sed call for this, so it's easy to fix. I will now remove that
+>>> > part hereinafter.
+>>> > I check in Documentation/ but did not find any clear info for this.
+>>> >
+>>>
+>>> The easiest way to make (sub)maintainers happy is to check the git-log...
+>>>
+>>> $ git log --oneline /path/to/file
+>>>
+>>> ...and look how other contributors labeled their patches.
+>>>
+>>> [1] is the 1st address to look at on how to submit patches to Linux-kernel.
+>>> To promote the good work of Greg, see [2,3] for a video and tutorial
+>>> on that topic, too.
+>>>
+>>> - Sedat -
+>>>
+>>> [1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/SubmittingPatches
+>>> [2] https://www.youtube.com/watch?v=XXix80GCvpo
+>>> [3] https://github.com/gregkh/kernel-tutorial
 >>
->> The easiest way to make (sub)maintainers happy is to check the git-log...
 >>
->> $ git log --oneline /path/to/file
 >>
->> ...and look how other contributors labeled their patches.
+>> Hi Sedat
 >>
->> [1] is the 1st address to look at on how to submit patches to Linux-kernel.
->> To promote the good work of Greg, see [2,3] for a video and tutorial
->> on that topic, too.
+>> Thanks for the tip :)
 >>
->> - Sedat -
+>> To bad with the audio in the video thow. Have read SubmittingPatches before.
 >>
->> [1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/SubmittingPatches
->> [2] https://www.youtube.com/watch?v=XXix80GCvpo
->> [3] https://github.com/gregkh/kernel-tutorial
 >
+> AFAICS there is another (earlier) video "Write and Submit your first
+> Linux kernel Patch" from FOSDEM 2010.
 >
+> For German readers I can recommend the book from [2] (no I get no
+> money for promotion).
 >
-> Hi Sedat
+> - Sedat -
 >
-> Thanks for the tip :)
+> [1] https://www.youtube.com/watch?v=LLBrBBImJt4
+> [2] http://www.opensourcepress.de/de/produkte/Git/33227/978-3-95539-119-5-
 >
-> To bad with the audio in the video thow. Have read SubmittingPatches before.
->
+>>
+>> But I have now added a line in my script that does a:
+>>
+>> git log -10 --oneline
+>>
+>> So I can at least see the other subjekt lines, and make adjustments if
+>> necessary.
+>>
+>>
+>>
+>> Kind regards
+>> Rickard Strandqvist
 
-AFAICS there is another (earlier) video "Write and Submit your first
-Linux kernel Patch" from FOSDEM 2010.
 
-For German readers I can recommend the book from [2] (no I get no
-money for promotion).
+Hi
 
-- Sedat -
+Good video!
+Wish I had seen this a year ago.
 
-[1] https://www.youtube.com/watch?v=LLBrBBImJt4
-[2] http://www.opensourcepress.de/de/produkte/Git/33227/978-3-95539-119-5-
+Sorry, no German for me :)
 
->
-> But I have now added a line in my script that does a:
->
-> git log -10 --oneline
->
-> So I can at least see the other subjekt lines, and make adjustments if
-> necessary.
->
->
->
-> Kind regards
-> Rickard Strandqvist
+
+Kind regards
+Rickard Strandqvist
