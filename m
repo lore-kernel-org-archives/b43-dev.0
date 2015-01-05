@@ -1,36 +1,30 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 5 Jan 2015 07:34:53 +0100
-Subject: [PATCH] net: wireless: b43legacy: radio.c: Remove unused function
-In-Reply-To: <CAKXHbyMqTk=k7eieBNtAD+n6+4w3weL82twHBo-o8ebm_3+wvg@mail.gmail.com>
-References: <1420127170-28421-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
- <CACna6rznUcqGTK0t1k=kjn0NVLycq865780ozyB+VYu78d_BSg@mail.gmail.com>
- <CACna6rxbGRdw7XSYvHAJGxJvMVwjVbAL4ynBM3m9rNggh7gCVQ@mail.gmail.com>
- <CA+icZUWOXMEyobZkudW9BEfkaWFTXQL9XF26g7oJMCzt=4==6g@mail.gmail.com>
- <CAKXHbyO70WdWekSYCY9spMbX2+_kdKTp3JoreDKpCdUBzFwYqw@mail.gmail.com>
- <CACna6rxTYUWvxvu0rFydWxkjbYdHfhV=o+9A+ViCpbV-LFx7fw@mail.gmail.com>
- <CAKXHbyMqTk=k7eieBNtAD+n6+4w3weL82twHBo-o8ebm_3+wvg@mail.gmail.com>
-Message-ID: <CACna6rxF1OKRZSpaL=+XzSV2kCpMH5LuB-B+eWV7zF8MJ-9tog@mail.gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 05 Jan 2015 11:29:50 +0200
+Subject: [PATCH] drivers:net:wireless: Add proper locking for the function,
+ b43_op_beacon_set_tim in main.c
+In-Reply-To: <1420184041-6788-1-git-send-email-xerofoify@gmail.com> (Nicholas
+ Krause's message of "Fri, 2 Jan 2015 02:34:01 -0500")
+References: <1420184041-6788-1-git-send-email-xerofoify@gmail.com>
+Message-ID: <87tx05378x.fsf@kamboji.qca.qualcomm.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Stefano Brivio <stefano.brivio@polimi.it>, Network Development <netdev@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+To: Nicholas Krause <xerofoify@gmail.com>
+Cc: stefano.brivio@polimi.it, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 3 January 2015 at 13:28, Rickard Strandqvist
-<rickard_strandqvist@spectrumdigital.se> wrote:
-> 2015-01-02 22:34 GMT+01:00 Rafa? Mi?ecki <zajec5@gmail.com>:
->>
->> 1) I gave you Ack for the changes
->> 2) You could drop "net: wireless: " or better use something Sedat proposed
->
-> Nice, yes I miss the Ack :)
->
-> I just got one more complaining about my subject-line in "net: wireless: "
-> I use some sed call for this, so it's easy to fix. I will now remove that
-> part hereinafter.
+Nicholas Krause <xerofoify@gmail.com> writes:
 
-Will you re-send this patch with a proper subject then, please?
+> This adds proper locking for the function, b43_op_beacon_set_tim in
+> main.c by using the mutex lock in the structure pointer wl, as
+> embedded into this pointer as a mutex in order to protect against
+> multiple access to the pointer wl when updating the templates for this
+> pointer in the function, b43_update_templates internally in the
+> function, b43_op_beacon_set_tim.
+>
+> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+
+Based on the discussion I have dropped this patch.
 
 -- 
-Rafa?
+Kalle Valo
