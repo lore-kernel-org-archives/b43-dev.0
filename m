@@ -1,65 +1,36 @@
-From: Falco Preiseni <apfelkomplott2014@mailbox.org>
-Date: Sun, 4 Jan 2015 18:13:08 +0100 (CET)
-Subject: BCM43228 not working (no access points shown)
-Message-ID: <89580273.9420.1420391589215.JavaMail.open-xchange@ox3app>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Mon, 5 Jan 2015 07:34:53 +0100
+Subject: [PATCH] net: wireless: b43legacy: radio.c: Remove unused function
+In-Reply-To: <CAKXHbyMqTk=k7eieBNtAD+n6+4w3weL82twHBo-o8ebm_3+wvg@mail.gmail.com>
+References: <1420127170-28421-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
+ <CACna6rznUcqGTK0t1k=kjn0NVLycq865780ozyB+VYu78d_BSg@mail.gmail.com>
+ <CACna6rxbGRdw7XSYvHAJGxJvMVwjVbAL4ynBM3m9rNggh7gCVQ@mail.gmail.com>
+ <CA+icZUWOXMEyobZkudW9BEfkaWFTXQL9XF26g7oJMCzt=4==6g@mail.gmail.com>
+ <CAKXHbyO70WdWekSYCY9spMbX2+_kdKTp3JoreDKpCdUBzFwYqw@mail.gmail.com>
+ <CACna6rxTYUWvxvu0rFydWxkjbYdHfhV=o+9A+ViCpbV-LFx7fw@mail.gmail.com>
+ <CAKXHbyMqTk=k7eieBNtAD+n6+4w3weL82twHBo-o8ebm_3+wvg@mail.gmail.com>
+Message-ID: <CACna6rxF1OKRZSpaL=+XzSV2kCpMH5LuB-B+eWV7zF8MJ-9tog@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Stefano Brivio <stefano.brivio@polimi.it>, Network Development <netdev@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-Hello everyone,
+On 3 January 2015 at 13:28, Rickard Strandqvist
+<rickard_strandqvist@spectrumdigital.se> wrote:
+> 2015-01-02 22:34 GMT+01:00 Rafa? Mi?ecki <zajec5@gmail.com>:
+>>
+>> 1) I gave you Ack for the changes
+>> 2) You could drop "net: wireless: " or better use something Sedat proposed
+>
+> Nice, yes I miss the Ack :)
+>
+> I just got one more complaining about my subject-line in "net: wireless: "
+> I use some sed call for this, so it's easy to fix. I will now remove that
+> part hereinafter.
 
-my Broadcom BCM43228 wifi card is not able to show any access points (neither
-with "iw wlpx scan" nor with NetworkManager). Connecting with the ESSID does not
-work, either. According to the LED and the output of "ip link" the card is
-active. Furthermore "lspci -k" tells that "bcma-pci-bridge" is the kernel driver
-in use despite I modprobed b43. According to [3] this could be a sign that b43
-ignores my device. Or is this label normal?
+Will you re-send this patch with a proper subject then, please?
 
-I followed the instructions on the ArchLinux Wiki[1] (which should align with
-the official instructions [2]), installed b43-fwcutter and b43-firmware in order
-to obtain the firmware version 5.100.138 and I also tried a newer firmware
-(6.30.163.46). Currently I have blacklisted almost everything (b43legacy,
-bcma-pci-bridge, bcma, brcmsmac, ssb and b43) and activated "option b43
-allhwsupport=1" and modprobed b43 by hand.
-
-I did a lot of reasearch but wasn't able to solve my problem. At least the label
-"bcma-pci-bridge" looks like a bug but I don't know. Any idea what's wrong?
-
-Best wishes,
-Falco
-
-[1] https://wiki.archlinux.org/index.php/B43#b43.2Fb43legacy
-[2] http://wireless.kernel.org/en/users/Drivers/b43
-[3]
-http://www.linuxforums.org/forum/wireless-internet/188346-b43-requiring-bcma-ssb.html#post889324
-
-$ uname -a
-Linux hugo 3.17.6-1-ARCH #1 SMP PREEMPT Sun Dec 7 23:43:32 UTC 2014 x86_64
-GNU/Linux
-(current ArchLinux kernel from the official repo)
-
-$ lspci -vvn|grep 43 -A7
-02:00.0 0280: 14e4:4359
-	DeviceName: WLAN
-	Subsystem: 14e4:05e2
-	Physical Slot: 0
-	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping-
-SERR- FastB2B- DisINTx-
-	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort-
-<MAbort- >SERR- <PERR- INTx+
-	Latency: 0, Cache Line Size: 64 bytes
-	Interrupt: pin A routed to IRQ 54
-
-$ lspci -k
-...
-02:00.0 Network controller: Broadcom Corporation BCM43228 802.11a/b/g/n
-	DeviceName: WLAN
-	Subsystem: Broadcom Corporation Device 05e2
-	Kernel driver in use: bcma-pci-bridge
-	Kernel modules: bcma
-...
-
-$ dmesg
-pasted here: http://paste.opensuse.org/79451668
+-- 
+Rafa?
