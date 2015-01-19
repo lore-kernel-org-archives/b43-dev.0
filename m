@@ -1,49 +1,44 @@
-From: Sabrina Dubroca <sd@queasysnail.net>
-Date: Mon, 19 Jan 2015 15:34:32 +0100
-Subject: [PATCH] b43: stop leds during suspend
-Message-ID: <1421678072-28997-1-git-send-email-sd@queasysnail.net>
+From: Arend van Spriel <arend@broadcom.com>
+Date: Mon, 19 Jan 2015 16:45:08 +0100
+Subject: b43 bcm43228 and linux 3.18.3
+In-Reply-To: <CACaajQs1r1tE-GXv7cmAL9w8q2cwn_iiDttp6tLFB7BdSBNDPw@mail.gmail.com>
+References: <CACaajQsqPMzwD=EqdD5_XfWAPmkn-52VVNHF1ntFZ6ofEH4D-w@mail.gmail.com>
+ <CACaajQs1r1tE-GXv7cmAL9w8q2cwn_iiDttp6tLFB7BdSBNDPw@mail.gmail.com>
+Message-ID: <54BD2684.30701@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvalo@codeaurora.org, stefano.brivio@polimi.it
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Sabrina Dubroca <sd@queasysnail.net>
+To: Vasiliy Tolstov <v.tolstov@selfip.ru>
+Cc: linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-Call b43_leds_stop during suspend to avoid this WARN:
++ b43-dev at lists.infradead.org
 
-WARNING: CPU: 1 PID: 0 at net/mac80211/util.c:755 ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]()
-queueing ieee80211 work while going to suspend
+On 01/19/15 13:20, Vasiliy Tolstov wrote:
+> Anybody can helps me debug this?
+>
+> 2015-01-17 20:59 GMT+03:00 Vasiliy Tolstov<v.tolstov@selfip.ru>:
+>> Hi all. I have 3.18.3 kernel and bcm43228, firstly all works fine, but
+>> after connection with my zyxel router i can't ping it ip (after 1-2
+>> min). Connection worked fin, but nothing transmitted =(.
+>> I'm try to disable qos, but this not helps, i'm try to enable
+>> verbose=3, but in dmesg nothing interesting. Time after time b43
+>> driver moved from 5Ghz to 2.4Ghz to 5Ghz and so.
 
- [...]
+What do you mean by "moved from 5Ghz to 2.4Ghz..". You mean it is 
+roaming between the two bands? Anyway, there is a b43 specific mailing 
+list which I added.
 
-Call Trace:
- [<c165fb2a>] dump_stack+0x48/0x69
- [<c1052f7b>] warn_slowpath_common+0x8b/0xc0
- [<f9c30225>] ? ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]
- [<f9c30225>] ? ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]
- [<c1052fe3>] warn_slowpath_fmt+0x33/0x40
- [<f9c30225>] ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]
- [<f9c30260>] ieee80211_queue_work+0x20/0x40 [mac80211]
- [<f9f25d78>] b43_led_brightness_set+0x28/0x30 [b43]
- [<c14f3835>] led_timer_function+0xd5/0xe0
- [<c10cb534>] call_timer_fn+0xa4/0x4a0
+Regards,
+Arend
 
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
----
- drivers/net/wireless/b43/main.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 47731cb0d815..58a2e88631fb 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -4318,6 +4318,7 @@ redo:
- 	mutex_unlock(&wl->mutex);
- 	cancel_delayed_work_sync(&dev->periodic_work);
- 	cancel_work_sync(&wl->tx_work);
-+	b43_leds_stop(dev);
- 	mutex_lock(&wl->mutex);
- 	dev = wl->current_dev;
- 	if (!dev || b43_status(dev) < B43_STAT_STARTED) {
--- 
-2.2.2
+>> How can i debug this issue? I'm realy love free opensource drivers.
+>> Thanks
+>>
+>> --
+>> Vasiliy Tolstov,
+>> e-mail: v.tolstov at selfip.ru
+>> jabber: vase at selfip.ru
+>
+>
+>
