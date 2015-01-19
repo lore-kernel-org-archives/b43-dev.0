@@ -1,61 +1,49 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 19 Jan 2015 09:06:14 +0100
-Subject: BCM43228 not working (no access points shown)
-In-Reply-To: <731034686.6449.1421521983812.JavaMail.open-xchange@ox2app>
-References: <89580273.9420.1420391589215.JavaMail.open-xchange@ox3app>
- <CACna6ryjfpehyZQvsJQv+ib4c0O5vFTvZp3eRY4u4gP=jg-urA@mail.gmail.com>
- <731034686.6449.1421521983812.JavaMail.open-xchange@ox2app>
-Message-ID: <CACna6rzCDnZuakxsj7ftRR+PsEvJrFcc=Zm_9swWnt0oAogRrw@mail.gmail.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
+Date: Mon, 19 Jan 2015 15:34:32 +0100
+Subject: [PATCH] b43: stop leds during suspend
+Message-ID: <1421678072-28997-1-git-send-email-sd@queasysnail.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: kvalo@codeaurora.org, stefano.brivio@polimi.it
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Sabrina Dubroca <sd@queasysnail.net>
 
-On 17 January 2015 at 20:13, Falco Preiseni
-<apfelkomplott2014@mailbox.org> wrote:
-> thanks for your efforts :) I tried out the wl driver on ArchLinux but it didn't
-> work either. However, on Debian the wl driver works with my card:
->
-> $ uname -a
-> Linux noname 3.2.0-4-amd64 #1 SMP Debian 3.2.63-2+deb7u1 x86_64 GNU/Linux
->
-> $ dmesg
-> [   97.463846] wl 0000:02:00.0: setting latency timer to 64
-> [   97.492386] INFO @wl_cfg80211_attach : Registered CFG80211 phy
-> [   97.493105] wlan0: Broadcom BCM4359 802.11 Hybrid Wireless Controller
-> 5.100.82.112
->
-> On ArchLinux I noticed that there is always (for b43 and wl) the same error
-> (INVALID_DEVICE_REQUEST) in the dmesg output after the broadcom stuff:
-> [  587.974839] wl0: online cpus 1
-> [  587.975382] wlan0: Broadcom BCM4359 802.11 Hybrid Wireless Controller
-> 6.30.223.248 (r487574)
-> [  587.983443] wl 0000:02:00.0 wlo1: renamed from wlan0
-> [  588.134778] AMD-Vi: Event logged [INVALID_DEVICE_REQUEST device=00:00.1
-> address=0x000000fdf80c0020 flags=0x0a00]
->
-> I found only one entry on google [1] with the same error and interestingly
-> enough that user has the same wifi card and laptop model (HP Elitebook 755 G2
-> with AMD processor). Unfortunately the given solution (add *intremap=off* as
-> kernel parameter) does not work for me :(
->
-> Howsoever: It's not a b43 problem. I don't know...
+Call b43_leds_stop during suspend to avoid this WARN:
 
-Wait a second. So are all these tests coming from the same machine? Do
-I get it right that:
-1) Debian (3.2.0) + wl.ko (5.100.82.112) = GOOD
-2) ArchLinux + wl.ko (6.30.223.248) = BAD
-3) ArchLinux + b43.ko = BAD
-?
+WARNING: CPU: 1 PID: 0 at net/mac80211/util.c:755 ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]()
+queueing ieee80211 work while going to suspend
 
-If so it would mean that:
-1) Upgrading kernel broke something
-2) Upgrading wl.ko broken something
+ [...]
 
-Do you still have this Debian? Could you try following setup:
-Debian (3.2.0) + wl.ko (6.30.223.248)
-and let us know if it works?
+Call Trace:
+ [<c165fb2a>] dump_stack+0x48/0x69
+ [<c1052f7b>] warn_slowpath_common+0x8b/0xc0
+ [<f9c30225>] ? ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]
+ [<f9c30225>] ? ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]
+ [<c1052fe3>] warn_slowpath_fmt+0x33/0x40
+ [<f9c30225>] ieee80211_can_queue_work.isra.11+0x35/0x50 [mac80211]
+ [<f9c30260>] ieee80211_queue_work+0x20/0x40 [mac80211]
+ [<f9f25d78>] b43_led_brightness_set+0x28/0x30 [b43]
+ [<c14f3835>] led_timer_function+0xd5/0xe0
+ [<c10cb534>] call_timer_fn+0xa4/0x4a0
 
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+---
+ drivers/net/wireless/b43/main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index 47731cb0d815..58a2e88631fb 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -4318,6 +4318,7 @@ redo:
+ 	mutex_unlock(&wl->mutex);
+ 	cancel_delayed_work_sync(&dev->periodic_work);
+ 	cancel_work_sync(&wl->tx_work);
++	b43_leds_stop(dev);
+ 	mutex_lock(&wl->mutex);
+ 	dev = wl->current_dev;
+ 	if (!dev || b43_status(dev) < B43_STAT_STARTED) {
 -- 
-Rafa?
+2.2.2
