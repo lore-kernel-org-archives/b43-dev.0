@@ -1,63 +1,53 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Date: Sun, 25 Jan 2015 14:39:34 +0100
-Subject: [PATCH] b43: support bcma core reset on AC-PHY hardware
-Message-ID: <1422193174-16908-1-git-send-email-zajec5@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 25 Jan 2015 10:51:49 -0600
+Subject: [PATCH] net:wireless:Add proper locking for the function,
+ b43_op_beacon_set_tim in main.c
+In-Reply-To: <1422169574-8451-1-git-send-email-xerofoify@gmail.com>
+References: <1422169574-8451-1-git-send-email-xerofoify@gmail.com>
+Message-ID: <54C51F25.9050602@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org
-Cc: b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Nicholas Krause <xerofoify@gmail.com>
+Cc: netdev@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, kvalo@codeaurora.org, linux-kernel@vger.kernel.org
 
-AC-PHY hardware includes new control 0x3 bits that need to be set to the
-0x1 by default.
+On 01/25/2015 01:06 AM, Nicholas Krause wrote:
+> Adds proper locking for the function, b43_op_beacon_set_tim in main.c that internally calls b43_update_templates.
+> Due to the function that is being called internally,b43_update_templates needing the mutex lock of the structure
+> pointer wl passed  it to run successfully and without issues we add the calls to mutex_lock before and mutex_unlock
+> after it's call internally in b43_op_beacon_set_tim in order to allow the function,,b43_update_templates to run
+> successfully and without issues related to concurrent access.
+>
+> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+> ---
+>   drivers/net/wireless/b43/main.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+> index 47731cb..b807958 100644
+> --- a/drivers/net/wireless/b43/main.c
+> +++ b/drivers/net/wireless/b43/main.c
+> @@ -5094,8 +5094,9 @@ static int b43_op_beacon_set_tim(struct ieee80211_hw *hw,
+>   {
+>   	struct b43_wl *wl = hw_to_b43_wl(hw);
+>
+> -	/* FIXME: add locking */
+> +	mutex_lock(&wl->mutex);
+>   	b43_update_templates(wl);
+> +	mutex_unlock(&wl->mutex);
+>
+>   	return 0;
+>   }
 
-Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
----
- drivers/net/wireless/b43/b43.h  |  2 ++
- drivers/net/wireless/b43/main.c | 17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
+Nicolas,
 
-diff --git a/drivers/net/wireless/b43/b43.h b/drivers/net/wireless/b43/b43.h
-index bb12586..ed403ed 100644
---- a/drivers/net/wireless/b43/b43.h
-+++ b/drivers/net/wireless/b43/b43.h
-@@ -500,6 +500,8 @@ enum {
- #define  B43_BCMA_IOCTL_PHY_BW_10MHZ	0x00000000	/* 10 MHz bandwidth, 40 MHz PHY */
- #define  B43_BCMA_IOCTL_PHY_BW_20MHZ	0x00000040	/* 20 MHz bandwidth, 80 MHz PHY */
- #define  B43_BCMA_IOCTL_PHY_BW_40MHZ	0x00000080	/* 40 MHz bandwidth, 160 MHz PHY */
-+#define  B43_BCMA_IOCTL_PHY_BW_80MHZ	0x000000C0	/* 80 MHz bandwidth */
-+#define B43_BCMA_IOCTL_DAC		0x00000300	/* Highspeed DAC mode control field */
- #define B43_BCMA_IOCTL_GMODE		0x00002000	/* G Mode Enable */
- 
- /* BCMA 802.11 core specific IO status (BCMA_IOST) flags */
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index 58a2e88..753e9b0 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -1262,6 +1262,23 @@ static void b43_bcma_wireless_core_reset(struct b43_wldev *dev, bool gmode)
- 		flags |= B43_BCMA_IOCTL_GMODE;
- 	b43_device_enable(dev, flags);
- 
-+	if (dev->phy.type == B43_PHYTYPE_AC) {
-+		u16 tmp;
-+
-+		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
-+		tmp &= ~B43_BCMA_IOCTL_DAC;
-+		tmp |= 0x100;
-+		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
-+
-+		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
-+		tmp &= ~B43_BCMA_IOCTL_PHY_CLKEN;
-+		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
-+
-+		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
-+		tmp |= B43_BCMA_IOCTL_PHY_CLKEN;
-+		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, tmp);
-+	}
-+
- 	bcma_core_set_clockmode(dev->dev->bdev, BCMA_CLKMODE_FAST);
- 	b43_bcma_phy_reset(dev);
- 	bcma_core_pll_ctl(dev->dev->bdev, req, status, true);
--- 
-1.8.4.5
+You must be an idiot for resubmitting this patch after Michael Busch clearly 
+told you that this patch can *never* work as we are in atomic context here! If 
+you are looking for patch credits, submitting one that messes with locking *that 
+you have never tested* will certainly get you notoriety on the Internet, but I 
+doubt that you want that bad a reputation!!
+
+NACK.
+
+Larry
