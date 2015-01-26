@@ -1,39 +1,31 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 26 Jan 2015 09:12:20 +0100
-Subject: [PATCH] b43: AC-PHY: prepare place for developing new PHY support
-In-Reply-To: <87egqiggzi.fsf@kamboji.qca.qualcomm.com>
-References: <1422205297-24767-1-git-send-email-zajec5@gmail.com>
- <87egqiggzi.fsf@kamboji.qca.qualcomm.com>
-Message-ID: <CACna6rx8LQZLPmAp8mgXro_5=ppprKHrRe7L-VFEU=Qdz60Edw@mail.gmail.com>
+From: Falco Preiseni <apfelkomplott2014@mailbox.org>
+Date: Mon, 26 Jan 2015 15:36:06 +0100 (CET)
+Subject: BCM43228 not working (no access points shown)
+In-Reply-To: <CACna6rzCDnZuakxsj7ftRR+PsEvJrFcc=Zm_9swWnt0oAogRrw@mail.gmail.com>
+References: <89580273.9420.1420391589215.JavaMail.open-xchange@ox3app>
+ <CACna6ryjfpehyZQvsJQv+ib4c0O5vFTvZp3eRY4u4gP=jg-urA@mail.gmail.com>
+ <731034686.6449.1421521983812.JavaMail.open-xchange@ox2app>
+ <CACna6rzCDnZuakxsj7ftRR+PsEvJrFcc=Zm_9swWnt0oAogRrw@mail.gmail.com>
+Message-ID: <1652037317.13481.1422282966103.JavaMail.open-xchange@ox2app>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Hauke Mehrtens <hauke@hauke-m.de>
+To: b43-dev@lists.infradead.org
 
-On 26 January 2015 at 08:04, Kalle Valo <kvalo@codeaurora.org> wrote:
-> Rafa? Mi?ecki <zajec5@gmail.com> writes:
->
->> There are new (not anymore?) Broadcom 802.11ac wireless cards based on
->> chipsets like BCM4352 and BCM4360. They use a new PHY type (called
->> simply AC) that will require new specific code.
->>
->> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
->> ---
->>
->> Kalle: as this commit & Kconfig say, this is just a beginning of new
->> PHY type support. In the past we used development model this patch
->> follows. Code for new PHY was added patch by patch. Adding everything
->> at once would require a huge patchset & development behing the doors.
->> Also sending small patches allows better review of changes & should
->> result in a better code quality. Let me know if there are any
->> problems.
->
-> Sounds good to me. Just keep dependency to BROKEN until it's usable and
-> make sure that the code compiles after every patch.
+Sorry for the late reply..
 
-Alright! :)
+> On 19 January 2015 at 09:06 Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+> Wait a second. So are all these tests coming from the same machine? Do
+> I get it right that:
+> 1) Debian (3.2.0) + wl.ko (5.100.82.112) = GOOD
+> 2) ArchLinux + wl.ko (6.30.223.248) = BAD
+> 3) ArchLinux + b43.ko = BAD
+> ?
+Yes, that's correct and it's the same machine.
 
--- 
-Rafa?
+> Do you still have this Debian? Could you try following setup:
+> Debian (3.2.0) + wl.ko (6.30.223.248)
+> and let us know if it works?
+This also works. I installed the broadcom-sta-dkms package from testing as it
+contains the above version...
