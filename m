@@ -1,18 +1,34 @@
-From: Falco Preiseni <apfelkomplott2014@mailbox.org>
-Date: Tue, 27 Jan 2015 16:35:06 +0100 (CET)
-Subject: BCM43228 not working (no access points shown)
-In-Reply-To: <CACna6ry_RGseL1L_nRv9h5a_OGcMj7wYjMgc5oMBpd6r3uZcDw@mail.gmail.com>
-References: <89580273.9420.1420391589215.JavaMail.open-xchange@ox3app>
- <CACna6ryjfpehyZQvsJQv+ib4c0O5vFTvZp3eRY4u4gP=jg-urA@mail.gmail.com>
- <731034686.6449.1421521983812.JavaMail.open-xchange@ox2app>
- <CACna6rzCDnZuakxsj7ftRR+PsEvJrFcc=Zm_9swWnt0oAogRrw@mail.gmail.com>
- <1652037317.13481.1422282966103.JavaMail.open-xchange@ox2app>
- <CACna6ry_RGseL1L_nRv9h5a_OGcMj7wYjMgc5oMBpd6r3uZcDw@mail.gmail.com>
-Message-ID: <397112209.24287.1422372906467.JavaMail.open-xchange@ox1app>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 29 Jan 2015 08:30:34 +0000 (UTC)
+Subject: b43: Fix locking FIXME in beacon update top half
+In-Reply-To: <20150126182617.521f58b5@wiggum>
+Message-ID: <20150129083034.A6A7313FF8F@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?utf-8?q?Michael_B=C3=BCsch?= <m@bues.ch>
+Cc: b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>
 
-Ok, thank you for your detailed help :)
+
+> b43 has a FIXME about locking in the mac80211 set-beacon-int callback for a long time.
+> As it turns out there actually is a tiny race window that could result in
+> a use-after-free bug of the 'current_beacon' memory.
+> Nobody ever reported this, so it probably never happened.
+> 
+> Fix this by adding a spin lock that protects the current_beacon access.
+> We must not be in atomic context while accessing hardware (due to SDIO),
+> so the beacon update bottom half has to clone the skb and release the lock
+> before writing it to hardware.
+> 
+> Let's all hope that this stops the troll who is trying to submit incorrect
+> fixes for this issue repeatedly.
+> And let's hope that I'm not a troll, too, who just hides even more evil code
+> in an even more complex attempt to fix the issue.
+> 
+> Signed-off-by: Michael Buesch <m@bues.ch>
+> Tested-by: Larry Finger <Larry.Finger@lwfinger.net>
+
+Thanks, applied to wireless-drivers-next.git.
+
+Kalle Valo
