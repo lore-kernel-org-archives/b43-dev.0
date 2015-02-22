@@ -1,69 +1,54 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 18 Feb 2015 11:26:43 -0600
-Subject: b43-fwcutter: add helper script for getting firmware
-In-Reply-To: <CACna6ryuSMp=xT78DYpjqe18vrwXBORMejhYdz+eUX_GY69fyA@mail.gmail.com>
-References: <CACna6rz8TMrhkrSJWsxuBAzNjNew8usn9qo1zHgtPQUCtT-_2A@mail.gmail.com>
- <CACna6ryuSMp=xT78DYpjqe18vrwXBORMejhYdz+eUX_GY69fyA@mail.gmail.com>
-Message-ID: <54E4CB53.5050804@lwfinger.net>
+From: Vasiliy Tolstov <v.tolstov@selfip.ru>
+Date: Mon, 23 Feb 2015 01:31:12 +0400
+Subject: b43 bcm43228 and linux 3.18.3
+In-Reply-To: <CACaajQv0g90p1jKi_v4PAAimhE8EJ+5uY7_B78paZxXSOLn6gA@mail.gmail.com>
+References: <CACaajQsqPMzwD=EqdD5_XfWAPmkn-52VVNHF1ntFZ6ofEH4D-w@mail.gmail.com>
+ <CACaajQs1r1tE-GXv7cmAL9w8q2cwn_iiDttp6tLFB7BdSBNDPw@mail.gmail.com>
+ <54BD2684.30701@broadcom.com>
+ <CACaajQuCfe-POEecGmet7R3GG8sg5KPzdteU+sHD8Vs5TBLzyA@mail.gmail.com>
+ <54BE2E98.1030109@broadcom.com>
+ <CACaajQv0g90p1jKi_v4PAAimhE8EJ+5uY7_B78paZxXSOLn6gA@mail.gmail.com>
+Message-ID: <CACaajQtfH92PH4h01NKuih-bfLX3b+OtpEjW-Ox9raoAHte8xw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Vasiliy Tolstov <v.tolstov@selfip.ru>
+Cc: Arend van Spriel <arend@broadcom.com>, linux-wireless@vger.kernel.org, b43-dev <b43-dev@lists.infradead.org>
 
-On 02/18/2015 04:03 AM, Rafa? Mi?ecki wrote:
-> On 1 August 2014 at 19:41, Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->> Installing a firmware was always kind of challenge for end users.
->> There were many tries of solving this:
->> 1) Distribution wiki pages with descriptions
->> 2) b43 wiki page trying to handle the most common distros
->> 3) Extra non-free packages
->> 4) Scripts like install_bcm43xx_firmware in openSUSE
->> 5) Scripts like postinst in Debian
->> Way too many of them. Way too complex.
->>
->> My idea is to add a helper script to the b43-tools / fwcutter and put
->> it during install in $(PREFIX)/bin/. This way we will know that every
->> user who installed b43-fwcutter also owns our script. Then we just
->> tell our users "hey, fire your b43_install_firmware" (or whatever).
->>
->> Of course distros still we be able to make it automatic. For example
->> Debian's postinst could simply call this script and simplify its
->> postinst. Same for RPMs.
->>
->> [The second part]
->>
->> Now, if you like my idea above, there is one more thing worth
->> considering. Offline firmware installation. It's not that common, but
->> there still appear ppl who can't use Ethernet cable and don't have
->> another Linux machine to extract firmware using it. For them our
->> script would be useless.
->>
->> So my another idea is to make our script accept passing path to the
->> driver as a command line argument. So one can download
->> broadcom-wl-6.30.163.46.tar.bz2, put it on a USB flash and call
->> b43_install_firmware /mnt/usb/broadcom-wl-6.30.163.46.tar.bz2
->> We should also remember to allows passing other archives as an
->> argument (wl_apsta-3.130.20.0.o at least!).
->>
->>
->> Do you like this idea? Could someone handle this?
+I'm switch to 3.19 kernel, now debug info contains:
+[  286.557369] b43-phy0 ERROR: PHY transmission error
+[  286.557551] b43-phy0 ERROR: PHY transmission error
+[  290.412335] b43-phy0 ERROR: PHY transmission error
+[  303.809876] b43-phy0 debug: Switching to 5 GHz band
+[  303.957855] b43-phy0 debug: Switching to 2.4 GHz band
+[  304.296705] b43-phy0 debug: Switching to 5 GHz band
+[  304.444641] b43-phy0 debug: Switching to 2.4 GHz band
+[  304.784427] b43-phy0 debug: Switching to 5 GHz band
+[  304.932492] b43-phy0 debug: Switching to 2.4 GHz band
+[  305.273372] b43-phy0 debug: Switching to 5 GHz band
+[  305.424327] b43-phy0 debug: Switching to 2.4 GHz band
+
+and i have sometimes stuck in tcp/udp transmissions.
+
+2015-01-20 13:48 GMT+03:00 Vasiliy Tolstov <v.tolstov@selfip.ru>:
+> 2015-01-20 13:31 GMT+03:00 Arend van Spriel <arend@broadcom.com>:
+>> 'b/g' is in 2.4G band. 'n' is in both 2.4G and 5G band. Assume it can do 'a'
+>> as well. Anyway, does that router let you specify the SSID for both 2.4G and
+>> 5G. Are you using same SSID for both?
 >
-> I'd like to resurrect this idea. So far I've prepared wiki page
-> describing the problem and our plan, see:
-> https://wireless.wiki.kernel.org/en/users/drivers/b43/firmware
 >
-> Is there anything else you would like to add? Before I start
-> contacting distribution maintainers?
+> As i see i can't specify different SSID for 2.4G and 5G (only one ssid
+> available). Does it possible to not roam between bands in b43 driver?
+>
+> --
+> Vasiliy Tolstov,
+> e-mail: v.tolstov at selfip.ru
+> jabber: vase at selfip.ru
 
-That looks good. For what it is worth, the openSUSE script would be a good 
-starting point for network installations. It only uses standard utilities, and 
-the only assumption it makes is that b43-fwcutter is available.
 
-The off-line firmware installation is more important. File 
-http://www.lwfinger.com/b43-firmware/no_net_install_bcm43xx_firmware.tar.bz2 
-handles the problem, but only for a single version of the firmware.
 
-I think you are ready to contact the distros.
-
-Larry
+-- 
+Vasiliy Tolstov,
+e-mail: v.tolstov at selfip.ru
+jabber: vase at selfip.ru
