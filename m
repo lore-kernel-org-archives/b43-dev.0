@@ -1,34 +1,26 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 03 Mar 2015 17:05:02 +0200
+From: Jonas Gorski <jogo@openwrt.org>
+Date: Tue, 3 Mar 2015 16:38:54 +0100
 Subject: [PATCH][FIX][RESEND] b43: fix support for 5 GHz only BCM43228
  model
-In-Reply-To: <1425313135-28225-1-git-send-email-zajec5@gmail.com>
- (=?utf-8?Q?=22Rafa=C5=82=09Mi=C5=82ecki=22's?= message of "Mon, 2 Mar 2015
- 17:18:55 +0100")
+In-Reply-To: <87k2yy86ld.fsf@kamboji.qca.qualcomm.com>
 References: <1424103816-10566-1-git-send-email-zajec5@gmail.com>
  <1425313135-28225-1-git-send-email-zajec5@gmail.com>
-Message-ID: <87k2yy86ld.fsf@kamboji.qca.qualcomm.com>
+ <87k2yy86ld.fsf@kamboji.qca.qualcomm.com>
+Message-ID: <CAOiHx==ZbVCsymBFhn60nBU2-gHU2HPdp1T9xdZpK9OVjAzFUw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, stable@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, stable@vger.kernel.org
 
-Rafa? Mi?ecki <zajec5@gmail.com> writes:
-
-> It was incorrectly detected as 2 GHz device.
+On Tue, Mar 3, 2015 at 4:05 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
+>> RESEND: It seems patchwork didn't catch my patch. Trying again.
 >
-> Signed-off-by: Rafa? Mi?ecki <zajec5@gmail.com>
-> Cc: stable at vger.kernel.org # 3.17+
-> ---
-> Kalle: can you take it for 3.20, please?
+> Odd, I still don't see it in patchwork. I wonder what caused that?
 
-Thanks, applied to wireless-drivers.git.
+I also see it neither in my b43-dev nor linux-wireless archives, nor
+does google find it (only your reply).
 
-> RESEND: It seems patchwork didn't catch my patch. Trying again.
 
-Odd, I still don't see it in patchwork. I wonder what caused that?
-
--- 
-Kalle Valo
+Jonas
