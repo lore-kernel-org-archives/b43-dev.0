@@ -1,69 +1,35 @@
-From: Anders Stedtlund <falolaf@gmail.com>
-Date: Tue, 12 May 2015 16:29:10 +0200
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Tue, 12 May 2015 09:35:12 -0500
 Subject: Broadcom BCM4352 WIFI problem - Fedora 21
-In-Reply-To: <1431440727.17810.6.camel@atos.atos>
+In-Reply-To: <1431439680.17810.4.camel@atos.atos>
 References: <1431439680.17810.4.camel@atos.atos>
- <CADLx2Vp=sfk-TmiYbayr5LyOER1onpyTKLgeydfE+HZcX9S=UA@mail.gmail.com>
- <1431440727.17810.6.camel@atos.atos>
-Message-ID: <CADLx2VqHstmB8R1DADOaM07StNzT6TVwuOoFKq1AFWAKDqLFsg@mail.gmail.com>
+Message-ID: <55520FA0.1090205@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Hi Goran,
+On 05/12/2015 09:08 AM, Goran Gojic wrote:
+> Hello,
+>
+> OS:  Fedora 21 (kernel 3.19.5.200).
+>
+> Can someone please help me to enable WIFI functionality with my  2015
+> DELL XPS 13.
+>
+> lspci -nn -d 14e4:
+>
+> Network controller [0280]: Broadcom Corporation BCM4352 802.11ac
+> Wireless Network Adapter [14e4:43b1] (rev 03)
+>
+> Please assist.
 
-As I'm not on fedora I will not be to much help unfortunately. Try any
-fedora forum!
+What I consider to be the definitive source, 
+https://wireless.wiki.kernel.org/en/users/Drivers/b43, says that only Broadcom's 
+proprietary driver wl is available for that device. You can get that at 
+https://www.broadcom.com/support/802.11/linux_sta.php. Of course, you will need 
+to build it for your system. If you need help building an out-of-kernel module, 
+the best place for help with that is your distro's forum.
 
-/Anders
-
-2015-05-12 16:25 GMT+02:00 Goran Gojic <gorgo@teol.net>:
-> Thank you for the fast answer.
->
-> I do have broadcom-wl-6.30.223.248-2.fc21.noarch installed but still
-> doesn't work..
->
-> Thanks
->
->
-> -----Original Message-----
-> From: Anders Stedtlund <falolaf@gmail.com>
-> To: Goran Gojic <gorgo@teol.net>
-> Cc: b43-dev at lists.infradead.org
-> Subject: Re: Broadcom BCM4352 WIFI problem - Fedora 21
-> Date: Tue, 12 May 2015 16:17:28 +0200
->
-> Hi Goran,
->
-> I would say you need the broadcom wl driver.
->
-> Do a search for e.g.:
-> broadcom wl fedora 21
->
-> /Anders
->
-> 2015-05-12 16:08 GMT+02:00 Goran Gojic <gorgo@teol.net>:
->> Hello,
->>
->> OS:  Fedora 21 (kernel 3.19.5.200).
->>
->> Can someone please help me to enable WIFI functionality with my  2015
->> DELL XPS 13.
->>
->> lspci -nn -d 14e4:
->>
->> Network controller [0280]: Broadcom Corporation BCM4352 802.11ac
->> Wireless Network Adapter [14e4:43b1] (rev 03)
->>
->> Please assist.
->>
->> Thank you
->>
->>
->> _______________________________________________
->> b43-dev mailing list
->> b43-dev at lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/b43-dev
->
+Larry
