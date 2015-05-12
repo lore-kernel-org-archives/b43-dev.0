@@ -1,14 +1,30 @@
-From: Anders Stedtlund <falolaf@gmail.com>
-Date: Tue, 12 May 2015 16:17:28 +0200
+From: Goran Gojic <gorgo@teol.net>
+Date: Tue, 12 May 2015 16:25:27 +0200
 Subject: Broadcom BCM4352 WIFI problem - Fedora 21
-In-Reply-To: <1431439680.17810.4.camel@atos.atos>
+In-Reply-To: <CADLx2Vp=sfk-TmiYbayr5LyOER1onpyTKLgeydfE+HZcX9S=UA@mail.gmail.com>
 References: <1431439680.17810.4.camel@atos.atos>
-Message-ID: <CADLx2Vp=sfk-TmiYbayr5LyOER1onpyTKLgeydfE+HZcX9S=UA@mail.gmail.com>
+ <CADLx2Vp=sfk-TmiYbayr5LyOER1onpyTKLgeydfE+HZcX9S=UA@mail.gmail.com>
+Message-ID: <1431440727.17810.6.camel@atos.atos>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
+
+Thank you for the fast answer.
+
+I do have broadcom-wl-6.30.223.248-2.fc21.noarch installed but still
+doesn't work..
+
+Thanks
+
+
+-----Original Message-----
+From: Anders Stedtlund <falolaf@gmail.com>
+To: Goran Gojic <gorgo@teol.net>
+Cc: b43-dev at lists.infradead.org
+Subject: Re: Broadcom BCM4352 WIFI problem - Fedora 21
+Date: Tue, 12 May 2015 16:17:28 +0200
 
 Hi Goran,
 
