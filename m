@@ -1,42 +1,90 @@
-From: Arend van Spriel <aspriel@gmail.com>
-Date: Sun, 17 May 2015 11:27:55 +0200
+From: Arend van Spriel <arend@broadcom.com>
+Date: Sun, 17 May 2015 12:23:02 +0200
 Subject: lspci not working
-In-Reply-To: <CACna6rzxZJg3MHsBV3vtaEtgUbh9umE6CS=2YkgkexT51J1oiw@mail.gmail.com>
-References: <CA+0W_As0c=eAijuvWfSBLMY4vj2P1-zoMsjz1mmNm0_vfepPCA@mail.gmail.com>	<5557556C.2080107@lwfinger.net>	<CACna6rwCapwThrMGt2HV_YyPQtZ+xRPJdBcapRqs2mkvGPdmSQ@mail.gmail.com>	<5557B396.9080300@gmail.com>	<CA+0W_At43pB=FeBR4jJzKxO3ruaATAidU8rimBOE3bLM1wKGsA@mail.gmail.com>
- <CACna6rzxZJg3MHsBV3vtaEtgUbh9umE6CS=2YkgkexT51J1oiw@mail.gmail.com>
-Message-ID: <55585F1B.5050008@gmail.com>
+In-Reply-To: <CA+0W_At43pB=FeBR4jJzKxO3ruaATAidU8rimBOE3bLM1wKGsA@mail.gmail.com>
+References: <CA+0W_As0c=eAijuvWfSBLMY4vj2P1-zoMsjz1mmNm0_vfepPCA@mail.gmail.com>	<5557556C.2080107@lwfinger.net>	<CACna6rwCapwThrMGt2HV_YyPQtZ+xRPJdBcapRqs2mkvGPdmSQ@mail.gmail.com>	<5557B396.9080300@gmail.com>
+ <CA+0W_At43pB=FeBR4jJzKxO3ruaATAidU8rimBOE3bLM1wKGsA@mail.gmail.com>
+Message-ID: <55586C06.8050803@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Schmirr Wurst <schmirrwurst@gmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
+To: Schmirr Wurst <schmirrwurst@gmail.com>
+Cc: Arend van Spriel <aspriel@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, b43-dev <b43-dev@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>
 
-On 17-05-15 10:47, Rafa? Mi?ecki wrote:
-> On 17 May 2015 at 02:21, Schmirr Wurst <schmirrwurst@gmail.com> wrote:
->> I tried as suggested to had a look at
->> /sys/bus/sdio/devices, but the only devices around there a 3
->> mmc1:0001:1 to :3, I guess it is something else...
+On 05/17/15 02:21, Schmirr Wurst wrote:
+> Thank you all, for your answers...
 >
-> Why do you guess so? You didn't provide us any details about entries there.
+> In fact I'm trying to help a friend with that, and I must say I never
+> hard such a complicated device...
 
-Indeed a wrong guess. The sdio specification allows a physical sdio 
-device to provide multiple sdio functions, which are instantiated as 
-devices in the linux driver model. So they will have the same modalias.
+Well, it depends what aspect you find complicated. It is pretty 
+straightforward device that just needs a driver to work.
 
->> In that directory, I see a directory mmc1:0001:2
->> under device I have 0xa94d
->>
->> I completly lost, maybe you understand that information, sorry..
+> I tried as suggested to had a look at
+> /sys/bus/sdio/devices, but the only devices around there a 3
+> mmc1:0001:1 to :3, I guess it is something else...
 >
-> You provided only one single device id, without even vendor id. Give
-> us at least a list of devices, e.g. by their modalias, like
-> cat /sys/bus/sdio/devices/*/modalias
+> I already try to install brcmfmac_sdio , with some tutorial from the
+> internet, but it didn't work...
+> actually, I see under /sys/bus/sdio/drivers brcmfmac_sdio ...
 >
+> In that directory, I see a directory mmc1:0001:2
+> under device I have 0xa94d
+>
+> I completly lost, maybe you understand that information, sorry..
 
-Converting 0xa94d gives 43341, which does not look like a coincidence to 
-me. So this Asus device comes with a newer chip, but it is supported by 
-brcmfmac (provided vendor id is indeed 0x02d0!).
+I do. The fact that you see a subdirectory mmc1:0001:2 in 
+/sys/bus/sdio/drivers/brcmfmac_sdio means that the driver was probed for 
+this device. Now would be a good time to share your (friends') kernel 
+log, but my guess is you are either missing firmware or nvram data or 
+both for this device.
+
+And could you try to answer inline instead of top-posting.
 
 Regards,
 Arend
+
+> 2015-05-16 23:16 GMT+02:00 Arend van Spriel<aspriel@gmail.com>:
+>>
+>>
+>> On 16-05-15 16:58, Rafa? Mi?ecki wrote:
+>>>
+>>> On 16 May 2015 at 16:34, Larry Finger<Larry.Finger@lwfinger.net>  wrote:
+>>>>
+>>>> On 05/16/2015 04:12 AM, Schmirr Wurst wrote:
+>>>>>
+>>>>>
+>>>>> I've already posted the message once, but as it was my first, I'm not
+>>>>> sure, if it worked...
+>>>>>
+>>>>> Actually I'm trying to get read of a t100af from asus, that has a nice
+>>>>> broadcom wifi chipset, but I'm wondering that I don't see anything
+>>>>> with lspci, do that mean, that the chipset is broken ?
+>>>>> (I though lspci is one level deeper than driver, and I should see
+>>>>> something, even if I have driver problems) ?
+>>>>>
+>>>>> Could just somebody tell me if I'm right or wrong ?
+>>>>
+>>>>
+>>>>
+>>>> On Intel Bay Trail tablets, the wifi device is frequently attached using
+>>>> an
+>>>> SDIO bus, not a PCI connection. Accordingly, lspci will probably not show
+>>>> the device.
+>>>
+>>>
+>>> But you should be able to browse  /sys/bus/sdio/devices/ I guess
+>>> (assuming bus host driver is working).
+>>
+>>
+>> Indeed. The broadcom device would have a modalias starting 'sdio:c00v02D0d'.
+>> The Asus T100 series use 43241 if I am not mistaken. It should be supported
+>> by the brcmfmac driver.
+>>
+>> Regards,
+>> Arend
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
