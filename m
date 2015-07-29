@@ -1,23 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 21 Jul 2015 13:53:22 +0000 (UTC)
-Subject: b43: Fix typo in function name
-In-Reply-To: <1435625147-23535-1-git-send-email-nikolas@gnu.org>
-Message-ID: <20150721135322.077C2141142@smtp.codeaurora.org>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Wed, 29 Jul 2015 23:36:30 +0200
+Subject: [PATCH] b43: fix extpa_gain check for 2GHz
+Message-ID: <1438205790-17629-1-git-send-email-hauke@hauke-m.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nik Nyby <nikolas@gnu.org>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: kvalo@qca.qualcomm.com
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Hauke Mehrtens <hauke@hauke-m.de>
 
+On the 2GHz and and on the 5GHZ band only the extpa_gain setting from
+the 5GHz band was checked. this patch makes it check the property from
+the correct band.
 
-> This fixes a typo in the "b43_lo_g_maintenance_work" function
-> name.
-> 
-> Signed-off-by: Nik Nyby <nikolas@gnu.org>
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-> Acked-by: Michael Buesch <m@bues.ch>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/net/wireless/b43/tables_nphy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, applied to wireless-drivers-next.git.
-
-Kalle Valo
+diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
+index 25d1cbd..b2f0d24 100644
+--- a/drivers/net/wireless/b43/tables_nphy.c
++++ b/drivers/net/wireless/b43/tables_nphy.c
+@@ -3728,7 +3728,7 @@ const u32 *b43_nphy_get_tx_gain_table(struct b43_wldev *dev)
+ 		switch (phy->rev) {
+ 		case 6:
+ 		case 5:
+-			if (sprom->fem.ghz5.extpa_gain == 3)
++			if (sprom->fem.ghz2.extpa_gain == 3)
+ 				return b43_ntab_tx_gain_epa_rev3_hi_pwr_2g;
+ 			/* fall through */
+ 		case 4:
+-- 
+2.1.4
