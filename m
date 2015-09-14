@@ -1,9 +1,7 @@
-From: =?UTF-8?Q?Sven_K=c3=b6hler?= <sven.koehler@gmail.com>
-Date: Sun, 13 Sep 2015 19:38:36 +0300
-Subject: BCM4360 support
-In-Reply-To: <CAEiiMrqp2pDFa5v_tAZCg+pSQcAN0zyX8qUT_r1LSmRyrGg+vg@mail.gmail.com>
-References: <CAEiiMrqp2pDFa5v_tAZCg+pSQcAN0zyX8qUT_r1LSmRyrGg+vg@mail.gmail.com>
-Message-ID: <55F5A68C.6070800@gmail.com>
+From: Wifi User <mywifiismycastle@gmail.com>
+Date: Mon, 14 Sep 2015 17:48:41 +0200
+Subject: b43 with Kernel 4.1?
+Message-ID: <CABC5CqK2A7N5MN8in00953LfTOB=21NW0sJF2bWpG92c+ypXYw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,18 +10,26 @@ To: b43-dev@lists.infradead.org
 
 Hi,
 
-Am 10.09.2015 um 00:49 schrieb Moro Modo:
-> I've bought a new PCE-AC68 from Asus. It uses the BCM4360. I wanted to
-> know, if you guys are up to a solution to support this device?
+did someone mange to get b43 running under kernel 4.1?
 
-I would like to know that too. I have an ASUS Notebook which uses a
-BCM4360 based card. I have to use Broadcom's driver, which doesn't even
-work that great, especially if I enable 802.11n on my access point.
+With an older kernel everything is perfect. After an upgrade to 4.1 my
+wireless card doesn't seem to get recognized. :( - The firmware cutter used
+broadcom-wl-6.30.163.46
 
-I would appreciate a driver that only supports 802.11g or even 802.11n
-but lacks 802.11ac support, hoping that this makes things easier.
+I can clearly see the card with lspci but I don't get a wlan0 device.
 
+---
+09:00.0 Network controller [0280]: Broadcom Corporation BCM4322
+802.11a/b/g/n Wireless LAN Controller [14e4:432b] (rev 01)
+    Subsystem: Broadcom Corporation Device [14e4:04a4]
+    Flags: bus master, fast devsel, latency 0, IRQ 18
+    Memory at dfcfc000 (64-bit, non-prefetchable) [size=16K]
+    Capabilities: [40] Power Management version 3
+    Capabilities: [58] Vendor Specific Information: Len=78 <?>
+    Capabilities: [e8] MSI: Enable- Count=1/1 Maskable- 64bit+
+    Capabilities: [d0] Express Endpoint, MSI 00
+    Kernel driver in use: b43-pci-bridge
+---
 
-
-Regards,
-  Sven
+Thx
+Wifiuser
