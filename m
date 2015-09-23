@@ -1,41 +1,54 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 21 Sep 2015 11:38:30 -0500
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Wed, 23 Sep 2015 12:02:48 +0200
 Subject: [PATCH][RFC][RFT] ssb: pick PCMCIA host code support from b43
  driver
-In-Reply-To: <20150921182622.0727f224@wiggum>
+In-Reply-To: <20150921182000.6d89445d@wiggum>
 References: <1442826259-6270-1-git-send-email-zajec5@gmail.com>
- <56002CE8.3080605@lwfinger.net> <20150921182622.0727f224@wiggum>
-Message-ID: <56003286.4010800@lwfinger.net>
+ <20150921182000.6d89445d@wiggum>
+Message-ID: <CACna6rzSqnJF2uBS-DszR+1PFNwqM8S0WecAE+R4QRJjGYuXYQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>, b43-dev@lists.infradead.org
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Larry Finger <larry.finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, b43-dev <b43-dev@lists.infradead.org>
 
-On 09/21/2015 11:26 AM, Michael B?sch wrote:
-> On Mon, 21 Sep 2015 11:14:32 -0500
-> Larry Finger <Larry.Finger@lwfinger.net> wrote:
+On 21 September 2015 at 18:20, Michael B?sch <m@bues.ch> wrote:
+> On Mon, 21 Sep 2015 11:04:19 +0200
+> Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+>> @@ -1464,6 +1463,12 @@ static int __init ssb_modinit(void)
+>>               /* don't fail SSB init because of this */
+>>               err = 0;
+>>       }
+>> +     err = ssb_host_pcmcia_init();
+>> +     if (err) {
+>> +             ssb_err("PCMCIA host initialization failed\n");
+>> +             /* don't fail SSB init because of this */
 >
->> This patch has been tested on PPC architecture with Linksys WPC54G PCMCIA cards.
+> Why not? What's the point of not failing here?
+
+I just copied the logic from few lines above where we handle PCI init.
+I guess the point was to support other host devices even is PCI host
+registration fails.
+
+
+>> +static const struct pcmcia_device_id ssb_host_pcmcia_tbl[] = {
+>> +     PCMCIA_DEVICE_MANF_CARD(0x2D0, 0x448),
+>> +     PCMCIA_DEVICE_MANF_CARD(0x2D0, 0x476),
+>> +     PCMCIA_DEVICE_NULL,
+>> +};
 >
-> Are you sure that this really is a 16 bit PCMCIA card and not a PC-Card?
-> If it shows up in lspci, it's not a PCMCIA card.
+> This doesn't belong into ssb'c pcmcia.c, IMO.
+> It should be in a new file called b43_pcmcia_bridge.c, just like we have
+> b43_pci_bridge.c.
+> The bridge code technically (also for pci) doesn't belong into ssb. But
+> it makes kconfig simpler.
 
-Point taken. These are indeed PC-Cards in a PCMCIA format.
+This is something I don't understand. This PCI bridge was also always
+confusing me.
+Why do we want a separated file for that? What's wrong with having 1
+file for host (PCI/PCMCIA) driver (probe and remove functions) *and*
+ssb initialization?
 
->> It probably does not matter here, but I prefer that hexadecimal constants in
->> device tables contain only the lower-case versions of a-f. That makes searching
->> for such constants with grep a lot easier.
->
-> I prefer coffee over tea. That doesn't make coffee any better, though.
->
-> Is it really so that the rest of the kernel only uses lower case here?
-> Grep also supports case insensitive regexes, if done correctly. And if
-> not everybody uses lower case here, you'll have to do that anyway.
-
-Yes, I know how to use grep to ignore case.
-
-Larry
-
->
+-- 
+Rafa?
