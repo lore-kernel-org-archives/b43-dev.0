@@ -1,38 +1,30 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 25 Sep 2015 09:11:58 +0200
-Subject: b43 with Kernel 4.1?
-In-Reply-To: <CABC5CqL5-Kv4k=eevOzSg_qxeWRo4M_sHObJR+rzykBcUTasEA@mail.gmail.com>
-References: <CABC5CqK2A7N5MN8in00953LfTOB=21NW0sJF2bWpG92c+ypXYw@mail.gmail.com>
- <55F75EE9.6070304@lwfinger.net>
- <CABC5Cq+ecoDYz2kq9rF9_XNRDP1bKT=TcnqQvMQAd4WbPxUgmw@mail.gmail.com>
- <CACna6rwh0Ta2WbyVD2Zi_jKvof=BPcLV4h9ux-C6SBWdDneobA@mail.gmail.com>
- <CABC5CqL5-Kv4k=eevOzSg_qxeWRo4M_sHObJR+rzykBcUTasEA@mail.gmail.com>
-Message-ID: <CACna6rz8tj-g0irsYr04BwA4ziS894JnNzrBmNAOiZheCspX5Q@mail.gmail.com>
+From: Nirav Patel <nspho1@gmail.com>
+Date: Sat, 26 Sep 2015 15:31:24 +0530
+Subject: Support for bcm43217 pci id 14e4:a8db
+In-Reply-To: <CACW9AP4wHpZX_DxNQCyvCrQyc69YJYO4UzsM=ubZ6wfZaXEXCg@mail.gmail.com>
+References: <CACW9AP4wHpZX_DxNQCyvCrQyc69YJYO4UzsM=ubZ6wfZaXEXCg@mail.gmail.com>
+Message-ID: <CACW9AP497W6pYdhz4nvoZ6N_SHdAed66H5F4M+=5rZZ+XYCUgA@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 25 September 2015 at 08:39, Wifi User <mywifiismycastle@gmail.com> wrote:
-> 2015-09-25 5:40 GMT+02:00 Rafa? Mi?ecki <zajec5@gmail.com>:
->> On 24 September 2015 at 20:00, Wifi User <mywifiismycastle@gmail.com> wrote:
->>> Do you happen to have a clue where I'm doing something wrong?
->>
->> You're trying to use obsolete API (iwconfig). Just stick to nl80211
->> (it's used by "iw" tool and wpa_supplicant with "-D nl80211").
->
-> That means in future I shouldn't use iwconfig any longer but switch to
-> iw wlan0 link instead?
+When we would get support for [Chip ID bcm43217 | PCI-ID 14e4:a8db |
+PHY N (r17)] ?
+Currently I have tested it in openwrt chaos calmer and found that:
+ It works perfectly well in 802.11g mode.
+ But it doesn't work in 802.11n mode.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/nl80211
+On the page https://wireless.wiki.kernel.org/en/users/drivers/b43 it
+is mentioned that it is partially supported. It is not supported by
+any other driver except b43. And the use of this chip is increasing
+(at least in embedded devices) day by day AFAIK.
 
+Please tell me if it would be supporting wireless n in future or not?
+If yes, what's the status of the work? Tell me if I could help in it's
+support.
 
-> Next challenge is getting 802.11n to run. - Are there any plans to
-> support 802.11n with b43, too?
-> (My chip 14e4:432b is unfortunately not supported by brcm80211 :()
-
-A little chance for that, I'm too busy with other stuff.
-
--- 
-Rafa?
+For further details read my ticket and all comments at
+https://dev.openwrt.org/ticket/20227.
+Thanks in advance for your help and time taken.
