@@ -1,35 +1,50 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Wed, 14 Oct 2015 16:48:43 +0200
-Subject: [PATCH][RFC][RFT] ssb: pick PCMCIA host code support from b43
- driver
-In-Reply-To: <CACna6rwGRM-qiXSijeGDzupwUXg62BoUDtyL3gPD-HrCJvhQmQ@mail.gmail.com>
-References: <1442826259-6270-1-git-send-email-zajec5@gmail.com>
- <20150921182000.6d89445d@wiggum>
- <CACna6rzSqnJF2uBS-DszR+1PFNwqM8S0WecAE+R4QRJjGYuXYQ@mail.gmail.com>
- <20150923175801.69076f31@wiggum>
- <CACna6rwGRM-qiXSijeGDzupwUXg62BoUDtyL3gPD-HrCJvhQmQ@mail.gmail.com>
-Message-ID: <20151014164843.4f9a00e3@wiggum>
+From: Paul McQuade <paulmcquad@gmail.com>
+Date: Sun, 18 Oct 2015 00:01:36 +0100
+Subject: [PATCH 1/3] net: wireless: rsi: Coding Spaces
+Message-ID: <1445122898-5810-1-git-send-email-paulmcquad@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Larry Finger <larry.finger@lwfinger.net>, Hauke Mehrtens <hauke@hauke-m.de>, b43-dev <b43-dev@lists.infradead.org>
+To: paulmcquad@gmail.com
+Cc: kvalo@codeaurora.org, zajec5@gmail.com, johannes.berg@intel.com, davem@davemloft.net, joe@perches.com, m@bues.ch, mike.looijmans@topic.nl, cengelma@gmx.at, khoroshilov@ispras.ru, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 14 Oct 2015 13:17:16 +0200
-Rafa? Mi?ecki <zajec5@gmail.com> wrote:
+Removed space before that ','
 
-> If all PCI-bus-host-specific code is always the same,
+Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_sdio_ops.c | 2 +-
+ drivers/net/wireless/rsi/rsi_mgmt.h         | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-And that's the point. It's always the same _except_ for the device IDs.
-Which obviously are PCI-device specific.
-
+diff --git a/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c b/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
+index 40d7231..8fa241b 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
++++ b/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
+@@ -435,7 +435,7 @@ void rsi_interrupt_handler(struct rsi_hw *adapter)
+ 				} else {
+ 					rsi_dbg(ERR_ZONE,
+ 						"%s: Firmware Status is 0x%x\n",
+-						__func__ , fw_status);
++						__func__, fw_status);
+ 					rsi_sdio_ack_intr(common->priv,
+ 							  (1 << FW_ASSERT_IND));
+ 				}
+diff --git a/drivers/net/wireless/rsi/rsi_mgmt.h b/drivers/net/wireless/rsi/rsi_mgmt.h
+index 3741173..3d4eddd 100644
+--- a/drivers/net/wireless/rsi/rsi_mgmt.h
++++ b/drivers/net/wireless/rsi/rsi_mgmt.h
+@@ -173,9 +173,9 @@ enum cmd_frame_type {
+ 	AUTO_RATE_IND,
+ 	BOOTUP_PARAMS_REQUEST,
+ 	VAP_CAPABILITIES,
+-	EEPROM_READ_TYPE ,
++	EEPROM_READ_TYPE,
+ 	EEPROM_WRITE,
+-	GPIO_PIN_CONFIG ,
++	GPIO_PIN_CONFIG,
+ 	SET_RX_FILTER,
+ 	AMPDU_IND,
+ 	STATS_REQUEST_FRAME,
 -- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20151014/2a0bc224/attachment.sig>
+2.6.1
