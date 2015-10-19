@@ -1,20 +1,26 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Sun, 18 Oct 2015 11:32:50 +0200
-Subject: [PATCH 3/3] net: wireless: b43: statics Don't init to 0
-In-Reply-To: <1445122898-5810-3-git-send-email-paulmcquad@gmail.com>
-References: <1445122898-5810-1-git-send-email-paulmcquad@gmail.com>
- <1445122898-5810-3-git-send-email-paulmcquad@gmail.com>
-Message-ID: <CACna6rxotaUpArMtcBhQ6r5-=VpsoNDLTRZd4PyVB0Epc3atwg@mail.gmail.com>
+From: Paul McQuade <paulmcquad@gmail.com>
+Date: Mon, 19 Oct 2015 17:02:20 +0100
+Subject: [PATCH v2 0/3] Coding Style Cleanning
+Message-ID: <1445270543-2209-1-git-send-email-paulmcquad@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul McQuade <paulmcquad@gmail.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, Johannes Berg <johannes.berg@intel.com>, David Miller <davem@davemloft.net>, Joe Perches <joe@perches.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, mike.looijmans@topic.nl, cengelma@gmx.at, khoroshilov@ispras.ru, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Network Development <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: paulmcquad@gmail.com
+Cc: kvalo@codeaurora.org, zajec5@gmail.com, davem@davemloft.net, joe@perches.com, johannes.berg@intel.com, sd@queasysnail.net, m@bues.ch, mike.looijmans@topic.nl, khoroshilov@ispras.ru, cengelma@gmx.at, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 18 October 2015 at 01:01, Paul McQuade <paulmcquad@gmail.com> wrote:
-> Don't turn statics to 0 or NULL
+Paul McQuade (3):
+  net: wireless: rsi: Coding Spaces
+  net: wireless: b43: Coding Style
+  net: wireless: b43: Statics are init to 0
 
-Same request as Michael's in 2/3. Your "statics Don't init to 0"
-message sounds strange, statics *are* initialized to 0 by default (as
-you probably know but described it in a unclear way).
+ drivers/net/wireless/b43/main.c             | 8 ++++----
+ drivers/net/wireless/b43/main.h             | 2 +-
+ drivers/net/wireless/b43/phy_lp.c           | 2 +-
+ drivers/net/wireless/b43/xmit.h             | 2 +-
+ drivers/net/wireless/rsi/rsi_91x_sdio_ops.c | 2 +-
+ drivers/net/wireless/rsi/rsi_mgmt.h         | 4 ++--
+ 6 files changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+2.6.1
