@@ -1,97 +1,30 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 19 Oct 2015 18:07:42 +0200
-Subject: [PATCH v2 2/3] net: wireless: b43: Coding Style
-In-Reply-To: <1445270543-2209-3-git-send-email-paulmcquad@gmail.com>
-References: <1445270543-2209-1-git-send-email-paulmcquad@gmail.com>
- <1445270543-2209-3-git-send-email-paulmcquad@gmail.com>
-Message-ID: <20151019180742.2d6bf8f1@wiggum>
+From: Johannes Pautzke <laserlaslo@gmail.com>
+Date: Mon, 2 Nov 2015 13:35:55 +0800
+Subject: B43 for 2015 Macbook Pro
+Message-ID: <CABwny0xQsXTDR6WYjBJ5NknsOU=+YDFGdwb5+EGTBdE3F4Juxg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul McQuade <paulmcquad@gmail.com>, kvalo@codeaurora.org
-Cc: zajec5@gmail.com, davem@davemloft.net, joe@perches.com, johannes.berg@intel.com, sd@queasysnail.net, mike.looijmans@topic.nl, khoroshilov@ispras.ru, cengelma@gmx.at, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On Mon, 19 Oct 2015 17:02:22 +0100
-Paul McQuade <paulmcquad@gmail.com> wrote:
+Hi guys,
 
-> Fixed Pointer Coding Style
-> 
-> Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
-> ---
->  drivers/net/wireless/b43/main.c | 6 +++---
->  drivers/net/wireless/b43/main.h | 2 +-
->  drivers/net/wireless/b43/xmit.h | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-> index 2849070..040caa4 100644
-> --- a/drivers/net/wireless/b43/main.c
-> +++ b/drivers/net/wireless/b43/main.c
-> @@ -364,7 +364,7 @@ static struct ieee80211_supported_band b43_band_2ghz_limited = {
->  
->  static void b43_wireless_core_exit(struct b43_wldev *dev);
->  static int b43_wireless_core_init(struct b43_wldev *dev);
-> -static struct b43_wldev * b43_wireless_core_stop(struct b43_wldev *dev);
-> +static struct b43_wldev *b43_wireless_core_stop(struct b43_wldev *dev);
->  static int b43_wireless_core_start(struct b43_wldev *dev);
->  static void b43_op_bss_info_changed(struct ieee80211_hw *hw,
->  				    struct ieee80211_vif *vif,
-> @@ -989,7 +989,7 @@ static void do_key_write(struct b43_wldev *dev,
->  		 * 0xffffffff and let's b43_op_update_tkip_key provide a
->  		 * correct pair.
->  		 */
-> -		rx_tkip_phase1_write(dev, index, 0xffffffff, (u16*)buf);
-> +		rx_tkip_phase1_write(dev, index, 0xffffffff, (u16 *)buf);
->  	} else if (index >= pairwise_keys_start) /* clear it */
->  		rx_tkip_phase1_write(dev, index, 0, NULL);
->  	if (key)
-> @@ -4334,7 +4334,7 @@ out_unlock:
->  /* Locking: wl->mutex
->   * Returns the current dev. This might be different from the passed in dev,
->   * because the core might be gone away while we unlocked the mutex. */
-> -static struct b43_wldev * b43_wireless_core_stop(struct b43_wldev *dev)
-> +static struct b43_wldev *b43_wireless_core_stop(struct b43_wldev *dev)
->  {
->  	struct b43_wl *wl;
->  	struct b43_wldev *orig_dev;
-> diff --git a/drivers/net/wireless/b43/main.h b/drivers/net/wireless/b43/main.h
-> index c46430c..fa56b22 100644
-> --- a/drivers/net/wireless/b43/main.h
-> +++ b/drivers/net/wireless/b43/main.h
-> @@ -73,7 +73,7 @@ static inline int b43_is_ofdm_rate(int rate)
->  u8 b43_ieee80211_antenna_sanitize(struct b43_wldev *dev,
->  				  u8 antenna_nr);
->  
-> -void b43_tsf_read(struct b43_wldev *dev, u64 * tsf);
-> +void b43_tsf_read(struct b43_wldev *dev, u64 *tsf);
->  void b43_tsf_write(struct b43_wldev *dev, u64 tsf);
->  
->  u32 b43_shm_read32(struct b43_wldev *dev, u16 routing, u16 offset);
-> diff --git a/drivers/net/wireless/b43/xmit.h b/drivers/net/wireless/b43/xmit.h
-> index ba61153..fed8657 100644
-> --- a/drivers/net/wireless/b43/xmit.h
-> +++ b/drivers/net/wireless/b43/xmit.h
-> @@ -203,7 +203,7 @@ size_t b43_txhdr_size(struct b43_wldev *dev)
->  
->  
->  int b43_generate_txhdr(struct b43_wldev *dev,
-> -		       u8 * txhdr,
-> +		       u8 *txhdr,
->  		       struct sk_buff *skb_frag,
->  		       struct ieee80211_tx_info *txctl, u16 cookie);
->  
+I got myself a Macbook Pro this year, which has the BCM43602 chipset
+(PCI 14e4:43ba). The only driver which I could make work (running kali
+linux) on this chipset is brcmfmac43602. Unfortunately it is quite
+unreliable, doesn't support monitor mode and the b43 driver doesn't
+work for this chipset, yet.
+It would be so awesome if it was possible to make it work. Is there
+any chance you guys could do that? If there is any way I could
+contribute, please let me know.
+As macbooks get more and more spread I'm sure tons of people would
+appreciate and benefit from that!
 
 
-Acked-by: Michael Buesch <m@bues.ch>
+Looking forward to hearing from you. Keep up the good work!
 
 
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20151019/351472f6/attachment-0001.sig>
+Cheers,
+
+Johnny
