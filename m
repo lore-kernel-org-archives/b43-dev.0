@@ -1,32 +1,21 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 2 Nov 2015 17:56:02 -0600
-Subject: B43 for 2015 Macbook Pro
-In-Reply-To: <CABwny0xQsXTDR6WYjBJ5NknsOU=+YDFGdwb5+EGTBdE3F4Juxg@mail.gmail.com>
-References: <CABwny0xQsXTDR6WYjBJ5NknsOU=+YDFGdwb5+EGTBdE3F4Juxg@mail.gmail.com>
-Message-ID: <5637F812.4070103@lwfinger.net>
+From: Domeika, Max J <max.j.domeika@intel.com>
+Date: Tue, 3 Nov 2015 22:00:23 +0000
+Subject: Broadcom 4330 and Intel Edison
+Message-ID: <D25E6E76.15890%max.j.domeika@intel.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 11/01/2015 11:35 PM, Johannes Pautzke wrote:
-> Hi guys,
->
-> I got myself a Macbook Pro this year, which has the BCM43602 chipset
-> (PCI 14e4:43ba). The only driver which I could make work (running kali
-> linux) on this chipset is brcmfmac43602. Unfortunately it is quite
-> unreliable, doesn't support monitor mode and the b43 driver doesn't
-> work for this chipset, yet.
-> It would be so awesome if it was possible to make it work. Is there
-> any chance you guys could do that? If there is any way I could
-> contribute, please let me know.
-> As macbooks get more and more spread I'm sure tons of people would
-> appreciate and benefit from that!
->
->
-> Looking forward to hearing from you. Keep up the good work!
+Hi,
 
-Driver b43 will never support any fullmac devices.
+  I could really use some help/expertise.
 
-Larry
+We are trying to get the Intel Edison which uses the Broadcom 4330 to act as both an AP and client at the same time. Iw list seems to suggest it is possible, but we haven?t figured out the correct process to do so or even if the underlying kernel will allow it (using ubilinux 3.10.17 and the driver is bcm43340-mod-1.141-r47.
+
+Who could provide some expert advice/consultation?
+
+Thanks and regards,
+
+Max
