@@ -1,73 +1,53 @@
 From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Thu, 26 Nov 2015 13:32:41 +0100
-Subject: (bug report) b43: impossible conditions in debugfs
-In-Reply-To: <20151126115924.GI10556@mwanda>
-References: <20151126115924.GI10556@mwanda>
-Message-ID: <20151126133241.5bc5a793@wiggum>
+Date: Thu, 26 Nov 2015 13:40:30 +0100
+Subject: (bug report) b43: precendence error
+In-Reply-To: <20151126115843.GH10556@mwanda>
+References: <20151126115843.GH10556@mwanda>
+Message-ID: <20151126134030.63bd44aa@wiggum>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Thu, 26 Nov 2015 14:59:24 +0300
+On Thu, 26 Nov 2015 14:58:43 +0300
 Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> Hello Michael Buesch,
+> [ All the old wireless Smatch warnings are showing up as new ones
+>   because of the path reshuffle in linux-next.  I'm going through and
+>   reporting the extra suspicious ones.  -dan ]
 > 
-> The patch 6bbc321a96d4: "b43: Add debugfs files for random SHM
-> access" from Jun 19, 2008, leads to the following static checker
+> Hello Rafa? Mi?ecki,
+> 
+> The patch 6f98e62a9f1b: "b43: update cordic code to match current
+> specs" from Jan 25, 2010, leads to the following static checker
 > warning:
 > 
-> 	drivers/net/wireless/broadcom/b43/debugfs.c:217 shm32write__write_file()
-> 	warn: impossible condition '(mask > 4294967295) => (0-u32max > u32max)'
+> 	drivers/net/wireless/broadcom/b43/phy_lp.c:1803 lpphy_start_tx_tone()
+> 	warn: mask and shift to zero
 > 
-> drivers/net/wireless/broadcom/b43/debugfs.c
->    198  static int shm32write__write_file(struct b43_wldev *dev,
->    199                                    const char *buf, size_t count)
->    200  {
->    201          unsigned int routing, addr, mask, set;
->    202          u32 val;
->    203          int res;
->    204  
->    205          res = sscanf(buf, "0x%X 0x%X 0x%X 0x%X",
->    206                       &routing, &addr, &mask, &set);
->    207          if (res != 4)
->    208                  return -EINVAL;
->    209          if (routing > B43_MAX_SHM_ROUTING)
->    210                  return -EADDRNOTAVAIL;
->    211          if (addr > B43_MAX_SHM_ADDR)
->    212                  return -EADDRNOTAVAIL;
->    213          if (routing == B43_SHM_SHARED) {
->    214                  if ((addr % 2) != 0)
->    215                          return -EADDRNOTAVAIL;
->    216          }
->    217          if ((mask > 0xFFFFFFFF) || (set > 0xFFFFFFFF))
+> drivers/net/wireless/broadcom/b43/phy_lp.c
+>   1800          for (i = 0; i < samples; i++) {
+>   1801                  sample = b43_cordic(angle);
+>   1802                  angle += rotation;
+>   1803                  buf[i] = CORDIC_CONVERT((sample.i * max) & 0xFF) << 8;
+>   1804                  buf[i] |= CORDIC_CONVERT((sample.q * max) & 0xFF);
 > 
-> Both of these conditions are impossible.
+> Maybe the intention was:
 > 
->    218                  return -E2BIG;
->    219  
->    220          if (mask == 0)
->    221                  val = 0;
->    222          else
->    223                  val = b43_shm_read32(dev, routing, addr);
->    224          val &= mask;
->    225          val |= set;
->    226          b43_shm_write32(dev, routing, addr, val);
->    227  
->    228          return 0;
->    229  }
+> 			buf[i] = (CORDIC_CONVERT(sample.i * max) & 0xFF) << 8;
+> 			buf[i] |= CORDIC_CONVERT((sample.q * max) & 0xFF;
 > 
-> See also:
-> drivers/net/wireless/broadcom/b43/debugfs.c:346 mmio32write__write_file() warn: impossible condition '(mask > 4294967295) => (0-u32max > u32max)'
-> drivers/net/wireless/broadcom/b43/debugfs.c:346 mmio32write__write_file() warn: impossible condition '(set > 4294967295) => (0-u32max > u32max)'
+>   1805          }
+>   1806  
 
 
+This looks like a bug indeed.
+Rafa?, do you have hw to check this?
 
-Sure. These are intentional.
-The compiler will optimize this out.
+ 			buf[i] = (CORDIC_CONVERT(sample.i * max) & 0xFF) << 8;
+ 			buf[i] |= CORDIC_CONVERT(sample.q * max) & 0xFF;
 
 -- 
 Michael
@@ -77,4 +57,4 @@ Name: not available
 Type: application/pgp-signature
 Size: 819 bytes
 Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20151126/99514e38/attachment.sig>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20151126/03c6a363/attachment.sig>
