@@ -1,60 +1,40 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Thu, 26 Nov 2015 13:40:30 +0100
-Subject: (bug report) b43: precendence error
-In-Reply-To: <20151126115843.GH10556@mwanda>
-References: <20151126115843.GH10556@mwanda>
-Message-ID: <20151126134030.63bd44aa@wiggum>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Nov 2015 16:00:34 +0300
+Subject: (bug report) b43: impossible conditions in debugfs
+In-Reply-To: <20151126133241.5bc5a793@wiggum>
+References: <20151126115924.GI10556@mwanda>
+ <20151126133241.5bc5a793@wiggum>
+Message-ID: <20151126130033.GG7289@mwanda>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: zajec5@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: Michael =?iso-8859-1?Q?B=FCsch?= <m@bues.ch>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Thu, 26 Nov 2015 14:58:43 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Thu, Nov 26, 2015 at 01:32:41PM +0100, Michael B?sch wrote:
+> > See also:
+> > drivers/net/wireless/broadcom/b43/debugfs.c:346 mmio32write__write_file() warn: impossible condition '(mask > 4294967295) => (0-u32max > u32max)'
+> > drivers/net/wireless/broadcom/b43/debugfs.c:346 mmio32write__write_file() warn: impossible condition '(set > 4294967295) => (0-u32max > u32max)'
+> 
+> 
+> 
+> Sure. These are intentional.
+> The compiler will optimize this out.
 
-> [ All the old wireless Smatch warnings are showing up as new ones
->   because of the path reshuffle in linux-next.  I'm going through and
->   reporting the extra suspicious ones.  -dan ]
-> 
-> Hello Rafa? Mi?ecki,
-> 
-> The patch 6f98e62a9f1b: "b43: update cordic code to match current
-> specs" from Jan 25, 2010, leads to the following static checker
-> warning:
-> 
-> 	drivers/net/wireless/broadcom/b43/phy_lp.c:1803 lpphy_start_tx_tone()
-> 	warn: mask and shift to zero
-> 
-> drivers/net/wireless/broadcom/b43/phy_lp.c
->   1800          for (i = 0; i < samples; i++) {
->   1801                  sample = b43_cordic(angle);
->   1802                  angle += rotation;
->   1803                  buf[i] = CORDIC_CONVERT((sample.i * max) & 0xFF) << 8;
->   1804                  buf[i] |= CORDIC_CONVERT((sample.q * max) & 0xFF);
-> 
-> Maybe the intention was:
-> 
-> 			buf[i] = (CORDIC_CONVERT(sample.i * max) & 0xFF) << 8;
-> 			buf[i] |= CORDIC_CONVERT((sample.q * max) & 0xFF;
-> 
->   1805          }
->   1806  
+Hm...  We try to ignore when people do intentional comparisons with zero
+like this:
 
+	if (unsigned_var < 0 || unsigned_var >= 10)
+		return -EINVAL;
 
-This looks like a bug indeed.
-Rafa?, do you have hw to check this?
+Because they are obviously harmless and they don't hurt readability.
+Also Linus doesn't like removing these.
 
- 			buf[i] = (CORDIC_CONVERT(sample.i * max) & 0xFF) << 8;
- 			buf[i] |= CORDIC_CONVERT(sample.q * max) & 0xFF;
+But what's the point of this?  I have seen these before when I was
+checking ide_set_disk_chs() for underflows.  I also reported another one
+recently that was exactly the same as this and the guy changed it from
+if (x > UINT_MAX) to if (!(x < UINT_MAX))...  I don't get it.
 
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20151126/03c6a363/attachment.sig>
+regards,
+dan carpenter
