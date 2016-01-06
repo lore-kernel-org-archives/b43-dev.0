@@ -1,10 +1,10 @@
 From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Wed, 6 Jan 2016 11:32:53 -0600
+Date: Wed, 6 Jan 2016 14:17:42 -0600
 Subject: New b43 firmware via ASUS/broadcom? postinst and documentation
  updates? downstream bugs?
 In-Reply-To: <080d7753324814742172df41fb7071da.squirrel@webmail.dreamhost.com>
 References: <080d7753324814742172df41fb7071da.squirrel@webmail.dreamhost.com>
-Message-ID: <568D4FC5.3090904@lwfinger.net>
+Message-ID: <568D7666.8090004@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -25,10 +25,7 @@ On 01/05/2016 01:38 AM, Drew Scott Daniels wrote:
 > Description 	GPL of ASUS RT-AC66U for firmware 3.0.0.4.378.9313
 > File Size 	567.48 MBytes update 2015/11/16
 > Download from 	Global
-
-It is new firmware for that ASUS AP, but it is impossible to tell whether the 
-b43 firmware is new.
-
+>
 > "Global" is a link to
 > http://dlcdnet.asus.com/pub/ASUS/wireless/RT-AC66U/GPL_RT_AC66U_30043789313.zip
 > contains
@@ -41,78 +38,7 @@ b43 firmware is new.
 > asuswrt/release/src-rt-6.x/wl/sysdeps/RT-AC66U/linux/wl_apsta.o
 > 2cc734d9f9ba27c5922f351f6558aa54
 > asuswrt/release/src-rt-6.x/wl/sysdeps/RT-AC66U/linux/wl_sta.o
->
-> 2) Are these ASUS released files GPL that could be included in the Linux
-> kernel?
 
-The short answer is no. These .o files do have the b43 firmware included in 
-them, but it would be useful only after extraction using b43-cutter. The 
-resulting firmware files would not be redistributable. Including a file of 567 
-MB in the kernel or in any distro will not happen. That is why the distros 
-include a script to download some file and run fwcutter on it.
-
-> asuswrt/License starts:
->
-> DESCRIPTION
-> --------------------------
-> This product includes copyrighted third-party software licensed
-> under the terms of the GNU General Public License. Please see
-> The GNU General Public License for the exact terms and conditions
-> of this license. All future firmware updates will also be accompanied
-> with their respective source code. Please visit our web site for updated
-> information. Note that we do not offer direct support for the distribution.
->
->
-> 3) https://www.broadcom.com/support/802.11 also has a download to
-> hybrid-v35_64-nodebug-pcoem-6_30_223_271.tar.gz with files dated
-> 2015-09-18 including lib/wlc_hybrid.o_shipped with md5sum
-> 6889dbd24abf8006de5cc6eddd138518. This looks newer than
-> broadcom-wl-6.30.163.46.tar.bz2 which had support added in 2013 to
-> fwcutter.
->
-> It's hard to tell without trying to cut the files out, and I'm not sure if
-> that's the right file.
->
-> 4) http://linuxwireless.org/en/users/Drivers/b43/ lists b43-fwcutter-018
-> but I see http://bues.ch/b43/fwcutter/ lists:
-> b43-fwcutter-019.tar.bz2	25-Jun-2014 16:05 	46K
-
-It appears the wiki needs an update.
-
-> 5) http://linuxwireless.sipsolutions.net/en/users/Drivers/b43/ lists
-> http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2 but
-> http://linuxwireless.sipsolutions.net/en/users/Drivers/b43/developers/
-> shows a table with a link to
-> http://www.lwfinger.com/b43-firmware/broadcom-wl-6.30.163.46.tar.bz2 which
-> looks newer. Does it not work as well as 5.100.138?
-
-The wiki at en/users/Drivers/b43/ is out of date. I have no idea what the 
-changes are between firmware version 666.2 and 784.2.
-
-> 6) b43-fwcutter-0.19.tar.bz2 contains:
-> ./debian/firmware-b43-installer/DEBIAN/postinst
-> that downloads broadcom-wl-5.100.138.tar.bz2 and not 6.30.136.46
-> Debian and Ubuntu b43-fwcutter_019-2 contain the same postinst.
-
-I do not know who wrote that code and as I do not understand Debian installers, 
-I will leave that question for them.
-
-> 7) Debian, Ubuntu and Arch are all tracking issues with b43-fwcutter
-> including file permissions being 750 or 755. See:
-> https://launchpad.net/ubuntu/+source/b43-fwcutter/+bugs
-> https://bugs.debian.org/cgi-bin/pkgreport.cgi?repeatmerged=yes&src=b43-fwcutter
-> https://aur.archlinux.org/packages/b43-firmware/
-> Fedora doesn't list any open bugs at
-> https://apps.fedoraproject.org/packages/b43-fwcutter/ and doesn't seem to
-> have the postinst script.
-> There may be other issues being tracked in the other distributions like
-> openSUSE.
->
-> Are the file permissions intentional? Just needed temporarily?
-
-The extracted firmware files are created with permissions 311, which is correct. 
-If they end up with some other permissions in some distro, I expect that is a 
-problem with their installation process. On my openSUSE 13.2 system, the 
-permissions are correct.
+The firmware version is 784.2. It is not new b43 firmware.
 
 Larry
