@@ -1,23 +1,54 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 11 Jan 2016 17:42:36 +0100
-Subject: [PATCH] b43: Fix a memory leak in b43_bus_dev_ssb_init
-In-Reply-To: <1452483457-568-1-git-send-email-baijiaju1990@163.com>
-References: <1452483457-568-1-git-send-email-baijiaju1990@163.com>
-Message-ID: <CACna6ryM1vekanY6WEC9g5G70uZi=rEOShgv1xamK8MuD=YsrA@mail.gmail.com>
+From: Jia-Ju Bai <baijiaju1990@163.com>
+Date: Tue, 12 Jan 2016 09:01:04 +0800
+Subject: [PATCH] b43: Fix memory leaks in b43_bus_dev_ssb_init and
+ b43_bus_dev_bcma_init
+Message-ID: <1452560464-7146-1-git-send-email-baijiaju1990@163.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jia-Ju Bai <baijiaju1990@163.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, Johannes Berg <johannes.berg@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, Network Development <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kvalo@codeaurora.org, zajec5@gmail.com, joe@perches.com, davem@davemloft.net, m@bues.ch, johannes.berg@intel.com
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>
 
-On 11 January 2016 at 04:37, Jia-Ju Bai <baijiaju1990@163.com> wrote:
-> The memory allocated by kzalloc in b43_bus_dev_ssb_init is not freed.
-> This patch fixes the bug by adding kfree in b43_ssb_remove.
+The memory allocated by kzalloc in b43_bus_dev_ssb_init and
+b43_bus_dev_bcma_initis not freed.
+This patch fixes the bug by adding kfree in b43_ssb_remove,
+b43_bcma_remove and error handling code of b43_bcma_probe.
 
-Nice. If you want somethig more to scratch your head, see
-"Missing b43 firmware handling"
-http://lists.infradead.org/pipermail/b43-dev/2014-June/003467.html
+Thanks Michael for his suggestion.
 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+---
+ drivers/net/wireless/b43/main.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index ec013fb..2c9d9c1 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -5683,6 +5683,7 @@ static int b43_bcma_probe(struct bcma_device *core)
+ 	schedule_work(&wl->firmware_load);
+ 
+ bcma_out:
++	kfree(dev);
+ 	return err;
+ 
+ bcma_err_wireless_exit:
+@@ -5716,6 +5717,7 @@ static void b43_bcma_remove(struct bcma_device *core)
+ 	b43_leds_unregister(wl);
+ 
+ 	ieee80211_free_hw(wl->hw);
++	kfree(wldev->dev);
+ }
+ 
+ static struct bcma_driver b43_bcma_driver = {
+@@ -5798,6 +5800,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
+ 
+ 	b43_leds_unregister(wl);
+ 	b43_wireless_exit(dev, wl);
++	kfree(dev);
+ }
+ 
+ static struct ssb_driver b43_ssb_driver = {
 -- 
-Rafa?
+1.7.9.5
