@@ -1,14 +1,14 @@
 From: Jia-Ju Bai <baijiaju1990@163.com>
-Date: Tue, 12 Jan 2016 15:00:06 +0800
-Subject: [PATCH v2] b43: Fix memory leaks in b43_bus_dev_ssb_init and
+Date: Sat, 16 Jan 2016 21:08:10 +0800
+Subject: [PATCH v2 resend] b43: Fix memory leaks in b43_bus_dev_ssb_init and
  b43_bus_dev_bcma_init
-Message-ID: <1452582006-6796-1-git-send-email-baijiaju1990@163.com>
+Message-ID: <1452949690-16387-1-git-send-email-baijiaju1990@163.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kvalo@codeaurora.org, zajec5@gmail.com, joe@perches.com, davem@davemloft.net, m@bues.ch, johannes.berg@intel.com
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>
 
 The memory allocated by kzalloc in b43_bus_dev_ssb_init and
 b43_bus_dev_bcma_init is not freed.
