@@ -1,27 +1,27 @@
 From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Tue, 2 Feb 2016 21:48:59 +0530
-Subject: [1/3] net: wireless: rsi: Coding Spaces
-In-Reply-To: <1445122898-5810-1-git-send-email-paulmcquad@gmail.com>
-References: <1445122898-5810-1-git-send-email-paulmcquad@gmail.com>
-Message-ID: <20160202161859.GB8235@sudip-laptop>
+Date: Tue, 2 Feb 2016 21:55:19 +0530
+Subject: [v2,2/3] net: wireless: b43: Coding Style
+In-Reply-To: <1445270543-2209-3-git-send-email-paulmcquad@gmail.com>
+References: <1445270543-2209-3-git-send-email-paulmcquad@gmail.com>
+Message-ID: <20160202162519.GC8235@sudip-laptop>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Paul Mcquade <paulmcquad@gmail.com>
-Cc: kvalo@codeaurora.org, zajec5@gmail.com, johannes.berg@intel.com, davem@davemloft.net, joe@perches.com, m@bues.ch, mike.looijmans@topic.nl, cengelma@gmx.at, khoroshilov@ispras.ru, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kvalo@codeaurora.org, zajec5@gmail.com, davem@davemloft.net, joe@perches.com, johannes.berg@intel.com, sd@queasysnail.net, m@bues.ch, mike.looijmans@topic.nl, khoroshilov@ispras.ru, cengelma@gmx.at, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Oct 18, 2015 at 12:01:36AM +0100, Paul Mcquade wrote:
-> Removed space before that ','
+On Mon, Oct 19, 2015 at 05:02:22PM +0100, Paul Mcquade wrote:
+> Fixed Pointer Coding Style
 > 
 > Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
+> Acked-by: Michael Buesch <m@bues.ch>
 
-The From: name and Signed-off-by: name should be same else some of the
-stats generating tools will break. It should be Paul McQuade, not
-Paul Mcquade. Maybe you have modified your .gitconfig recently.
+Please fix the From: name like i just replied in another of your patch
+and this patch will not apply anymore as the driver has moved to a new
+location drivers/net/wireless/broadcom/b43/
 
-And in the subject net: wireless: is not required.
-Can you please send v2..
+can you please rebase it against the current tree and send.
 
 regards
 sudip
