@@ -1,10 +1,8 @@
 From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Mon,  8 Feb 2016 21:41:13 +0100
-Subject: [PATCH 2/2] rtlwifi: Remove unnecessary synchronize_irq() before
+Date: Mon,  8 Feb 2016 21:41:12 +0100
+Subject: [PATCH 1/2] b43: Remove unnecessary synchronize_irq() before
  free_irq()
-In-Reply-To: <1454964073-25108-1-git-send-email-lars@metafoo.de>
-References: <1454964073-25108-1-git-send-email-lars@metafoo.de>
-Message-ID: <1454964073-25108-2-git-send-email-lars@metafoo.de>
+Message-ID: <1454964073-25108-1-git-send-email-lars@metafoo.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -28,20 +26,27 @@ expression irq;
 
 Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 ---
- drivers/net/wireless/realtek/rtlwifi/pci.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/broadcom/b43/main.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.c b/drivers/net/wireless/realtek/rtlwifi/pci.c
-index 7f471bf..140d254 100644
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -2392,7 +2392,6 @@ void rtl_pci_disconnect(struct pci_dev *pdev)
- 	rtlpriv->cfg->ops->deinit_sw_vars(hw);
- 
- 	if (rtlpci->irq_alloc) {
--		synchronize_irq(rtlpci->pdev->irq);
- 		free_irq(rtlpci->pdev->irq, hw);
- 		rtlpci->irq_alloc = 0;
- 	}
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index c279211..72380af 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -4375,12 +4375,10 @@ redo:
+ 	/* Synchronize and free the interrupt handlers. Unlock to avoid deadlocks. */
+ 	orig_dev = dev;
+ 	mutex_unlock(&wl->mutex);
+-	if (b43_bus_host_is_sdio(dev->dev)) {
++	if (b43_bus_host_is_sdio(dev->dev))
+ 		b43_sdio_free_irq(dev);
+-	} else {
+-		synchronize_irq(dev->dev->irq);
++	else
+ 		free_irq(dev->dev->irq, dev);
+-	}
+ 	mutex_lock(&wl->mutex);
+ 	dev = wl->current_dev;
+ 	if (!dev)
 -- 
 2.1.4
