@@ -1,35 +1,27 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Thu, 18 Feb 2016 18:04:36 +0530
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 18 Feb 2016 14:40:20 +0100
 Subject: [PATCH] b43: fix memory leak
-Message-ID: <1455798876-32186-1-git-send-email-sudipm.mukherjee@gmail.com>
+In-Reply-To: <1455798876-32186-1-git-send-email-sudipm.mukherjee@gmail.com>
+References: <1455798876-32186-1-git-send-email-sudipm.mukherjee@gmail.com>
+Message-ID: <CACna6rztbZ5P4RborXrTdLJDEmQyGNOExNvAmWcxZG83stS2bg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, Network Development <netdev@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-From: Sudip Mukherjee <sudip@vectorindia.org>
+On 18 February 2016 at 13:34, Sudip Mukherjee
+<sudipm.mukherjee@gmail.com> wrote:
+> From: Sudip Mukherjee <sudip@vectorindia.org>
+>
+> On error we jumped to the label bcma_out and returned the error code but
+> we missed freeing dev.
 
-On error we jumped to the label bcma_out and returned the error code but
-we missed freeing dev.
+What if b43_one_core_attach fails? Won't we miss kfree then as well?
+Shouldn't you simply improve error path and maybe use an additional
+label? Also may we be missing a proper free in b43_bcma_remove as
+well?
 
-Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
----
- drivers/net/wireless/broadcom/b43/main.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index c279211..78f670a 100644
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -5671,6 +5671,7 @@ static int b43_bcma_probe(struct bcma_device *core)
- 	wl = b43_wireless_init(dev);
- 	if (IS_ERR(wl)) {
- 		err = PTR_ERR(wl);
-+		kfree(dev);
- 		goto bcma_out;
- 	}
- 
--- 
-1.9.1
+Your patch subject could also be a bit more descriptive (e.g. what
+memory leak exactly is it).
