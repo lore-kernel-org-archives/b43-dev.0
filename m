@@ -1,38 +1,35 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Mon, 8 Feb 2016 23:22:02 +0100
-Subject: [PATCH 1/2] b43: Remove unnecessary synchronize_irq() before
- free_irq()
-In-Reply-To: <1454964073-25108-1-git-send-email-lars@metafoo.de>
-References: <1454964073-25108-1-git-send-email-lars@metafoo.de>
-Message-ID: <20160208232202.7db42b54@wiggum>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date: Thu, 18 Feb 2016 18:04:36 +0530
+Subject: [PATCH] b43: fix memory leak
+Message-ID: <1455798876-32186-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, Chaoming Li <chaoming_li@realsil.com.cn>, b43-dev@lists.infradead.org, Larry Finger <Larry.Finger@lwfinger.net>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
 
-On Mon,  8 Feb 2016 21:41:12 +0100
-Lars-Peter Clausen <lars@metafoo.de> wrote:
+From: Sudip Mukherjee <sudip@vectorindia.org>
 
-> Calling synchronize_irq() right before free_irq() is quite useless. On one
-> hand the IRQ can easily fire again before free_irq() is entered,
+On error we jumped to the label bcma_out and returned the error code but
+we missed freeing dev.
 
-Well, that depends on whether the interrupt is shared and whether we
-disabled the interrupt mask inside of the device (which we did).
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+---
+ drivers/net/wireless/broadcom/b43/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> on the
-> other hand free_irq() itself calls synchronize_irq() internally (in a race
-> condition free way), before any state associated with the IRQ is freed.
-
-Ok, fair enough.
-
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index c279211..78f670a 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -5671,6 +5671,7 @@ static int b43_bcma_probe(struct bcma_device *core)
+ 	wl = b43_wireless_init(dev);
+ 	if (IS_ERR(wl)) {
+ 		err = PTR_ERR(wl);
++		kfree(dev);
+ 		goto bcma_out;
+ 	}
+ 
 -- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20160208/9a3d5f46/attachment.sig>
+1.9.1
