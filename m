@@ -1,39 +1,36 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 29 Feb 2016 10:30:19 -0600
-Subject: Is Larry's reverse-engineering effort dead?
-In-Reply-To: <CA+XFjiqzyPpPmYg6OQm2bR0nejX1-Tz8B-58HsgvApKf1jAKXw@mail.gmail.com>
-References: <CA+XFjiqzyPpPmYg6OQm2bR0nejX1-Tz8B-58HsgvApKf1jAKXw@mail.gmail.com>
-Message-ID: <56D4721B.80607@lwfinger.net>
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Thu, 10 Mar 2016 18:43:13 +0100
+Subject: [PATCH] b43: fix memory leak
+In-Reply-To: <56C72FA6.3090102@gmail.com>
+References: <1455798876-32186-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <20160218173212.03670d97@wiggum> <87io1lqh3j.fsf@purkki.adurom.net>
+ <56C72FA6.3090102@gmail.com>
+Message-ID: <20160310184313.06eb8b91@wiggum>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, netdev@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
 
-On 02/29/2016 05:24 AM, G?bor Stefanik wrote:
-> Hi All,
->
-> I recently got my HP laptop replaced under warranty. Unfortunately,
-> while the old one had a Realtek wireless card with a supported
-> mainstream Linux driver, this one came with the dreaded BCM43142
-> (LCN40-PHY), which neither b43 nor brcmsmac supports.
->
-> Since I have previously implemented support for LP-PHY in b43, I
-> thought about having a go at implementing this PHY. However, no specs
-> appear to exist for this chip - in fact, it looks like no new specs
-> were posted since the N-PHY ones back in 2010.
->
-> Is the reverse engineering effort still ongoing somewhere? I've seen
-> some mail on the list about AC-PHY development starting, which is also
-> not on the specs wiki.
+On Fri, 19 Feb 2016 20:37:18 +0530
+Sudip Mukherjee <sudipm.mukherjee@gmail.com> wrote:
 
-Yes, my reverse-engineering effort is dead. There have never been any specs 
-published by Broadcom. Those in the specs wiki came from an SSB driver that 
-Michael acquired, and from reverse-compiling various MIPS binaries. That is 
-really hard work, and I have little enthusiasm for any further efforts in that 
-direction.
+> > https://patchwork.kernel.org/patch/8049041/  
+> 
+> I have an old laptop running on 800Mhz CPU. It has "Broadcom BCM4311 
+> [14e4:4311] (rev 01)".
+> I will try to test it on this weekend.
 
-Rafal has done some reverse engineering by dumping the MMIO communications. With 
-the LCN40 devices, that is likely the only way to go.
+Any news on this one?
 
-Larry
+
+-- 
+Michael
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 819 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20160310/1e3664da/attachment.sig>
