@@ -1,32 +1,32 @@
 From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Thu, 10 Mar 2016 23:26:46 +0530
-Subject: [PATCH] b43: fix memory leak
-In-Reply-To: <20160310184313.06eb8b91@wiggum>
-References: <1455798876-32186-1-git-send-email-sudipm.mukherjee@gmail.com>	<20160218173212.03670d97@wiggum>	<87io1lqh3j.fsf@purkki.adurom.net>	<56C72FA6.3090102@gmail.com>
- <20160310184313.06eb8b91@wiggum>
-Message-ID: <56E1B55E.3080804@gmail.com>
+Date: Fri, 11 Mar 2016 21:52:30 +0530
+Subject: [v2, resend] b43: Fix memory leaks in b43_bus_dev_ssb_init and
+ b43_bus_dev_bcma_init
+In-Reply-To: <1452949690-16387-1-git-send-email-baijiaju1990@163.com>
+References: <1452949690-16387-1-git-send-email-baijiaju1990@163.com>
+Message-ID: <20160311162230.GA5436@sudip-laptop>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?windows-1252?Q?Michael_B=FCsch?= <m@bues.ch>
-Cc: Kalle Valo <kvalo@codeaurora.org>, netdev@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
+To: Jia-Ju Bai <baijiaju1990@163.com>
+Cc: kvalo@codeaurora.org, zajec5@gmail.com, joe@perches.com, davem@davemloft.net, m@bues.ch, johannes.berg@intel.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
 
-On Thursday 10 March 2016 11:13 PM, Michael B?sch wrote:
-> On Fri, 19 Feb 2016 20:37:18 +0530
-> Sudip Mukherjee <sudipm.mukherjee@gmail.com> wrote:
->
->>> https://patchwork.kernel.org/patch/8049041/
->>
->> I have an old laptop running on 800Mhz CPU. It has "Broadcom BCM4311
->> [14e4:4311] (rev 01)".
->> I will try to test it on this weekend.
->
-> Any news on this one?
+On Sat, Jan 16, 2016 at 09:08:10PM +0800, Jia-Ju Bai wrote:
+> The memory allocated by kzalloc in b43_bus_dev_ssb_init and
+> b43_bus_dev_bcma_init is not freed.
+> This patch fixes the bug by adding kfree in b43_ssb_remove,
+> b43_bcma_remove and error handling code of b43_bcma_probe.
+> 
+> Thanks Michael for his suggestion.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
 
-No. Sorry. I was trying to install ubuntu 14.04 in it, but for some 
-reason the usb stick is not moving past the boot screen. Give me two 
-more days and I will let you all know by this Saturday.
+The patch did not apply cleanly. I had to edit the patch to point to
+drivers/net/wireless/broadcom/b43/main.c
+
+For CONFIG_B43_SSB part-
+Tested-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 
 regards
 sudip
