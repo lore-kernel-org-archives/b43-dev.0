@@ -1,53 +1,66 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Fri, 11 Mar 2016 17:30:47 +0100
-Subject: [v2, resend] b43: Fix memory leaks in b43_bus_dev_ssb_init and
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date: Fri, 11 Mar 2016 22:44:37 +0530
+Subject: [PATCH] b43: Fix memory leaks in b43_bus_dev_ssb_init and
  b43_bus_dev_bcma_init
-In-Reply-To: <20160311162230.GA5436@sudip-laptop>
-References: <1452949690-16387-1-git-send-email-baijiaju1990@163.com>
- <20160311162230.GA5436@sudip-laptop>
-Message-ID: <20160311173047.785c2b24@wiggum>
+Message-ID: <1457716477-6287-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, kvalo@codeaurora.org
-Cc: Jia-Ju Bai <baijiaju1990@163.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, joe@perches.com
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>, =?UTF-8?q?Michael=20B=C3=BCsch?= <m@bues.ch>
 
-On Fri, 11 Mar 2016 21:52:30 +0530
-Sudip Mukherjee <sudipm.mukherjee@gmail.com> wrote:
+From: Jia-Ju Bai <baijiaju1990@163.com>
 
-> On Sat, Jan 16, 2016 at 09:08:10PM +0800, Jia-Ju Bai wrote:
-> > The memory allocated by kzalloc in b43_bus_dev_ssb_init and
-> > b43_bus_dev_bcma_init is not freed.
-> > This patch fixes the bug by adding kfree in b43_ssb_remove,
-> > b43_bcma_remove and error handling code of b43_bcma_probe.
-> > 
-> > Thanks Michael for his suggestion.
-> > 
-> > Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>  
-> 
-> The patch did not apply cleanly. I had to edit the patch to point to
-> drivers/net/wireless/broadcom/b43/main.c
-> 
-> For CONFIG_B43_SSB part-
-> Tested-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+The memory allocated by kzalloc in b43_bus_dev_ssb_init and
+b43_bus_dev_bcma_init is not freed.
+This patch fixes the bug by adding kfree in b43_ssb_remove,
+b43_bcma_remove and error handling code of b43_bcma_probe.
 
+Thanks Michael for his suggestion.
 
-Ok thanks a lot.
-We possibly don't get an bcma tester anytime soon. As this is quite an
-important fix, we should probably apply it.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Acked-by: Michael B?sch <m@bues.ch>
+Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+---
+ drivers/net/wireless/broadcom/b43/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Sudip, can you please update the patch so it applies cleanly on the
-current tree? You can add my acked-by if you want.
-
-Kalle, can you please apply it afterwards?
-
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index 72380af..b0603e7 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -5680,11 +5680,12 @@ static int b43_bcma_probe(struct bcma_device *core)
+ 	INIT_WORK(&wl->firmware_load, b43_request_firmware);
+ 	schedule_work(&wl->firmware_load);
+ 
+-bcma_out:
+ 	return err;
+ 
+ bcma_err_wireless_exit:
+ 	ieee80211_free_hw(wl->hw);
++bcma_out:
++	kfree(dev);
+ 	return err;
+ }
+ 
+@@ -5712,8 +5713,8 @@ static void b43_bcma_remove(struct bcma_device *core)
+ 	b43_rng_exit(wl);
+ 
+ 	b43_leds_unregister(wl);
+-
+ 	ieee80211_free_hw(wl->hw);
++	kfree(wldev->dev);
+ }
+ 
+ static struct bcma_driver b43_bcma_driver = {
+@@ -5796,6 +5797,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
+ 
+ 	b43_leds_unregister(wl);
+ 	b43_wireless_exit(dev, wl);
++	kfree(dev);
+ }
+ 
+ static struct ssb_driver b43_ssb_driver = {
 -- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20160311/723bfcd4/attachment.sig>
+1.9.1
