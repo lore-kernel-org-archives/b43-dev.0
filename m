@@ -1,84 +1,31 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Fri, 18 Mar 2016 13:24:28 +1100
-Subject: [PATCH 10/19] b43: Fix memory leaks in b43_bus_dev_ssb_init and
- b43_bus_dev_bcma_init
-In-Reply-To: <cover.1458262312.git.julian.calaby@gmail.com>
-References: <cover.1458262312.git.julian.calaby@gmail.com>
-Message-ID: <4193d5f8e6288b463252fbbb6fae0e9950d83677.1458262312.git.julian.calaby@gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 23 Mar 2016 15:51:57 +0000 (UTC)
+Subject: b43: Fix memory leaks in b43_bus_dev_ssb_init
+ andb43_bus_dev_bcma_init
+In-Reply-To: <1457716477-6287-1-git-send-email-sudipm.mukherjee@gmail.com>
+Message-ID: <20160323155157.45F8E615D5@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
+References: <1457716477-6287-1-git-send-email-sudipm.mukherjee@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Lars-Peter Clausen <lars@metafoo.de>, Jia-Ju Bai <baijiaju1990@163.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: Sudip Mukherjee <sudipm.mukherjee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jia-Ju Bai <baijiaju1990-9Onoh4P/yGk@public.gmane.org>, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, =?UTF-8?q?Michael=20B=C3=BCsch?= <m@bues.ch>
 
-From: Jia-Ju Bai <baijiaju1990@163.com>
 
-The memory allocated by kzalloc in b43_bus_dev_ssb_init and
-b43_bus_dev_bcma_init is not freed.
-This patch fixes the bug by adding kfree in b43_ssb_remove,
-b43_bcma_remove and error handling code of b43_bcma_probe.
+> From: Jia-Ju Bai <baijiaju1990@163.com>
+> 
+> The memory allocated by kzalloc in b43_bus_dev_ssb_init and
+> b43_bus_dev_bcma_init is not freed.
+> This patch fixes the bug by adding kfree in b43_ssb_remove,
+> b43_bcma_remove and error handling code of b43_bcma_probe.
+> 
+> Thanks Michael for his suggestion.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+> Acked-by: Michael B??sch <m@bues.ch>
+> Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 
-Thanks Michael for his suggestion.
+Thanks, applied to wireless-drivers.git.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
-Tested-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-Signed-off-by: Julian Calaby <julian.calaby@gmail.com>
-
----
-
-This stalled waiting for testing on BCMA.
-
-The fix _looks_ correct.
-
-For BCMA, b43_bus_dev_bcma_init() allocs the memory that wldev->dev ends
-up pointing to, however it appears that this memory is never freed. Hunks
-1 and 2 add that freeing to the probe and remove functions respectively.
-
-Hunk 1 makes b43_bcma_probe()'s error handling look like b43_ssb_probe()'s.
-
-Thanks,
-
-Julian Calaby
----
- drivers/net/wireless/broadcom/b43/main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index 72380af..b0603e7 100644
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -5680,11 +5680,12 @@ static int b43_bcma_probe(struct bcma_device *core)
- 	INIT_WORK(&wl->firmware_load, b43_request_firmware);
- 	schedule_work(&wl->firmware_load);
- 
--bcma_out:
- 	return err;
- 
- bcma_err_wireless_exit:
- 	ieee80211_free_hw(wl->hw);
-+bcma_out:
-+	kfree(dev);
- 	return err;
- }
- 
-@@ -5712,8 +5713,8 @@ static void b43_bcma_remove(struct bcma_device *core)
- 	b43_rng_exit(wl);
- 
- 	b43_leds_unregister(wl);
--
- 	ieee80211_free_hw(wl->hw);
-+	kfree(wldev->dev);
- }
- 
- static struct bcma_driver b43_bcma_driver = {
-@@ -5796,6 +5797,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
- 
- 	b43_leds_unregister(wl);
- 	b43_wireless_exit(dev, wl);
-+	kfree(dev);
- }
- 
- static struct ssb_driver b43_ssb_driver = {
--- 
-2.7.0
+Kalle Valo
