@@ -1,18 +1,43 @@
-From: Jan Sobotka <xSobotkaJ@seznam.cz>
-Date: Sat, 30 Apr 2016 10:38:51 +0200 (CEST)
-Subject: =?utf-8?q?Planned_Support_for_BCM_43162_=5B14e4=3A43ae=5D_rev_02_?=
- =?utf-8?q?=3F=0A?=
-Message-ID: <75r.2THk.1aVrEGdo1ry.1N96yR@seznam.cz>
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+Date: Fri, 1 Apr 2016 00:13:46 +0100
+Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
+In-Reply-To: <E1akxli-00030z-BC@bombadil.infradead.org>
+References: <E1akxli-00030z-BC@bombadil.infradead.org>
+Message-ID: <20160331231346.GA7469@localhost>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-Hello,
+On Tue, Mar 29, 2016 at 07:41:30PM +0200, Lukas Wunner wrote:
+> Broadcom 4331 wireless cards built into Apple Macs unleash an IRQ storm
+> on boot until they are reset, causing spurious interrupts if the IRQ is
+> shared. Apparently the EFI bootloader enables the device and does not
+> disable it before passing control to the OS. The bootloader contains a
+> driver for the wireless card which allows it to phone home to Cupertino.
+> This is used for Internet Recovery (download and install OS X images)
+> and probably also for Back to My Mac (remote access, RFC 6281) and to
+> discover stolen hardware.
+> 
+> The issue is most pronounced on 2011 and 2012 MacBook Pros where the IRQ
+> is shared with 3 other devices (Light Ridge Thunderbolt controller, SDXC
+> reader, HDA card on discrete GPU). As soon as an interrupt handler is
+> installed for one of these devices, the ensuing storm of spurious IRQs
+> causes the kernel to disable the IRQ and switch to polling. This lasts
+> until the b43 driver loads and resets the device.
+> 
+> Loading the b43 driver first is not always an option, in particular with
+> the Light Ridge Thunderbolt controller: The PCI hotplug IRQ handler gets
+> installed early on because it is built in, unlike b43 which is usually
+> a module.
+> 
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=79301
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=895951
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1009819
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1149632
 
-is planned to add support for BCM 43162 [14e4:43ae] to b43 in near future? Unfortunately I bought the notebook with this WLAN card. Bug reported here https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1576815 I'm willing to help, for example with testing.
-
-Regards.
-
-Jan 
+Should also fix https://bugzilla.kernel.org/show_bug.cgi?id=111781 ?
+Given that this is a serious bug that can corrupt filesystems it would
+be good to see the fix in stable too.
