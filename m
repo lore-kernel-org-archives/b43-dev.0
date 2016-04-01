@@ -1,47 +1,92 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Thu, 31 Mar 2016 21:09:36 +0200
+From: Lukas Wunner <lukas@wunner.de>
+Date: Sat, 2 Apr 2016 00:46:46 +0200
 Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
-In-Reply-To: <E1akxli-00030z-Jz@bombadil.infradead.org>
-References: <E1akxli-00030z-Jz@bombadil.infradead.org>
-Message-ID: <20160331210936.6b195135@wiggum>
+In-Reply-To: <20160331231346.GA7469@localhost>
+References: <E1akxli-00030z-BC@bombadil.infradead.org>
+ <20160331231346.GA7469@localhost>
+Message-ID: <20160401224646.GA11281@wunner.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Wunner <lukas@wunner.de>
+To: Chris Bainbridge <chris.bainbridge@gmail.com>
 Cc: linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Tue, 29 Mar 2016 19:41:30 +0200
-Lukas Wunner <lukas@wunner.de> wrote:
+Hi Chris,
 
-> +static void quirk_apple_b43_reset(struct pci_dev *dev)
-> +{
-> +	void __iomem *mmio;
-> +
-> +	if (!dmi_match(DMI_BOARD_VENDOR, "Apple Inc.") || !dev->bus->self ||
-> +	    pci_pcie_type(dev->bus->self) != PCI_EXP_TYPE_ROOT_PORT)
-> +		return;
-> +
-> +	mmio = pci_iomap(dev, 0, 0);
-> +	if (!mmio) {
-> +		pr_err("b43 quirk: Cannot iomap device, IRQ storm ahead\n");
-> +		return;
-> +	}
-> +	iowrite32(BCMA_RESET_CTL_RESET,
-> +		  mmio + (1 * BCMA_CORE_SIZE) + BCMA_RESET_CTL);
-> +	pci_iounmap(dev, mmio);
-> +}
-> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_BROADCOM, 0x4331, quirk_apple_b43_reset);
+On Fri, Apr 01, 2016 at 12:13:46AM +0100, Chris Bainbridge wrote:
+> On Tue, Mar 29, 2016 at 07:41:30PM +0200, Lukas Wunner wrote:
+> > Broadcom 4331 wireless cards built into Apple Macs unleash an IRQ storm
+> > on boot until they are reset, causing spurious interrupts if the IRQ is
+> > shared. Apparently the EFI bootloader enables the device and does not
+> > disable it before passing control to the OS. The bootloader contains a
+> > driver for the wireless card which allows it to phone home to Cupertino.
+> > This is used for Internet Recovery (download and install OS X images)
+> > and probably also for Back to My Mac (remote access, RFC 6281) and to
+> > discover stolen hardware.
+> > 
+> > The issue is most pronounced on 2011 and 2012 MacBook Pros where the IRQ
+> > is shared with 3 other devices (Light Ridge Thunderbolt controller, SDXC
+> > reader, HDA card on discrete GPU). As soon as an interrupt handler is
+> > installed for one of these devices, the ensuing storm of spurious IRQs
+> > causes the kernel to disable the IRQ and switch to polling. This lasts
+> > until the b43 driver loads and resets the device.
+> > 
+> > Loading the b43 driver first is not always an option, in particular with
+> > the Light Ridge Thunderbolt controller: The PCI hotplug IRQ handler gets
+> > installed early on because it is built in, unlike b43 which is usually
+> > a module.
+> > 
+> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=79301
+> > Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=895951
+> > Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1009819
+> > Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1149632
+> 
+> Should also fix https://bugzilla.kernel.org/show_bug.cgi?id=111781 ?
+> Given that this is a serious bug that can corrupt filesystems it would
+> be good to see the fix in stable too.
 
-Looks good, as long as the wireless core is always guaranteed to be
-the second core on that PCI device.
+I cannot reproduce this particular issue on my MBP9,1 even though it
+is architecturally very similar to your MBP10,2. I tested it with
+"iommu=force intel_iommu=on", blacklisted b43 and stressed the machine
+a bit with kernel compiles. No issues.
 
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20160331/6fe60948/attachment.sig>
+Have you tested my patch? As Michael B?sch has pointed out correctly,
+it should mitigate that issue but will not solve it completely.
+You write in the bugzilla entry that you've seen the issue as early
+as 0.7 seconds into the boot. That's not a very precise method to
+measure boot progress but on my machine the card is reset around 1.2
+seconds, so likely too late. It's possible to execute the PCI quirk
+slightly earlier (in the header fixup section rather than the late
+fixup section) but that wouldn't make a significant difference.
+
+If you use the method described in Matthew Garrett's blog post,
+i.e. boot with "memmap=0xc0$0x1568a0", does the issue go away?
+If so, we could probably add a quirk in arch/x86/kernel/e820.c
+to mark that particular area reserved, or generally mark all
+EFI boot services areas as reserved on Macs. This memory could
+then be marked usable again once the card has been reset.
+
+As to why the issue doesn't occur on my machine, my guess is that
+the wireless card only writes packets to memory if it is associated
+with a base station. Do you have an open WLAN around? Try moving
+out of its reach and test if the issue goes away. Alternatively,
+did you enter Wifi credentials in OS X? If so it has saved the
+credentials to EFI variables. To verify if it has, use this on OS X:
+
+/usr/sbin/nvram 36C28AB5-6566-4C50-9EBD-CBB920F83843:current-network
+/usr/sbin/nvram 36C28AB5-6566-4C50-9EBD-CBB920F83843:preferred-networks
+/usr/sbin/nvram 36C28AB5-6566-4C50-9EBD-CBB920F83843:preferred-count
+
+On Linux, invoke "mount -t efivarfs none /sys/firmware/efi/efivars"
+and delete the variables (use chattr -i first if you're on Linux 4.5+).
+Test if the issue goes away.
+
+I have neither an open WLAN nearby nor Wifi credentials in my EFI
+variables, so the wireless card cannot associate with a base station
+in the pre-OS phase and that's probably the reason why the issue doesn't
+occur on my machine.
+
+Best regards,
+
+Lukas
