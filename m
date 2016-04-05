@@ -1,138 +1,146 @@
-From: Lukas Wunner <lukas@wunner.de>
-Date: Sun, 3 Apr 2016 13:49:12 +0200
+From: Bjorn Helgaas <helgaas@kernel.org>
+Date: Tue, 5 Apr 2016 14:40:15 -0500
 Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
-In-Reply-To: <CA+Y=x3=cLDHc7PK5h9n=ixdgVKWdVSu_v+-7jHJ-vBnDrv4sgg@mail.gmail.com>
-References: <E1akxli-00030z-BC@bombadil.infradead.org>
- <CA+Y=x3=cLDHc7PK5h9n=ixdgVKWdVSu_v+-7jHJ-vBnDrv4sgg@mail.gmail.com>
-Message-ID: <20160403114912.GA11540@wunner.de>
+In-Reply-To: <811539524df8b5ed7e2817c1c3e3e08560c97964.1459275517.git.lukas@wunner.de>
+References: <811539524df8b5ed7e2817c1c3e3e08560c97964.1459275517.git.lukas@wunner.de>
+Message-ID: <20160405194015.GC15353@localhost>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Worsley <amworsley@gmail.com>
-Cc: b43-dev@lists.infradead.org, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, b43-dev@lists.infradead.org, Matthew Garrett <mjg59@srcf.ucam.org>
 
-Hi Andrew,
+[+cc Matthew]
 
-On Sat, Apr 02, 2016 at 10:40:41PM +1100, Andrew Worsley wrote:
-> On 30 March 2016 at 04:41, Lukas Wunner <lukas@wunner.de> wrote:
-> > Broadcom 4331 wireless cards built into Apple Macs unleash an IRQ storm
-> > on boot until they are reset, causing spurious interrupts if the IRQ is
-> > shared. Apparently the EFI bootloader enables the device and does not
-> > disable it before passing control to the OS. The bootloader contains a
-> > driver for the wireless card which allows it to phone home to Cupertino.
-> > This is used for Internet Recovery (download and install OS X images)
-> > and probably also for Back to My Mac (remote access, RFC 6281) and to
-> > discover stolen hardware.
-> >
-> > The issue is most pronounced on 2011 and 2012 MacBook Pros where the IRQ
-> > is shared with 3 other devices (Light Ridge Thunderbolt controller, SDXC
-> > reader, HDA card on discrete GPU). As soon as an interrupt handler is
-> > installed for one of these devices, the ensuing storm of spurious IRQs
-> > causes the kernel to disable the IRQ and switch to polling. This lasts
-> > until the b43 driver loads and resets the device.
-> >
-> > Loading the b43 driver first is not always an option, in particular with
-> > the Light Ridge Thunderbolt controller: The PCI hotplug IRQ handler gets
-> > installed early on because it is built in, unlike b43 which is usually
-> > a module.
-> >
-> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=79301
-> > Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=895951
-> > Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1009819
-> > Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1149632
+Hi Lukas,
+
+On Tue, Mar 29, 2016 at 08:20:30PM +0200, Lukas Wunner wrote:
+> Broadcom 4331 wireless cards built into Apple Macs unleash an IRQ storm
+> on boot until they are reset, causing spurious interrupts if the IRQ is
+> shared. Apparently the EFI bootloader enables the device and does not
+> disable it before passing control to the OS. The bootloader contains a
+> driver for the wireless card which allows it to phone home to Cupertino.
+> This is used for Internet Recovery (download and install OS X images)
+> and probably also for Back to My Mac (remote access, RFC 6281) and to
+> discover stolen hardware.
 > 
-> I do see an irq 17 problem on my macbook, but I thought grub is
-> supposed to stop the boardcom wireless?
+> The issue is most pronounced on 2011 and 2012 MacBook Pros where the IRQ
+> is shared with 3 other devices (Light Ridge Thunderbolt controller, SDXC
+> reader, HDA card on discrete GPU). As soon as an interrupt handler is
+> installed for one of these devices, the ensuing storm of spurious IRQs
+> causes the kernel to disable the IRQ and switch to polling. This lasts
+> until the b43 driver loads and resets the device.
 > 
-> Investigating grub2 git://git.savannah.gnu.org/grub.git I see this
-> patch  rev 9d34bb8 which says it disables Broadcom wireless hardware
-> on Apples:
-
-Thanks for the pointer to the grub2 commit, I wasn't aware of that.
-
-The commit puts the wireless card in power state D3hot but that doesn't
-stop it from sending interrupts. I have just tested that. So it's
-perfectly plausible that you're still seeing spurious interrupts
-despite using grub. Please test the patch I've posted, the spurious
-interrupts should disappear. If you "cat /proc/interrupts", you should
-then only see a few hundred interrupts on IRQ 17. Without the patch it
-should be in the 100000+ range.
-
-Best regards,
-
-Lukas
-
+> Loading the b43 driver first is not always an option, in particular with
+> the Light Ridge Thunderbolt controller: The PCI hotplug IRQ handler gets
+> installed early on because it is built in, unlike b43 which is usually
+> a module.
 > 
-> * commit 9d34bb8
-> | Author: Matthew Garrett <mjg@redhat.com>
-> | Date:   Thu May 3 17:26:55 2012 +0200
-> |
-> |       Suspend broadcom cards in order to stop their DMA.
-> |
-> |       * grub-core/Makefile.am (KERNEL_HEADER_FILES): Add pci.h on x86 EFI.
-> |       * grub-core/Makefile.core.def (kernel): Add pci.c on x86 EFI.
-> |       (pci): Don't build on x86 EFI.
-> |       * grub-core/bus/pci.c (grub_pci_find_capability): New function.
-> |       * grub-core/kern/efi/mm.c (stop_broadcom) [__i386__ || __x86_64__]:
-> |       New function.
-> |       (grub_efi_finish_boot_services) [__i386__ || __x86_64__]: Call
-> |       stop_broadcom if running on EFI.
-> |       * include/grub/pci.h (GRUB_PCI_CLASS_NETWORK): New enum value.
-> |       (GRUB_PCI_CAP_POWER_MANAGEMENT): Likewise.
-> |       (GRUB_PCI_VENDOR_BROADCOM): Likewise.
-> |       (grub_pci_find_capability): New proto.
-> |
-> |       Also-By: Vladimir Serbinenko <phcoder@gmail.com>
-> |
-> | M     ChangeLog
-> | M     grub-core/Makefile.am
-> | M     grub-core/Makefile.core.def
-> | M     grub-core/bus/pci.c
-> | M     grub-core/kern/efi/mm.c
-> | M     include/grub/pci.h
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=79301
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=895951
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1009819
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1149632
+> Tested-by: Lukas Wunner <lukas@wunner.de> [MacBookPro9,1]
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> ---
+>  drivers/bcma/bcma_private.h |  2 --
+>  drivers/pci/quirks.c        | 27 +++++++++++++++++++++++++++
+>  include/linux/bcma/bcma.h   |  1 +
+>  3 files changed, 28 insertions(+), 2 deletions(-)
 > 
-> But I run debian grub2-common 2.02~beta2-22+deb8u1 which has this fix
-> and I *still* get this irq issue
+> diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
+> index eda0909..f642c42 100644
+> --- a/drivers/bcma/bcma_private.h
+> +++ b/drivers/bcma/bcma_private.h
+> @@ -8,8 +8,6 @@
+>  #include <linux/bcma/bcma.h>
+>  #include <linux/delay.h>
+>  
+> -#define BCMA_CORE_SIZE		0x1000
+> -
+>  #define bcma_err(bus, fmt, ...) \
+>  	pr_err("bus%d: " fmt, (bus)->num, ##__VA_ARGS__)
+>  #define bcma_warn(bus, fmt, ...) \
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 8e67802..d4fb5ee 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -25,6 +25,8 @@
+>  #include <linux/sched.h>
+>  #include <linux/ktime.h>
+>  #include <linux/mm.h>
+> +#include <linux/bcma/bcma.h>
+> +#include <linux/bcma/bcma_regs.h>
+>  #include <asm/dma.h>	/* isa_dma_bridge_buggy */
+>  #include "pci.h"
+>  
+> @@ -3282,6 +3284,31 @@ DECLARE_PCI_FIXUP_RESUME_EARLY(PCI_VENDOR_ID_INTEL, 0x156d,
+>  			       quirk_apple_wait_for_thunderbolt);
+>  #endif
+>  
+> +/*
+> + * Broadcom 4331 wireless cards built into Apple Macs unleash an IRQ storm
+> + * on boot until they are reset, causing spurious interrupts if the IRQ is
+> + * shared. Apparently the EFI bootloader enables the device to phone home
+> + * to Cupertino and does not disable it before passing control to the OS.
+> + */
+> +static void quirk_apple_b43_reset(struct pci_dev *dev)
+> +{
+> +	void __iomem *mmio;
+> +
+> +	if (!dmi_match(DMI_BOARD_VENDOR, "Apple Inc.") || !dev->bus->self ||
+> +	    pci_pcie_type(dev->bus->self) != PCI_EXP_TYPE_ROOT_PORT)
+> +		return;
+> +
+> +	mmio = pci_iomap(dev, 0, 0);
+> +	if (!mmio) {
+> +		pr_err("b43 quirk: Cannot iomap device, IRQ storm ahead\n");
+> +		return;
+> +	}
+> +	iowrite32(BCMA_RESET_CTL_RESET,
+> +		  mmio + (1 * BCMA_CORE_SIZE) + BCMA_RESET_CTL);
+> +	pci_iounmap(dev, mmio);
+
+https://bugzilla.kernel.org/show_bug.cgi?id=111781 and
+https://mjg59.dreamwidth.org/11235.html describe a sort of similar
+issue, but with DMA.  An interrupt from the device is probably to
+signal a DMA completion, but these problem reports only mention the
+"IRQ nobody cared" issue; I don't see anything about memory
+corruption.
+
+If this resets the device, I guess that should prevent future DMA as
+well as future interrupts.  Would pci_reset_function() do the same
+thing in a more generic way?
+
+I'm a little bit hesitant to put a quirk like this in Linux because
+it's only a 90% solution.  If the only problem is the interrupts, it's
+probably OK since a few extra interrupts doesn't hurt anything.  But
+if there is also DMA that might corrupt something, a 90% solution just
+makes it harder to debug for the remaining 10%.
+
+> +}
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_BROADCOM, 0x4331, quirk_apple_b43_reset);
+> +
+>  static void pci_do_fixups(struct pci_dev *dev, struct pci_fixup *f,
+>  			  struct pci_fixup *end)
+>  {
+> diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
+> index 0367c63..5c37b58 100644
+> --- a/include/linux/bcma/bcma.h
+> +++ b/include/linux/bcma/bcma.h
+> @@ -158,6 +158,7 @@ struct bcma_host_ops {
+>  #define BCMA_CORE_DEFAULT		0xFFF
+>  
+>  #define BCMA_MAX_NR_CORES		16
+> +#define BCMA_CORE_SIZE			0x1000
+>  
+>  /* Chip IDs of PCIe devices */
+>  #define BCMA_CHIP_ID_BCM4313	0x4313
+> -- 
+> 2.8.0.rc3
 > 
-> ....
-> [  608.242849] xhci_hcd 0000:00:14.0: xHCI xhci_drop_endpoint called
-> with disabled ep ffff88008a19df48
-> [  608.242851] xhci_hcd 0000:00:14.0: xHCI xhci_drop_endpoint called
-> with disabled ep ffff88008a19df90
-> [  608.254975] irq 17: nobody cared (try booting with the "irqpoll" option)
-> [  608.254979] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C O
-> 3.16.0-4-amd64 #1 Debian 3.16.7-ckt20-1+deb8u4
-> [  608.254981] Hardware name: Apple Inc.
-> MacBookPro10,1/Mac-C3EC7CD22292981F, BIOS
-> MBP101.88Z.00EE.B00.1205101839 05/10/2012
-> [  608.254985]  ffff88045a85bac4 ffffffff8150dcff ffff88045a85ba00
-> ffffffff810bd3ad
-> [  608.254987]  ffff88045a85ba00 0000000000000011 0000000000000000
-> ffffffff810bd8d1
-> [  608.254989]  0000000000000000 0000000000000000 0000000000000011
-> 0000000000000000
-> [  608.254990] Call Trace:
-> [  608.254999]  <IRQ>  [<ffffffff8150dcff>] ? dump_stack+0x41/0x51
-> [  608.255006]  [<ffffffff810bd3ad>] ? __report_bad_irq+0x2d/0xc0
-> [  608.255010]  [<ffffffff810bd8d1>] ? note_interrupt+0x241/0x290
-> [  608.255013]  [<ffffffff810bb0f1>] ? handle_irq_event_percpu+0xa1/0x190
-> [  608.255017]  [<ffffffff810bb218>] ? handle_irq_event+0x38/0x60
-> [  608.255020]  [<ffffffff810be413>] ? handle_fasteoi_irq+0x83/0x150
-> [  608.255025]  [<ffffffff810150cd>] ? handle_irq+0x1d/0x30
-> [  608.255029]  [<ffffffff81516cd9>] ? do_IRQ+0x49/0xe0
-> [  608.255033]  [<ffffffff81514b2d>] ? common_interrupt+0x6d/0x6d
-> [  608.255037]  <EOI>  [<ffffffff8108aded>] ?
-> __hrtimer_start_range_ns+0x1cd/0x390
-> [  608.255041]  [<ffffffff813dfd42>] ? cpuidle_enter_state+0x52/0xc0
-> [  608.255044]  [<ffffffff813dfd38>] ? cpuidle_enter_state+0x48/0xc0
-> [  608.255047]  [<ffffffff810a80d8>] ? cpu_startup_entry+0x2f8/0x400
-> [  608.255051]  [<ffffffff81903076>] ? start_kernel+0x497/0x4a2
-> [  608.255054]  [<ffffffff81902a04>] ? set_init_arg+0x4e/0x4e
-> [  608.255057]  [<ffffffff81902120>] ? early_idt_handler_array+0x120/0x120
-> [  608.255060]  [<ffffffff8190271f>] ? x86_64_start_kernel+0x14d/0x15c
-> [  608.255061] handlers:
-> [  608.255088] [<ffffffffa0645730>] azx_interrupt [snd_hda_controller]
-> [  608.255089] Disabling IRQ #17
-> [  608.354706] usb 1-2: reset high-speed USB device number 3 using xhci_hcd
-> ...
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo at vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
