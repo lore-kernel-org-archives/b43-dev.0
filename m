@@ -1,32 +1,41 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Date: Tue, 5 Apr 2016 20:59:46 +0100
+From: Andrew Worsley <amworsley@gmail.com>
+Date: Wed, 6 Apr 2016 21:28:27 +1000
 Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
-In-Reply-To: <20160405194015.GC15353@localhost>
+In-Reply-To: <20160405195946.GA18194@srcf.ucam.org>
 References: <811539524df8b5ed7e2817c1c3e3e08560c97964.1459275517.git.lukas@wunner.de>
  <20160405194015.GC15353@localhost>
-Message-ID: <20160405195946.GA18194@srcf.ucam.org>
+ <20160405195946.GA18194@srcf.ucam.org>
+Message-ID: <CA+Y=x3=02_ScR_jVcxy_9O0LE-HhdjOT80kPCT6oJX949i+Crg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, b43-dev@lists.infradead.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Tue, Apr 05, 2016 at 02:40:15PM -0500, Bjorn Helgaas wrote:
+That patch appears to be the grub 1 equivalent  to  grub2
+git://git.savannah.gnu.org/grub.git rev 9d34bb8 which puts the network
+device into D3 power state.
 
-> https://bugzilla.kernel.org/show_bug.cgi?id=111781 and
-> https://mjg59.dreamwidth.org/11235.html describe a sort of similar
-> issue, but with DMA.  An interrupt from the device is probably to
-> signal a DMA completion, but these problem reports only mention the
-> "IRQ nobody cared" issue; I don't see anything about memory
+I am running grub2 with that patch and it doesn't fix my irq 17 problem.
+
+Can we not fix this in grub2 via something like Lukas original patch
+or disable any DMA transfers before the kernel starts?
+
+Andrew
+On 6 April 2016 at 05:59, Matthew Garrett <mjg59@srcf.ucam.org> wrote:
+> On Tue, Apr 05, 2016 at 02:40:15PM -0500, Bjorn Helgaas wrote:
+>
+>> https://bugzilla.kernel.org/show_bug.cgi?id=111781 and
+>> https://mjg59.dreamwidth.org/11235.html describe a sort of similar
+>> issue, but with DMA.  An interrupt from the device is probably to
+>> signal a DMA completion, but these problem reports only mention the
+>> "IRQ nobody cared" issue; I don't see anything about memory
+>> corruption.
+>
+> I "fixed" this with
+> https://github.com/mjg59/grub-fedora/commit/21fcd6d79b7601e4b20ad70c5408adff2dabbc1d
+> - doing the same in the kernel EFI stub would probably be the best way
+> to handle it. This way you're guaranteed to stop DMA before the kernel
+> reclaims boot services memory, which guarantees you won't have any
 > corruption.
-
-I "fixed" this with 
-https://github.com/mjg59/grub-fedora/commit/21fcd6d79b7601e4b20ad70c5408adff2dabbc1d 
-- doing the same in the kernel EFI stub would probably be the best way 
-to handle it. This way you're guaranteed to stop DMA before the kernel 
-reclaims boot services memory, which guarantees you won't have any 
-corruption.
-
--- 
-Matthew Garrett | mjg59 at srcf.ucam.org
