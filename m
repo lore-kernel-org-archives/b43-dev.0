@@ -1,41 +1,94 @@
-From: Matt Fleming <matt@codeblueprint.co.uk>
-Date: Sat, 9 Apr 2016 13:00:55 +0100
+From: Andrew Worsley <amworsley@gmail.com>
+Date: Sun, 10 Apr 2016 20:09:29 +1000
 Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
-In-Reply-To: <20160406213029.GA12421@wunner.de>
-References: <811539524df8b5ed7e2817c1c3e3e08560c97964.1459275517.git.lukas@wunner.de>
- <20160405194015.GC15353@localhost>
- <20160406213029.GA12421@wunner.de>
-Message-ID: <20160409120055.GR2701@codeblueprint.co.uk>
+In-Reply-To: <CA+Y=x3nfe7CniNhruOhGmdxY3g4B1n3YRVWChoVYJns7D8pNEg@mail.gmail.com>
+References: <E1akxli-00030z-BC@bombadil.infradead.org>
+ <CA+Y=x3=cLDHc7PK5h9n=ixdgVKWdVSu_v+-7jHJ-vBnDrv4sgg@mail.gmail.com>
+ <20160403114912.GA11540@wunner.de>
+ <CA+Y=x3nfe7CniNhruOhGmdxY3g4B1n3YRVWChoVYJns7D8pNEg@mail.gmail.com>
+Message-ID: <CA+Y=x3mVrSKMgzy74xtO5ZOc5kYLYU=iKZgqyjn0j94bXoebjg@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, b43-dev@lists.infradead.org, Matthew Garrett <mjg59@srcf.ucam.org>, linux-efi@vger.kernel.org
+Cc: b43-dev@lists.infradead.org, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org
 
-On Wed, 06 Apr, at 11:30:29PM, Lukas Wunner wrote:
-> 
-> More specifically, arch/x86/platform/efi/quirks.c:efi_free_boot_services()
-> makes EFI boot services memory available to the page allocator and this
-> is called near the end of init/main.c:start_kernel(). *Afterwards*, the
-> initcalls are executed via rest_init() -> kernel_init() ->
-> kernel_init_freeable() -> do_basic_setup() -> do_initcalls(). In particular,
-> PCI header fixups are executed in the subsys_initcall acpi_init().
-> 
-> Some of the possible solutions are:
-> 
-> (1) Delay efi_free_boot_services() further, e.g. until late_initcall.
- 
-I'd prefer not to do this because boot services regions can account
-for a large amount of memory (multiple gigabytes).
+Further testing Broadcom 4331 reset quirk to prevent IRQ storm patch
+testing reveals that:
+  1. quirk is run on initial boot up and this time appears to have
+vastly reduced the interrupts (only 81 this time):
+cat /proc/interrupts| grep 17
+ 17:         81          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
 
-> (2) Find out exactly which EFI boot services area is used for DMA and
->     amend arch/x86/platform/efi/quirks.c:efi_apply_memmap_quirks() to
->     assign that area a different type if dmi_match(DMI_SYS_VENDOR,
->     "Apple Inc."). That way it's not freed by efi_free_boot_services().
->     Add a late_initcall which calls free_bootmem() for that area.
- 
-If it is possible to find out which boot services region is the
-problematic one, this would be the best solution. If there's any way
-to tie it into the PCI quirk, that would be even better so we don't
-need to maintain the blacklist in two places.
+ 2. But it is apparently *NOT* run after a suspend/resume and we get
+the problem:
+ 17:     100084          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+
+Rebooting a further nine times shows the low number (below 100) only
+happens around 1/3 of the times:
+boot #2
+ 17:      38706          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+boot #3
+ 17:         87          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+LOC:       2494       2031       2094       1831       1157       1171
+      1573       1271   Local timer interrupts
+boot #4
+ 17:      50616          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+boot#5
+ 17:      26454          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+boot#6
+ 17:      34440          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+boot#7
+ 17:         79          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+boot#8
+ 17:         84          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+boot#9
+ 17:      37054          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+boot#10
+ 17:      24648          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+
+ Is there an easy setpci command to stop this we can add to grub?
+
+Presently I have a grub work around for black screen as described here:
+  http://askubuntu.com/questions/264247/proprietary-nvidia-drivers-with-efi-on-mac-to-prevent-overheating/613573#613573
+
+which basically involves adding a grub scriptlet to enable PCI-E bus
+mastering on graphics cards:
+
+In /etc/grub.d/01_enable_vga.conf:
+
+setpci -s "00:01.0" 3e.b=8
+setpci -s "01:00.0" 04.b=7
+
+Can we do some similar magic setpci commands to disable 04:00.0
+which is my BCM4331
+
+  lspci | grep 4331
+04:00.0 Network controller: Broadcom Corporation BCM4331 802.11a/b/g/n (rev 02)
+
+
+
+On 7 April 2016 at 22:04, Andrew Worsley <amworsley@gmail.com> wrote:
+> Sorry but testing the patch shows no difference.
+>
+> I have just compiled debian jessie kernel 3.16.7-ckt25 and booted it
+> and hibernated it twice, then did the same with your patch applied.
+> There appeared to be no difference
+>
+....
+
+Thanks for any suggestions
+
+Andrew
