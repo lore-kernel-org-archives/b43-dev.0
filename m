@@ -1,196 +1,155 @@
-From: Lukas Wunner <lukas@wunner.de>
-Date: Tue, 12 Apr 2016 20:32:02 +0200
+From: Andrew Worsley <amworsley@gmail.com>
+Date: Thu, 14 Apr 2016 06:42:50 +1000
 Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
-In-Reply-To: <CA+Y=x3mVrSKMgzy74xtO5ZOc5kYLYU=iKZgqyjn0j94bXoebjg@mail.gmail.com>
+In-Reply-To: <20160412183202.GC13637@wunner.de>
 References: <E1akxli-00030z-BC@bombadil.infradead.org>
  <CA+Y=x3=cLDHc7PK5h9n=ixdgVKWdVSu_v+-7jHJ-vBnDrv4sgg@mail.gmail.com>
  <20160403114912.GA11540@wunner.de>
  <CA+Y=x3nfe7CniNhruOhGmdxY3g4B1n3YRVWChoVYJns7D8pNEg@mail.gmail.com>
  <CA+Y=x3mVrSKMgzy74xtO5ZOc5kYLYU=iKZgqyjn0j94bXoebjg@mail.gmail.com>
-Message-ID: <20160412183202.GC13637@wunner.de>
+ <20160412183202.GC13637@wunner.de>
+Message-ID: <CA+Y=x3mBm6==ffohf+aH2tHm9m+RSa7mZBJkDSvSmdCmEDdkNQ@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Worsley <amworsley@gmail.com>
+To: Lukas Wunner <lukas@wunner.de>
 Cc: b43-dev@lists.infradead.org, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org
 
-Hi Andrew,
+Thank-you very much for your comments in your reply.
 
-thank you for the extensive testing.
+Actually the patch did work - I confirmed it was run and the iomap
+call was successful by adding a pr_info() after the pci_iomap()
+success branch.
 
-On Sun, Apr 10, 2016 at 08:09:29PM +1000, Andrew Worsley wrote:
-> Further testing Broadcom 4331 reset quirk to prevent IRQ storm patch
-> testing reveals that:
->   1. quirk is run on initial boot up and this time appears to have
-> vastly reduced the interrupts (only 81 this time):
-> cat /proc/interrupts| grep 17
->  17:         81          0          0          0          0          0
->          0          0   IO-APIC-fasteoi   snd_hda_intel
+The only time I am getting the IRQ 17 nobody cared message is on
+suspend / resume. A fresh boot always had below the 100k interrupt
+threshold level.
 
-Something in the ballpark of 81 interrupt requests is fine.
+I tried your new patch and the number is even lower < 30,000 over two boots.
 
-The kernel will print the error message about spurious interrupts and
-switch to polling at 100000 requests. But even 20000 is way too much.
-This just means that b43 loaded quickly enough to stop the interrupts
-before the kernel limit of 100000 was reached, but the wireless card
-wasn't reset early on as it should have been.
+BUT on suspend resume again 126856.
 
-It looks like the patch didn't work at all on your machine for some
-reason. Do you see a message "cannot iomap device, IRQ storm ahead"
-in dmesg?
-
-Included below is a slightly different patch which is based on the
-3.16.7-ckt tree (so it should apply cleanly to your kernel version).
-This version prints a message when the wireless card is reset. Please
-verify that you see the message "b43 quirk: resetting controller" in
-dmesg with this patch. This version of the patch also resets the card
-a bit earlier in the boot process than the previous version did.
-Please let me know if this improves the situation on your machine.
-
-You might also want to try a newer kernel version, 3.16 is very old
-and I'm not sure if there have been any changes since which might
-negatively impact proper functioning of the patch. There are also
-official 4.4 kernels available for Jessie. Canonical ends support
-for the 3.16.y-ckt series anyway this month.
+Have you any insights on fixing suspend to disk  / resume paths which
+presumably face the same issue of being passed live hardware on boot
+up?
 
 
-> Presently I have a grub work around for black screen as described here:
->   http://askubuntu.com/questions/264247/proprietary-nvidia-drivers-with-efi-on-mac-to-prevent-overheating/613573#613573
-> 
-> which basically involves adding a grub scriptlet to enable PCI-E bus
-> mastering on graphics cards:
-> 
-> In /etc/grub.d/01_enable_vga.conf:
-> 
-> setpci -s "00:01.0" 3e.b=8
-> setpci -s "01:00.0" 04.b=7
+On 13 April 2016 at 04:32, Lukas Wunner <lukas@wunner.de> wrote:
+> Hi Andrew,
+>
+> thank you for the extensive testing.
+>
+> On Sun, Apr 10, 2016 at 08:09:29PM +1000, Andrew Worsley wrote:
+>> Further testing Broadcom 4331 reset quirk to prevent IRQ storm patch
+>> testing reveals that:
+>>   1. quirk is run on initial boot up and this time appears to have
+>> vastly reduced the interrupts (only 81 this time):
+>> cat /proc/interrupts| grep 17
+>>  17:         81          0          0          0          0          0
+>>          0          0   IO-APIC-fasteoi   snd_hda_intel
+>
+> Something in the ballpark of 81 interrupt requests is fine.
+>
+> The kernel will print the error message about spurious interrupts and
+> switch to polling at 100000 requests. But even 20000 is way too much.
+> This just means that b43 loaded quickly enough to stop the interrupts
+> before the kernel limit of 100000 was reached, but the wireless card
+> wasn't reset early on as it should have been.
+>
+> It looks like the patch didn't work at all on your machine for some
+> reason. Do you see a message "cannot iomap device, IRQ storm ahead"
+> in dmesg?
 
-I think you need to upgrade to a newer version of the Nvidia driver,
-I have just verified that 352.63 will set the busmaster bit if it's
-cleared.
+Result from two reboots with my 3.16 kernel and your new patch
+
+Three full boots (all below 30k interrupts):
+ 17:      23978          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+ 17:      30088          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+ 17:      26853          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
 
 
-> Can we do some similar magic setpci commands to disable 04:00.0
-> which is my BCM4331
+dmesg output showing quirk running
+dmesg | grep -C 5 quirk
+[    3.270315] pci 0000:00:1c.0: PCI bridge to [bus 03]
+[    3.270323] pci 0000:00:1c.0:   bridge window [mem 0xc1a00000-0xc1afffff]
+[    3.270331] pci 0000:00:1c.0:   bridge window [mem
+0xc1800000-0xc18fffff 64bit pref]
+[    3.270463] pci 0000:04:00.0: [14e4:4331] type 00 class 0x028000
+[    3.270495] pci 0000:04:00.0: reg 0x10: [mem 0xc1900000-0xc1903fff 64bit]
+[    3.270574] pci 0000:04:00.0: b43 quirk: resetting controller
+[    3.270711] pci 0000:04:00.0: supports D1 D2
+[    3.270712] pci 0000:04:00.0: PME# supported from D0 D3hot D3cold
+[    3.270759] pci 0000:04:00.0: System wakeup disabled by ACPI
+[    3.278239] pci 0000:00:1c.1: PCI bridge to [bus 04]
+[    3.278251] pci 0000:00:1c.1:   bridge window [mem 0xc1900000-0xc19fffff]
 
-I think grub is also able to write to mmio space of a PCI device,
-which is what's necessary to reset the wireless card, so theoretically
-yes, but the right place to fix this is in the kernel since not
-everyone is using grub.
+Output after resume.  Note: Some times it looks it can happen on the
+suspend to disk? But a new one is always present after the resume.
 
-Best regards,
+ 17:     126856          0          0          0          0          0
+         0          0   IO-APIC-fasteoi   snd_hda_intel
+[   53.404157] xhci_hcd 0000:00:14.0: xHCI xhci_drop_endpoint called
+with disabled ep ffff88045d495540
+[   53.468249] irq 17: nobody cared (try booting with the "irqpoll" option)
+[   53.468253] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C O
+3.16.7-ckt25-3.16-bcm4331-patch2 #7
+[   53.468254] Hardware name: Apple Inc.
+MacBookPro10,1/Mac-C3EC7CD22292981F, BIOS
+MBP101.88Z.00EE.B00.1205101839 05/10/2012
+[   53.468259]  0000000000000000 ffffffff81520370 ffff88045a8a8c00
+ffff88045a8a8cc4
+[   53.468262]  ffffffff810bfe7d ffff88045a8a8c00 0000000000000000
+0000000000000011
+[   53.468264]  ffffffff810c022f 0000000000000000 0000000000000011
+0000000000000000
+[   53.468265] Call Trace:
+[   53.468275]  <IRQ>  [<ffffffff81520370>] ? dump_stack+0x5d/0x78
+[   53.468282]  [<ffffffff810bfe7d>] ? __report_bad_irq+0x2d/0xd0
+[   53.468286]  [<ffffffff810c022f>] ? note_interrupt+0x25f/0x2b0
+[   53.468290]  [<ffffffff810bd9c1>] ? handle_irq_event_percpu+0x121/0x190
+[   53.468294]  [<ffffffff810bda68>] ? handle_irq_event+0x38/0x50
+[   53.468296]  [<ffffffff810c0d5f>] ? handle_fasteoi_irq+0x7f/0x150
+[   53.468302]  [<ffffffff810153ad>] ? handle_irq+0x1d/0x30
+[   53.468307]  [<ffffffff81529118>] ? do_IRQ+0x48/0xe0
+[   53.468311]  [<ffffffff81526f6d>] ? common_interrupt+0x6d/0x6d
+[   53.468317]  <EOI>  [<ffffffff813ef54c>] ? cpuidle_enter_state+0x4c/0xc0
+[   53.468320]  [<ffffffff813ef542>] ? cpuidle_enter_state+0x42/0xc0
+[   53.468323]  [<ffffffff810aaa6a>] ? cpu_startup_entry+0x33a/0x460
+[   53.468326]  [<ffffffff81911f34>] ? start_kernel+0x473/0x47b
+[   53.468331]  [<ffffffff81911120>] ? early_idt_handler_array+0x120/0x120
+[   53.468335]  [<ffffffff81911608>] ? x86_64_start_kernel+0x14d/0x15c
+[   53.468336] handlers:
+[   53.468367] [<ffffffffa02ce740>] azx_interrupt [snd_hda_controller]
+[   53.468368] Disabling IRQ #17
+[   53.513740] usb 3-1: reset high-speed USB device number 2 using xhci_hcd
+[   53.633633] usb 1-1.1: reset high-speed USB device number 3 using ehci-pci
+[   53.633646] usb 2-1.8: reset high-speed USB device number 3 using ehci-pci
 
-Lukas
+  Sorry for the old kernel - I want to run debian stable rather than
+hand buit kernels so my other packages.
 
--- >8 --
-Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
+I don't see any newer kernels when I do
+apt-cache search "^linux-source"
 
-Broadcom 4331 wireless cards built into Apple Macs unleash an IRQ storm
-on boot until they are reset, causing spurious interrupts if the IRQ is
-shared. Apparently the EFI bootloader enables the device and does not
-disable it before passing control to the OS. The bootloader contains a
-driver for the wireless card which allows it to phone home to Cupertino.
-This is used for Internet Recovery (download and install OS X images)
-and probably also for Back to My Mac (remote access, RFC 6281) and to
-discover stolen hardware.
+so perhaps I have to add backports or testing into my repository list?
+If you think it is worth it I can do that.
 
-The issue is most pronounced on 2011 and 2012 MacBook Pros where the IRQ
-is shared with 3 other devices (Light Ridge Thunderbolt controller, SDXC
-reader, HDA card on discrete GPU). As soon as an interrupt handler is
-installed for one of these devices, the ensuing storm of spurious IRQs
-causes the kernel to disable the IRQ and switch to polling. This lasts
-until the b43 driver loads and resets the device.
+What other boot loaders do people use on a MacBook beside grub?
 
-Loading the b43 driver first is not always an option, in particular with
-the Light Ridge Thunderbolt controller: The PCI hotplug IRQ handler gets
-installed early on because it is built in, unlike b43 which is usually
-a module.
+I think the setpci commands in grub might fix the problem for me for
+suspend/resume as well as boot. Can you can easily point me to how to
+translate the numbers from your patch:
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=79301
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=895951
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1009819
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1149632
-Cc: <stable@vger.kernel.org>
-Tested-by: Lukas Wunner <lukas@wunner.de> [MacBookPro9,1]
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Rafa?? Mi??ecki <zajec5@gmail.com>
----
- drivers/bcma/bcma_private.h |  2 --
- drivers/pci/quirks.c        | 28 ++++++++++++++++++++++++++++
- include/linux/bcma/bcma.h   |  1 +
- 3 files changed, 29 insertions(+), 2 deletions(-)
+Would it be:
 
-diff --git a/drivers/bcma/bcma_private.h b/drivers/bcma/bcma_private.h
-index 09b632a..7ded994 100644
---- a/drivers/bcma/bcma_private.h
-+++ b/drivers/bcma/bcma_private.h
-@@ -8,8 +8,6 @@
- #include <linux/bcma/bcma.h>
- #include <linux/delay.h>
- 
--#define BCMA_CORE_SIZE		0x1000
--
- #define bcma_err(bus, fmt, ...) \
- 	pr_err("bus%d: " fmt, (bus)->num, ##__VA_ARGS__)
- #define bcma_warn(bus, fmt, ...) \
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 1f5ea24..5a33924 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -25,6 +25,8 @@
- #include <linux/sched.h>
- #include <linux/ktime.h>
- #include <linux/mm.h>
-+#include <linux/bcma/bcma.h>
-+#include <linux/bcma/bcma_regs.h>
- #include <asm/dma.h>	/* isa_dma_bridge_buggy */
- #include "pci.h"
- 
-@@ -3082,6 +3084,32 @@ static void quirk_no_bus_reset(struct pci_dev *dev)
-  */
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0030, quirk_no_bus_reset);
- 
-+/*
-+ * Broadcom 4331 wireless cards built into Apple Macs unleash an IRQ storm
-+ * on boot until they are reset, causing spurious interrupts if the IRQ is
-+ * shared. Apparently the EFI bootloader enables the device to phone home
-+ * to Cupertino and does not disable it before passing control to the OS.
-+ */
-+static void quirk_apple_b43_reset(struct pci_dev *dev)
-+{
-+	void __iomem *mmio;
-+
-+	if (!dmi_match(DMI_SYS_VENDOR, "Apple Inc.") || !dev->bus->self ||
-+	    pci_pcie_type(dev->bus->self) != PCI_EXP_TYPE_ROOT_PORT)
-+		return;
-+
-+	mmio = pci_iomap(dev, 0, 0);
-+	if (!mmio) {
-+		dev_err(&dev->dev, "b43 quirk: cannot iomap device, IRQ storm ahead\n");
-+		return;
-+	}
-+	dev_info(&dev->dev, "b43 quirk: resetting controller\n");
-+	iowrite32(BCMA_RESET_CTL_RESET,
-+		  mmio + (1 * BCMA_CORE_SIZE) + BCMA_RESET_CTL);
-+	pci_iounmap(dev, mmio);
-+}
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x4331, quirk_apple_b43_reset);
-+
- static void pci_do_fixups(struct pci_dev *dev, struct pci_fixup *f,
- 			  struct pci_fixup *end)
- {
-diff --git a/include/linux/bcma/bcma.h b/include/linux/bcma/bcma.h
-index 0b3bb16..b19c7ed 100644
---- a/include/linux/bcma/bcma.h
-+++ b/include/linux/bcma/bcma.h
-@@ -153,6 +153,7 @@ struct bcma_host_ops {
- #define BCMA_CORE_DEFAULT		0xFFF
- 
- #define BCMA_MAX_NR_CORES		16
-+#define BCMA_CORE_SIZE			0x1000
- 
- /* Chip IDs of PCIe devices */
- #define BCMA_CHIP_ID_BCM4313	0x4313
--- 
-1.8.5.2 (Apple Git-48)
+setpci -s "04:00.0" 1800.l=1
+
+Do you have another pointer to where to fix the suspend resume?
+
+Thanks very much again
+
+Andrew
