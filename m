@@ -1,35 +1,45 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 19 Apr 2016 09:39:42 -0500
-Subject: b43 driver
-In-Reply-To: <1461037534.26856.24.camel@van.vsnyder>
-References: <1461037534.26856.24.camel@van.vsnyder>
-Message-ID: <5716432E.8060603@lwfinger.net>
+From: Lukas Wunner <lukas@wunner.de>
+Date: Sun, 24 Apr 2016 19:04:23 +0200
+Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
+In-Reply-To: <CA+Y=x3mBm6==ffohf+aH2tHm9m+RSa7mZBJkDSvSmdCmEDdkNQ@mail.gmail.com>
+References: <E1akxli-00030z-BC@bombadil.infradead.org>
+ <CA+Y=x3=cLDHc7PK5h9n=ixdgVKWdVSu_v+-7jHJ-vBnDrv4sgg@mail.gmail.com>
+ <20160403114912.GA11540@wunner.de>
+ <CA+Y=x3nfe7CniNhruOhGmdxY3g4B1n3YRVWChoVYJns7D8pNEg@mail.gmail.com>
+ <CA+Y=x3mVrSKMgzy74xtO5ZOc5kYLYU=iKZgqyjn0j94bXoebjg@mail.gmail.com>
+ <20160412183202.GC13637@wunner.de>
+ <CA+Y=x3mBm6==ffohf+aH2tHm9m+RSa7mZBJkDSvSmdCmEDdkNQ@mail.gmail.com>
+Message-ID: <20160424170423.GB17019@wunner.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Andrew Worsley <amworsley@gmail.com>
+Cc: b43-dev@lists.infradead.org, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org
 
-On 04/18/2016 10:45 PM, Van Snyder wrote:
-> I can't find a b43 driver anywhere.  All I can find is advice on how to
-> use b43-fwcutter and b43-firmware-install.
->
-> I have Scientific Linux 7.2.  The wireless is BCM4312.  I have b44,
-> which works fine for the BCM4401-B0.
->
-> I have also gotten advice to use broadcom-wl, and either wl-kmod or
-> kmod-wl, none of which I can find.
->
-> What do you recommend (other than replacing the wireless network card,
-> which isn't a card -- it's integrated on the motherboard)?
+Hi Andrew,
 
-The driver for b43 has been built into the kernel for a very long time, and I 
-test it regularly. You said what distro you use, but not the kernel version, 
-which is much more important. You can get that info from a "uname -r" command. 
-Post the output of that command, and the output from the "dmesg | grep b43" 
-command. From there, we should be able to proceed.
+On Thu, Apr 14, 2016 at 06:42:50AM +1000, Andrew Worsley wrote:
+> The only time I am getting the IRQ 17 nobody cared message is on
+> suspend / resume. A fresh boot always had below the 100k interrupt
+> threshold level.
+> 
+> I tried your new patch and the number is even lower < 30,000 over two boots.
 
-It is possible that the on-board wireless has failed. That has happened to a 
-couple of the old laptops that I keep for testing.
+Hm, that's still way too much. You should have < 100 interrupts on IRQ 17
+on *every* boot, anything else isn't satisfactory. I'm working on a patch
+that runs before EFI ExitBootServices() but will need a little longer to
+find an optimal solution.
 
-Larry
+
+> Have you any insights on fixing suspend to disk  / resume paths which
+> presumably face the same issue of being passed live hardware on boot
+> up?
+
+Suspend to disk involves two kernels, the boot kernel and the image kernel.
+Perhaps these two are not the same on your machine and you've only compiled
+the patch into one of them?
+
+Best regards,
+
+Lukas
