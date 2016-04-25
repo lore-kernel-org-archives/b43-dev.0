@@ -1,58 +1,69 @@
-From: Lukas Wunner <lukas@wunner.de>
-Date: Sun, 24 Apr 2016 18:58:58 +0200
-Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
-In-Reply-To: <20160409120055.GR2701@codeblueprint.co.uk>
-References: <811539524df8b5ed7e2817c1c3e3e08560c97964.1459275517.git.lukas@wunner.de>
- <20160405194015.GC15353@localhost>
- <20160406213029.GA12421@wunner.de>
- <20160409120055.GR2701@codeblueprint.co.uk>
-Message-ID: <20160424165858.GA17019@wunner.de>
+From: Lucas Stach <dev@lynxeye.de>
+Date: Mon, 25 Apr 2016 09:40:51 +0200
+Subject: [PATCH RFC] b43: stop hardcoding LED behavior
+Message-ID: <1461570051-3950-1-git-send-email-dev@lynxeye.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, zajec5@gmail.com, b43-dev@lists.infradead.org, Matthew Garrett <mjg59@srcf.ucam.org>, linux-efi@vger.kernel.org, Andrew Worsley <amworsley@gmail.com>, Chris Bainbridge <chris.bainbridge@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
 
-Hi,
+The code to hardcode the LED behavior is basically unchanged from when it
+was first merged in 2007. It is likely wrong for many modern systems using
+the b43 driver.
 
-On Sat, Apr 09, 2016 at 01:00:55PM +0100, Matt Fleming wrote:
-> On Wed, 06 Apr, at 11:30:29PM, Lukas Wunner wrote:
-> > (2) Find out exactly which EFI boot services area is used for DMA and
-> >     amend arch/x86/platform/efi/quirks.c:efi_apply_memmap_quirks() to
-> >     assign that area a different type if dmi_match(DMI_SYS_VENDOR,
-> >     "Apple Inc."). That way it's not freed by efi_free_boot_services().
-> >     Add a late_initcall which calls free_bootmem() for that area.
->  
-> If it is possible to find out which boot services region is the
-> problematic one, this would be the best solution. If there's any way
-> to tie it into the PCI quirk, that would be even better so we don't
-> need to maintain the blacklist in two places.
+On my system the SPROM correctly defines the only wired LED (radio) but
+skips all others, leading to the hardcode to register LEDs with RX and TX
+triggers. These triggers cause many uneccesary CPU wakeups to drive LEDs
+that aren't even present in the system, reducing battery runtime.
 
-I've since cooked up an experimental patch which resets the Broadcom 4331
-wireless card from arch/x86/kernel/early-quirks.c, and another which does
-the same from arch/x86/boot/compressed/eboot.c. Both approaches stopped
-the spurious interrupts for me and should also stop the DMA'ing.
+Remove the hardcode to stop it from doing any harm. If this code is useful
+for others it should probably be reworked as a quirk table triggering only
+for individual systems that need it.
 
-In the latter case, the machine locked up immediately after resetting the
-card. Suspecting that the EFI driver doesn't digest the reset well,
-I tried kicking it off the card with DisconnectController() first.
-This worked, although it returns EFI_NOT_FOUND, which is strange as that
-error isn't defined for DisconnectController() per the spec.
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+---
+ drivers/net/wireless/broadcom/b43/leds.c | 26 ++------------------------
+ 1 file changed, 2 insertions(+), 24 deletions(-)
 
-I then tested if DisconnectController() alone is already sufficient
-(i.e. without resetting the card by writing to its mmio).
-Guess what, it is. So the EFI driver seems to leave the card in a
-sane state if it's unloaded.
-
-I then realized that the Simple Network protocol is supported for both
-the wireless card as well as the Ethernet card built into my MacBook Pro.
-What I'll try next is to iterate over all handles that support that
-protocol and just Stop() the interface if it's been brought up by EFI.
-
-Perhaps OS X supports some kind of connection handover from EFI.
-That would explain why they leave the card enabled.
-
-Best regards,
-
-Lukas
+diff --git a/drivers/net/wireless/broadcom/b43/leds.c b/drivers/net/wireless/broadcom/b43/leds.c
+index d79ab2a..77d2dad 100644
+--- a/drivers/net/wireless/broadcom/b43/leds.c
++++ b/drivers/net/wireless/broadcom/b43/leds.c
+@@ -224,31 +224,9 @@ static void b43_led_get_sprominfo(struct b43_wldev *dev,
+ 
+ 	if (sprom[led_index] == 0xFF) {
+ 		/* There is no LED information in the SPROM
+-		 * for this LED. Hardcode it here. */
++		 * for this LED. Keep it disabled. */
+ 		*activelow = false;
+-		switch (led_index) {
+-		case 0:
+-			*behaviour = B43_LED_ACTIVITY;
+-			*activelow = true;
+-			if (dev->dev->board_vendor == PCI_VENDOR_ID_COMPAQ)
+-				*behaviour = B43_LED_RADIO_ALL;
+-			break;
+-		case 1:
+-			*behaviour = B43_LED_RADIO_B;
+-			if (dev->dev->board_vendor == PCI_VENDOR_ID_ASUSTEK)
+-				*behaviour = B43_LED_ASSOC;
+-			break;
+-		case 2:
+-			*behaviour = B43_LED_RADIO_A;
+-			break;
+-		case 3:
+-			*behaviour = B43_LED_OFF;
+-			break;
+-		default:
+-			*behaviour = B43_LED_OFF;
+-			B43_WARN_ON(1);
+-			return;
+-		}
++		*behaviour = B43_LED_OFF;
+ 	} else {
+ 		*behaviour = sprom[led_index] & B43_LED_BEHAVIOUR;
+ 		*activelow = !!(sprom[led_index] & B43_LED_ACTIVELOW);
+-- 
+2.5.5
