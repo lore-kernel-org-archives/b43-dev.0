@@ -1,37 +1,26 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Fri, 1 Apr 2016 06:59:10 +0200
-Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
-In-Reply-To: <20160331231346.GA7469@localhost>
-References: <E1akxli-00030z-BC@bombadil.infradead.org>
- <20160331231346.GA7469@localhost>
-Message-ID: <20160401065910.71e602b7@wiggum>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Wed, 4 May 2016 20:42:00 +0200
+Subject: Planned Support for BCM 43162 [14e4:43ae] rev 02 ?
+In-Reply-To: <75r.2THk.1aVrEGdo1ry.1N96yR@seznam.cz>
+References: <75r.2THk.1aVrEGdo1ry.1N96yR@seznam.cz>
+Message-ID: <CACna6rypnsgK4DeMxL6F8jwuFpzYhvG8O_TA1M4A6j8X6Eh5_A@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Bainbridge <chris.bainbridge@gmail.com>
-Cc: Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Fri, 1 Apr 2016 00:13:46 +0100
-Chris Bainbridge <chris.bainbridge@gmail.com> wrote:
+Hi,
 
-> Should also fix https://bugzilla.kernel.org/show_bug.cgi?id=111781 ?
-> Given that this is a serious bug that can corrupt filesystems it would
-> be good to see the fix in stable too.
+On 30 April 2016 at 10:38, Jan Sobotka <xSobotkaJ@seznam.cz> wrote:
+> is planned to add support for BCM 43162 [14e4:43ae] to b43 in near future? Unfortunately I bought the notebook with this WLAN card. Bug reported here https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1576815 I'm willing to help, for example with testing.
 
-Wow, this is horrible.
-
-This patch should help a bit. But it's probably hard to workaround that
-DMA issue completely. There still is a chance of corruption, as soon as
-the kernel allocates and uses some memory that the DMA controller still
-uses from boot-up before the fixup is applied.
+Noone is working on new hw support right now, but essential question
+is what PHY is used in this chipset. Can you load bcma for this card
+and get us bcma (and potentially b43) logs?
+modprobe bcma
+echo "14e4 43ae" > /sys/bus/pci/drivers/bcma-pci-bridge/new_id
+dmesg | egrep "bcma|b43"
 
 -- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20160401/1265c561/attachment.sig>
+Rafa?
