@@ -1,41 +1,45 @@
-From: Stuart Longland <stuartl@longlandclan.id.au>
-Date: Fri, 6 May 2016 04:11:40 +1000
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 6 May 2016 02:03:06 +0200
 Subject: Planned Support for BCM 43162 [14e4:43ae] rev 02 ?
-In-Reply-To: <CACna6rx90=u7ZSY6ZXjWw4CicEQR6Ty-iEc_G9ACLL0j9EfJLg@mail.gmail.com>
-References: <75r.2THk.1aVrEGdo1ry.1N96yR@seznam.cz>
+In-Reply-To: <3L}.2TJP.BPtk86KPbh.1NAtDW@seznam.cz>
+References: <3Fn.2TId.FHuvjLBV4z.1NAsIY@seznam.cz>
+ <75r.2THk.1aVrEGdo1ry.1N96yR@seznam.cz>
  <CACna6rypnsgK4DeMxL6F8jwuFpzYhvG8O_TA1M4A6j8X6Eh5_A@mail.gmail.com>
- <3Fn.2TId.FHuvjLBV4z.1NAsIY@seznam.cz>
  <CACna6rx90=u7ZSY6ZXjWw4CicEQR6Ty-iEc_G9ACLL0j9EfJLg@mail.gmail.com>
-Message-ID: <572B8CDC.20204@longlandclan.id.au>
+ <3L}.2TJP.BPtk86KPbh.1NAtDW@seznam.cz>
+Message-ID: <CACna6rwe9mbcHW+AvtcXvpdvnwZMxkLKzvOLeNp0-XTLB5k6_A@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Jan Sobotka <xSobotkaJ@seznam.cz>, brcm80211 development <brcm80211-dev-list@broadcom.com>
+Cc: b43-dev <b43-dev@lists.infradead.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On 06/05/16 01:37, Rafa? Mi?ecki wrote:
->> sudo echo "14e4 43ae" > /sys/bus/pci/drivers/bcma-pci-bridge/new_id
->> > bash: /sys/bus/pci/drivers/bcma-pci-bridge/new_id: Permission denied
-> Not sure why it happens
+On 5 May 2016 at 18:22, Jan Sobotka <xSobotkaJ@seznam.cz> wrote:
+> Great, now it works. Output:
+>
+> root at chobot-lenovo-laptop:/home/chobot# echo "14e4 43ae" > /sys/bus/pci/drivers/bcma-pci-bridge/new_id
+> root at chobot-lenovo-laptop:/home/chobot# dmesg | egrep "bcma|b43"
+> [ 5295.114902] bcma: bus0: Found chip with id 0x4335, rev 0x02 and package 0x01
+> [ 5295.114950] bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2E, class 0x0)
+> [ 5295.114974] bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2E, class 0x0)
+> [ 5295.115026] bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x04, class 0x0)
+> [ 5295.115073] bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x04, class 0x0)
+> [ 5295.115096] bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x14, class 0x0)
+> [ 5295.115119] bcma: bus0: Core 5 found: SDIO Device (manuf 0x4BF, id 0x829, rev 0x15, class 0x0)
+> [ 5295.115170] bcma: bus0: Bridge found
+> [ 5295.115221] bcma-pci-bridge: probe of 0000:02:00.0 failed with error -84
 
-echo "14e4 43ae" | sudo tee /sys/bus/pci/drivers/bcma-pci-bridge/new_id
+So this is device with BCM4335 chipset which is a FullMAC one AFAIK.
+It may be supported by brcmfmac. There is already support for BCM4335
+in brcmfmac but it was developed for SDIO devices only. I don't think
+we ever met BCM4335 on PCIe device.
 
-That should work.  The reason why the other didn't work is because you
-were running the 'echo' command as root, but then the re-direction was
-being done by a shell that was running as a user.
+You may try:
+sudo su
+rmmod bcma
+echo "14e4 43ae" > /sys/bus/pci/drivers/brcmfmac/new_id
+dmesg | grep brcmfmac
 
-`sudo` is not a magic shell built-command, it's just a suid-root binary,
-and merely passes on the arguments the shell gives it.
--- 
-Stuart Longland (aka Redhatter, VK4MSL)
-
-I haven't lost my mind...
-  ...it's backed up on a tape somewhere.
-
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 819 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20160506/93caabd4/attachment.sig>
+However I think brcmfmac may need some extra changes to support
+BCM4335 on PCIe. Lets also see if Broadcom team can help us with this.
