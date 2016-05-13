@@ -1,65 +1,37 @@
-From: Jan Sobotka <xSobotkaJ@seznam.cz>
-Date: Fri, 13 May 2016 08:43:50 +0200 (CEST)
-Subject: Broadcom BCM43162 [14e4:43ae] Support
-References: <1463115008.17952.11.camel@gmail.com>
-Message-ID: <1BA.2TDT.2JBpGL4MFRD.1NDNUc@seznam.cz>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 13 May 2016 15:39:17 +0300
+Subject: Use of deleted Kconfig option B43_PCMCIA
+In-Reply-To: <CACna6rzdCwK7cWNkHUFbeaG2DkOW8bKfxEv=RqhW7RPZsv84hg@mail.gmail.com>
+ (=?utf-8?Q?=22Rafa=C5=82_Mi=C5=82ecki=22's?= message of "Tue, 26 Jan 2016
+ 16:35:09 +0100")
+References: <56A78B69.9050002@fau.de>
+ <CACna6rzdCwK7cWNkHUFbeaG2DkOW8bKfxEv=RqhW7RPZsv84hg@mail.gmail.com>
+Message-ID: <87oa8ap1xm.fsf@purkki.adurom.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: Andreas Ziegler <andreas.ziegler@fau.de>, b43-dev <b43-dev@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
 
-Hi Rod,
+(Adding linux-wireless)
 
+Rafa? Mi?ecki <zajec5@gmail.com> writes:
 
-I posted same question recently. Please refer to this thread http://lists.infradead.org/pipermail/b43-dev/2016-May/thread.html#3942
+> On 26 January 2016 at 16:06, Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+>> your commit 399500da18f7 ("ssb: pick PCMCIA host code support from b43
+>> driver") removed the Kconfig option B43_PCMCIA from Kconfig, but left
+>> one reference to it in b43/main.c, inside the b43_print_driverinfo()
+>> function.
+>>
+>> Can this #ifdef be removed, should it be replaced with an #ifdef using
+>> CONFIG_SSB_PCMCIAHOST instead or should we do something entirely different?
+>
+> We even got patch for this, but it wasn't submitted correctly (didn't
+> go to linux-wireless):
+> https://lkml.org/lkml/2015/11/2/154
 
+Nobody resubmitted that patch?
 
-Jan
-
-
----------- P?vodn? zpr?va ----------
-Od: Rod Manning 
-Komu: b43-dev at lists.infradead.org
-Datum: 13. 5. 2016 7:15:42
-P?edm?t: Broadcom BCM43162 [14e4:43ae] Support
-
-Hi,
-
-Wondering if anyone can provide information on plans to support the
-Broadcom BCM43162 adapter in the b43 kernel drivers?
-
-Have tried other options with ndiswrapper etc. to no success. Wondering
-whether to keep trying to get a solution/wait for driver vs just
-replace the card...
-
-(Happy to provide testing etc. if it helps out.)
-
---
-Thanks for any info,
-
-Rod
-
-lspci output:
------------------------------------------------------------------
-03:00.0 Network controller [0280]: Broadcom Corporation BCM43162 802.11ac
-Wireless Network Adapter [14e4:43ae] (rev 02)
-????????Subsystem: Lenovo Device [17aa:0622]
-????????Flags: bus master, fast devsel, latency 0, IRQ 255
-????????Memory at f0c00000 (64-bit, non-prefetchable) [size=32K]
-????????Memory at f0800000 (64-bit, non-prefetchable) [size=4M]
-????????Capabilities: [48] Power Management version 3
-????????Capabilities: [58] MSI: Enable- Count=1/1 Maskable- 64bit+
-????????Capabilities: [68] Vendor Specific Information: Len=44 
-????????Capabilities: [ac] Express Endpoint, MSI 00
-????????Capabilities: [100] Advanced Error Reporting
-????????Capabilities: [13c] Device Serial Number 00-00-08-ff-ff-00-30-0e
-????????Capabilities: [150] Power Budgeting 
-????????Capabilities: [160] Virtual Channel
-????????Capabilities: [1b0] Latency Tolerance Reporting
-????????Capabilities: [220] #15
-
-_______________________________________________
-b43-dev mailing list
-b43-dev at lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+-- 
+Kalle Valo
