@@ -1,56 +1,44 @@
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Date: Mon, 9 May 2016 11:40:51 +0200
-Subject: Planned Support for BCM 43162 [14e4:43ae] rev 02 ?
-In-Reply-To: <CACna6rwe9mbcHW+AvtcXvpdvnwZMxkLKzvOLeNp0-XTLB5k6_A@mail.gmail.com>
-References: <3Fn.2TId.FHuvjLBV4z.1NAsIY@seznam.cz>
- <75r.2THk.1aVrEGdo1ry.1N96yR@seznam.cz>
- <CACna6rypnsgK4DeMxL6F8jwuFpzYhvG8O_TA1M4A6j8X6Eh5_A@mail.gmail.com>
- <CACna6rx90=u7ZSY6ZXjWw4CicEQR6Ty-iEc_G9ACLL0j9EfJLg@mail.gmail.com>
- <3L}.2TJP.BPtk86KPbh.1NAtDW@seznam.cz>
- <CACna6rwe9mbcHW+AvtcXvpdvnwZMxkLKzvOLeNp0-XTLB5k6_A@mail.gmail.com>
-Message-ID: <57305B23.4030101@broadcom.com>
+From: Rod Manning <rod.t.manning@gmail.com>
+Date: Fri, 13 May 2016 14:20:08 +0930
+Subject: Broadcom BCM43162 [14e4:43ae] Support
+Message-ID: <1463115008.17952.11.camel@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Jan Sobotka <xSobotkaJ@seznam.cz>, brcm80211 development <brcm80211-dev-list@broadcom.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: b43-dev@lists.infradead.org
 
-On 6-5-2016 2:03, Rafa? Mi?ecki wrote:
-> On 5 May 2016 at 18:22, Jan Sobotka <xSobotkaJ@seznam.cz> wrote:
->> Great, now it works. Output:
->>
->> root at chobot-lenovo-laptop:/home/chobot# echo "14e4 43ae" > /sys/bus/pci/drivers/bcma-pci-bridge/new_id
->> root at chobot-lenovo-laptop:/home/chobot# dmesg | egrep "bcma|b43"
->> [ 5295.114902] bcma: bus0: Found chip with id 0x4335, rev 0x02 and package 0x01
->> [ 5295.114950] bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2E, class 0x0)
->> [ 5295.114974] bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2E, class 0x0)
->> [ 5295.115026] bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x04, class 0x0)
->> [ 5295.115073] bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x04, class 0x0)
->> [ 5295.115096] bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x14, class 0x0)
->> [ 5295.115119] bcma: bus0: Core 5 found: SDIO Device (manuf 0x4BF, id 0x829, rev 0x15, class 0x0)
->> [ 5295.115170] bcma: bus0: Bridge found
->> [ 5295.115221] bcma-pci-bridge: probe of 0000:02:00.0 failed with error -84
-> 
-> So this is device with BCM4335 chipset which is a FullMAC one AFAIK.
-> It may be supported by brcmfmac. There is already support for BCM4335
-> in brcmfmac but it was developed for SDIO devices only. I don't think
-> we ever met BCM4335 on PCIe device.
+Hi,
 
-It does have an ARM core, but for fullmac we need RAM as well and I
-don't see that listed. So I guess it is a 43162 and needs softmac
-driver. Also could not find any fullmac firmware for it. The only thing
-I found was a hybrid wl driver release for it.
+Wondering if anyone can provide information on plans to support the
+Broadcom BCM43162 adapter in the b43 kernel drivers?
 
-Regards,
-Arend
+Have tried other options with ndiswrapper etc. to no success. Wondering
+whether to keep trying to get a solution/wait for driver vs just
+replace the card...
 
-> You may try:
-> sudo su
-> rmmod bcma
-> echo "14e4 43ae" > /sys/bus/pci/drivers/brcmfmac/new_id
-> dmesg | grep brcmfmac
-> 
-> However I think brcmfmac may need some extra changes to support
-> BCM4335 on PCIe. Lets also see if Broadcom team can help us with this.
-> 
+(Happy to provide testing etc. if it helps out.)
+
+--
+Thanks for any info,
+
+Rod
+
+lspci output:
+-----------------------------------------------------------------
+03:00.0 Network controller [0280]: Broadcom Corporation BCM43162 802.11ac
+Wireless Network Adapter [14e4:43ae] (rev 02)
+????????Subsystem: Lenovo Device [17aa:0622]
+????????Flags: bus master, fast devsel, latency 0, IRQ 255
+????????Memory at f0c00000 (64-bit, non-prefetchable) [size=32K]
+????????Memory at f0800000 (64-bit, non-prefetchable) [size=4M]
+????????Capabilities: [48] Power Management version 3
+????????Capabilities: [58] MSI: Enable- Count=1/1 Maskable- 64bit+
+????????Capabilities: [68] Vendor Specific Information: Len=44 <?>
+????????Capabilities: [ac] Express Endpoint, MSI 00
+????????Capabilities: [100] Advanced Error Reporting
+????????Capabilities: [13c] Device Serial Number 00-00-08-ff-ff-00-30-0e
+????????Capabilities: [150] Power Budgeting <?>
+????????Capabilities: [160] Virtual Channel
+????????Capabilities: [1b0] Latency Tolerance Reporting
+????????Capabilities: [220] #15
