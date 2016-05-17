@@ -1,29 +1,23 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 16 May 2016 14:41:14 +0300
-Subject: [b43] don't unconditionally fall back to CCK if the rate is 6MB
- OFDM.
-In-Reply-To: <20160515163217.2b75ba97@wiggum> ("Michael
- \=\?utf-8\?Q\?B\=C3\=BCs\?\= \=\?utf-8\?Q\?ch\=22's\?\= message of
- "Sun, 15 May 2016 16:32:17 +0200")
-References: <CAJ-Vmom45Pb9X_1Zw6VdszZAiizZUUd=HbEFw0hFMmPFFSNbpQ@mail.gmail.com>
- <20160515163217.2b75ba97@wiggum>
-Message-ID: <87k2iup6w5.fsf@purkki.adurom.net>
+From: Adrian Chadd <adrian@freebsd.org>
+Date: Mon, 16 May 2016 20:25:33 -0700
+Subject: [PATCH] b43: don't fall back to CCK rates on 5GHz OFDM for RTS frames
+Message-ID: <1463455534-22512-1-git-send-email-adrian@freebsd.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>
-Cc: Adrian Chadd <adrian@freebsd.org>, b43-dev@lists.infradead.org, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: linux-wireless@vger.kernel.org
+Cc: Adrian Chadd <adrian@freebsd.org>, Kalle Valo <kvalo@codeaurora.org>, b43-dev@lists.infradead.org
 
-Michael B?sch <m@bues.ch> writes:
+This fixes a small issue with selecting fallback rates for
+RTS frames.  For OFDM PHY rates in 5GHz mode we shouldn't
+fall back to CCK.
 
-> In the final submission please send this to Kalle Valo and add [PATCH]
-> to the subject, so tools can pick this up.
+Adrian Chadd (1):
+  [b43] don't unconditionally fall back to CCK if the rate is 6MB OFDM.
 
-And remember to CC linux-wireless so that patchwork sees the patch. I
-skip the patches sent via email and only follow patchwork:
-
-https://patchwork.kernel.org/project/linux-wireless/list/?state=*
+ drivers/net/wireless/broadcom/b43/xmit.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 -- 
-Kalle Valo
+2.6.3
