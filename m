@@ -1,44 +1,50 @@
-From: benjamin deuker <deukerb@gmail.com>
-Date: Tue, 24 May 2016 17:45:22 +0200
-Subject: B43_PHY_AC config investigation and new b43 firmware via ASUS
-Message-ID: <CAOWOSJ8mmWaChBeyqYVzCFjNLZL2EY6Q+ZzcScxq3muAM_vF0g@mail.gmail.com>
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+Date: Wed, 25 May 2016 00:38:58 +0100
+Subject: [PATCH] PCI: Add Broadcom 4331 reset quirk to prevent IRQ storm
+In-Reply-To: <20160523144216.GA4894@wunner.de>
+References: <E1akxli-00030z-BC@bombadil.infradead.org>
+ <CA+Y=x3=cLDHc7PK5h9n=ixdgVKWdVSu_v+-7jHJ-vBnDrv4sgg@mail.gmail.com>
+ <20160403114912.GA11540@wunner.de>
+ <CA+Y=x3nfe7CniNhruOhGmdxY3g4B1n3YRVWChoVYJns7D8pNEg@mail.gmail.com>
+ <CA+Y=x3mVrSKMgzy74xtO5ZOc5kYLYU=iKZgqyjn0j94bXoebjg@mail.gmail.com>
+ <20160412183202.GC13637@wunner.de>
+ <CA+Y=x3mBm6==ffohf+aH2tHm9m+RSa7mZBJkDSvSmdCmEDdkNQ@mail.gmail.com>
+ <20160424170423.GB17019@wunner.de>
+ <20160523144216.GA4894@wunner.de>
+Message-ID: <20160524233858.GA5525@localhost>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Andrew Worsley <amworsley@gmail.com>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-Hi,
+On Mon, May 23, 2016 at 04:42:16PM +0200, Lukas Wunner wrote:
+> 
+> The reason why my previous patches didn't work on your machine is
+> because you're using grub, and grub contains a patch by Matthew
+> Garrett which puts the wireless card into power state D3hot. The
+> card's mmio space isn't accessible in D3hot. Included below is a
+> new patch which transitions the card to D0 before resetting it.
+> Please let me know if this fixes the issue for you.
 
-Thanks for all your work on the b43 drivers and tools.
+The grub patch is in Debian but didn't prevent the issue on my setup,
+presumably because of the Ubuntu "linuxefi" fallback that Matthew
+previously posted about.
 
-I have an ASUS PCE-AC68. This adapter works properly with the wl
-broadcom driver in STA mode,
-but i would use hotspot feature (AP mode).
+> @Chris Bainbridge: Please test this as well, this is no longer a
+> plain vanilla PCI quirk but an early quirk, it should prevent any
+> kind of memory corruption by DMAed packets.
 
-In the Kconfig file of b43, we can read:
-        bool "Support for AC-PHY (802.11ac) devices (BROKEN)"
-        depends on B43 && B43_BCMA && BROKEN
-        ---help---
-          This PHY type can be found in the following chipsets:
-          PCI: BCM4352, BCM4360
+I tested a "no b43" kernel for 10 boots with and without the patch.
 
-          Say N, this is BROKEN and crashes driver.
+Without the patch: 7 boots had potential memory corruption (caught by
+the IOMMU) and all had IRQ 17 disabled.
 
-I would like investigate on this driver crash.
+With the patch: no memory corruption or disabled IRQ 17.
 
-Where can I find some informations on B43_PHY_AC integration tests ?
+With b43 built in to the kernel wifi worked as expected.
 
-For starters, I have checked the latest firmware.
-It seems there is a new b43 firmware (802.204)  in:
-http://dlcdnet.asus.com/pub/ASUS/wireless/RT-AC66U/GPL_RT_AC66U_30043803264.zip
+So the patch looks good to me. Thanks for the fix.
 
-You can extract this b43 firmware with an adaptation of mbuesch b43-tools:
-https://github.com/deukerb/b43-tools
-
-Be careful: this firmware has not been tested
-^^^^^^^^^^
-
-Thanks,
-
-Benjamin
+Tested-by: Chris Bainbridge <chris.bainbridge@gmail.com> [MacBookPro10,2]
