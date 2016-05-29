@@ -1,10 +1,10 @@
 From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Date: Sun, 29 May 2016 20:48:22 +0200
+Date: Sun, 29 May 2016 20:55:01 +0200
 Subject: BCM4331 reset leads to wl lockup
 In-Reply-To: <20160529110248.GA12632@wunner.de>
 References: <20160526121210.GA7006@wunner.de> <20160526144246.217bfff1@wiggum>
  <20160529110248.GA12632@wunner.de>
-Message-ID: <574B3976.3060708@broadcom.com>
+Message-ID: <574B3B05.3020106@broadcom.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -45,39 +45,10 @@ On 29-05-16 13:02, Lukas Wunner wrote:
 > and that Eric Duzamet has kindly provided a fix for broadcom-sta:
 > https://bugs.gentoo.org/show_bug.cgi?id=523326#c24
 > https://523326.bugs.gentoo.org/attachment.cgi?id=393374
-> 
-> @Broadcom: Please consider releasing a new driver version which
-> incorporates that patch. The latest version 6.30.223.271 of your
-> driver is still missing it even though the issue has existed for
-> almost 18 months now.
-> 
-> Nevertheless I amended my patch to follow the reset procedure you
-> specified above, just to cover all bases. Thanks Michael.
 
-That reset procedure is a bit superseded. For brcmfmac we decided to
-talk to some hardware engineers and looking at ai_core_disable (from
-which bcma_core_disable() is (probably) derived) they shook their head
-in horror. So better check brcmf_chip_ai_coredisable() in
-.../brcm80211/brcmfmac/chip.c. The function needs a prereset and reset
-parameter which are core specific. For the 802.11 core you need
-preset=D11_BCMA_IOCTL_PHYRESET | D11_BCMA_IOCTL_PHYCLOCKEN and
-reset=D11_BCMA_IOCTL_PHYCLOCKEN.
-
-/* D11 core specific control flag bits */
-#define D11_BCMA_IOCTL_PHYCLOCKEN	0x0004
-#define D11_BCMA_IOCTL_PHYRESET		0x0008
-
-I still have a patch for bcma lying around for this, but did not
-complete the work for submission.
+Looked at the patch and it provides little context. So before diving in
+the code would you know if the patched broadcom-sta driver works for
+kernels before 3.18?
 
 Regards,
 Arend
-
-> Best regards,
-> 
-> Lukas
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
