@@ -1,68 +1,29 @@
-From: Lukas Wunner <lukas@wunner.de>
-Date: Mon, 30 May 2016 01:52:29 +0200
-Subject: BCM4331 reset leads to wl lockup
-In-Reply-To: <574B3B05.3020106@broadcom.com>
-References: <20160526121210.GA7006@wunner.de> <20160526144246.217bfff1@wiggum>
- <20160529110248.GA12632@wunner.de> <574B3B05.3020106@broadcom.com>
-Message-ID: <20160529235229.GA13107@wunner.de>
+From: Matt Fleming <matt@codeblueprint.co.uk>
+Date: Thu, 2 Jun 2016 10:48:42 +0100
+Subject: [PATCH] x86: Add early quirk to reset Apple AirPort card
+In-Reply-To: <82c2548dffc6cfbc484b9111b1073f407c946061.1464477483.git.lukas@wunner.de>
+References: <82c2548dffc6cfbc484b9111b1073f407c946061.1464477483.git.lukas@wunner.de>
+Message-ID: <20160602094842.GF2658@codeblueprint.co.uk>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Michael =?iso-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-wlan-client-support-list@broadcom.com, 1332647@gmail.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Eric Dumazet <edumazet@google.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Chris Milsted <cmilsted@redhat.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Andi Kleen <ak@linux.intel.com>, Michael Buesch <m@bues.ch>, Bjorn Helgaas <bhelgaas@google.com>, Konstantin Simanov <k.simanov@stlk.ru>, Bryan Paradis <bryan.paradis@gmail.com>, Andrew Worsley <amworsley@gmail.com>, Chris Bainbridge <chris.bainbridge@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, zajec5@gmail.com
 
-[cc += Eric Dumazet]
+On Sun, 29 May, at 01:35:28AM, Lukas Wunner wrote:
+> The EFI firmware on Macs contains a full-fledged network stack for
+> downloading OS X images from osrecovery.apple.com. Unfortunately
+> on Macs introduced 2011 and 2012, EFI brings up the Broadcom 4331
+> wireless card on every boot and leaves it enabled even after
+> ExitBootServices has been called. The card continues to assert its IRQ
+> line, causing spurious interrupts if the IRQ is shared. It also corrupts
+> memory by DMAing received packets, allowing for remote code execution
+> over the air. This only stops when a driver is loaded for the wireless
+> card, which may be never if the driver is not installed or blacklisted.
 
-On Sun, May 29, 2016 at 08:55:01PM +0200, Arend van Spriel wrote:
-> On 29-05-16 13:02, Lukas Wunner wrote:
-> > On Thu, May 26, 2016 at 02:42:46PM +0200, Michael B?sch wrote:
-> >> On Thu, 26 May 2016 14:12:10 +0200 Lukas Wunner <lukas@wunner.de> wrote:
-> >>> +	mmio = early_ioremap(addr, BCM4331_MMIO_SIZE);
-> >>> +	if (!mmio) {
-> >>> +		pr_err("Cannot iomap Apple AirPort card\n");
-> >>> +		return;
-> >>> +	}
-> >>> +	pr_info("Resetting Apple AirPort card\n");
-> >>> +	iowrite32(BCMA_RESET_CTL_RESET,
-> >>> +		  mmio + (1 * BCMA_CORE_SIZE) + BCMA_RESET_CTL);
-> >>> +	early_iounmap(mmio, BCM4331_MMIO_SIZE);
-> >>
-> >> Just writing that bit is not the correct reset procedure.
-> >> So it might cause problems depending on how wl does the core reset
-> >> later.
-> >>
-> >> Please try this:
-> >> - wait for BCMA_RESET_ST to be 0
-> >> - set reset bit
-> >> - flush
-> >> - wait 1us
-> >> - reset reset bit
-> >> - flush
-> >> - wait 10us
-> >>
-> >> See bcma_core_disable()
-> > 
-> > It turned out that the lockups are triggered by bec3cfdca36b
-> > ("net: skb_segment() provides list head and tail") in Linux 3.18
-> > and that Eric Dumazet has kindly provided a fix for broadcom-sta:
-> > https://bugs.gentoo.org/show_bug.cgi?id=523326#c24
-> > https://523326.bugs.gentoo.org/attachment.cgi?id=393374
-> 
-> Looked at the patch and it provides little context. So before diving in
-> the code would you know if the patched broadcom-sta driver works for
-> kernels before 3.18?
+[... Snip a very thorough changelog ...]
 
-I'm not familiar with the broadcom-sta code but I'm inclined to say yes.
+This patch looks fine to me from an EFI perspective.
 
-The function modified by the patch, wl_start(), contains an if/else
-statement, the if-branch puts a packet to be transmitted on a work
-queue and the else-branch transmits it straight away. Apparently
-skb->prev isn't initialized to NULL for the else-branch which wasn't
-an issue until bec3cfdca36b. That's my superficial understanding of
-that code, I'm sure you have access to the full source and revision
-history and can make more sense of it than I do.
-
-Best regards,
-
-Lukas
+Acked-by: Matt Fleming <matt@codeblueprint.co.uk>
