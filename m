@@ -1,29 +1,49 @@
-From: Matt Fleming <matt@codeblueprint.co.uk>
-Date: Thu, 2 Jun 2016 10:48:42 +0100
-Subject: [PATCH] x86: Add early quirk to reset Apple AirPort card
-In-Reply-To: <82c2548dffc6cfbc484b9111b1073f407c946061.1464477483.git.lukas@wunner.de>
-References: <82c2548dffc6cfbc484b9111b1073f407c946061.1464477483.git.lukas@wunner.de>
-Message-ID: <20160602094842.GF2658@codeblueprint.co.uk>
+From: Lucas Stach <dev@lynxeye.de>
+Date: Fri,  3 Jun 2016 23:04:03 +0200
+Subject: [PATCH] b43: only hardcode LED behavior if SPROM doesn't encode any
+Message-ID: <1464987843-6928-1-git-send-email-dev@lynxeye.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Wunner <lukas@wunner.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Chris Milsted <cmilsted@redhat.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Andi Kleen <ak@linux.intel.com>, Michael Buesch <m@bues.ch>, Bjorn Helgaas <bhelgaas@google.com>, Konstantin Simanov <k.simanov@stlk.ru>, Bryan Paradis <bryan.paradis@gmail.com>, Andrew Worsley <amworsley@gmail.com>, Chris Bainbridge <chris.bainbridge@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, zajec5@gmail.com
+To: Kalle Valo <kvalo@codeaurora.org>, Michael Buesch <m@bues.ch>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On Sun, 29 May, at 01:35:28AM, Lukas Wunner wrote:
-> The EFI firmware on Macs contains a full-fledged network stack for
-> downloading OS X images from osrecovery.apple.com. Unfortunately
-> on Macs introduced 2011 and 2012, EFI brings up the Broadcom 4331
-> wireless card on every boot and leaves it enabled even after
-> ExitBootServices has been called. The card continues to assert its IRQ
-> line, causing spurious interrupts if the IRQ is shared. It also corrupts
-> memory by DMAing received packets, allowing for remote code execution
-> over the air. This only stops when a driver is loaded for the wireless
-> card, which may be never if the driver is not installed or blacklisted.
+Only hardcode the LED behavior if the SROM doesn't provide any for all
+LEDs of the card. This avoids instantiating LED triggers for unconnected
+LEDs, while (hopefully) keeping things working for old cards with a
+blank SROM.
 
-[... Snip a very thorough changelog ...]
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+---
+ drivers/net/wireless/broadcom/b43/leds.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-This patch looks fine to me from an EFI perspective.
-
-Acked-by: Matt Fleming <matt@codeblueprint.co.uk>
+diff --git a/drivers/net/wireless/broadcom/b43/leds.c b/drivers/net/wireless/broadcom/b43/leds.c
+index d79ab2a..cb987c2 100644
+--- a/drivers/net/wireless/broadcom/b43/leds.c
++++ b/drivers/net/wireless/broadcom/b43/leds.c
+@@ -222,7 +222,7 @@ static void b43_led_get_sprominfo(struct b43_wldev *dev,
+ 	sprom[2] = dev->dev->bus_sprom->gpio2;
+ 	sprom[3] = dev->dev->bus_sprom->gpio3;
+ 
+-	if (sprom[led_index] == 0xFF) {
++	if ((sprom[0] & sprom[1] & sprom[2] & sprom[3]) == 0xff) {
+ 		/* There is no LED information in the SPROM
+ 		 * for this LED. Hardcode it here. */
+ 		*activelow = false;
+@@ -250,7 +250,11 @@ static void b43_led_get_sprominfo(struct b43_wldev *dev,
+ 			return;
+ 		}
+ 	} else {
+-		*behaviour = sprom[led_index] & B43_LED_BEHAVIOUR;
++		/* keep LED disabled if no mapping is defined */
++		if (sprom[led_index] == 0xff)
++			*behaviour = B43_LED_OFF;
++		else
++			*behaviour = sprom[led_index] & B43_LED_BEHAVIOUR;
+ 		*activelow = !!(sprom[led_index] & B43_LED_ACTIVELOW);
+ 	}
+ }
+-- 
+2.5.5
