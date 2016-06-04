@@ -1,29 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sat,  4 Jun 2016 15:00:59 +0000 (UTC)
-Subject: b43: don't unconditionally fall back to CCK if the rate is 6MB
- OFDM.
-In-Reply-To: <1463455534-22512-2-git-send-email-adrian@freebsd.org>
-Message-ID: <20160604150059.D7551613D3@smtp.codeaurora.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sat, 4 Jun 2016 16:23:27 -0500
+Subject: [PATCH v3 1/2] b43: Remove unused phy_a code
+In-Reply-To: <1465052053-26740-1-git-send-email-linux@roeck-us.net>
+References: <1465052053-26740-1-git-send-email-linux@roeck-us.net>
+Message-ID: <575346CF.9040003@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Guenter Roeck <linux@roeck-us.net>, Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, m@bues.ch
 
-Adrian Chadd <adrian@freebsd.org> wrote:
-> Check the current PHY operating mode (gmode) to see if we should
-> fall back from 6MB OFDM to 11MB CCK.  For 5GHz operation this isn't
-> allowed.
-> 
-> Note, the fallback lookup is only done for RTS rates; normal fallback
-> rates are done via mac80211 and aren't affected by this change.
-> 
-> Signed-off-by: Adrian Chadd <adrian@freebsd.org>
+On 06/04/2016 09:54 AM, Guenter Roeck wrote:
+> gcc-6 reports the following error with -Werror=unused-const-variable.
+>
+> drivers/net/wireless/broadcom/b43/phy_a.c:576:40: error:
+> 	'b43_phyops_a' defined but not used
+>
+> Per Michael B?sch: "All a-phy code is usused", so remove it all,
+> and move the remaining Type-G initialization code into phy_g.c.
+>
+> Reported-by: Fengguang Wu <fengguang.wu@intel.com> [0-day test robot]
+> Cc: Michael B?sch <m@bues.ch>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> v3: Do not rename b43_phy_inita()
+> v2: Remove phy_a.c; move left-over code into phy_g.c
+>      Remove now unused data structure
 
-Thanks, 1 patch applied to wireless-drivers-next.git:
+These two patches have been tested on a BCM4318.
 
-d0b03439f784 b43: don't unconditionally fall back to CCK if the rate is 6MB OFDM.
-
--- 
-Sent by pwcli
-https://patchwork.kernel.org/patch/9108351/
+Larry
