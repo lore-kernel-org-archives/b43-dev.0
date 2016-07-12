@@ -1,13 +1,20 @@
-From: Nirav Patel <nspho1@gmail.com>
-Date: Tue, 21 Jun 2016 12:28:56 +0530
-Subject: Petition to broadcom at Change.org
-Message-ID: <CACW9AP7J_k9n6a==2M3NPNm+9ByXew5v8FU2ZPCTE+um1J9XQw@mail.gmail.com>
+From: William Brian <brian040888@yahoo.com>
+Date: Tue, 12 Jul 2016 15:17:52 +0300
+Subject: How to get or buy brcm4360 wifi driver?
+Message-ID: <CA45E8EB-2CF0-44BF-A68B-48FC46A9BF75@yahoo.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-I have filed a petition at change.org, so that broadcom updates
-brcmsmac drivers. Please read, support and share the link:
-https://www.change.org/p/broadcom-must-keep-brcmsmac-updated
+Dear Sir,
+
+Please help me to get broadcom brcm4360 wifi chip driver.
+I am going to add brcm4360 wifi chip driver for Netgear R7000 AP on openwrt.
+If need, I will buy driver and source code.
+
+Please let me know how to get or buy driver and source code for brcm4360 (price and procedure for buying).
+
+Best Regards.
+William Brian.
