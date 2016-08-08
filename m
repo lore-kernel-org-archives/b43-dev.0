@@ -1,17 +1,17 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon,  8 Aug 2016 21:10:39 +0200
-Subject: [PATCH 4.4 04/68] x86/quirks: Add early quirk to reset Apple AirPort
+Date: Mon,  8 Aug 2016 21:10:27 +0200
+Subject: [PATCH 4.6 04/96] x86/quirks: Add early quirk to reset Apple AirPort
  card
-In-Reply-To: <20160808180209.697765393@linuxfoundation.org>
-References: <20160808180209.697765393@linuxfoundation.org>
-Message-ID: <20160808180209.909701632@linuxfoundation.org>
+In-Reply-To: <20160808180243.898163389@linuxfoundation.org>
+References: <20160808180243.898163389@linuxfoundation.org>
+Message-ID: <20160808180244.091694945@linuxfoundation.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.6-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -161,7 +161,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  static void __init fix_hypertransport_config(int num, int slot, int func)
  {
-@@ -596,6 +603,61 @@ static void __init force_disable_hpet(in
+@@ -597,6 +604,61 @@ static void __init force_disable_hpet(in
  #endif
  }
  
@@ -223,7 +223,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  #define QFLAG_APPLY_ONCE 	0x1
  #define QFLAG_APPLIED		0x2
-@@ -638,6 +700,8 @@ static struct chipset early_qrk[] __init
+@@ -639,6 +701,8 @@ static struct chipset early_qrk[] __init
  	 */
  	{ PCI_VENDOR_ID_INTEL, 0x0f00,
  		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
@@ -245,7 +245,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  #define bcma_warn(bus, fmt, ...) \
 --- a/include/linux/bcma/bcma.h
 +++ b/include/linux/bcma/bcma.h
-@@ -156,6 +156,7 @@ struct bcma_host_ops {
+@@ -158,6 +158,7 @@ struct bcma_host_ops {
  #define BCMA_CORE_DEFAULT		0xFFF
  
  #define BCMA_MAX_NR_CORES		16
