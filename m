@@ -1,77 +1,183 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Date: Wed, 21 Sep 2016 18:29:26 +0200
-Subject: [PATCH 2/4] carl9170: fix debugfs crashes
-In-Reply-To: <20160921101325.GA22263@kroah.com>
-References: <48411543620969bebb37a1a9ea7b8f451cdfdd31.1474140477.git.chunkeey@gmail.com>
- <ccf228acb7af8ee3bbd82f72f28ebc068f37cb8e.1474140477.git.chunkeey@gmail.com>
- <20160921101325.GA22263@kroah.com>
-Message-ID: <1927662.l0xhZ6GL0u@debian64>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Tue, 18 Oct 2016 10:28:57 +0200
+Subject: [PATCH] wireless: deprecate WDS and disable by default
+Message-ID: <1476779337-3520-1-git-send-email-johannes@sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Christian Lamparter <chunkeey@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, Nicolai Stange <nicstange@gmail.com>, Ben Greear <greearb@candelatech.com>, Larry Finger <Larry.Finger@lwfinger.net>
+To: linux-wireless@vger.kernel.org
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, b43-dev@lists.infradead.org, Larry Finger <Larry.Finger@lwfinger.net>, ath9k-devel@qca.qualcomm.com, ath9k-devel@lists.ath9k.org, Johannes Berg <johannes.berg@intel.com>
 
-On Wednesday, September 21, 2016 12:13:25 PM CEST Greg KH wrote:
-> On Sat, Sep 17, 2016 at 09:43:02PM +0200, Christian Lamparter wrote:
-> > Ben Greear reported:
-> > > I see lots of instability as soon as I load up the carl9710 NIC.
-> > > My application is going to be poking at it's debugfs files...
-> > >
-> > > BUG: KASAN: slab-out-of-bounds in carl9170_debugfs_read+0xd5/0x2a0
-> > > [carl9170] at addr ffff8801bc1208b0
-> > > Read of size 8 by task btserver/5888
-> > > =======================================================================
-> > > BUG kmalloc-256 (Tainted: G        W      ): kasan: bad access detected
-> > > -----------------------------------------------------------------------
-> > >
-> > > INFO: Allocated in seq_open+0x50/0x100 age=2690 cpu=2 pid=772
-> > >...
-> > 
-> > This breakage was caused by the introduction of intermediate
-> > fops in debugfs by commit 9fd4dcece43a
-> > ("debugfs: prevent access to possibly dead file_operations at file open")
-> > 
-> > Thankfully, the original/real fops are still available in d_fsdata.
-> > 
-> > Reported-by: Ben Greear <greearb@candelatech.com>
-> > Reviewed-by: Nicolai Stange <nicstange@gmail.com>
-> > Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-> > Acked-by: Kalle Valo <kvalo@codeaurora.org>
-> > Cc: stable <stable@vger.kernel.org> # 4.7+
-> > ---
-> >  drivers/net/wireless/ath/carl9170/debug.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/wireless/ath/carl9170/debug.c b/drivers/net/wireless/ath/carl9170/debug.c
-> > index 01a0919..ad7ffd5 100644
-> > --- a/drivers/net/wireless/ath/carl9170/debug.c
-> > +++ b/drivers/net/wireless/ath/carl9170/debug.c
-> > @@ -75,7 +75,7 @@ static ssize_t carl9170_debugfs_read(struct file *file, char __user *userbuf,
-> >  
-> >  	if (!ar)
-> >  		return -ENODEV;
-> > -	dfops = container_of(file->f_path.dentry->d_fsdata,
-> > +	dfops = container_of(debugfs_real_fops(file),
-> >  			     struct carl9170_debugfs_fops, fops);
-> >  
-> >  	if (!dfops->read)
-> > @@ -128,7 +128,7 @@ static ssize_t carl9170_debugfs_write(struct file *file,
-> >  
-> >  	if (!ar)
-> >  		return -ENODEV;
-> > -	dfops = container_of(file->f_path.dentry->d_fsdata,
-> > +	dfops = container_of(debugfs_real_fops(file),
-> >  			     struct carl9170_debugfs_fops, fops);
-> >  	if (!dfops->write)
-> >  		return -ENOSYS;
-> 
-> What tree is this against?  I can't apply it to 4.8-rc5, or 4.8-rc7, are
-> you sure it is still needed?
+From: Johannes Berg <johannes.berg@intel.com>
+
+The old WDS 4-addr frame support is very limited, e.g.
+ * no encryption is possible on such links
+ * it cannot support rate/HT/VHT negotiation
+ * management APIs are very restricted
+
+These make the WDS legacy mode useless in practice.
+
+All of these are resolved by the 4-addr AP/client support,
+so there's also no reason to improve WDS in the future.
+
+Therefore, add a Kconfig option to disable legacy WDS.
+This gives people an "emergency valve" while they migrate
+to the better-supported 4-addr AP/client option; we plan
+to remove it (and the associated cfg80211/mac80211 code,
+which is the ultimate goal) in the future.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
-Yes, the patch is needed. That said I screwed this patch up and as a result
-it is faulty. I'll send out v2 shortly
+ drivers/net/wireless/Kconfig                   | 13 +++++++++++++
+ drivers/net/wireless/ath/ath9k/init.c          |  6 ++++++
+ drivers/net/wireless/broadcom/b43/main.c       |  2 ++
+ drivers/net/wireless/broadcom/b43legacy/main.c |  2 ++
+ drivers/net/wireless/ralink/rt2x00/rt2x00dev.c |  6 ++++--
+ net/wireless/core.c                            | 10 ++++++++++
+ 6 files changed, 37 insertions(+), 2 deletions(-)
 
-Thanks,
-Christian
+diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
+index 8c8edaf1bba6..fa9c4fa9477e 100644
+--- a/drivers/net/wireless/Kconfig
++++ b/drivers/net/wireless/Kconfig
+@@ -17,6 +17,19 @@ menuconfig WLAN
+ 
+ if WLAN
+ 
++config WIRELESS_WDS
++	bool "mac80211-based legacy WDS support"
++	help
++	  This option enables the deprecated WDS support, the newer
++	  mac80211-based 4-addr AP/client support supersedes it with
++	  a much better feature set (HT, VHT, ...)
++
++	  We plan to remove this option and code, so if you find
++	  that you have to enable it, please let us know on the
++	  linux-wireless at vger.kernel.org mailing list, so we can
++	  help you migrate to 4-addr AP/client (or, if it's really
++	  necessary, give up on our plan of removing it).
++
+ source "drivers/net/wireless/admtek/Kconfig"
+ source "drivers/net/wireless/ath/Kconfig"
+ source "drivers/net/wireless/atmel/Kconfig"
+diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
+index cfa3fe82ade3..368d9b313823 100644
+--- a/drivers/net/wireless/ath/ath9k/init.c
++++ b/drivers/net/wireless/ath/ath9k/init.c
+@@ -734,9 +734,11 @@ static const struct ieee80211_iface_limit if_limits[] = {
+ 				 BIT(NL80211_IFTYPE_P2P_GO) },
+ };
+ 
++#ifdef CONFIG_WIRELESS_WDS
+ static const struct ieee80211_iface_limit wds_limits[] = {
+ 	{ .max = 2048,	.types = BIT(NL80211_IFTYPE_WDS) },
+ };
++#endif
+ 
+ #ifdef CONFIG_ATH9K_CHANNEL_CONTEXT
+ 
+@@ -774,6 +776,7 @@ static const struct ieee80211_iface_combination if_comb[] = {
+ 					BIT(NL80211_CHAN_WIDTH_40),
+ #endif
+ 	},
++#ifdef CONFIG_WIRELESS_WDS
+ 	{
+ 		.limits = wds_limits,
+ 		.n_limits = ARRAY_SIZE(wds_limits),
+@@ -781,6 +784,7 @@ static const struct ieee80211_iface_combination if_comb[] = {
+ 		.num_different_channels = 1,
+ 		.beacon_int_infra_match = true,
+ 	},
++#endif
+ };
+ 
+ #ifdef CONFIG_ATH9K_CHANNEL_CONTEXT
+@@ -851,7 +855,9 @@ static void ath9k_set_hw_capab(struct ath_softc *sc, struct ieee80211_hw *hw)
+ 			BIT(NL80211_IFTYPE_STATION) |
+ 			BIT(NL80211_IFTYPE_ADHOC) |
+ 			BIT(NL80211_IFTYPE_MESH_POINT) |
++#ifdef CONFIG_WIRELESS_WDS
+ 			BIT(NL80211_IFTYPE_WDS) |
++#endif
+ 			BIT(NL80211_IFTYPE_OCB);
+ 
+ 		if (ath9k_is_chanctx_enabled())
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index 6e5d9095b195..52f3541ecbcf 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -5591,7 +5591,9 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ 		BIT(NL80211_IFTYPE_AP) |
+ 		BIT(NL80211_IFTYPE_MESH_POINT) |
+ 		BIT(NL80211_IFTYPE_STATION) |
++#ifdef CONFIG_WIRELESS_WDS
+ 		BIT(NL80211_IFTYPE_WDS) |
++#endif
+ 		BIT(NL80211_IFTYPE_ADHOC);
+ 
+ 	hw->wiphy->flags |= WIPHY_FLAG_IBSS_RSN;
+diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
+index 83770d2ea057..e97ab2b91663 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/main.c
++++ b/drivers/net/wireless/broadcom/b43legacy/main.c
+@@ -3838,7 +3838,9 @@ static int b43legacy_wireless_init(struct ssb_device *dev)
+ 	hw->wiphy->interface_modes =
+ 		BIT(NL80211_IFTYPE_AP) |
+ 		BIT(NL80211_IFTYPE_STATION) |
++#ifdef CONFIG_WIRELESS_WDS
+ 		BIT(NL80211_IFTYPE_WDS) |
++#endif
+ 		BIT(NL80211_IFTYPE_ADHOC);
+ 	hw->queues = 1; /* FIXME: hardware has more queues */
+ 	hw->max_rates = 2;
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+index 4e0c5653054b..236f790e097a 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+@@ -1362,11 +1362,13 @@ int rt2x00lib_probe_dev(struct rt2x00_dev *rt2x00dev)
+ 	if (rt2x00dev->bcn->limit > 0)
+ 		rt2x00dev->hw->wiphy->interface_modes |=
+ 		    BIT(NL80211_IFTYPE_ADHOC) |
+-		    BIT(NL80211_IFTYPE_AP) |
+ #ifdef CONFIG_MAC80211_MESH
+ 		    BIT(NL80211_IFTYPE_MESH_POINT) |
+ #endif
+-		    BIT(NL80211_IFTYPE_WDS);
++#ifdef CONFIG_WIRELESS_WDS
++		    BIT(NL80211_IFTYPE_WDS) |
++#endif
++		    BIT(NL80211_IFTYPE_AP);
+ 
+ 	rt2x00dev->hw->wiphy->flags |= WIPHY_FLAG_IBSS_RSN;
+ 
+diff --git a/net/wireless/core.c b/net/wireless/core.c
+index 8201e6d7449e..f433f15f9222 100644
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -571,6 +571,11 @@ static int wiphy_verify_combinations(struct wiphy *wiphy)
+ 				return -EINVAL;
+ 		}
+ 
++#ifndef CONFIG_WIRELESS_WDS
++		if (WARN_ON(all_iftypes & BIT(NL80211_IFTYPE_WDS)))
++			return -EINVAL;
++#endif
++
+ 		/* You can't even choose that many! */
+ 		if (WARN_ON(cnt < c->max_interfaces))
+ 			return -EINVAL;
+@@ -609,6 +614,11 @@ int wiphy_register(struct wiphy *wiphy)
+ 		     !rdev->ops->add_nan_func || !rdev->ops->del_nan_func)))
+ 		return -EINVAL;
+ 
++#ifndef CONFIG_WIRELESS_WDS
++	if (WARN_ON(wiphy->interface_modes & BIT(NL80211_IFTYPE_WDS)))
++		return -EINVAL;
++#endif
++
+ 	/*
+ 	 * if a wiphy has unsupported modes for regulatory channel enforcement,
+ 	 * opt-out of enforcement checking
+-- 
+2.8.1
