@@ -1,17 +1,17 @@
 From: Ben Hutchings <ben@decadent.org.uk>
-Date: Mon, 14 Nov 2016 00:14:20 +0000
-Subject: [PATCH 3.16 057/346] x86/quirks: Add early quirk to reset Apple
+Date: Mon, 14 Nov 2016 00:14:07 +0000
+Subject: [PATCH 3.2 017/152] x86/quirks: Add early quirk to reset Apple
  AirPort card
-In-Reply-To: <lsq.1479082458.755945576@decadent.org.uk>
-Message-ID: <lsq.1479082460.127832746@decadent.org.uk>
+In-Reply-To: <lsq.1479082446.271293126@decadent.org.uk>
+Message-ID: <lsq.1479082447.295446131@decadent.org.uk>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Denys Vlasenko <dvlasenk@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Brian Gerst <brgerst@gmail.com>, Michael Buesch <m@bues.ch>, Lukas Wunner <lukas@wunner.de>, Chris Milsted <cmilsted@redhat.com>, Yinghai Lu <yinghai@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?Q?Rafa=C5=82=20?= =?UTF-8?Q?Mi=C5=82ecki?= <zajec5@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, linux-wireless@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Josh Poimboeuf <jpoimboe@redhat.com>, b43-dev@lists.infradead.org, Matt Fleming <matt@codeblueprint.co.uk>, Konstantin Simanov <k.simanov@stlk.ru>, Andy Lutomirski <luto@kernel.org>, Andrew Worsley <amworsley@gmail.com>, Bryan Paradis <bryan.paradis@gmail.com>, Chris Bainbridge <chris.bainbridge@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: akpm@linux-foundation.org, Denys Vlasenko <dvlasenk@redhat.com>, linux-wireless@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Matt Fleming <matt@codeblueprint.co.uk>, Peter Zijlstra <peterz@infradead.org>, Konstantin Simanov <k.simanov@stlk.ru>, Borislav Petkov <bp@alien8.de>, linux-pci@vger.kernel.org, Brian Gerst <brgerst@gmail.com>, Michael Buesch <m@bues.ch>, Andrew Worsley <amworsley@gmail.com>, Lukas Wunner <lukas@wunner.de>, =?UTF-8?Q?Rafa=C5=82=20?= =?UTF-8?Q?Mi=C5=82ecki?= <zajec5@gmail.com>, Chris Bainbridge <chris.bainbridge@gmail.com>, b43-dev@lists.infradead.org, Bryan Paradis <bryan.paradis@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Josh Poimboeuf <jpoimboe@redhat.com>, Chris Milsted <cmilsted@redhat.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>, Ingo Molnar <mingo@kernel.org>
 
-3.16.39-rc1 review patch.  If anyone has any objections, please let me know.
+3.2.84-rc1 review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -129,6 +129,10 @@ Cc: linux-wireless at vger.kernel.org
 Link: http://lkml.kernel.org/r/48d0972ac82a53d460e5fce77a07b2560db95203.1465690253.git.lukas at wunner.de
 [ Did minor readability edits. ]
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.2:
+ - early_ioremap() is declared in <asm/io.h> not <asm/early_ioremap.h>
+ - Add definition of BCMA_RESET_ST
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
  arch/x86/kernel/early-quirks.c | 64 ++++++++++++++++++++++++++++++++++++++++++
@@ -138,7 +142,7 @@ Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 
 --- a/arch/x86/kernel/early-quirks.c
 +++ b/arch/x86/kernel/early-quirks.c
-@@ -11,7 +11,11 @@
+@@ -11,13 +11,20 @@
  
  #include <linux/pci.h>
  #include <linux/acpi.h>
@@ -147,22 +151,21 @@ Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
  #include <linux/pci_ids.h>
 +#include <linux/bcma/bcma.h>
 +#include <linux/bcma/bcma_regs.h>
- #include <drm/i915_drm.h>
  #include <asm/pci-direct.h>
  #include <asm/dma.h>
-@@ -21,6 +25,9 @@
+ #include <asm/io_apic.h>
+ #include <asm/apic.h>
  #include <asm/iommu.h>
  #include <asm/gart.h>
- #include <asm/irq_remapping.h>
-+#include <asm/early_ioremap.h>
++#include <asm/io.h>
 +
 +#define dev_err(msg)  pr_err("pci 0000:%02x:%02x.%d: %s", bus, slot, func, msg)
  
  static void __init fix_hypertransport_config(int num, int slot, int func)
  {
-@@ -572,6 +579,61 @@ static void __init force_disable_hpet(in
- #endif
+@@ -199,6 +206,62 @@ static void __init ati_bugs_contd(int nu
  }
+ #endif
  
 +#define BCM4331_MMIO_SIZE	16384
 +#define BCM4331_PM_CAP		0x40
@@ -219,13 +222,14 @@ Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 +
 +	early_iounmap(mmio, BCM4331_MMIO_SIZE);
 +}
- 
++
  #define QFLAG_APPLY_ONCE 	0x1
  #define QFLAG_APPLIED		0x2
-@@ -610,6 +672,8 @@ static struct chipset early_qrk[] __init
- 	 */
- 	{ PCI_VENDOR_ID_INTEL, 0x0f00,
- 		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
+ #define QFLAG_DONE		(QFLAG_APPLY_ONCE|QFLAG_APPLIED)
+@@ -222,6 +285,8 @@ static struct chipset early_qrk[] __init
+ 	  PCI_CLASS_SERIAL_SMBUS, PCI_ANY_ID, 0, ati_bugs },
+ 	{ PCI_VENDOR_ID_ATI, PCI_DEVICE_ID_ATI_SBX00_SMBUS,
+ 	  PCI_CLASS_SERIAL_SMBUS, PCI_ANY_ID, 0, ati_bugs_contd },
 +	{ PCI_VENDOR_ID_BROADCOM, 0x4331,
 +	  PCI_CLASS_NETWORK_OTHER, PCI_ANY_ID, 0, apple_airport_reset},
  	{}
@@ -239,16 +243,26 @@ Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
  
 -#define BCMA_CORE_SIZE		0x1000
 -
- #define bcma_err(bus, fmt, ...) \
- 	pr_err("bus%d: " fmt, (bus)->num, ##__VA_ARGS__)
- #define bcma_warn(bus, fmt, ...) \
+ struct bcma_bus;
+ 
+ /* main.c */
 --- a/include/linux/bcma/bcma.h
 +++ b/include/linux/bcma/bcma.h
-@@ -153,6 +153,7 @@ struct bcma_host_ops {
+@@ -124,6 +124,7 @@ struct bcma_host_ops {
  #define BCMA_CORE_DEFAULT		0xFFF
  
  #define BCMA_MAX_NR_CORES		16
 +#define BCMA_CORE_SIZE			0x1000
  
- /* Chip IDs of PCIe devices */
- #define BCMA_CHIP_ID_BCM4313	0x4313
+ struct bcma_device {
+ 	struct bcma_bus *bus;
+--- a/include/linux/bcma/bcma_regs.h
++++ b/include/linux/bcma/bcma_regs.h
+@@ -35,6 +35,7 @@
+ #define  BCMA_IOST_BIST_DONE		0x8000
+ #define BCMA_RESET_CTL			0x0800
+ #define  BCMA_RESET_CTL_RESET		0x0001
++#define BCMA_RESET_ST			0x0804
+ 
+ /* BCMA PCI config space registers. */
+ #define BCMA_PCI_PMCSR			0x44
