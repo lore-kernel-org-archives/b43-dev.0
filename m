@@ -1,16 +1,32 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Tue, 29 Nov 2016 12:01:09 +0100
+From: Dora Smith <tiggernut24@yahoo.com>
+Date: Tue, 29 Nov 2016 09:01:51 -0600
 Subject: BCM43224
-In-Reply-To: <7b40931a-1d1a-9baf-28d3-59568a346800@me.com>
+In-Reply-To: <CACna6rwgsEf8=SykiD1mU0qVLHCC5ki_HiMb4omC+jB5eV+kfA@mail.gmail.com>
 References: <3dba7020-e9ae-e7b7-2471-aa0681553f20@me.com>
  <CACna6rzE2R2jQtViNrqvLriybxnWK1k+hw-FjSgg9Ch7ZD6jZw@mail.gmail.com>
  <7b40931a-1d1a-9baf-28d3-59568a346800@me.com>
-Message-ID: <CACna6rwgsEf8=SykiD1mU0qVLHCC5ki_HiMb4omC+jB5eV+kfA@mail.gmail.com>
+ <CACna6rwgsEf8=SykiD1mU0qVLHCC5ki_HiMb4omC+jB5eV+kfA@mail.gmail.com>
+Message-ID: <4798341C682F42D89235C411274B7EDF@DoraWin7PC>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
+
+I got it to work, sort of, but ended up upgrading to a new old card, and 
+I've been VERY happy with it.
+
+I did research and found one of the few N cards that was made for the type 
+of slot in my older notebook.
+
+Dora
+
+-----Original Message----- 
+From: Rafa? Mi?ecki
+Sent: Tuesday, November 29, 2016 5:01 AM
+To: Faissal Bensefia
+Cc: b43-dev
+Subject: Re: BCM43224
 
 On 29 November 2016 at 11:48, Faissal Bensefia <faissaloo@me.com> wrote:
 > On 28/11/16 21:03, Rafa? Mi?ecki wrote:
@@ -36,3 +52,8 @@ Please be specific.
 
 -- 
 Rafa?
+
+_______________________________________________
+b43-dev mailing list
+b43-dev at lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev 
