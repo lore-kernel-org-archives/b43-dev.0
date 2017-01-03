@@ -1,51 +1,57 @@
-From: Faissal Bensefia <faissaloo@me.com>
-Date: Sat, 03 Dec 2016 10:31:04 +0000
-Subject: BCM43224
-In-Reply-To: <u1d4h6rs6i83hi154hnklibm.1480451893397@email.android.com>
-References: <u1d4h6rs6i83hi154hnklibm.1480451893397@email.android.com>
-Message-ID: <20009b01-d725-13a8-698e-ce0939d08e20@me.com>
+From: Hogren <hogren@iiiha.com>
+Date: Tue, 3 Jan 2017 11:00:23 +0100
+Subject: problem with qos option with b43
+Message-ID: <5b94a041-ed93-b49e-4db0-98ac5346cd1c@iiiha.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
+Hello,
+
+I hope that I will not use your time for nothing.
+
+I recently solved a problem with my wifi card.
 
 
-On 29/11/16 20:37, Faissal Bensefia wrote:
-> 
-> On 29 Nov 2016 11:01 a.m., Rafa? Mi?ecki <zajec5@gmail.com> wrote:
->>
->> On 29 November 2016 at 11:48, Faissal Bensefia <faissaloo@me.com> wrote: 
->>> On 28/11/16 21:03, Rafa? Mi?ecki wrote: 
->>>> On 23 November 2016 at 21:27, Faissal Bensefia <faissaloo@me.com> wrote: 
->>>>> To my knowledge the only drivers for this card are brcmsmac and 
->>>>> broadcom-wl, both of which require proprietary firmware, which I'd like 
->>>>> to do without. How can I assist in reverse engineering the BCM43224 
->>>>> firmware? Are there any resources that explain how to use b43-tools? 
->>>>
->>>> b43 also has (very) limited support for BCM43224, after all you 
->>>> e-mailed b43 mailing list. 
->>>>
->>> I've attempted to use b43 but on my card but it doesn't work, the module 
->>> never loads, despite me removing brcmsmac making sure that everything 
->>> has been unloaded and then loading b43, as well as blacklisting 
->>> brcmsmac, none of which worked. From what I've read there is meant to be 
->>> support but it's not been tested (I don't remember where the site was 
->>> but it had a list of Broadcom cards and their support status). 
->>
->> Please be specific. 
->>
->> "the module never loads" - what error do you see after doing "modprobe b43"? 
->>
->> -- 
->> Rafa? 
-> 
-> I get no error when I do that. When I say the module never loads I'm assuming it hasn't because I have no network connection and network manager doesn't detect a Wi-Fi interface.
-> 
+Wifi Card:
 
-Ok, just a follow up, I was looking through my journalctl and found this:
-Dec 03 10:29:27 macbook-xubuntu kernel: b43: probe of bcma0:1 failed
-with error -524
+# lspci |grep -i bc
+24:00.0 Network controller: Broadcom Corporation BCM43228 802.11a/b/g/n
 
-~Faissal
+
+Title of the gentoo mailing thread about my problem:
+
+[gentoo-user] Broadcom wireless problem after a certain time
+
+
+My problem was that after a certain time (I suppose that is after a
+certain amount of received data), the card stopped to work fine, I
+couldn't access to any website, etc. I restart the wpa_supplicant
+systemd module, and the wifi works again.
+
+
+After my discussion on the gentoo mailing-list, I tested to disable qos
+(echo "options b43 qos=0" > /etc/modprobe.d/b43.conf), and it resolved
+the problem.
+
+
+The goal of my mail is :
+
+I want to learn. I want to help.
+
+
+Is there a page with a description of the QoS option of b43 module (what
+does it do, compatibility, etc.) ?
+
+Can I make any tests or analyses to help you to possibly repair a bug in
+the module ?
+
+
+Thank you very much !!
+
+And an happy new geek year !
+
+
+Hogren
