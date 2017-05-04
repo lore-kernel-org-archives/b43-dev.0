@@ -1,45 +1,46 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 15 Apr 2017 11:28:46 -0500
-Subject: Using b43 with broadcom 4312 on hp2133 yields "device not ready"
-In-Reply-To: <c92149c95e371f5d4dc914210a8f46b8@out-of-bounds.de>
-References: <7828614472cf8cead9a152593a34bcfe@out-of-bounds.de>
- <e2ef8f21-66b3-ef8d-9baa-9204a9ac7920@lwfinger.net>
- <c92149c95e371f5d4dc914210a8f46b8@out-of-bounds.de>
-Message-ID: <a9ead8f0-d135-d84a-9a68-9f08294315c3@lwfinger.net>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu,  4 May 2017 11:27:52 +0200
+Subject: [PATCH] b43: Add missing MODULE_FIRMWARE()
+Message-ID: <20170504092752.2422-1-tiwai@suse.de>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
 
-On 04/14/2017 03:13 PM, registration at out-of-bounds.de wrote:
-> Hi again,
->
-> when using google on the "channel switch error", I came across the commands
-> "iwlist" and "iw" so find their output enclosed in the hopes it helps.
->
-> Trying "iw phy0 set channel x" did not work, though: device busy
->
-> I also found a reference to a kernel patch regarding the issue/error message:
-> https://patchwork.kernel.org/patch/4276461/
+Some recent firmware entries were forgotten to be added via
+MODULE_FIRMWARE(), which may result in the non-functional state when
+the driver is loaded in initrd.
 
-That patch was applied to kernel code on May 31, 2014.
+Link: http://bugzilla.opensuse.org/show_bug.cgi?id=1037344
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ drivers/net/wireless/broadcom/b43/main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> hope that helps you help me ;-)
-
-I'm not sure how much help I can give you. I have now built a modern kernel for 
-my netbook. On it the BCM4312 works fine. That system had older firmware on it 
-so I downloaded the newest file and installed it. The device still works, thus I 
-think we can rule out some unexpected changes in either the driver or the 
-firmware. I was using kernel 4.11.0-rc5.
-
-My conclusion is that your hardware is defective. Unfortunately, although a 
-replacement part can be obtained on E-Bay for less that $4, replacing the WLAN 
-module on that particular laptop requires complete disassembly. I would not 
-recommend that unless you have considerable experience.
-
-My suggestion is that you purchase a USB adapter for this laptop. If you are 
-willing to purchase from E-Bay, the small, dual-band 802.11ac devices are under 
-$20 US. I'm not sure what they will cost in Germany.
-
-Larry
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index d23aac7503d3..b37e7391f55d 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -71,8 +71,18 @@ MODULE_FIRMWARE("b43/ucode11.fw");
+ MODULE_FIRMWARE("b43/ucode13.fw");
+ MODULE_FIRMWARE("b43/ucode14.fw");
+ MODULE_FIRMWARE("b43/ucode15.fw");
++MODULE_FIRMWARE("b43/ucode16_lp.fw");
+ MODULE_FIRMWARE("b43/ucode16_mimo.fw");
++MODULE_FIRMWARE("b43/ucode24_lcn.fw");
++MODULE_FIRMWARE("b43/ucode25_lcn.fw");
++MODULE_FIRMWARE("b43/ucode25_mimo.fw");
++MODULE_FIRMWARE("b43/ucode26_mimo.fw");
++MODULE_FIRMWARE("b43/ucode29_mimo.fw");
++MODULE_FIRMWARE("b43/ucode33_lcn40.fw");
++MODULE_FIRMWARE("b43/ucode30_mimo.fw");
+ MODULE_FIRMWARE("b43/ucode5.fw");
++MODULE_FIRMWARE("b43/ucode40.fw");
++MODULE_FIRMWARE("b43/ucode42.fw");
+ MODULE_FIRMWARE("b43/ucode9.fw");
+ 
+ static int modparam_bad_frames_preempt;
+-- 
+2.12.2
