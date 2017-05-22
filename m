@@ -1,34 +1,28 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 04 May 2017 12:43:14 +0300
-Subject: [PATCH] b43: Add missing MODULE_FIRMWARE()
-In-Reply-To: <20170504092752.2422-1-tiwai@suse.de> (Takashi Iwai's message of
- "Thu, 4 May 2017 11:27:52 +0200")
+Date: Mon, 22 May 2017 09:03:55 +0000 (UTC)
+Subject: b43: Add missing MODULE_FIRMWARE()
+In-Reply-To: <20170504092752.2422-1-tiwai@suse.de>
 References: <20170504092752.2422-1-tiwai@suse.de>
-Message-ID: <87wp9xq7nx.fsf@kamboji.qca.qualcomm.com>
+Message-ID: <20170522090355.8BC9C60A0C@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, zajec5@gmail.com
+To: b43-dev@lists.infradead.org
 
-Takashi Iwai <tiwai@suse.de> writes:
-
-> Some recent firmware entries were forgotten to be added via
-> MODULE_FIRMWARE(), which may result in the non-functional state when
-> the driver is loaded in initrd.
->
+Takashi Iwai <tiwai@suse.de> wrote:
+> Some firmware entries were forgotten to be added via MODULE_FIRMWARE(), which
+> may result in the non-functional state when the driver is loaded in initrd.
+> 
 > Link: http://bugzilla.opensuse.org/show_bug.cgi?id=1037344
+> Fixes: 15be8e89cdd9 ("b43: add more bcma cores")
 > Signed-off-by: Takashi Iwai <tiwai@suse.de>
 
-With recent you mean three years ago? ;) Some of these were added by
-Rafal (CCed) in commit 15be8e89cdd99 and some in a60f99f75dd35.
+Patch applied to wireless-drivers-next.git, thanks.
 
-I'll replace the word recent and add:
-
-Fixes: 15be8e89cdd9 ("b43: add more bcma cores")
-
-But as this is so old bug I'll queue this to 4.13.
+3c89a72ad80c b43: Add missing MODULE_FIRMWARE()
 
 -- 
-Kalle Valo
+https://patchwork.kernel.org/patch/9711225/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
