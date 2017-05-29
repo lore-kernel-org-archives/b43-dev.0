@@ -1,28 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 22 May 2017 09:03:55 +0000 (UTC)
-Subject: b43: Add missing MODULE_FIRMWARE()
-In-Reply-To: <20170504092752.2422-1-tiwai@suse.de>
-References: <20170504092752.2422-1-tiwai@suse.de>
-Message-ID: <20170522090355.8BC9C60A0C@smtp.codeaurora.org>
+From: l <sexelex@hotmail.com>
+Date: Mon, 29 May 2017 03:34:16 +0000
+Subject: BCM4311 Dropping Connection To Router 
+Message-ID: <DM5PR12MB1545A452F6E51056B4087166B5F30@DM5PR12MB1545.namprd12.prod.outlook.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-Takashi Iwai <tiwai@suse.de> wrote:
-> Some firmware entries were forgotten to be added via MODULE_FIRMWARE(), which
-> may result in the non-functional state when the driver is loaded in initrd.
-> 
-> Link: http://bugzilla.opensuse.org/show_bug.cgi?id=1037344
-> Fixes: 15be8e89cdd9 ("b43: add more bcma cores")
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This wireless card will not remain connected to my router.  I am going to use this laptop as a ip camera security server.  
 
-Patch applied to wireless-drivers-next.git, thanks.
+When it boots up I can connect to it via ssh for about 10 minutes or less and then it looses connection to the router.  
 
-3c89a72ad80c b43: Add missing MODULE_FIRMWARE()
+Router:
 
--- 
-https://patchwork.kernel.org/patch/9711225/
+Netgear Rangemax Wireless-N 150
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Hardware :
+
+Compaq Presario C700
+
+# ip a
+
+3: wlp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 1000
+    link/ether 00:1a:73:90:e6:df brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.14/24 brd 192.168.1.255 scope global wlp1s0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::21a:73ff:fe90:e6df/64 scope link 
+       valid_lft forever preferred_lft forever
+
+# lspci
+01:00.0 Network controller: Broadcom Limited BCM4311 802.11b/g WLAN (rev 02)
+
+# uname -a
+Linux security 4.9.0-3-amd64 #1 SMP Debian 4.9.25-1 (2017-05-02) x86_64 GNU/Linux
