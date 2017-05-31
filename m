@@ -1,64 +1,73 @@
 From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Wed, 31 May 2017 17:17:15 +0200
+Date: Wed, 31 May 2017 17:32:15 +0200
 Subject: [PATCH] b43legacy: Fix a sleep-in-atomic bug in
- b43legacy_attr_interfmode_store
-In-Reply-To: <1496226547-5921-1-git-send-email-baijiaju1990@163.com>
-References: <1496226547-5921-1-git-send-email-baijiaju1990@163.com>
-Message-ID: <20170531171715.58d6c084@wiggum>
+ b43legacy_op_bss_info_changed
+In-Reply-To: <877f0xnwyk.fsf@kamboji.qca.qualcomm.com>
+References: <1496225353-5544-1-git-send-email-baijiaju1990@163.com>
+ <877f0xnwyk.fsf@kamboji.qca.qualcomm.com>
+Message-ID: <20170531173107.25eeda48@wiggum>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jia-Ju Bai <baijiaju1990@163.com>
-Cc: Larry.Finger@lwfinger.net, kvalo@codeaurora.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Jia-Ju Bai <baijiaju1990@163.com>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org, Larry.Finger@lwfinger.net
 
-On Wed, 31 May 2017 18:29:07 +0800
-Jia-Ju Bai <baijiaju1990@163.com> wrote:
+On Wed, 31 May 2017 13:26:43 +0300
+Kalle Valo <kvalo@codeaurora.org> wrote:
 
-> The driver may sleep under a spin lock, and the function call path is:
-> b43legacy_attr_interfmode_store (acquire the lock by spin_lock_irqsave)
->   b43legacy_radio_set_interference_mitigation
->     b43legacy_radio_interference_mitigation_disable
->       b43legacy_calc_nrssi_slope
->         b43legacy_synth_pu_workaround
->           might_sleep and msleep --> may sleep
+> Jia-Ju Bai <baijiaju1990@163.com> writes:
 > 
-> Fixing it may be complex, and a possible way is to remove 
-> spin_lock_irqsave and spin_lock_irqrestore in 
-> b43legacy_attr_interfmode_store, and the code has been protected by
-> mutex_lock and mutex_unlock.
+> > The driver may sleep under a spin lock, and the function call path is:
+> > b43legacy_op_bss_info_changed (acquire the lock by spin_lock_irqsave)
+> >   b43legacy_synchronize_irq
+> >     synchronize_irq --> may sleep
+> >
+> > To fix it, the lock is released before b43legacy_synchronize_irq, and the 
+> > lock is acquired again after this function.
+> >
+> > Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+> > ---
+> >  drivers/net/wireless/broadcom/b43legacy/main.c |    2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
+> > index f1e3dad..31ead21 100644
+> > --- a/drivers/net/wireless/broadcom/b43legacy/main.c
+> > +++ b/drivers/net/wireless/broadcom/b43legacy/main.c
+> > @@ -2859,7 +2859,9 @@ static void b43legacy_op_bss_info_changed(struct ieee80211_hw *hw,
+> >  	b43legacy_write32(dev, B43legacy_MMIO_GEN_IRQ_MASK, 0);
+> >  
+> >  	if (changed & BSS_CHANGED_BSSID) {
+> > +		spin_unlock_irqrestore(&wl->irq_lock, flags);
+> >  		b43legacy_synchronize_irq(dev);
+> > +		spin_lock_irqsave(&wl->irq_lock, flags);  
 > 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
-> ---
->  drivers/net/wireless/broadcom/b43legacy/sysfs.c |    2 --
->  1 file changed, 2 deletions(-)
+> To me this looks like a fragile workaround and not a real fix. You can
+> easily add new race conditions with releasing the lock like this.
 > 
-> diff --git a/drivers/net/wireless/broadcom/b43legacy/sysfs.c b/drivers/net/wireless/broadcom/b43legacy/sysfs.c
-> index 2a1da15..9ede143 100644
-> --- a/drivers/net/wireless/broadcom/b43legacy/sysfs.c
-> +++ b/drivers/net/wireless/broadcom/b43legacy/sysfs.c
-> @@ -137,14 +137,12 @@ static ssize_t b43legacy_attr_interfmode_store(struct device *dev,
->  	}
->  
->  	mutex_lock(&wldev->wl->mutex);
-> -	spin_lock_irqsave(&wldev->wl->irq_lock, flags);
->  
->  	err = b43legacy_radio_set_interference_mitigation(wldev, mode);
->  	if (err)
->  		b43legacyerr(wldev->wl, "Interference Mitigation not "
->  		       "supported by device\n");
->  	mmiowb();
-> -	spin_unlock_irqrestore(&wldev->wl->irq_lock, flags);
->  	mutex_unlock(&wldev->wl->mutex);
->  
->  	return err ? err : count;
 
 
-Interference mitigation has never been properly implemented and tested.
-As such nobody should use it and I would be surprised if anybody uses
-this attribute.
-So I would suggest to remove this sysfs attribute entirely instead of
-having this incorrect fix.
+I think releasing the lock possibly is fine. It certainly is better than
+sleeping with a lock held.
+We disabled the device interrupts just before this line.
+
+However I think the synchronize_irq should be outside of the
+conditional right after the write to B43legacy_MMIO_GEN_IRQ_MASK. (So
+two lines above)
+I don't think it makes sense to only synchronize if BSS_CHANGED_BSSID
+is set.
+
+
+On the other hand b43 does not have this irq-disabling foobar anymore.
+So somebody must have removed it. Maybe you can find the commit that
+removed this stuff from b43 and port it to b43legacy?
+
+
+So I would vote for moving the synchronize_irq up outside of the
+conditional and put the unlock/lock sequence around it.
+And as a second patch on top of that try to remove this stuff
+altogether like b43 did.
 
 -- 
 Michael
@@ -68,4 +77,4 @@ Name: not available
 Type: application/pgp-signature
 Size: 833 bytes
 Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170531/47bfb51a/attachment.sig>
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170531/1579f463/attachment-0001.sig>
