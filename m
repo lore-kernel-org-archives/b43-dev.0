@@ -1,53 +1,41 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 29 May 2017 07:38:43 -0500
-Subject: BCM4311 Dropping Connection To Router
-In-Reply-To: <DM5PR12MB1545A452F6E51056B4087166B5F30@DM5PR12MB1545.namprd12.prod.outlook.com>
-References: <DM5PR12MB1545A452F6E51056B4087166B5F30@DM5PR12MB1545.namprd12.prod.outlook.com>
-Message-ID: <8a4f6a36-caa2-99da-b50b-1994206be778@lwfinger.net>
+From: Jia-Ju Bai <baijiaju1990@163.com>
+Date: Wed, 31 May 2017 18:09:13 +0800
+Subject: [PATCH] b43legacy: Fix a sleep-in-atomic bug in
+ b43legacy_op_bss_info_changed
+Message-ID: <1496225353-5544-1-git-send-email-baijiaju1990@163.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Larry.Finger@lwfinger.net, kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>
 
-On 05/28/2017 10:34 PM, l wrote:
-> This wireless card will not remain connected to my router.  I am going to use this laptop as a ip camera security server.
-> 
-> When it boots up I can connect to it via ssh for about 10 minutes or less and then it looses connection to the router.
-> 
-> Router:
-> 
-> Netgear Rangemax Wireless-N 150
-> 
-> Hardware :
-> 
-> Compaq Presario C700
-> 
-> # ip a
-> 
-> 3: wlp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 1000
->      link/ether 00:1a:73:90:e6:df brd ff:ff:ff:ff:ff:ff
->      inet 192.168.1.14/24 brd 192.168.1.255 scope global wlp1s0
->         valid_lft forever preferred_lft forever
->      inet6 fe80::21a:73ff:fe90:e6df/64 scope link
->         valid_lft forever preferred_lft forever
-> 
-> # lspci
-> 01:00.0 Network controller: Broadcom Limited BCM4311 802.11b/g WLAN (rev 02)
-> 
-> # uname -a
-> Linux security 4.9.0-3-amd64 #1 SMP Debian 4.9.25-1 (2017-05-02) x86_64 GNU/Linux
+The driver may sleep under a spin lock, and the function call path is:
+b43legacy_op_bss_info_changed (acquire the lock by spin_lock_irqsave)
+  b43legacy_synchronize_irq
+    synchronize_irq --> may sleep
 
-I'm not sure if we will be able to help, but we certainly need more information:
+To fix it, the lock is released before b43legacy_synchronize_irq, and the 
+lock is acquired again after this function.
 
-1. The connection drop messages from dmesg will be quite helpful.
-2. What network management software is the machine running? Does it try to 
-remake the connection when it drops? The latter question should be evident in 
-the dmesg output.
-3. Is that Wireless N 150 router able to handle the 802.11g connection of the 
-BCM4311?
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+---
+ drivers/net/wireless/broadcom/b43legacy/main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Note that wireless will always run into conditions that cause a drop of the 
-connection. You may wish to rethink your solution.
-
-Larry
+diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
+index f1e3dad..31ead21 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/main.c
++++ b/drivers/net/wireless/broadcom/b43legacy/main.c
+@@ -2859,7 +2859,9 @@ static void b43legacy_op_bss_info_changed(struct ieee80211_hw *hw,
+ 	b43legacy_write32(dev, B43legacy_MMIO_GEN_IRQ_MASK, 0);
+ 
+ 	if (changed & BSS_CHANGED_BSSID) {
++		spin_unlock_irqrestore(&wl->irq_lock, flags);
+ 		b43legacy_synchronize_irq(dev);
++		spin_lock_irqsave(&wl->irq_lock, flags);
+ 
+ 		if (conf->bssid)
+ 			memcpy(wl->bssid, conf->bssid, ETH_ALEN);
+-- 
+1.7.9.5
