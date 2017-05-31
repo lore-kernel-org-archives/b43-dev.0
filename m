@@ -1,8 +1,8 @@
 From: Jia-Ju Bai <baijiaju1990@163.com>
-Date: Wed, 31 May 2017 18:09:13 +0800
+Date: Wed, 31 May 2017 18:29:07 +0800
 Subject: [PATCH] b43legacy: Fix a sleep-in-atomic bug in
- b43legacy_op_bss_info_changed
-Message-ID: <1496225353-5544-1-git-send-email-baijiaju1990@163.com>
+ b43legacy_attr_interfmode_store
+Message-ID: <1496226547-5921-1-git-send-email-baijiaju1990@163.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,31 +11,41 @@ To: Larry.Finger@lwfinger.net, kvalo@codeaurora.org
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>
 
 The driver may sleep under a spin lock, and the function call path is:
-b43legacy_op_bss_info_changed (acquire the lock by spin_lock_irqsave)
-  b43legacy_synchronize_irq
-    synchronize_irq --> may sleep
+b43legacy_attr_interfmode_store (acquire the lock by spin_lock_irqsave)
+  b43legacy_radio_set_interference_mitigation
+    b43legacy_radio_interference_mitigation_disable
+      b43legacy_calc_nrssi_slope
+        b43legacy_synth_pu_workaround
+          might_sleep and msleep --> may sleep
 
-To fix it, the lock is released before b43legacy_synchronize_irq, and the 
-lock is acquired again after this function.
+Fixing it may be complex, and a possible way is to remove 
+spin_lock_irqsave and spin_lock_irqrestore in 
+b43legacy_attr_interfmode_store, and the code has been protected by
+mutex_lock and mutex_unlock.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
 ---
- drivers/net/wireless/broadcom/b43legacy/main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/broadcom/b43legacy/sysfs.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
-index f1e3dad..31ead21 100644
---- a/drivers/net/wireless/broadcom/b43legacy/main.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/main.c
-@@ -2859,7 +2859,9 @@ static void b43legacy_op_bss_info_changed(struct ieee80211_hw *hw,
- 	b43legacy_write32(dev, B43legacy_MMIO_GEN_IRQ_MASK, 0);
+diff --git a/drivers/net/wireless/broadcom/b43legacy/sysfs.c b/drivers/net/wireless/broadcom/b43legacy/sysfs.c
+index 2a1da15..9ede143 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/sysfs.c
++++ b/drivers/net/wireless/broadcom/b43legacy/sysfs.c
+@@ -137,14 +137,12 @@ static ssize_t b43legacy_attr_interfmode_store(struct device *dev,
+ 	}
  
- 	if (changed & BSS_CHANGED_BSSID) {
-+		spin_unlock_irqrestore(&wl->irq_lock, flags);
- 		b43legacy_synchronize_irq(dev);
-+		spin_lock_irqsave(&wl->irq_lock, flags);
+ 	mutex_lock(&wldev->wl->mutex);
+-	spin_lock_irqsave(&wldev->wl->irq_lock, flags);
  
- 		if (conf->bssid)
- 			memcpy(wl->bssid, conf->bssid, ETH_ALEN);
+ 	err = b43legacy_radio_set_interference_mitigation(wldev, mode);
+ 	if (err)
+ 		b43legacyerr(wldev->wl, "Interference Mitigation not "
+ 		       "supported by device\n");
+ 	mmiowb();
+-	spin_unlock_irqrestore(&wldev->wl->irq_lock, flags);
+ 	mutex_unlock(&wldev->wl->mutex);
+ 
+ 	return err ? err : count;
 -- 
 1.7.9.5
