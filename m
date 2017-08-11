@@ -1,61 +1,85 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 30 Jul 2017 12:24:04 +0200
-Subject: [PATCH] b43legacy: Fix a sleep-in-atomic bug in
- b43legacy_attr_interfmode_store
-In-Reply-To: <5930BCD6.9010306@163.com>
-References: <1496226547-5921-1-git-send-email-baijiaju1990@163.com>
- <85905124-7167-aeb0-8aff-4ceec09e9542@lwfinger.net>
- <592F6843.9000204@163.com> <20170601101113.6dd30d6d@lwn.net>
- <5930BCD6.9010306@163.com>
-Message-ID: <20170730122404.63efba2c@wiggum>
+From: Robert McQueen <rob@endlessm.com>
+Date: Fri, 11 Aug 2017 13:48:22 +0100
+Subject: Using b43-fwcutter on Windows drivers
+In-Reply-To: <bcf64bd7-ebf8-1876-3487-453c941ec7bc@lwfinger.net>
+References: <CAOcMMidabs11reb+t8rcop5z8AsiU13xcsT7-VYJXGO0RdUyWw@mail.gmail.com>
+ <fca17d4a-21b8-9087-b0e0-41f183b70e89@lwfinger.net>
+ <CAOcMMidd-qr8DZYyQCwHrejpVym64-nR9-_10nepm61GOT7Eow@mail.gmail.com>
+ <bcf64bd7-ebf8-1876-3487-453c941ec7bc@lwfinger.net>
+Message-ID: <2e82aa8c-a053-a8b3-8a90-a4c56cacf60a@endlessm.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jia-Ju Bai <baijiaju1990@163.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org, kvalo@codeaurora.org, Larry Finger <Larry.Finger@lwfinger.net>
+To: b43-dev@lists.infradead.org
 
-On Fri, 02 Jun 2017 09:18:14 +0800
-Jia-Ju Bai <baijiaju1990@163.com> wrote:
+Hi Larry,
 
-> On 06/02/2017 12:11 AM, Jonathan Corbet wrote:
-> > On Thu, 01 Jun 2017 09:05:07 +0800
-> > Jia-Ju Bai<baijiaju1990@163.com>  wrote:
-> >  
-> >> I admit my patches are not well tested, and they may not well fix the bugs.
-> >> I am looking forward to opinions and suggestions :)  
-> > May I politely suggest that sending out untested locking changes is a
-> > dangerous thing to do?  You really should not be changing the locking in a
-> > piece of kernel code without understanding very well what the lock is
-> > protecting and being able to say why your changes are safe.  Without that,
-> > the risk of introducing subtle bugs is very high.
-> >
-> > It looks like you have written a useful tool that could help us to make
-> > the kernel more robust.  If you are interested in my suggestion, I would
-> > recommend that you post the sleep-in-atomic scenarios that you are
-> > finding, but refrain from "fixing" them in any case where you cannot offer
-> > a strong explanation of why your fix is correct.
-> >
-> > Thanks for working to find bugs in the kernel!
-> >
-> > jon  
-> Hi,
-> 
-> Thanks for your good and helpful advice. I am sorry for my improper patches.
-> I will only report bugs instead of sending improper patches when I have 
-> no good solution of fixing the bugs.
+On 08/06/17 05:48, Larry Finger wrote:
+> A potential solution to your problem might be to use The method employed
+> in
+> http://www.lwfinger.com/b43-firmware/no_net_install_bcm43xx_firmware.tar.bz2.
+> That tar file contains Broadcom object files with firmware for b43 and
+> b43legacy with a script that extracts the firmware files. It meets
+> Broadcom restrictions in that it only redistributes drivers, not
+> firmware files. That particular tar file contains 5.100.138 b43
+> firmware; however, it would be easy to package a different driver, and
+> adjust the extraction script accordingly. If it is not possible to
+> package the tar file as part of your Windows installation, at least you
+> could have your users download that file from a Windows boot, and then
+> run the firmware extraction from a Linux boot.
 
+Thanks for this, I work with Joao and I've been investigating this
+avenue of automatically fetching the drivers and then unpacking the
+firmware when needed with a modprobe install hook, so we can get these
+b43 cards working as seamlessly as possible in Endless when udev/etc
+finds a supported card. I don't have any relevant hardware to test
+unfortunately, but at least "on paper" it looks like it's working
+nicely. Before we press on and enable it in the distro, I had a few
+questions.
 
-Is somebody still working on these fixes?
-I think I found my old b43-legacy based 4306, so that I will
-be able to get these patches into properly tested shape.
+1. It looks like brcmsmac supports three devices which are all also
+claimed by b43. I imagine that, because b43 usually requires manual
+interaction with fwcutter, it's rare that users would get b43 working
+unless they knew they needed it - so in a sense brcmsmac is the
+"default" driver for these devices. However if we get b43 its firmware
+automatically, does it become non-deterministic which driver will bind?
 
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 833 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170730/f87a6ac3/attachment.sig>
+If so it feels to me (although I've got no evidence) that this could
+expose some differences in behaviour / capabilities and could confuse
+userland stuff like NetworkManager which uses the wireless extensions
+extensively, so settings might not be applied correctly, etc. My
+instinct is to just make this choice one way or another by either having
+b43 not register for these three devices in our kernel, or blacklist
+brcmsmac. If both drivers are available, do you have any suggestions
+over which one would/should be used?
+
+2. Your script uses the 5.100.138 driver, but 6.30.163.46 is available.
+Is there any reason to not use the newer one? I had naively assumed
+newer is better but there is some anecdotal evidence that some versions
+work better for some cards - Arch Linux goes to the effort of packaging
+two different firmware versions:
+ https://wiki.archlinux.org/index.php/broadcom_wireless#b43
+
+Is there any truth/merit in this? Which firmware would you use in an
+optimal configuration? Do I need to switch the version based on the
+device, or get the firmware for some cards from an older version and
+some from a newer one?
+
+3. I've not been able to find the MIPS wl_apsta drivers for download
+directly from Broadcom, and every other source (wifi router source
+drops, OpenWRT, etc) I've found seems not to have a LICENSE file along
+with the .o. It seems most likely to me that the same Broadcom license
+as applied to the PC STA wl drivers applies to these ones - ie like
+http://metadata.ftp-master.debian.org/changelogs/non-free/b/broadcom-sta/broadcom-sta_6.30.223.271-7_copyright
+- but I have no proof of that. Does anyone have any pointers to a more
+definitive statement of the license the wl_apsta.o drivers are under?
+
+> Larry
+
+Cheers,
+Rob
+
+........................................................................
+
+Robert McQueen  |  +1.415.413.4159  |  Endless <http://endlessm.com/>
