@@ -1,13 +1,13 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue,  5 Sep 2017 19:15:50 +0100
-Subject: [PATCH 1/2] b43: fix unitialized reads of ret by initializing the
- array to zero
-Message-ID: <20170905181550.23839-1-colin.king@canonical.com>
+Date: Tue,  5 Sep 2017 19:16:58 +0100
+Subject: [PATCH 2/2] b43legacy: fix unitialized reads of ret by initializing
+ the array to zero
+Message-ID: <20170905181658.23893-1-colin.king@canonical.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
@@ -18,25 +18,25 @@ This results in a later scan of the array to read potentially
 uninitialized values.  Fix this by initializing the array to zero.
 This seems to have been an issue since the very first commit.
 
-Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
+Detected by CoverityScan CID#139653 ("Uninitialized scalar variable")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/broadcom/b43/phy_g.c | 2 +-
+ drivers/net/wireless/broadcom/b43legacy/radio.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/phy_g.c b/drivers/net/wireless/broadcom/b43/phy_g.c
-index 822dcaa8ace6..f59c02166462 100644
---- a/drivers/net/wireless/broadcom/b43/phy_g.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_g.c
-@@ -2297,7 +2297,7 @@ static u8 b43_gphy_aci_detect(struct b43_wldev *dev, u8 channel)
- static u8 b43_gphy_aci_scan(struct b43_wldev *dev)
+diff --git a/drivers/net/wireless/broadcom/b43legacy/radio.c b/drivers/net/wireless/broadcom/b43legacy/radio.c
+index 9501420340a9..eab1c9387846 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/radio.c
++++ b/drivers/net/wireless/broadcom/b43legacy/radio.c
+@@ -280,7 +280,7 @@ u8 b43legacy_radio_aci_detect(struct b43legacy_wldev *dev, u8 channel)
+ u8 b43legacy_radio_aci_scan(struct b43legacy_wldev *dev)
  {
- 	struct b43_phy *phy = &dev->phy;
+ 	struct b43legacy_phy *phy = &dev->phy;
 -	u8 ret[13];
 +	u8 ret[13] = { 0 };
  	unsigned int channel = phy->channel;
- 	unsigned int i, j, start, end;
- 
+ 	unsigned int i;
+ 	unsigned int j;
 -- 
 2.14.1
