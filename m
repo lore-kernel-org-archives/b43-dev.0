@@ -1,62 +1,35 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 5 Sep 2017 22:18:22 +0200
-Subject: [PATCH 1/2] b43: fix unitialized reads of ret by initializing
- the array to zero
-In-Reply-To: <20170905181550.23839-1-colin.king@canonical.com>
-References: <20170905181550.23839-1-colin.king@canonical.com>
-Message-ID: <20170905221654.64f2aae5@wiggum>
+From: Drew Scott Daniels <ddaniels@UMAlumni.mb.ca>
+Date: Tue, 5 Sep 2017 22:58:18 -0700
+Subject: CVE-2017-9417 firmware fix with b43-fwcutter?
+Message-ID: <20170906055818.GA25367@auburn.dreamhost.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-On Tue,  5 Sep 2017 19:15:50 +0100
-Colin King <colin.king@canonical.com> wrote:
+Hi,
+Is there newer firmware that fixes the CVE-2017-9417 vulnerability or does
+it not apply to devices supported by this driver? If there is a different
+CVE not released you can say that this doesn't apply. Is there newer
+firmware in pre-release (e.g. brcmfw_170808.tgz)or is that firmware
+unrelated (e.g. just for the BCM43430 that isn't listed as supported)?
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The u8 char array ret is not being initialized and elements outside
-> the range start to end contain just garbage values from the stack.
-> This results in a later scan of the array to read potentially
-> uninitialized values.  Fix this by initializing the array to zero.
-> This seems to have been an issue since the very first commit.
-> 
-> Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/broadcom/b43/phy_g.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/broadcom/b43/phy_g.c b/drivers/net/wireless/broadcom/b43/phy_g.c
-> index 822dcaa8ace6..f59c02166462 100644
-> --- a/drivers/net/wireless/broadcom/b43/phy_g.c
-> +++ b/drivers/net/wireless/broadcom/b43/phy_g.c
-> @@ -2297,7 +2297,7 @@ static u8 b43_gphy_aci_detect(struct b43_wldev *dev, u8 channel)
->  static u8 b43_gphy_aci_scan(struct b43_wldev *dev)
->  {
->  	struct b43_phy *phy = &dev->phy;
-> -	u8 ret[13];
-> +	u8 ret[13] = { 0 };
->  	unsigned int channel = phy->channel;
->  	unsigned int i, j, start, end;
->  
+https://blog.exodusintel.com/2017/07/26/broadpwn/ indicates the
+vulnerabilities are focused in HardMAC and seems to imply that SoftMAC isn't
+vulnerable (at least on the firmware side as the vulnerability is in the MAC
+code). The models listed as affected on that site are BCM4339 through
+BCM4361 though it seems others may be affected.
 
+https://bugs.launchpad.net/ubuntu/+source/linux-firmware/+bug/1713276 says:
+Cypress (was Broadcom) have given the Raspberry Pi foundation new releases
+of the WiFi and Bluetooth firmware to fix the problem. See
+https://github.com/raspberrypi/linux/issues/1342#issuecomment-321221748
 
-This fix seems to be correct.
-Thanks for finding and fixing the issue.
+Debian is tracking a related bug at
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=869639
 
-Reviewed-by: Michael Buesch <m@bues.ch>
+Thanks,
 
-
--- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 833 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170905/c732a046/attachment.sig>
+     Drew Daniels
+Blog: http://www.boxheap.net/ddaniels/blog
