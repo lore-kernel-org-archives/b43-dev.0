@@ -1,50 +1,57 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Thu, 7 Sep 2017 20:54:25 +0200
-Subject: CVE-2017-9417 firmware fix with b43-fwcutter?
-In-Reply-To: <1483001379.8665325.1504807495471.JavaMail.zimbra@redhat.com>
-References: <20170906055818.GA25367@auburn.dreamhost.com>
- <1483001379.8665325.1504807495471.JavaMail.zimbra@redhat.com>
-Message-ID: <20170907205107.6a3490f2@wiggum>
+From: Aluizio Oliveira <aluiziob.oliveira@gmail.com>
+Date: Sat, 16 Sep 2017 00:13:12 -0300
+Subject: BCM4322 not working properly on Debian Stretch
+Message-ID: <CAFp9Rcu9QX8MmoSczNB2eO3k2g_U=g3V7hRBC1bDYB7JyLwXAw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On Thu, 7 Sep 2017 14:04:55 -0400 (EDT)
-Vladis Dronov <vdronov@redhat.com> wrote:
+Hello all,
 
-> I would join Drew in asking a question about CVE-2017-9417/Broadpwn.
-> My main concern is if this flaw in a firmware above can affect
-> laptop/desktop/server Linux systems?
-> 
-> So far I see two contradicting answers: "he could reproduce the crash
-> with the standard Linux firmware [on a mobile phone]" and "I do not
-> think that Broadpwm is a problem". Can someone please clarify?
+I recently updated my Debian system from version 8 (Jessie) to 9
+(Stretch) with a full format / reinstall and my wireless card that
+worked perfectly on Jessie suddenly became buggy - when it does
+connect, it goes really slow and I experience connection drops from
+time to time. It usually only connects if I load the driver with
+modprobe and suspend / wake up the computer after that. I tried
+different networks / routers but the problem seems to be with my
+machine. Also tried both b43 and wl drivers with no luck... This is
+happening on my MacBook Pro 7,1 (2010).
 
+Any suggestions? I attached my dmesg and lsmod outputs before and
+after loading the driver in case it might be of any help on debugging
+the issue.
 
-Mobile phones often use FullMAC chips.
+Thanks,
 
-That means the chip runs a small operating system and a full 802.11
-MLME stack. Usually referred to as "firmware".
-This is not to be confused with the "microcode" or "ucode". The ucode
-runs on a small sequencer in the 802.11 baseband processor.
-
-FullMAC:	An ARM/MIPS core on the chip runs the 802.11 MLME stack.
-		The 802.11 baseband core runs ucode.
-
-SoftMAC:	The host system runs the 802.11 MLME stack.
-		The 802.11 baseband core runs ucode.
-
-So if the vulnerability is in the "firmware" and not in the "ucode",
-the SoftMAC chips are not affected.
-
--- 
-Michael
+Aluizio
 -------------- next part --------------
 A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 833 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170907/79aa4ac6/attachment.sig>
+Name: lsmod_170915_1801
+Type: application/octet-stream
+Size: 5077 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0004.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: dmesg_1709151801
+Type: application/octet-stream
+Size: 65765 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0005.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: dmesg_1709151759
+Type: application/octet-stream
+Size: 63462 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0006.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: lsmod_170915_1757
+Type: application/octet-stream
+Size: 4636 bytes
+Desc: not available
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0007.obj>
