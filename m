@@ -1,57 +1,38 @@
-From: Aluizio Oliveira <aluiziob.oliveira@gmail.com>
-Date: Sat, 16 Sep 2017 00:13:12 -0300
-Subject: BCM4322 not working properly on Debian Stretch
-Message-ID: <CAFp9Rcu9QX8MmoSczNB2eO3k2g_U=g3V7hRBC1bDYB7JyLwXAw@mail.gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 20 Sep 2017 12:41:24 +0000 (UTC)
+Subject: [1/2] b43: fix unitialized reads of ret by initializing the array
+ to zero
+In-Reply-To: <20170905181550.23839-1-colin.king@canonical.com>
+References: <20170905181550.23839-1-colin.king@canonical.com>
+Message-ID: <20170920124124.5440D60724@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Hello all,
+Colin Ian King <colin.king@canonical.com> wrote:
 
-I recently updated my Debian system from version 8 (Jessie) to 9
-(Stretch) with a full format / reinstall and my wireless card that
-worked perfectly on Jessie suddenly became buggy - when it does
-connect, it goes really slow and I experience connection drops from
-time to time. It usually only connects if I load the driver with
-modprobe and suspend / wake up the computer after that. I tried
-different networks / routers but the problem seems to be with my
-machine. Also tried both b43 and wl drivers with no luck... This is
-happening on my MacBook Pro 7,1 (2010).
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The u8 char array ret is not being initialized and elements outside
+> the range start to end contain just garbage values from the stack.
+> This results in a later scan of the array to read potentially
+> uninitialized values.  Fix this by initializing the array to zero.
+> This seems to have been an issue since the very first commit.
+> 
+> Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Michael Buesch <m@bues.ch>
 
-Any suggestions? I attached my dmesg and lsmod outputs before and
-after loading the driver in case it might be of any help on debugging
-the issue.
+2 patches applied to wireless-drivers-next.git, thanks.
 
-Thanks,
+e31fbe1034d9 b43: fix unitialized reads of ret by initializing the array to zero
+e3ae1c772046 b43legacy: fix unitialized reads of ret by initializing the array to zero
 
-Aluizio
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: lsmod_170915_1801
-Type: application/octet-stream
-Size: 5077 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0004.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: dmesg_1709151801
-Type: application/octet-stream
-Size: 65765 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0005.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: dmesg_1709151759
-Type: application/octet-stream
-Size: 63462 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0006.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: lsmod_170915_1757
-Type: application/octet-stream
-Size: 4636 bytes
-Desc: not available
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20170916/72b17b9d/attachment-0007.obj>
+-- 
+https://patchwork.kernel.org/patch/9939435/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
