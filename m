@@ -1,38 +1,64 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 20 Sep 2017 12:41:24 +0000 (UTC)
-Subject: [1/2] b43: fix unitialized reads of ret by initializing the array
- to zero
-In-Reply-To: <20170905181550.23839-1-colin.king@canonical.com>
-References: <20170905181550.23839-1-colin.king@canonical.com>
-Message-ID: <20170920124124.5440D60724@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 16:39:02 +0100
+Subject: [PATCH] b43: make const arrays static, reduces object code size
+Message-ID: <20170922153902.15372-1-colin.king@canonical.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The u8 char array ret is not being initialized and elements outside
-> the range start to end contain just garbage values from the stack.
-> This results in a later scan of the array to read potentially
-> uninitialized values.  Fix this by initializing the array to zero.
-> This seems to have been an issue since the very first commit.
-> 
-> Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Michael Buesch <m@bues.ch>
+Don't populate const arrays on the stack, instead make them static.
+Makes the object code smaller by over 60 bytes:
 
-2 patches applied to wireless-drivers-next.git, thanks.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  14816	   1296	      0	  16112	   3ef0	b43/phy_ht.o
 
-e31fbe1034d9 b43: fix unitialized reads of ret by initializing the array to zero
-e3ae1c772046 b43legacy: fix unitialized reads of ret by initializing the array to zero
+After:
+   text	   data	    bss	    dec	    hex	filename
+  14551	   1496	      0	  16047	   3eaf	b43/phy_ht.o
 
+(gcc 6.3.0, x86-64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/b43/phy_ht.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43/phy_ht.c b/drivers/net/wireless/broadcom/b43/phy_ht.c
+index 718c90e81696..c3158d085c2b 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_ht.c
++++ b/drivers/net/wireless/broadcom/b43/phy_ht.c
+@@ -119,7 +119,7 @@ static void b43_radio_2059_rcal(struct b43_wldev *dev)
+ /* Calibrate the internal RC oscillator? */
+ static void b43_radio_2057_rccal(struct b43_wldev *dev)
+ {
+-	const u16 radio_values[3][2] = {
++	static const u16 radio_values[3][2] = {
+ 		{ 0x61, 0xE9 }, { 0x69, 0xD5 }, { 0x73, 0x99 },
+ 	};
+ 	int i;
+@@ -154,7 +154,7 @@ static void b43_radio_2059_init_pre(struct b43_wldev *dev)
+ 
+ static void b43_radio_2059_init(struct b43_wldev *dev)
+ {
+-	const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3 };
++	static const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3 };
+ 	int i;
+ 
+ 	/* Prepare (reset?) radio */
+@@ -263,7 +263,7 @@ static void b43_phy_ht_reset_cca(struct b43_wldev *dev)
+ static void b43_phy_ht_zero_extg(struct b43_wldev *dev)
+ {
+ 	u8 i, j;
+-	u16 base[] = { 0x40, 0x60, 0x80 };
++	static const u16 base[] = { 0x40, 0x60, 0x80 };
+ 
+ 	for (i = 0; i < ARRAY_SIZE(base); i++) {
+ 		for (j = 0; j < 4; j++)
 -- 
-https://patchwork.kernel.org/patch/9939435/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
