@@ -1,40 +1,20 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 25 Sep 2017 08:30:45 +0000 (UTC)
-Subject: b43: make const arrays static, reduces object code size
-In-Reply-To: <20170922153902.15372-1-colin.king@canonical.com>
-References: <20170922153902.15372-1-colin.king@canonical.com>
-Message-ID: <20170925083045.14D4F6099A@smtp.codeaurora.org>
+From: jay pokarna <jay.pokarna10@gmail.com>
+Date: Thu, 28 Sep 2017 22:06:57 +0530
+Subject: Driver supporting ap mode in BCM43142
+Message-ID: <CAK61LuBQ15HeEzcRsvPG2AumbuWKwVM4bfCRMmNQnRd6zMzpqw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: b43-dev@lists.infradead.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+Hey,
+          I am currently using BCM43142 chip on my laptop. I am in
+need of a driver that supports ap-mode with this chipset. Is there any
+driver that supports ap-mode with it? If not, when can I expect the
+driver to be released?
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const arrays on the stack, instead make them static.
-> Makes the object code smaller by over 60 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   14816	   1296	      0	  16112	   3ef0	b43/phy_ht.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   14551	   1496	      0	  16047	   3eaf	b43/phy_ht.o
-> 
-> (gcc 6.3.0, x86-64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The PCI-ID is 14e4:4365.
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-96cbe3d638e4 b43: make const arrays static, reduces object code size
-
--- 
-https://patchwork.kernel.org/patch/9966415/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Regards,
+Jay Pokarna
