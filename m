@@ -1,47 +1,61 @@
-From: Adrian Chadd <adrian@freebsd.org>
-Date: Fri, 6 Oct 2017 14:53:18 -0700
-Subject: Restricting BCM4354 to 802.11b only
-In-Reply-To: <04e66bc2-8c34-f513-cd75-b8ea6f9f02c5@tealdrones.com>
-References: <04e66bc2-8c34-f513-cd75-b8ea6f9f02c5@tealdrones.com>
-Message-ID: <CAJ-Vmom2vjs9s1=xPnhR7gGTzTZ=JcNdQks5TBQZjmM1CPseRQ@mail.gmail.com>
+From: Dmitry Kozlov <dmitry.f.kozlov@gmail.com>
+Date: Tue, 24 Oct 2017 01:43:16 +0300
+Subject: FATAL: Module wl not found in directory
+ /lib/modules/4.13.0-16-lowlatency Ubuntu 17.10
+Message-ID: <CAGSoEtrBubdcVhSzfn1uagqAdoq2V2YOV1tR2cXTaXH=gNxX2w@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: b43-dev@lists.infradead.org
 
-On 6 October 2017 at 14:47, Dennis Millard <dennis@tealdrones.com> wrote:
-> I'm developing on an nVidia TX1 SOM which has an integrated BCM4354 chipset.
-> The SOM is running Ubuntu 16.04 Linux (64-bit ARM)
->
-> I have an application where I need long range with low bandwidth
-> requirements.  It seems that 802.11b has the best receive sensitivity, and I
-> need to reduce latency caused by modulation switching (i.e. 802.11 b, g, n
-> etc).  I'm looking for a way to configure the BCM43 chipset to lock in to
-> 802.11b mode only, so I want to disable 802.11g and 802.11n modes.
->
-> I'm capable of making kernel driver modifications if necessary, but I don't
-> have the required information to do this.  I've seen references on google to
-> the Broadcom WLAN client utility, or "wl", but it's not freely available
-> anywhere.
->
-> Does anyone have any advice on where to turn for information on how to do
-> this?  Thanks.
+Hello,
 
-Hi,
+I have following problems with my BCM43142 802.11b/g/n wireless
+adapter after upgrading to Ubuntu 17.10:
 
-Have you noticed any actual modulation switching latency? Ideally it's
-just enabling a different PHY path and so the latency should be
-effectively nil.
+08:00.0 Network controller: Broadcom Limited BCM43142 802.11b/g/n (rev 01)
+    Subsystem: Hewlett-Packard Company BCM43142 802.11b/g/n
+    Flags: fast devsel, IRQ 255
+    Memory at c6100000 (64-bit, non-prefetchable) [size=32K]
+    Capabilities: [40] Power Management version 3
+    Capabilities: [58] Vendor Specific Information: Len=78 <?>
+    Capabilities: [48] MSI: Enable- Count=1/1 Maskable- 64bit+
+    Capabilities: [d0] Express Endpoint, MSI 00
+    Capabilities: [100] Advanced Error Reporting
+    Capabilities: [13c] Virtual Channel
+    Capabilities: [160] Device Serial Number 00-00-af-ff-ff-e6-74-29
+    Capabilities: [16c] Power Budgeting <?>
 
-Also, BCM4354 is a fullmac SDIO 11ac chip, not a b43 chip. :-)
+$ sudo apt install --reinstall bcmwl-kernel-source
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+0 upgraded, 0 newly installed, 1 reinstalled, 0 to remove and 0 not upgraded.
+Need to get 0 B/1 544 kB of archives.
+After this operation, 0 B of additional disk space will be used.
+(Reading database ... 240009 files and directories currently installed.)
+Preparing to unpack
+.../bcmwl-kernel-source_6.30.223.271+bdcom-0ubuntu3_amd64.deb ...
+Removing all DKMS Modules
+Done.
+Unpacking bcmwl-kernel-source (6.30.223.271+bdcom-0ubuntu3) over
+(6.30.223.271+bdcom-0ubuntu3) ...
+Setting up bcmwl-kernel-source (6.30.223.271+bdcom-0ubuntu3) ...
+Loading new bcmwl-6.30.223.271+bdcom DKMS files...
+Building for 4.13.0-16-lowlatency
+Building for architecture x86_64
+Module build for kernel 4.13.0-16-lowlatency was skipped since the
+kernel headers for this kernel does not seem to be installed.
+modprobe: FATAL: Module wl not found in directory
+/lib/modules/4.13.0-16-lowlatency
+update-initramfs: deferring update (trigger activated)
+Processing triggers for shim-signed (1.32+0.9+1474479173.6c180c6-1ubuntu1) ...
+Secure Boot not enabled on this system.
+Processing triggers for initramfs-tools (0.125ubuntu12) ...
+update-initramfs: Generating /boot/initrd.img-4.13.0-16-lowlatency
 
-And the TL;DR is - yes, there'll be an ioctl command to send to the
-chip to tell it which PHY mode to operate in, and I bet you can set it
-to operate on 'b' only. I just don't know off-hand on the brcmfmac
-driver what that is, and you should likely ask on linux-wireless where
-the brcmfmac people watch out.
 
-
-
--adrian
+-- 
+Best regards,
+Dmitry Kozlov
