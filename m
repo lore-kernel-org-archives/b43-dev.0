@@ -1,7 +1,7 @@
 From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Sun, 24 Dec 2017 12:03:43 +0800
+Date: Sat, 30 Dec 2017 19:08:27 +0800
 Subject: [PATCH] b43: Replace mdelay with msleep in b43_radio_2057_init_post
-Message-ID: <1514088223-7411-1-git-send-email-baijiaju1990@gmail.com>
+Message-ID: <1514632107-14698-1-git-send-email-baijiaju1990@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
