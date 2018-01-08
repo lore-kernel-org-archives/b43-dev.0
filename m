@@ -1,38 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 21:33:44 +0100
-Subject: [PATCH] wireless: b43: Delete an error message for a failed memory
- allocation in b43_sdio_probe()
-Message-ID: <175d361f-0c00-2a32-c860-a5ad198e74ba@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon,  8 Jan 2018 16:21:28 +0000 (UTC)
+Subject: b43: Replace mdelay with msleep in b43_radio_2057_init_post
+In-Reply-To: <1514632107-14698-1-git-send-email-baijiaju1990@gmail.com>
+References: <1514632107-14698-1-git-send-email-baijiaju1990@gmail.com>
+Message-ID: <20180108162128.6D37560B1D@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jia-Ju Bai <baijiaju1990-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, johannes.berg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, andrew.zaborowski-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 21:23:47 +0100
+Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> b43_radio_2057_init_post is not called in an interrupt handler 
+> nor holding a spinlock.
+> The function mdelay in it can be replaced with msleep, to reduce busy wait.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-This issue was detected by using the Coccinelle software.
+You submitted an identical patch a week earlier:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/wireless/broadcom/b43/sdio.c | 1 -
- 1 file changed, 1 deletion(-)
+https://patchwork.kernel.org/patch/10137671/
 
-diff --git a/drivers/net/wireless/broadcom/b43/sdio.c b/drivers/net/wireless/broadcom/b43/sdio.c
-index 59a521800694..5a6dbcf170f9 100644
---- a/drivers/net/wireless/broadcom/b43/sdio.c
-+++ b/drivers/net/wireless/broadcom/b43/sdio.c
-@@ -146,7 +146,6 @@ static int b43_sdio_probe(struct sdio_func *func,
- 	sdio = kzalloc(sizeof(*sdio), GFP_KERNEL);
- 	if (!sdio) {
- 		error = -ENOMEM;
--		dev_err(&func->dev, "failed to allocate ssb bus\n");
- 		goto err_disable_func;
- 	}
- 	error = ssb_bus_sdiobus_register(&sdio->ssb, func,
+How is this different? Also always add version number to the patch so that the
+maintainers can follow the changes easily:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#patch_version_missing
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#changelog_missing
+
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10137671/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
