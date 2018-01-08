@@ -1,36 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon,  8 Jan 2018 16:21:28 +0000 (UTC)
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Mon, 8 Jan 2018 10:31:56 -0600
 Subject: b43: Replace mdelay with msleep in b43_radio_2057_init_post
-In-Reply-To: <1514632107-14698-1-git-send-email-baijiaju1990@gmail.com>
+In-Reply-To: <20180108162128.6D37560B1D@smtp.codeaurora.org>
 References: <1514632107-14698-1-git-send-email-baijiaju1990@gmail.com>
-Message-ID: <20180108162128.6D37560B1D@smtp.codeaurora.org>
+ <20180108162128.6D37560B1D@smtp.codeaurora.org>
+Message-ID: <fc3e2558-c31f-289d-8413-33fef4f5ca64@lwfinger.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jia-Ju Bai <baijiaju1990-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, johannes.berg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, andrew.zaborowski-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org
+To: Kalle Valo <kvalo@codeaurora.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: kstewart@linuxfoundation.org, johannes.berg@intel.com, tiwai@suse.de, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, andrew.zaborowski@intel.com, b43-dev@lists.infradead.org, netdev@vger.kernel.org, colin.king@canonical.com
 
-Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
-
-> b43_radio_2057_init_post is not called in an interrupt handler 
-> nor holding a spinlock.
-> The function mdelay in it can be replaced with msleep, to reduce busy wait.
+On 01/08/2018 10:21 AM, Kalle Valo wrote:
+> Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 > 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>> b43_radio_2057_init_post is not called in an interrupt handler
+>> nor holding a spinlock.
+>> The function mdelay in it can be replaced with msleep, to reduce busy wait.
+>>
+>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> 
+> You submitted an identical patch a week earlier:
+> 
+> https://patchwork.kernel.org/patch/10137671/
+> 
+> How is this different? Also always add version number to the patch so that the
+> maintainers can follow the changes easily:
+> 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#patch_version_missing
+> 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#changelog_missing
 
-You submitted an identical patch a week earlier:
+I had negative comments on one of those due to the possibility of msleep(2) 
+extending as long as 20 msec. Until the author, or someone else, can test that 
+this is OK, then the mdelay(2) can only be replaced with usleep_range(2000, 3000).
 
-https://patchwork.kernel.org/patch/10137671/
+NACK for both.
 
-How is this different? Also always add version number to the patch so that the
-maintainers can follow the changes easily:
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#patch_version_missing
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#changelog_missing
-
--- 
-https://patchwork.kernel.org/patch/10137671/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Larry
