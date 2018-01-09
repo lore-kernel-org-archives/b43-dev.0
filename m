@@ -1,59 +1,45 @@
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Tue, 9 Jan 2018 09:36:38 +0800
-Subject: b43: Replace mdelay with msleep in b43_radio_2057_init_post
-In-Reply-To: <fc3e2558-c31f-289d-8413-33fef4f5ca64@lwfinger.net>
-References: <1514632107-14698-1-git-send-email-baijiaju1990@gmail.com>
- <20180108162128.6D37560B1D@smtp.codeaurora.org>
- <fc3e2558-c31f-289d-8413-33fef4f5ca64@lwfinger.net>
-Message-ID: <050fa2c3-0ead-66c9-085a-e8c4578512eb@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Tue, 9 Jan 2018 09:35:41 +0100
+Subject: [PATCH v2] b43: Replace mdelay with usleep_range in
+ b43_radio_2057_init_post
+In-Reply-To: <1515462006-6144-1-git-send-email-baijiaju1990@gmail.com>
+References: <1515462006-6144-1-git-send-email-baijiaju1990@gmail.com>
+Message-ID: <20180109083541.GA13460@kroah.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>
-Cc: kstewart@linuxfoundation.org, johannes.berg@intel.com, tiwai@suse.de, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, andrew.zaborowski@intel.com, b43-dev@lists.infradead.org, netdev@vger.kernel.org, colin.king@canonical.com
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: Larry.Finger@lwfinger.net, kvalo@codeaurora.org, kstewart@linuxfoundation.org, johannes.berg@intel.com, tiwai@suse.de, colin.king@canonical.com, andrew.zaborowski@intel.com, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, b43-dev@lists.infradead.org
 
+On Tue, Jan 09, 2018 at 09:40:06AM +0800, Jia-Ju Bai wrote:
+> b43_radio_2057_init_post is not called in an interrupt handler
+> nor holding a spinlock.
+> The function mdelay in it can be replaced with usleep_range, 
+> to reduce busy wait.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+> v2:
+> * Replace mdelay with usleep_range, instead of msleep in v1.
+>   Thank Larry for good advice.
+> ---
+>  drivers/net/wireless/broadcom/b43/phy_n.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+> index a5557d7..f2a2f41 100644
+> --- a/drivers/net/wireless/broadcom/b43/phy_n.c
+> +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+> @@ -1031,7 +1031,7 @@ static void b43_radio_2057_init_post(struct b43_wldev *dev)
+>  
+>  	b43_radio_set(dev, R2057_RFPLL_MISC_CAL_RESETN, 0x78);
+>  	b43_radio_set(dev, R2057_XTAL_CONFIG2, 0x80);
+> -	mdelay(2);
+> +	usleep_range(2000, 3000);
 
+Where did 3000 come from?  Are you sure about that?
 
-On 2018/1/9 0:31, Larry Finger wrote:
-> On 01/08/2018 10:21 AM, Kalle Valo wrote:
->> Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
->>
->>> b43_radio_2057_init_post is not called in an interrupt handler
->>> nor holding a spinlock.
->>> The function mdelay in it can be replaced with msleep, to reduce 
->>> busy wait.
->>>
->>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->>
->> You submitted an identical patch a week earlier:
->>
->> https://patchwork.kernel.org/patch/10137671/
->>
->> How is this different? Also always add version number to the patch so 
->> that the
->> maintainers can follow the changes easily:
->>
->> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#patch_version_missing 
->>
->>
->> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#changelog_missing 
->>
->
-> I had negative comments on one of those due to the possibility of 
-> msleep(2) extending as long as 20 msec. Until the author, or someone 
-> else, can test that this is OK, then the mdelay(2) can only be 
-> replaced with usleep_range(2000, 3000).
->
-> NACK for both.
->
-> Larry
->
+thanks,
 
-Sorry for my mistake.
-I have sent a patch v2 using usleep_range(2000, 3000), and you can have 
-a look :)
-
-
-Thanks,
-Jia-Ju Bai
+greg k-h
