@@ -1,33 +1,43 @@
-From: Michael Bazzinotti <bazz@bazz1.com>
-Date: Fri, 2 Feb 2018 21:27:59 -0500
-Subject: iPXE Port
-Message-ID: <20180203022758.nltt3mx2rjvdz2gk@bazz1.com>
+From: Chris Vine <vine35792468@gmail.com>
+Date: Sun, 4 Feb 2018 18:58:55 +0000
+Subject: Fw: Regression: bcm4312 lp-phy device not recognized in 4.15 kernel
+Message-ID: <20180204185855.74e6ade5@bother.homenet>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
 
-Hello b43-dev subscribers,
+I probably should have copied this to the relevant kernel wireless
+mailing lists.  Anyway, here it is.
 
-Are you familiar with the open source boot firmware iPXE?
-(See https://ipxe.org/)
+As a further datum point, the b43 driver works fine with the 4.15.0-rc3
+kernel.  So something seems to have changed between that and 4.15.0.
 
-It has long been a dream of mine to use iPXE in tandem with my wireless
-NIC, so I have started porting b43 and its sublayers to iPXE.
+Chris
 
-Here is a picture of a successful SSB<->PCI enumeration in iPXE; a
-satisfying check point in the porting process.
-http://bazz1.com/ipxe_ssb.jpg
+Begin forwarded message:
 
-There are some more details in my message to the iPXE-devel mailing list,
-http://lists.ipxe.org/pipermail/ipxe-devel/2018-February/006012.html
+Date: Mon, 29 Jan 2018 23:37:49 +0000
+From: Chris Vine <vine35792468@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Regression: bcm4312 lp-phy device not recognized in 4.15 kernel
 
-I am also available on IRC freenode:#bcm-users
 
-Sincerely,
+I have an old netbook with a Broadcom bcm4312 802.11b/g lp-phy
+[14e4:4315] (rev 01) wifi device.  It is no longer recognized in kernel
+4.15: it works fine with the 4.14 kernel and earlier, with the b43 and
+ssb kernel modules.
 
-Michael Bazzinotti
-Technologist & Musician
-http://www.github.com/bazzinotti
-http://www.bazz1.com
+I cannot give any further information as there are no error messages
+logged. The b43 firmware (wl-5.100.138) is not loaded for it, nor are
+the ssb/b43/bcma/ mmc_core/mac80211/cfg80211 modules.  The modules can
+be loaded by hand without error, but nothing happens and no network
+interface is presented.
+
+This is a pretty slow and rubbish netbook but is useful when travelling
+to a country which might impound your laptop (no names) and you don't
+mind too much losing it.  It would be nice to continue to be able to
+use it for that.
+
+Chris
