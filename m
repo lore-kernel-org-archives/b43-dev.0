@@ -1,72 +1,50 @@
-From: Chris Vine <vine.chris@gmail.com>
-Date: Mon, 5 Feb 2018 10:26:54 +0000
-Subject: Regression: bcm4312 lp-phy device not recognized in 4.15 kernel
-In-Reply-To: <20180204220032.3c339324@bother.homenet>
-References: <20180204185855.74e6ade5@bother.homenet>
- <935a4987-c481-f4e4-16d7-f5f56adcfee0@gmail.com>
- <20180204220032.3c339324@bother.homenet>
-Message-ID: <20180205102654.14394e68@bother.homenet>
+From: Juri Lelli <juri.lelli@gmail.com>
+Date: Fri, 23 Mar 2018 10:47:40 +0100
+Subject: [QUESTION] Mainline support for B43_PHY_AC wifi cards
+Message-ID: <20180323094740.GA5942@localhost.localdomain>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+To: b43-dev@lists.infradead.org
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 4 Feb 2018 22:00:32 +0000
-Chris Vine <vine35792468@gmail.com> wrote:
-> On Sun, 4 Feb 2018 12:03:49 -0800
-> Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > On 02/04/2018 10:58 AM, Chris Vine wrote:  
-> > > I probably should have copied this to the relevant kernel wireless
-> > > mailing lists.  Anyway, here it is.
-> > > 
-> > > As a further datum point, the b43 driver works fine with the
-> > > 4.15.0-rc3 kernel.  So something seems to have changed between
-> > > that and 4.15.0.  
-> > 
-> > Does this patch help?
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git/commit/?id=a9e6d44ddeccd3522670e641f1ed9b068e746ff7  
-> 
-> Yes, I have wireless working again.
-> 
-> I'll recompile tomorrow from a fresh kernel tree and apply the patch
-> again and make sure it still works.  I will let you know.
+Hi,
 
-I can confirm that when the kernel is built with that configuration
-patch my bcm4312 device works OK again.
+I've got a Dell XPS 13 9343/0TM99H (BIOS A15 01/23/2018) mounting a
+BCM4352 802.11ac (rev 03) wireless card and so far I've been using it on
+Fedora with broadcom-wl package (which I believe installs Broadcom's STA
+driver?). It works good apart from occasional hiccups after suspend.
 
-Chris
+I'd like to get rid of that dependency (you can understand that it's
+particularly annoying when testing mainline kernels), but I found out
+that support for my card is BROKEN in mainline [1]. Just to see what
+happens, I forcibly enabled it witnessing that it indeed crashes like
+below as Kconfig warns. :)
 
-> -----------------------------------------
-> > > 
-> > > Begin forwarded message:
-> > > 
-> > > Date: Mon, 29 Jan 2018 23:37:49 +0000
-> > > From: Chris Vine <vine35792468@gmail.com>
-> > > To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-> > > Subject: Regression: bcm4312 lp-phy device not recognized in 4.15
-> > > kernel
-> > > 
-> > > 
-> > > I have an old netbook with a Broadcom bcm4312 802.11b/g lp-phy
-> > > [14e4:4315] (rev 01) wifi device.  It is no longer recognized in
-> > > kernel 4.15: it works fine with the 4.14 kernel and earlier, with
-> > > the b43 and ssb kernel modules.
-> > > 
-> > > I cannot give any further information as there are no error
-> > > messages logged. The b43 firmware (wl-5.100.138) is not loaded
-> > > for it, nor are the ssb/b43/bcma/ mmc_core/mac80211/cfg80211
-> > > modules.  The modules can be loaded by hand without error, but
-> > > nothing happens and no network interface is presented.
-> > > 
-> > > This is a pretty slow and rubbish netbook but is useful when
-> > > travelling to a country which might impound your laptop (no names)
-> > > and you don't mind too much losing it.  It would be nice to
-> > > continue to be able to use it for that.
-> > > 
-> > > Chris
-> > >   
-> 
-> 
+ bcma: bus0: Found chip with id 0x4352, rev 0x03 and package 0x00
+ bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
+ bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
+ bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
+ bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
+ bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
+ bcma: Unsupported SPROM revision: 11
+ bcma: bus0: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
+ bcma: bus0: Using fallback SPROM failed (err -2)
+ bcma: bus0: No SPROM available
+ bcma: bus0: Bus registered
+ b43-phy0: Broadcom 4352 WLAN found (core revision 42)
+ b43-phy0: Found PHY: Analog 12, Type 11 (AC), Revision 1
+ b43-phy0: Found Radio: Manuf 0x17F, ID 0x2069, Revision 4, Version 0
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+
+So, question: is replacing my card the only way I can get rid of this
+downstream dependency? :(
+
+Thanks a lot.
+
+Best,
+
+- Juri
+
+[1] https://elixir.bootlin.com/linux/v4.16-rc6/source/drivers/net/wireless/broadcom/b43/Kconfig#L151
