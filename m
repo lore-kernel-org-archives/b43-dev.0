@@ -1,36 +1,48 @@
-From: Felix Fietkau <nbd@nbd.name>
-Date: Thu, 5 Apr 2018 16:05:51 +0200
-Subject: [PATCH 00/12] Ethernet: Add and use ether_<type>_addr globals
-In-Reply-To: <1522936292.11185.15.camel@perches.com>
-References: <cover.1522479607.git.joe@perches.com>
- <e0ab9616-64fa-cdbc-7a77-7e25d70c1a52@nbd.name>
- <1522936292.11185.15.camel@perches.com>
-Message-ID: <999e4ee7-2e4e-6bf9-ac76-209e259c83e4@nbd.name>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Date: Tue, 10 Apr 2018 21:54:19 +0800
+Subject: [PATCH] net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL
+ in dma_tx_fragment
+Message-ID: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, bridge@lists.linux-foundation.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Cc: linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+To: Larry.Finger@lwfinger.net, kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
 
-On 2018-04-05 15:51, Joe Perches wrote:
->>  You have to factor in
->> not just the .text size, but the fact that referencing an exported
->> symbol needs a .reloc entry as well, which also eats up some space (at
->> least when the code is being built as module).
-> 
-> Thanks, the modules I built got smaller.
-Please post some numbers to show this. By the way, on other
-architectures the numbers will probably be different, especially on
-ARM/MIPS.
->> In my opinion, your series probably causes more bloat in common
->> configurations instead of reducing it.
->> 
->> You're also touching several places that could easily use
->> eth_broadcast_addr and eth_zero_addr. I think making those changes would
->> be more productive than what you did in this series.
-> 
-> Doubtful. AFAIK: possible unaligned addresses.
-Those two are just memset calls, alignment does not matter.
+dma_tx_fragment() is never called in atomic context.
 
-- Felix
+dma_tx_fragment() is only called by b43legacy_dma_tx(), which is 
+only called by b43legacy_tx_work().
+b43legacy_tx_work() is only set a parameter of INIT_WORK() in 
+b43legacy_wireless_init().
+
+Despite never getting called from atomic context,
+dma_tx_fragment() calls alloc_skb() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of sucessful allocation.
+
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/wireless/broadcom/b43legacy/dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/wireless/broadcom/b43legacy/dma.c
+index cfa617d..2f0c64c 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/dma.c
++++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
+@@ -1064,7 +1064,7 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
+ 	meta->dmaaddr = map_descbuffer(ring, skb->data, skb->len, 1);
+ 	/* create a bounce buffer in zone_dma on mapping failure. */
+ 	if (b43legacy_dma_mapping_error(ring, meta->dmaaddr, skb->len, 1)) {
+-		bounce_skb = alloc_skb(skb->len, GFP_ATOMIC | GFP_DMA);
++		bounce_skb = alloc_skb(skb->len, GFP_KERNEL | GFP_DMA);
+ 		if (!bounce_skb) {
+ 			ring->current_slot = old_top_slot;
+ 			ring->used_slots = old_used_slots;
+-- 
+1.9.1
