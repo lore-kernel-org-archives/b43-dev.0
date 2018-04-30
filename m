@@ -1,18 +1,17 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 10 Apr 2018 18:57:56 +0200
-Subject: [PATCH] net: wireless: b43legacy: Replace GFP_ATOMIC with
- GFP_KERNEL in dma_tx_fragment
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 30 Apr 2018 10:27:20 +0000 (UTC)
+Subject: net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL in
+ dma_tx_fragment
 In-Reply-To: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
 References: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
-Message-ID: <20180410185756.35d4f601@wiggum>
+Message-ID: <20180430102720.A86B260767@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: Larry.Finger@lwfinger.net, kvalo@codeaurora.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Jia-Ju Bai <baijiaju1990-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org
 
-On Tue, 10 Apr 2018 21:54:19 +0800
 Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
 > dma_tx_fragment() is never called in atomic context.
@@ -32,42 +31,12 @@ Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 > And I also manually check it.
 > 
 > Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  drivers/net/wireless/broadcom/b43legacy/dma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/wireless/broadcom/b43legacy/dma.c
-> index cfa617d..2f0c64c 100644
-> --- a/drivers/net/wireless/broadcom/b43legacy/dma.c
-> +++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
-> @@ -1064,7 +1064,7 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
->  	meta->dmaaddr = map_descbuffer(ring, skb->data, skb->len, 1);
->  	/* create a bounce buffer in zone_dma on mapping failure. */
->  	if (b43legacy_dma_mapping_error(ring, meta->dmaaddr, skb->len, 1)) {
-> -		bounce_skb = alloc_skb(skb->len, GFP_ATOMIC | GFP_DMA);
-> +		bounce_skb = alloc_skb(skb->len, GFP_KERNEL | GFP_DMA);
->  		if (!bounce_skb) {
->  			ring->current_slot = old_top_slot;
->  			ring->used_slots = old_used_slots;
 
+Patch applied to wireless-drivers-next.git, thanks.
 
-Ack.
-I think the GFP_ATOMIC came from the days where we did DMA operations
-under spinlock instead of mutex.
-
-The same thing can be done in b43.
-
-Also 
-setup_rx_descbuffer(ring, desc, meta, GFP_ATOMIC)
-could be GFP_KERNEL in dma_rx().
-This function is called from IRQ thread context.
+6e1d8d1470b2 net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL in dma_tx_fragment
 
 -- 
-Michael
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: application/pgp-signature
-Size: 833 bytes
-Desc: OpenPGP digital signature
-URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20180410/8729a971/attachment.sig>
+https://patchwork.kernel.org/patch/10333217/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
