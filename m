@@ -1,107 +1,68 @@
-From: Taketo Kabe <kabe@sra-tohoku.co.jp>
-Date: Thu, 10 May 2018 19:30:45 +0900
-Subject: [PATCH v2] drivers/net/wireless/broadcom/b43: fix transmit failure
- when VT is switched
-In-Reply-To: <20180509185101.0888bd7a@wiggum>
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Thu, 10 May 2018 13:15:22 +0200
+Subject: [PATCH v2] drivers/net/wireless/broadcom/b43: fix transmit
+ failure when VT is switched
+In-Reply-To: <5AF41F55.4060606@sra-tohoku.co.jp>
 References: <5AF2DE73.20608@sra-tohoku.co.jp> <20180509185101.0888bd7a@wiggum>
-Message-ID: <5AF41F55.4060606@sra-tohoku.co.jp>
+ <5AF41F55.4060606@sra-tohoku.co.jp>
+Message-ID: <20180510131522.0ac08f84@wiggum>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
-Cc: kabe@sra-tohoku.co.jp, linux-wireless@vger.kernel.org, kvalo@codeaurora.org
+To: Taketo Kabe <kabe@sra-tohoku.co.jp>, kvalo@codeaurora.org
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+
+On Thu, 10 May 2018 19:30:45 +0900
+Taketo Kabe <kabe@sra-tohoku.co.jp> wrote:
+
+> Signed-off-by: Taketo Kabe <kabe@sra-tohoku.co.jp>
+> ---
+> diff -up ./drivers/net/wireless/broadcom/b43/dma.c.b43 ./drivers/net/wireless/broadcom/b43/dma.c
+> --- ./drivers/net/wireless/broadcom/b43/dma.c.b43	2018-05-04 15:18:12.000000000 +0900
+> +++ ./drivers/net/wireless/broadcom/b43/dma.c	2018-05-10 18:46:36.000000000 +0900
+> @@ -1484,7 +1484,7 @@ void b43_dma_handle_txstatus(struct b43_
+>   	int slot, firstused;
+>   	bool frame_succeed;
+>   	int skip;
+> -	static u8 err_out1, err_out2;
+> +	static u8 err_out1;
+> 
+>   	ring = parse_cookie(dev, status->cookie, &slot);
+>   	if (unlikely(!ring))
+> @@ -1518,13 +1518,13 @@ void b43_dma_handle_txstatus(struct b43_
+>   			}
+>   		} else {
+>   			/* More than a single header/data pair were missed.
+> -			 * Report this error once.
+> +			 * Report this error, and reset the controller to
+> +			 * revive operation.
+>   			 */
+> -			if (!err_out2)
+> -				b43dbg(dev->wl,
+> -				       "Out of order TX status report on DMA ring %d. Expected %d, but got %d\n",
+> -				       ring->index, firstused, slot);
+> -			err_out2 = 1;
+> +			b43dbg(dev->wl,
+> +			       "Out of order TX status report on DMA ring %d. Expected %d, but got %d\n",
+> +			       ring->index, firstused, slot);
+> +			b43_controller_restart(dev, "Out of order TX");
+>   			return;
+>   		}
+>   	}
 
 
-From: Taketo Kabe <kabe@sra-tohoku.co.jp>
+Reviewed-by: Michael B?sch <m@bues.ch>
 
-Fix for b43 wireless card stopping transmission when switching VTs.
-
-Setup:
-Using BCM4306 rev.03 chip based CardBus wireless card.
-IRQ is shared with yenta (cardbus bridge) and i915 (display) driver.
-For firmware, installed latest but dated openfwwf 5.2
-(http://netweb.ing.unibs.it/~openfwwf/)
-
-How-to-reproduce:
-Do "ssh <NetBSD-remotehost>", then "ls -lR /" to generate traffic, then
-repeatedly switch VTs by Alt-F1<>Alt-F2.
-Eventually (within a minute) the card stops working.
-You can receive traffic but no transmission.
-For unknown reason it doesn't occur when just generating traffic by
-"ssh <remotehost> ls -lR /".
-
-With CONFIG_B43_DEBUG=y kernel config, when it stops,
-the debug message shows
-     kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 148, but got 180
-The slot offset I observed so far was always 32.
-
-When err_out2 is not set to make error messages successive,
-the debug output will be like this:
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 148
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 150
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 120
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 152
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 122
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 154
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 124
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 156
-kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 126
-The TX ring alternates between 2 sequences; the ring seems
-to be completely confused. Controller restart is needed.
-
-Workaround(1):
-This problem doesn't occur when using propriatory firmware
-you will extract by b43-fwcutter, so it may be a bug in
-openfwwf firmware, as the comment in the b43_dma_handle_txstatus() suggests.
-I wasn't able to find a bug in the terse openfwwf code though.
-
-Workaround(2):
-Using "pio=1" option to not use DMA makes this problem to
-not occur.
-
-Description of the patch:
-This patch will forcibly reset the controller to make it
-work again. Very kludgy and doesn't look right, but
-the traffic will continue to flow.
-
-Changes since last edition:
-- Remove now unused err_out2 variable.
-
-Signed-off-by: Taketo Kabe <kabe@sra-tohoku.co.jp>
----
-diff -up ./drivers/net/wireless/broadcom/b43/dma.c.b43 ./drivers/net/wireless/broadcom/b43/dma.c
---- ./drivers/net/wireless/broadcom/b43/dma.c.b43	2018-05-04 15:18:12.000000000 +0900
-+++ ./drivers/net/wireless/broadcom/b43/dma.c	2018-05-10 18:46:36.000000000 +0900
-@@ -1484,7 +1484,7 @@ void b43_dma_handle_txstatus(struct b43_
-  	int slot, firstused;
-  	bool frame_succeed;
-  	int skip;
--	static u8 err_out1, err_out2;
-+	static u8 err_out1;
-
-  	ring = parse_cookie(dev, status->cookie, &slot);
-  	if (unlikely(!ring))
-@@ -1518,13 +1518,13 @@ void b43_dma_handle_txstatus(struct b43_
-  			}
-  		} else {
-  			/* More than a single header/data pair were missed.
--			 * Report this error once.
-+			 * Report this error, and reset the controller to
-+			 * revive operation.
-  			 */
--			if (!err_out2)
--				b43dbg(dev->wl,
--				       "Out of order TX status report on DMA ring %d. Expected %d, but got %d\n",
--				       ring->index, firstused, slot);
--			err_out2 = 1;
-+			b43dbg(dev->wl,
-+			       "Out of order TX status report on DMA ring %d. Expected %d, but got %d\n",
-+			       ring->index, firstused, slot);
-+			b43_controller_restart(dev, "Out of order TX");
-  			return;
-  		}
-  	}
+I think this is a good thing to have.
+It improves robustness against firmware/DMA misbehavior.
 
 -- 
-kabe
+Michael
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.infradead.org/pipermail/b43-dev/attachments/20180510/4c3fee2e/attachment.sig>
