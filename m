@@ -1,55 +1,75 @@
-From: Chris Vine <vine35792468@gmail.com>
-Date: Mon, 14 May 2018 19:37:10 +0100
-Subject: Regression: bcm4312 lp-phy device not working in 4.17-rc5 kernel
-In-Reply-To: <20180514200205.47814f60@wiggum>
-References: <20180514184953.001c06412efcf2b16fdc59ac@gmail.com>
- <20180514195539.74686870@wiggum> <20180514200205.47814f60@wiggum>
-Message-ID: <20180514193710.39101e4d30d2282fb1a73f10@gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 15 May 2018 05:40:39 +0000 (UTC)
+Subject: [v3] b43: fix transmit failure when VT is switched
+In-Reply-To: <5AF80278.9000501@sra-tohoku.co.jp>
+References: <5AF80278.9000501@sra-tohoku.co.jp>
+Message-ID: <20180515054039.AFB29601D7@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+To: b43-dev@lists.infradead.org
 
-On Mon, 14 May 2018 20:02:05 +0200
-Michael B?sch <m@bues.ch> wrote:
-> On Mon, 14 May 2018 19:55:39 +0200
-> Michael B?sch <m@bues.ch> wrote:
-> 
-> > On Mon, 14 May 2018 18:49:53 +0100
-> > Chris Vine <vine35792468@gmail.com> wrote:
-> > 
-> > > I have an old netbook with a Broadcom bcm4312 802.11b/g lp-phy
-> > > [14e4:4315] (rev 01) wifi device.  This works up to and including the
-> > > 4.16 kernel, but not with 4.17-rc5.
-> > > 
-> > > The b43, mac80211, cfg80211, ssb and mmc_core modules are loaded OK, as
-> > > is the firmware, and the wlan0 interface will come up, but any attempt
-> > > to use the interface fails and it cannot (for example) scan.
-> > > 
-> > > No useful error messages are given.  The interface (wlan0) is just
-> > > reported as not being ready.  
-> > 
-> > Hi,
-> > 
-> > thanks for your report.
-> > 
-> > Can you please provide all kernel log messages anyway?
-> > And what does "not ready" mean exactly?
-> > 
-> > It would be extremely helpful if you'd do a git bisect to find the
-> > commit that broke it.
-> > 
-> 
-> Ok, I just noticed that mainline still contains the ssb breakage.
-> 
-> So you are most likely hitting this:
-> https://patchwork.kernel.org/patch/10393729/
+kabe at sra-tohoku.co.jp wrote:
 
-Yes thanks, applying that patch resolves the issue fine.  There was a
-similar problem with disabled PCI support for b43 which found its way
-into the 4.15.0/4.15.1 kernels:
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git/commit/?id=a9e6d44ddeccd3522670e641f1ed9b068e746ff7
-At least this bug should avoid getting into the mainline release.
+> From: Taketo Kabe <kabe@sra-tohoku.co.jp>
+> 
+> Setup:
+> Using BCM4306 rev.03 chip based CardBus wireless card.
+> IRQ is shared with yenta (cardbus bridge) and i915 (display) driver.
+> For firmware, installed latest but dated openfwwf 5.2
+> (http://netweb.ing.unibs.it/~openfwwf/)
+> 
+> How-to-reproduce:
+> Do "ssh <NetBSD-remotehost>", then "ls -lR /" to generate traffic, then
+> repeatedly switch VTs by Alt-F1<>Alt-F2.
+> Eventually (within a minute) the card stops working.
+> You can receive traffic but no transmission.
+> For unknown reason it doesn't occur when just generating traffic by
+> "ssh <remotehost> ls -lR /".
+> 
+> With CONFIG_B43_DEBUG=y kernel config, when it stops,
+> the debug message shows
+>     kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 148, but got 180
+> The slot offset I observed so far was always 32.
+> 
+> When err_out2 is not set to make error messages successive,
+> the debug output will be like this:
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 148
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 150
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 120
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 152
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 122
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 154
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 124
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 156
+> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 126
+> The TX ring alternates between 2 sequences; the ring seems
+> to be completely confused. Controller restart is needed.
+> 
+> Workaround(1):
+> This problem doesn't occur when using propriatory firmware
+> you will extract by b43-fwcutter, so it may be a bug in
+> openfwwf firmware, as the comment in the b43_dma_handle_txstatus() suggests.
+> I wasn't able to find a bug in the terse openfwwf code though.
+> 
+> Workaround(2):
+> Using "pio=1" option to not use DMA makes this problem to
+> not occur.
+> 
+> Description of the patch:
+> This patch will forcibly reset the controller to make it
+> work again. Very kludgy and doesn't look right, but
+> the traffic will continue to flow.
+> 
+> Signed-off-by: Taketo Kabe <kabe@sra-tohoku.co.jp>
+> Reviewed-by: Michael Buesch <m@bues.ch>
 
-Chris
+Patch applied to wireless-drivers-next.git, thanks.
+
+66cffd6daab7 b43: fix transmit failure when VT is switched
+
+-- 
+https://patchwork.kernel.org/patch/10396133/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
