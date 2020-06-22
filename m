@@ -1,75 +1,69 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 15 May 2018 05:40:39 +0000 (UTC)
-Subject: [v3] b43: fix transmit failure when VT is switched
-In-Reply-To: <5AF80278.9000501@sra-tohoku.co.jp>
-References: <5AF80278.9000501@sra-tohoku.co.jp>
-Message-ID: <20180515054039.AFB29601D7@smtp.codeaurora.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Mon, 22 Jun 2020 11:07:14 +0200
+Subject: [PATCH v2 00/16] Remove uninitialized_var() macro
+In-Reply-To: <202006200854.B2D8F21@keescook>
+References: <20200620033007.1444705-1-keescook@chromium.org>
+ <CA+icZUWpHRR7ukyepiUH1dR3r4GMi-s2crfwR5vTszdt1SUTQw@mail.gmail.com>
+ <202006200854.B2D8F21@keescook>
+Message-ID: <CA+icZUV-gBgUnrm6pF2MHWC2SnK_ZBatAa9VrEJ2VbdARi1YBw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alexander Potapenko <glider@google.com>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, x86@kernel.org, drbd-dev@lists.linbit.com, linux-block@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org, linux-ide@vger.kernel.org, linux-clk@vger.kernel.org, linux-spi@vger.kernel.org, linux-mm@kvack.org, Clang-Built-Linux ML <clang-built-linux@googlegroups.com>
 
-kabe at sra-tohoku.co.jp wrote:
+On Sat, Jun 20, 2020 at 5:57 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Sat, Jun 20, 2020 at 09:03:34AM +0200, Sedat Dilek wrote:
+> > On Sat, Jun 20, 2020 at 5:30 AM Kees Cook <keescook@chromium.org> wrote:
+> > >
+> > > v2:
+> > > - more special-cased fixes
+> > > - add reviews
+> > > v1: https://lore.kernel.org/lkml/20200603233203.1695403-1-keescook at chromium.org
+> > >
+> > > Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> > > (or can in the future), and suppresses unrelated compiler warnings
+> > > (e.g. "unused variable"). If the compiler thinks it is uninitialized,
+> > > either simply initialize the variable or make compiler changes.
+> > >
+> > > As recommended[2] by[3] Linus[4], remove the macro.
+> > >
+> > > Most of the 300 uses don't cause any warnings on gcc 9.3.0, so they're in
+> > > a single treewide commit in this series. A few others needed to actually
+> > > get cleaned up, and I broke those out into individual patches.
+> > >
+> > > The tree is:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/uninit/macro
+> > >
+> > > -Kees
+> > >
+> >
+> > Hi Kees,
+> >
+> > thanks for doing a v2 of your patchset.
+> >
+> > As I saw Jason Yan providing some "uninitialized_var() macro" patches
+> > to the MLs I pointen him to your tree "v1".
+>
+> Thanks!
+>
+> > BTW, I have tested your "v1" against Linux v5.7 (see [1]) - just
+> > yesterday with Linux v5.7.5-rc1.
+> >
+> > Is it possible to have a v2 of this patchset on top od Linux v5.7 - if
+> > you do not mind.
+>
+> Since it's only going to be for post-v5.8, I'm fine skipping the v5.7
+> testing. Mainly I'm looking at v5.8 and linux-next.
+>
+> Thanks for looking at it!
+>
 
-> From: Taketo Kabe <kabe@sra-tohoku.co.jp>
-> 
-> Setup:
-> Using BCM4306 rev.03 chip based CardBus wireless card.
-> IRQ is shared with yenta (cardbus bridge) and i915 (display) driver.
-> For firmware, installed latest but dated openfwwf 5.2
-> (http://netweb.ing.unibs.it/~openfwwf/)
-> 
-> How-to-reproduce:
-> Do "ssh <NetBSD-remotehost>", then "ls -lR /" to generate traffic, then
-> repeatedly switch VTs by Alt-F1<>Alt-F2.
-> Eventually (within a minute) the card stops working.
-> You can receive traffic but no transmission.
-> For unknown reason it doesn't occur when just generating traffic by
-> "ssh <remotehost> ls -lR /".
-> 
-> With CONFIG_B43_DEBUG=y kernel config, when it stops,
-> the debug message shows
->     kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 148, but got 180
-> The slot offset I observed so far was always 32.
-> 
-> When err_out2 is not set to make error messages successive,
-> the debug output will be like this:
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 148
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 150
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 120
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 152
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 122
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 154
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 124
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 156
-> kernel: b43-phy1 debug: Out of order TX status report on DMA ring 1. Expected 116, but got 126
-> The TX ring alternates between 2 sequences; the ring seems
-> to be completely confused. Controller restart is needed.
-> 
-> Workaround(1):
-> This problem doesn't occur when using propriatory firmware
-> you will extract by b43-fwcutter, so it may be a bug in
-> openfwwf firmware, as the comment in the b43_dma_handle_txstatus() suggests.
-> I wasn't able to find a bug in the terse openfwwf code though.
-> 
-> Workaround(2):
-> Using "pio=1" option to not use DMA makes this problem to
-> not occur.
-> 
-> Description of the patch:
-> This patch will forcibly reset the controller to make it
-> work again. Very kludgy and doesn't look right, but
-> the traffic will continue to flow.
-> 
-> Signed-off-by: Taketo Kabe <kabe@sra-tohoku.co.jp>
-> Reviewed-by: Michael Buesch <m@bues.ch>
+Thanks for the feedback.
 
-Patch applied to wireless-drivers-next.git, thanks.
+"I knew you'd say that."
+( Judge Dredd )
 
-66cffd6daab7 b43: fix transmit failure when VT is switched
-
--- 
-https://patchwork.kernel.org/patch/10396133/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+- Sedat -
