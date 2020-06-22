@@ -1,16 +1,17 @@
 From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Mon, 22 Jun 2020 10:04:18 -0700
-Subject: [PATCH v2 04/16] b43: Remove uninitialized_var() usage
-In-Reply-To: <20200620033007.1444705-5-keescook@chromium.org>
+Date: Mon, 22 Jun 2020 10:22:53 -0700
+Subject: [PATCH v2 10/16] KVM: PPC: Book3S PR: Remove uninitialized_var()
+ usage
+In-Reply-To: <20200620033007.1444705-11-keescook@chromium.org>
 References: <20200620033007.1444705-1-keescook@chromium.org>
- <20200620033007.1444705-5-keescook@chromium.org>
-Message-ID: <CAKwvOdmsXuqx-3Rt_KNFq4psAeFjG2-7qQaqkJ7dDqqmscUFNw@mail.gmail.com>
+ <20200620033007.1444705-11-keescook@chromium.org>
+Message-ID: <CAKwvOd=N3HQNZfKMQ7eZWdawwNn13=YNNgMO0WAng2ERYX4Juw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alexander Potapenko <glider@google.com>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, drbd-dev@lists.linbit.com, linux-block@vger.kernel.org, b43-dev@lists.infradead.org, Network Development <netdev@vger.kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, linux-ide@vger.kernel.org, linux-clk@vger.kernel.org, linux-spi@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>, clang-built-linux <clang-built-linux@googlegroups.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Nathan Chancellor <natechancellor@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alexander Potapenko <glider@google.com>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, drbd-dev@lists.linbit.com, linux-block@vger.kernel.org, b43-dev@lists.infradead.org, Network Development <netdev@vger.kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, linux-ide@vger.kernel.org, linux-clk@vger.kernel.org, linux-spi@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>, clang-built-linux <clang-built-linux@googlegroups.com>
 
 On Fri, Jun 19, 2020 at 8:30 PM Kees Cook <keescook@chromium.org> wrote:
 >
@@ -18,38 +19,42 @@ On Fri, Jun 19, 2020 at 8:30 PM Kees Cook <keescook@chromium.org> wrote:
 > (or can in the future), and suppresses unrelated compiler warnings (e.g.
 > "unused variable"). If the compiler thinks it is uninitialized, either
 > simply initialize the variable or make compiler changes. As a precursor
-> to removing[2] this[3] macro[4], just initialize this variable to NULL.
-> No later NULL deref is possible due to the early returns outside of the
-> (phy->rev >= 7 && phy->rev < 19) case, which explicitly tests for NULL.
+> to removing[2] this[3] macro[4], just remove this variable since it was
+> actually unused:
+>
+> arch/powerpc/kvm/book3s_pr.c:1832:16: warning: unused variable 'vrsave' [-Wunused-variable]
+>         unsigned long vrsave;
+>                       ^
 >
 > [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider at google.com/
 > [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw at mail.gmail.com/
 > [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg at mail.gmail.com/
 > [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA at mail.gmail.com/
 >
-> Fixes: 58619b14d106 ("b43: move under broadcom vendor directory")
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Fixes: f05ed4d56e9c ("KVM: PPC: Split out code from book3s.c into book3s_pr.c")
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
-I see three total uses of uninitialized_var() in this file, do we want
-to eliminate all of them?
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
 > ---
->  drivers/net/wireless/broadcom/b43/phy_n.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/powerpc/kvm/book3s_pr.c | 3 ---
+>  1 file changed, 3 deletions(-)
 >
-> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-> index c33b4235839d..46db91846007 100644
-> --- a/drivers/net/wireless/broadcom/b43/phy_n.c
-> +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-> @@ -4222,7 +4222,7 @@ static void b43_nphy_tx_gain_table_upload(struct b43_wldev *dev)
->         u32 rfpwr_offset;
->         u8 pga_gain, pad_gain;
->         int i;
-> -       const s16 *uninitialized_var(rf_pwr_offset_table);
-> +       const s16 *rf_pwr_offset_table = NULL;
+> diff --git a/arch/powerpc/kvm/book3s_pr.c b/arch/powerpc/kvm/book3s_pr.c
+> index ef54f917bdaf..ed12dfbf9bb5 100644
+> --- a/arch/powerpc/kvm/book3s_pr.c
+> +++ b/arch/powerpc/kvm/book3s_pr.c
+> @@ -1828,9 +1828,6 @@ static int kvmppc_vcpu_run_pr(struct kvm_vcpu *vcpu)
+>  {
+>         struct kvm_run *run = vcpu->run;
+>         int ret;
+> -#ifdef CONFIG_ALTIVEC
+> -       unsigned long uninitialized_var(vrsave);
+> -#endif
 >
->         table = b43_nphy_get_tx_gain_table(dev);
->         if (!table)
+>         /* Check if we can run the vcpu at all */
+>         if (!vcpu->arch.sane) {
 > --
 
 -- 
