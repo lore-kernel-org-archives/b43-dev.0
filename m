@@ -1,10 +1,10 @@
 From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Mon, 22 Jun 2020 09:59:54 -0700
-Subject: [PATCH v2 01/16] docs: deprecated.rst: Add uninitialized_var()
-In-Reply-To: <20200620033007.1444705-2-keescook@chromium.org>
+Date: Mon, 22 Jun 2020 10:04:18 -0700
+Subject: [PATCH v2 04/16] b43: Remove uninitialized_var() usage
+In-Reply-To: <20200620033007.1444705-5-keescook@chromium.org>
 References: <20200620033007.1444705-1-keescook@chromium.org>
- <20200620033007.1444705-2-keescook@chromium.org>
-Message-ID: <CAKwvOd=a+aSb5Scg=jD-jDfvnKJjOCVQ8CidgEo-39g2b2z-3A@mail.gmail.com>
+ <20200620033007.1444705-5-keescook@chromium.org>
+Message-ID: <CAKwvOdmsXuqx-3Rt_KNFq4psAeFjG2-7qQaqkJ7dDqqmscUFNw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,55 +14,43 @@ Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundati
 
 On Fri, Jun 19, 2020 at 8:30 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> Nothing should be using this macro, and the entire idea of tricking the
-> compiler into silencing such warnings is a mistake.
+> Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> (or can in the future), and suppresses unrelated compiler warnings (e.g.
+> "unused variable"). If the compiler thinks it is uninitialized, either
+> simply initialize the variable or make compiler changes. As a precursor
+> to removing[2] this[3] macro[4], just initialize this variable to NULL.
+> No later NULL deref is possible due to the early returns outside of the
+> (phy->rev >= 7 && phy->rev < 19) case, which explicitly tests for NULL.
 >
+> [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider at google.com/
+> [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw at mail.gmail.com/
+> [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg at mail.gmail.com/
+> [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA at mail.gmail.com/
+>
+> Fixes: 58619b14d106 ("b43: move under broadcom vendor directory")
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+I see three total uses of uninitialized_var() in this file, do we want
+to eliminate all of them?
 
 > ---
->  Documentation/process/deprecated.rst | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  drivers/net/wireless/broadcom/b43/phy_n.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-> index 652e2aa02a66..943a926ecbbb 100644
-> --- a/Documentation/process/deprecated.rst
-> +++ b/Documentation/process/deprecated.rst
-> @@ -51,6 +51,24 @@ to make sure their systems do not continue running in the face of
->  "unreachable" conditions. (For example, see commits like `this one
->  <https://git.kernel.org/linus/d4689846881d160a4d12a514e991a740bcb5d65a>`_.)
+> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+> index c33b4235839d..46db91846007 100644
+> --- a/drivers/net/wireless/broadcom/b43/phy_n.c
+> +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+> @@ -4222,7 +4222,7 @@ static void b43_nphy_tx_gain_table_upload(struct b43_wldev *dev)
+>         u32 rfpwr_offset;
+>         u8 pga_gain, pad_gain;
+>         int i;
+> -       const s16 *uninitialized_var(rf_pwr_offset_table);
+> +       const s16 *rf_pwr_offset_table = NULL;
 >
-> +uninitialized_var()
-> +-------------------
-> +For any compiler warnings about uninitialized variables, just add
-> +an initializer. Using the uninitialized_var() macro (or similar
-> +warning-silencing tricks) is dangerous as it papers over `real bugs
-> +<https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/>`_
-> +(or can in the future), and suppresses unrelated compiler warnings
-> +(e.g. "unused variable"). If the compiler thinks it is uninitialized,
-> +either simply initialize the variable or make compiler changes. Keep in
-> +mind that in most cases, if an initialization is obviously redundant,
-> +the compiler's dead-store elimination pass will make sure there are no
-> +needless variable writes.
-> +
-> +As Linus has said, this macro
-> +`must <https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/>`_
-> +`be <https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/>`_
-> +`removed <https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/>`_.
-> +
->  open-coded arithmetic in allocator arguments
->  --------------------------------------------
->  Dynamic size calculations (especially multiplication) should not be
+>         table = b43_nphy_get_tx_gain_table(dev);
+>         if (!table)
 > --
-> 2.25.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe at googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200620033007.1444705-2-keescook%40chromium.org.
-
-
 
 -- 
 Thanks,
