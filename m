@@ -1,176 +1,40 @@
-From: Alexander A. Klimov <grandmaster@al2klimov.de>
-Date: Sun, 19 Jul 2020 13:11:24 +0200
-Subject: [PATCH for v5.9] b43legacy: Replace HTTP links with HTTPS ones
-Message-ID: <20200719111124.58167-1-grandmaster@al2klimov.de>
+From: Theodore J. Allen <tjallen@hws.edu>
+Date: Fri, 24 Jul 2020 17:22:38 -0400
+Subject: Curious behavior (bug?) in b43 driver with BCM4331 and
+ WPA2-Enterprise access
+Message-ID: <8229543F-401B-42F2-A568-0D616141A5EA@hws.edu>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry.Finger@lwfinger.net, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+To: b43-dev@lists.infradead.org
 
-Rationale:
-Reduces attack surface on kernel devs opening the links for MITM
-as HTTPS traffic is much harder to manipulate.
+Dear b43 Maintainers,
 
-Deterministic algorithm:
-For each file:
-  If not .svg:
-    For each line:
-      If doesn't contain `\bxmlns\b`:
-        For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
-	  If neither `\bgnu\.org/license`, nor `\bmozilla\.org/MPL\b`:
-            If both the HTTP and HTTPS versions
-            return 200 OK and serve the same content:
-              Replace HTTP with HTTPS.
+I'm sorry to bother you. I'm using Slackware64 14.2 on a MacBook Pro 2012 (macbookpro9,2), which has a Broadcom BCM 4331 wifi card and I have a problem that may be a driver bug or perhaps a problem on the access points I'm trying to connect to. If you've seen my problem and know either how to work around it or that it can't be fixed, that would be very helpful. If I've found a bug, I'd be happy to help you fix it (though I'm not a programmer, let alone a kernal developer).
 
-Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
----
- Continuing my work started at 93431e0607e5.
- See also: git log --oneline '--author=Alexander A. Klimov <grandmaster@al2klimov.de>' v5.7..master
- (Actually letting a shell for loop submit all this stuff for me.)
+PROBLEM:
 
- If there are any URLs to be removed completely
- or at least not (just) HTTPSified:
- Just clearly say so and I'll *undo my change*.
- See also: https://lkml.org/lkml/2020/6/27/64
+I can connect to my home WPA2-PSK network but I cannot connect to my employer's wifi, of which there are three different types. One is WPA2-Enterprise PEAP-MSCHAPv2, one is a WPA2-Enterprise PEAP-MSCHAPv2 eduroam access point, but the third is an unencrypted guest captive access point. None of them uses certificates. When I try to connect, dmesg shows that I manage to authenticate and then associate but then I get disconnected. dmesg shows wlan0: deauthenticating from c8:b5:ad:5d:c2:21 by local choice (Reason: 3=DEAUTH_LEAVING).
 
- If there are any valid, but yet not changed URLs:
- See: https://lkml.org/lkml/2020/6/26/837
+I can connect to all of my employer's wifi points with USB wifi dongles using either the zd1211rw or rt2800usb drivers (though, as with the built-in BCM4331 and the b43 driver, I can't connect with a dongle using the r8712u staging driver). Like the BCM4331 with the b43 driver, all USB wifi dongles I've used will connect to my WPA2-PSK home network.
 
- If you apply the patch, please let me know.
+This problem occurs with all kernels I've tried, most recently 4.4.230 and 5.4.52 and I have the same problem with the stock "huge" 4.4.14 kernel of Slackware64 14.2. I'm using the v6.30.163.46 Broadcom firmware, from a package built from SlackBuilds.org. 
 
- Sorry again to all maintainers who complained about subject lines.
- Now I realized that you want an actually perfect prefixes,
- not just subsystem ones.
- I tried my best...
- And yes, *I could* (at least half-)automate it.
- Impossible is nothing! :)
+OUTPUT:
 
+The kernel configs and outputs of uname -a, lspci -vvn|grep 43 -A7, and dmesg for these kernels can be found at
 
- drivers/net/wireless/broadcom/b43legacy/main.c  | 8 ++++----
- drivers/net/wireless/broadcom/b43legacy/phy.c   | 8 ++++----
- drivers/net/wireless/broadcom/b43legacy/radio.c | 8 ++++----
- 3 files changed, 12 insertions(+), 12 deletions(-)
+http://people.hws.edu/tjallen/b43/4.4.230-4.config.txt
+http://people.hws.edu/tjallen/b43/uname.txt
+http://people.hws.edu/tjallen/b43/lspci.txt
+http://people.hws.edu/tjallen/b43/dmesg.txt
 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
-index 5208a39fd6f7..177a5d85915f 100644
---- a/drivers/net/wireless/broadcom/b43legacy/main.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/main.c
-@@ -591,7 +591,7 @@ static void b43legacy_synchronize_irq(struct b43legacy_wldev *dev)
- }
- 
- /* DummyTransmission function, as documented on
-- * http://bcm-specs.sipsolutions.net/DummyTransmission
-+ * https://bcm-specs.sipsolutions.net/DummyTransmission
-  */
- void b43legacy_dummy_transmission(struct b43legacy_wldev *dev)
- {
-@@ -1870,7 +1870,7 @@ static int b43legacy_upload_initvals(struct b43legacy_wldev *dev)
- }
- 
- /* Initialize the GPIOs
-- * http://bcm-specs.sipsolutions.net/GPIO
-+ * https://bcm-specs.sipsolutions.net/GPIO
-  */
- static int b43legacy_gpio_init(struct b43legacy_wldev *dev)
- {
-@@ -1960,7 +1960,7 @@ void b43legacy_mac_enable(struct b43legacy_wldev *dev)
- 	}
- }
- 
--/* http://bcm-specs.sipsolutions.net/SuspendMAC */
-+/* https://bcm-specs.sipsolutions.net/SuspendMAC */
- void b43legacy_mac_suspend(struct b43legacy_wldev *dev)
- {
- 	int i;
-@@ -2141,7 +2141,7 @@ static void b43legacy_chip_exit(struct b43legacy_wldev *dev)
- }
- 
- /* Initialize the chip
-- * http://bcm-specs.sipsolutions.net/ChipInit
-+ * https://bcm-specs.sipsolutions.net/ChipInit
-  */
- static int b43legacy_chip_init(struct b43legacy_wldev *dev)
- {
-diff --git a/drivers/net/wireless/broadcom/b43legacy/phy.c b/drivers/net/wireless/broadcom/b43legacy/phy.c
-index a659259bc51a..05404fbd1e70 100644
---- a/drivers/net/wireless/broadcom/b43legacy/phy.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/phy.c
-@@ -129,7 +129,7 @@ void b43legacy_phy_calibrate(struct b43legacy_wldev *dev)
- }
- 
- /* initialize B PHY power control
-- * as described in http://bcm-specs.sipsolutions.net/InitPowerControl
-+ * as described in https://bcm-specs.sipsolutions.net/InitPowerControl
-  */
- static void b43legacy_phy_init_pctl(struct b43legacy_wldev *dev)
- {
-@@ -1461,7 +1461,7 @@ void b43legacy_phy_set_baseband_attenuation(struct b43legacy_wldev *dev,
- 	b43legacy_phy_write(dev, 0x0060, value);
- }
- 
--/* http://bcm-specs.sipsolutions.net/LocalOscillator/Measure */
-+/* https://bcm-specs.sipsolutions.net/LocalOscillator/Measure */
- void b43legacy_phy_lo_g_measure(struct b43legacy_wldev *dev)
- {
- 	static const u8 pairorder[10] = { 3, 1, 5, 7, 9, 2, 0, 4, 6, 8 };
-@@ -1721,7 +1721,7 @@ void b43legacy_phy_lo_mark_all_unused(struct b43legacy_wldev *dev)
- 	}
- }
- 
--/* http://bcm-specs.sipsolutions.net/EstimatePowerOut
-+/* https://bcm-specs.sipsolutions.net/EstimatePowerOut
-  * This function converts a TSSI value to dBm in Q5.2
-  */
- static s8 b43legacy_phy_estimate_power_out(struct b43legacy_wldev *dev, s8 tssi)
-@@ -1747,7 +1747,7 @@ static s8 b43legacy_phy_estimate_power_out(struct b43legacy_wldev *dev, s8 tssi)
- 	return dbm;
- }
- 
--/* http://bcm-specs.sipsolutions.net/RecalculateTransmissionPower */
-+/* https://bcm-specs.sipsolutions.net/RecalculateTransmissionPower */
- void b43legacy_phy_xmitpower(struct b43legacy_wldev *dev)
- {
- 	struct b43legacy_phy *phy = &dev->phy;
-diff --git a/drivers/net/wireless/broadcom/b43legacy/radio.c b/drivers/net/wireless/broadcom/b43legacy/radio.c
-index da40d1ca8723..06891b4f837b 100644
---- a/drivers/net/wireless/broadcom/b43legacy/radio.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/radio.c
-@@ -313,14 +313,14 @@ u8 b43legacy_radio_aci_scan(struct b43legacy_wldev *dev)
- 	return ret[channel - 1];
- }
- 
--/* http://bcm-specs.sipsolutions.net/NRSSILookupTable */
-+/* https://bcm-specs.sipsolutions.net/NRSSILookupTable */
- void b43legacy_nrssi_hw_write(struct b43legacy_wldev *dev, u16 offset, s16 val)
- {
- 	b43legacy_phy_write(dev, B43legacy_PHY_NRSSILT_CTRL, offset);
- 	b43legacy_phy_write(dev, B43legacy_PHY_NRSSILT_DATA, (u16)val);
- }
- 
--/* http://bcm-specs.sipsolutions.net/NRSSILookupTable */
-+/* https://bcm-specs.sipsolutions.net/NRSSILookupTable */
- s16 b43legacy_nrssi_hw_read(struct b43legacy_wldev *dev, u16 offset)
- {
- 	u16 val;
-@@ -331,7 +331,7 @@ s16 b43legacy_nrssi_hw_read(struct b43legacy_wldev *dev, u16 offset)
- 	return (s16)val;
- }
- 
--/* http://bcm-specs.sipsolutions.net/NRSSILookupTable */
-+/* https://bcm-specs.sipsolutions.net/NRSSILookupTable */
- void b43legacy_nrssi_hw_update(struct b43legacy_wldev *dev, u16 val)
- {
- 	u16 i;
-@@ -345,7 +345,7 @@ void b43legacy_nrssi_hw_update(struct b43legacy_wldev *dev, u16 val)
- 	}
- }
- 
--/* http://bcm-specs.sipsolutions.net/NRSSILookupTable */
-+/* https://bcm-specs.sipsolutions.net/NRSSILookupTable */
- void b43legacy_nrssi_mem_update(struct b43legacy_wldev *dev)
- {
- 	struct b43legacy_phy *phy = &dev->phy;
--- 
-2.27.0
+http://people.hws.edu/tjallen/b43/5.4.52.config.txt
+http://people.hws.edu/tjallen/b43/uname-5.4.52.txt
+http://people.hws.edu/tjallen/b43/lspci-5.4.52.txt
+http://people.hws.edu/tjallen/b43/dmesg-5.4.52.txt
+
+If you're interested to look into this and you have any further tests you want me to make, I'd be happy to make them. 
+
+    Ted Allen
