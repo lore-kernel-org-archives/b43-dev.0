@@ -1,9 +1,9 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sun,  2 Aug 2020 15:16:55 +0000 (UTC)
-Subject: [PATCH for v5.9] b43: Replace HTTP links with HTTPS ones
-In-Reply-To: <20200719110115.58085-1-grandmaster@al2klimov.de>
-References: <20200719110115.58085-1-grandmaster@al2klimov.de>
-Message-ID: <20200802151655.D959CC433C6@smtp.codeaurora.org>
+Date: Sun,  2 Aug 2020 15:17:51 +0000 (UTC)
+Subject: [PATCH for v5.9] b43legacy: Replace HTTP links with HTTPS ones
+In-Reply-To: <20200719111124.58167-1-grandmaster@al2klimov.de>
+References: <20200719111124.58167-1-grandmaster@al2klimov.de>
+Message-ID: <20200802151752.01D6FC433C6@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -31,9 +31,9 @@ To: b43-dev@lists.infradead.org
 
 Patch applied to wireless-drivers-next.git, thanks.
 
-2d96c1ed4bab b43: Replace HTTP links with HTTPS ones
+140c6026167b b43legacy: Replace HTTP links with HTTPS ones
 
 -- 
-https://patchwork.kernel.org/patch/11672421/
+https://patchwork.kernel.org/patch/11672427/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
