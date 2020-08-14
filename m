@@ -1,52 +1,61 @@
 From: Lee Jones <lee.jones@linaro.org>
-Date: Fri, 14 Aug 2020 17:36:54 +0100
-Subject: [PATCH 26/30] net: wireless: broadcom: b43: phy_common: Demote
- non-conformant kerneldoc header
-In-Reply-To: <CAJrvBf00yQQ7F1p1utBuq1oWc2RwnqXijBjaJ+FuxG0mS0TvOA@mail.gmail.com>
+Date: Fri, 14 Aug 2020 17:43:22 +0100
+Subject: [PATCH 07/30] net: wireless: broadcom: b43: main: Add braces
+ around empty statements
+In-Reply-To: <87v9hll0ro.fsf@codeaurora.org>
 References: <20200814113933.1903438-1-lee.jones@linaro.org>
- <20200814113933.1903438-27-lee.jones@linaro.org>
- <CAJrvBf00yQQ7F1p1utBuq1oWc2RwnqXijBjaJ+FuxG0mS0TvOA@mail.gmail.com>
-Message-ID: <20200814163654.GM4354@dell>
+ <20200814113933.1903438-8-lee.jones@linaro.org>
+ <87v9hll0ro.fsf@codeaurora.org>
+Message-ID: <20200814164322.GP4354@dell>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artur Dubrovsky <dubrovsky.mail@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, Michael Buesch <m@bues.ch>, Stefano Brivio <stefano.brivio@polimi.it>, Andreas Jaggi <andreas.jaggi@waterwave.ch>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org, "Alexander A. Klimov" <grandmaster@al2klimov.de>, Martin Langer <martin-langer@gmx.de>, van Dyk <kugelfang@gentoo.org>, Kalle Valo <kvalo@codeaurora.org>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, Martin Langer <martin-langer@gmx.de>, Stefano Brivio <stefano.brivio@polimi.it>, Michael Buesch <m@bues.ch>, van Dyk <kugelfang@gentoo.org>, Andreas Jaggi <andreas.jaggi@waterwave.ch>, Albert Herranz <albert_herranz@yahoo.es>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
 
-On Fri, 14 Aug 2020, Artur Dubrovsky wrote:
+On Fri, 14 Aug 2020, Kalle Valo wrote:
 
-> remove me from mailing list
-
-I guess you have to remove yourself:
-
-http://lists.infradead.org/mailman/listinfo/b43-dev
-
-> ??, 14 ???. 2020 ?. ? 14:43, Lee Jones <lee.jones@linaro.org>:
+> Lee Jones <lee.jones@linaro.org> writes:
 > 
 > > Fixes the following W=1 kernel build warning(s):
 > >
-> >  drivers/net/wireless/broadcom/b43/phy_common.c:467: warning: Function
-> > parameter or member 'work' not described in 'b43_phy_txpower_adjust_work'
+> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_dummy_transmission?:
+> >  drivers/net/wireless/broadcom/b43/main.c:785:3: warning: suggest braces around empty body in an ?if? statement [-Wempty-body]
+> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_do_interrupt_thread?:
+> >  drivers/net/wireless/broadcom/b43/main.c:2017:3: warning: suggest braces around empty body in an ?if? statement [-Wempty-body]
 > >
 > > Cc: Kalle Valo <kvalo@codeaurora.org>
 > > Cc: "David S. Miller" <davem@davemloft.net>
 > > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: "Alexander A. Klimov" <grandmaster@al2klimov.de>
 > > Cc: Martin Langer <martin-langer@gmx.de>
 > > Cc: Stefano Brivio <stefano.brivio@polimi.it>
 > > Cc: Michael Buesch <m@bues.ch>
 > > Cc: van Dyk <kugelfang@gentoo.org>
 > > Cc: Andreas Jaggi <andreas.jaggi@waterwave.ch>
+> > Cc: Albert Herranz <albert_herranz@yahoo.es>
 > > Cc: linux-wireless at vger.kernel.org
 > > Cc: b43-dev at lists.infradead.org
 > > Cc: netdev at vger.kernel.org
 > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > > ---
-> >  drivers/net/wireless/broadcom/b43/phy_common.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  drivers/net/wireless/broadcom/b43/main.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> Please don't copy the full directory structure to the title. I'll change
+> the title to more simple version:
+> 
+> b43: add braces around empty statements
 
-[...]
+This seems to go the other way.
+
+"net: wireless: b43" seems sensible.
+
+> I'll do similar changes to other wireless-drivers patches.
+
+Thanks.
+
+Does that mean it's been applied, or is this future tense?
 
 -- 
 Lee Jones [???]
