@@ -1,64 +1,71 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Fri, 14 Aug 2020 17:43:22 +0100
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 14 Aug 2020 20:25:31 +0300
 Subject: [PATCH 07/30] net: wireless: broadcom: b43: main: Add braces
  around empty statements
-In-Reply-To: <87v9hll0ro.fsf@codeaurora.org>
+In-Reply-To: <20200814164322.GP4354@dell> (Lee Jones's message of "Fri, 14 Aug
+ 2020 17:43:22 +0100")
 References: <20200814113933.1903438-1-lee.jones@linaro.org>
  <20200814113933.1903438-8-lee.jones@linaro.org>
- <87v9hll0ro.fsf@codeaurora.org>
-Message-ID: <20200814164322.GP4354@dell>
+ <87v9hll0ro.fsf@codeaurora.org> <20200814164322.GP4354@dell>
+Message-ID: <87eeo9kulw.fsf@codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, Martin Langer <martin-langer@gmx.de>, Stefano Brivio <stefano.brivio@polimi.it>, Michael Buesch <m@bues.ch>, van Dyk <kugelfang@gentoo.org>, Andreas Jaggi <andreas.jaggi@waterwave.ch>, Albert Herranz <albert_herranz@yahoo.es>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
 
-On Fri, 14 Aug 2020, Kalle Valo wrote:
+Lee Jones <lee.jones@linaro.org> writes:
 
-> Lee Jones <lee.jones@linaro.org> writes:
-> 
-> > Fixes the following W=1 kernel build warning(s):
-> >
-> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_dummy_transmission?:
-> >  drivers/net/wireless/broadcom/b43/main.c:785:3: warning: suggest braces around empty body in an ?if? statement [-Wempty-body]
-> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_do_interrupt_thread?:
-> >  drivers/net/wireless/broadcom/b43/main.c:2017:3: warning: suggest braces around empty body in an ?if? statement [-Wempty-body]
-> >
-> > Cc: Kalle Valo <kvalo@codeaurora.org>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: Martin Langer <martin-langer@gmx.de>
-> > Cc: Stefano Brivio <stefano.brivio@polimi.it>
-> > Cc: Michael Buesch <m@bues.ch>
-> > Cc: van Dyk <kugelfang@gentoo.org>
-> > Cc: Andreas Jaggi <andreas.jaggi@waterwave.ch>
-> > Cc: Albert Herranz <albert_herranz@yahoo.es>
-> > Cc: linux-wireless at vger.kernel.org
-> > Cc: b43-dev at lists.infradead.org
-> > Cc: netdev at vger.kernel.org
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/net/wireless/broadcom/b43/main.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> Please don't copy the full directory structure to the title. I'll change
-> the title to more simple version:
-> 
-> b43: add braces around empty statements
+> On Fri, 14 Aug 2020, Kalle Valo wrote:
+>
+>> Lee Jones <lee.jones@linaro.org> writes:
+>> 
+>> > Fixes the following W=1 kernel build warning(s):
+>> >
+>> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_dummy_transmission?:
+>> >  drivers/net/wireless/broadcom/b43/main.c:785:3: warning: suggest
+>> > braces around empty body in an ?if? statement [-Wempty-body]
+>> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_do_interrupt_thread?:
+>> >  drivers/net/wireless/broadcom/b43/main.c:2017:3: warning: suggest
+>> > braces around empty body in an ?if? statement [-Wempty-body]
+>> >
+>> > Cc: Kalle Valo <kvalo@codeaurora.org>
+>> > Cc: "David S. Miller" <davem@davemloft.net>
+>> > Cc: Jakub Kicinski <kuba@kernel.org>
+>> > Cc: Martin Langer <martin-langer@gmx.de>
+>> > Cc: Stefano Brivio <stefano.brivio@polimi.it>
+>> > Cc: Michael Buesch <m@bues.ch>
+>> > Cc: van Dyk <kugelfang@gentoo.org>
+>> > Cc: Andreas Jaggi <andreas.jaggi@waterwave.ch>
+>> > Cc: Albert Herranz <albert_herranz@yahoo.es>
+>> > Cc: linux-wireless at vger.kernel.org
+>> > Cc: b43-dev at lists.infradead.org
+>> > Cc: netdev at vger.kernel.org
+>> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>> > ---
+>> >  drivers/net/wireless/broadcom/b43/main.c | 6 ++++--
+>> >  1 file changed, 4 insertions(+), 2 deletions(-)
+>> 
+>> Please don't copy the full directory structure to the title. I'll change
+>> the title to more simple version:
+>> 
+>> b43: add braces around empty statements
+>
+> This seems to go the other way.
+>
+> "net: wireless: b43" seems sensible.
 
-This seems to go the other way.
+Sorry, not understanding what you mean here.
 
-"net: wireless: b43" seems sensible.
+>> I'll do similar changes to other wireless-drivers patches.
+>
+> Thanks.
+>
+> Does that mean it's been applied, or is this future tense?
 
-> I'll do similar changes to other wireless-drivers patches.
-
-Thanks.
-
-Does that mean it's been applied, or is this future tense?
+It's not applied yet, there will be an automatic "applied" email once I
+have done that.
 
 -- 
-Lee Jones [???]
-Senior Technical Lead - Developer Services
-Linaro.org ? Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
