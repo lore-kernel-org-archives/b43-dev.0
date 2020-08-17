@@ -1,54 +1,65 @@
 From: Allen Pais <allen.cryptic@gmail.com>
-Date: Mon, 17 Aug 2020 14:36:25 +0530
-Subject: [PATCH 04/16] wireless: ath11k: convert tasklets to use new
+Date: Mon, 17 Aug 2020 14:36:26 +0530
+Subject: [PATCH 05/16] wireless: atmel: convert tasklets to use new
  tasklet_setup() API
 In-Reply-To: <20200817090637.26887-1-allen.cryptic@gmail.com>
 References: <20200817090637.26887-1-allen.cryptic@gmail.com>
-Message-ID: <20200817090637.26887-5-allen.cryptic@gmail.com>
+Message-ID: <20200817090637.26887-6-allen.cryptic@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kvalo@codeaurora.org, kuba@kernel.org, jirislaby@kernel.org, mickflemm@gmail.com, mcgrof@kernel.org, chunkeey@googlemail.com, Larry.Finger@lwfinger.net, stas.yakovlev@gmail.com, helmut.schaa@googlemail.com, pkshih@realtek.com, yhchuang@realtek.com, dsd@gentoo.org, kune@deine-taler.de
-Cc: brcm80211-dev-list.pdl@broadcom.com, keescook@chromium.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@cypress.com, b43-dev@lists.infradead.org, Allen Pais <allen.lkml@gmail.com>, ath11k@lists.infradead.org
+Cc: brcm80211-dev-list.pdl@broadcom.com, keescook@chromium.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@cypress.com, b43-dev@lists.infradead.org, Allen Pais <allen.lkml@gmail.com>, Romain Perier <romain.perier@gmail.com>, ath11k@lists.infradead.org
 
 From: Allen Pais <allen.lkml@gmail.com>
 
 In preparation for unconditionally passing the
 struct tasklet_struct pointer to all tasklet
 callbacks, switch to using the new tasklet_setup()
-and from_tasklet() to pass the tasklet pointer explicitly.
+and from_tasklet() to pass the tasklet pointer explicitly
+and remove .data field.
 
+Signed-off-by: Romain Perier <romain.perier@gmail.com>
 Signed-off-by: Allen Pais <allen.lkml@gmail.com>
 ---
- drivers/net/wireless/ath/ath11k/ahb.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/wireless/atmel/at76c50x-usb.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
-index 30092841ac46..28d7e833e27f 100644
---- a/drivers/net/wireless/ath/ath11k/ahb.c
-+++ b/drivers/net/wireless/ath/ath11k/ahb.c
-@@ -675,9 +675,9 @@ static void ath11k_ahb_free_irq(struct ath11k_base *ab)
- 	ath11k_ahb_free_ext_irq(ab);
+diff --git a/drivers/net/wireless/atmel/at76c50x-usb.c b/drivers/net/wireless/atmel/at76c50x-usb.c
+index a63b5c2f1e17..365c2ee19d03 100644
+--- a/drivers/net/wireless/atmel/at76c50x-usb.c
++++ b/drivers/net/wireless/atmel/at76c50x-usb.c
+@@ -1199,7 +1199,6 @@ static void at76_rx_callback(struct urb *urb)
+ {
+ 	struct at76_priv *priv = urb->context;
+ 
+-	priv->rx_tasklet.data = (unsigned long)urb;
+ 	tasklet_schedule(&priv->rx_tasklet);
  }
  
--static void ath11k_ahb_ce_tasklet(unsigned long data)
-+static void ath11k_ahb_ce_tasklet(struct tasklet_struct *t)
+@@ -1545,10 +1544,10 @@ static inline int at76_guess_freq(struct at76_priv *priv)
+ 	return ieee80211_channel_to_frequency(channel, NL80211_BAND_2GHZ);
+ }
+ 
+-static void at76_rx_tasklet(unsigned long param)
++static void at76_rx_tasklet(struct tasklet_struct *t)
  {
--	struct ath11k_ce_pipe *ce_pipe = (struct ath11k_ce_pipe *)data;
-+	struct ath11k_ce_pipe *ce_pipe = from_tasklet(ce_pipe, t, intr_tq);
+-	struct urb *urb = (struct urb *)param;
+-	struct at76_priv *priv = urb->context;
++	struct at76_priv *priv = from_tasklet(priv, t, rx_tasklet);
++	struct urb *urb = priv->rx_urb;
+ 	struct at76_rx_buffer *buf;
+ 	struct ieee80211_rx_status rx_status = { 0 };
  
- 	ath11k_ce_per_engine_service(ce_pipe->ab, ce_pipe->pipe_num);
+@@ -2215,7 +2214,7 @@ static struct at76_priv *at76_alloc_new_device(struct usb_device *udev)
+ 	INIT_WORK(&priv->work_join_bssid, at76_work_join_bssid);
+ 	INIT_DELAYED_WORK(&priv->dwork_hw_scan, at76_dwork_hw_scan);
  
-@@ -827,8 +827,7 @@ static int ath11k_ahb_config_irq(struct ath11k_base *ab)
+-	tasklet_init(&priv->rx_tasklet, at76_rx_tasklet, 0);
++	tasklet_setup(&priv->rx_tasklet, at76_rx_tasklet);
  
- 		irq_idx = ATH11K_IRQ_CE0_OFFSET + i;
- 
--		tasklet_init(&ce_pipe->intr_tq, ath11k_ahb_ce_tasklet,
--			     (unsigned long)ce_pipe);
-+		tasklet_setup(&ce_pipe->intr_tq, ath11k_ahb_ce_tasklet);
- 		irq = platform_get_irq_byname(ab->pdev, irq_name[irq_idx]);
- 		ret = request_irq(irq, ath11k_ahb_ce_interrupt_handler,
- 				  IRQF_TRIGGER_RISING, irq_name[irq_idx],
+ 	priv->pm_mode = AT76_PM_OFF;
+ 	priv->pm_period = 0;
 -- 
 2.17.1
