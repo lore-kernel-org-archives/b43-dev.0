@@ -1,57 +1,40 @@
-From: Allen Pais <allen.cryptic@gmail.com>
-Date: Mon, 17 Aug 2020 14:36:37 +0530
-Subject: [PATCH 16/16] wireless: zydas: convert tasklets to use new
- tasklet_setup() API
-In-Reply-To: <20200817090637.26887-1-allen.cryptic@gmail.com>
-References: <20200817090637.26887-1-allen.cryptic@gmail.com>
-Message-ID: <20200817090637.26887-17-allen.cryptic@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 17 Aug 2020 10:11:39 +0100
+Subject: [PATCH 26/30] net: wireless: broadcom: b43: phy_common: Demote
+ non-conformant kerneldoc header
+In-Reply-To: <CACna6ryNNyyVftEFNFEwouKc3O21oPaeqie+bjJR4L_Cf8z2BQ@mail.gmail.com>
+References: <20200814113933.1903438-1-lee.jones@linaro.org>
+ <20200814113933.1903438-27-lee.jones@linaro.org>
+ <CACna6ryNNyyVftEFNFEwouKc3O21oPaeqie+bjJR4L_Cf8z2BQ@mail.gmail.com>
+Message-ID: <20200817091139.GU4354@dell>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvalo@codeaurora.org, kuba@kernel.org, jirislaby@kernel.org, mickflemm@gmail.com, mcgrof@kernel.org, chunkeey@googlemail.com, Larry.Finger@lwfinger.net, stas.yakovlev@gmail.com, helmut.schaa@googlemail.com, pkshih@realtek.com, yhchuang@realtek.com, dsd@gentoo.org, kune@deine-taler.de
-Cc: brcm80211-dev-list.pdl@broadcom.com, keescook@chromium.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@cypress.com, b43-dev@lists.infradead.org, Allen Pais <allen.lkml@gmail.com>, Romain Perier <romain.perier@gmail.com>, ath11k@lists.infradead.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: David Miller <davem@davemloft.net>, kuba@kernel.org, Michael Buesch <m@bues.ch>, Stefano Brivio <stefano.brivio@polimi.it>, Andreas Jaggi <andreas.jaggi@waterwave.ch>, Network Development <netdev@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>, "Alexander A. Klimov" <grandmaster@al2klimov.de>, Martin Langer <martin-langer@gmx.de>, van Dyk <kugelfang@gentoo.org>, Kalle Valo <kvalo@codeaurora.org>
 
-From: Allen Pais <allen.lkml@gmail.com>
+On Mon, 17 Aug 2020, Rafa? Mi?ecki wrote:
 
-In preparation for unconditionally passing the
-struct tasklet_struct pointer to all tasklet
-callbacks, switch to using the new tasklet_setup()
-and from_tasklet() to pass the tasklet pointer explicitly
-and remove .data fieldd
+> On Fri, 14 Aug 2020 at 13:41, Lee Jones <lee.jones@linaro.org> wrote:
+> > Fixes the following W=1 kernel build warning(s):
+> >
+> >  drivers/net/wireless/broadcom/b43/phy_common.c:467: warning: Function parameter or member 'work' not described in 'b43_phy_txpower_adjust_work'
+> 
+> Why you can't document @work instead? Should be quite a better solution.
 
-Signed-off-by: Romain Perier <romain.perier@gmail.com>
-Signed-off-by: Allen Pais <allen.lkml@gmail.com>
----
- drivers/net/wireless/zydas/zd1211rw/zd_usb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+It some circumstances it would, but not this one.
 
-diff --git a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-index 65b5985ad402..8b3d248bac6e 100644
---- a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-+++ b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-@@ -1140,9 +1140,9 @@ static void zd_rx_idle_timer_handler(struct work_struct *work)
- 	zd_usb_reset_rx(usb);
- }
+ 1. This 'kernel-doc' function is not referenced from any
+    documentation location i.e. it is presently unused and there is no
+    reason for it to be kernel-doc in the first place.
+ 2. This patch stops `scripts/find-unused-docs.sh` complaining about
+    phy_common.c
+ 3. 'b43_phy_txpower_adjust_work' is the only function that has been
+     documented as kernel-doc - why is that?  Seems like a mistake.
  
--static void zd_usb_reset_rx_idle_timer_tasklet(unsigned long param)
-+static void zd_usb_reset_rx_idle_timer_tasklet(struct tasklet_struct *t)
- {
--	struct zd_usb *usb = (struct zd_usb *)param;
-+	struct zd_usb *usb = from_tasklet(usb, t, rx.reset_timer_tasklet);
- 
- 	zd_usb_reset_rx_idle_timer(usb);
- }
-@@ -1178,8 +1178,8 @@ static inline void init_usb_rx(struct zd_usb *usb)
- 	}
- 	ZD_ASSERT(rx->fragment_length == 0);
- 	INIT_DELAYED_WORK(&rx->idle_work, zd_rx_idle_timer_handler);
--	rx->reset_timer_tasklet.func = zd_usb_reset_rx_idle_timer_tasklet;
--	rx->reset_timer_tasklet.data = (unsigned long)usb;
-+	rx->reset_timer_tasklet.func = (void (*)(unsigned long))
-+					zd_usb_reset_rx_idle_timer_tasklet;
- }
- 
- static inline void init_usb_tx(struct zd_usb *usb)
 -- 
-2.17.1
+Lee Jones [???]
+Senior Technical Lead - Developer Services
+Linaro.org ? Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
