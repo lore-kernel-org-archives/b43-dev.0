@@ -1,59 +1,46 @@
-From: Gustavo A. R. Silva <gustavoars@kernel.org>
-Date: Fri, 21 Aug 2020 01:44:12 -0500
-Subject: [PATCH][next] b43legacy: Use fallthrough pseudo-keyword
-Message-ID: <20200821064412.GA20612@embeddedor>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Fri, 21 Aug 2020 08:16:29 +0100
+Subject: [PATCH 17/32] wireless: broadcom: b43: phy_ht: Remove 9 year old TODO
+In-Reply-To: <20200821071644.109970-1-lee.jones@linaro.org>
+References: <20200821071644.109970-1-lee.jones@linaro.org>
+Message-ID: <20200821071644.109970-18-lee.jones@linaro.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, "Alexander A. Klimov" <grandmaster@al2klimov.de>, b43-dev@lists.infradead.org
 
-Replace the existing /* fall through */ comments and its variants with
-the new pseudo-keyword macro fallthrough[1].
+Fixes the following W=1 kernel build warning(s):
 
-[1] https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
+ drivers/net/wireless/broadcom/b43/phy_ht.c: In function ?b43_phy_ht_op_init?:
+ drivers/net/wireless/broadcom/b43/phy_ht.c:904:3: warning: suggest braces around empty body in an ?if? statement [-Wempty-body]
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Cc: linux-wireless at vger.kernel.org
+Cc: b43-dev at lists.infradead.org
+Cc: netdev at vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/net/wireless/broadcom/b43legacy/dma.c  | 2 +-
- drivers/net/wireless/broadcom/b43legacy/main.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_ht.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/wireless/broadcom/b43legacy/dma.c
-index f7594e2a896e..7e2f70c4207c 100644
---- a/drivers/net/wireless/broadcom/b43legacy/dma.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
-@@ -189,7 +189,7 @@ return dev->dma.tx_ring1;
- 	switch (queue_priority) {
- 	default:
- 		B43legacy_WARN_ON(1);
--		/* fallthrough */
-+		fallthrough;
- 	case 0:
- 		ring = dev->dma.tx_ring3;
- 		break;
-diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
-index 2eaf481f03f1..7fab9f107c10 100644
---- a/drivers/net/wireless/broadcom/b43legacy/main.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/main.c
-@@ -1537,7 +1537,7 @@ static int do_request_fw(struct b43legacy_wldev *dev,
- 		size = be32_to_cpu(hdr->size);
- 		if (size != (*fw)->size - sizeof(struct b43legacy_fw_header))
- 			goto err_format;
--		/* fallthrough */
-+		fallthrough;
- 	case B43legacy_FW_TYPE_IV:
- 		if (hdr->ver != 1)
- 			goto err_format;
-@@ -2076,7 +2076,7 @@ static void b43legacy_rate_memory_init(struct b43legacy_wldev *dev)
- 		b43legacy_rate_memory_write(dev, B43legacy_OFDM_RATE_36MB, 1);
- 		b43legacy_rate_memory_write(dev, B43legacy_OFDM_RATE_48MB, 1);
- 		b43legacy_rate_memory_write(dev, B43legacy_OFDM_RATE_54MB, 1);
--		/* fallthrough */
-+		fallthrough;
- 	case B43legacy_PHYTYPE_B:
- 		b43legacy_rate_memory_write(dev, B43legacy_CCK_RATE_1MB, 0);
- 		b43legacy_rate_memory_write(dev, B43legacy_CCK_RATE_2MB, 0);
+diff --git a/drivers/net/wireless/broadcom/b43/phy_ht.c b/drivers/net/wireless/broadcom/b43/phy_ht.c
+index c685b4bb5ed6e..d050971d150a5 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_ht.c
++++ b/drivers/net/wireless/broadcom/b43/phy_ht.c
+@@ -900,9 +900,6 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 	b43_phy_write(dev, 0x70, 0x50);
+ 	b43_phy_write(dev, 0x1ff, 0x30);
+ 
+-	if (0) /* TODO: condition */
+-		; /* TODO: PHY op on reg 0x217 */
+-
+ 	if (b43_current_band(dev->wl) == NL80211_BAND_5GHZ)
+ 		b43_phy_ht_classifier(dev, B43_PHY_HT_CLASS_CTL_CCK_EN, 0);
+ 	else
 -- 
-2.27.0
+2.25.1
