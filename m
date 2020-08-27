@@ -1,46 +1,97 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Fri, 21 Aug 2020 08:16:29 +0100
-Subject: [PATCH 17/32] wireless: broadcom: b43: phy_ht: Remove 9 year old TODO
-In-Reply-To: <20200821071644.109970-1-lee.jones@linaro.org>
-References: <20200821071644.109970-1-lee.jones@linaro.org>
-Message-ID: <20200821071644.109970-18-lee.jones@linaro.org>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 27 Aug 2020 10:42:12 +0300
+Subject: [PATCH 07/30] net: wireless: broadcom: b43: main: Add braces
+ around empty statements
+In-Reply-To: <20200817085018.GT4354@dell> (Lee Jones's message of "Mon, 17 Aug
+ 2020 09:50:18 +0100")
+References: <20200814113933.1903438-1-lee.jones@linaro.org>
+ <20200814113933.1903438-8-lee.jones@linaro.org>
+ <87v9hll0ro.fsf@codeaurora.org> <20200814164322.GP4354@dell>
+ <87eeo9kulw.fsf@codeaurora.org> <20200817085018.GT4354@dell>
+Message-ID: <87zh6gleln.fsf@codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, "Alexander A. Klimov" <grandmaster@al2klimov.de>, b43-dev@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, Martin Langer <martin-langer@gmx.de>, Stefano Brivio <stefano.brivio@polimi.it>, Michael Buesch <m@bues.ch>, van Dyk <kugelfang@gentoo.org>, Andreas Jaggi <andreas.jaggi@waterwave.ch>, Albert Herranz <albert_herranz@yahoo.es>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+Lee Jones <lee.jones@linaro.org> writes:
 
- drivers/net/wireless/broadcom/b43/phy_ht.c: In function ?b43_phy_ht_op_init?:
- drivers/net/wireless/broadcom/b43/phy_ht.c:904:3: warning: suggest braces around empty body in an ?if? statement [-Wempty-body]
+> On Fri, 14 Aug 2020, Kalle Valo wrote:
+>
+>> Lee Jones <lee.jones@linaro.org> writes:
+>> 
+>> > On Fri, 14 Aug 2020, Kalle Valo wrote:
+>> >
+>> >> Lee Jones <lee.jones@linaro.org> writes:
+>> >> 
+>> >> > Fixes the following W=1 kernel build warning(s):
+>> >> >
+>> >> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_dummy_transmission?:
+>> >> >  drivers/net/wireless/broadcom/b43/main.c:785:3: warning: suggest
+>> >> > braces around empty body in an ?if? statement [-Wempty-body]
+>> >> >  drivers/net/wireless/broadcom/b43/main.c: In function ?b43_do_interrupt_thread?:
+>> >> >  drivers/net/wireless/broadcom/b43/main.c:2017:3: warning: suggest
+>> >> > braces around empty body in an ?if? statement [-Wempty-body]
+>> >> >
+>> >> > Cc: Kalle Valo <kvalo@codeaurora.org>
+>> >> > Cc: "David S. Miller" <davem@davemloft.net>
+>> >> > Cc: Jakub Kicinski <kuba@kernel.org>
+>> >> > Cc: Martin Langer <martin-langer@gmx.de>
+>> >> > Cc: Stefano Brivio <stefano.brivio@polimi.it>
+>> >> > Cc: Michael Buesch <m@bues.ch>
+>> >> > Cc: van Dyk <kugelfang@gentoo.org>
+>> >> > Cc: Andreas Jaggi <andreas.jaggi@waterwave.ch>
+>> >> > Cc: Albert Herranz <albert_herranz@yahoo.es>
+>> >> > Cc: linux-wireless at vger.kernel.org
+>> >> > Cc: b43-dev at lists.infradead.org
+>> >> > Cc: netdev at vger.kernel.org
+>> >> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>> >> > ---
+>> >> >  drivers/net/wireless/broadcom/b43/main.c | 6 ++++--
+>> >> >  1 file changed, 4 insertions(+), 2 deletions(-)
+>> >> 
+>> >> Please don't copy the full directory structure to the title. I'll change
+>> >> the title to more simple version:
+>> >> 
+>> >> b43: add braces around empty statements
+>> >
+>> > This seems to go the other way.
+>> >
+>> > "net: wireless: b43" seems sensible.
+>> 
+>> Sorry, not understanding what you mean here.
+>
+> So I agree that:
+>
+>   "net: wireless: broadcom: b43: main"
+>
+> ... seems unnecessarily long and verbose.  However, IMHO:
+>
+>   "b43:"
+>
+> ... is too short and not forthcoming enough.  Obviously this fine when
+> something like `git log -- net/wireless`, as you already know what the
+> patch pertains to, however when someone who is not in the know (like I
+> would be) does `git log` and sees a "b43:" patch, they would have no
+> idea which subsystem this patch is adapting.  Even:
+>
+>   "wireless: b43:"
+>
+> ... would be worlds better.
+>
+> A Git log which omitted all subsystem tags would be of limited use.
 
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc: linux-wireless at vger.kernel.org
-Cc: b43-dev at lists.infradead.org
-Cc: netdev at vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/net/wireless/broadcom/b43/phy_ht.c | 3 ---
- 1 file changed, 3 deletions(-)
+There are good reasons why the style is like it is. If I would start
+adding "wireless:" tags to the title it would clutter 'git log
+--oneline' and gitk output, which I use all the time. And I'm not
+interested making my work harder, there would need to be really strong
+reasons why I would even recondiser changing it.
 
-diff --git a/drivers/net/wireless/broadcom/b43/phy_ht.c b/drivers/net/wireless/broadcom/b43/phy_ht.c
-index c685b4bb5ed6e..d050971d150a5 100644
---- a/drivers/net/wireless/broadcom/b43/phy_ht.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_ht.c
-@@ -900,9 +900,6 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
- 	b43_phy_write(dev, 0x70, 0x50);
- 	b43_phy_write(dev, 0x1ff, 0x30);
- 
--	if (0) /* TODO: condition */
--		; /* TODO: PHY op on reg 0x217 */
--
- 	if (b43_current_band(dev->wl) == NL80211_BAND_5GHZ)
- 		b43_phy_ht_classifier(dev, B43_PHY_HT_CLASS_CTL_CCK_EN, 0);
- 	else
+BTW, this is also documented in our wiki:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#commit_title_is_wrong
+
 -- 
-2.25.1
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
