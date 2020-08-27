@@ -1,10 +1,10 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 27 Aug 2020 10:15:40 +0000 (UTC)
-Subject: [PATCH 01/16] wireless: ath5k: convert tasklets to use new
+Date: Thu, 27 Aug 2020 10:16:39 +0000 (UTC)
+Subject: [PATCH 02/16] wireless: ath9k: convert tasklets to use new
  tasklet_setup() API
-In-Reply-To: <20200817090637.26887-2-allen.cryptic@gmail.com>
-References: <20200817090637.26887-2-allen.cryptic@gmail.com>
-Message-ID: <20200827101541.23AA0C433AF@smtp.codeaurora.org>
+In-Reply-To: <20200817090637.26887-3-allen.cryptic@gmail.com>
+References: <20200817090637.26887-3-allen.cryptic@gmail.com>
+Message-ID: <20200827101640.74F89C433CB@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -25,9 +25,9 @@ Allen Pais <allen.cryptic@gmail.com> wrote:
 
 Patch applied to ath-next branch of ath.git, thanks.
 
-c068a9ec3c94 ath5k: convert tasklets to use new tasklet_setup() API
+f91a35b46af0 ath9k: convert tasklets to use new tasklet_setup() API
 
 -- 
-https://patchwork.kernel.org/patch/11717393/
+https://patchwork.kernel.org/patch/11717397/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
