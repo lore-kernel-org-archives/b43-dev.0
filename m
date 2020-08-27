@@ -1,9 +1,9 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 27 Aug 2020 13:08:40 +0000 (UTC)
-Subject: [PATCH][next] b43: Use fallthrough pseudo-keyword
-In-Reply-To: <20200821064218.GA19502@embeddedor>
-References: <20200821064218.GA19502@embeddedor>
-Message-ID: <20200827130840.9D642C433C6@smtp.codeaurora.org>
+Date: Thu, 27 Aug 2020 13:09:04 +0000 (UTC)
+Subject: [PATCH][next] b43legacy: Use fallthrough pseudo-keyword
+In-Reply-To: <20200821064412.GA20612@embeddedor>
+References: <20200821064412.GA20612@embeddedor>
+Message-ID: <20200827130904.884A7C43387@smtp.codeaurora.org>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,9 +21,9 @@ To: b43-dev@lists.infradead.org
 
 Patch applied to wireless-drivers-next.git, thanks.
 
-7b54281cb685 b43: Use fallthrough pseudo-keyword
+ce3b6845fc4d b43legacy: Use fallthrough pseudo-keyword
 
 -- 
-https://patchwork.kernel.org/patch/11728229/
+https://patchwork.kernel.org/patch/11728231/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
