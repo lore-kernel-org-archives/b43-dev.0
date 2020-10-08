@@ -1,9 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:18 +0000
-Subject: [PATCH net 006/117] mac80211: set KEY_OPS_W.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:19 +0000
+Subject: [PATCH net 007/117] mac80211: set KEY_CONF_OPS.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-6-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-7-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -15,23 +15,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: d0a77c6569ab ("mac80211: allow writing TX PN in debugfs")
+Fixes: 8f20fc24986a ("[MAC80211]: embed key conf in key, fix driver interface")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
  net/mac80211/debugfs_key.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/net/mac80211/debugfs_key.c b/net/mac80211/debugfs_key.c
-index ea5908465f2e..b5fe68b683e7 100644
+index b5fe68b683e7..d7c0c28045ef 100644
 --- a/net/mac80211/debugfs_key.c
 +++ b/net/mac80211/debugfs_key.c
-@@ -39,6 +39,7 @@ static const struct file_operations key_ ##name## _ops = {		\
- 	.write = key_##name##_write,					\
+@@ -55,6 +55,7 @@ static const struct file_operations key_ ##name## _ops = {		\
+ 	.read = key_conf_##name##_read,					\
  	.open = simple_open,						\
  	.llseek = generic_file_llseek,					\
 +	.owner = THIS_MODULE,						\
  }
  
- #define KEY_FILE(name, format)						\
+ #define KEY_CONF_FILE(name, format)					\
 -- 
 2.17.1
