@@ -1,8 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:13 +0000
-Subject: [PATCH net 001/117] mac80211: set .owner to THIS_MODULE in
- debugfs_netdev.c
-Message-ID: <20201008155209.18025-1-ap420073@gmail.com>
+Date: Thu,  8 Oct 2020 15:50:14 +0000
+Subject: [PATCH net 002/117] mac80211: set rcname_ops.owner to THIS_MODULE
+In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
+References: <20201008155209.18025-1-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-2-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -14,23 +15,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: e9f207f0ff90 ("[MAC80211]: Add debugfs attributes.")
+Fixes: 4b7679a561e5 ("mac80211: clean up rate control API")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- net/mac80211/debugfs_netdev.c | 1 +
+ net/mac80211/rate.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/net/mac80211/debugfs_netdev.c b/net/mac80211/debugfs_netdev.c
-index fe8a7a87e513..8efa31ae7334 100644
---- a/net/mac80211/debugfs_netdev.c
-+++ b/net/mac80211/debugfs_netdev.c
-@@ -127,6 +127,7 @@ static const struct file_operations name##_ops = {			\
- 	.write = (_write),						\
- 	.open = simple_open,						\
- 	.llseek = generic_file_llseek,					\
-+	.owner = THIS_MODULE,						\
- }
+diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
+index b051f125d3af..4f9d33fc895e 100644
+--- a/net/mac80211/rate.c
++++ b/net/mac80211/rate.c
+@@ -218,6 +218,7 @@ const struct file_operations rcname_ops = {
+ 	.read = rcname_read,
+ 	.open = simple_open,
+ 	.llseek = default_llseek,
++	.owner = THIS_MODULE,
+ };
+ #endif
  
- #define _IEEE80211_IF_FILE_R_FN(name)					\
 -- 
 2.17.1
