@@ -1,10 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:42 +0000
-Subject: [PATCH net 090/117] wil6210: set fops_fw_capabilities.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:43 +0000
+Subject: [PATCH net 091/117] wil6210: set fops_fw_version.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-90-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-91-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +15,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 12bace75704e ("wil6210: extract firmware capabilities from FW file")
+Fixes: 13cd9f758a55 ("wil6210: extract firmware version from file header")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
  drivers/net/wireless/ath/wil6210/debugfs.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/ath/wil6210/debugfs.c b/drivers/net/wireless/ath/wil6210/debugfs.c
-index c4c159656eb6..b147b97c0d5e 100644
+index b147b97c0d5e..c1a43de9a630 100644
 --- a/drivers/net/wireless/ath/wil6210/debugfs.c
 +++ b/drivers/net/wireless/ath/wil6210/debugfs.c
-@@ -2204,6 +2204,7 @@ static const struct file_operations fops_fw_capabilities = {
+@@ -2231,6 +2231,7 @@ static const struct file_operations fops_fw_version = {
  	.release	= single_release,
  	.read		= seq_read,
  	.llseek		= seq_lseek,
 +	.owner		= THIS_MODULE,
  };
  
- /*---------FW version------------*/
+ /*---------suspend_stats---------*/
 -- 
 2.17.1
