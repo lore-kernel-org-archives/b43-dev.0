@@ -1,9 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:40 +0000
-Subject: [PATCH net 088/117] wil6210: set fops_led_cfg.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:41 +0000
+Subject: [PATCH net 089/117] wil6210: set fops_led_blink_time.owner to
+ THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-88-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-89-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,16 +23,16 @@ Signed-off-by: Taehee Yoo <ap420073@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/ath/wil6210/debugfs.c b/drivers/net/wireless/ath/wil6210/debugfs.c
-index afbe30989ee4..54285e5420f6 100644
+index 54285e5420f6..c4c159656eb6 100644
 --- a/drivers/net/wireless/ath/wil6210/debugfs.c
 +++ b/drivers/net/wireless/ath/wil6210/debugfs.c
-@@ -2113,6 +2113,7 @@ static const struct file_operations fops_led_cfg = {
- 	.read = wil_read_file_led_cfg,
- 	.write = wil_write_file_led_cfg,
+@@ -2179,6 +2179,7 @@ static const struct file_operations fops_led_blink_time = {
+ 	.read = wil_read_led_blink_time,
+ 	.write = wil_write_led_blink_time,
  	.open  = simple_open,
 +	.owner = THIS_MODULE,
  };
  
- /* led_blink_time, write:
+ /*---------FW capabilities------------*/
 -- 
 2.17.1
