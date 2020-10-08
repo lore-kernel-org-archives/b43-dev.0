@@ -1,9 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:22 +0000
-Subject: [PATCH net 070/117] ath10k: set fops_btcoex.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:25 +0000
+Subject: [PATCH net 073/117] wcn36xx: set fops_wcn36xx_bmps.owner to
+ THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-70-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-73-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -15,25 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 844fa5722712 ("ath10k: debugfs file to enable Bluetooth coexistence feature")
+Fixes: 8e84c2582169 ("wcn36xx: mac80211 driver for Qualcomm WCN3660/WCN3680 hardware")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/ath/ath10k/debug.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/wcn36xx/debug.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/debug.c b/drivers/net/wireless/ath/ath10k/debug.c
-index 9789ef98d25b..d1f8cf0d5604 100644
---- a/drivers/net/wireless/ath/ath10k/debug.c
-+++ b/drivers/net/wireless/ath/ath10k/debug.c
-@@ -2041,7 +2041,8 @@ static ssize_t ath10k_read_btcoex(struct file *file, char __user *ubuf,
- static const struct file_operations fops_btcoex = {
- 	.read = ath10k_read_btcoex,
- 	.write = ath10k_write_btcoex,
--	.open = simple_open
-+	.open = simple_open,
+diff --git a/drivers/net/wireless/ath/wcn36xx/debug.c b/drivers/net/wireless/ath/wcn36xx/debug.c
+index 389b5e7129a6..6bd874c0a9f5 100644
+--- a/drivers/net/wireless/ath/wcn36xx/debug.c
++++ b/drivers/net/wireless/ath/wcn36xx/debug.c
+@@ -93,6 +93,7 @@ static const struct file_operations fops_wcn36xx_bmps = {
+ 	.open = simple_open,
+ 	.read  =       read_file_bool_bmps,
+ 	.write =       write_file_bool_bmps,
 +	.owner = THIS_MODULE,
  };
  
- static ssize_t ath10k_write_enable_extd_tx_stats(struct file *file,
+ static ssize_t write_file_dump(struct file *file,
 -- 
 2.17.1
