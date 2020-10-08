@@ -1,10 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:16 +0000
-Subject: [PATCH net 004/117] mac80211: set minstrel_ht_stat_csv_fops.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:17 +0000
+Subject: [PATCH net 005/117] mac80211: set KEY_OPS.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-4-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-5-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +15,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 2cae0b6a70d6 ("mac80211: add new Minstrel-HT statistic output via csv")
+Fixes: e9f207f0ff90 ("[MAC80211]: Add debugfs attributes.")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- net/mac80211/rc80211_minstrel_ht_debugfs.c | 1 +
+ net/mac80211/debugfs_key.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/net/mac80211/rc80211_minstrel_ht_debugfs.c b/net/mac80211/rc80211_minstrel_ht_debugfs.c
-index 6021e394e5da..cdb51aa460a3 100644
---- a/net/mac80211/rc80211_minstrel_ht_debugfs.c
-+++ b/net/mac80211/rc80211_minstrel_ht_debugfs.c
-@@ -312,6 +312,7 @@ static const struct file_operations minstrel_ht_stat_csv_fops = {
- 	.read = minstrel_stats_read,
- 	.release = minstrel_stats_release,
- 	.llseek = no_llseek,
-+	.owner = THIS_MODULE,
- };
+diff --git a/net/mac80211/debugfs_key.c b/net/mac80211/debugfs_key.c
+index 98a713475e0f..ea5908465f2e 100644
+--- a/net/mac80211/debugfs_key.c
++++ b/net/mac80211/debugfs_key.c
+@@ -30,6 +30,7 @@ static const struct file_operations key_ ##name## _ops = {		\
+ 	.read = key_##name##_read,					\
+ 	.open = simple_open,						\
+ 	.llseek = generic_file_llseek,					\
++	.owner = THIS_MODULE,						\
+ }
  
- void
+ #define KEY_OPS_W(name)							\
 -- 
 2.17.1
