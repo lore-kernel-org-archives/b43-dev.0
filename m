@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:50 +0000
-Subject: [PATCH net 038/117] wl1251: set tx_queue_status_ops.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:51 +0000
+Subject: [PATCH net 039/117] iwlwifi: set rs_sta_dbgfs_scale_table_ops.owner
+ to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-38-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-39-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: b7339b1de0f7 ("wl1251: add tx queue status to debugfs")
+Fixes: 5ae212c9273d ("[PATCH] iwlwifi: add read rate scale table debugfs function")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/ti/wl1251/debugfs.c | 1 +
+ drivers/net/wireless/intel/iwlwifi/dvm/rs.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ti/wl1251/debugfs.c b/drivers/net/wireless/ti/wl1251/debugfs.c
-index 165e346bf383..0a26cee0f287 100644
---- a/drivers/net/wireless/ti/wl1251/debugfs.c
-+++ b/drivers/net/wireless/ti/wl1251/debugfs.c
-@@ -237,6 +237,7 @@ static const struct file_operations tx_queue_status_ops = {
- 	.read = tx_queue_status_read,
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/rs.c b/drivers/net/wireless/intel/iwlwifi/dvm/rs.c
+index 4fa4eab2d7f3..d013203c7d5a 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/rs.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/rs.c
+@@ -3172,6 +3172,7 @@ static const struct file_operations rs_sta_dbgfs_scale_table_ops = {
+ 	.read = rs_sta_dbgfs_scale_table_read,
  	.open = simple_open,
- 	.llseek = generic_file_llseek,
+ 	.llseek = default_llseek,
 +	.owner = THIS_MODULE,
  };
- 
- static void wl1251_debugfs_delete_files(struct wl1251 *wl)
+ static ssize_t rs_sta_dbgfs_stats_table_read(struct file *file,
+ 			char __user *user_buf, size_t count, loff_t *ppos)
 -- 
 2.17.1
