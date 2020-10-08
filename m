@@ -1,10 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:48 +0000
-Subject: [PATCH net 036/117] wl12xx: set DEBUGFS_READONLY_FILE.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:49 +0000
+Subject: [PATCH net 037/117] wl12xx: set tx_queue_len_ops.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-36-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-37-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,16 +22,16 @@ Signed-off-by: Taehee Yoo <ap420073@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/ti/wl1251/debugfs.c b/drivers/net/wireless/ti/wl1251/debugfs.c
-index 0b09ffec9027..21d432532bc3 100644
+index 21d432532bc3..165e346bf383 100644
 --- a/drivers/net/wireless/ti/wl1251/debugfs.c
 +++ b/drivers/net/wireless/ti/wl1251/debugfs.c
-@@ -68,6 +68,7 @@ static const struct file_operations sub## _ ##name## _ops = {		\
- 	.read = sub## _ ##name## _read,					\
- 	.open = simple_open,						\
- 	.llseek	= generic_file_llseek,					\
-+	.owner = THIS_MODULE,						\
+@@ -214,6 +214,7 @@ static const struct file_operations tx_queue_len_ops = {
+ 	.read = tx_queue_len_read,
+ 	.open = simple_open,
+ 	.llseek = generic_file_llseek,
++	.owner = THIS_MODULE,
  };
  
- #define DEBUGFS_FWSTATS_ADD(sub, name)				\
+ static ssize_t tx_queue_status_read(struct file *file, char __user *userbuf,
 -- 
 2.17.1
