@@ -1,10 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:19 +0000
-Subject: [PATCH net 067/117] ath11k: set fops_simulate_radar.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:21 +0000
+Subject: [PATCH net 069/117] ath10k: set fops_quiet_period.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-67-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-69-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,25 +15,25 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Fixes: 63fb32df9786 ("ath10k: add debugfs entry to configure quiet period")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/ath/ath11k/debug.c | 3 ++-
+ drivers/net/wireless/ath/ath10k/debug.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath11k/debug.c b/drivers/net/wireless/ath/ath11k/debug.c
-index da085c0a01ed..c3475ece2720 100644
---- a/drivers/net/wireless/ath/ath11k/debug.c
-+++ b/drivers/net/wireless/ath/ath11k/debug.c
-@@ -1143,7 +1143,8 @@ static ssize_t ath11k_write_simulate_radar(struct file *file,
- 
- static const struct file_operations fops_simulate_radar = {
- 	.write = ath11k_write_simulate_radar,
+diff --git a/drivers/net/wireless/ath/ath10k/debug.c b/drivers/net/wireless/ath/ath10k/debug.c
+index 78bbb0380323..9789ef98d25b 100644
+--- a/drivers/net/wireless/ath/ath10k/debug.c
++++ b/drivers/net/wireless/ath/ath10k/debug.c
+@@ -1956,7 +1956,8 @@ static ssize_t ath10k_read_quiet_period(struct file *file, char __user *ubuf,
+ static const struct file_operations fops_quiet_period = {
+ 	.read = ath10k_read_quiet_period,
+ 	.write = ath10k_write_quiet_period,
 -	.open = simple_open
 +	.open = simple_open,
 +	.owner = THIS_MODULE,
  };
  
- int ath11k_debug_register(struct ath11k *ar)
+ static ssize_t ath10k_write_btcoex(struct file *file,
 -- 
 2.17.1
