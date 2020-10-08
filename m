@@ -1,9 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:24 +0000
-Subject: [PATCH net 072/117] ath10k: set fops_peer_stats.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:27 +0000
+Subject: [PATCH net 075/117] wireless: set fops_ioblob.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-72-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-75-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -15,25 +15,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: cc61a1bbbc0e ("ath10k: enable debugfs provision to enable Peer Stats feature")
+Fixes: 2be7d22f0625 ("wireless: add new wil6210 802.11ad 60GHz driver")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/ath/ath10k/debug.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/wil6210/debugfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/debug.c b/drivers/net/wireless/ath/ath10k/debug.c
-index 8829232e2b34..afde3d8048e8 100644
---- a/drivers/net/wireless/ath/ath10k/debug.c
-+++ b/drivers/net/wireless/ath/ath10k/debug.c
-@@ -2167,7 +2167,8 @@ static ssize_t ath10k_read_peer_stats(struct file *file, char __user *ubuf,
- static const struct file_operations fops_peer_stats = {
- 	.read = ath10k_read_peer_stats,
- 	.write = ath10k_write_peer_stats,
--	.open = simple_open
-+	.open = simple_open,
-+	.owner = THIS_MODULE,
+diff --git a/drivers/net/wireless/ath/wil6210/debugfs.c b/drivers/net/wireless/ath/wil6210/debugfs.c
+index 11d0c79e9056..c155baa3655f 100644
+--- a/drivers/net/wireless/ath/wil6210/debugfs.c
++++ b/drivers/net/wireless/ath/wil6210/debugfs.c
+@@ -678,6 +678,7 @@ static const struct file_operations fops_ioblob = {
+ 	.read =		wil_read_file_ioblob,
+ 	.open =		simple_open,
+ 	.llseek =	default_llseek,
++	.owner =	THIS_MODULE,
  };
  
- static ssize_t ath10k_debug_fw_checksums_read(struct file *file,
+ static
 -- 
 2.17.1
