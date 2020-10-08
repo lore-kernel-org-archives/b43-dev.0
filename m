@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:01 +0000
-Subject: [PATCH net 049/117] iwlwifi: runtime: set
- _FWRT_DEBUGFS_READ_FILE_OPS.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:02 +0000
+Subject: [PATCH net 050/117] iwlwifi: runtime: set
+ _FWRT_DEBUGFS_READ_WRITE_FILE_OPS.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-49-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-50-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,16 +23,16 @@ Signed-off-by: Taehee Yoo <ap420073@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
-index 267ad4eddb5c..c0edf6fb3760 100644
+index c0edf6fb3760..d99ed6b2f781 100644
 --- a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
 +++ b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
-@@ -122,6 +122,7 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
+@@ -151,6 +151,7 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
  	.open = _iwl_dbgfs_##name##_open,				\
  	.llseek = generic_file_llseek,					\
  	.release = _iwl_dbgfs_release,					\
 +	.owner = THIS_MODULE,						\
  }
  
- #define FWRT_DEBUGFS_WRITE_WRAPPER(name, buflen, argtype)		\
+ #define _FWRT_DEBUGFS_WRITE_FILE_OPS(name, buflen, argtype)		\
 -- 
 2.17.1
