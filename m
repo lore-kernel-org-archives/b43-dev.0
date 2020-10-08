@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:26 +0000
-Subject: [PATCH net 074/117] wcn36xx: set fops_wcn36xx_dump.owner to
+Date: Thu,  8 Oct 2020 15:51:23 +0000
+Subject: [PATCH net 071/117] ath10k: set fops_enable_extd_tx_stats.owner to
  THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-74-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-71-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +16,25 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 8e84c2582169 ("wcn36xx: mac80211 driver for Qualcomm WCN3660/WCN3680 hardware")
+Fixes: 348cd95c8196 ("ath10k: add debugfs entry to enable extended tx stats")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/ath/wcn36xx/debug.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/ath10k/debug.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/debug.c b/drivers/net/wireless/ath/wcn36xx/debug.c
-index 6bd874c0a9f5..4b78be5c67e8 100644
---- a/drivers/net/wireless/ath/wcn36xx/debug.c
-+++ b/drivers/net/wireless/ath/wcn36xx/debug.c
-@@ -135,6 +135,7 @@ static ssize_t write_file_dump(struct file *file,
- static const struct file_operations fops_wcn36xx_dump = {
- 	.open = simple_open,
- 	.write =       write_file_dump,
+diff --git a/drivers/net/wireless/ath/ath10k/debug.c b/drivers/net/wireless/ath/ath10k/debug.c
+index d1f8cf0d5604..8829232e2b34 100644
+--- a/drivers/net/wireless/ath/ath10k/debug.c
++++ b/drivers/net/wireless/ath/ath10k/debug.c
+@@ -2097,7 +2097,8 @@ static ssize_t ath10k_read_enable_extd_tx_stats(struct file *file,
+ static const struct file_operations fops_enable_extd_tx_stats = {
+ 	.read = ath10k_read_enable_extd_tx_stats,
+ 	.write = ath10k_write_enable_extd_tx_stats,
+-	.open = simple_open
++	.open = simple_open,
 +	.owner = THIS_MODULE,
  };
  
- #define ADD_FILE(name, mode, fop, priv_data)		\
+ static ssize_t ath10k_write_peer_stats(struct file *file,
 -- 
 2.17.1
