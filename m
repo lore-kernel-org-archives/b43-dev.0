@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:34 +0000
-Subject: [PATCH net 022/117] netdevsim: set nsim_dev_health_break_fops.owner
- to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:35 +0000
+Subject: [PATCH net 023/117] netdevsim: set
+ nsim_udp_tunnels_info_reset_fops.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-22-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-23-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 82c93a87bf8b ("netdevsim: implement couple of testing devlink health reporters")
+Fixes: 424be63ad831 ("netdevsim: add UDP tunnel port offload support")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/netdevsim/health.c | 1 +
+ drivers/net/netdevsim/udp_tunnels.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/netdevsim/health.c b/drivers/net/netdevsim/health.c
-index 62958b238d50..21e2974660e7 100644
---- a/drivers/net/netdevsim/health.c
-+++ b/drivers/net/netdevsim/health.c
-@@ -261,6 +261,7 @@ static const struct file_operations nsim_dev_health_break_fops = {
+diff --git a/drivers/net/netdevsim/udp_tunnels.c b/drivers/net/netdevsim/udp_tunnels.c
+index 22c06a76033c..2482b0f80b2f 100644
+--- a/drivers/net/netdevsim/udp_tunnels.c
++++ b/drivers/net/netdevsim/udp_tunnels.c
+@@ -119,6 +119,7 @@ static const struct file_operations nsim_udp_tunnels_info_reset_fops = {
  	.open = simple_open,
- 	.write = nsim_dev_health_break_write,
+ 	.write = nsim_udp_tunnels_info_reset_write,
  	.llseek = generic_file_llseek,
 +	.owner = THIS_MODULE,
  };
  
- int nsim_dev_health_init(struct nsim_dev *nsim_dev, struct devlink *devlink)
+ int nsim_udp_tunnels_info_create(struct nsim_dev *nsim_dev,
 -- 
 2.17.1
