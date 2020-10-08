@@ -1,10 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:45 +0000
-Subject: [PATCH net 093/117] wil6210: set fops_compressed_rx_status.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:46 +0000
+Subject: [PATCH net 094/117] cw1200: set fops_wsm_dumps.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-93-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-94-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +15,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 96c93589e2df ("wil6210: initialize TX and RX enhanced DMA rings")
+Fixes: a910e4a94f69 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/ath/wil6210/debugfs.c | 1 +
+ drivers/net/wireless/st/cw1200/debug.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/wil6210/debugfs.c b/drivers/net/wireless/ath/wil6210/debugfs.c
-index 4ac558f95586..7540c49aba3f 100644
---- a/drivers/net/wireless/ath/wil6210/debugfs.c
-+++ b/drivers/net/wireless/ath/wil6210/debugfs.c
-@@ -2347,6 +2347,7 @@ static const struct file_operations fops_compressed_rx_status = {
- 	.read = seq_read,
- 	.write = wil_compressed_rx_status_write,
- 	.llseek	= seq_lseek,
+diff --git a/drivers/net/wireless/st/cw1200/debug.c b/drivers/net/wireless/st/cw1200/debug.c
+index 8686929c70df..bcb8757c34ae 100644
+--- a/drivers/net/wireless/st/cw1200/debug.c
++++ b/drivers/net/wireless/st/cw1200/debug.c
+@@ -355,6 +355,7 @@ static const struct file_operations fops_wsm_dumps = {
+ 	.open = simple_open,
+ 	.write = cw1200_wsm_dumps,
+ 	.llseek = default_llseek,
 +	.owner = THIS_MODULE,
  };
  
- /*----------------*/
+ int cw1200_debug_init(struct cw1200_common *priv)
 -- 
 2.17.1
