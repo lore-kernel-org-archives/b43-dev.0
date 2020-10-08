@@ -1,10 +1,9 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:14 +0000
-Subject: [PATCH net 062/117] iwlagn: set DEBUGFS_READ_WRITE_FILE_OPS.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:15 +0000
+Subject: [PATCH net 063/117] rtlwifi: set file_ops_common.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-62-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-63-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +15,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 87e5666c0722 ("iwlagn: transport handler can register debugfs entries")
+Fixes: 610247f46feb ("rtlwifi: Improve debugging by using debugfs")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 1 +
+ drivers/net/wireless/realtek/rtlwifi/debug.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index 7c13184fc8e7..f228e362b71f 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -2522,6 +2522,7 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
- 	.read = iwl_dbgfs_##name##_read,				\
- 	.open = simple_open,						\
- 	.llseek = generic_file_llseek,					\
-+	.owner = THIS_MODULE,						\
+diff --git a/drivers/net/wireless/realtek/rtlwifi/debug.c b/drivers/net/wireless/realtek/rtlwifi/debug.c
+index 55db71c766fe..0a368b1dd1b5 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/debug.c
++++ b/drivers/net/wireless/realtek/rtlwifi/debug.c
+@@ -89,6 +89,7 @@ static const struct file_operations file_ops_common = {
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
+ 	.release = single_release,
++	.owner = THIS_MODULE,
  };
  
- struct iwl_dbgfs_tx_queue_priv {
+ static int rtl_debug_get_mac_page(struct seq_file *m, void *v)
 -- 
 2.17.1
