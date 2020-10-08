@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:44 +0000
-Subject: [PATCH net 032/117] wl1271: set DEBUGFS_READONLY_FILE.owner to
+Date: Thu,  8 Oct 2020 15:50:45 +0000
+Subject: [PATCH net 033/117] wl1271: set DEBUGFS_FWSTATS_FILE.owner to
  THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-32-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-33-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,16 +23,16 @@ Signed-off-by: Taehee Yoo <ap420073@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/ti/wlcore/debugfs.h b/drivers/net/wireless/ti/wlcore/debugfs.h
-index fc3bb0d2ab8d..9cc2dee42f51 100644
+index 9cc2dee42f51..681dead95e0c 100644
 --- a/drivers/net/wireless/ti/wlcore/debugfs.h
 +++ b/drivers/net/wireless/ti/wlcore/debugfs.h
-@@ -35,6 +35,7 @@ static const struct file_operations name## _ops = {			\
- 	.read = name## _read,						\
+@@ -69,6 +69,7 @@ static const struct file_operations sub## _ ##name## _ops = {		\
+ 	.read = sub## _ ##name## _read,					\
  	.open = simple_open,						\
  	.llseek	= generic_file_llseek,					\
 +	.owner = THIS_MODULE,						\
  };
  
- #define DEBUGFS_ADD(name, parent)					\
+ #define DEBUGFS_FWSTATS_FILE_ARRAY(sub, name, len, struct_type)		\
 -- 
 2.17.1
