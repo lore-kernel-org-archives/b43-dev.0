@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:58 +0000
-Subject: [PATCH net 046/117] iwlwifi: mvm: set
- rs_sta_dbgfs_drv_tx_stats_ops.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:59 +0000
+Subject: [PATCH net 047/117] iwlwifi: mvm: set .owner to THIS_MODULE in
+ debugfs.h
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-46-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-47-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +16,37 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 757cf23b4b4b ("iwlwifi: mvm: add per rate tx stats")
+Fixes: 8ca151b568b6 ("iwlwifi: add the MVM driver")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/debugfs.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-index 5b81cb1bdd3b..6fc2c841a873 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -4042,6 +4042,7 @@ static const struct file_operations rs_sta_dbgfs_drv_tx_stats_ops = {
- 	.write = rs_sta_dbgfs_drv_tx_stats_write,
- 	.open = simple_open,
- 	.llseek = default_llseek,
-+	.owner = THIS_MODULE,
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.h b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.h
+index a83d252c0602..5bf4f7801b83 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.h
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.h
+@@ -63,6 +63,7 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
+ 	.read = iwl_dbgfs_##name##_read,				\
+ 	.open = simple_open,						\
+ 	.llseek = generic_file_llseek,					\
++	.owner = THIS_MODULE,						\
+ }
+ 
+ #define MVM_DEBUGFS_WRITE_WRAPPER(name, buflen, argtype)		\
+@@ -87,6 +88,7 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
+ 	.read = iwl_dbgfs_##name##_read,				\
+ 	.open = simple_open,						\
+ 	.llseek = generic_file_llseek,					\
++	.owner = THIS_MODULE,						\
  };
  
- static ssize_t iwl_dbgfs_ss_force_read(struct file *file,
+ #define _MVM_DEBUGFS_WRITE_FILE_OPS(name, buflen, argtype)		\
+@@ -95,4 +97,5 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
+ 	.write = _iwl_dbgfs_##name##_write,				\
+ 	.open = simple_open,						\
+ 	.llseek = generic_file_llseek,					\
++	.owner = THIS_MODULE,						\
+ };
 -- 
 2.17.1
