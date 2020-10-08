@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:51 +0000
-Subject: [PATCH net 099/117] net: mt7601u: set fops_ampdu_stat.owner to
+Date: Thu,  8 Oct 2020 15:51:52 +0000
+Subject: [PATCH net 100/117] net: mt7601u: set fops_eeprom_param.owner to
  THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-99-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-100-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,16 +23,16 @@ Signed-off-by: Taehee Yoo <ap420073@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/mediatek/mt7601u/debugfs.c b/drivers/net/wireless/mediatek/mt7601u/debugfs.c
-index 300242bce799..03f7235a90ab 100644
+index 03f7235a90ab..3edf153dc68c 100644
 --- a/drivers/net/wireless/mediatek/mt7601u/debugfs.c
 +++ b/drivers/net/wireless/mediatek/mt7601u/debugfs.c
-@@ -84,6 +84,7 @@ static const struct file_operations fops_ampdu_stat = {
+@@ -143,6 +143,7 @@ static const struct file_operations fops_eeprom_param = {
  	.read = seq_read,
  	.llseek = seq_lseek,
  	.release = single_release,
 +	.owner = THIS_MODULE,
  };
  
- static int
+ void mt7601u_init_debugfs(struct mt7601u_dev *dev)
 -- 
 2.17.1
