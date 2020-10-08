@@ -1,9 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:38 +0000
-Subject: [PATCH net 026/117] ieee802154: set test_int_fops.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:39 +0000
+Subject: [PATCH net 027/117] i2400m: set i2400m_rx_stats_fops.owner to
+ THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-26-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-27-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -15,25 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: ded845a781a5 ("ieee802154: Add CA8210 IEEE 802.15.4 device driver")
+Fixes: c71228caf91e ("i2400m: debugfs controls")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/ieee802154/ca8210.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wimax/i2400m/debugfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-index 4eb64709d44c..d7b68c1279e6 100644
---- a/drivers/net/ieee802154/ca8210.c
-+++ b/drivers/net/ieee802154/ca8210.c
-@@ -2672,7 +2672,8 @@ static const struct file_operations test_int_fops = {
- 	.open =           ca8210_test_int_open,
- 	.release =        NULL,
- 	.unlocked_ioctl = ca8210_test_int_ioctl,
--	.poll =           ca8210_test_int_poll
-+	.poll =           ca8210_test_int_poll,
-+	.owner =	  THIS_MODULE,
+diff --git a/drivers/net/wimax/i2400m/debugfs.c b/drivers/net/wimax/i2400m/debugfs.c
+index 1c640b41ea4c..9eda1535f777 100644
+--- a/drivers/net/wimax/i2400m/debugfs.c
++++ b/drivers/net/wimax/i2400m/debugfs.c
+@@ -87,6 +87,7 @@ const struct file_operations i2400m_rx_stats_fops = {
+ 	.read =		i2400m_rx_stats_read,
+ 	.write =	i2400m_rx_stats_write,
+ 	.llseek =	default_llseek,
++	.owner =	THIS_MODULE,
  };
  
- /* Init/Deinit */
+ 
 -- 
 2.17.1
