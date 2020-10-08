@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:32 +0000
-Subject: [PATCH net 020/117] batman-adv: set batadv_log_fops.owner to
+Date: Thu,  8 Oct 2020 15:50:33 +0000
+Subject: [PATCH net 021/117] 6lowpan: iphc: set lowpan_ctx_pfx_fops.owner to
  THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-20-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-21-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 9e466250ede3 ("batman-adv: Prefix bat_debugfs local static functions with batadv_")
+Fixes: 5609c185f24d ("6lowpan: iphc: add support for stateful compression")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- net/batman-adv/log.c | 1 +
+ net/6lowpan/debugfs.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/net/batman-adv/log.c b/net/batman-adv/log.c
-index a67b2b091447..5f887bca2549 100644
---- a/net/batman-adv/log.c
-+++ b/net/batman-adv/log.c
-@@ -180,6 +180,7 @@ static const struct file_operations batadv_log_fops = {
- 	.read           = batadv_log_read,
- 	.poll           = batadv_log_poll,
- 	.llseek         = no_llseek,
+diff --git a/net/6lowpan/debugfs.c b/net/6lowpan/debugfs.c
+index 1c140af06d52..29c3627a00e2 100644
+--- a/net/6lowpan/debugfs.c
++++ b/net/6lowpan/debugfs.c
+@@ -161,6 +161,7 @@ static const struct file_operations lowpan_ctx_pfx_fops = {
+ 	.write		= lowpan_ctx_pfx_write,
+ 	.llseek		= seq_lseek,
+ 	.release	= single_release,
 +	.owner		= THIS_MODULE,
  };
  
- /**
+ static void lowpan_dev_debugfs_ctx_init(struct net_device *dev,
 -- 
 2.17.1
