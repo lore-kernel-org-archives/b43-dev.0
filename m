@@ -1,33 +1,40 @@
 From: Johannes Berg <johannes@sipsolutions.net>
-Date: Thu, 08 Oct 2020 18:06:56 +0200
-Subject: [PATCH net 001/117] mac80211: set .owner to THIS_MODULE in
- debugfs_netdev.c
-In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
- (sfid-20201008_175239_508186_DB541C11)
-References: <20201008155209.18025-1-ap420073@gmail.com>
- (sfid-20201008_175239_508186_DB541C11)
-Message-ID: <e385f0c4d37812d9e69369645082baf4a352b6c3.camel@sipsolutions.net>
+Date: Thu, 08 Oct 2020 18:14:15 +0200
+Subject: [PATCH net 000/117] net: avoid to remove module when its
+ debugfs is being used
+In-Reply-To: <1cbb69d83188424e99b2d2482848ae64@AcuMS.aculab.com>
+ (sfid-20201008_181146_072575_728542C7)
+References: <20201008155048.17679-1-ap420073@gmail.com>
+ <1cbb69d83188424e99b2d2482848ae64@AcuMS.aculab.com>
+ (sfid-20201008_181146_072575_728542C7)
+Message-ID: <62f6c2bd11ed8b25c1cd4462ebc6db870adc4229.camel@sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Taehee Yoo <ap420073@gmail.com>, davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, b43-dev@lists.infradead.org, linux-bluetooth@vger.kernel.org
+To: David Laight <David.Laight@ACULAB.COM>, 'Taehee Yoo' <ap420073@gmail.com>, "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Nicolai Stange <nicstange@gmail.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "wil6210@qti.qualcomm.com" <wil6210@qti.qualcomm.com>, "brcm80211-dev-list@cypress.com" <brcm80211-dev-list@cypress.com>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>
 
-On Thu, 2020-10-08 at 15:50 +0000, Taehee Yoo wrote:
-> If THIS_MODULE is not set, the module would be removed while debugfs is
-> being used.
-> It eventually makes kernel panic.
+On Thu, 2020-10-08 at 15:59 +0000, David Laight wrote:
+> From: Taehee Yoo
+> > Sent: 08 October 2020 16:49
+> > 
+> > When debugfs file is opened, its module should not be removed until
+> > it's closed.
+> > Because debugfs internally uses the module's data.
+> > So, it could access freed memory.
+> > 
+> > In order to avoid panic, it just sets .owner to THIS_MODULE.
+> > So that all modules will be held when its debugfs file is opened.
 > 
-Wow, 117 practically identical patches? No thanks ...
+> Can't you fix it in common code?
 
-Can you merge the ones that belong to a single driver?
+Yeah I was just wondering that too - weren't the proxy_fops even already
+intended to fix this?
 
-net/mac80211/ -> mac80211
-net/wireless/ -> cfg80211
+The modules _should_ be removing the debugfs files, and then the
+proxy_fops should kick in, no?
 
-etc.
-
-I don't think we need more than one patch for each driver/subsystem.
+So where's the issue?
 
 johannes
