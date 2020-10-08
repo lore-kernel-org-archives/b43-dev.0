@@ -1,9 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:56 +0000
-Subject: [PATCH net 104/117] mt76: set fops_tx_stats.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:57 +0000
+Subject: [PATCH net 105/117] mt76: mt7915: set fops_sta_stats.owner to
+ THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-104-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-105-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -15,23 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: e57b7901469f ("mt76: add mac80211 driver for MT7915 PCIe-based chipsets")
+Fixes: ec9742a8f38e ("mt76: mt7915: add .sta_add_debugfs support")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
  drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c b/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c
-index 38f473d587c9..31ac338c5526 100644
+index 31ac338c5526..149686906ad4 100644
 --- a/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c
 +++ b/drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c
-@@ -234,6 +234,7 @@ static const struct file_operations fops_tx_stats = {
+@@ -462,6 +462,7 @@ static const struct file_operations fops_sta_stats = {
  	.read = seq_read,
  	.llseek = seq_lseek,
  	.release = single_release,
 +	.owner = THIS_MODULE,
  };
  
- static int mt7915_read_temperature(struct seq_file *s, void *data)
+ void mt7915_sta_add_debugfs(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 -- 
 2.17.1
