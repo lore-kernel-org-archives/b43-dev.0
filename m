@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:09 +0000
-Subject: [PATCH net 057/117] iwlwifi: set rs_sta_dbgfs_stats_table_ops.owner
- to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:10 +0000
+Subject: [PATCH net 058/117] iwlwifi: set
+ rs_sta_dbgfs_rate_scale_data_ops.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-57-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-58-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,16 +23,16 @@ Signed-off-by: Taehee Yoo <ap420073@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/intel/iwlegacy/4965-rs.c b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
-index 43fff3fd18e7..6592726235d4 100644
+index 6592726235d4..5e3a30d553dc 100644
 --- a/drivers/net/wireless/intel/iwlegacy/4965-rs.c
 +++ b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
-@@ -2715,6 +2715,7 @@ static const struct file_operations rs_sta_dbgfs_stats_table_ops = {
- 	.read = il4965_rs_sta_dbgfs_stats_table_read,
+@@ -2744,6 +2744,7 @@ static const struct file_operations rs_sta_dbgfs_rate_scale_data_ops = {
+ 	.read = il4965_rs_sta_dbgfs_rate_scale_data_read,
  	.open = simple_open,
  	.llseek = default_llseek,
 +	.owner = THIS_MODULE,
  };
  
- static ssize_t
+ static void
 -- 
 2.17.1
