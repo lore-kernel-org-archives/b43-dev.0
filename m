@@ -1,37 +1,32 @@
-From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:52:09 +0000
-Subject: [PATCH net 117/117] Bluetooth: set test_ecdh_fops.owner to THIS_MODULE
-In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
-References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-117-ap420073@gmail.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Thu, 8 Oct 2020 15:59:28 +0000
+Subject: [PATCH net 000/117] net: avoid to remove module when its debugfs
+ is being used
+In-Reply-To: <20201008155048.17679-1-ap420073@gmail.com>
+References: <20201008155048.17679-1-ap420073@gmail.com>
+Message-ID: <1cbb69d83188424e99b2d2482848ae64@AcuMS.aculab.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org
-Cc: ap420073@gmail.com, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, b43-dev@lists.infradead.org, linux-bluetooth@vger.kernel.org
+To: 'Taehee Yoo' <ap420073@gmail.com>, "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "wil6210@qti.qualcomm.com" <wil6210@qti.qualcomm.com>, "brcm80211-dev-list@cypress.com" <brcm80211-dev-list@cypress.com>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>
 
-If THIS_MODULE is not set, the module would be removed while debugfs is
-being used.
-It eventually makes kernel panic.
+From: Taehee Yoo
+> Sent: 08 October 2020 16:49
+> 
+> When debugfs file is opened, its module should not be removed until
+> it's closed.
+> Because debugfs internally uses the module's data.
+> So, it could access freed memory.
+> 
+> In order to avoid panic, it just sets .owner to THIS_MODULE.
+> So that all modules will be held when its debugfs file is opened.
 
-Fixes: 6de50f9fdb60 ("Bluetooth: Export ECDH selftest result in debugfs")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
----
- net/bluetooth/selftest.c | 1 +
- 1 file changed, 1 insertion(+)
+Can't you fix it in common code?
 
-diff --git a/net/bluetooth/selftest.c b/net/bluetooth/selftest.c
-index f71c6fa65fb3..445ea247061b 100644
---- a/net/bluetooth/selftest.c
-+++ b/net/bluetooth/selftest.c
-@@ -194,6 +194,7 @@ static const struct file_operations test_ecdh_fops = {
- 	.open		= simple_open,
- 	.read		= test_ecdh_read,
- 	.llseek		= default_llseek,
-+	.owner		= THIS_MODULE,
- };
- 
- static int __init test_ecdh(void)
--- 
-2.17.1
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
