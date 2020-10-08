@@ -1,9 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:50:31 +0000
-Subject: [PATCH net 019/117] net: hsr: set hsr_fops.owner to THIS_MODULE
+Date: Thu,  8 Oct 2020 15:50:32 +0000
+Subject: [PATCH net 020/117] batman-adv: set batadv_log_fops.owner to
+ THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-19-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-20-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -15,23 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: fc4ecaeebd26 ("net: hsr: add debugfs support for display node list")
+Fixes: 9e466250ede3 ("batman-adv: Prefix bat_debugfs local static functions with batadv_")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- net/hsr/hsr_debugfs.c | 1 +
+ net/batman-adv/log.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/net/hsr/hsr_debugfs.c b/net/hsr/hsr_debugfs.c
-index 7e11a6c35bc3..92ebb5ff41e4 100644
---- a/net/hsr/hsr_debugfs.c
-+++ b/net/hsr/hsr_debugfs.c
-@@ -90,6 +90,7 @@ static const struct file_operations hsr_fops = {
- 	.read	= seq_read,
- 	.llseek = seq_lseek,
- 	.release = single_release,
-+	.owner = THIS_MODULE,
+diff --git a/net/batman-adv/log.c b/net/batman-adv/log.c
+index a67b2b091447..5f887bca2549 100644
+--- a/net/batman-adv/log.c
++++ b/net/batman-adv/log.c
+@@ -180,6 +180,7 @@ static const struct file_operations batadv_log_fops = {
+ 	.read           = batadv_log_read,
+ 	.poll           = batadv_log_poll,
+ 	.llseek         = no_llseek,
++	.owner		= THIS_MODULE,
  };
  
- /* hsr_debugfs_init - create hsr node_table file for dumping
+ /**
 -- 
 2.17.1
