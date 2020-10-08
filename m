@@ -1,10 +1,10 @@
 From: Taehee Yoo <ap420073@gmail.com>
-Date: Thu,  8 Oct 2020 15:51:00 +0000
-Subject: [PATCH net 048/117] iwlwifi: mvm: set iwl_dbgfs_mem_ops.owner to
- THIS_MODULE
+Date: Thu,  8 Oct 2020 15:51:01 +0000
+Subject: [PATCH net 049/117] iwlwifi: runtime: set
+ _FWRT_DEBUGFS_READ_FILE_OPS.owner to THIS_MODULE
 In-Reply-To: <20201008155209.18025-1-ap420073@gmail.com>
 References: <20201008155209.18025-1-ap420073@gmail.com>
-Message-ID: <20201008155209.18025-48-ap420073@gmail.com>
+Message-ID: <20201008155209.18025-49-ap420073@gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -16,23 +16,23 @@ If THIS_MODULE is not set, the module would be removed while debugfs is
 being used.
 It eventually makes kernel panic.
 
-Fixes: 2b55f43f8e47 ("iwlwifi: mvm: Add mem debugfs entry")
+Fixes: 93b167c13a3a ("iwlwifi: runtime: sync FW and host clocks for logs")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c | 1 +
+ drivers/net/wireless/intel/iwlwifi/fw/debugfs.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-index 8fae7e707374..3bfa91b4cba9 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-@@ -1981,6 +1981,7 @@ static const struct file_operations iwl_dbgfs_mem_ops = {
- 	.write = iwl_dbgfs_mem_write,
- 	.open = simple_open,
- 	.llseek = default_llseek,
-+	.owner = THIS_MODULE,
- };
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
+index 267ad4eddb5c..c0edf6fb3760 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
+@@ -122,6 +122,7 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
+ 	.open = _iwl_dbgfs_##name##_open,				\
+ 	.llseek = generic_file_llseek,					\
+ 	.release = _iwl_dbgfs_release,					\
++	.owner = THIS_MODULE,						\
+ }
  
- void iwl_mvm_sta_add_debugfs(struct ieee80211_hw *hw,
+ #define FWRT_DEBUGFS_WRITE_WRAPPER(name, buflen, argtype)		\
 -- 
 2.17.1
