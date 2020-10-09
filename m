@@ -1,83 +1,31 @@
-From: Taehee Yoo <ap420073@gmail.com>
-Date: Fri, 9 Oct 2020 19:15:14 +0900
-Subject: [PATCH net 000/117] net: avoid to remove module when its debugfs
- is being used
-In-Reply-To: <fd8aaf06b53f32eae7b5bdcec2f3ea9e1f419b1d.camel@sipsolutions.net>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Fri, 09 Oct 2020 12:21:54 +0200
+Subject: [PATCH net 000/117] net: avoid to remove module when its
+ debugfs is being used
+In-Reply-To: <CAMArcTUdGPH5a0RTUiNoLvuQtdnXHOCwStJ+gp_noaNEzgSA1Q@mail.gmail.com>
+ (sfid-20201009_121527_238342_F5A29EF9)
 References: <20201008155048.17679-1-ap420073@gmail.com>
  <1cbb69d83188424e99b2d2482848ae64@AcuMS.aculab.com>
  <62f6c2bd11ed8b25c1cd4462ebc6db870adc4229.camel@sipsolutions.net>
  <87v9fkgf4i.fsf@suse.de>
  <fd8aaf06b53f32eae7b5bdcec2f3ea9e1f419b1d.camel@sipsolutions.net>
-Message-ID: <CAMArcTUdGPH5a0RTUiNoLvuQtdnXHOCwStJ+gp_noaNEzgSA1Q@mail.gmail.com>
+ <CAMArcTUdGPH5a0RTUiNoLvuQtdnXHOCwStJ+gp_noaNEzgSA1Q@mail.gmail.com>
+ (sfid-20201009_121527_238342_F5A29EF9)
+Message-ID: <4a58caee3b6b8975f4ff632bf6d2a6673788157d.camel@sipsolutions.net>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
+To: Taehee Yoo <ap420073@gmail.com>
 Cc: Nicolai Stange <nstange@suse.de>, David Laight <David.Laight@aculab.com>, "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "wil6210@qti.qualcomm.com" <wil6210@qti.qualcomm.com>, "brcm80211-dev-list@cypress.com" <brcm80211-dev-list@cypress.com>, "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>
 
-On Fri, 9 Oct 2020 at 16:45, Johannes Berg <johannes@sipsolutions.net> wrote:
->
+On Fri, 2020-10-09 at 19:15 +0900, Taehee Yoo wrote:
+> 
+> Okay, as you mentioned earlier in 001/117 patch thread,
+> I will squash patches into per-driver/subsystem then send them as v2.
 
-Hi Johannes,
-Thank you for the review!
+Give me a bit. I think I figured out a less intrusive way that at least
+means we don't have to do it if the fops doesn't have ->release(), which
+is the vast majority.
 
-> On Fri, 2020-10-09 at 07:09 +0200, Nicolai Stange wrote:
-> > Johannes Berg <johannes@sipsolutions.net> writes:
-> >
-> > > On Thu, 2020-10-08 at 15:59 +0000, David Laight wrote:
-> > > > From: Taehee Yoo
-> > > > > Sent: 08 October 2020 16:49
-> > > > >
-> > > > > When debugfs file is opened, its module should not be removed until
-> > > > > it's closed.
-> > > > > Because debugfs internally uses the module's data.
-> > > > > So, it could access freed memory.
-> > > > >
-> > > > > In order to avoid panic, it just sets .owner to THIS_MODULE.
-> > > > > So that all modules will be held when its debugfs file is opened.
-> > > >
-> > > > Can't you fix it in common code?
-> >
-> > Probably not: it's the call to ->release() that's faulting in the Oops
-> > quoted in the cover letter and that one can't be protected by the
-> > core debugfs code, unfortunately.
-> >
-> > There's a comment in full_proxy_release(), which reads as
-> >
-> >       /*
-> >        * We must not protect this against removal races here: the
-> >        * original releaser should be called unconditionally in order
-> >        * not to leak any resources. Releasers must not assume that
-> >        * ->i_private is still being meaningful here.
-> >        */
->
-> Yeah, found that too now :-)
->
-> > > Yeah I was just wondering that too - weren't the proxy_fops even already
-> > > intended to fix this?
-> >
-> > No, as far as file_operations are concerned, the proxy fops's intent was
-> > only to ensure that the memory the file_operations' ->owner resides in
-> > is still valid so that try_module_get() won't splat at file open
-> > (c.f. [1]).
->
-> Right.
->
-> > You're right that the default "full" proxy fops do prevent all
-> > file_operations but ->release() from getting invoked on removed files,
-> > but the motivation had not been to protect the file_operations
-> > themselves, but accesses to any stale data associated with removed files
-> > ([2]).
->
-> :)
->
-> I actually got this to work in a crazy way, I'll send something out but
-> I'm sure it's a better idea to add the .owner everywhere, but please
-> let's do it in fewer than hundreds of patches :-)
->
-Okay, as you mentioned earlier in 001/117 patch thread,
-I will squash patches into per-driver/subsystem then send them as v2.
-
-Thanks a lot!
-Taehee
+johannes
