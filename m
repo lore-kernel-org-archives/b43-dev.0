@@ -1,44 +1,62 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 5 Dec 2020 11:56:36 -0600
-Subject: where to find b43 firmware?
-In-Reply-To: <CAJCQCtQH3ew2-Nmd_ybyx9AXX4=77tAfnZSr_TW7XRtvtn8sxg@mail.gmail.com>
-References: <CAJCQCtQH3ew2-Nmd_ybyx9AXX4=77tAfnZSr_TW7XRtvtn8sxg@mail.gmail.com>
-Message-ID: <3bb06cbf-ce9a-73be-9baa-142c1a70f0b2@lwfinger.net>
+From: Abaci Team <abaci-bugfix@linux.alibaba.com>
+Date: Thu, 28 Jan 2021 16:47:16 +0800
+Subject: [PATCH] b43: Remove redundant code
+Message-ID: <1611823636-18377-1-git-send-email-abaci-bugfix@linux.alibaba.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org
+To: kvalo@codeaurora.org
+Cc: davem@davemloft.net, kuba@kernel.org, linux-wireless@vger.kernel.org, lee.jones@linaro.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Abaci Team <abaci-bugfix@linux.alibaba.com>
 
-On 12/5/20 12:31 AM, Chris Murphy wrote:
-> Hi,
-> 
-> When I boot kernel 5.10-rc6, I see this message:
-> 
-> [    9.850583] b43-phy0 ERROR: You must go to
-> https://wireless.wiki.kernel.org/en/users/Drivers/b43#devicefirmware
-> and download the correct firmware for this driver version. Please
-> carefully read all instructions on this website.
-> 
-> When I go to that URL, there's no download for firmware or any
-> reference how to find out where to download it from. It's a dead end.
-> 
-> This page includes:
-> You need to have firmware files (usually in /lib/firmware/) so
-> b43(legacy) can upload them to the card and run properly.
-> 
-> Sure, OK. But how do I do that? There isn't even a mention of
-> b43-fwcutter on this page.
+Fix the following coccicheck warnings:
 
-The previous version of that web page, referenced on the 3rd line of the page 
-you noted, (http://linuxwireless.sipsolutions.net/en/users/Drivers/b43/) has the 
-instructions for downloading that firmware on Fedora, openSUSE, and 
-Ubuntu/Debian distros. You do not say what distro you are running, but one of 
-those 4 should provide the rpm or deb file that you need.
+./drivers/net/wireless/broadcom/b43/phy_n.c:4640:2-4: WARNING: possible
+condition with no effect (if == else).
 
-We have always been hampered by Broadcom's refusal to redistribute that 
-firmware, thus it cannot be put into the linux-firmware repo at git.kernel.org.
+./drivers/net/wireless/broadcom/b43/phy_n.c:4606:2-4: WARNING: possible
+condition with no effect (if == else).
 
-If you are unable to get this firmware through that web page, write me privately.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Suggested-by: Jiapeng Zhong <oswb@linux.alibaba.com>
+Signed-off-by: Abaci Team <abaci-bugfix@linux.alibaba.com>
+---
+ drivers/net/wireless/broadcom/b43/phy_n.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-Larry
+diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+index b669dff..39a335f 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_n.c
++++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+@@ -4601,16 +4601,6 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
+ 	if (nphy->hang_avoid)
+ 		b43_nphy_stay_in_carrier_search(dev, 1);
+ 
+-	if (nphy->gband_spurwar_en) {
+-		/* TODO: N PHY Adjust Analog Pfbw (7) */
+-		if (channel == 11 && b43_is_40mhz(dev)) {
+-			; /* TODO: N PHY Adjust Min Noise Var(2, tone, noise)*/
+-		} else {
+-			; /* TODO: N PHY Adjust Min Noise Var(0, NULL, NULL)*/
+-		}
+-		/* TODO: N PHY Adjust CRS Min Power (0x1E) */
+-	}
+-
+ 	if (nphy->aband_spurwar_en) {
+ 		if (channel == 54) {
+ 			tone[0] = 0x20;
+@@ -4636,12 +4626,6 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
+ 			tone[0] = 0;
+ 			noise[0] = 0;
+ 		}
+-
+-		if (!tone[0] && !noise[0]) {
+-			; /* TODO: N PHY Adjust Min Noise Var(1, tone, noise)*/
+-		} else {
+-			; /* TODO: N PHY Adjust Min Noise Var(0, NULL, NULL)*/
+-		}
+ 	}
+ 
+ 	if (nphy->hang_avoid)
+-- 
+1.8.3.1
