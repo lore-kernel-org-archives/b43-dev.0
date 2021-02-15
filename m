@@ -1,133 +1,51 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Thu, 28 Jan 2021 21:29:14 +1100
-Subject: [PATCH] b43: Remove redundant code
-In-Reply-To: <1611823636-18377-1-git-send-email-abaci-bugfix@linux.alibaba.com>
-References: <1611823636-18377-1-git-send-email-abaci-bugfix@linux.alibaba.com>
-Message-ID: <CAGRGNgWM=dQx4suXZJX+u6m0i4=Qx3hZFZWdWJ8VO+FG_edH2w@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Feb 2021 12:05:32 +0000
+Subject: [PATCH] b43: N-PHY: Fix the update of coef for the PHY revision >=
+ 3case
+Message-ID: <20210215120532.76889-1-colin.king@canonical.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Abaci Team <abaci-bugfix@linux.alibaba.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, b43-dev <b43-dev@lists.infradead.org>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, "John W . Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi ..... <insert name here>,
+From: Colin Ian King <colin.king@canonical.com>
 
-(No proper name in the from field or signed-off-by, as you're already aware)
+The documentation for the PHY update [1] states:
 
-On Thu, Jan 28, 2021 at 7:53 PM Abaci Team
-<abaci-bugfix@linux.alibaba.com> wrote:
->
-> Fix the following coccicheck warnings:
->
-> ./drivers/net/wireless/broadcom/b43/phy_n.c:4640:2-4: WARNING: possible
-> condition with no effect (if == else).
->
-> ./drivers/net/wireless/broadcom/b43/phy_n.c:4606:2-4: WARNING: possible
-> condition with no effect (if == else).
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Suggested-by: Jiapeng Zhong <oswb@linux.alibaba.com>
-> Signed-off-by: Abaci Team <abaci-bugfix@linux.alibaba.com>
-> ---
->  drivers/net/wireless/broadcom/b43/phy_n.c | 16 ----------------
->  1 file changed, 16 deletions(-)
->
-> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-> index b669dff..39a335f 100644
-> --- a/drivers/net/wireless/broadcom/b43/phy_n.c
-> +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-> @@ -4601,16 +4601,6 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
->         if (nphy->hang_avoid)
->                 b43_nphy_stay_in_carrier_search(dev, 1);
->
-> -       if (nphy->gband_spurwar_en) {
-> -               /* TODO: N PHY Adjust Analog Pfbw (7) */
-> -               if (channel == 11 && b43_is_40mhz(dev)) {
-> -                       ; /* TODO: N PHY Adjust Min Noise Var(2, tone, noise)*/
-> -               } else {
-> -                       ; /* TODO: N PHY Adjust Min Noise Var(0, NULL, NULL)*/
-> -               }
-> -               /* TODO: N PHY Adjust CRS Min Power (0x1E) */
-> -       }
+Loop 4 times with index i
 
-I'm not sure how useful this patch is, even though it is technically correct.
+    If PHY Revision >= 3
+        Copy table[i] to coef[i]
+    Otherwise
+        Set coef[i] to 0
 
-The b43 driver was almost entirely reverse engineered from various
-sources so there's still a lot of places, like this, where placeholder
-comments were written until the actual code that would have been here
-was ready / reverse engineered.
+the copy of the table to coef is currently implemented the wrong way
+around, table is being updated from uninitialized values in coeff.
+Fix this by swapping the assignment around.
 
-That said, I believe the driver works well enough for all it's users
-and has not seen any significant changes in a long time.
+[1] https://bcm-v4.sipsolutions.net/802.11/PHY/N/RestoreCal/
 
-Thanks,
+Fixes: 2f258b74d13c ("b43: N-PHY: implement restoring general configuration")
+Addresses-Coverity: ("Uninitialized scalar variable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/b43/phy_n.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+index b669dff24b6e..665b737fbb0d 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_n.c
++++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+@@ -5311,7 +5311,7 @@ static void b43_nphy_restore_cal(struct b43_wldev *dev)
+ 
+ 	for (i = 0; i < 4; i++) {
+ 		if (dev->phy.rev >= 3)
+-			table[i] = coef[i];
++			coef[i] = table[i];
+ 		else
+ 			coef[i] = 0;
+ 	}
 -- 
-Julian Calaby
-
-Email: julian.calaby at gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
-
-On Thu, Jan 28, 2021 at 7:53 PM Abaci Team
-<abaci-bugfix@linux.alibaba.com> wrote:
->
-> Fix the following coccicheck warnings:
->
-> ./drivers/net/wireless/broadcom/b43/phy_n.c:4640:2-4: WARNING: possible
-> condition with no effect (if == else).
->
-> ./drivers/net/wireless/broadcom/b43/phy_n.c:4606:2-4: WARNING: possible
-> condition with no effect (if == else).
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Suggested-by: Jiapeng Zhong <oswb@linux.alibaba.com>
-> Signed-off-by: Abaci Team <abaci-bugfix@linux.alibaba.com>
-> ---
->  drivers/net/wireless/broadcom/b43/phy_n.c | 16 ----------------
->  1 file changed, 16 deletions(-)
->
-> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-> index b669dff..39a335f 100644
-> --- a/drivers/net/wireless/broadcom/b43/phy_n.c
-> +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-> @@ -4601,16 +4601,6 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
->         if (nphy->hang_avoid)
->                 b43_nphy_stay_in_carrier_search(dev, 1);
->
-> -       if (nphy->gband_spurwar_en) {
-> -               /* TODO: N PHY Adjust Analog Pfbw (7) */
-> -               if (channel == 11 && b43_is_40mhz(dev)) {
-> -                       ; /* TODO: N PHY Adjust Min Noise Var(2, tone, noise)*/
-> -               } else {
-> -                       ; /* TODO: N PHY Adjust Min Noise Var(0, NULL, NULL)*/
-> -               }
-> -               /* TODO: N PHY Adjust CRS Min Power (0x1E) */
-> -       }
-> -
->         if (nphy->aband_spurwar_en) {
->                 if (channel == 54) {
->                         tone[0] = 0x20;
-> @@ -4636,12 +4626,6 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
->                         tone[0] = 0;
->                         noise[0] = 0;
->                 }
-> -
-> -               if (!tone[0] && !noise[0]) {
-> -                       ; /* TODO: N PHY Adjust Min Noise Var(1, tone, noise)*/
-> -               } else {
-> -                       ; /* TODO: N PHY Adjust Min Noise Var(0, NULL, NULL)*/
-> -               }
->         }
->
->         if (nphy->hang_avoid)
-> --
-> 1.8.3.1
->
-
-
--- 
-Julian Calaby
-
-Email: julian.calaby at gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+2.30.0
