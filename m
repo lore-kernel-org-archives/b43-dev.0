@@ -1,40 +1,22 @@
-From: patchwork-bot+netdevbpf at kernel.org <patchwork-bot+netdevbpf@kernel.org>
-Date: Mon, 15 Feb 2021 20:50:07 +0000
-Subject: [PATCH] b43: N-PHY: Fix the update of coef for the PHY revision >=
- 3case
-In-Reply-To: <20210215120532.76889-1-colin.king@canonical.com>
-References: <20210215120532.76889-1-colin.king@canonical.com>
-Message-ID: <161342220742.9745.8382671351408094694.git-patchwork-notify@kernel.org>
+From: Evan Foss <evanfoss@gmail.com>
+Date: Tue, 9 Mar 2021 07:18:53 -0500
+Subject: [b43] ssh bug
+Message-ID: <CAM2RGhR89fcuPwkNxmiynU6qocjM85ROBA0M+Fw3y9VR-Mh2Pw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, zajec5@gmail.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b43-dev@lists.infradead.org
 
-Hello:
+Hi B43-dev,
 
-This patch was applied to netdev/net.git (refs/heads/master):
+I am having trouble with the wifi card in my macbook pro 2012. It's a
+BCM4331 and it hangs on ssh sessions.
 
-On Mon, 15 Feb 2021 12:05:32 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The documentation for the PHY update [1] states:
-> 
-> Loop 4 times with index i
-> 
->     If PHY Revision >= 3
->         Copy table[i] to coef[i]
->     Otherwise
->         Set coef[i] to 0
-> 
-> [...]
+I noticed it documented here.
+https://wiki.archlinux.org/index.php/broadcom_wireless#SSH_freeze_for_BCM4331_with_b43
 
-Here is the summary with links:
-  - b43: N-PHY: Fix the update of coef for the PHY revision >= 3case
-    https://git.kernel.org/netdev/net/c/4773acf3d4b5
+Is there some testing I could contribute to help fix this?
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thanks,
+Evan Foss
