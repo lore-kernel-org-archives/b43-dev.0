@@ -1,43 +1,105 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 9 Mar 2021 16:26:46 -0600
+From: Evan Foss <evanfoss@gmail.com>
+Date: Fri, 12 Mar 2021 14:28:14 -0500
 Subject: [b43] ssh bug
-In-Reply-To: <CAM2RGhR89fcuPwkNxmiynU6qocjM85ROBA0M+Fw3y9VR-Mh2Pw@mail.gmail.com>
+In-Reply-To: <b99457e9-c562-45a8-40f8-fafbbda8fd2c@lwfinger.net>
 References: <CAM2RGhR89fcuPwkNxmiynU6qocjM85ROBA0M+Fw3y9VR-Mh2Pw@mail.gmail.com>
-Message-ID: <b99457e9-c562-45a8-40f8-fafbbda8fd2c@lwfinger.net>
+ <b99457e9-c562-45a8-40f8-fafbbda8fd2c@lwfinger.net>
+Message-ID: <CAM2RGhSkamk605iTCikYoNiF_bFU6kV9c198g=5UE_450i9ybw@mail.gmail.com>
 List-Id: <b43-dev.lists.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evan Foss <evanfoss@gmail.com>
+To: Larry Finger <Larry.Finger@lwfinger.net>
 Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
 
-On 3/9/21 6:18 AM, Evan Foss wrote:
-> Hi B43-dev,
-> 
-> I am having trouble with the wifi card in my macbook pro 2012. It's a
-> BCM4331 and it hangs on ssh sessions.
-> 
-> I noticed it documented here.
-> https://wiki.archlinux.org/index.php/broadcom_wireless#SSH_freeze_for_BCM4331_with_b43
-> 
-> Is there some testing I could contribute to help fix this?
+Hi Larry,
 
-Evan,
+I was offering to do testing. You might not remember me from like 15
+years ago but I remember you. I was fighting a BCM4311 back then.
 
-I do not have that card, thus I cannot test with that chip.
+The symptoms are interesting. It freezes not just that session but all
+other ssh sessions. I want to point out that it doesn't fail in all
+ssh use cases, just file i/o. ssh terminal sessions don't cause it but
+are also frozen when it hits. After the bug is triggered no new
+sessions can be initiated.
 
-Given the age of the chips driven by b43, it is hard to imagine that there are 
-any undisclosed proprietary secrets buried in the code. Broadcom should open 
-source these old drivers.
+What is fun is that it starts doing file i/o before it triggers so
+some small number of bytes or time are required. So often I can see
+whole directories on remote file systems just before it locks up.
 
-What are the symptoms of the frozen sessions? Is there anything in particular 
-that you are doing when it freezes? Does the freeze require rebooting either of 
-the machines in question? Is anything logged in the dmesg output of either machine?
+I looked at wl a while back but I really wanted to contribute testing
+to fix what remains the one unpatched bug in the driver.
 
-One useful test would be to run Wireshark to capture the data on the network 
-interface. That capture file might have information that you would not want to 
-share, but you should be able to supply only the last few packets.
+Thanks,
+Evan
 
-A macbook of that vintage should be able to run wl. That may be your best option.
+On Tue, Mar 9, 2021 at 5:26 PM Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>
+> On 3/9/21 6:18 AM, Evan Foss wrote:
+> > Hi B43-dev,
+> >
+> > I am having trouble with the wifi card in my macbook pro 2012. It's a
+> > BCM4331 and it hangs on ssh sessions.
+> >
+> > I noticed it documented here.
+> > https://wiki.archlinux.org/index.php/broadcom_wireless#SSH_freeze_for_BCM4331_with_b43
+> >
+> > Is there some testing I could contribute to help fix this?
+>
+> Evan,
+>
+> I do not have that card, thus I cannot test with that chip.
+>
+> Given the age of the chips driven by b43, it is hard to imagine that there are
+> any undisclosed proprietary secrets buried in the code. Broadcom should open
+> source these old drivers.
+>
+> What are the symptoms of the frozen sessions? Is there anything in particular
+> that you are doing when it freezes? Does the freeze require rebooting either of
+> the machines in question? Is anything logged in the dmesg output of either machine?
+>
+> One useful test would be to run Wireshark to capture the data on the network
+> interface. That capture file might have information that you would not want to
+> share, but you should be able to supply only the last few packets.
+>
+> A macbook of that vintage should be able to run wl. That may be your best option.
+>
+> Larry
+>
+>
 
-Larry
+
+--
+https://github.com/evanfoss
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v2
+
+mQENBFYy4RYBCAC183JomLtbdAlcKiaPDoVHq52LDmVmH75aiEc69m7YxDt54/ai
+VtYCAobbGVIyn3Hlz3uhF6LnPl/6Lm1VdnCfpwu3KQhCO6ds10ow2C30X4ohCqOd
+hCVg5C+ILmQkEffFrFODy3ji+PYTF4pADvHCWsTMv0hf0llwFOJsBCK6cl02IffE
+JPqy4PjM1nZ9HpzT84JBaG/4OGvTZ8SQ2yFUl265jagvygPTf88H1xpZHH1r8dB1
+stjUHLmPH8AOyDgKxFchgGeDc3p/vJtgDDIXAFfDXG0NSRovLmtaQdGxe47Zf/go
+bXiEM7YL2WqQe5zfEA919JxkEwlDKYniOSVzABEBAAG0N0V2YW4gRm9zcyAoVGhp
+cyBpcyBteSBwdWJsaWMga2V5LikgPGV2YW5mb3NzQGdtYWlsLmNvbT6JATkEEwEC
+ACMFAlYy4RYCGwMHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCIpQTcE8nN
+bbBaCACAm8pU5lG1ev2Fsw68Axtcl57SJrYieqX96c3YuYH9JpqMqJRnd9nDKw9X
+tQuvuH7tUk0VbOaDqReOYJVI/4c5wb9AaOFp6K2DUcupq6XhgXpvz3HzoPwjAdIj
+XuQzdRUx5+innTJrSkGuBYW/CZ2zqEx4xfLlq4rO0hoTUMR8QVp2cCrkw6BT0m86
+APIw/ZnjoxM8IEzr7MxfRIg3qpzrZk28rmhx+k78Jyk61UhwcCPGIm/pjUopTwYJ
+3YBdRB2cYD2aN7A1JVf5cRmSQYooHBGpH0kYvomGk97PKqypVuJ7OpG9xM58wUcC
+qUVt9hKlePLzP8csYjt8onqI7qIIuQENBFYy4RYBCADlH8spG3WkCx62vB5mr5Z0
+SCDd/RcyA4A5y5EOj5KurQkrSWpgi9Ho1yKruMJ6blQR2qkc66KqH9pnXDm/ZI1M
+K/wdW3ngETxBmXoozzFMT89aEWIVR5/PFodWK1elekE9iJxACuR98Zg2QttTD3x8
+A9w8VEyMLOXcDTrPFpHegMKswFBg5iuMulAdXAoGejWTI3n+qKFpabHm2Lfs6wjk
+5rjucpTdeFK6UeWF1xAvNxXibuu5BlGwv53930qIXRwO/Gn2Rh5DXWxKU2fEIme/
+xgQQmIsDeUoWbfybdjw/x7Q0LW4mINiLDQcGHHRQKFIxbAJCT3USPLGh5xwE9/Er
+ABEBAAGJAR8EGAECAAkFAlYy4RYCGwwACgkQiKUE3BPJzW0uYAf9Hf30n8tM3mR2
+Zo6ESE0ivgdgjaJtAWrBUx7JzAzPjBnBOlNnu5Y9lVEqetvUPH6e3PvaHYUuaUU8
+0HwxuKBW9nUprgV6uIu1DZmlcp+SxpbuCy7RDpNocRLNWWFMaYYzznmTgfnTgD4D
+gCq8Mf1mcfrluTkOAo+QNqbMfl1GISClopRqxVuAo59ewgMnFujwgd8w12BwWl24
+CzqOs5HqcUslePj+LzcjSNgVCklYwKl+0dsb/fctMOCtHodwqm2CBJ+zydvNmYkD
+fxda/J91Z1xrah5ec++FL0L4vs+jCiIWJeupJFKlr1hCMZiiGH7W554loK5l4jv3
+EY347EidAw==
+=Ta4p
+-----END PGP PUBLIC KEY BLOCK-----
