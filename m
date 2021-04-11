@@ -1,105 +1,130 @@
-From: Evan Foss <evanfoss@gmail.com>
-Date: Fri, 12 Mar 2021 14:28:14 -0500
-Subject: [b43] ssh bug
-In-Reply-To: <b99457e9-c562-45a8-40f8-fafbbda8fd2c@lwfinger.net>
-References: <CAM2RGhR89fcuPwkNxmiynU6qocjM85ROBA0M+Fw3y9VR-Mh2Pw@mail.gmail.com>
- <b99457e9-c562-45a8-40f8-fafbbda8fd2c@lwfinger.net>
-Message-ID: <CAM2RGhSkamk605iTCikYoNiF_bFU6kV9c198g=5UE_450i9ybw@mail.gmail.com>
-List-Id: <b43-dev.lists.infradead.org>
+Return-Path: <SRS0=pb/9=JI=lists.infradead.org=b43-dev-bounces+b43-dev=archiver.kernel.org@kernel.org>
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02959C433B4
+	for <b43-dev@archiver.kernel.org>; Sun, 11 Apr 2021 18:56:29 +0000 (UTC)
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id 785DD6105A
+	for <b43-dev@archiver.kernel.org>; Sun, 11 Apr 2021 18:56:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785DD6105A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.infradead.org; s=desiato.20200630; h=Sender:Content-Type:
+	Content-Transfer-Encoding:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:MIME-Version:Date:Message-ID:Subject:From:To:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=i6g2rGaHjsIkjBm0HGfy0Nfp0nYswXKOlt6F9oyLlpU=; b=jNAaCokMme7n6V
+	QAmTBeld8vKdQyh9NjqeUUguyxBtVk4FVh5oUxRVw0psldoB9UPMjKBSNLsA75l5I1akkfs1WN6pR
+	ZgbhuJr2OQbdJNqOctYogjYuuwdOf0/8LSN29gmC5Oy4vy53uE7la8KtfqS7GsCxQk+jLvD89Ac5F
+	XzScaJhyZlPUlXAQhXzoweyO4nKww8NFpcUir+JNEN3mxAtVkA4+3p0JFNINgRwexQrU01Baeo3vJ
+	/O+gnp/YltxuXe+VJ7VKRedcTWUmDJNt9UnwlyhGjw1fnOPtF2w4lZMI0xYyhoRrx+ysC7Ona4+oC
+	uWVgdItBQaqc1q42dxjQ==;
+Received: from localhost ([::1] helo=desiato.infradead.org)
+	by desiato.infradead.org with esmtp (Exim 4.94 #2 (Red Hat Linux))
+	id 1lVfFW-004wdn-2t; Sun, 11 Apr 2021 18:55:58 +0000
+Received: from bombadil.infradead.org ([2607:7c80:54:e::133])
+ by desiato.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
+ id 1lVfFL-004wdV-35
+ for b43-dev@desiato.infradead.org; Sun, 11 Apr 2021 18:55:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:In-Reply-To:References;
+ bh=+6c2k/RUrVZKOWRhFRj2RErcqlp4co/XIfweNxUpvkQ=; b=FsZy6ujsToszv9aKGBRvtT6iaF
+ +wOU9YwzkTpmY9ed0s8yoRqFAfw2YfYjwgRmYWvFn6Ys4GodOc1seHl0L+Zc5JPFHFThzPOh6OVBu
+ E0Z7rsSivggXiNGqBxs8Obxzsh/1coCsHKmhACi7omSR5fEzsP4UzvFo6aH9kvzNtzuiE99v0TcCX
+ KNy9HlePHlj9hApV9PYAcj5NZzqdvne7Gt4rRWN/oL2XR+VXFVZzmXjEmzRxv+hX1KpmmLrVSte/k
+ omJtoLOas5rlw+RlGtIhUNCDQ6GEZtT7OHEdU8+ayQ0YobguH1FZxjiftNvvBrHrDGoSL1eC7ncKC
+ v9wNuTLw==;
+Received: from mx3.molgen.mpg.de ([141.14.17.11] helo=mx1.molgen.mpg.de)
+ by bombadil.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
+ id 1lVfFG-005em9-LP
+ for b43-dev@lists.infradead.org; Sun, 11 Apr 2021 18:55:45 +0000
+Received: from [192.168.0.2] (ip5f5aef24.dynamic.kabel-deutschland.de
+ [95.90.239.36])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested) (Authenticated sender: pmenzel)
+ by mx.molgen.mpg.de (Postfix) with ESMTPSA id 894FB206473C4;
+ Sun, 11 Apr 2021 20:55:28 +0200 (CEST)
+To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: b43: probe of bcma0:1 failed with error -524
+Message-ID: <e97229b0-27e5-83a2-aa89-550dfddbeb23@molgen.mpg.de>
+Date: Sun, 11 Apr 2021 20:55:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>
+Content-Language: en-US
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
+X-CRM114-CacheID: sfid-20210411_115542_874403_14A13445 
+X-CRM114-Status: GOOD (  10.80  )
+X-BeenThere: b43-dev@lists.infradead.org
+X-Mailman-Version: 2.1.34
+Precedence: list
+List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
+ <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/b43-dev/>
+List-Post: <mailto:b43-dev@lists.infradead.org>
+List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
+ <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
+Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Hi Larry,
-
-I was offering to do testing. You might not remember me from like 15
-years ago but I remember you. I was fighting a BCM4311 back then.
-
-The symptoms are interesting. It freezes not just that session but all
-other ssh sessions. I want to point out that it doesn't fail in all
-ssh use cases, just file i/o. ssh terminal sessions don't cause it but
-are also frozen when it hits. After the bug is triggered no new
-sessions can be initiated.
-
-What is fun is that it starts doing file i/o before it triggers so
-some small number of bytes or time are required. So often I can see
-whole directories on remote file systems just before it locks up.
-
-I looked at wl a while back but I really wanted to contribute testing
-to fix what remains the one unpatched bug in the driver.
-
-Thanks,
-Evan
-
-On Tue, Mar 9, 2021 at 5:26 PM Larry Finger <Larry.Finger@lwfinger.net> wrote:
->
-> On 3/9/21 6:18 AM, Evan Foss wrote:
-> > Hi B43-dev,
-> >
-> > I am having trouble with the wifi card in my macbook pro 2012. It's a
-> > BCM4331 and it hangs on ssh sessions.
-> >
-> > I noticed it documented here.
-> > https://wiki.archlinux.org/index.php/broadcom_wireless#SSH_freeze_for_BCM4331_with_b43
-> >
-> > Is there some testing I could contribute to help fix this?
->
-> Evan,
->
-> I do not have that card, thus I cannot test with that chip.
->
-> Given the age of the chips driven by b43, it is hard to imagine that there are
-> any undisclosed proprietary secrets buried in the code. Broadcom should open
-> source these old drivers.
->
-> What are the symptoms of the frozen sessions? Is there anything in particular
-> that you are doing when it freezes? Does the freeze require rebooting either of
-> the machines in question? Is anything logged in the dmesg output of either machine?
->
-> One useful test would be to run Wireshark to capture the data on the network
-> interface. That capture file might have information that you would not want to
-> share, but you should be able to supply only the last few packets.
->
-> A macbook of that vintage should be able to run wl. That may be your best option.
->
-> Larry
->
->
-
-
---
-https://github.com/evanfoss
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v2
-
-mQENBFYy4RYBCAC183JomLtbdAlcKiaPDoVHq52LDmVmH75aiEc69m7YxDt54/ai
-VtYCAobbGVIyn3Hlz3uhF6LnPl/6Lm1VdnCfpwu3KQhCO6ds10ow2C30X4ohCqOd
-hCVg5C+ILmQkEffFrFODy3ji+PYTF4pADvHCWsTMv0hf0llwFOJsBCK6cl02IffE
-JPqy4PjM1nZ9HpzT84JBaG/4OGvTZ8SQ2yFUl265jagvygPTf88H1xpZHH1r8dB1
-stjUHLmPH8AOyDgKxFchgGeDc3p/vJtgDDIXAFfDXG0NSRovLmtaQdGxe47Zf/go
-bXiEM7YL2WqQe5zfEA919JxkEwlDKYniOSVzABEBAAG0N0V2YW4gRm9zcyAoVGhp
-cyBpcyBteSBwdWJsaWMga2V5LikgPGV2YW5mb3NzQGdtYWlsLmNvbT6JATkEEwEC
-ACMFAlYy4RYCGwMHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCIpQTcE8nN
-bbBaCACAm8pU5lG1ev2Fsw68Axtcl57SJrYieqX96c3YuYH9JpqMqJRnd9nDKw9X
-tQuvuH7tUk0VbOaDqReOYJVI/4c5wb9AaOFp6K2DUcupq6XhgXpvz3HzoPwjAdIj
-XuQzdRUx5+innTJrSkGuBYW/CZ2zqEx4xfLlq4rO0hoTUMR8QVp2cCrkw6BT0m86
-APIw/ZnjoxM8IEzr7MxfRIg3qpzrZk28rmhx+k78Jyk61UhwcCPGIm/pjUopTwYJ
-3YBdRB2cYD2aN7A1JVf5cRmSQYooHBGpH0kYvomGk97PKqypVuJ7OpG9xM58wUcC
-qUVt9hKlePLzP8csYjt8onqI7qIIuQENBFYy4RYBCADlH8spG3WkCx62vB5mr5Z0
-SCDd/RcyA4A5y5EOj5KurQkrSWpgi9Ho1yKruMJ6blQR2qkc66KqH9pnXDm/ZI1M
-K/wdW3ngETxBmXoozzFMT89aEWIVR5/PFodWK1elekE9iJxACuR98Zg2QttTD3x8
-A9w8VEyMLOXcDTrPFpHegMKswFBg5iuMulAdXAoGejWTI3n+qKFpabHm2Lfs6wjk
-5rjucpTdeFK6UeWF1xAvNxXibuu5BlGwv53930qIXRwO/Gn2Rh5DXWxKU2fEIme/
-xgQQmIsDeUoWbfybdjw/x7Q0LW4mINiLDQcGHHRQKFIxbAJCT3USPLGh5xwE9/Er
-ABEBAAGJAR8EGAECAAkFAlYy4RYCGwwACgkQiKUE3BPJzW0uYAf9Hf30n8tM3mR2
-Zo6ESE0ivgdgjaJtAWrBUx7JzAzPjBnBOlNnu5Y9lVEqetvUPH6e3PvaHYUuaUU8
-0HwxuKBW9nUprgV6uIu1DZmlcp+SxpbuCy7RDpNocRLNWWFMaYYzznmTgfnTgD4D
-gCq8Mf1mcfrluTkOAo+QNqbMfl1GISClopRqxVuAo59ewgMnFujwgd8w12BwWl24
-CzqOs5HqcUslePj+LzcjSNgVCklYwKl+0dsb/fctMOCtHodwqm2CBJ+zydvNmYkD
-fxda/J91Z1xrah5ec++FL0L4vs+jCiIWJeupJFKlr1hCMZiiGH7W554loK5l4jv3
-EY347EidAw==
-=Ta4p
------END PGP PUBLIC KEY BLOCK-----
+RGVhciBMaW51eCBmb2xrcywKCgpPbiBhbiBBY2VyIFRyYXZlbE1hdGUgNTczNVosIExpbnV44oCZ
+IGI0MyBkcml2ZXIgbG9ncyBhIHByb2JlIGVycm9yLgoKYGBgClsgICAgMC4wMDAwMDBdIExpbnV4
+IHZlcnNpb24gNS4xMC4wLTUtYW1kNjQgCihkZWJpYW4ta2VybmVsQGxpc3RzLmRlYmlhbi5vcmcp
+IChnY2MtMTAgKERlYmlhbiAxMC4yLjEtNikgMTAuMi4xIAoyMDIxMDExMCwgR05VIGxkIChHTlUg
+QmludXRpbHMgZm9yIERlYmlhbikgMi4zNS4yKSAjMSBTTVAgRGViaWFuIAo1LjEwLjI2LTEgKDIw
+MjEtMDMtMjcpClvigKZdClsgICAgMC4wMDAwMDBdIERNSTogQWNlciBUcmF2ZWxNYXRlIDU3MzVa
+L0JBNTFfTVYsIEJJT1MgVjEuMTQgMDcvMjYvMjAxMQpb4oCmXQpbICAgIDUuMzAxNjY0XSBTdXBw
+b3J0IGZvciBjb3JlcyByZXZpc2lvbnMgMHgxNyBhbmQgMHgxOCBkaXNhYmxlZCBieSAKbW9kdWxl
+IHBhcmFtIGFsbGh3c3VwcG9ydD0wLiBUcnkgYjQzLmFsbGh3c3VwcG9ydD0xClsgICAgNS4zMDE2
+ODJdIGI0MzogcHJvYmUgb2YgYmNtYTA6MSBmYWlsZWQgd2l0aCBlcnJvciAtNTI0ClsgICAgNS4z
+MDM1MTBdIEJyb2FkY29tIDQzeHggZHJpdmVyIGxvYWRlZCBbIEZlYXR1cmVzOiBQTkxTIF0KWyAg
+ICA1LjMxNjI2Nl0gZmJjb246IGk5MTVkcm1mYiAoZmIwKSBpcyBwcmltYXJ5IGRldmljZQpbICAg
+IDUuMzE4NDIyXSB2aWRlb2RldjogTGludXggdmlkZW8gY2FwdHVyZSBpbnRlcmZhY2U6IHYyLjAw
+ClsgICAgNS4zMjMyNDBdIHVzYmNvcmU6IHJlZ2lzdGVyZWQgbmV3IGludGVyZmFjZSBkcml2ZXIg
+dWFzClsgICAgNS4zMjU3MDBdIHVtcy1yZWFsdGVrIDMtNToxLjA6IFVTQiBNYXNzIFN0b3JhZ2Ug
+ZGV2aWNlIGRldGVjdGVkClsgICAgNS4zNzgxMzNdIHNjc2kgaG9zdDQ6IHVzYi1zdG9yYWdlIDMt
+NToxLjAKWyAgICA1LjM3ODMyOF0gdXNiY29yZTogcmVnaXN0ZXJlZCBuZXcgaW50ZXJmYWNlIGRy
+aXZlciB1bXMtcmVhbHRlawpbICAgIDUuMzg3NTgyXSBicmNtc21hYyBiY21hMDoxOiBtZmcgNGJm
+IGNvcmUgODEyIHJldiAyMyBjbGFzcyAwIGlycSAxNwpbICAgIDUuMzg4NDg5XSBpZWVlODAyMTEg
+cGh5MDogU2VsZWN0ZWQgcmF0ZSBjb250cm9sIGFsZ29yaXRobSAnbWluc3RyZWxfaHQnClsgICAg
+NS40MjU4MTNdIGJhdHRlcnk6IEFDUEk6IEJhdHRlcnkgU2xvdCBbQkFUMF0gKGJhdHRlcnkgcHJl
+c2VudCkKWyAgICA1LjQ2Nzg3OV0gdGczIDAwMDA6MDU6MDAuMCBlbnA1czA6IExpbmsgaXMgZG93
+bgpbICAgIDUuNDkxNzU4XSB1dmN2aWRlbzogRm91bmQgVVZDIDEuMDAgZGV2aWNlIDEuM00gV2Vi
+Q2FtICgwNGYyOmIxZDgpClsgICAgNS41MjcwMjVdIGlucHV0OiAxLjNNIFdlYkNhbTogMS4zTSBX
+ZWJDYW0gYXMgCi9kZXZpY2VzL3BjaTAwMDA6MDAvMDAwMDowMDoxZC43L3VzYjMvMy00LzMtNDox
+LjAvaW5wdXQvaW5wdXQxNApbICAgIDUuNTI3NDc4XSB1c2Jjb3JlOiByZWdpc3RlcmVkIG5ldyBp
+bnRlcmZhY2UgZHJpdmVyIHV2Y3ZpZGVvClsgICAgNS41Mjc0NzldIFVTQiBWaWRlbyBDbGFzcyBk
+cml2ZXIgKDEuMS4xKQpbICAgIDUuNTMyMzU2XSBicmNtc21hYyBiY21hMDoxOiBmaXJtd2FyZTog
+ZGlyZWN0LWxvYWRpbmcgZmlybXdhcmUgCmJyY20vYmNtNDN4eC0wLmZ3ClsgICAgNS41MzI3MDld
+IGJyY21zbWFjIGJjbWEwOjE6IGZpcm13YXJlOiBkaXJlY3QtbG9hZGluZyBmaXJtd2FyZSAKYnJj
+bS9iY200M3h4X2hkci0wLmZ3ClsgICAgNS41ODY1NTFdIGJyY21zbWFjIGJjbWEwOjE6IGJyY21z
+X29wc19ic3NfaW5mb19jaGFuZ2VkOiBxb3MgCmVuYWJsZWQ6IGZhbHNlIChpbXBsZW1lbnQpClsg
+ICAgNS41ODY1NjFdIGJyY21zbWFjIGJjbWEwOjE6IGJyY21zX29wc19jb25maWc6IGNoYW5nZSBw
+b3dlci1zYXZlIAptb2RlOiBmYWxzZSAoaW1wbGVtZW50KQpbICAgIDUuOTIwNTc1XSBicmNtc21h
+YyBiY21hMDoxOiBicmNtc19vcHNfYnNzX2luZm9fY2hhbmdlZDogcW9zIAplbmFibGVkOiBmYWxz
+ZSAoaW1wbGVtZW50KQpbICAgIDUuOTIwNTgzXSBicmNtc21hYyBiY21hMDoxOiBicmNtc19vcHNf
+Y29uZmlnOiBjaGFuZ2UgcG93ZXItc2F2ZSAKbW9kZTogZmFsc2UgKGltcGxlbWVudCkKW+KApl0K
+YGBgCgpUaGUgd2lyZWxlc3MgZGV2aWNlIHdvcmtzLCBhbmQgaXQgbG9va3MgbGlrZSBpdOKAmXMg
+dXNpbmcgdGhlIGRyaXZlciAKYnJjbXNtYWMuIFNob3VsZCB0aGUgYjQzIGRyaXZlciBiZSBpbnZv
+bHZlZCBmb3IgdGhlIGRldmljZSBoZXJlPyBUaG91Z2ggCkkgZG8gbm90IGtub3cgd2hhdCBlcnJv
+ciAtNTI0IGlzIGV4YWN0bHkuCgoKS2luZCByZWdhcmRzLAoKUGF1bAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQz
+LWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
+YW4vbGlzdGluZm8vYjQzLWRldgo=
