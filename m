@@ -1,82 +1,78 @@
-Return-Path: <SRS0=VEjH=JP=lists.infradead.org=b43-dev-bounces+b43-dev=archiver.kernel.org@kernel.org>
+Return-Path: <SRS0=ewyC=KF=lists.infradead.org=b43-dev-bounces+b43-dev=archiver.kernel.org@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1745FC433ED
-	for <b43-dev@archiver.kernel.org>; Sun, 18 Apr 2021 08:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3079FC433ED
+	for <b43-dev@archiver.kernel.org>; Mon, 10 May 2021 14:53:12 +0000 (UTC)
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 61AA261207
-	for <b43-dev@archiver.kernel.org>; Sun, 18 Apr 2021 08:40:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61AA261207
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTPS id EB56F613DE
+	for <b43-dev@archiver.kernel.org>; Mon, 10 May 2021 14:53:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB56F613DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding
 	:Content-Type:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:MIME-Version:Date:Cc:To:From:Subject:Message-ID:
+	List-Unsubscribe:List-Id:MIME-Version:Message-ID:Date:Subject:CC:To:From:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=kptpTlupo9P1Aa/88P1gngaFOi2KnjljDCUGfmo3y9k=; b=U2QZNEhslBD3yB6AzMIHJhYKmX
-	d5op4rMc5suV5LDvVi6PLD8hctYABkN3lkKyX4t7tIuDmVjkX/RiQyNES9o12zxx+M9Y5qSF9wiEQ
-	YSV4fe/3XjrZXF62uk2fcUI6YoIKqZYrG3pfi+xAF/LGZgxLSDYwwEhk/CDjpeo5v2jO7KiQvqpr1
-	uflsglxyHUjCy9Pcq/QOCkWnvXT8VWEaMqE+V7B53J2szxasvFiXVPauQxZiNMmpCeDmcgm7nv1Af
-	t8QgXoyxHAet1Y8DhsoiVG4+E/rbU6AGr7jnzPnc89kZR1BfAfH2ucii1KlOmdkmtf1zfA0g5gBbC
-	qrmTaMow==;
+	bh=viDHNY+pVl1oelUbQPtY6y/zMNyIfZEriNEbltH4n0Y=; b=kowId9Tv8TyRQ3xE+SaWVSYbfq
+	AJ1t6MKDYBnDS74LrwVtonkQ0moNnEn3IxcIYElcG2mN5TQCSdLvPoX1J+6D+EO72nyRmAc9jIQet
+	9nKQLFB8f3FkWFuGI/IZ7Qyf07SPXN5IeT+y2TSA0fcKv5dhwOGKD75NgTID1r0muv4Z5OravykOK
+	TATbl9GuhgbRFbb/NIUY9rgMIAmaC/Cm/+hBfjS+l4MA+fM474BdD0j+DkFkxFa/fQrx8BDpWqUuP
+	PENAoX80xMn46bdaNQGEifwDeK+OwPtVxSwRQaB8NofULtwsbNBj61a2MFLBawtp2zh0gWx7Y+hT8
+	K25ZpikA==;
 Received: from localhost ([::1] helo=desiato.infradead.org)
 	by desiato.infradead.org with esmtp (Exim 4.94 #2 (Red Hat Linux))
-	id 1lY2yR-007W5j-4P; Sun, 18 Apr 2021 08:40:11 +0000
+	id 1lg7H0-00EhGy-Kq; Mon, 10 May 2021 14:52:42 +0000
 Received: from bombadil.infradead.org ([2607:7c80:54:e::133])
  by desiato.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
- id 1lY2yK-007W5W-4q
- for b43-dev@desiato.infradead.org; Sun, 18 Apr 2021 08:40:04 +0000
+ id 1lg7GO-00Eh3D-OO
+ for b43-dev@desiato.infradead.org; Mon, 10 May 2021 14:52:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:Content-Type:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:In-Reply-To:References;
- bh=k1wDSJjNSGWSCTU5eRsvAHpZuwW/3tmAnj5jy/JDNEk=; b=ev0GqfAZWKo5C6cFaR4rAZZyJ2
- XvduKs28XcyvCO/MXvskDKPcvBbneDwnl3nrfPDbIIbD5MMbiQ9l3YjDzTIPp4Cl/grulW9QMHam2
- 6eWspOxtPjToChNiov1i5T0wiaH0j7sZF5hVtV7hRvlgurHKnEpsLXuUloyJO2mZqP//ZviYo9Fyl
- FOFvJDBvdR57sLwwUtoxau3D+JLkb7MjYoEaxAIvcZUHB5XDh1A+ecFMWL5zYoTKrN3X9w3dYZdbw
- sF9E4NNYBbnxgKtmWAgM8SkkKQhQJMkuf9PARQaT5cE/b9Agx6Gg+w7hxkESPwriOg9qLgTQ8Fazb
- 2IEqQrzA==;
-Received: from smtprelay0147.hostedemail.com ([216.40.44.147]
- helo=smtprelay.hostedemail.com)
+ d=infradead.org; s=bombadil.20210309; h=Content-Type:
+ Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From:
+ Sender:Reply-To:Content-ID:Content-Description:In-Reply-To:References;
+ bh=Yde8xYpjNkPm5Nn/Y1h9e3kAMl95TUwYN5kOAHH1R4k=; b=tHry05Py2cQBggxcSBKaZpsJcI
+ pXOnzZM+C2QLUODo0gD0B+lvgelr9hAiKn+VYxRPUGtbHAHRhP5RaOJSdj+L+LVwcWEaf8amZqfK3
+ +HFfKgZ7jT9SHbf9gslF33U+XqkBtgcoB5aQKiu0aIHxZEN018vwMwpIh4w3G1I0GUmFn0UFJmtBV
+ 92oSZIiGfP0LCPz+nNDuqOMx4IRL3vlTvJ3ge6/HgjKEpx7wuAoJN3CTbeqtk8q0umksqt4p/ySjU
+ ofSVnrBaTLqsNmVCdJfq4euw916G/t2XVClt9mHjcmCJh2gD6tDuIr/MonvmI44qpYId4S80OxWdW
+ EM3463bg==;
+Received: from szxga06-in.huawei.com ([45.249.212.32])
  by bombadil.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
- id 1lY2yH-00AM2b-1L
- for b43-dev@lists.infradead.org; Sun, 18 Apr 2021 08:40:02 +0000
-Received: from omf04.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
- by smtprelay07.hostedemail.com (Postfix) with ESMTP id 089F4181D337B;
- Sun, 18 Apr 2021 08:39:56 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by
- omf04.hostedemail.com (Postfix) with ESMTPA id 9FD9ED1513; 
- Sun, 18 Apr 2021 08:39:54 +0000 (UTC)
-Message-ID: <8b210b5f5972e39eded269b35a1297cf824c4181.camel@perches.com>
-Subject: [PATCH] net/wireless/bcom: constify ieee80211_get_response_rate return
-From: Joe Perches <joe@perches.com>
-To: Kalle Valo <kvalo@codeaurora.org>, "David S. Miller"
- <davem@davemloft.net>,  Jakub Kicinski <kuba@kernel.org>, Larry Finger
- <Larry.Finger@lwfinger.net>, Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, 
- netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Date: Sun, 18 Apr 2021 01:39:53 -0700
-User-Agent: Evolution 3.38.1-1 
+ id 1lg7GL-008peH-Lo
+ for b43-dev@lists.infradead.org; Mon, 10 May 2021 14:52:03 +0000
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Ff3qZ58kQzmVRp;
+ Mon, 10 May 2021 22:49:46 +0800 (CST)
+Received: from thunder-town.china.huawei.com (10.174.177.72) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 10 May 2021 22:51:49 +0800
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless
+ <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>,
+ netdev <netdev@vger.kernel.org>
+CC: Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] b43: phy_n: Delete some useless empty code
+Date: Mon, 10 May 2021 22:51:17 +0800
+Message-ID: <20210510145117.4066-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.26.0.windows.1
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 9FD9ED1513
-X-Stat-Signature: wxh44ewt85uwut8m4fac3o6ad4fbuo6w
-X-Rspamd-Server: rspamout01
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+G5UYbcY9U2RzhD4ADj2YOG2tye+AZKYQ=
-X-HE-Tag: 1618735194-176317
+X-Originating-IP: [10.174.177.72]
+X-CFilter-Loop: Reflected
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210418_014001_191067_B36F884C 
-X-CRM114-Status: GOOD (  10.35  )
+X-CRM114-CacheID: sfid-20210510_075201_890387_6D4B1F11 
+X-CRM114-Status: UNSURE (   9.60  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -93,69 +89,56 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-It's not modified so make it const with the eventual goal of moving
-data to text for various static struct ieee80211_rate arrays.
+These TODO empty code are added by
+commit 9442e5b58edb ("b43: N-PHY: partly implement SPUR workaround"). It's
+been more than a decade now. I don't think anyone who wants to perfect
+this workaround can follow this TODO tip exactly. Instead, it limits them
+to new thinking. Remove it will be better.
 
-Signed-off-by: Joe Perches <joe@perches.com>
+No functional change.
+
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- drivers/net/wireless/broadcom/b43/main.c       | 2 +-
- drivers/net/wireless/broadcom/b43legacy/main.c | 2 +-
- include/net/cfg80211.h                         | 2 +-
- net/wireless/util.c                            | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_n.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index 150a366e8f62..17bcec5f3ff7 100644
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -4053,7 +4053,7 @@ static void b43_update_basic_rates(struct b43_wldev *dev, u32 brates)
- {
- 	struct ieee80211_supported_band *sband =
- 		dev->wl->hw->wiphy->bands[b43_current_band(dev->wl)];
--	struct ieee80211_rate *rate;
-+	const struct ieee80211_rate *rate;
- 	int i;
- 	u16 basic, direct, offset, basic_offset, rateptr;
+diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+index 665b737fbb0d820..13cc62695f4cc93 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_n.c
++++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+@@ -4601,16 +4601,6 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
+ 	if (nphy->hang_avoid)
+ 		b43_nphy_stay_in_carrier_search(dev, 1);
  
-diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
-index 7692a2618c97..f64ebff68308 100644
---- a/drivers/net/wireless/broadcom/b43legacy/main.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/main.c
-@@ -2762,7 +2762,7 @@ static void b43legacy_update_basic_rates(struct b43legacy_wldev *dev, u32 brates
- {
- 	struct ieee80211_supported_band *sband =
- 		dev->wl->hw->wiphy->bands[NL80211_BAND_2GHZ];
--	struct ieee80211_rate *rate;
-+	const struct ieee80211_rate *rate;
- 	int i;
- 	u16 basic, direct, offset, basic_offset, rateptr;
+-	if (nphy->gband_spurwar_en) {
+-		/* TODO: N PHY Adjust Analog Pfbw (7) */
+-		if (channel == 11 && b43_is_40mhz(dev)) {
+-			; /* TODO: N PHY Adjust Min Noise Var(2, tone, noise)*/
+-		} else {
+-			; /* TODO: N PHY Adjust Min Noise Var(0, NULL, NULL)*/
+-		}
+-		/* TODO: N PHY Adjust CRS Min Power (0x1E) */
+-	}
+-
+ 	if (nphy->aband_spurwar_en) {
+ 		if (channel == 54) {
+ 			tone[0] = 0x20;
+@@ -4636,12 +4626,6 @@ static void b43_nphy_spur_workaround(struct b43_wldev *dev)
+ 			tone[0] = 0;
+ 			noise[0] = 0;
+ 		}
+-
+-		if (!tone[0] && !noise[0]) {
+-			; /* TODO: N PHY Adjust Min Noise Var(1, tone, noise)*/
+-		} else {
+-			; /* TODO: N PHY Adjust Min Noise Var(0, NULL, NULL)*/
+-		}
+ 	}
  
-diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
-index 911fae42b0c0..ed07590bc72d 100644
---- a/include/net/cfg80211.h
-+++ b/include/net/cfg80211.h
-@@ -5606,7 +5606,7 @@ static inline bool cfg80211_channel_is_psc(struct ieee80211_channel *chan)
-  * which is, for this function, given as a bitmap of indices of
-  * rates in the band's bitrate table.
-  */
--struct ieee80211_rate *
-+const struct ieee80211_rate *
- ieee80211_get_response_rate(struct ieee80211_supported_band *sband,
- 			    u32 basic_rates, int bitrate);
- 
-diff --git a/net/wireless/util.c b/net/wireless/util.c
-index 1bf0200f562a..382c5262d997 100644
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -24,7 +24,7 @@
- #include "rdev-ops.h"
- 
- 
--struct ieee80211_rate *
-+const struct ieee80211_rate *
- ieee80211_get_response_rate(struct ieee80211_supported_band *sband,
- 			    u32 basic_rates, int bitrate)
- {
+ 	if (nphy->hang_avoid)
+-- 
+2.26.0.106.g9fadedd
+
 
 
 _______________________________________________
