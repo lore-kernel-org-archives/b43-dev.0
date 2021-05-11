@@ -2,84 +2,85 @@ Return-Path: <SRS0=m+ae=KG=lists.infradead.org=b43-dev-bounces+b43-dev=archiver.
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0686C433B4
-	for <b43-dev@archiver.kernel.org>; Tue, 11 May 2021 11:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F83DC433ED
+	for <b43-dev@archiver.kernel.org>; Tue, 11 May 2021 13:17:00 +0000 (UTC)
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F146F61363
-	for <b43-dev@archiver.kernel.org>; Tue, 11 May 2021 11:16:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F146F61363
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 09C93613C5
+	for <b43-dev@archiver.kernel.org>; Tue, 11 May 2021 13:16:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C93613C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding
 	:Content-Type:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:Date:Message-ID:References:
-	CC:To:From:Subject:Reply-To:Content-ID:Content-Description:Resent-Date:
+	List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=Cl6OmtdrZ3HARO+6kZfjgIcHcpR7xd0ulBhc+Z6Cj+Y=; b=KJrQHLTFkozR3H5yPY9dUhkNC
-	vX/6s78Mc4J8Yg6DRhO6XP0QZZk487gRZTwysmhcejbA1UADynOOakGR40S8gnA0AZ3KkFfHo68Jj
-	MQMXcRvOweEiGzLe7vD7RgVXYIHX3FZPc7FlymVEHezAVAauIYViwMeGalvURLfWmKAXKEFdQ4wGa
-	mc+UFn+jwFUZ9vwvGUGyYCopMPVRQT1VN0kOn6Jr5w1XBN3MoY9DqD9XvOIv3Zuy2WucMdo9I2wKN
-	DmJCP7apn5Hk+0D/WLnxoGUIr8haqAQallZWuIAmFww4cc44uOa8P6RZsuM0OuvIHnuOPiKZNos0N
-	r5UE7TRhw==;
+	 bh=M2TMV62QKGW/rx789an/7xNqXn7SPY280dBF4HDbAtY=; b=DCza5wxjBXKWSYi5tYoD3Dbnm
+	z5qWsInsRwAiy1W7NYCAgy+a+PTh0GDRvmtMblNZH8lDh5PPMa/W3E4zS1y5khzzoikKoyTWFJvQx
+	zMNUEPEKvf+hKo5xivSYvg8gA5Wkhl7Lco7QtCX9MTS93z5Fb3hL3ptwV3TYH8uHg5OxAqDhGbrVP
+	CklzPfrMeBrBUu9z6M9r/4MYI8Hgv1KXk6zYOzFAWnedqh4AIkWaZP7jstKbog3FZf2Oi0y9OL+ia
+	pbYAalQVeK3yAFiIXysuLl7PPsw4Z80kccjp6D01wg8Cy5dURgF2VnQ19EMVrARxZlOgZka6YbAZS
+	tRv+uhbIA==;
 Received: from localhost ([::1] helo=desiato.infradead.org)
 	by desiato.infradead.org with esmtp (Exim 4.94 #2 (Red Hat Linux))
-	id 1lgQNP-00H61Z-Dj; Tue, 11 May 2021 11:16:35 +0000
-Received: from [2607:7c80:54:e::133] (helo=bombadil.infradead.org)
+	id 1lgSFZ-0002BX-Hc; Tue, 11 May 2021 13:16:37 +0000
+Received: from bombadil.infradead.org ([2607:7c80:54:e::133])
  by desiato.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
- id 1lgIdA-00G9LK-Vh
- for b43-dev@desiato.infradead.org; Tue, 11 May 2021 03:00:22 +0000
+ id 1lgR7y-00HHXQ-Us
+ for b43-dev@desiato.infradead.org; Tue, 11 May 2021 12:04:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:CC:To:From:
- Subject:Sender:Reply-To:Content-ID:Content-Description;
- bh=0WrMO99tGZH/ExjVpzV6fq59FktD6Kzvm5NMPNGFsw4=; b=28JN2APwM9/G4OzO3sm1CWLwUu
- gN30yxYI+StJwARX0VCNcZYUOoduOj+S8jECpBdS8YzPF/4OgeNCypB/FIcb4uK0Vwi6paJfBEvqI
- fj7PLZg/bZXK6vGLmuHYHsmCovJpDGTXbUdjKbPohIekUOj7hFHCg+4aE+eoFXWZkv3MQ1ifsH6/U
- OmdOMDWL4cDUsj0EHXa9XU+cUo01QjNg0RZeFourw/cbvLJpiD49SA0mbVkkPFULu+xr8uE9raSDX
- lDvcBp6bRBFtTZ7lTL/ZO8PvlvrtVb+DT2Qzg0TcLLMzLd6DTe4fFXbn4qgDhqhl6Ysr81Yh/cBlZ
- F1SYrNIA==;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=5u2lW8RKz8/Z3PJTIiHXnNaU9wBSRgfqwolanPIUe8Y=; b=4IgJa1wC5wFcVQmht//glmSI65
+ WE50GThF6drfJEid5nznHUMbgvRESzUVZMu9ahWCK1SEpU5YMflI+PajEr5cayeTnZrzOz754szMw
+ KC+/w86+My5XPJdl6NSl37XVmqmR25KEXLcb5R6pPHKPWL5asRuWKpkh/uIAIYDYRMS1KzK/GFUGV
+ 959x/X6l3h2kvdvTF7erMEGyKnPpKrNIAdPOyOfXrctSvL5NWuMpabktBlvz2KYnB52U5RXjlSE83
+ VoGzjSXpjdQPvCuBqnYRUWlMNvtmRW2qz/OXPPdrlYxtPJwTv3CZpTYj2jEl5IsXeLQi6gHqLbb2e
+ J6pWqmog==;
+Received: from vps0.lunn.ch ([185.16.172.187])
  by bombadil.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
- id 1lgId6-009Gka-JZ
- for b43-dev@lists.infradead.org; Tue, 11 May 2021 03:00:18 +0000
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FfMzH6bcFz1BLCD;
- Tue, 11 May 2021 10:57:31 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.72) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.498.0; Tue, 11 May 2021
- 11:00:07 +0800
+ id 1lgR7w-009Y3i-HC
+ for b43-dev@lists.infradead.org; Tue, 11 May 2021 12:04:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+ s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+ Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=5u2lW8RKz8/Z3PJTIiHXnNaU9wBSRgfqwolanPIUe8Y=; b=RoAPO8hC9Tz7/mkjSljO3QEuHe
+ gSA4/K7SZtCZ5m/cr4u09PjrjVDc56+Ez1S3Uz4vELPR9vkzxoS/ywHTYBOf3OvrdEE/Z4NQfxB9W
+ jv4rIu8lEskUxwz99sE+555MaWrn41DzFSbHRPt38gTG95XaP88fcV4vErLP+e5YLA0Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+ (envelope-from <andrew@lunn.ch>)
+ id 1lgR7e-003jM0-8X; Tue, 11 May 2021 14:04:22 +0200
+Date: Tue, 11 May 2021 14:04:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+ "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ linux-wireless <linux-wireless@vger.kernel.org>,
+ b43-dev <b43-dev@lists.infradead.org>, netdev <netdev@vger.kernel.org>
 Subject: Re: [PATCH 1/1] b43: phy_n: Delete some useless empty code
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless
- <linux-wireless@vger.kernel.org>, b43-dev <b43-dev@lists.infradead.org>,
- netdev <netdev@vger.kernel.org>
+Message-ID: <YJpyxtsmj1upSpQE@lunn.ch>
 References: <20210510145117.4066-1-thunder.leizhen@huawei.com>
- <YJmRUQwPPDE+hWiN@lunn.ch> <1890aa92-ddf2-78f7-51e7-bdc3a58a04c6@huawei.com>
-Message-ID: <c7c7c332-acc3-4907-1c7d-ccf2413ef837@huawei.com>
-Date: Tue, 11 May 2021 11:00:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ <YJmRUQwPPDE+hWiN@lunn.ch>
+ <1890aa92-ddf2-78f7-51e7-bdc3a58a04c6@huawei.com>
+ <c7c7c332-acc3-4907-1c7d-ccf2413ef837@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1890aa92-ddf2-78f7-51e7-bdc3a58a04c6@huawei.com>
-Content-Language: en-US
-X-Originating-IP: [10.174.177.72]
-X-CFilter-Loop: Reflected
+Content-Disposition: inline
+In-Reply-To: <c7c7c332-acc3-4907-1c7d-ccf2413ef837@huawei.com>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210510_200016_839169_5F838DF0 
-X-CRM114-Status: GOOD (  10.76  )
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210510_200016_839169_5F838DF0 
-X-CRM114-Status: UNSURE (   7.20  )
+X-CRM114-CacheID: sfid-20210511_050440_587603_AB9B1F32 
+X-CRM114-Status: UNSURE (   6.19  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -97,36 +98,15 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
+> I got it. It reported by W=1.
 
+A lot of the kernel tree is W=1 clean now. Networking is. So we expect
+patches to also be W=1 clean.
 
-On 2021/5/11 9:11, Leizhen (ThunderTown) wrote:
-> 
-> 
-> On 2021/5/11 4:02, Andrew Lunn wrote:
->> On Mon, May 10, 2021 at 10:51:17PM +0800, Zhen Lei wrote:
->>> These TODO empty code are added by
->>> commit 9442e5b58edb ("b43: N-PHY: partly implement SPUR workaround"). It's
->>> been more than a decade now. I don't think anyone who wants to perfect
->>> this workaround can follow this TODO tip exactly. Instead, it limits them
->>> to new thinking. Remove it will be better.
->>>
->>> No functional change.
->>
->> No function change, apart from the new warning?
->>
->> Does your bot to compile the change and look for new warnings/errors?
-> 
-> Sorry, I have compiled it. I guess it's probably separated by macros, which I didn't notice. I will check it.
+Hopefully this will become the default at some point, or the
+additional warnings W=1 enables will be made always be enabled.
 
-I got it. It reported by W=1.
-
-> 
->>
->>      Andrew
->>
->> .
->>
-
+	   Andrew
 
 _______________________________________________
 b43-dev mailing list
