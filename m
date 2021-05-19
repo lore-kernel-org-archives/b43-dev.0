@@ -7,79 +7,94 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDACC433B4
-	for <b43-dev@archiver.kernel.org>; Wed, 19 May 2021 05:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 501A5C433ED
+	for <b43-dev@archiver.kernel.org>; Wed, 19 May 2021 15:05:47 +0000 (UTC)
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A63A46135B
-	for <b43-dev@archiver.kernel.org>; Wed, 19 May 2021 05:05:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A63A46135B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTPS id BAB84610CD
+	for <b43-dev@archiver.kernel.org>; Wed, 19 May 2021 15:05:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAB84610CD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding
-	:Content-Type:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	d=lists.infradead.org; s=desiato.20200630; h=Sender:Content-Type:
+	Content-Transfer-Encoding:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Message-ID:References:In-Reply-To:Subject:Cc:To:From
+	:Date:MIME-Version:Reply-To:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=B6TWOcwQEI5wFr76iXUNA/p+bUnYcO76XBkk6Zos8fM=; b=L+a5lxtC5Z0fgA9GmFYtryLAj
-	C2U/ZrVdbXcIqC6dj4pX/tEl26ttHAMOUSTIMho8yYQbzdn/ghxkq4SpOrlDDrsT3bePolnORb/QR
-	XPne7qUBgY6KW5PDR18LWYgTsWPgJ3rjPPVKzTvoROwyuyfV8iqXCjF5sFJI/X/h3ttG3Wk3AI27m
-	Qu9ikhK7m8DBykzsDtZMsNgRkaP1PJ1n12N+K16oSeCiLyezrGBiXOXdi+rxvZHAKSkQYkBwhYWcq
-	PmgchH+FYVr8yeADG+t7vTLhHpBPf0k0O5rPLf1tgiy6iFQErMvUUuqNTBkMiSsdt92t1Ivf1ICiu
-	fppcWf2Tg==;
+	 bh=oH9wetZDL+cFQO7fWC1Tj7J/sz2KvzSZV6BXHboVF5w=; b=NZSNRfB0eCb206dwqnbDq55EP
+	Ku6tP1SyMl8gBgWCjF1RL3N8yzyLMCcKSAz5PhTz5/iDo+W1ZIhWVakFq0FbzDpXAWiTdlfj9/rl8
+	A4w6KiPQ3ftvfsKrzF/P+K50KIDZ6+D6lzQBaZfUa+ol8GF80HGECBrG4Q07Ky+g5WbyegMAlWo+E
+	9UbpZncvnsjh7VSG/FhtWT0gBL9zcroAVTfwHmGb86UljCRICIphHdy9bHG5CdpFzDS3ISiuBQQPd
+	teSlaG8bWgoOi5IKRJVAfA9etXsVJl1ugPX1T3g5vIu8GeI2ngTaUaxzSUQFU9aAG3xq2IlS/2CMT
+	Z3LvlWxfg==;
 Received: from localhost ([::1] helo=desiato.infradead.org)
 	by desiato.infradead.org with esmtp (Exim 4.94 #2 (Red Hat Linux))
-	id 1ljEON-002o19-Hb; Wed, 19 May 2021 05:05:12 +0000
+	id 1ljNl8-004Ku7-8s; Wed, 19 May 2021 15:05:18 +0000
 Received: from bombadil.infradead.org ([2607:7c80:54:e::133])
  by desiato.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
- id 1ljEOJ-002o0Q-8g
- for b43-dev@desiato.infradead.org; Wed, 19 May 2021 05:05:07 +0000
+ id 1ljNl6-004Ku0-Qy
+ for b43-dev@desiato.infradead.org; Wed, 19 May 2021 15:05:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=Q74XFfN7I00nkeAA3Gm4B6jFCRAm/m9QCYLiOs7Bwhk=; b=LfrzkYfmUXpXBYyb3Yv5bIYTIR
- wadHyoS3mObAwzva2kEyeFc396SFMw9Un6ysEAx9XkgGasEnvqWefe6ASApIuJ2hlQ8Z5fqiK6sjn
- Cs8QXJjoiGLgaEb3AA+/DgBlLITP3l6fKwAqXn/LImEpcJHvzF1xk1J8rDFFLE+LJBw4UKYvY9+Hu
- HpWnRI0cAlElHqkv2qJP9Z+TZGxIhblHEjxOzEI4VTBewMi6KNbZifgO70SgtSImT2WZQ+SsT6zLs
- pbi6GXRBYSA9b4qytKpUMPukZDT1GqUWyjGHyLjovMLotwXiFqk1pY4v+1Ieag9TW8K8zoSnJlJmw
- nkg7KlDw==;
-Received: from mail.kernel.org ([198.145.29.99])
+ d=infradead.org; s=bombadil.20210309; h=Message-ID:References:In-Reply-To:
+ Subject:Cc:To:From:Date:Content-Transfer-Encoding:Content-Type:MIME-Version:
+ Sender:Reply-To:Content-ID:Content-Description;
+ bh=mbm/KQC14is0rErwVc62s6au2BQPmhOMig0Vh7EVlik=; b=h2Vnd65VhEOW5GW0qAhK2AIF47
+ m63hSv6qHhyeKkieUkoiwpdTPHen4bJZtoFmo+0BNd4wNekZQQu6WbVv8ZkTlw66m6eAuusxjOoqf
+ XAYu6YEdhnxczpau4ZTTRi0/kVG6a7GA8BdyIX28o5+tSCSJroNkW8vTE3kxDlfPrtWTa3Ni1NXLv
+ piGAIoaYw1KyJcTTpaYSLG6eES3y0L+s+Wpiebtwu8Jzy2feA/t32jjLUg+iW74uqeqANMiCS4635
+ iRZWeDPqCIT5HOJKD7mZyV02Zc+gkukd0ONBOXoWWgNoFcDhy+k2cx1ldk7YD2rXsCJFhRdwyTKZW
+ f4snHtqQ==;
+Received: from so254-9.mailgun.net ([198.61.254.9])
  by bombadil.infradead.org with esmtps (Exim 4.94 #2 (Red Hat Linux))
- id 1ljEOG-00F8Xf-GB
- for b43-dev@lists.infradead.org; Wed, 19 May 2021 05:05:05 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 92D0E6135B;
- Wed, 19 May 2021 05:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
- s=korg; t=1621400703;
- bh=wYYX9ZqE8MzuuAZRGsD7NWSnysXuKB8JlIKz2SrZG7Y=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=jDTLUdYDPOqGsBMcGlgqJPnqMyaL+6ZyGBbXTrwd5gxKE34zpNCuAW3q48aS8oBCE
- jVXiydajtZ29294JvxkwdUKOzRZV+CreV+bh8Sqqf2YYgUivccXwr1eshu/5M54dld
- n7oqYbFPbYfTTEIoA6QBTEOQTIwmguh/aG6WnvO0=
-Date: Wed, 19 May 2021 07:05:00 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jeff Johnson <jjohnson@codeaurora.org>
+ id 1ljNl1-00FZh3-Ah
+ for b43-dev@lists.infradead.org; Wed, 19 May 2021 15:05:15 +0000
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
+ q=dns/txt; 
+ s=smtp; t=1621436714; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=mbm/KQC14is0rErwVc62s6au2BQPmhOMig0Vh7EVlik=;
+ b=byCbqqcNo4FqtaS4Tii00CPyzigrElKNGWNpo8YTUwOQOs2POAjUHaBnhYVh7Ho2qD5SEF6I
+ mmiqnRkQ9elWjGTUEIjCtsgQjWEIFIBeIG8F/qkLm7zPWri6HsGh6siZHq3kTbubud6EdFfn
+ w2wek/9Q9ow3d45AaEXlz/375s4=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyIxODVhOSIsICJiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 60a5291b7b9a7a2b6c26233a (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 19 May 2021 15:04:59
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+ id 64BDCC433F1; Wed, 19 May 2021 15:04:59 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+ (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+ (No client certificate requested) (Authenticated sender: jjohnson)
+ by smtp.codeaurora.org (Postfix) with ESMTPSA id 1F866C433D3;
+ Wed, 19 May 2021 15:04:59 +0000 (UTC)
+MIME-Version: 1.0
+Date: Wed, 19 May 2021 08:04:59 -0700
+From: Jeff Johnson <jjohnson@codeaurora.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
- "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Kees Cook <keescook@chromium.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Chao Yu <chao@kernel.org>,
- Leon Romanovsky <leon@kernel.org>, b43-dev@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- jjohnson=codeaurora.org@codeaurora.org
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Kees Cook <keescook@chromium.org>, Jason Gunthorpe <jgg@ziepe.ca>, Chao Yu
+ <chao@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jjohnson=codeaurora.org@codeaurora.org
 Subject: Re: [PATCH v2] b43: don't save dentries for debugfs
-Message-ID: <YKScfFKhxtVqfRkt@kroah.com>
+In-Reply-To: <YKScfFKhxtVqfRkt@kroah.com>
 References: <20210518163304.3702015-1-gregkh@linuxfoundation.org>
  <891f28e4c1f3c24ed1b257de83cbb3a0@codeaurora.org>
  <f539277054c06e1719832b9e99cbf7f1@codeaurora.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <f539277054c06e1719832b9e99cbf7f1@codeaurora.org>
+ <YKScfFKhxtVqfRkt@kroah.com>
+Message-ID: <2eb3af43025436c0832c8f61fbf519ad@codeaurora.org>
+X-Sender: jjohnson@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210518_220504_586253_FB51A32D 
-X-CRM114-Status: GOOD (  25.04  )
+X-CRM114-CacheID: sfid-20210519_080514_346278_491F6ED6 
+X-CRM114-Status: GOOD (  17.56  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -91,56 +106,33 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-On Tue, May 18, 2021 at 03:00:44PM -0700, Jeff Johnson wrote:
-> On 2021-05-18 12:29, Jeff Johnson wrote:
-> > On 2021-05-18 09:33, Greg Kroah-Hartman wrote:
-> > > There is no need to keep around the dentry pointers for the debugfs
-> > > files as they will all be automatically removed when the subdir is
-> > > removed.  So save the space and logic involved in keeping them
-> > > around by
-> > > just getting rid of them entirely.
-> > > 
-> > > By doing this change, we remove one of the last in-kernel user that
-> > > was
-> > > storing the result of debugfs_create_bool(), so that api can be
-> > > cleaned
-> > > up.
-> > 
-> > Question not about this specific change, but the general concept
-> > of keeping (or not keeping) dentry pointers. In the ath drivers,
-> > as well as in an out-of-tree driver for Android, we keep a
-> > debugfs dentry pointer to use as a param to relay_open().
-> > 
-> > Will we still be able to have a dentry pointer for this purpose?
-> > Or better, is there a recommended way to get a dentry pointer
-> > NOT associated with debugfs at all (which would be ideal for
-> > Android where debugfs is disabled).
-> 
-> Answering one of my questions: The dentry passed to relay_open() comes
-> from debugfs_create_dir() which is expected to return a dentry.
-> 
-> Would still like guidance on if there is a recommended way to get a
-> dentry not associated with debugfs.
-
-What do you exactly mean by "not associated with debugfs"?
-
-And why are you passing a debugfs dentry to relay_open()?  That feels
-really wrong and fragile.
-
-Ideally I want to get rid of the "raw" dentry that debugfs returns to
-callers, as it has caused odd problems in the past, but that's a very
-long-term project...
-
-thanks,
-
-greg k-h
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+T24gMjAyMS0wNS0xOCAyMjowNSwgR3JlZyBLcm9haC1IYXJ0bWFuIHdyb3RlOgo+IE9uIFR1ZSwg
+TWF5IDE4LCAyMDIxIGF0IDAzOjAwOjQ0UE0gLTA3MDAsIEplZmYgSm9obnNvbiB3cm90ZToKPj4g
+T24gMjAyMS0wNS0xOCAxMjoyOSwgSmVmZiBKb2huc29uIHdyb3RlOgo+PiBXb3VsZCBzdGlsbCBs
+aWtlIGd1aWRhbmNlIG9uIGlmIHRoZXJlIGlzIGEgcmVjb21tZW5kZWQgd2F5IHRvIGdldCBhCj4+
+IGRlbnRyeSBub3QgYXNzb2NpYXRlZCB3aXRoIGRlYnVnZnMuCj4gCj4gV2hhdCBkbyB5b3UgZXhh
+Y3RseSBtZWFuIGJ5ICJub3QgYXNzb2NpYXRlZCB3aXRoIGRlYnVnZnMiPwo+IAo+IEFuZCB3aHkg
+YXJlIHlvdSBwYXNzaW5nIGEgZGVidWdmcyBkZW50cnkgdG8gcmVsYXlfb3BlbigpPyAgVGhhdCBm
+ZWVscwo+IHJlYWxseSB3cm9uZyBhbmQgZnJhZ2lsZS4KCkkgZG9uJ3Qga25vdyB0aGUgaGlzdG9y
+eSBidXQgdGhlIHJlbGF5IGRvY3VtZW50YXRpb24gdGVsbHMgdXM6CiJJZiB5b3Ugd2FudCBhIGRp
+cmVjdG9yeSBzdHJ1Y3R1cmUgdG8gY29udGFpbiB5b3VyIHJlbGF5IGZpbGVzLAp5b3Ugc2hvdWxk
+IGNyZWF0ZSBpdCB1c2luZyB0aGUgaG9zdCBmaWxlc3lzdGVt4oCZcyBkaXJlY3RvcnkKY3JlYXRp
+b24gZnVuY3Rpb24sIGUuZy4gZGVidWdmc19jcmVhdGVfZGlyKCkuLi4iCgpTbyBteSBndWVzcyBp
+cyB0aGF0IHRoZSBvcmlnaW5hbCBpbXBsZW1lbnRhdGlvbiBmb2xsb3dlZCB0aGF0CmFkdmljZS4g
+IEkgc2VlIDUgY2xpZW50cyBvZiB0aGlzIGZ1bmN0aW9uYWxpdHksIGFuZCBhbGwgNSBwYXNzIGEK
+ZGVudHJ5IHJldHVybmVkIGZyb20gZGVidWdmc19jcmVhdGVfZGlyKCk6Cgpkcml2ZXJzL2dwdS9k
+cm0vaTkxNS9ndC91Yy9pbnRlbF9ndWNfbG9nLmMsIGxpbmUgMzg0CmRyaXZlcnMvbmV0L3dpcmVs
+ZXNzL2F0aC9hdGgxMGsvc3BlY3RyYWwuYywgbGluZSA1MzQKZHJpdmVycy9uZXQvd2lyZWxlc3Mv
+YXRoL2F0aDExay9zcGVjdHJhbC5jLCBsaW5lIDkwMgpkcml2ZXJzL25ldC93aXJlbGVzcy9hdGgv
+YXRoOWsvY29tbW9uLXNwZWN0cmFsLmMsIGxpbmUgMTA3NwprZXJuZWwvdHJhY2UvYmxrdHJhY2Uu
+YywgbGluZSA1NDkKCkplZmYKLS0gClRoZSBRdWFsY29tbSBJbm5vdmF0aW9uIENlbnRlciwgSW5j
+LiBpcyBhIG1lbWJlciBvZiB0aGUgQ29kZSBBdXJvcmEgCkZvcnVtLAphIExpbnV4IEZvdW5kYXRp
+b24gQ29sbGFib3JhdGl2ZSBQcm9qZWN0CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJh
+ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMt
+ZGV2Cg==
