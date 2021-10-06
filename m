@@ -2,162 +2,52 @@ Return-Path: <SRS0=OdlP=O2=lists.infradead.org=b43-dev-bounces+b43-dev=archiver.
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1014EC433F5
-	for <b43-dev@archiver.kernel.org>; Wed,  6 Oct 2021 07:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DC7C433FE
+	for <b43-dev@archiver.kernel.org>; Wed,  6 Oct 2021 16:15:12 +0000 (UTC)
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B43C86115A
-	for <b43-dev@archiver.kernel.org>; Wed,  6 Oct 2021 07:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B43C86115A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTPS id 5A78861130
+	for <b43-dev@archiver.kernel.org>; Wed,  6 Oct 2021 16:15:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 5A78861130
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=lists.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:In-Reply-To:Message-ID:
-	Subject:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-	List-Owner; bh=1O7WOGdywNODDOX2jE9mVSvZjETWA1tSBMN+Wnyokpk=; b=461i8azYy1hHs5
-	rkiUlPzkCnyKoTeF7ROb5WFVciROJvGEBER0blbOB8h8phTHBMymMjF88ElvRYA+faodZwssnn7Nr
-	d7mcRaSAPaig3ytA9QQj3yRSZ0LkTDe6YW8oKsJ6LMyXf0Q4VUWWAjo+hUC0wy28BDq//bZYBUGip
-	cxWTq0TJoMv7FFdYy/yRhLQ78jRDr+TlauF7PhXqdHycCE3lvpfN0AZyIpsAC5oFa06d/Gi2EdWZJ
-	jDUQuqbBm39BWnmixIcq2LFTNvDee64dAtGOq+UKyytxNNQxzfo78MzV8l0iIc4leUMc8lwBJAWjV
-	K0yooOI2xiAoIEThNdMQ==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=wKAKiy3OXgRd1jhgekXK8TuN0GxZx0g0l/bWYkocZ+g=; b=LUD3iB1AZMEffusEBaB8RHrspl
+	8BjQo1oxJ12X0jk24jO6m5U+3ewMQYM2uVZv+pyyUOBEwdoyEjFdumQ05t1z+L5xvVbEx3HXCPBYV
+	VHB/xoj8ClAGm7yQLDOoj/YWrOJ8WWNa0xBc1Tcr4Q3MwGpQyhhL0Qxrs/wrBfDwRSBEnm/vyHRxu
+	rXSt9NDXsw7TMKIQ+1HEanyTkVtz2ZetM1v5bTOW9PrKCZRgALquY4VOFIWMAtUsxcnj240tpA4eg
+	AWbvSIOrZ81trJVb2eFz5bP5QvLBnxTXPc8ugeIxzxYvpcJKGowx3pmQtqPn2J1bZijLxnes30Wn5
+	F3EEtKbA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1mY1Vj-00DGKa-0D; Wed, 06 Oct 2021 07:38:43 +0000
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32])
+	id 1mY9ZI-00ExqK-VL; Wed, 06 Oct 2021 16:14:57 +0000
+Received: from bues.ch ([2a01:138:9005::1:4])
  by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
- id 1mY1Vg-00DGJu-AV
- for b43-dev@lists.infradead.org; Wed, 06 Oct 2021 07:38:41 +0000
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
- by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1967B1hM014783; 
- Wed, 6 Oct 2021 07:36:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
- h=date : from : to : cc
- : subject : message-id : content-type : in-reply-to : mime-version;
- s=corp-2021-07-09; bh=RUCztaPgsrI13QjlNGdoBAyhzj+hNbgVu9OdaPjif7A=;
- b=PCzH8P3Do1y9WbefBIxGyZENuYWBh5J/Y5SUViMnvywgqNn5wPLk3ecjPiwt0NlXPKEE
- PjVnjr7vETxxZWogxBB0FZsdw/QCjWGfXUVQpBLdrXldqUN/siD6ZMBGCUSuBBTLJtZ7
- Hesfkw01AwmUmLKSTnjLaVJRX2ieugL4dEtF/4NAXMi7b89nySXDk0s6LeBTROO2YZem
- hTW8yI5/TMaR9w7V+6C8GbVTalBEZevwF+GBMo7v3UtqrTZVCJwk2Jmz9vn4NFnt4pOX
- rVKlWQ7XE/0xMeHy4BqWLrgSfPasewM30cTTWXpjimXrtCDk1IKOKEvg6DUK7BWSfIuI +w== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
- by mx0b-00069f02.pphosted.com with ESMTP id 3bh3y590sk-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Wed, 06 Oct 2021 07:36:35 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
- by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1967a01Z196103;
- Wed, 6 Oct 2021 07:36:35 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com
- (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
- by aserp3030.oracle.com with ESMTP id 3bev7ueshs-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Wed, 06 Oct 2021 07:36:35 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RRGBjrjVXSCVQS05jpjhWMcyoyio2oVcPnbPlyJyJStcWriVnp9wD1ymD/DCR2amDx4S6xDdg3Fvk4YkbV9mDco+MBbD462F5kXHGicLszZ6ZhC6krLcAQwZKUSsgPeywtDSU/z6XkZausPiMGeJ65kt0l+QCLvjOjUNfW8CPF3ZnW/TTAxAJ/O+cguTiDHPp9nayPa9W7didCwd7KZ7jiamJ1xZ4lTvgB3nJCcRxaAqySE/JfwCcN/gJubu2UgLfHQGtHIr7qzak75btMx+lLPqGVc2r0WiKMm+7d5CGCJAMf7etbo4IFaAF0SfR5xuDo65JgdIE4U9HqgR40EJBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RUCztaPgsrI13QjlNGdoBAyhzj+hNbgVu9OdaPjif7A=;
- b=NMfV/sLgXu/RMXXW/HEheQKaSB73w1+BzCG1qWsH0P7jMd8VOg9GUBSAGQpLIxhODEHHrGzNY/xTG0kbBlPyM2CS8s0bLbFD1a8LziiptYOPjp5NcvVPrWWSQuOX/J1Tz3lkmwxG8IegVFcBjZNxXGJRas7GaStFxR6BdXtfT071KZNl31y5ab8YeSurUUQcZtuscFDNGorbisQIlBE2l7XXKzik3G5lXtH4GrL2aSE9NcPoDbx6xH42zNJhvoksmNxr7RJEJrNS00q4XnOxettYNDIY/DaHh7hFrAqXRy9t7Kc0yrkHg6m44iI5imp8Eq9OmeKhDiY0GZmN9j9kEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RUCztaPgsrI13QjlNGdoBAyhzj+hNbgVu9OdaPjif7A=;
- b=ipow/mx+bVVcBc63Bt/GVTFKq25zxZuueAgz26+n6Spkq5S/gHvh5a371x5Lafc3MqoXFtmpN0BR6ktO50QQ4PMLtYgH+KwcIQlXzQp0y+TDbP37HOWB3zeu2aXYKQ0hgPice7vLlKlNmsmlD+WXx823CTtizeJD3e/vJsogSLo=
-Authentication-Results: codeaurora.org; dkim=none (message not signed)
- header.d=none;codeaurora.org; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CO1PR10MB4546.namprd10.prod.outlook.com
- (2603:10b6:303:6e::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.16; Wed, 6 Oct
- 2021 07:36:33 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4566.022; Wed, 6 Oct 2021
- 07:36:33 +0000
-Date: Wed, 6 Oct 2021 10:36:22 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 2/2] b43: fix a lower bounds test
-Message-ID: <20211006073621.GE8404@kili>
-Content-Disposition: inline
+ id 1mY9ZD-00Exmw-QH
+ for b43-dev@lists.infradead.org; Wed, 06 Oct 2021 16:14:53 +0000
+Received: by bues.ch with esmtpsa (Exim 4.92) (envelope-from <m@bues.ch>)
+ id 1mY9Z0-0002Y7-VV; Wed, 06 Oct 2021 18:14:39 +0200
+Date: Wed, 6 Oct 2021 18:13:58 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo
+ <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+ b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] b43legacy: fix a lower bounds test
+Message-ID: <20211006181358.67a23e18@wiggum>
 In-Reply-To: <20211006073542.GD8404@kili>
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: AS8P250CA0021.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:20b:330::26) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+References: <20211006073542.GD8404@kili>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: from kili (62.8.83.99) by AS8P250CA0021.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:20b:330::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.14 via Frontend
- Transport; Wed, 6 Oct 2021 07:36:29 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f6af2a66-753e-4e12-ec17-08d9889c0506
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4546:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CO1PR10MB45461EF2E1C40F8CB5462D708EB09@CO1PR10MB4546.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mNVk5qwYrwae1ltFBrJs7VKOWKtDl0nX/hgf36KXjQ68BI5Luy1Z6Y4dat6B6ww1vc8IOaKGaKoQ6dXCQDudtEaNkI/kTaHB/S+q4+lfeNJviOtBQf8i58yxqX3Ls+dENccxyqpjQR2OWq5pt5ToDhz11KPiYiDDIGQ/3P49bPGLYgtmWFsXwZjh1lDfP5qdbBD7rU+frbLteuL59ScTMrOV+ztujvZjif3OuYtyIs/KlAEk/i7zo/Wo4+fC09TtnC0QCFN7l9Gv5dY3cq4GJll9fOxN0kTAlWHUAo/2pL7btt++uLln5AmuFSX5l2ul6wZEZ/E4u745MMweRn4AQ9Vpolynr7FUrJ2zcMix6LkPH3k+A64Wx/fDzS90qcbaiGbMn/g4sh6wXO3TCVw4yNQQPfw8XKjCU94TzGNWZarYdEwoATyocB7RpVsmsjBzbAAlGtnnjaxLJSA6lbtFuHFhnSL7nKLMP4Mm2BUQv6nfDEXCjvR/ZaXciW6OwuAxgoCL38NbCKmjVtJdyqBLPLXF2rWTVURxqs54PyyScT4bs4tHE4tnaoJIs/dYMAmQS5tYXkPx2QhOWIBePSMLFEwXw9iJ7Wehh5qJrnO0E4twFHICBnt7l4McgW1Q7wX3A53HwIXGVzVdSalFIMOTH5wcoVOwlcocICKtNcRBvLLHZEdoNqfzqnpUUMEA0R31Fd0ORLAQozdiEsP+iGvISw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MWHPR1001MB2365.namprd10.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(366004)(83380400001)(86362001)(6916009)(33716001)(1076003)(26005)(508600001)(6666004)(44832011)(956004)(4326008)(186003)(2906002)(38350700002)(52116002)(9686003)(6496006)(66946007)(66476007)(66556008)(8676002)(316002)(8936002)(38100700002)(33656002)(55016002)(9576002)(54906003)(5660300002);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EUxIvrDmORY7QRPERUwRWt7ILR6kmZxw7+CTGo0iS7j9B0MKtxTMOQxPza6M?=
- =?us-ascii?Q?xkw9DLW5YppNw/DFIP13OvjfVRw8DTrFoUjXV1CDb2+aBqsuibydAY06wX0w?=
- =?us-ascii?Q?URmQAkSGVZ7ckRKd3l4OS9wpRTCkyBQkcqaZcjrFQzbKJYJlNDZW26Lu9DNv?=
- =?us-ascii?Q?izOhpozdBUR4M+9/+63Dbtdzij4bMEafdsXVQDgA5YER+QQTo37h01I/PAUE?=
- =?us-ascii?Q?5KYTRnp1onSPVktMPXpcTDKPtmebdAd8N8B9RmKTv7liC9YCnRBtWtrk0B3g?=
- =?us-ascii?Q?96Swr/FRT1CsHG7L7pv55OyJ2phg/bMAuUTEYXAzJeX7dBe4GCBQvZ4/Xjx2?=
- =?us-ascii?Q?DYy2hVzeUlzoNRgQKu8Jypo4OfJ0u7mIG64yS5cSkmwuyodcFtuRuahSd2lO?=
- =?us-ascii?Q?tDqKqJ8PwdfsRR8tQQrRWaf/80HuNHs5qe64my31pRLw6h4TzEiZk7/Qz+rN?=
- =?us-ascii?Q?7Pa9Z29ZbctuT8OlM3FQN6z/j1SjVCrj0Dk0b9PbpEElebscAmcEpMSgrA0i?=
- =?us-ascii?Q?KdoQpzNS2BkpvEjI9NDTTTMrYu5RMrmJMxK2uTtGbJhQR2iwRe8HLxswup3T?=
- =?us-ascii?Q?aS3uprbtvhLuzaK83ksQ4Q+tb6NAhOPHTvBhGEjQLouzEE4vE1phjIf+2Ev2?=
- =?us-ascii?Q?hqyf2t4fmFs9c0kDs1QOcGhCYa7XUSXz+PhpGsPchJte7KleoihtSubixD9O?=
- =?us-ascii?Q?YqHsQtGPwbBqMQlyyhThQKw1OnwyYa4+pbfRFAe4R5jP859n5OTuON3i3Ncp?=
- =?us-ascii?Q?Q/yIjUVuPeEctFBpOnCHeBEaato/E6HpJb7omoyllkzaJvi2gz8eRgDHsvY9?=
- =?us-ascii?Q?Fj+9050ONMRJUdTqpQLLKL6y3+4Rtjy2gqnK2bwSd18KgYw+vKvMs6iSp/0O?=
- =?us-ascii?Q?erLSd21zvAWDjIteeEUhzTnEE2R5VTTYMC0Vxp6PfJu3GzcpVbbVKvWh2lKm?=
- =?us-ascii?Q?Jf9rPXD9KJ0eyipWvdLxcumIQi8vLgt9/0KQvBKDsFUsMhi+/fNZ3gUfPzJ9?=
- =?us-ascii?Q?brlGgbwYqQ4pQLDLKTE6oPR58MJXcCGICrpA5u/wnomjAA+aKJ847+YFEySt?=
- =?us-ascii?Q?OJcqGZsMCyTYbBb6tLzstxptBX5fF6uHUT95jGH28dscuH1DfmD1xmIO7In3?=
- =?us-ascii?Q?tm8F2Y8I5SNEUkwfnOs0LrtfRtqOcCIpaoDsQSMWL3F6i9I5kUiP5OqNS3Jg?=
- =?us-ascii?Q?zJNKTqMl1Zu0JUx92aLMujVv3Lz2+JjekH/0UxMOW0qHH9FhPhdXsUUi/YMV?=
- =?us-ascii?Q?0FYU/tB1dCD9RfnsRVi3G1mIYA10wtePSNBMrjOhd6jewQ2n4yCaB7PjrFLy?=
- =?us-ascii?Q?VI2JujyVeJYxck+I9vpeNVP9?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6af2a66-753e-4e12-ec17-08d9889c0506
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2021 07:36:33.1440 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zrLnFwD2r3C6fqtm1ZhmfOgjoCIdGqjZrPZL6IvUbIFyUoBXopSMMCT54w/DZnmah4aq+JH6HEeeXQOxTx7p3iam2AyBEEJpmCGwbcZ4Hjg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4546
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10128
- signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
- mlxlogscore=999 adultscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109230001
- definitions=main-2110060047
-X-Proofpoint-GUID: 4Ic2UQjB61Sjm7jCkVqLO6u7bPt3GDHe
-X-Proofpoint-ORIG-GUID: 4Ic2UQjB61Sjm7jCkVqLO6u7bPt3GDHe
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20211006_003840_517478_4468B20B 
-X-CRM114-Status: GOOD (  17.84  )
+X-CRM114-CacheID: sfid-20211006_091451_874737_03CC2C7D 
+X-CRM114-Status: GOOD (  18.96  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -169,46 +59,100 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- Michael Buesch <mb@bu3sch.de>, b43-dev@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============7794990960836364628=="
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-The problem is that "channel" is an unsigned int, when it's less 5 the
-value of "channel - 5" is not a negative number as one would expect but
-is very high positive value instead.
+--===============7794990960836364628==
+Content-Type: multipart/signed; boundary="Sig_/goiVgRssi9A8ba=rcm/gfDw";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 
-This means that "start" becomes a very high positive value.  The result
-of that is that we never enter the "for (i = start; i <= end; i++) {"
-loop.  Instead of storing the result from b43legacy_radio_aci_detect()
-it just uses zero.
+--Sig_/goiVgRssi9A8ba=rcm/gfDw
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: ef1a628d83fc ("b43: Implement dynamic PHY API")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/broadcom/b43/phy_g.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 6 Oct 2021 10:35:42 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-diff --git a/drivers/net/wireless/broadcom/b43/phy_g.c b/drivers/net/wireless/broadcom/b43/phy_g.c
-index d5a1a5c58236..ac72ca39e409 100644
---- a/drivers/net/wireless/broadcom/b43/phy_g.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_g.c
-@@ -2297,7 +2297,7 @@ static u8 b43_gphy_aci_scan(struct b43_wldev *dev)
- 	b43_phy_mask(dev, B43_PHY_G_CRS, 0x7FFF);
- 	b43_set_all_gains(dev, 3, 8, 1);
- 
--	start = (channel - 5 > 0) ? channel - 5 : 1;
-+	start = (channel > 5) ? channel - 5 : 1;
- 	end = (channel + 5 < 14) ? channel + 5 : 13;
- 
- 	for (i = start; i <= end; i++) {
--- 
-2.20.1
+> The problem is that "channel" is an unsigned int, when it's less 5 the
+> value of "channel - 5" is not a negative number as one would expect but
+> is very high positive value instead.
+>=20
+> This means that "start" becomes a very high positive value.  The result
+> of that is that we never enter the "for (i =3D start; i <=3D end; i++) {"
+> loop.  Instead of storing the result from b43legacy_radio_aci_detect()
+> it just uses zero.
+>=20
+> Fixes: 75388acd0cd8 ("[B43LEGACY]: add mac80211-based driver for legacy B=
+CM43xx devices")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This fix is correct, but making dead code go live can sometimes expose
+> bugs which were previously hiding and is always carries a slight risk.
+>=20
+>  drivers/net/wireless/broadcom/b43legacy/radio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/wireless/broadcom/b43legacy/radio.c b/drivers/ne=
+t/wireless/broadcom/b43legacy/radio.c
+> index 06891b4f837b..fdf78c10a05c 100644
+> --- a/drivers/net/wireless/broadcom/b43legacy/radio.c
+> +++ b/drivers/net/wireless/broadcom/b43legacy/radio.c
+> @@ -283,7 +283,7 @@ u8 b43legacy_radio_aci_scan(struct b43legacy_wldev *d=
+ev)
+>  			    & 0x7FFF);
+>  	b43legacy_set_all_gains(dev, 3, 8, 1);
+> =20
+> -	start =3D (channel - 5 > 0) ? channel - 5 : 1;
+> +	start =3D (channel > 5) ? channel - 5 : 1;
+>  	end =3D (channel + 5 < 14) ? channel + 5 : 13;
+> =20
+>  	for (i =3D start; i <=3D end; i++) {
 
+Nice finding.
+
+Acked-by: Michael B=C3=BCsch <m@bues.ch>
+
+
+--=20
+Michael
+
+https://bues.ch/
+
+--Sig_/goiVgRssi9A8ba=rcm/gfDw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmFdy0YACgkQ9TK+HZCN
+iw5iWA//Qsq+DuoC10lMYoTH3WkopAMR9mKhwbe5FTZUUe0eWQM3r9a7uGKGKOX2
+LW47biXVl/9u0PiUulvLWklyV2Kg6QKCewOLmUHbZB7XBPW0PVf/67KRL3Y4Iz7p
+0nZhcOzkv00cyoQ5wIOBcjrrqwK9+u0BgK1VUDRWd8yblOyK8jPTaIEf6x0E1VPT
+1Ve7yeETJzioF8xeTCgBoY2SUUGAfZ91C/w5dtctfPkuW8RSHwqFH0553f9QICQS
+z9XDBvESlPY7GLzDSXv/TulyRPqK3K+jZA5zuiOlW5XJpXiOax1xdNyq/GwcGpV7
+a332WOmx4Q0Edc/183OUpx1xoIHFLQiMfs6kpmkvgoaqWdCdjzF7yTr9xXOcM3S7
+YSR3Be18aarCLhGR354xz+Wbvb69IIS7hEwK7lBZwD7u6Jd/KyLU+3k77D69gdzl
+y+33iLFxH1pWtsw/wGwZrPH1hl9LUE18s3S4vfKpJ4EqJ20+nIGIPgf2EPGhEaEW
+IUnA5es/jscNcYdCTvfffyeKRwyo1NZhJHBslqVqF6InC+MMilFHBZo+2ZA3Swey
+NBdDueAsTFF/XAdep9Y32U1l1aiXfUoVROXPFQtGnX1V7qP3Aucx1Kpt9ZPiqk4Y
+QI85MyfpA7WDWEYLjBP9APcX2uI29nTHrRsztGJxx+SDycGymWU=
+=mGEZ
+-----END PGP SIGNATURE-----
+
+--Sig_/goiVgRssi9A8ba=rcm/gfDw--
+
+
+--===============7794990960836364628==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
+
+--===============7794990960836364628==--
+
