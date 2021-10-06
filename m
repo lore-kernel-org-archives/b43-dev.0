@@ -1,88 +1,164 @@
-Return-Path: <SRS0=/5zT=K5=lists.infradead.org=b43-dev-bounces+b43-dev=archiver.kernel.org@kernel.org>
+Return-Path: <SRS0=OdlP=O2=lists.infradead.org=b43-dev-bounces+b43-dev=archiver.kernel.org@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C593C47096
-	for <b43-dev@archiver.kernel.org>; Thu,  3 Jun 2021 09:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C52C433EF
+	for <b43-dev@archiver.kernel.org>; Wed,  6 Oct 2021 07:36:39 +0000 (UTC)
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1B9A8613DE
-	for <b43-dev@archiver.kernel.org>; Thu,  3 Jun 2021 09:32:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9A8613DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
+	by mail.kernel.org (Postfix) with ESMTPS id DA0BD60F9C
+	for <b43-dev@archiver.kernel.org>; Wed,  6 Oct 2021 07:36:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org DA0BD60F9C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=lists.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Cc:To:References:
-	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=GYJ+HE4bwcfDKTpQLJASa2oNkESUzqhIpgO9gf3gu8E=; b=nMe1o7z6Esro+u
-	6tNs5ji/P06r3A4t46sS70gYOgtsZah7A9l57JNTge6KfmoPDHYfUsXlq9jRlNzCbRWuuMJ7IWK1G
-	xXw3xNEcFhgGBsRIe7tk2EJebCgkwxxFKLSUxrtgqlj/eBz5TiixT3XlJ/wNnpOzvPxlIVViOqXJA
-	2NMiRXxZZ7HyyOolmAfJbCPeIr+muX0kX1UPjaH2c/V0TQRo+M1g79tFAeq345nTqJNk34TohuhnT
-	7MQGz0/VKChQsJT0fvW1UAdVOxhrlKWQ3RJnN769NkLUBJsM55zpk6vc0QedRarThf/D+5Q3+R6rj
-	Efyjo2gpUUMSa/vCi/pg==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=S6764z4lon2u9IySXtJhphFwpI8uiw1JwQRHKlVWBZI=; b=MxGSvJu/BjiOZA
+	Lx66ERAlMyFhZsfJP4MKEHGNYi8fSmIR0fB9VqvDTpKLkayL8lLZBKnn52jLYDNAlkOtQxp0xbflJ
+	5EnybGrO4xdSFmLW4JghDcbufzytufdngMCiOQS5HG9PtgKKFdI83rYsCZ8lC3BEOKawznUXFinxC
+	bHzxEt0kMm+6NR1dXJqIBGS7SHDUe4EYxvoxX2kV3Y/AzM8TN+AUcg7bPEZueP3V1CqM7tLcsI6Wo
+	r1MSlUOsOmTgYguOtdBG/TBoPygNkxZA4ikuAF56HNysDRNmsYyXst9jMuhLnqZa/rMqw/LFi4SZm
+	H6FWegLDgRYyMLu7du3Q==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1lojiJ-007sGA-Dw; Thu, 03 Jun 2021 09:32:31 +0000
-Received: from so254-9.mailgun.net ([198.61.254.9])
+	id 1mY1TJ-00DFvH-Od; Wed, 06 Oct 2021 07:36:13 +0000
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32])
  by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
- id 1lojiE-007sEt-A9
- for b43-dev@lists.infradead.org; Thu, 03 Jun 2021 09:32:30 +0000
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
- q=dns/txt; 
- s=smtp; t=1622712748; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=HD7eYJ5faNy3m03p+InB6TCp4g/hx1UCjXjENik8p7s=;
- b=Pv+uDwWlXcxuyUx/scZ8JkYGP0tapQ7mT4OD32XCGIUHK3dB2MVn/hzljl13FuUuBscilku6
- sT+Dz0ft1H/U1N8tmQrXEc8AsRJ1WDM8gQ4LgxYN0cyBc22iZA6kld8gcd2ZbSym6eDeOAUc
- TZAsLlbFAHm+S78R87QBBeRXmNE=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyIxODVhOSIsICJiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmciLCAiYmU5ZTRhIl0=
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 60b8a1a3abfd22a3dc62f68b (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 03 Jun 2021 09:32:19
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
- id 2A08DC433F1; Thu,  3 Jun 2021 09:32:19 +0000 (UTC)
-Received: from tykki.adurom.net (88-114-240-156.elisa-laajakaista.fi
- [88.114.240.156])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested) (Authenticated sender: kvalo)
- by smtp.codeaurora.org (Postfix) with ESMTPSA id 9B740C433D3;
- Thu,  3 Jun 2021 09:32:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B740C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- spf=fail smtp.mailfrom=kvalo@codeaurora.org
+ id 1mY1T9-00DFu1-S9
+ for b43-dev@lists.infradead.org; Wed, 06 Oct 2021 07:36:09 +0000
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+ by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1966FZDO003372; 
+ Wed, 6 Oct 2021 07:35:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
+ h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=96gGWQWVpvgVXjtBe8+QIJJrzrzH2F8eny4tpoYl/rA=;
+ b=yxweAmSMJvmk7kU0NKqTt5nmxrCd0EBRI9t0R+PKBzgldFuXo+JAMb2/U9JX+5vL0q/1
+ aKnNgGnrbNUGVS2jRcX5+hh/Q0JBdRb6H+Bhyk63zy2hNS70UPchEaS6rgc2NcRT69WV
+ XH13lHh8h+8EfAO88j0QUSyZxHdvhd8feiG/uPsYmAne5aHn3MGMIbaz+RvyaSQg8IHD
+ pOkWSWOWC7MhT4OTBl2OxTykTKFRyg5HiK2kiiezM/iqQ+4U7FMjKHyoKfUlb/rx8yBg
+ gavRElTAjo/X4hZ3BJWyUvHr9GVIvRJD7Rwz3IFlPsZpRuoPCXqR53dVhPI9omEtYNjv VA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+ by mx0b-00069f02.pphosted.com with ESMTP id 3bh2dnhaup-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Wed, 06 Oct 2021 07:35:57 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+ by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1967Yjbi059089;
+ Wed, 6 Oct 2021 07:35:56 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com
+ (mail-bn7nam10lp2103.outbound.protection.outlook.com [104.47.70.103])
+ by userp3020.oracle.com with ESMTP id 3bf16uhrn0-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Wed, 06 Oct 2021 07:35:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cdNs8cMbQp3kic/x3BNXjfwk/DTYgNjE6ORqIu67H3VyPWket/+JPhiznvP9BTo+biG04Qm6wOuQes+NkSujoPskF639OpwjZDHqY99h58xCKyoqxQwS+b9ZuXqlDXfuv/QLFsXgq4f9jzn+2pLoMzwyy26r4AJElbrB78280v2k66oswMjWsuMdvJ7pP+lg9lBQLRvTvZMTpSQcbAtoxSxrMtIZADjVMmhvkjux9vjw995x6kgqTHHTv2vVU7HmLcO728cKaHAa0jbeI/aKPuW+HI84gwMoyrEX/+6MBedAYpt26fsk6vzkgq+7+NF95XgbqDwo2OLa38yWlG3h+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=96gGWQWVpvgVXjtBe8+QIJJrzrzH2F8eny4tpoYl/rA=;
+ b=BG8d+FBwDgMRCo/sZtUY7TMu7xy9VI8eubyhK9rNTrWt7rmWLzd7ePJiS3cvXmWrcxgPbqiIyUCObdv3I3FsjEqCGTP9vxc5oXyAgzh+er4tSnOT/wGMJbhwrhaZvRHZgv2k4o+llevUNISQFVZN2q6zc3PheCIWbgiCpb2fqkaFN/yZM5mjf9AzY3CKL0ASboARqwrorqvacMTPzjzYYVwto8S2nrPgtFPr6zgWTS3ZUHGFYNm7KJZNDqpo59lBMxiRlW82nhp30KY9EXfUM52ZcKt7wYsB+klOqtQZOmY9DvLEljovQG822gp6NprTHuD4KTDvIPQsUKWjBu4JrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=96gGWQWVpvgVXjtBe8+QIJJrzrzH2F8eny4tpoYl/rA=;
+ b=YgZwE6JRGbYSSjN1JFARykS7PmXPzvoZZR7XMGYT5ogLsVllvh/od52N7a7eSO+ojjmttzZXYSu626GTjyDUrzxRqUkcARma7rOZ66s4ISxaV3+zYo+kF4URvE5WZUjbbOSVJT7yK8F/4btNMHA7CMPGJDzFrlJaJAaLUtv4nC4=
+Authentication-Results: lwfinger.net; dkim=none (message not signed)
+ header.d=none;lwfinger.net; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CO1PR10MB4546.namprd10.prod.outlook.com
+ (2603:10b6:303:6e::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.16; Wed, 6 Oct
+ 2021 07:35:53 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4566.022; Wed, 6 Oct 2021
+ 07:35:53 +0000
+Date: Wed, 6 Oct 2021 10:35:42 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+ b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] b43legacy: fix a lower bounds test
+Message-ID: <20211006073542.GD8404@kili>
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: ZRAP278CA0007.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:10::17) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Subject: Re: [PATCH] b43legacy: Fix spelling mistake "overflew" -> "overflowed"
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20210601102855.8884-1-colin.king@canonical.com>
-References: <20210601102855.8884-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>,
- "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210603093219.2A08DC433F1@smtp.codeaurora.org>
-Date: Thu,  3 Jun 2021 09:32:19 +0000 (UTC)
+Received: from kili (62.8.83.99) by ZRAP278CA0007.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:10::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15 via Frontend
+ Transport; Wed, 6 Oct 2021 07:35:50 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d4abeda4-e3fd-4aa1-f352-08d9889bed78
+X-MS-TrafficTypeDiagnostic: CO1PR10MB4546:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CO1PR10MB4546721850D033A16A9BB0738EB09@CO1PR10MB4546.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: o2mqalhbptgucy/mbj4eOi9csARKxviDTMi8ynLoSLK3NfpRlGp+FlLzwaTyyyrP1J/g7egUaq32790MPYX9/+2ygtqIZkhjNNKczc3PDKx5h34YilF7ZreU9epWy3V/Fwqqso5Bak2QfTooJYhSAy69VTRRS3NxneaCFdWAMP4DdIxef3a8LrJds00zAtHBiUqz0v+mpC8F0kBoMSeqvGxSrG46RnBsbFbLpF+JkghAa+kH79frigzoSWvEWsNkBlzgAvH8lbvVxu4+XOoXhiXCmCkiN702GiZvbudkPvCSb6xyPC0/VkUbkdNbJp8caDk21pzlhQr5xoXv7h4JNGo/kWDXanBZbBp5iWh9bQqKM30HBA4I4nicUuc544tnxKYXDr0oIqClRKrsWMu6GyGgKjcDY0lbH5LWp3GFoVb8OP3eA67wQUk88hgw3ATyCuIq5RH8T6U1MFcxGRUVTonhwrxQsiG+SnZLmskUIVPnTGQY7pY9aBW4GQzNHtof6iutKMjtvi7o6RPkKHikJwky1KluxULylchzDzkjqMfU6QkN86mY+MSW24FXSGN3bXqZlpRfL+m4RyrXTyZphCSexSBynCfUVB/G7lsg5Hj+rbGO67G7sf9SuCavB2mfOVy1t44ulFpWB6jh5APeqKlXcECzHxyaytlpr6IssO4WVoR6GmYrGWLSTI5kmga8Y7X7Ed3BbLBK7vu0j08xKA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:MWHPR1001MB2365.namprd10.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(366004)(83380400001)(86362001)(6916009)(33716001)(1076003)(26005)(508600001)(6666004)(44832011)(956004)(4326008)(186003)(2906002)(38350700002)(52116002)(9686003)(6496006)(66946007)(66476007)(66556008)(8676002)(316002)(8936002)(38100700002)(33656002)(55016002)(9576002)(5660300002);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gfXFERSX2KeInulu95v3e8zyo1nf2yjpkD6RDxKSdIqnGXQniGnMzMs0uy4J?=
+ =?us-ascii?Q?mg6m2+3TZlPeOiykYi14IW48X93CZHCkiKVht3LE/1ryrafZhy3gAuuWd8e9?=
+ =?us-ascii?Q?ELGR9/RnTsBsREwIT96ay19Mp3Otv264eCTlfoDzRkut0rN7w0efqfAZF+fP?=
+ =?us-ascii?Q?Oo5i2lj3rS7dy7M/p/2DqONsGjAwwJ/mLpanDsxFJKZjNqUjoWfWcymunyJD?=
+ =?us-ascii?Q?fxxR+1Euj7AbxQzMOSD2A8YA4PyuNe8+9w9wWI5p1hs8hgyPuIPY2yHtUbJX?=
+ =?us-ascii?Q?mPapjdFcxRyyrVVd3u3il/HGnB+YKwaj+Fge2LvM88IhDZtvptkw3zhgwGzH?=
+ =?us-ascii?Q?Cxpc75BHp4gsA5vZ4A8cFmALvQLNZUOETV9P7gIfn12KtyI2ezpx+tA8wYhz?=
+ =?us-ascii?Q?opjwatMsWKqu4uTqm6ANe9vFKXNxnDAn9U3d4cQS6/uNTalG3hQFt8ZLhfm6?=
+ =?us-ascii?Q?nnQX+9wzRUImUH2sUsz36ezcl/xX3wZGr32QVrGnqIl3DBnnFNKei0LYZKEW?=
+ =?us-ascii?Q?EWV4iRHNLt27eHRIhPHL+ZS/lFywWOpOfEZwWIU9DY2zb+dSfKpBoQJliTV3?=
+ =?us-ascii?Q?Uk9vywHEXYqzZADYzGfAuEuQ5DbKTbuRNKig8cU2CWd9iWqJq0eVIv+40oW/?=
+ =?us-ascii?Q?J/uT2CSj3S0kMze2P2hXSYXZBnc3wHQ8PnQ0nH7ohDbFY3c0eMr5UQgZBJmH?=
+ =?us-ascii?Q?Axuj6KPkWb6PVP5dvEhJdVoyrMP4bzgtw6uRmdF1e3uY60QWNGP1x9bAWVjR?=
+ =?us-ascii?Q?YvXdp+NaQ6Yyyp+MPckFUyxcFK7w3CAC0BfMrJbewPoejNXwcxBMJSTpQ725?=
+ =?us-ascii?Q?kVbv5HztV8A1tPadK/9JfsyLarhbhdB9T7X0RJTJ0SgGe1cJ2Rp9T2m9Z0bR?=
+ =?us-ascii?Q?PENMqVFnkPzC1MYcNR/SO5px5r+d3Wc8Aa7pvlSQlN2AxXWSh15Ln8gMtX3i?=
+ =?us-ascii?Q?wGc2m2TbiVPiiZvHSaeMRZTZXlbKwJC5FcfcUlCR/YEmdloW174kbMzN25ry?=
+ =?us-ascii?Q?wxaTojOYCH6Z363WSv8B3/PgWBDm+7rdhhPtGHQ61MIlkyYJuoT+HpRuneJh?=
+ =?us-ascii?Q?eLaMNGKdqcTq3ZpDkfhxJ9Mp9qnTBAvj6eK4FXgolbXY405OUFjdddGEe5Me?=
+ =?us-ascii?Q?cVCptFf22kF22pcs68IVNX07haN8dAAQiv5O1mxuM08KvBCHY9VYaoIW0IC0?=
+ =?us-ascii?Q?nU3URUCIUyKV/ozic8p+UQ8mZA4eGlwprdtNYeTTOQmiMs706ZPoGGpW6Vgn?=
+ =?us-ascii?Q?8nTH0i1cSI/Q9uOKV6rteuzk9E8MeUQJGe6PeIj/6VZ7f0hn/LjZxebK0Dxx?=
+ =?us-ascii?Q?syC0Y6d8tFnn3CiACpibCuej?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4abeda4-e3fd-4aa1-f352-08d9889bed78
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2021 07:35:53.6160 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uvQw3Nn9zei0eZaeI4kW50pO4dfm/W2G/fYXhqwUvtferPNVtl58oV3saFNhqBl1wZn4lHv3oscyppDKE7r2D/vRagBM8mxRclDSSDFICj8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4546
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10128
+ signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ adultscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109230001 definitions=main-2110060047
+X-Proofpoint-ORIG-GUID: X4bQUUsQEeSlARoUhxY49asyD6mNSQQ2
+X-Proofpoint-GUID: X4bQUUsQEeSlARoUhxY49asyD6mNSQQ2
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210603_023228_760488_BD26FB66 
-X-CRM114-Status: UNSURE (   8.44  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20211006_003603_952566_61B342A5 
+X-CRM114-Status: GOOD (  17.48  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -99,22 +175,39 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Colin King <colin.king@canonical.com> wrote:
+The problem is that "channel" is an unsigned int, when it's less 5 the
+value of "channel - 5" is not a negative number as one would expect but
+is very high positive value instead.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a comment. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This means that "start" becomes a very high positive value.  The result
+of that is that we never enter the "for (i = start; i <= end; i++) {"
+loop.  Instead of storing the result from b43legacy_radio_aci_detect()
+it just uses zero.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Fixes: 75388acd0cd8 ("[B43LEGACY]: add mac80211-based driver for legacy BCM43xx devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This fix is correct, but making dead code go live can sometimes expose
+bugs which were previously hiding and is always carries a slight risk.
 
-fef1cdbba4d1 b43legacy: Fix spelling mistake "overflew" -> "overflowed"
+ drivers/net/wireless/broadcom/b43legacy/radio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/wireless/broadcom/b43legacy/radio.c b/drivers/net/wireless/broadcom/b43legacy/radio.c
+index 06891b4f837b..fdf78c10a05c 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/radio.c
++++ b/drivers/net/wireless/broadcom/b43legacy/radio.c
+@@ -283,7 +283,7 @@ u8 b43legacy_radio_aci_scan(struct b43legacy_wldev *dev)
+ 			    & 0x7FFF);
+ 	b43legacy_set_all_gains(dev, 3, 8, 1);
+ 
+-	start = (channel - 5 > 0) ? channel - 5 : 1;
++	start = (channel > 5) ? channel - 5 : 1;
+ 	end = (channel + 5 < 14) ? channel + 5 : 13;
+ 
+ 	for (i = start; i <= end; i++) {
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20210601102855.8884-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
 
 
 _______________________________________________
