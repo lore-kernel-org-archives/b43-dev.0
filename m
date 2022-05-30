@@ -4,64 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8D8C6C433F5
-	for <b43-dev@archiver.kernel.org>; Mon, 23 May 2022 20:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11E29C433FE
+	for <b43-dev@archiver.kernel.org>; Mon, 30 May 2022 13:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:To:Subject:Message-ID:Date:From:
-	MIME-Version:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Owner; bh=42ihuY3ibGO1AVYNV/DzzIYOuBVU/YLoE+cblfWee54=; b=Z6D
-	KLgMjmkAzSx5SjVx+xFQECliWkYvtnLTy8OqQvq2cppFVk1PkEYP17c8z+dPZET9Ma86aZ4tGKW9R
-	R4Szx2dJoz4+kWar3VR4yCMa54mOEiGatLWHhLtf0ghEFs6RRtFZddx6x+s4WIGnjmGCb9Q+hPIa9
-	rl9fdgfWtFR3f80NkwOHWB1wX6Aj9F3D2nFAFdSQimbuobywV9vRLUY1vwGL9EtCgurasfzMw9IX0
-	vIUQWFaMlwBC+8w3CXQWbVpakLD7k9lDzop4cfx5YpAfmecVcsf/FDLFVQ8fHrw/hZ1fCsLVErKzx
-	9xBBLVtYbcHNXECcBvPzlGscTja+Eiw==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=6NZJCK7+f+ZVAa8ceRa07TiUtAYAam+KGjE0kFJkBFY=; b=l6WuToossEqGP9
+	dF1CeUNPT+cbgWDlvEwx4QJZ4QqQjKSWeRFwQw1V/cbHQrNkQMVDx9lAOIr+oAr5MkdNIp+Sdu/o2
+	06vE7iwoG5c9X0AoG31TM3X4PkuNWuo7GX2d0/ujaMQT7DZS/ehHEAj7Vw1JFE5bXEAs6ZpUL4DfQ
+	tJl4ymrjrNNUGwKut5HCN+ceEwUKrenEvO6kE4WIX53+9ljkpTyjHjQVk69FPrO5rbwgj+qLsCKsP
+	KAcffLerHcdohPJ3CmBZrtRuVEX06c4fCLtIJhIrggYkEJNwBD4LbTffj5Ujy6+LZImI5Qy2ElaIy
+	SjCPWAsmJ4Ewmc3d3qVQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1ntEve-005pzz-GO; Mon, 23 May 2022 20:45:26 +0000
-Received: from mail-wm1-x332.google.com ([2a00:1450:4864:20::332])
- by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
- id 1ntEvZ-005pyR-2G
- for b43-dev@lists.infradead.org; Mon, 23 May 2022 20:45:22 +0000
-Received: by mail-wm1-x332.google.com with SMTP id
- h205-20020a1c21d6000000b003972dda143eso264326wmh.3
- for <b43-dev@lists.infradead.org>; Mon, 23 May 2022 13:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bogomips.com; s=google;
- h=mime-version:from:date:message-id:subject:to
- :content-transfer-encoding;
- bh=nnQsDsbPzPjGO8LF+IX8YDLslpVTrpU/hFnWqg5AVyg=;
- b=L5pkxs5ZLSS9kCjr6fPZi5jO4oAlEr5QwWcbXJO+vg9UEM7PhpjMQ94oDHkiJEUVkC
- T5AMQ2iVbeYVWIQOOhR66g75Xo61frFbqrzDHH3IV7Jj/STj8gJUtPCSYCTcZCG4VPYr
- JX/ubVh59OBfMohUIMPSftEvyusXM8RffW7tQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=x-gm-message-state:mime-version:from:date:message-id:subject:to
- :content-transfer-encoding;
- bh=nnQsDsbPzPjGO8LF+IX8YDLslpVTrpU/hFnWqg5AVyg=;
- b=mfQ4Ml16NBi+URmJo8rQ9tqHxySPgXQS+GRxWpkl8nCWE9DxAbmRjxqvvhR04AVHHc
- xGNaMM1thrwt+CMI+U72ZUa5OmZ34qQ1dMTa1wkv/5ybcpYpoRriWhcQr0edq5fOM9jm
- 1Fwtt8ERTHCM27psz25ZsHNxAMHQl2uohaZtmMY0uuRXPMwnwaJ9KCkASPgKe/RXczz5
- S6Jn94m5Uwu1xlFKQegKbZ7GZbojYu+p00xSTo2zwn+BedSGW1Z3umo2ZDWRQtwYl+gI
- 8Cz9CVy8qCnKsVUNovmNnqu3i3+oiZQ7hSKbODXA3zbqXB5sLL1vsgcnylWZCpjcoOUZ
- Jq9g==
-X-Gm-Message-State: AOAM530STIfL8FBFdBEPCXraasfqFIht1gr4PWAkV6BxD0BzmlxjYjQf
- ZGcmAjnfJYdFl3CcJVeumDHPBnYh5e8cfsj1WhYX1UddH0urKQ==
-X-Google-Smtp-Source: ABdhPJxNzQ3i0cjIoodfKJl41PVAGMKFfh4zVl9Yu6p17UBmbWjqtrokIzaBTmwyn5lqYgvdkrDuMG1XBW8AHfLGUao=
-X-Received: by 2002:a7b:c183:0:b0:397:4924:7cfe with SMTP id
- y3-20020a7bc183000000b0039749247cfemr751012wmi.128.1653338717207; Mon, 23 May
- 2022 13:45:17 -0700 (PDT)
+	id 1nvfOJ-006fxW-FB; Mon, 30 May 2022 13:25:03 +0000
+Received: from ams.source.kernel.org ([145.40.68.75])
+	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1nvfOD-006fwD-SS
+	for b43-dev@lists.infradead.org; Mon, 30 May 2022 13:24:59 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ams.source.kernel.org (Postfix) with ESMTPS id 7D2D8B80AE8;
+	Mon, 30 May 2022 13:24:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8B5C385B8;
+	Mon, 30 May 2022 13:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1653917095;
+	bh=nQbb+Dvg94Bd3lpBOt9d1emxz4LV6Rz434ipGpczzEo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QPyb2rVw4zDPS3x3RnmdRciRF1bbmQUYysaVbzh2VbUfRZOZ/W2FTlIWhv9oeBXBe
+	 zmVqZQEc6EXloTrSuZ4hMHEOubFntkgS0kjtG3AJGzuaXKPvxJsxJud4gG+7yxBWbV
+	 1kFr+Bu6nnyjv+uJp949ux/0La6qpmVduTUWqN0/sRnkn1mG2DzVipnoRv/HHVbI2E
+	 /bwej4U6eukDVWSoYtrlZ1ytO+VJOBzxR1ZTinAFOH21+r044rqXSLcXwMmAYZJfLM
+	 FpDhxItsGnVIMTgFF6z0RIOj3fdUuN75NGGfnrHVZdkW4mVgG0jlY5B5o726Sw0q6w
+	 SRY7Gzdvtv0GQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Haowen Bai <baihaowen@meizu.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Larry.Finger@lwfinger.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-wireless@vger.kernel.org,
+	b43-dev@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.18 013/159] b43legacy: Fix assigning negative value to unsigned variable
+Date: Mon, 30 May 2022 09:21:58 -0400
+Message-Id: <20220530132425.1929512-13-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220530132425.1929512-1-sashal@kernel.org>
+References: <20220530132425.1929512-1-sashal@kernel.org>
 MIME-Version: 1.0
-From: John Paul Morrison <jmorrison@bogomips.com>
-Date: Mon, 23 May 2022 13:45:03 -0700
-Message-ID: <CAO-kYtGnneDEFUBB=bBCbAGHhi0wBUMNZkQ8JLkT6WvbqEATgg@mail.gmail.com>
-Subject: How to enable DFS channels?
-To: b43-dev@lists.infradead.org
+X-stable: review
+X-Patchwork-Hint: Ignore
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20220523_134521_150528_07EC85E2 
-X-CRM114-Status: UNSURE (   7.40  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20220530_062458_108655_C35919DD 
+X-CRM114-Status: GOOD (  11.81  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -73,70 +79,45 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-SSBhbSBub3QgYWJsZSB0byBzZWUgb3IgY29ubmVjdCB0byBTU0lEcyBvbiBERlMgY2hhbm5lbHMg
-d2l0aCB0aGUgYjQzCm9yIHdsIEJyb2FkY29tIGRyaXZlcnMgLSBpcyB0aGVyZSBhbnkgd2F5IHRv
-IGVuYWJsZSB0aGVzZSBjaGFubmVscz8KCkkgY2FuIGNvbm5lY3QgdG8gbm9ybWFsIDUgR0h6IGNo
-YW5uZWxzIGFuZCAyLjQgR0h6IGJ1dCBub3QgREZTIG9uZXMKZXZlbiB0aG91Z2ggSSd2ZSBzZXQg
-dGhlIGNvdW50cnkgY29kZS4gSSBjYW4gc2VlIERGUyBjaGFubmVscyB3aXRoCm90aGVyIG5vbiBC
-cm9hZGNvbSB3aWZpIGFkYXB0ZXJzLgoKdGhhbmtzCgoKbHNwY2k6CjAyOjAwLjAgTmV0d29yayBj
-b250cm9sbGVyIFswMjgwXTogQnJvYWRjb20gSW5jLiBhbmQgc3Vic2lkaWFyaWVzCkJDTTQzMjI4
-IDgwMi4xMWEvYi9nL24gWzE0ZTQ6NDM1OV0KICAgICAgICBTdWJzeXN0ZW06IERlbGwgRGV2aWNl
-IFsxMDI4OjAwMTRdCiAgICAgICAgRmxhZ3M6IGJ1cyBtYXN0ZXIsIGZhc3QgZGV2c2VsLCBsYXRl
-bmN5IDAsIElSUSAxNwogICAgICAgIE1lbW9yeSBhdCBmN2UwMDAwMCAoNjQtYml0LCBub24tcHJl
-ZmV0Y2hhYmxlKSBbc2l6ZT0xNktdCiAgICAgICAgQ2FwYWJpbGl0aWVzOiA8YWNjZXNzIGRlbmll
-ZD4KICAgICAgICBLZXJuZWwgZHJpdmVyIGluIHVzZTogYmNtYS1wY2ktYnJpZGdlCiAgICAgICAg
-S2VybmVsIG1vZHVsZXM6IGJjbWEsIHdsCgoKaXcgcmVnIGdldApnbG9iYWwKY291bnRyeSBDQTog
-REZTLUZDQwogICAgICAgICgyNDAyIC0gMjQ3MiBAIDQwKSwgKE4vQSwgMzApLCAoTi9BKQogICAg
-ICAgICg1MTUwIC0gNTI1MCBAIDgwKSwgKE4vQSwgMjMpLCAoTi9BKSwgTk8tT1VURE9PUiwgQVVU
-Ty1CVwogICAgICAgICg1MjUwIC0gNTM1MCBAIDgwKSwgKE4vQSwgMjQpLCAoMCBtcyksIERGUywg
-QVVUTy1CVwogICAgICAgICg1NDcwIC0gNTYwMCBAIDgwKSwgKE4vQSwgMjQpLCAoMCBtcyksIERG
-UwogICAgICAgICg1NjUwIC0gNTczMCBAIDgwKSwgKE4vQSwgMjQpLCAoMCBtcyksIERGUwogICAg
-ICAgICg1NzM1IC0gNTgzNSBAIDgwKSwgKE4vQSwgMzApLCAoTi9BKQoKbW9kaW5mbyBiNDMKZmls
-ZW5hbWU6Ci9saWIvbW9kdWxlcy81LjE3LjgtMzAwLmZjMzYueDg2XzY0L2tlcm5lbC9kcml2ZXJz
-L25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMvYjQzLmtvLnh6CmZpcm13YXJlOiAgICAgICBiNDMv
-dWNvZGU5LmZ3CmZpcm13YXJlOiAgICAgICBiNDMvdWNvZGU0Mi5mdwpmaXJtd2FyZTogICAgICAg
-YjQzL3Vjb2RlNDAuZncKZmlybXdhcmU6ICAgICAgIGI0My91Y29kZTUuZncKZmlybXdhcmU6ICAg
-ICAgIGI0My91Y29kZTMwX21pbW8uZncKZmlybXdhcmU6ICAgICAgIGI0My91Y29kZTMzX2xjbjQw
-LmZ3CmZpcm13YXJlOiAgICAgICBiNDMvdWNvZGUyOV9taW1vLmZ3CmZpcm13YXJlOiAgICAgICBi
-NDMvdWNvZGUyNl9taW1vLmZ3CmZpcm13YXJlOiAgICAgICBiNDMvdWNvZGUyNV9taW1vLmZ3CmZp
-cm13YXJlOiAgICAgICBiNDMvdWNvZGUyNV9sY24uZncKZmlybXdhcmU6ICAgICAgIGI0My91Y29k
-ZTI0X2xjbi5mdwpmaXJtd2FyZTogICAgICAgYjQzL3Vjb2RlMTZfbWltby5mdwpmaXJtd2FyZTog
-ICAgICAgYjQzL3Vjb2RlMTZfbHAuZncKZmlybXdhcmU6ICAgICAgIGI0My91Y29kZTE1LmZ3CmZp
-cm13YXJlOiAgICAgICBiNDMvdWNvZGUxNC5mdwpmaXJtd2FyZTogICAgICAgYjQzL3Vjb2RlMTMu
-ZncKZmlybXdhcmU6ICAgICAgIGI0My91Y29kZTExLmZ3CmxpY2Vuc2U6ICAgICAgICBHUEwKYXV0
-aG9yOiAgICAgICAgIFJhZmHFgiBNacWCZWNraQphdXRob3I6ICAgICAgICAgR8OhYm9yIFN0ZWZh
-bmlrCmF1dGhvcjogICAgICAgICBNaWNoYWVsIEJ1ZXNjaAphdXRob3I6ICAgICAgICAgU3RlZmFu
-byBCcml2aW8KYXV0aG9yOiAgICAgICAgIE1hcnRpbiBMYW5nZXIKZGVzY3JpcHRpb246ICAgIEJy
-b2FkY29tIEI0MyB3aXJlbGVzcyBkcml2ZXIKcmhlbHZlcnNpb246ICAgIDkuOTkKYWxpYXM6ICAg
-ICAgICAgIHNzYjp2NDI0M2lkMDgxMnJldjEwKgphbGlhczogICAgICAgICAgc3NiOnY0MjQzaWQw
-ODEycmV2MEYqCmFsaWFzOiAgICAgICAgICBzc2I6djQyNDNpZDA4MTJyZXYwRCoKYWxpYXM6ICAg
-ICAgICAgIHNzYjp2NDI0M2lkMDgxMnJldjBDKgphbGlhczogICAgICAgICAgc3NiOnY0MjQzaWQw
-ODEycmV2MEIqCmFsaWFzOiAgICAgICAgICBzc2I6djQyNDNpZDA4MTJyZXYwQSoKYWxpYXM6ICAg
-ICAgICAgIHNzYjp2NDI0M2lkMDgxMnJldjA5KgphbGlhczogICAgICAgICAgc3NiOnY0MjQzaWQw
-ODEycmV2MDcqCmFsaWFzOiAgICAgICAgICBzc2I6djQyNDNpZDA4MTJyZXYwNioKYWxpYXM6ICAg
-ICAgICAgIHNzYjp2NDI0M2lkMDgxMnJldjA1KgphbGlhczogICAgICAgICAgYmNtYTptMDRCRmlk
-MDgxMnJldjJBY2wqCmFsaWFzOiAgICAgICAgICBiY21hOm0wNEJGaWQwODEycmV2MjhjbCoKYWxp
-YXM6ICAgICAgICAgIGJjbWE6bTA0QkZpZDA4MTJyZXYxRWNsKgphbGlhczogICAgICAgICAgYmNt
-YTptMDRCRmlkMDgxMnJldjFEY2wqCmFsaWFzOiAgICAgICAgICBiY21hOm0wNEJGaWQwODEycmV2
-MUNjbCoKYWxpYXM6ICAgICAgICAgIGJjbWE6bTA0QkZpZDA4MTJyZXYxOGNsKgphbGlhczogICAg
-ICAgICAgYmNtYTptMDRCRmlkMDgxMnJldjE3Y2wqCmFsaWFzOiAgICAgICAgICBiY21hOm0wNEJG
-aWQwODEycmV2MTVjbCoKYWxpYXM6ICAgICAgICAgIGJjbWE6bTA0QkZpZDA4MTJyZXYxMWNsKgpk
-ZXBlbmRzOiAgICAgICAgbWFjODAyMTEsc3NiLGJjbWEsbW1jX2NvcmUsY2ZnODAyMTEsY29yZGlj
-CnJldHBvbGluZTogICAgICBZCmludHJlZTogICAgICAgICBZCm5hbWU6ICAgICAgICAgICBiNDMK
-dmVybWFnaWM6ICAgICAgIDUuMTcuOC0zMDAuZmMzNi54ODZfNjQgU01QIHByZWVtcHQgbW9kX3Vu
-bG9hZApzaWdfaWQ6ICAgICAgICAgUEtDUyM3CnNpZ25lcjogICAgICAgICBGZWRvcmEga2VybmVs
-IHNpZ25pbmcga2V5CnNpZ19rZXk6ICAgICAgICA2MTpCQjpGNjpGRTo0MDpCMToyQzpEODoxQzpC
-RDo1RjpBRTpEMDo1Mjo5Mjo0QjpEMjo0Qjo2QzozQgoKCm1vZGluZm8gd2wKZmlsZW5hbWU6ICAg
-ICAgIC9saWIvbW9kdWxlcy81LjE3LjgtMzAwLmZjMzYueDg2XzY0L2V4dHJhL3dsL3dsLmtvLnh6
-CmxpY2Vuc2U6ICAgICAgICBNSVhFRC9Qcm9wcmlldGFyeQpyaGVsdmVyc2lvbjogICAgOS45OQph
-bGlhczogICAgICAgICAgcGNpOnYqZCpzdipzZCpiYzAyc2M4MGkqCmRlcGVuZHM6ICAgICAgICBj
-Zmc4MDIxMQpyZXRwb2xpbmU6ICAgICAgWQpuYW1lOiAgICAgICAgICAgd2wKdmVybWFnaWM6ICAg
-ICAgIDUuMTcuOC0zMDAuZmMzNi54ODZfNjQgU01QIHByZWVtcHQgbW9kX3VubG9hZAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYjQzLWRldiBtYWlsaW5n
-IGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
-b3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
+From: Haowen Bai <baihaowen@meizu.com>
+
+[ Upstream commit 3f6b867559b3d43a7ce1b4799b755e812fc0d503 ]
+
+fix warning reported by smatch:
+drivers/net/wireless/broadcom/b43legacy/phy.c:1181 b43legacy_phy_lo_b_measure()
+warn: assigning (-772) to unsigned variable 'fval'
+
+Signed-off-by: Haowen Bai <baihaowen@meizu.com>
+Signed-off-by: Kalle Valo <kvalo@kernel.org>
+Link: https://lore.kernel.org/r/1648203433-8736-1-git-send-email-baihaowen@meizu.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/broadcom/b43legacy/phy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43legacy/phy.c b/drivers/net/wireless/broadcom/b43legacy/phy.c
+index 05404fbd1e70..c1395e622759 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/phy.c
++++ b/drivers/net/wireless/broadcom/b43legacy/phy.c
+@@ -1123,7 +1123,7 @@ void b43legacy_phy_lo_b_measure(struct b43legacy_wldev *dev)
+ 	struct b43legacy_phy *phy = &dev->phy;
+ 	u16 regstack[12] = { 0 };
+ 	u16 mls;
+-	u16 fval;
++	s16 fval;
+ 	int i;
+ 	int j;
+ 
+-- 
+2.35.1
+
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
