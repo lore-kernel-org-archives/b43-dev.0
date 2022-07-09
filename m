@@ -4,51 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 37241C43334
-	for <b43-dev@archiver.kernel.org>; Sun, 26 Jun 2022 11:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2FF37C43334
+	for <b43-dev@archiver.kernel.org>; Sat,  9 Jul 2022 13:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Z+pycSZLjVhDdgfL/p7uS/2AqU+1XbgOTOojocAvNXg=; b=Xw5JmGjDmQ4c7ndmBviLneXfJA
-	O8pRmXgZ48ORBHrfgTrZJCiKp/ohWmNwSJf3Er67CVKpOJYjo4Mh3TXGoaMoNC1RrUQLIk0ewl1zd
-	QoiTDH6AQ1TcNjmJonHCWVsISX632VaVjBmgoGDHcKkNjHJO+27LzuZySogYNly/Hv78szM5RVpRA
-	HsbFXQFrTuNEEeuAOqANpO+Bdw0u6jIJYAgxCgnL3egL6HFC1BJLR4bXiU5UCZ9MBD5Xbvcd7u5oY
-	wfkmdVPy+jtakl0Wd9Dd1FFuOqBboeYlW3i+2MtYkbqPANuOw/bS85jzwQHM8mjQAIFj1wGZGC/S+
-	OhAwX4YQ==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-Id:Date:Subject:Cc
+	:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=iH+iKGN81/Ny/UzHDh0pMDPDAH6L4x9zFUxFQ3jeP4M=; b=Er/nUOtlgyjw3w
+	7rqx1TGsDRUJnmDtGqQWGroT3zRS6PMFKyQKo6ijERs2Nm9XsYjwwbIhEc89eNM1s1zRKcX5f6pD+
+	R9ihTOuWvGUM58tg2sy7NYa9nx0WiwXW6xDY9FmjD/AoJwAHZkaPayOVhneBM8zImXuaEM55Z5aCA
+	x3/8LxEeemJlGZEpfYryQAY0F/U/OG76Dzs5IEwJSFARPDa9eiiAEWBX4BEw6XXKNCuBWZC6Rqphx
+	8vK3m3XAAeWtJ4IFoIs81m3Z1KNCd+mbPsS8pK+BI23QVw8cnNAT+MthsnRpfkNwfBDg/hFaXoG4Z
+	Ay6oYg3LnTSMmG526xJQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1o5QIc-00BPqI-48; Sun, 26 Jun 2022 11:19:30 +0000
-Received: from bues.ch ([2a01:138:9005::1:4])
+	id 1oAAZ2-0085re-8G; Sat, 09 Jul 2022 13:32:04 +0000
+Received: from biz-43-154-221-58.mail.qq.com ([43.154.221.58] helo=smtpbg.qq.com)
 	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1o5QIZ-00BPoE-12
-	for b43-dev@lists.infradead.org; Sun, 26 Jun 2022 11:19:28 +0000
-Received: by bues.ch with esmtpsa (Exim 4.92)
-	(envelope-from <m@bues.ch>)
-	id 1o5QIF-0002eX-RG; Sun, 26 Jun 2022 13:19:07 +0200
-Date: Sun, 26 Jun 2022 13:18:37 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Sebastian Gottschall <s.gottschall@newmedia-net.de>
-Cc: Praghadeesh T K S <praghadeeshthevendria@gmail.com>, Kalle Valo
- <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, praghadeeshtks@zohomail.in,
- skhan@linuxfoundation.org
-Subject: Re: [PATCH] net: wireless/broadcom: fix possible condition with no
- effect
-Message-ID: <20220626131837.622a36c5@barney>
-In-Reply-To: <458bd8dd-29c2-8029-20f5-f746db57740a@newmedia-net.de>
-References: <20220625192902.30050-1-praghadeeshthevendria@gmail.com>
- <458bd8dd-29c2-8029-20f5-f746db57740a@newmedia-net.de>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+	id 1oAAYr-0085hc-12
+	for b43-dev@lists.infradead.org; Sat, 09 Jul 2022 13:31:58 +0000
+X-QQ-mid: bizesmtp90t1657373497tdnfr5lx
+Received: from localhost.localdomain ( [182.148.15.109])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 09 Jul 2022 21:31:25 +0800 (CST)
+X-QQ-SSF: 01000000002000B0C000C00A0000000
+X-QQ-FEAT: NGMqyHdgFPZS9GfmAvySZM4IBQ9huUf94Nm6JQof7SBGbKe/T1QR1vRvce1lx
+	KAETXXKTPT84s/r91IIVG73OUDWsSxuGhOe2x7qveS5BIVhkd1BFLAI5vstzC7K1GIVL9mA
+	TKlFXNfwc7G1JE+k2Vf9oVsmtlZ9kzsVDwJc8LIgPizRwaQNd3lXe8delt6o0f0rSmu6q6+
+	KBFJOGiPbG6W785dMAuw6o2++T+AxG3+75dzj6DJO9j4TE8RU56daJsg/moIRHj/9WVE20p
+	cD4XS20MWIVCzTR/4bv6LCTkuLFepZUCWF5TR8WpuXSx3/Q5pdLD7cNIdKd1GYmcmgmfJ4S
+	O8u4BZ5QtPk/2qw45x8dJyjmF+6amqE074oGgmDHvDtDa+r9as=
+X-QQ-GoodBg: 0
+From: Jilin Yuan <yuanjilin@cdjrlc.com>
+To: kvalo@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-wireless@vger.kernel.org,
+	b43-dev@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jilin Yuan <yuanjilin@cdjrlc.com>
+Subject: [PATCH] wifi: b43: fix repeated words in comments
+Date: Sat,  9 Jul 2022 21:31:19 +0800
+Message-Id: <20220709133119.21076-1-yuanjilin@cdjrlc.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr4
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20220626_041927_105692_995DC101 
-X-CRM114-Status: GOOD (  18.05  )
+X-CRM114-CacheID: sfid-20220709_063153_394441_123B6585 
+X-CRM114-Status: UNSURE (   8.29  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -60,95 +70,36 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============8770905697686979194=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
---===============8770905697686979194==
-Content-Type: multipart/signed; boundary="Sig_/gLIzHQzsO8pBgS_8XdvwdPb";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+ Delete the redundant word 'early'.
 
---Sig_/gLIzHQzsO8pBgS_8XdvwdPb
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jilin Yuan <yuanjilin@cdjrlc.com>
+---
+ drivers/net/wireless/broadcom/b43/phy_common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, 26 Jun 2022 13:03:57 +0200
-Sebastian Gottschall <s.gottschall@newmedia-net.de> wrote:
+diff --git a/drivers/net/wireless/broadcom/b43/phy_common.h b/drivers/net/wireless/broadcom/b43/phy_common.h
+index 4213caca9117..5ec5233acf40 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_common.h
++++ b/drivers/net/wireless/broadcom/b43/phy_common.h
+@@ -88,7 +88,7 @@ enum b43_txpwr_result {
+  * 			initialized here.
+  * 			Must not be NULL.
+  * @prepare_hardware:	Prepare the PHY. This is called before b43_chip_init to
+- * 			do some early early PHY hardware init.
++ * 			do some early PHY hardware init.
+  * 			Can be NULL, if not required.
+  * @init:		Initialize the PHY.
+  * 			Must not be NULL.
+-- 
+2.36.1
 
-> Am 25.06.2022 um 21:29 schrieb Praghadeesh T K S:
-> > Fix a coccinelle warning by removing condition with no possible
-> > effect
-> >
-> > Signed-off-by: Praghadeesh T K S <praghadeeshthevendria@gmail.com>
-> > ---
-> >   drivers/net/wireless/broadcom/b43/xmit.c | 7 +------
-> >   1 file changed, 1 insertion(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/net/wireless/broadcom/b43/xmit.c
-> > b/drivers/net/wireless/broadcom/b43/xmit.c index 7651b1b..667a74b
-> > 100644 --- a/drivers/net/wireless/broadcom/b43/xmit.c
-> > +++ b/drivers/net/wireless/broadcom/b43/xmit.c
-> > @@ -169,12 +169,7 @@ static u16 b43_generate_tx_phy_ctl1(struct
-> > b43_wldev *dev, u8 bitrate) const struct b43_phy *phy =3D &dev->phy;
-> >   	const struct b43_tx_legacy_rate_phy_ctl_entry *e;
-> >   	u16 control =3D 0;
-> > -	u16 bw;
-> > -
-> > -	if (phy->type =3D=3D B43_PHYTYPE_LP)
-> > -		bw =3D B43_TXH_PHY1_BW_20;
-> > -	else /* FIXME */
-> > -		bw =3D B43_TXH_PHY1_BW_20;
-> > +	u16 bw =3D B43_TXH_PHY1_BW_20; =20
-> Can you check if this is a possible register typo?
-
-
-I think use of this name was intentional.
-The code is marked as being incomplete with /* FIXME */
-
-This change removes the FIXME. Which is bad. It doesn't improve the
-code. It reduces code quality by removing the
-incompleteness documentation.
-
-Please leave the code as-is.
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/gLIzHQzsO8pBgS_8XdvwdPb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmK4QI0ACgkQ9TK+HZCN
-iw6qfg//Xz4FgwF/d8Elx8vDBrIjZS+3IeOuZoLP3Ljiz/YHjDRKdcZHG8fcm4c5
-zsxT27VyXc466fOKCM+dV7ArdXGdkAPBT+8G3Z0v7EBoBxbj91prW+dc2Oa8mdxH
-o6YDR0cqjXT+/3tMO9hasuMoembusnmhMoiWkIm6Lc/s8MzvKPLRVxRqknhNMR1o
-wiamTMmM8cUyBcalQWg1rJ0E8WWy7gq0RHb51vaqVpMe+KmfCQLKIm5q4YbOEXb2
-ol5dC/RFPeCNgF2zQEJGrqnNPbAVgncsaA21W4D1lLlXNmz0FO+LwVuK5tIK7/5z
-oDIBBIcbQsHR15j5fkmpe5ykhJfIs4q7XwauYTvaVwTC/eX+/0jPT3MuKplEEK/m
-D6FGvVkvmnzSns/m1DOZB/gpuPZvf0qLi1X+AH4gtxp4PbLRTIgPkS0I7YNpdEju
-xjc0IVK6a5LKwrseAZKCkT9EC9zPPkg1gN0VMNlP4H92UT2/CCOeIuDgdJitVkE5
-waItsFQpIIvAcnkcYe5BEW4toqkFtD1snbKPHinDDpD6OmwvpQvdILwCmkOFBuQU
-0W+F2d0BTcbVvJl8m/Qj9jv43FF5PUu5WsbGN7VKdOnFXFcnsyn+t5166P3tuy1n
-wH6UR+MWJ+eo533M8jq9pZdv59A7S+rJlQ115di4Pa4YffWQ8z4=
-=dwmE
------END PGP SIGNATURE-----
-
---Sig_/gLIzHQzsO8pBgS_8XdvwdPb--
-
-
---===============8770905697686979194==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
-
---===============8770905697686979194==--
-
