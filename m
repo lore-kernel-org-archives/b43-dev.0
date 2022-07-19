@@ -4,60 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0AAF1C433EF
-	for <b43-dev@archiver.kernel.org>; Mon, 18 Jul 2022 12:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1D2EEC433EF
+	for <b43-dev@archiver.kernel.org>; Tue, 19 Jul 2022 00:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-ID:Cc:To:References:
-	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=oVyFqym3mHJYou6MSVF39fT6gzm0/8YHHR0qAWLowgM=; b=DaYTqOV+YG+3Pm
-	s85DNsACJLjlG87Mk+8lP0FlTz9qlcD1Sk3IFCEJRvdjOYaDHQhFdrGZzRHAkaVV5sdaTX2UIwoE8
-	JWcIL54fHBzO08m51FGDQadJ9BcsiTILY0Gxc+4TgtxbSToA4IBwZugdqBrmwgm3ofxR1VcszdwjJ
-	qFkN1qt0ozRCSUV+vaog4dMv0ZxBQINylH5CzrxOAY5RYI1TbAOLHSjtcuGiX5F6moejcZyRHS1PK
-	JPZp39Y/ws1a7x0cFomGEegVe3Eww8YH84NDlFbm6j8KpUKYSO3MW2wrEKzO2AW4kZoVww+uc8vb0
-	ycWcjiSRLbaEH1CiEhLw==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-Id:Date:Subject:Cc
+	:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=5SvFR9SngaB6mqOwSvc6N3jDv4cRQRZHY49W45s90eI=; b=ED8aeRZWcx34S7
+	ifzLEsJg2eKsfF06I/8XrjJeNwLYM418fPlvq1J6Keh0C+XDVJuIiuiZXKw7hXm8UaSCeoTgmS16M
+	8gXrITQ0QIQkPDjYn/ETrEUPq5DzZ6pMILnFmUfqZUX2SuxVitqzTohA9U0YcBKy+mv1XE1qM64Tu
+	q70e4OH2VxuO8OF+gdf98bQui8/pr03pOwaB9jQLR7VkEFTzgxMB5LBL9yeEGxrF0u0UZBHXsqZZp
+	7ko4aDfq3zyowCBF9r1TI6BTF8stReTun2/HQ47VZYBQantLySFD8nKrgFZaMiI2XP4jh0+eIJN4N
+	9A8hojBCevTlaWXpmO1g==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oDPXK-00D6ol-Gm; Mon, 18 Jul 2022 12:07:42 +0000
-Received: from dfw.source.kernel.org ([139.178.84.217])
+	id 1oDbLx-003FEA-Pi; Tue, 19 Jul 2022 00:44:45 +0000
+Received: from out199-18.us.a.mail.aliyun.com ([47.90.199.18])
 	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oDPXF-00D6lF-61
-	for b43-dev@lists.infradead.org; Mon, 18 Jul 2022 12:07:41 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by dfw.source.kernel.org (Postfix) with ESMTPS id 5BD466146E;
-	Mon, 18 Jul 2022 12:07:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C58C341C0;
-	Mon, 18 Jul 2022 12:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1658146055;
-	bh=UrxKT41abmSdbKRzjqBkgtXEAHHMGNKmuOTzccd+mpQ=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=hSByNAyDnYY5KQ71gNIXM0NnJ6VtQM0Kr4+M0xDm+X8+46S9zX2SxYMDMLiXd4qYH
-	 zJgmr1akBi4Yf9h+sNGv2rek66/Nb/4AIMWojJIO8bGl3/hIY4txIdm3mRhWpVQO/b
-	 GN7NDM0KohO75G5Ta5T8DYuTXtclia+WOEB5OvSEsrAf1VQBQhEtTcz1uWrILhAC95
-	 zozbsFkeiNy5rJ4rV5/26WYDlPojU0o/jIcRoz8KODhN8lniZyVlpXvYYnjbBJyrZ7
-	 8vd0WiDiODg+0THX0Zt+ehuI6uV2ktH0XQuc/jgCRaNs+MTbntUU6P2mz2X3Ap+fa0
-	 xKqUhkKyFohCg==
+	id 1oDbLn-003FB6-Qo
+	for b43-dev@lists.infradead.org; Tue, 19 Jul 2022 00:44:38 +0000
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0VJp5nlb_1658191464;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VJp5nlb_1658191464)
+          by smtp.aliyun-inc.com;
+          Tue, 19 Jul 2022 08:44:25 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: davem@davemloft.net
+Cc: Larry.Finger@lwfinger.net,
+	kvalo@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-wireless@vger.kernel.org,
+	b43-dev@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] wifi: mac80211: clean up one inconsistent indenting
+Date: Tue, 19 Jul 2022 08:44:23 +0800
+Message-Id: <20220719004423.85142-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-Subject: Re: [PATCH] wifi: b43: fix repeated words in comments
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220709133119.21076-1-yuanjilin@cdjrlc.com>
-References: <20220709133119.21076-1-yuanjilin@cdjrlc.com>
-To: Jilin Yuan <yuanjilin@cdjrlc.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jilin Yuan <yuanjilin@cdjrlc.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <165814605166.32602.7331424475643392487.kvalo@kernel.org>
-Date: Mon, 18 Jul 2022 12:07:33 +0000 (UTC)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20220718_050737_303416_5DF82086 
-X-CRM114-Status: UNSURE (   6.58  )
+X-CRM114-CacheID: sfid-20220718_174436_142941_288ADD8C 
+X-CRM114-Status: UNSURE (   7.43  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -75,20 +67,30 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Jilin Yuan <yuanjilin@cdjrlc.com> wrote:
+Eliminate the follow smatch warning:
+drivers/net/wireless/broadcom/b43legacy/main.c:2947 b43legacy_wireless_core_stop() warn: inconsistent indenting
 
-> Delete the redundant word 'early'.
-> 
-> Signed-off-by: Jilin Yuan <yuanjilin@cdjrlc.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/net/wireless/broadcom/b43legacy/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied to wireless-next.git, thanks.
-
-e2dfb8a5c605 wifi: b43: fix repeated words in comments
-
+diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
+index cbc21c7c3138..4022c544aefe 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/main.c
++++ b/drivers/net/wireless/broadcom/b43legacy/main.c
+@@ -2944,7 +2944,7 @@ static void b43legacy_wireless_core_stop(struct b43legacy_wldev *dev)
+ 			dev_kfree_skb(skb_dequeue(&wl->tx_queue[queue_num]));
+ 	}
+ 
+-b43legacy_mac_suspend(dev);
++	b43legacy_mac_suspend(dev);
+ 	free_irq(dev->dev->irq, dev);
+ 	b43legacydbg(wl, "Wireless interface stopped\n");
+ }
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220709133119.21076-1-yuanjilin@cdjrlc.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1.7.g153144c
 
 
 _______________________________________________
