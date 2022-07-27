@@ -4,61 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34158C04A68
-	for <b43-dev@archiver.kernel.org>; Wed, 27 Jul 2022 12:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1A6CC04A68
+	for <b43-dev@archiver.kernel.org>; Wed, 27 Jul 2022 12:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-ID:Cc:To:References:
 	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
 	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=xZnQkQTEK5WxVE7yUrNhEWuNYOjkhZPrgPXm91e4Dw0=; b=Y/gMS9j6d79c8O
-	XNGKeKrpQpKYVP1+XYZCq5QLC7QoRGn4uZRx79Xr+UDWGU6EcAOUFpHjFTY+93K/IemadTT8EpSv8
-	pOD76ZfNAvL+ftdqBz2Lxb8mPpkpR4fWqOBn5fxOwJOH23zM8UZ5CA8pP5y8z9qznhqjihrr1XbkQ
-	SfVB0wt1Mh4eWCo6QUg2fkPLm/ZI4Vbnq5UJc9enyw5E4w7LOJCg1h75AnWB2pbP29UcpP6MreDk2
-	+sWkMCTqKIV4mctfmKwFD62YfQ+gdwICkXvIkAlixBljKXhOvCz+n/pxf1VZR2ks1mcVWOJHgL7f7
-	eU3CSbLHELs973TO3HaA==;
+	List-Owner; bh=yHkig+a1LIHtzCTYTbwaOvCpntIcv/Lgxw/+S0CCWIw=; b=B2Fa7VzYihZl6E
+	FUX1wUwubxxBiVfOh1DmwTWcnzxq6ci4rqM3DgQWfgYTu+eikKhEXdNsrlMDlP4HrpmXLm/xOi3dt
+	YLq5hBfTXJ/ZY/fw2b1Wvcx3HhsiAIJheJRd7prIKl6ddK5TMl6gsbNiZ/yuLKdI/GNyZ8lgyqPtX
+	XRm8t+i52lpy06l3+Czf3W3n+p34KHFQkKqGy5cNQJ6atpXRjXZQGuzd6Wj86gw81HzwgBMp//K1X
+	ET++/zIUiyslN/rNaQsSJeH0yOmu0qp8QYgdA8VGw3RZIKcdpbFGlG6vmbZMKU6vkok3LowvG0NST
+	9bbdZVo2Yb0tuqO6vbYQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oGgXs-00DiuK-6s; Wed, 27 Jul 2022 12:53:48 +0000
+	id 1oGgYF-00Dj9x-P8; Wed, 27 Jul 2022 12:54:11 +0000
 Received: from dfw.source.kernel.org ([2604:1380:4641:c500::1])
 	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oGgXm-00Diqw-LL
-	for b43-dev@lists.infradead.org; Wed, 27 Jul 2022 12:53:44 +0000
+	id 1oGgYB-00Dj5y-Id
+	for b43-dev@lists.infradead.org; Wed, 27 Jul 2022 12:54:08 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.source.kernel.org (Postfix) with ESMTPS id 82F8E615F4;
-	Wed, 27 Jul 2022 12:53:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5E5C433D6;
-	Wed, 27 Jul 2022 12:53:35 +0000 (UTC)
+	by dfw.source.kernel.org (Postfix) with ESMTPS id D2C3B615FB;
+	Wed, 27 Jul 2022 12:54:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EFEAC433C1;
+	Wed, 27 Jul 2022 12:54:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1658926417;
-	bh=3RCDpDtQR1Vz/cIwomt6p/0yfoytC9LPqFXeIvarhMU=;
+	s=k20201202; t=1658926446;
+	bh=bUI8RRcRRi8N4BCjRhAZBlP3oQu0WfRYo+LB9U7ijHI=;
 	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=NbEFoU8nnEVQi7h6uQ51HrNGIYIfL6aKGERBViggvZfbxgys6RhUL68IATnbGYJxV
-	 3jKhxJCtaFxgMzriKUgIARjZMhUSk/pRIUseqogPIy4Nqd2UnsDtOx/du51mgokNCd
-	 Cb2Q57NUwVeqJCTKf8sGIfqEH3U0xB2Fh675DsiM47TX/GfgiMTNaW9pir4OYZqBSz
-	 H+LieArSx4DrU7AkN7wGe5mW7UNiTCnRhHh5BhkYZIzZY8EwOQk2NwN0aaTf/Hs1AU
-	 l50sT3xB+RtzJcUfUQhV/dfDaVjApqjAxieFCQjU8wF73/JeJNklY2Y3pCOplCnwRZ
-	 bN2+jbNoMtXrQ==
+	b=JCHGNXwGYot1cE5EL6Gc3+C09mDz8gC6wsoK7F+rP4k6EuhITigg3GaQXGPRg3GmV
+	 Pl7jfG5plca5zDcHmeAM47HBPux8Dw8QLBSmMvE+tNpbjiBKXweXjGpbV3Jx/NrDgA
+	 PBgUJPE4rkdvgioC+hPE0tefuicFIwpDDumQkL+pKXOYbWuGzpwMWh2CPdrwbkRIt7
+	 09aDkk2Oe1kyVOpM6qo7tP+YaTmMGbs/wFlkBOOEayw2BvZN9/z1G2pHrkoyHqt+sK
+	 RoBx2TqQJGMTf+CbVrJXlLRqEkR6pRZC+OfidtHElKtiypk1AQUdPDuMSWEaWO5vMe
+	 2Hjnq/JaUcWtQ==
 MIME-Version: 1.0
-Subject: Re: [-next,v2] wifi: b43legacy: clean up one inconsistent indenting
+Subject: Re: wifi: b43: do not initialise static variable to 0
 From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220719075637.111716-1-yang.lee@linux.alibaba.com>
-References: <20220719075637.111716-1-yang.lee@linux.alibaba.com>
-To: Yang Li <yang.lee@linux.alibaba.com>
-Cc: davem@davemloft.net, johannes@sipsolutions.net, Larry.Finger@lwfinger.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yang Li <yang.lee@linux.alibaba.com>, Abaci Robot <abaci@linux.alibaba.com>
+In-Reply-To: <20220720194245.8442-1-gaoxin@cdjrlc.com>
+References: <20220720194245.8442-1-gaoxin@cdjrlc.com>
+To: Xin Gao <gaoxin@cdjrlc.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, linux-wireless@vger.kernel.org,
+ b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xin Gao <gaoxin@cdjrlc.com>
 User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <165892641335.11639.12371328790924183483.kvalo@kernel.org>
-Date: Wed, 27 Jul 2022 12:53:35 +0000 (UTC)
+Message-ID: <165892644221.11639.11999522991830836091.kvalo@kernel.org>
+Date: Wed, 27 Jul 2022 12:54:03 +0000 (UTC)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20220727_055342_768095_07F58A9A 
-X-CRM114-Status: UNSURE (   5.79  )
+X-CRM114-CacheID: sfid-20220727_055407_690726_73E7F5B7 
+X-CRM114-Status: UNSURE (   6.51  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -76,20 +75,20 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Yang Li <yang.lee@linux.alibaba.com> wrote:
+Xin Gao <gaoxin@cdjrlc.com> wrote:
 
-> Eliminate the follow smatch warning:
-> drivers/net/wireless/broadcom/b43legacy/main.c:2947 b43legacy_wireless_core_stop() warn: inconsistent indenting
+> No need to initialise static variables to zero.
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> Signed-off-by: Xin Gao <gaoxin@cdjrlc.com>
+> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+> [kvalo@kernel.org: improve commit log]
 
 Patch applied to wireless-next.git, thanks.
 
-7d13c0ae38a6 wifi: b43legacy: clean up one inconsistent indenting
+dbf8cd368a47 wifi: b43: do not initialise static variable to 0
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220719075637.111716-1-yang.lee@linux.alibaba.com/
+https://patchwork.kernel.org/project/linux-wireless/patch/20220720194245.8442-1-gaoxin@cdjrlc.com/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
