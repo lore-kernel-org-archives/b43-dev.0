@@ -4,61 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1A6CC04A68
-	for <b43-dev@archiver.kernel.org>; Wed, 27 Jul 2022 12:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EDD6DECAAD5
+	for <b43-dev@archiver.kernel.org>; Tue, 30 Aug 2022 20:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-ID:Cc:To:References:
-	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=yHkig+a1LIHtzCTYTbwaOvCpntIcv/Lgxw/+S0CCWIw=; b=B2Fa7VzYihZl6E
-	FUX1wUwubxxBiVfOh1DmwTWcnzxq6ci4rqM3DgQWfgYTu+eikKhEXdNsrlMDlP4HrpmXLm/xOi3dt
-	YLq5hBfTXJ/ZY/fw2b1Wvcx3HhsiAIJheJRd7prIKl6ddK5TMl6gsbNiZ/yuLKdI/GNyZ8lgyqPtX
-	XRm8t+i52lpy06l3+Czf3W3n+p34KHFQkKqGy5cNQJ6atpXRjXZQGuzd6Wj86gw81HzwgBMp//K1X
-	ET++/zIUiyslN/rNaQsSJeH0yOmu0qp8QYgdA8VGw3RZIKcdpbFGlG6vmbZMKU6vkok3LowvG0NST
-	9bbdZVo2Yb0tuqO6vbYQ==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=2oac8ayxMutIJdnGirSjCKwwCd5d/XqMpusgUANHpjw=; b=CrSbi2xLrPOTIZ
+	Iib48N3vbNhZqyKLCq8xw3P+YIEAgjWx5TpBAH0q+phrq+Qof47BGxpGPdDgOGHx0njgoTwxvfLzw
+	1dOKUhYa+M450Wv/lTBiZ5iHqpwppQGp4XXns2tAOVEMYaAUc3lWPU0AbwpvwOVFcoHcceWZVqNKw
+	tx2s5iCNSqhpMY8Hi8Bg82IvSoewOpqNIAmoGdE10wfr+QiBk8nETglEzktWqsIz/vJqfU/1QNCpg
+	etmZVa1jnSARf9vbRQ2M8rr+7XuEHWncy6od6mPEKg62s1+OzKaJ1PZMUV5/9GZLLgfK9YxKF3Mm8
+	WO76meqxjgD33iis+SUw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oGgYF-00Dj9x-P8; Wed, 27 Jul 2022 12:54:11 +0000
-Received: from dfw.source.kernel.org ([2604:1380:4641:c500::1])
+	id 1oT7dr-001mK1-Ri; Tue, 30 Aug 2022 20:15:23 +0000
+Received: from www.zeus03.de ([194.117.254.33] helo=mail.zeus03.de)
 	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oGgYB-00Dj5y-Id
-	for b43-dev@lists.infradead.org; Wed, 27 Jul 2022 12:54:08 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by dfw.source.kernel.org (Postfix) with ESMTPS id D2C3B615FB;
-	Wed, 27 Jul 2022 12:54:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EFEAC433C1;
-	Wed, 27 Jul 2022 12:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1658926446;
-	bh=bUI8RRcRRi8N4BCjRhAZBlP3oQu0WfRYo+LB9U7ijHI=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=JCHGNXwGYot1cE5EL6Gc3+C09mDz8gC6wsoK7F+rP4k6EuhITigg3GaQXGPRg3GmV
-	 Pl7jfG5plca5zDcHmeAM47HBPux8Dw8QLBSmMvE+tNpbjiBKXweXjGpbV3Jx/NrDgA
-	 PBgUJPE4rkdvgioC+hPE0tefuicFIwpDDumQkL+pKXOYbWuGzpwMWh2CPdrwbkRIt7
-	 09aDkk2Oe1kyVOpM6qo7tP+YaTmMGbs/wFlkBOOEayw2BvZN9/z1G2pHrkoyHqt+sK
-	 RoBx2TqQJGMTf+CbVrJXlLRqEkR6pRZC+OfidtHElKtiypk1AQUdPDuMSWEaWO5vMe
-	 2Hjnq/JaUcWtQ==
+	id 1oT7dh-001mFc-55
+	for b43-dev@lists.infradead.org; Tue, 30 Aug 2022 20:15:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=k1; bh=4LFY4ioMkY3dYD
+	XeDSSXk/8F+iRs2Svtr3dX2Fp34ks=; b=MkZ1Rw4IxB5xvLqkBs6Lxg8V0u/Pwn
+	Mldk0Ip7V7tGgKb69zq7J3w4hxnUMb22dOYhpKRz8DqTJOkjKTXlYAvSH1G+X1hh
+	ZAjPxvdQYh4h8LtEa0wjJ8ic1dN9rboXv62JKqXiAcQfUr1LDpAppQnwNpbyLnxl
+	RSK+73AmBjdaA=
+Received: (qmail 422781 invoked from network); 30 Aug 2022 22:15:02 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 Aug 2022 22:15:02 +0200
+X-UD-Smtp-Session: l3s3148p1@XAYJCXvnYu0gAwDtxxrgAFH1RcxMblwv
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Christian Lamparter <chunkeey@googlemail.com>,
+	Simon Kelley <simon@thekelleys.org.uk>,
+	Larry Finger <Larry.Finger@lwfinger.net>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Franky Lin <franky.lin@broadcom.com>,
+	Hante Meuleman <hante.meuleman@broadcom.com>,
+	Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+	Stanislaw Gruszka <stf_xl@wp.pl>,
+	Jouni Malinen <j@w1.fi>,
+	Ajay Singh <ajay.kathat@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@microchip.com>,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Herton Ronaldo Krzesinski <herton@canonical.com>,
+	Hin-Tak Leung <htl10@users.sourceforge.net>,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	b43-dev@lists.infradead.org,
+	brcm80211-dev-list.pdl@broadcom.com,
+	SHA-cyfmac-dev-list@infineon.com,
+	libertas-dev@lists.infradead.org
+Subject: [PATCH v2 2/3] net: wireless: move from strlcpy with unused retval to strscpy
+Date: Tue, 30 Aug 2022 22:14:53 +0200
+Message-Id: <20220830201457.7984-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220830201457.7984-1-wsa+renesas@sang-engineering.com>
+References: <20220830201457.7984-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Subject: Re: wifi: b43: do not initialise static variable to 0
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220720194245.8442-1-gaoxin@cdjrlc.com>
-References: <20220720194245.8442-1-gaoxin@cdjrlc.com>
-To: Xin Gao <gaoxin@cdjrlc.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xin Gao <gaoxin@cdjrlc.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <165892644221.11639.11999522991830836091.kvalo@kernel.org>
-Date: Wed, 27 Jul 2022 12:54:03 +0000 (UTC)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20220727_055407_690726_73E7F5B7 
-X-CRM114-Status: UNSURE (   6.51  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20220830_131513_543990_48696BC9 
+X-CRM114-Status: GOOD (  19.96  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -75,22 +90,409 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Xin Gao <gaoxin@cdjrlc.com> wrote:
+Follow the advice of the below link and prefer 'strscpy' in this
+subsystem. Conversion is 1:1 because the return value is not used.
+Generated by a coccinelle script.
 
-> No need to initialise static variables to zero.
-> 
-> Signed-off-by: Xin Gao <gaoxin@cdjrlc.com>
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-> [kvalo@kernel.org: improve commit log]
+Link: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Patch applied to wireless-next.git, thanks.
+Changes since v1:
+* split into smaller patches
 
-dbf8cd368a47 wifi: b43: do not initialise static variable to 0
+ drivers/net/wireless/ath/ath6kl/init.c                    | 2 +-
+ drivers/net/wireless/ath/carl9170/fw.c                    | 2 +-
+ drivers/net/wireless/ath/wil6210/main.c                   | 2 +-
+ drivers/net/wireless/ath/wil6210/netdev.c                 | 2 +-
+ drivers/net/wireless/ath/wil6210/wmi.c                    | 2 +-
+ drivers/net/wireless/atmel/atmel.c                        | 2 +-
+ drivers/net/wireless/broadcom/b43/leds.c                  | 2 +-
+ drivers/net/wireless/broadcom/b43legacy/leds.c            | 2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c | 8 ++++----
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c   | 8 ++++----
+ .../net/wireless/broadcom/brcm80211/brcmfmac/firmware.c   | 2 +-
+ .../net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c   | 2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c              | 6 +++---
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c              | 6 +++---
+ drivers/net/wireless/intel/iwlegacy/3945-mac.c            | 2 +-
+ drivers/net/wireless/intersil/hostap/hostap_ioctl.c       | 2 +-
+ drivers/net/wireless/marvell/libertas/ethtool.c           | 4 ++--
+ drivers/net/wireless/microchip/wilc1000/mon.c             | 2 +-
+ drivers/net/wireless/quantenna/qtnfmac/cfg80211.c         | 2 +-
+ drivers/net/wireless/quantenna/qtnfmac/commands.c         | 2 +-
+ drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c       | 2 +-
+ drivers/net/wireless/wl3501_cs.c                          | 8 ++++----
+ 22 files changed, 36 insertions(+), 36 deletions(-)
 
+diff --git a/drivers/net/wireless/ath/ath6kl/init.c b/drivers/net/wireless/ath/ath6kl/init.c
+index 9b5c7d8f2b95..201e45554070 100644
+--- a/drivers/net/wireless/ath/ath6kl/init.c
++++ b/drivers/net/wireless/ath/ath6kl/init.c
+@@ -1014,7 +1014,7 @@ static int ath6kl_fetch_fw_apin(struct ath6kl *ar, const char *name)
+ 
+ 		switch (ie_id) {
+ 		case ATH6KL_FW_IE_FW_VERSION:
+-			strlcpy(ar->wiphy->fw_version, data,
++			strscpy(ar->wiphy->fw_version, data,
+ 				min(sizeof(ar->wiphy->fw_version), ie_len+1));
+ 
+ 			ath6kl_dbg(ATH6KL_DBG_BOOT,
+diff --git a/drivers/net/wireless/ath/carl9170/fw.c b/drivers/net/wireless/ath/carl9170/fw.c
+index 1ab09e1c9ec5..4c1aecd1163c 100644
+--- a/drivers/net/wireless/ath/carl9170/fw.c
++++ b/drivers/net/wireless/ath/carl9170/fw.c
+@@ -105,7 +105,7 @@ static void carl9170_fw_info(struct ar9170 *ar)
+ 			 CARL9170FW_GET_MONTH(fw_date),
+ 			 CARL9170FW_GET_DAY(fw_date));
+ 
+-		strlcpy(ar->hw->wiphy->fw_version, motd_desc->release,
++		strscpy(ar->hw->wiphy->fw_version, motd_desc->release,
+ 			sizeof(ar->hw->wiphy->fw_version));
+ 	}
+ }
+diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
+index 7da87c9f363f..94e61dbe94f8 100644
+--- a/drivers/net/wireless/ath/wil6210/main.c
++++ b/drivers/net/wireless/ath/wil6210/main.c
+@@ -1305,7 +1305,7 @@ void wil_get_board_file(struct wil6210_priv *wil, char *buf, size_t len)
+ 			board_file = WIL_BOARD_FILE_NAME;
+ 	}
+ 
+-	strlcpy(buf, board_file, len);
++	strscpy(buf, board_file, len);
+ }
+ 
+ static int wil_get_bl_info(struct wil6210_priv *wil)
+diff --git a/drivers/net/wireless/ath/wil6210/netdev.c b/drivers/net/wireless/ath/wil6210/netdev.c
+index 87a88f26233e..e76b38ad1d44 100644
+--- a/drivers/net/wireless/ath/wil6210/netdev.c
++++ b/drivers/net/wireless/ath/wil6210/netdev.c
+@@ -445,7 +445,7 @@ int wil_if_add(struct wil6210_priv *wil)
+ 
+ 	wil_dbg_misc(wil, "entered");
+ 
+-	strlcpy(wiphy->fw_version, wil->fw_version, sizeof(wiphy->fw_version));
++	strscpy(wiphy->fw_version, wil->fw_version, sizeof(wiphy->fw_version));
+ 
+ 	rc = wiphy_register(wiphy);
+ 	if (rc < 0) {
+diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/ath/wil6210/wmi.c
+index ea7bd403e706..6a5976a2944c 100644
+--- a/drivers/net/wireless/ath/wil6210/wmi.c
++++ b/drivers/net/wireless/ath/wil6210/wmi.c
+@@ -780,7 +780,7 @@ static void wmi_evt_ready(struct wil6210_vif *vif, int id, void *d, int len)
+ 		return; /* FW load will fail after timeout */
+ 	}
+ 	/* ignore MAC address, we already have it from the boot loader */
+-	strlcpy(wiphy->fw_version, wil->fw_version, sizeof(wiphy->fw_version));
++	strscpy(wiphy->fw_version, wil->fw_version, sizeof(wiphy->fw_version));
+ 
+ 	if (len > offsetof(struct wmi_ready_event, rfc_read_calib_result)) {
+ 		wil_dbg_wmi(wil, "rfc calibration result %d\n",
+diff --git a/drivers/net/wireless/atmel/atmel.c b/drivers/net/wireless/atmel/atmel.c
+index 0361c8eb2008..45d079b93384 100644
+--- a/drivers/net/wireless/atmel/atmel.c
++++ b/drivers/net/wireless/atmel/atmel.c
+@@ -1518,7 +1518,7 @@ struct net_device *init_atmel_card(unsigned short irq, unsigned long port,
+ 	priv->firmware = NULL;
+ 	priv->firmware_type = fw_type;
+ 	if (firmware) /* module parameter */
+-		strlcpy(priv->firmware_id, firmware, sizeof(priv->firmware_id));
++		strscpy(priv->firmware_id, firmware, sizeof(priv->firmware_id));
+ 	priv->bus_type = card_present ? BUS_TYPE_PCCARD : BUS_TYPE_PCI;
+ 	priv->station_state = STATION_STATE_DOWN;
+ 	priv->do_rx_crc = 0;
+diff --git a/drivers/net/wireless/broadcom/b43/leds.c b/drivers/net/wireless/broadcom/b43/leds.c
+index 982a772a9d87..bfe1be345844 100644
+--- a/drivers/net/wireless/broadcom/b43/leds.c
++++ b/drivers/net/wireless/broadcom/b43/leds.c
+@@ -118,7 +118,7 @@ static int b43_register_led(struct b43_wldev *dev, struct b43_led *led,
+ 	led->wl = dev->wl;
+ 	led->index = led_index;
+ 	led->activelow = activelow;
+-	strlcpy(led->name, name, sizeof(led->name));
++	strscpy(led->name, name, sizeof(led->name));
+ 	atomic_set(&led->state, 0);
+ 
+ 	led->led_dev.name = led->name;
+diff --git a/drivers/net/wireless/broadcom/b43legacy/leds.c b/drivers/net/wireless/broadcom/b43legacy/leds.c
+index 38b5be3a84e2..79e6fd205bfb 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/leds.c
++++ b/drivers/net/wireless/broadcom/b43legacy/leds.c
+@@ -88,7 +88,7 @@ static int b43legacy_register_led(struct b43legacy_wldev *dev,
+ 	led->dev = dev;
+ 	led->index = led_index;
+ 	led->activelow = activelow;
+-	strlcpy(led->name, name, sizeof(led->name));
++	strscpy(led->name, name, sizeof(led->name));
+ 
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
+index 7485e784be2a..372deeb69477 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
+@@ -261,7 +261,7 @@ int brcmf_c_preinit_dcmds(struct brcmf_if *ifp)
+ 				     &revinfo, sizeof(revinfo));
+ 	if (err < 0) {
+ 		bphy_err(drvr, "retrieving revision info failed, %d\n", err);
+-		strlcpy(ri->chipname, "UNKNOWN", sizeof(ri->chipname));
++		strscpy(ri->chipname, "UNKNOWN", sizeof(ri->chipname));
+ 	} else {
+ 		ri->vendorid = le32_to_cpu(revinfo.vendorid);
+ 		ri->deviceid = le32_to_cpu(revinfo.deviceid);
+@@ -314,7 +314,7 @@ int brcmf_c_preinit_dcmds(struct brcmf_if *ifp)
+ 
+ 	/* locate firmware version number for ethtool */
+ 	ptr = strrchr(buf, ' ') + 1;
+-	strlcpy(ifp->drvr->fwver, ptr, sizeof(ifp->drvr->fwver));
++	strscpy(ifp->drvr->fwver, ptr, sizeof(ifp->drvr->fwver));
+ 
+ 	/* Query for 'clmver' to get CLM version info from firmware */
+ 	memset(buf, 0, sizeof(buf));
+@@ -424,11 +424,11 @@ static void brcmf_mp_attach(void)
+ 	 * if not set then if available use the platform data version. To make
+ 	 * sure it gets initialized at all, always copy the module param version
+ 	 */
+-	strlcpy(brcmf_mp_global.firmware_path, brcmf_firmware_path,
++	strscpy(brcmf_mp_global.firmware_path, brcmf_firmware_path,
+ 		BRCMF_FW_ALTPATH_LEN);
+ 	if ((brcmfmac_pdata) && (brcmfmac_pdata->fw_alternative_path) &&
+ 	    (brcmf_mp_global.firmware_path[0] == '\0')) {
+-		strlcpy(brcmf_mp_global.firmware_path,
++		strscpy(brcmf_mp_global.firmware_path,
+ 			brcmfmac_pdata->fw_alternative_path,
+ 			BRCMF_FW_ALTPATH_LEN);
+ 	}
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+index bd164a0821f9..5516f7dc10c1 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+@@ -561,10 +561,10 @@ static void brcmf_ethtool_get_drvinfo(struct net_device *ndev,
+ 
+ 	if (drvr->revinfo.result == 0)
+ 		brcmu_dotrev_str(drvr->revinfo.driverrev, drev);
+-	strlcpy(info->driver, KBUILD_MODNAME, sizeof(info->driver));
+-	strlcpy(info->version, drev, sizeof(info->version));
+-	strlcpy(info->fw_version, drvr->fwver, sizeof(info->fw_version));
+-	strlcpy(info->bus_info, dev_name(drvr->bus_if->dev),
++	strscpy(info->driver, KBUILD_MODNAME, sizeof(info->driver));
++	strscpy(info->version, drev, sizeof(info->version));
++	strscpy(info->fw_version, drvr->fwver, sizeof(info->fw_version));
++	strscpy(info->bus_info, dev_name(drvr->bus_if->dev),
+ 		sizeof(info->bus_info));
+ }
+ 
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+index b8379e4034a4..15e99d8865bd 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+@@ -769,7 +769,7 @@ brcmf_fw_alloc_request(u32 chip, u32 chiprev,
+ 		fwnames[j].path[0] = '\0';
+ 		/* check if firmware path is provided by module parameter */
+ 		if (brcmf_mp_global.firmware_path[0] != '\0') {
+-			strlcpy(fwnames[j].path, mp_path,
++			strscpy(fwnames[j].path, mp_path,
+ 				BRCMF_FW_NAME_LEN);
+ 
+ 			if (end != '/') {
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+index d58525ebe618..a3d5030f6fe0 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+@@ -688,7 +688,7 @@ static void brcmf_fws_macdesc_set_name(struct brcmf_fws_info *fws,
+ 				       struct brcmf_fws_mac_descriptor *desc)
+ {
+ 	if (desc == &fws->desc.other)
+-		strlcpy(desc->name, "MAC-OTHER", sizeof(desc->name));
++		strscpy(desc->name, "MAC-OTHER", sizeof(desc->name));
+ 	else if (desc->mac_handle)
+ 		scnprintf(desc->name, sizeof(desc->name), "MAC-%d:%d",
+ 			  desc->mac_handle, desc->interface_id);
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index 5234511dac78..ac36c899134e 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -5907,8 +5907,8 @@ static void ipw_ethtool_get_drvinfo(struct net_device *dev,
+ 	struct ipw2100_priv *priv = libipw_priv(dev);
+ 	char fw_ver[64], ucode_ver[64];
+ 
+-	strlcpy(info->driver, DRV_NAME, sizeof(info->driver));
+-	strlcpy(info->version, DRV_VERSION, sizeof(info->version));
++	strscpy(info->driver, DRV_NAME, sizeof(info->driver));
++	strscpy(info->version, DRV_VERSION, sizeof(info->version));
+ 
+ 	ipw2100_get_fwversion(priv, fw_ver, sizeof(fw_ver));
+ 	ipw2100_get_ucodeversion(priv, ucode_ver, sizeof(ucode_ver));
+@@ -5916,7 +5916,7 @@ static void ipw_ethtool_get_drvinfo(struct net_device *dev,
+ 	snprintf(info->fw_version, sizeof(info->fw_version), "%s:%d:%s",
+ 		 fw_ver, priv->eeprom_version, ucode_ver);
+ 
+-	strlcpy(info->bus_info, pci_name(priv->pci_dev),
++	strscpy(info->bus_info, pci_name(priv->pci_dev),
+ 		sizeof(info->bus_info));
+ }
+ 
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index 029dacebe751..5b483de18c81 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -10424,8 +10424,8 @@ static void ipw_ethtool_get_drvinfo(struct net_device *dev,
+ 	char date[32];
+ 	u32 len;
+ 
+-	strlcpy(info->driver, DRV_NAME, sizeof(info->driver));
+-	strlcpy(info->version, DRV_VERSION, sizeof(info->version));
++	strscpy(info->driver, DRV_NAME, sizeof(info->driver));
++	strscpy(info->version, DRV_VERSION, sizeof(info->version));
+ 
+ 	len = sizeof(vers);
+ 	ipw_get_ordinal(p, IPW_ORD_STAT_FW_VERSION, vers, &len);
+@@ -10434,7 +10434,7 @@ static void ipw_ethtool_get_drvinfo(struct net_device *dev,
+ 
+ 	snprintf(info->fw_version, sizeof(info->fw_version), "%s (%s)",
+ 		 vers, date);
+-	strlcpy(info->bus_info, pci_name(p->pci_dev),
++	strscpy(info->bus_info, pci_name(p->pci_dev),
+ 		sizeof(info->bus_info));
+ }
+ 
+diff --git a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+index 846138d6e33d..7352d5b2095f 100644
+--- a/drivers/net/wireless/intel/iwlegacy/3945-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+@@ -3254,7 +3254,7 @@ il3945_store_measurement(struct device *d, struct device_attribute *attr,
+ 
+ 	if (count) {
+ 		char *p = buffer;
+-		strlcpy(buffer, buf, sizeof(buffer));
++		strscpy(buffer, buf, sizeof(buffer));
+ 		channel = simple_strtoul(p, NULL, 0);
+ 		if (channel)
+ 			params.channel = channel;
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+index 0a376f112db9..4e0a0c881697 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+@@ -3848,7 +3848,7 @@ static void prism2_get_drvinfo(struct net_device *dev,
+ 	iface = netdev_priv(dev);
+ 	local = iface->local;
+ 
+-	strlcpy(info->driver, "hostap", sizeof(info->driver));
++	strscpy(info->driver, "hostap", sizeof(info->driver));
+ 	snprintf(info->fw_version, sizeof(info->fw_version),
+ 		 "%d.%d.%d", (local->sta_fw_ver >> 16) & 0xff,
+ 		 (local->sta_fw_ver >> 8) & 0xff,
+diff --git a/drivers/net/wireless/marvell/libertas/ethtool.c b/drivers/net/wireless/marvell/libertas/ethtool.c
+index d8e4f29b690d..9f53308a9935 100644
+--- a/drivers/net/wireless/marvell/libertas/ethtool.c
++++ b/drivers/net/wireless/marvell/libertas/ethtool.c
+@@ -20,8 +20,8 @@ static void lbs_ethtool_get_drvinfo(struct net_device *dev,
+ 		priv->fwrelease >> 16 & 0xff,
+ 		priv->fwrelease >>  8 & 0xff,
+ 		priv->fwrelease       & 0xff);
+-	strlcpy(info->driver, "libertas", sizeof(info->driver));
+-	strlcpy(info->version, lbs_driver_version, sizeof(info->version));
++	strscpy(info->driver, "libertas", sizeof(info->driver));
++	strscpy(info->version, lbs_driver_version, sizeof(info->version));
+ }
+ 
+ /*
+diff --git a/drivers/net/wireless/microchip/wilc1000/mon.c b/drivers/net/wireless/microchip/wilc1000/mon.c
+index b5a1b65c087c..03b7229a0ff5 100644
+--- a/drivers/net/wireless/microchip/wilc1000/mon.c
++++ b/drivers/net/wireless/microchip/wilc1000/mon.c
+@@ -229,7 +229,7 @@ struct net_device *wilc_wfi_init_mon_interface(struct wilc *wl,
+ 		return NULL;
+ 
+ 	wl->monitor_dev->type = ARPHRD_IEEE80211_RADIOTAP;
+-	strlcpy(wl->monitor_dev->name, name, IFNAMSIZ);
++	strscpy(wl->monitor_dev->name, name, IFNAMSIZ);
+ 	wl->monitor_dev->netdev_ops = &wilc_wfi_netdev_ops;
+ 	wl->monitor_dev->needs_free_netdev = true;
+ 
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+index 1593e810b3ca..b71ed42188fc 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+@@ -1223,7 +1223,7 @@ int qtnf_wiphy_register(struct qtnf_hw_info *hw_info, struct qtnf_wmac *mac)
+ 			mac->macinfo.extended_capabilities_len;
+ 	}
+ 
+-	strlcpy(wiphy->fw_version, hw_info->fw_version,
++	strscpy(wiphy->fw_version, hw_info->fw_version,
+ 		sizeof(wiphy->fw_version));
+ 	wiphy->hw_version = hw_info->hw_version;
+ 
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+index 0fad53693292..b1b73478d89b 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+@@ -967,7 +967,7 @@ qtnf_cmd_resp_proc_hw_info(struct qtnf_bus *bus,
+ 		hwinfo->total_rx_chain, hwinfo->total_tx_chain,
+ 		hwinfo->fw_ver);
+ 
+-	strlcpy(hwinfo->fw_version, bld_label, sizeof(hwinfo->fw_version));
++	strscpy(hwinfo->fw_version, bld_label, sizeof(hwinfo->fw_version));
+ 	hwinfo->hw_version = hw_ver;
+ 
+ 	return 0;
+diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c b/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
+index 49421d10e22b..f7d95c9624a0 100644
+--- a/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
++++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
+@@ -143,7 +143,7 @@ static int rtl8187_register_led(struct ieee80211_hw *dev,
+ 	led->dev = dev;
+ 	led->ledpin = ledpin;
+ 	led->is_radio = is_radio;
+-	strlcpy(led->name, name, sizeof(led->name));
++	strscpy(led->name, name, sizeof(led->name));
+ 
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
+diff --git a/drivers/net/wireless/wl3501_cs.c b/drivers/net/wireless/wl3501_cs.c
+index dad38fc04243..1b532e00a56f 100644
+--- a/drivers/net/wireless/wl3501_cs.c
++++ b/drivers/net/wireless/wl3501_cs.c
+@@ -1441,7 +1441,7 @@ static void wl3501_detach(struct pcmcia_device *link)
+ static int wl3501_get_name(struct net_device *dev, struct iw_request_info *info,
+ 			   union iwreq_data *wrqu, char *extra)
+ {
+-	strlcpy(wrqu->name, "IEEE 802.11-DS", sizeof(wrqu->name));
++	strscpy(wrqu->name, "IEEE 802.11-DS", sizeof(wrqu->name));
+ 	return 0;
+ }
+ 
+@@ -1652,7 +1652,7 @@ static int wl3501_set_nick(struct net_device *dev, struct iw_request_info *info,
+ 
+ 	if (wrqu->data.length > sizeof(this->nick))
+ 		return -E2BIG;
+-	strlcpy(this->nick, extra, wrqu->data.length);
++	strscpy(this->nick, extra, wrqu->data.length);
+ 	return 0;
+ }
+ 
+@@ -1661,7 +1661,7 @@ static int wl3501_get_nick(struct net_device *dev, struct iw_request_info *info,
+ {
+ 	struct wl3501_card *this = netdev_priv(dev);
+ 
+-	strlcpy(extra, this->nick, 32);
++	strscpy(extra, this->nick, 32);
+ 	wrqu->data.length = strlen(extra);
+ 	return 0;
+ }
+@@ -1965,7 +1965,7 @@ static int wl3501_config(struct pcmcia_device *link)
+ 	this->firmware_date[0]	= '\0';
+ 	this->rssi		= 255;
+ 	this->chan		= iw_default_channel(this->reg_domain);
+-	strlcpy(this->nick, "Planet WL3501", sizeof(this->nick));
++	strscpy(this->nick, "Planet WL3501", sizeof(this->nick));
+ 	spin_lock_init(&this->lock);
+ 	init_waitqueue_head(&this->wait);
+ 	netif_start_queue(dev);
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220720194245.8442-1-gaoxin@cdjrlc.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.35.1
 
 
 _______________________________________________
