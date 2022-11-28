@@ -4,70 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3B104C4332F
-	for <b43-dev@archiver.kernel.org>; Tue, 22 Nov 2022 13:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6D26FC433FE
+	for <b43-dev@archiver.kernel.org>; Mon, 28 Nov 2022 13:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:To:Subject:Message-ID:Date:From:
-	In-Reply-To:References:MIME-Version:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=CSvFwzLzStK6EIDGD1a98HiX/M6HzhDf45DYWsEHFLw=; b=XQOqrCnJ9VMcsQ
-	d2rYvjlZQ/nB8ehJ8SkG+GqVqnOIbizQt4zlJfKPN0tOdYqtkRtH7OJz1f0z/F1DhVDrPRau/bP7N
-	xu9O0F+PQZ01PT6DJK9cTJxHP7seW1QDoWmgA8cUlL41CydUEOFFj9sqYSjg8hX5C1C7HWdFFTVet
-	+0v9Nnv9nb2DJsdoROW7/1P8cu3gHKBSrOrFX+USZ0IbTpSqc4mKJCrkZqNtMQ6walPDOScYOVKck
-	7TbJFqnVUok8uiqPuKKxtBtjJfkWEAYU9luj/KiI4pp6Ugl082yS9wS1c16YUNoUkG19v9ZsVNfYm
-	4z5w6uFWlYNCdLZSdPAg==;
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-ID:To:References:
+	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=elZU7sbZqA0JwdR/QvuLXD4y0w9YVhJ3/KDXhzVjXpw=; b=mhM5MrQsI3aIom
+	pW0h08FS5LS/4GVKk73kYUAWFQFW9kv9CTlf1sJ/31aSY6oeytimJDu7Ob1E6I5gyRXnlYCpDlRbx
+	i0DooND7ecE1ixwoLSxqXrKISVJRJQ/S0Y3TbCw+aaWXhdBxqOTPkUT2UbxgBW/RoZiTKD6ySgxdl
+	mC6vkQwN3wgH0DJF/lNTQe5mks+JcSrnpCGM5LeKXnkqW6a9MmIVA31KS9rnOzXgS7Lc4BB6RP59b
+	gg7EfdnKhmg6z7PWQjng4tXIurLZp+fP9gkE6fk5iUZnoccrUPzLfp88D36uYAvG011juWNSF7vDg
+	s5RkcqGTWOnteo8GcT8A==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oxTC7-009bEu-FA; Tue, 22 Nov 2022 13:20:11 +0000
-Received: from mail-ed1-x52a.google.com ([2a00:1450:4864:20::52a])
+	id 1ozedn-0021R6-9f; Mon, 28 Nov 2022 13:57:47 +0000
+Received: from dfw.source.kernel.org ([2604:1380:4641:c500::1])
 	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1oxTC4-009bDE-QX
-	for b43-dev@lists.infradead.org; Tue, 22 Nov 2022 13:20:10 +0000
-Received: by mail-ed1-x52a.google.com with SMTP id x2so20612090edd.2
-        for <b43-dev@lists.infradead.org>; Tue, 22 Nov 2022 05:20:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=skymem-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OOzIbrFIOKeJXJT4ID/MUCczRZmmy/MUgRjL2diXaTc=;
-        b=exKArqMppRWvzwf3ELZJ+WIimhqTiI0eQUPBRXmFBulCFmneBcH9Du2QIac/RFgtB0
-         ykN9/Me7ltc8TFWhmNzPiQ3qYQlvB1977JR+h9ccv4Lc6MXyLPV7gModyDCR2xukjiIf
-         F9nSWGWjCA7aYQVANWKilM4s//f5IpoT8mTc6UZy8pKVGi+SjIufo3LoYBNsT8PLqBYO
-         VA81jm9pDN0AZj2/68Zb88mPhJYrEiIS3D7ZXF2FqxLSrsPcxbW/088aIm8ubbbXiz4Y
-         dTGGnv5rUGkfowZVNtCbk/5HsZzuvL9bnDmQ224JipcbMZrK7a0ze8FzosN5yb+e6zGt
-         6yiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OOzIbrFIOKeJXJT4ID/MUCczRZmmy/MUgRjL2diXaTc=;
-        b=SO9NdDtrxta3NmX6tZRzvE/8SqxbbX0aA1m68HbOS6RMWJ7lKn6Sx6aOuyJv1OFofP
-         P7GygtZlxYdNTs+uWWz2Bm2V8NFazvH2cd77rQ60TC8C7r7lvFUqnENQelDuXEBcLMGA
-         KmJU9WSxenrdx1kfEoZVrdLB2AohIB+rCE9T/ZX9etUyCew90zqpawIJ2Qj9nrxP9mmH
-         EC0ldpwreRURM17dAREpGHAub6Tv7fi3a1jIKyvmoCL4Yevz4sbEnj+9KKsHPjsODEw+
-         D+e1JOIzcnwx3WXkS0wV/3Dkvyfi0upTmVuQXkE6BTu60qPvqKsrD/r43NZ6sjbTHPG0
-         HDnA==
-X-Gm-Message-State: ANoB5pnnNEBCD3VPzNC9rseowDGE9k/agMe4eqOC5+DMdGaPf2vwUgl9
-	J4kNKuABfiaFySZhLFNXO/y34W9Ero+rPF7+0pkR0w==
-X-Google-Smtp-Source: AA0mqf6RIQN3NAIPq8n53brtdf2c7RBwC0dm3F1Hg3vcuzZA+yL7BZxfmN50fae3ZbC8cj8CDbzO4XEicnkv+Bo+9Ew=
-X-Received: by 2002:a05:6402:5d5:b0:464:fa1:9ece with SMTP id
- n21-20020a05640205d500b004640fa19ecemr21917763edx.262.1669123205084; Tue, 22
- Nov 2022 05:20:05 -0800 (PST)
+	id 1ozedh-0021Pp-Mr
+	for b43-dev@lists.infradead.org; Mon, 28 Nov 2022 13:57:43 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by dfw.source.kernel.org (Postfix) with ESMTPS id 5C068610A7;
+	Mon, 28 Nov 2022 13:57:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A17CC433D6;
+	Mon, 28 Nov 2022 13:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1669643859;
+	bh=3iAjCz8Po6UxsVaFN66Kyn/1QE3Uxx8DWu4pZB3HbEM=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=H5FhmdZdWirC9HOnQW/3HbTLnGxregpR1YVsc6aDopEp2rolsPDSrPjxv4dZmBYuF
+	 3z2C0shBk8SBfpgATE0mBtzB8GD5Ju0aCEr6NgVGOisvmjGA+q/htKLvSEOnsl/39k
+	 ewgsG0FMjTSw+B2tVwHL3gHsB6lTEqNzRQHc5Gffn33nJ7SBIHpMxke9AcR0xBVnCe
+	 bJrpvvtYa8+aJkfp/0LGTWj+pLSOQhD6FPGZCH7CtmfcYmWh8Z5jGGuoI/nWh6cVh4
+	 dEgeKbvhnHIV0LJ3cUNXqHcLOnfImQNaqCL2WvvtL74TlFItTWCrqW3USArtLM6uwJ
+	 QPorcHjt1TiOg==
 MIME-Version: 1.0
-References: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-From: Info Skymem <info@skymem.com>
-Date: Tue, 22 Nov 2022 14:19:54 +0100
-Message-ID: <CAKvd=_ivRY1kDZYqygm2ZQCrcWV4f7RJjTdgw2i27gW9aUjCVA@mail.gmail.com>
 Subject: Re: [PATCH] wifi: b43: remove reference to removed config B43_PCMCIA
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
+References: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
 To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <166964385630.4701.15876061507595016726.kvalo@kernel.org>
+Date: Mon, 28 Nov 2022 13:57:38 +0000 (UTC)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20221122_052008_878459_50B25AEC 
-X-CRM114-Status: GOOD (  16.09  )
+X-CRM114-CacheID: sfid-20221128_055741_831488_F5FA56A4 
+X-CRM114-Status: UNSURE (   8.68  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -79,49 +66,33 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-SGksCnRoYW5rIHlvdSBmb3IgeW91ciBpbmZvcm1hdGlvbi4KCk9uIG91ciB3ZWJzaXRlIHlvdSBj
-YW4gZmluZCBlbWFpbCBhZGRyZXNzZXMgb2YgY29tcGFuaWVzIGFuZCBwZW9wbGUuCmh0dHBzOi8v
-d3d3LnNreW1lbS5pbmZvCgpJbiBzaG9ydCwgaXTigJlzIGxpa2UgR29vZ2xlIGZvciBlbWFpbHMu
-CgpCZXN0IHJlZ2FyZHMsClJvYmVydCwKU2t5bWVtIHRlYW0KCk9uIFR1ZSwgTm92IDIyLCAyMDIy
-IGF0IDI6MTUgUE0gTHVrYXMgQnVsd2FobiA8bHVrYXMuYnVsd2FobkBnbWFpbC5jb20+IHdyb3Rl
-Ogo+Cj4gQ29tbWl0IDM5OTUwMGRhMThmNyAoInNzYjogcGljayBQQ01DSUEgaG9zdCBjb2RlIHN1
-cHBvcnQgZnJvbSBiNDMgZHJpdmVyIikKPiByZW1vdmVzIHRoZSBjb25maWcgQjQzX1BDTUNJQS4K
-Pgo+IENsZWFuIHVwIHRoZSBsYXN0IHJlZmVyZW5jZSB0byB0aGlzIHJlbW92ZWQgY29uZmlnIEI0
-M19QQ01DSUEgaW4gdGhlCj4gYjQzX3ByaW50X2RyaXZlcmluZm8oKSBmdW5jdGlvbi4KPgo+IFNp
-Z25lZC1vZmYtYnk6IEx1a2FzIEJ1bHdhaG4gPGx1a2FzLmJ1bHdhaG5AZ21haWwuY29tPgo+IC0t
-LQo+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMvbWFpbi5jIHwgMTAgKysrLS0t
-LS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQo+
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29tL2I0My9tYWluLmMg
-Yi9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMvbWFpbi5jCj4gaW5kZXggMjk4ZmVi
-YmRmZmMwLi45MmNhMGIyY2EyODYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9uZXQvd2lyZWxlc3Mv
-YnJvYWRjb20vYjQzL21haW4uYwo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29t
-L2I0My9tYWluLmMKPiBAQCAtNTc4NCwxNSArNTc4NCwxMiBAQCB2b2lkIGI0M19jb250cm9sbGVy
-X3Jlc3RhcnQoc3RydWN0IGI0M193bGRldiAqZGV2LCBjb25zdCBjaGFyICpyZWFzb24pCj4KPiAg
-c3RhdGljIHZvaWQgYjQzX3ByaW50X2RyaXZlcmluZm8odm9pZCkKPiAgewo+IC0gICAgICAgY29u
-c3QgY2hhciAqZmVhdF9wY2kgPSAiIiwgKmZlYXRfcGNtY2lhID0gIiIsICpmZWF0X25waHkgPSAi
-IiwKPiArICAgICAgIGNvbnN0IGNoYXIgKmZlYXRfcGNpID0gIiIsICpmZWF0X25waHkgPSAiIiwK
-PiAgICAgICAgICAgICAgICAgICAgKmZlYXRfbGVkcyA9ICIiLCAqZmVhdF9zZGlvID0gIiI7Cj4K
-PiAgI2lmZGVmIENPTkZJR19CNDNfUENJX0FVVE9TRUxFQ1QKPiAgICAgICAgIGZlYXRfcGNpID0g
-IlAiOwo+ICAjZW5kaWYKPiAtI2lmZGVmIENPTkZJR19CNDNfUENNQ0lBCj4gLSAgICAgICBmZWF0
-X3BjbWNpYSA9ICJNIjsKPiAtI2VuZGlmCj4gICNpZmRlZiBDT05GSUdfQjQzX1BIWV9OCj4gICAg
-ICAgICBmZWF0X25waHkgPSAiTiI7Cj4gICNlbmRpZgo+IEBAIC01ODAzLDkgKzU4MDAsOCBAQCBz
-dGF0aWMgdm9pZCBiNDNfcHJpbnRfZHJpdmVyaW5mbyh2b2lkKQo+ICAgICAgICAgZmVhdF9zZGlv
-ID0gIlMiOwo+ICAjZW5kaWYKPiAgICAgICAgIHByaW50ayhLRVJOX0lORk8gIkJyb2FkY29tIDQz
-eHggZHJpdmVyIGxvYWRlZCAiCj4gLSAgICAgICAgICAgICAgIlsgRmVhdHVyZXM6ICVzJXMlcyVz
-JXMgXVxuIiwKPiAtICAgICAgICAgICAgICBmZWF0X3BjaSwgZmVhdF9wY21jaWEsIGZlYXRfbnBo
-eSwKPiAtICAgICAgICAgICAgICBmZWF0X2xlZHMsIGZlYXRfc2Rpbyk7Cj4gKyAgICAgICAgICAg
-ICAgIlsgRmVhdHVyZXM6ICVzJXMlcyVzIF1cbiIsCj4gKyAgICAgICAgICAgICAgZmVhdF9wY2ks
-IGZlYXRfbnBoeSwgZmVhdF9sZWRzLCBmZWF0X3NkaW8pOwo+ICB9Cj4KPiAgc3RhdGljIGludCBf
-X2luaXQgYjQzX2luaXQodm9pZCkKPiAtLQo+IDIuMTcuMQo+Cj4KPiBfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGI0My1kZXYgbWFpbGluZyBsaXN0Cj4g
-YjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCj4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9iNDMtZGV2CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJh
-ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMt
-ZGV2Cg==
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+
+> Commit 399500da18f7 ("ssb: pick PCMCIA host code support from b43 driver")
+> removes the config B43_PCMCIA.
+> 
+> Clean up the last reference to this removed config B43_PCMCIA in the
+> b43_print_driverinfo() function.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+Patch applied to wireless-next.git, thanks.
+
+3ca7f0b2523c wifi: b43: remove reference to removed config B43_PCMCIA
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20221122131248.23738-1-lukas.bulwahn@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
