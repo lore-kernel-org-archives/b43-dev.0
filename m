@@ -4,56 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6D26FC433FE
-	for <b43-dev@archiver.kernel.org>; Mon, 28 Nov 2022 13:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 22BECC004D4
+	for <b43-dev@archiver.kernel.org>; Wed, 18 Jan 2023 09:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-ID:To:References:
-	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=elZU7sbZqA0JwdR/QvuLXD4y0w9YVhJ3/KDXhzVjXpw=; b=mhM5MrQsI3aIom
-	pW0h08FS5LS/4GVKk73kYUAWFQFW9kv9CTlf1sJ/31aSY6oeytimJDu7Ob1E6I5gyRXnlYCpDlRbx
-	i0DooND7ecE1ixwoLSxqXrKISVJRJQ/S0Y3TbCw+aaWXhdBxqOTPkUT2UbxgBW/RoZiTKD6ySgxdl
-	mC6vkQwN3wgH0DJF/lNTQe5mks+JcSrnpCGM5LeKXnkqW6a9MmIVA31KS9rnOzXgS7Lc4BB6RP59b
-	gg7EfdnKhmg6z7PWQjng4tXIurLZp+fP9gkE6fk5iUZnoccrUPzLfp88D36uYAvG011juWNSF7vDg
-	s5RkcqGTWOnteo8GcT8A==;
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
+	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
+	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=+GySC2YtGvmPRhOP2p8TgtEAozTlWNK3H7MR3m9+sog=; b=jk+lTOISr588Q+
+	t2evvfaW0eeYDd1uhVFDCuRXgAINcsnSkqgd9Z628iG5SvVO6pKZn069P19saEc8y9lmnY0sU8hiP
+	oA4QcTWIjo8tA5iJ/YM84eQNU2Ioxm/UKwHYM6Cg3cGxAvCGSjRkMphoqDyIiTKtEBSCL43LXh4vB
+	uuCvTy1xvak42zmsYyTactOVjAxKAY0OORb0JF8y/A9EqQ0fmZHdN3Pd0irY6/KohcpPRC0+1zuPG
+	zP+6VAB7rUDSn3Rrkx3PIZP8yxxghP/QxLpL14R2JsbR1klqFjNbADt/jmgU166KD5at0qXrCc6EM
+	/7f1E2FgYG4Ccqtevl9A==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1ozedn-0021R6-9f; Mon, 28 Nov 2022 13:57:47 +0000
-Received: from dfw.source.kernel.org ([2604:1380:4641:c500::1])
+	id 1pI4Yi-0002nH-5E; Wed, 18 Jan 2023 09:16:40 +0000
+Received: from mail.craftsplex.pl ([162.19.155.126])
 	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1ozedh-0021Pp-Mr
-	for b43-dev@lists.infradead.org; Mon, 28 Nov 2022 13:57:43 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by dfw.source.kernel.org (Postfix) with ESMTPS id 5C068610A7;
-	Mon, 28 Nov 2022 13:57:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A17CC433D6;
-	Mon, 28 Nov 2022 13:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1669643859;
-	bh=3iAjCz8Po6UxsVaFN66Kyn/1QE3Uxx8DWu4pZB3HbEM=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=H5FhmdZdWirC9HOnQW/3HbTLnGxregpR1YVsc6aDopEp2rolsPDSrPjxv4dZmBYuF
-	 3z2C0shBk8SBfpgATE0mBtzB8GD5Ju0aCEr6NgVGOisvmjGA+q/htKLvSEOnsl/39k
-	 ewgsG0FMjTSw+B2tVwHL3gHsB6lTEqNzRQHc5Gffn33nJ7SBIHpMxke9AcR0xBVnCe
-	 bJrpvvtYa8+aJkfp/0LGTWj+pLSOQhD6FPGZCH7CtmfcYmWh8Z5jGGuoI/nWh6cVh4
-	 dEgeKbvhnHIV0LJ3cUNXqHcLOnfImQNaqCL2WvvtL74TlFItTWCrqW3USArtLM6uwJ
-	 QPorcHjt1TiOg==
+	id 1pI4Yb-0002mo-8F
+	for b43-dev@lists.infradead.org; Wed, 18 Jan 2023 09:16:34 +0000
+Received: by mail.craftsplex.pl (Postfix, from userid 1002)
+	id 68452245AB; Wed, 18 Jan 2023 09:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=craftsplex.pl;
+	s=mail; t=1674033391;
+	bh=PdkZ+v+vYeToqxHIEU5QY3nYNmj0rMl2wCVGcXJWjrM=;
+	h=Date:From:To:Subject:From;
+	b=VW/8ztfz+i4jABN77y9IIMqHQXIQ56XQNymQoWxzDA0wD7kLClcy3gnb/ngXYOnl0
+	 BeVoG0UC4NZVOVp9YW8yCulQ7Wl5h9DzWxBahjeP/vCgOG6NFAI3ABv0TNtf1kuPZU
+	 s/DbV+TUWoiG4GUVLqcN7Qx/e+c+CkCmEdf108l4efvPYA6XO+yYmbku1axXN8mMsJ
+	 6L/uhKqgVw+EnB78K9Nk6yOc+SPKTQEj99EBGnCwMrcCUHtMM7+CKVFtCs2/Qpec/B
+	 9hq/A0DrA9JR6EGQ3z/BWs8mSs3MxZBuX7+2GDfptlgvBkxX72TR97QtViafPLxzHD
+	 bZ0tqhrDNrqHg==
+Received: by mail.craftsplex.pl for <b43-dev@lists.infradead.org>; Wed, 18 Jan 2023 09:15:33 GMT
+Message-ID: <20230118074500-0.1.3s.8kxi.0.l2tkpp9czu@craftsplex.pl>
+Date: Wed, 18 Jan 2023 09:15:33 GMT
+From: "Kamil Tralewski" <kamil.tralewski@craftsplex.pl>
+To: <b43-dev@lists.infradead.org>
+Subject: =?UTF-8?Q?Zwi=C4=99ksz_zyski_poprzez_pozycjonowanie_?=
+X-Mailer: mail.craftsplex.pl
 MIME-Version: 1.0
-Subject: Re: [PATCH] wifi: b43: remove reference to removed config B43_PCMCIA
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-References: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166964385630.4701.15876061507595016726.kvalo@kernel.org>
-Date: Mon, 28 Nov 2022 13:57:38 +0000 (UTC)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20221128_055741_831488_F5FA56A4 
-X-CRM114-Status: UNSURE (   8.68  )
+X-CRM114-CacheID: sfid-20230118_011633_472346_425466D7 
+X-CRM114-Status: UNSURE (   2.22  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -66,33 +60,18 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-
-> Commit 399500da18f7 ("ssb: pick PCMCIA host code support from b43 driver")
-> removes the config B43_PCMCIA.
-> 
-> Clean up the last reference to this removed config B43_PCMCIA in the
-> b43_print_driverinfo() function.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Patch applied to wireless-next.git, thanks.
-
-3ca7f0b2523c wifi: b43: remove reference to removed config B43_PCMCIA
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20221122131248.23738-1-lukas.bulwahn@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+RHppZcWEIGRvYnJ5LAoKY3p5IHdpZWR6xIUgUGHFhHN0d28sIMW8ZSBvZHdpZWR6YWrEhWN5IFBh
+xYRzdHdhIHN0cm9uxJkgaW50ZXJuZXRvd8SFIEtsaWVuY2kgd3lyYWJpYWrEhSBzb2JpZSBvcGlu
+aWUgbyBtYXJjZSB3IGNpxIVndSA1MCBtaWxpc2VrdW5kPwoKT2QgbGF0IHpham11amVteSBzacSZ
+IHByb2Zlc2pvbmFsbnltaSB1c8WCdWdhbWkgU0VPLCBrdMOzcmUgcG96d2FsYWrEhSBuYXN6eW0g
+S2xpZW50b20gb2JzxYJ1Z2l3YcSHIHdpxJljZWogemxlY2XFhCBpIHdlasWbxIcgbmEgbm93ZSBy
+eW5raS4KCk1vxbxlbXkgcG9yb3ptYXdpYcSHIHcgbmFqYmxpxbxzenltIGN6YXNpZT8KCgpQb3pk
+cmF3aWFtCkthbWlsIFRyYWxld3NraQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRl
+YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRl
+dgo=
