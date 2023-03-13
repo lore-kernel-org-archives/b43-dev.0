@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2A6E1C64ED8
-	for <b43-dev@archiver.kernel.org>; Mon, 27 Feb 2023 10:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3B144C6FD19
+	for <b43-dev@archiver.kernel.org>; Mon, 13 Mar 2023 17:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
-	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
-	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=N6Iyw1oX8fNe2yQil+1Laeacf8sKzu7rRiRZtKMM0zU=; b=DIfxQnW/Pdqx8q
-	maXCTqD9XsrwNI209+UjyjKpqfM2M6JJOJEkFRzd1k7tjtDoChPkB+diyoCYIil6n5J41jhGYbvas
-	JqyszIxcY51oMOFiXU2axuRwGJW7UVUctGPR5Cr9585e0gKfoQpARKL+PuSX/hCtGbKxiphWb3j20
-	VBIicbPfAnIYVM+1gXnzu8fqpXXe38oS7YZPe2G7XzEhIFFV063v8rzsrOTZzEKEXBI9bVKmbuMQ2
-	J9ze4p2S96GjDEz2KPd+bpmyFB7QJtlBIEh5cZS8Y+cIGCccoAfIL5CqLx2Q7fbaW2lkz64/TUT8u
-	JoFTMhhXsNLqDatkga+w==;
+	Content-Transfer-Encoding:Content-Type:Reply-To:List-Subscribe:List-Help:
+	List-Post:List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Date:
+	Subject:To:From:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=D6mb5+VB3NDa12BRjSr2ZQul3cKJzF5qAhlhxxbyYoo=; b=ZSNBpkR9tXVRpK
+	ppI7MT+qi7p8K9ex+775DPb7IxXxREEHx4L1mu+Xf3vZqSheg5lSBstnKsX/EiIRCa2SXMXHSe/cY
+	+J/JC1jWWlrBSzLH+a9kPdqn6GFMV4eXNBIBiKI3Vol/imFxiR2QCfWQW/nZGk7qYwqbR/bNMu5ea
+	pdSqjiiyM3hDaMXNPmZ7QkeTOFYi1VNRIVp9WA9n6cA0KNxhuRHcfmiyDBuEEAKE3hCZsVsy+GI6e
+	ARonaYP+YxEP2yXdXPYY/I0c9Kg4qQw0zQ7kO4si2vbtZRMZTqse6/YwaMnD7ZlPkrnA++9e6FqJn
+	Q5Uo3ZDZCMbk7+urfI2Q==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1pWafg-009DGJ-9r; Mon, 27 Feb 2023 10:23:52 +0000
-Received: from mail.cannich.pl ([94.177.238.223])
+	id 1pblyU-0076uc-24; Mon, 13 Mar 2023 17:28:42 +0000
+Received: from [103.30.145.160] (helo=defaultworkshop.klidefectmanagement.com.novalocal)
 	by bombadil.infradead.org with esmtps (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1pWafY-009DFd-ON
-	for b43-dev@lists.infradead.org; Mon, 27 Feb 2023 10:23:46 +0000
-Received: by mail.cannich.pl (Postfix, from userid 1001)
-	id 92D2882343; Mon, 27 Feb 2023 10:23:36 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cannich.pl; s=mail;
-	t=1677493422; bh=cNbZL9WXZbgcQtzgDCharPn7EQBjUHnC1FAZ/+OQVjk=;
-	h=Date:From:To:Subject:From;
-	b=ejen87RtkHKSeHXcHYyP/XPj/qwOanVXB2Xj2I/qhwLKFrkIK27XXADMazk6Nbqhz
-	 m7SEBenU8m/uV6wceBavUv/UbLcW2HhCdHG9t/UNm5FmBePKUDiWKTWbfHwAr4Zq8P
-	 8mK5gKGlbr/AVv9FMA0oMUeUqqE6sh7tmjSIy8lHxdgOZ5t5DCbpvptLTYcaB6Ypk/
-	 6ykOB9Hb6hUwTVKT55/aEa5Uy2FowEhSissbmKxRGlXp87OXOBw2aZR+eLHOTiiSf1
-	 7CORMZuQyYNu9zn7uld8rNbgJ3iPXmZUHtKvsDbS9e2jesbQjwU5qihRNowuHQc3wI
-	 K/YBhBlZwRENQ==
-Received: by mail.cannich.pl for <b43-dev@lists.infradead.org>; Mon, 27 Feb 2023 10:23:29 GMT
-Message-ID: <20230227095324-0.1.23.1efi.0.y0m484i3r9@cannich.pl>
-Date: Mon, 27 Feb 2023 10:23:29 GMT
-From: =?UTF-8?Q?"Pawe=C5=82_Kamieniecki"?= <pawel.kamieniecki@cannich.pl>
-To: <b43-dev@lists.infradead.org>
-Subject: Prezentacja
-X-Mailer: mail.cannich.pl
+	id 1pblt9-0074e0-FD
+	for b43-dev@lists.infradead.org; Mon, 13 Mar 2023 17:23:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=asda.co.uk;
+	s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
+	Subject:To:From:Reply-To:Sender:Cc:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=UyXNYCF3z6mK+rtXeYCU9FZNDfmaRC3AyccYa6YObg0=; b=t
+	WXDf+d0nmGADqpPNCy3XQXRa3HhHcOb7zRJuPqFccuDNbRai95VhIcOyAjelX7kmUJFEI1/u3fQSu
+	wRjtT+0we8s31cnWIu4ML6lZPx5YaFp1EkTQ9GOn5yNAEof0Lg92FgXzpzQxsIBYunJd6Ps4jKPmZ
+	Pe+UG5gL2Fc3DPI0=;
+Received: from ec2-52-11-215-80.us-west-2.compute.amazonaws.com ([52.11.215.80] helo=asda.co.uk)
+	by defaultworkshop.klidefectmanagement.com.novalocal with esmtpa (Exim 4.94.2)
+	(envelope-from <sales1@asda.co.uk>)
+	id 1pblt7-0005Sa-9G
+	for b43-dev@lists.infradead.org; Tue, 14 Mar 2023 00:23:09 +0700
+From: ASDA Stores Limited <sales1@asda.co.uk>
+To: b43-dev@lists.infradead.org
+Subject: First quarter procurement order/enquiry
+Date: 13 Mar 2023 17:23:08 +0000
+Message-ID: <20230313152049.1506270DC6F8D6A4@asda.co.uk>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20230227_022345_286496_6175CB10 
-X-CRM114-Status: UNSURE (   1.91  )
+X-CRM114-CacheID: sfid-20230313_102312_236147_DC72849C 
+X-CRM114-Status: UNSURE (   0.26  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -59,22 +60,36 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Reply-To: sales@asda-c.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5IQoKQ3p5IG3Ds2fFgmJ5bSBwcnplZHN0YXdpxIcgcm96d2nEhXphbmllLCBr
-dMOzcmUgdW1vxbxsaXdpYSBtb25pdG9yaW5nIGthxbxkZWdvIGF1dGEgdyBjemFzaWUgcnplY3p5
-d2lzdHltIHcgdHltIGplZ28gcG96eWNqxJksIHp1xbx5Y2llIHBhbGl3YSBpIHByemViaWVnPwoK
-RG9kYXRrb3dvIG5hc3plIG5hcnrEmWR6aWUgbWluaW1hbGl6dWplIGtvc3p0eSB1dHJ6eW1hbmlh
-IHNhbW9jaG9kw7N3LCBza3JhY2EgY3phcyBwcnplamF6ZMOzdywgYSB0YWvFvGUgdHdvcnplbmll
-IHBsYW51IHRyYXMgY3p5IGRvc3Rhdy4KClogbmFzemVqIHdpZWR6eSBpIGRvxZt3aWFkY3plbmlh
-IGtvcnp5c3RhIGp1xbwgcG9uYWQgNDkgdHlzLiBLbGllbnTDs3cuIE1vbml0b3J1amVteSA4MDkg
-MDAwIHBvamF6ZMOzdyBuYSBjYcWCeW0gxZt3aWVjaWUsIGNvIGplc3QgbmFzesSFIG5hamxlcHN6
-xIUgd2l6eXTDs3drxIUuCgpCYXJkem8gcHJvc3rEmSBvIGUtbWFpbGEgendyb3RuZWdvLCBqZcWb
-bGkgbW9nbGliecWbbXkgd3Nww7NsbmllIG9tw7N3acSHIHBvdGVuY2phxYIgd3lrb3J6eXN0YW5p
-YSB0YWtpZWdvIHJvendpxIV6YW5pYSB3IFBhxYRzdHdhIGZpcm1pZS4KCgpQb3pkcmF3aWFtLApQ
-YXdlxYIgS2FtaWVuaWVja2kKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0My1kZXZAbGlzdHMuaW5mcmFkZWFkLm9y
-ZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2I0My1kZXYK
+Dear b43-dev
+I'm a procurement manager  with ASDA Group (the owners of ASDA 
+Stores) and your company product has caught our interest. 
+Therefore, we request you send
+list and prices of your hot selling items (products) for our 
+evaluation/pick.
+
+Soon as we receive your reply, we shall send you our company 
+profile and buying proposal. You can also check our website below 
+for detailed info of our purchase area and trading capacity.
+
+Your immediate response E-mail:  sales@asda-c.com   shall be 
+appreciated.
+
+Best Wishes
+
+Ms Stelle Montgomery
+Purchasing Dept.
+ASDA Stores Limited
+Tel:  +44 7418367220
+WhatsApp: + 44-7502985874
+Website: www.asda.com
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
