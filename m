@@ -4,125 +4,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7C04DC6FD1D
-	for <b43-dev@archiver.kernel.org>; Thu, 30 Mar 2023 14:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E39D7C761A6
+	for <b43-dev@archiver.kernel.org>; Thu, 30 Mar 2023 15:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:In-Reply-To:References:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	Content-Transfer-Encoding:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:In-Reply-To:From:References:Cc:To:Subject:
+	MIME-Version:Date:Message-ID:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=I9eRVEgwSWaBTG1H2X2AAYzHlaBbBs3CR6avbiYJfXw=; b=uegnHBrdNrlw1s
-	LNX3CeJTzNaj9m7DD7nUisnH3EnvAMjA3+aQvhGw/B1IgF1IJvJNNYfM8vC9JmrA26/6wsqL4zJa6
-	VRPsCX0LYQxnP8RtxtQp+v5+I8oHA5+ZpAR8QBZYoM0S4Wz+ctKqklx7C9CHPUbFFnBJSE8l6Tz+8
-	4Q2xCSHFGYDt4U9LXKnJnktxFKJz0UHgTCQmJT8kyOrHd1Dbh25afaOCA6lDqE2rDrTmbncdRHumg
-	ZfZF1bXKjfap60nQFDSdlYgIFOLqdqUf/DCaeDzMY53KFpdYXQ03C7MgZsVnDsqazINeAyr56pqWP
-	11Hhhp7rngeXlxkR1PDg==;
+	List-Owner; bh=bzUsO57Ov8XTQg/+Wqaqp+9fxdAyjOpLkv6GJk+rIqs=; b=y86ywnKYsBEpkS
+	cNhqPVZKKU0s973C2KOiU9Hb4ccK7H/WuUChzs00ncvMkwitwK48tyI6g0i8p6yQ3Aviiwkc5D+MC
+	dYcA513D2WLlvPvTDJbKdwBZkQFTwoT+Ef9R4S8NPooxFKDNxLxYj9yo1kcVxda6pybNbeNz27HCk
+	cDV2CaVTIbKfBXVbVYszKrXhcWrloG0HSIVYdgiXDb0w2k9zLfI7mHmDeFPLWzu71NahQOmjoXAt8
+	xlFSS5R6O41nB9MsVmzPGF/AU3Q30MehZqJjRfbXNbeAdXeXF9/O2bsalkqrwAlVI/OkrPUPNoKVE
+	GptnwBA8ocnVWJuKVd9g==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1pht1G-003z4v-1o;
-	Thu, 30 Mar 2023 14:12:50 +0000
-Received: from mail-bn8nam04on20702.outbound.protection.outlook.com ([2a01:111:f400:7e8d::702] helo=NAM04-BN8-obe.outbound.protection.outlook.com)
+	id 1phuTf-004N6U-0d;
+	Thu, 30 Mar 2023 15:46:15 +0000
+Received: from mail-oa1-x35.google.com ([2001:4860:4864:20::35])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1pht1D-003z3e-0M
+	id 1phuTb-004N46-1T
 	for b43-dev@lists.infradead.org;
-	Thu, 30 Mar 2023 14:12:48 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Up0xps8Uwuj2w8KvttcBzVw9ZJrNE9hFZXZv7xN0O0/Z3mI6mm3peMVqKL7J3GEnqdgzrSi7+t1FxbNnAbWvosTe3XmpActQF38Ot1QX0oeC/SbGXfR/8+iI5gU0rc00zIkKTtDUjBS/J/telsyFYktRL3MKp/Zf3AI3kYv8yIZ5sL+HJUbsmjj10NfWVj8aVuRlh5bttOsfKERYm9dD+IwG8XR/qAFfpP6EBoDPqy3NPUF9rf5X0i4Ic8SSz/gx8kWZtfnar+shHpn9C+DL6cKXbkDYCwQooUXI1QUiDm6XLM5kBbS/6g4R1BNCT2fJ1dxqHpOM/+2ofaMII2pt8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xavBcw6pZS+/JKkqew8dSvBDjaPo0z6C8vKsfijliKU=;
- b=Vo/U9uwDTbaxwIlFIC9NziJeJdQdqSiZ3ISmvbx4JR/vaZTCTo4gYxZCpLkUv9zL7zNVpjmgZhxtFA8jMBeTNi4vuVGsiAibU0R1mRMTWrmtcEVCFmfk6OdiPSog2Wf1wfbdoTjewDfolu8bBpqz88A2oeD3mwvwETfW+uKC4QpBIclkos+LQmjUsPkq9HC8LDNeCf1zne/YIoxpEXH2A9Wf6QOVM5dQj9b+uUhYjz7jCPO09Yal8GR7RuTe53+FoOdIFTpo2rfS61orC59fditQrw5m7T4BGgNhDdySok66SmNY/YuAT/7w50Bbv1drQ8hAzQu72gLxXPcr08ngDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
+	Thu, 30 Mar 2023 15:46:13 +0000
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-17786581fe1so20139458fac.10
+        for <b43-dev@lists.infradead.org>; Thu, 30 Mar 2023 08:46:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xavBcw6pZS+/JKkqew8dSvBDjaPo0z6C8vKsfijliKU=;
- b=kQdbP/nkwpiJK0kHb6OKbVVteyE1Gawt0sJ83mIWV/ugGhu878bAfqYmSiqY63MhA9J6kFFLb2hw8EUmSl5H61mjmfHfsufQ9mjc6mWLs0803A7EfI3GBV+Rin8qQB1obl8lpG04Eln+ilKszE3Uh8612mKA2VyD5dm7zl+YzII=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by CO6PR13MB5356.namprd13.prod.outlook.com (2603:10b6:303:14c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.33; Thu, 30 Mar
- 2023 14:12:33 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::c506:5243:557e:82cb]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::c506:5243:557e:82cb%5]) with mapi id 15.20.6254.021; Thu, 30 Mar 2023
- 14:12:33 +0000
-Date: Thu, 30 Mar 2023 16:12:26 +0200
-From: Simon Horman <simon.horman@corigine.com>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: Larry.Finger@lwfinger.net, kvalo@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] b43legacy: Remove the unused function prev_slot()
-Message-ID: <ZCWYysETADTNGsQ1@corigine.com>
-References: <20230330021841.67724-1-jiapeng.chong@linux.alibaba.com>
-Content-Disposition: inline
-In-Reply-To: <20230330021841.67724-1-jiapeng.chong@linux.alibaba.com>
-X-ClientProxiedBy: AS4P189CA0030.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:5db::17) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        d=gmail.com; s=20210112; t=1680191169;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJBA/37IIjC6kfXilx3ayeeRAXqubi70BYpfspioK0o=;
+        b=e4W0o7k7kelgvpOZr2/E8GJHvFZmR4jWQoKaNlO/ScW3aRqbohQBhlFFSLjjBXdQkj
+         Z+4LwHXSa5auE17/Hpp+4cMRo/uOoUMIIHjR9iv8GT/OQu1rDVVmeWlJtz+qM6NGPeRb
+         FPwJbN/NsmI6zSkW0VxQuPTWQzylzqQgsLOQMj3QCi4nCOSkFxd4RSlVOM8fHmzpohFA
+         E4SjNpow7JLhrsxdOk/Fp59HTNAn0hI04FO3plsg0kxdS2p4+E/wIDC2I16oFPshbPOF
+         2GWWDcmBF6a2I5kVQcPKACgiouSJtNpHeoCX/awIzarjCOGPxpVjM1wdPiWAWIM7fZ1n
+         CboQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680191169;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oJBA/37IIjC6kfXilx3ayeeRAXqubi70BYpfspioK0o=;
+        b=Pv3c0cQZLQD/AYk6sPPqRtUpZa3KQnGflBdCZjh5Ab+BEY2A3DvG4IRaNvZORF1Sie
+         LG8gtu7BO2jR7OWAzhdnXQUMCKtwZ+9zp6e9mww/B5ug5Unttdh4phT1TxBxi/Q+JWvV
+         Ojfmo1Lm4uBcqyjNgfuSK1IBh2CPLhibz6FZpBonYsN9a9+uXZzYpUX2slPhQjAPDLYb
+         iOGTvLujLHoMtyVtcA9zuVRrj/1kd+jA5zXvFIVksJpKYqpN0kdmclzd1Y9HndeWLveO
+         6jqjUw0HZlvC0n3NRUV5qV+QDIlXjh/ZlLnANK+g4aCdW72YTE4mODKa0jTcghDC9Xim
+         VqXw==
+X-Gm-Message-State: AO0yUKU4rtofpQwRMM8RiQE8TmLnfXt41/346c3nukIDOFbt5Azack2s
+	0tqFKe2EBRJu7/ouri1vsMU=
+X-Google-Smtp-Source: AKy350YGYVi0onCiOEL6jfuix4ot7d1BxrNLqI2LpurPhxw4Jz1gz5Er+kGSZMhfmR80lpKgRK1/dA==
+X-Received: by 2002:a05:6871:795:b0:17a:d863:4cfc with SMTP id o21-20020a056871079500b0017ad8634cfcmr16832470oap.38.1680191169514;
+        Thu, 30 Mar 2023 08:46:09 -0700 (PDT)
+Received: from [192.168.1.119] ([216.130.59.33])
+        by smtp.gmail.com with ESMTPSA id tw16-20020a056871491000b0017ae909afe8sm39016oab.34.2023.03.30.08.46.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Mar 2023 08:46:09 -0700 (PDT)
+Message-ID: <e81e65f7-9a55-5e28-a2fa-516e93d8e45d@lwfinger.net>
+Date: Thu, 30 Mar 2023 10:46:07 -0500
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|CO6PR13MB5356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80ee707b-4e2a-4608-bfe4-08db3128ce66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 	woYYyWSGe23QAXRJkfcSDqkgzvdZ+tkbROzV/cK/TZIRBatt2xHuhyC7+EAEmCEFbwMtg5hQMdvicNtlwt68eD6JJ1Pe1h3/FW0v/5xiWIhHPJyBU035DFNDWxczlGOkTJN6a4yqbap4D0RIZMIJ7u7DapzVGOquU96wphVcT3gRX2yGL9erD2kSEK3WDVbXRMs3pF/hj54hNkhs7ShBILJUxarykcWkh/VPdC+7AwOBVP0EENIJrtAhZ+bBJGs8xkwLHm6/uhTRBBs3ftFwBaAPRq9N/uaWmol5e65w3yYlewXu+7QIDfI/J2HN4rCyejtwoXPFgmE68QrMNM0AeH9fxS7Q1nJALLttpOkGcuvB9E0kx4zshKpfylCJznLCQbhfkSZ+aqGO9Ty0VWyLHl9AnXYqPFjPvbwzA6lH21XXpwIVrYQGyLNc/mRS8ixGOIbtYzZnMTrzQ/hkhU5qpAO43AD+D6qHNhwbN4gvJk9pcNFl2/+EwZEJgEBheNCPHgX3DcP3z3T38tQ0lpSuIs/TyCGPHfJuHx9Ex6SQm0w=
-X-Forefront-Antispam-Report: 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(396003)(376002)(346002)(39840400004)(451199021)(38100700002)(2906002)(5660300002)(44832011)(4744005)(966005)(6486002)(316002)(8676002)(66476007)(66946007)(36756003)(66556008)(6916009)(4326008)(478600001)(7416002)(41300700001)(83380400001)(2616005)(186003)(86362001)(6506007)(6666004)(6512007)(8936002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 	=?us-ascii?Q?L+Ku3/4b/G7shlwF5vN4VasY2kH7kKpBL1sGmI7CLEjG10m4Se3BUuX9s8hA?=
- =?us-ascii?Q?CtCjJGO1sg3VKSHmpm/1mHRHULzrzEcQrkScpvCkwf5H/3it1p28JZvOplcA?=
- =?us-ascii?Q?nTo7jmbCsy3ZyeCPGULHtZ4py1uNDKS8cp11IeedGjbMpdQ+G2spIsqZAFBo?=
- =?us-ascii?Q?HDJ1sNg11cTFhuarr1zhxP8dovxwMeMIe6z4RBLOGjM+18n74SpWZ+mxquxr?=
- =?us-ascii?Q?fl5zZ+KL5J1akGwvsUNHQBk/UN33AjggTSm4OvLLcM/zUQF2cv5ixhoyUFDp?=
- =?us-ascii?Q?PFgXi5UVo02Q8c5Z6zuXTxgxXpkX/cQ6x3lSX7w+bqr6rlz4WtLslYRr9hq1?=
- =?us-ascii?Q?dWeF8YWS5vO3DsaTgWErj6wWXoTdnNxv5BLGrz3PgZpp+gE84DjJg4fI7L84?=
- =?us-ascii?Q?q76BbF8t0trCj0FsiFYri7pkgE5QbhdZsD/nX6YX/+HfLGFxHone59F2R5TC?=
- =?us-ascii?Q?K56yyU2cfbYuXa9nT6hy0ze1yzhBzH/A4pAvj4G7tTB7oieoR3VNDJ8EnpWS?=
- =?us-ascii?Q?zZ38ymwgzQ/bdr0PzjBl1YIvAUGzwdZy7PABWIDn3mkPOOLinW6LAlgjy6JM?=
- =?us-ascii?Q?83UVZ+SzL12WP+RXUfrvcLRPjEp4jwoKda4IE52FJU44LdXoNA10iOA8+U3w?=
- =?us-ascii?Q?ZM//HWINNYG/zAU9SSuy4mdpm+xb0A00EQfNfxHtVX4qQ963igHBynHuYUYU?=
- =?us-ascii?Q?FpQBTP4SXGfpLQQ1M6cIOnI8jffAWJ8mOwEc8KM1P1bN7chO0AXSNSelGqvi?=
- =?us-ascii?Q?KIXdnYkpwAG40jNEKPqu4adq0PN14Z2fui9w4KQ1kkJ4/6AMQorHOwng3T/g?=
- =?us-ascii?Q?Mfl16keT0t7OFCYiTZNsmj4hCim8CqtXldmKQbELLJPF7yvFBXovlyN2mH9z?=
- =?us-ascii?Q?Mn0BiERW+PAverV1xAT7Sxjey1Z7F6SOxfI9/A+Swv10Y77xEh56uIei/UvK?=
- =?us-ascii?Q?l0dJDfjCBdi7mnrPhFwfJq6n7RxdylEPZpnvYvjfoY/JBuwSClXFBsnZphJq?=
- =?us-ascii?Q?BEfOwA24WZnIpMHM+2NNNwIZFnQIJlgAyIbnZH3l9/67d3M+0gphk85bCAvs?=
- =?us-ascii?Q?cPrVwYUwO9s877o7yg0flnXp21CTDp6QN6Wun1hH0tyus2KDMaQwnhB1WibV?=
- =?us-ascii?Q?do3ARBoIZqgiTMa9IINuxd4j7jdldBcpHR/yXnLmSIDo7Oj21GdnbhyXQf2I?=
- =?us-ascii?Q?mRysuLxlZmQZW09gSzQBbUDcgrOxtHzPOsgQBKc7dh/MqxdvwqOO/kp8qTfs?=
- =?us-ascii?Q?MNAcppKfVeyglNL1L0KpQGT2w/y8xPBIL31Yiq3IKm5ZhhV/zA+UnXMwPWKn?=
- =?us-ascii?Q?py3ywszhNgk1LADgQQleM1h1nLTdGelAHje287wENQVbMaCt9ucRYgB1gFpr?=
- =?us-ascii?Q?8aCrA93t8iaAs9tSI2V15LsxkgLqRvUvrHGrwqDnEevdKthg/9KP/bpFmCev?=
- =?us-ascii?Q?9MgmJQe0aJdgEZSPAfK/Yv3qariiqgzjjWaR3q4ehuPKS8cD80OWVwwklEYZ?=
- =?us-ascii?Q?Z1WiaxDJ8tF5CLMUjrgXZvr8JdVHz/cThF3gXqtt/K0IQEv90w8v0/TTDRYN?=
- =?us-ascii?Q?JaJY23UxzIxalfORya9mvpTy7P3XXSmpj2MqvIbXKqeROx0SvStGa7eGmLFa?=
- =?us-ascii?Q?lT0xPT0spzFVV4YuEiwKMBa+95ZrViFMXoUZbPoWdVCUEi5XAqdv+ork21WM?=
- =?us-ascii?Q?hDHhlw=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80ee707b-4e2a-4608-bfe4-08db3128ce66
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2023 14:12:33.6362
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L38jpiIGCnv6hQcfr6jywFWKGCopkIhIU9NLAPZlk5whTlMP1EU1emBJAcKdJ6J0j9msNlYcp0nG1wmygzy7ufoLxmFVgRa/vLln7aBTXiQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR13MB5356
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] b43legacy: Remove the unused function prev_slot()
+Content-Language: en-US
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-wireless@vger.kernel.org,
+ b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+References: <20230330021841.67724-1-jiapeng.chong@linux.alibaba.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+In-Reply-To: <20230330021841.67724-1-jiapeng.chong@linux.alibaba.com>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20230330_071247_343095_5AB38449 
-X-CRM114-Status: UNSURE (   8.02  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20230330_084611_513327_E2CEAEE9 
+X-CRM114-Status: GOOD (  10.85  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -134,12 +92,12 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-On Thu, Mar 30, 2023 at 10:18:41AM +0800, Jiapeng Chong wrote:
+On 3/29/23 21:18, Jiapeng Chong wrote:
 > The function prev_slot is defined in the dma.c file, but not called
 > elsewhere, so remove this unused function.
 > 
@@ -148,8 +106,15 @@ On Thu, Mar 30, 2023 at 10:18:41AM +0800, Jiapeng Chong wrote:
 > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
 > Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4642
 > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>   drivers/net/wireless/broadcom/b43legacy/dma.c | 8 --------
+>   1 file changed, 8 deletions(-)
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+
+Thanks,
+
+Larry
 
 
 _______________________________________________
