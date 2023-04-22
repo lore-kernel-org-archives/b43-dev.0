@@ -4,46 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 07FD1C7618E
-	for <b43-dev@archiver.kernel.org>; Sat, 22 Apr 2023 02:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4B45C7618E
+	for <b43-dev@archiver.kernel.org>; Sat, 22 Apr 2023 17:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:References:
-	In-Reply-To:Subject:CC:To:From:Date:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=+i2+RGUrFNTB/LsaCC+nDXcOuV+Id+xmgm5Ps6SKaTY=; b=4+tOtpjfTJ75k5
-	lhhOE+1YE7gD2KSqdrfQ5JWILUnEdBSzFWkena8Ozbqa6CE+EZ+FDk8JT9v9qpRteMq97iKw5g5Ei
-	t0R56Q8lMun8MACXTmHq4MvPnK8Yu8l6L1IPGvJUtqQReD6GURH/TfWQjIacFugg1xOI/tg5k2AJf
-	lLYQqhVQdlIgQ+AyyW3qLWt6xunOExuDW8GJF//wAXS6EQSKSHq0sbh7uuCVIYzrmkeD8iUFcReBL
-	cnZ0SZ7Lwmvs22MWL+QKRkdMKst0irKaFCqBoHqtlkhPFLIGAvudL8uqijeWgfkr86hGhdao7dDo4
-	8Zinteju/bCbaAYLXFOw==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Kewe8mg03a1gqe1JxUDSCBCAQp3AqjwdzCou1VObqKw=; b=jcENkWZX/XJtMLyhihEBE9aWAy
+	ELJRLxvrOxNT+Y4kp3T2t3ePVpaUQ3u4NgAOX4KjIXdH9WHfS7MFWvOmJ+1fl9wvzKwedtXT1NgFL
+	KnijlLhnzcdSnA74FJxooJOE1O+nSDOKL7zxz3esNgA1Ch7gIfDcf4y0kb0owaXOvcFbaYRvxEx+1
+	kkEKa1qfaFtDSfWlAxrkTdWb4iT1sP6M1JapKkGV7XKbUQ3tmjdrcon7cUdq7NtBp+rEX/JE2a3BR
+	eT91T0Zw9Rr102KdGiOd3LwqutrmSwsg4nH/2u1zqpSyqo/eZPilzKhohv5IjSThjdueeM+VWXKME
+	x6fIznXQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1pq2Xg-00CEa4-0U;
-	Sat, 22 Apr 2023 02:00:00 +0000
-Received: from mail.rslp.org ([46.23.92.29])
+	id 1pqH3C-00DANO-0p;
+	Sat, 22 Apr 2023 17:29:30 +0000
+Received: from bues.ch ([2a01:138:9005::1:4])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1pq2Xb-00CEZW-1R
+	id 1pqH37-00DALt-38
 	for b43-dev@lists.infradead.org;
-	Sat, 22 Apr 2023 01:59:57 +0000
-Received: from [IPv6:::1] (<unknown> [2607:fb90:37a:3c0a:40f6:775a:9fcf:f54c])
-	by mao.rslp.org (OpenSMTPD) with ESMTPSA id 532b3c7b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sat, 22 Apr 2023 03:59:48 +0200 (CEST)
-Date: Fri, 21 Apr 2023 21:59:45 -0400
-From: Pogprogrammer <spikey@rslp.org>
+	Sat, 22 Apr 2023 17:29:27 +0000
+Received: by bues.ch with esmtpsa (Exim 4.94.2)
+	(envelope-from <m@bues.ch>)
+	id 1pqH2e-0008h1-Tl; Sat, 22 Apr 2023 19:28:54 +0200
+Date: Sat, 22 Apr 2023 19:28:20 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
 To: Larry Finger <Larry.Finger@lwfinger.net>
-CC: b43-dev <b43-dev@lists.infradead.org>,
- linux-wireless <linux-wireless@vger.kernel.org>
-Subject: Re: NetworkManager cant connect on Macbook Pro7,1
-User-Agent: K-9 Mail for Android
-In-Reply-To: <19d8ea51-d37a-5446-fd7c-716e7e8b1aef@lwfinger.net>
-References: <50BB827E-7437-4E25-9F5F-636115EF2D20@rslp.org> <19d8ea51-d37a-5446-fd7c-716e7e8b1aef@lwfinger.net>
-Message-ID: <A174C362-2FAB-4191-A967-84D3B43F40AF@rslp.org>
+Cc: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Kalle Valo
+ <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, "John W. Linville" <linville@tuxdriver.com>,
+ linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org, Natalia Petrova <n.petrova@fintech.ru>
+Subject: Re: [PATCH v2] b43legacy: Add checking for null for
+ ssb_get_devtypedata(dev)
+Message-ID: <20230422192820.59e8e423@barney>
+In-Reply-To: <95cff855-cb12-cf66-888f-b296a712d37d@lwfinger.net>
+References: <20230418142918.70510-1-n.zhandarovich@fintech.ru>
+ <95cff855-cb12-cf66-888f-b296a712d37d@lwfinger.net>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20230421_185955_805605_3FE56B5C 
-X-CRM114-Status: GOOD (  13.77  )
+X-CRM114-CacheID: sfid-20230422_102926_002338_51816F60 
+X-CRM114-Status: GOOD (  13.68  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -55,42 +62,83 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============3347534237815088593=="
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Hello Larry,
-Thank you for responding. Yes, the Macbok pro 7,1 does have an Intel Core 2 Duo. 
-As for my dmesg, I have it on anonfiles for at least the next few hours.
-https://anonfiles.com/66ceMcm8zc/dmesg_txt
+--===============3347534237815088593==
+Content-Type: multipart/signed; boundary="Sig_/2UmYtPuo=8I_Omt_ytOLG9A";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 
-Again, thank you.
+--Sig_/2UmYtPuo=8I_Omt_ytOLG9A
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On April 21, 2023 8:05:13 PM EDT, Larry Finger <Larry.Finger@lwfinger.net> wrote:
->On 4/21/23 18:11, Pogprogrammer wrote:
->> Hello, I installed b43 and I get the error that DMA is not supported and it will be switched to PIO. This was a bug on kernel 2.6, but I am using 6.1+. My mac is partially supported according to http://linuxwireless.sipsolutions.net/en/users/Drivers/b43/ and that may be part of the problem, but:
->> I am on void linux and networkmanager can identify all the networks but if I connect I get errors like "not found network" or maybe "bad password".
->> This is a fresh install and sometimes certain daemons just arent running, so here is my list:
->> Dbus, dhcpcd, NetworkManager, udevd, wpa_supplicant as well as the agetty-tty[1-6].
->> 
->> _______________________________________________
->> b43-dev mailing list
->> b43-dev@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/b43-dev
->
->Your description of the problem is not terribly coherent, thus I will be requesting some more information.
->
->DMA should be supported. It certainly works on my PowerBook G4 with a ppc32 processor. I expect that a MacBook 7.1 has an Intel processor. If not, please enlighted me.
->
->I would like you to run the command 'dmesg > dmesg.txt' and post dmesg.txt on some site where I can read it.
->
->The b43 devices are certainly slow as compared to modern devices, but the one on my PowerBook certainly works.
->
->Larry
->
+On Fri, 21 Apr 2023 17:14:18 -0500
+Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> > (err) goto out;
+> >   		wl =3D ssb_get_devtypedata(dev);
+> > -		B43legacy_WARN_ON(!wl);
+> > +		if (!wl) {
+> > +			B43legacy_WARN_ON(!wl);
+> > +			err =3D -ENODEV;
+> > +			goto out;
+> > +		}
+> >   	}
+> >   	err =3D b43legacy_one_core_attach(dev, wl);
+> >   	if (err) =20
+>=20
+> I do not recall seeing v1. One additional nitpick: The latest
+> convention would have the subject as "wifi: b43legacy:...". Kalle may
+> be able to fix this on merging, but it not, a v3 might be required.
+> Otherwise, the patch is good.
+>=20
+> Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
+
+No, it's not good. It's wrong. I already replied to it.
+wl can never be NULL here and the goto-out path is wrong (if there
+was a chance for it to trigger).
+
+Please drop this patch, Kalle.
+
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
+
+--Sig_/2UmYtPuo=8I_Omt_ytOLG9A
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmREGTUACgkQ9TK+HZCN
+iw5QnxAAsP4FHvqBSFyCpRPrOwj512Kwf4RtO4TYNO/FC3zv09UAgjzILHDVJFDD
+nPmFfNaPsGiVqDUHTIfuPzBYFMdvDsZyibynDU4Fv24YFNXx9YkrytMAZH+Rzh6t
+4cID7MG82odxIJJP3ERs7vA0MX1HhD2cKR2BA2g6470gf1M1+EEqGt+xiu8Q09ja
+rJNpcZB616jmOd3kCxRtSmEVuksPZfVYFFm3Nj77MIUiO/DlIcn2abkFPDMGYpOf
+9GGCHTLc0DSTlZ2vTxmmnYQW/Jqhe6DAjjdY2v7OAN8Ma87VCKVWsCdjIKEhUSyf
+vKY8uxLK9mG5wE8NSD7MqKNALqBewpEcHJy9FyVsxPdq92FpbqfkQh8sWRZFPDC0
+kOT+Y9YqFaec9Ffe+jrISqN/lflkspnvCv4DJn2616NoaFa97zVMv43Oz+o5DYps
+H5TcuwMr/xGlXxHOTRYlxZUFPNMlarkkv6ZoXrhBJncjgZROTRvwjbzgsEeRSO1+
+OPUzTIIobbScYn3XNmNz85Ag8uBx/LrXqSW7F+N4dKyEhXs/EGXKjx/PnZIxSDNF
+s05UhkHRz6N624hRVSEIOS7R4HuZQxIg83usyAkhTT/o58UsHd9sjrK1Tv63m+wE
+XqbKdiC5cKgaN4Mhoeil2Cz6AZsSizVV4PYsAN7zGuk/iGOhC1Q=
+=vx0A
+-----END PGP SIGNATURE-----
+
+--Sig_/2UmYtPuo=8I_Omt_ytOLG9A--
+
+
+--===============3347534237815088593==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
+
+--===============3347534237815088593==--
+
