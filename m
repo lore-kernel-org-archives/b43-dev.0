@@ -4,53 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1E740C77B75
-	for <b43-dev@archiver.kernel.org>; Tue,  9 May 2023 09:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11254C77B7A
+	for <b43-dev@archiver.kernel.org>; Tue, 16 May 2023 07:46:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
-	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
-	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=Tk9qvIFOt6zmBTabiiVk7KZiGXaBPtLJDuCjIiZhjto=; b=qHZhA0f3+UxYaa
-	slinsdxreeu/AhpfxXKRxdXZBFLwMSR62eZAlbpbfojfn8thkKXEZaS39GOT5pyvfv1UbYH4NRTCz
-	wI7WNogX03WeE+pPBtYiWdrId+UebjmStNmLGHRybN2atihxp/LXqUwDTPC+/dldsdekeOx8ISLm9
-	XoCbBzbFjfmn0PmqWGafnBHb2IeZU70r8xnhXtdK3bo/Ik5XEAiw5FsB6ZZzK2t8DBwXsNCHgk4uN
-	iFUMJqRcE03oraL6LiYBuduyNPhn/8UIfwnTX5jkl88/Qhgf4jkPJNdvqQ2C/CONZF8GrZzVtLhPB
-	8hY1VuUfVsvVrP5eyWZw==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-Id:Date:Subject:Cc
+	:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=y7yFkeH3eGlYXOs/fpJN7XCX3Di7j4+yrcEG4QGwG8c=; b=nJGzqYRkmMm3o+
+	PS7ZuJV9mTkIxh8/E/xIx5rM/A/2zntPyhyTXElblqscABtP6x5JCVOAhG+pwCjouq4fSjJvdg9s6
+	/CjaVY0DmP1qW4ystu6OEySPtwuiHw6kaH452ET29HImnmqTmAvO7yAmgrVfs862lDoebRlkSYvjB
+	ofjR1XgkEk9Ep4VOWmocwtYUPeg83qEChepqJMea+qHqMVvQbczfnOiaF1e29YCMb5dxXnVT/Kbak
+	UOTqcjoVa3bhh8cn289ekTrjMJxadEm4eyaBdjKqPYiH+7XunGBpTssa/4EiRDGdgxAIZiR4jZWz5
+	J+juqVId6BpgTp16SaPw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1pwJhO-002kal-1j;
-	Tue, 09 May 2023 09:31:58 +0000
-Received: from mail.craftsplex.pl ([162.19.155.126])
+	id 1pypNm-004htE-2O;
+	Tue, 16 May 2023 07:46:06 +0000
+Received: from dfw.source.kernel.org ([139.178.84.217])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1pwJhI-002kYe-2R
+	id 1pypNi-004hsK-0m
 	for b43-dev@lists.infradead.org;
-	Tue, 09 May 2023 09:31:54 +0000
-Received: by mail.craftsplex.pl (Postfix, from userid 1002)
-	id F2A0622870; Tue,  9 May 2023 09:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=craftsplex.pl;
-	s=mail; t=1683624703;
-	bh=PcMncQpBfIZCnTOfZJY5G1G+gaLn4c9QPfFvoXrE4rA=;
-	h=Date:From:To:Subject:From;
-	b=kH90MoaEZzmXja87fW/UveZqbRdRyMMqx5AByk3cF+lhQmHEkeBFejjuh5xzJjyKh
-	 7t2+1Pv2m4ESFm4qZxK9FVae4gbPZFNZcPYxQSbqhEv9m3B8G1gJ75WVZGOj62cOuF
-	 nDHqe9Wtx/We3QJfXbpmxqGJ7LHm25jJXLYPnQtD0RnAnOpqwcCXM7Y3bFMHuZatyr
-	 ugZOj2B8GUsIpcmgowtWH2IkJPc/1DlI0G5D7v41uQSsaRkhte2V/295CByyZVATJv
-	 HFVXIBIfTWvYVFLWJNxHqd+Mncqsp6qpLFv9e30TK3LAQclupGWOfkEH+N5eam/eum
-	 4VASauuXcnsbg==
-Received: by mail.craftsplex.pl for <b43-dev@lists.infradead.org>; Tue,  9 May 2023 09:30:58 GMT
-Message-ID: <20230509085032-0.1.60.tahc.0.4j7ia0a2ib@craftsplex.pl>
-Date: Tue,  9 May 2023 09:30:58 GMT
-From: "Kamil Tralewski" <kamil.tralewski@craftsplex.pl>
-To: <b43-dev@lists.infradead.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.craftsplex.pl
+	Tue, 16 May 2023 07:46:03 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by dfw.source.kernel.org (Postfix) with ESMTPS id 14A5060BC5;
+	Tue, 16 May 2023 07:46:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE33C433D2;
+	Tue, 16 May 2023 07:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1684223160;
+	bh=DWVQGg8BOQg1TC5mQhyL5M5QVn3UeUKSLvymNtkvcT4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c4TkzfttZpQk0Ptc+5OqMy617FPzeTD+h9izO2F78CbvIexZDfGN86mXf7dEkoxa9
+	 h+lGw7DZfar/rMhiBdMV4WCAtrfSzoEHviL4BQsivRZF2nzHS6ZauNO62pFMsNyyFL
+	 AteyHMEc3rleqpNvRDnhzy77+P+WDF7n10KIosEBEWyuPIDs9/UsoqZh4aj3MMuZza
+	 bJM3xkdKlERWL9lHGePfDyU0EOfg70bLlL5XYtvIJalyVwTF6WxBKZ/z8Zb6jT28xc
+	 VAay31rGQE1qLGmb8S1LUUoYgAhMPhbg/2H3rsouC0ngqss5jB13ErcvDHW8pvuGMV
+	 nc42AQEJ4z8Hg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Tom Rix <trix@redhat.com>,
+	linux-wireless@vger.kernel.org,
+	b43-dev@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] wifi: b43: fix incorrect __packed annotation
+Date: Tue, 16 May 2023 09:45:42 +0200
+Message-Id: <20230516074554.1674536-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20230509_023153_044264_90281D0E 
-X-CRM114-Status: UNSURE (   2.31  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20230516_004602_339682_07738C5F 
+X-CRM114-Status: GOOD (  14.64  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -62,18 +78,47 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKemFwb3puYcWCZW0gc2nEmSB6IFBhxYRzdHdhIG9mZXJ0xIUgaSB6IHBy
-enlqZW1ub8WbY2nEhSBwcnp5em5hasSZLCDFvGUgcHJ6eWNpxIVnYSB1d2FnxJkgaSB6YWNoxJlj
-YSBkbyBkYWxzenljaCByb3ptw7N3LiAKClBvbXnFm2xhxYJlbSwgxbxlIG1vxbxlIG3Ds2fFgmJ5
-bSBtaWXEhyBzd8OzaiB3a8WCYWQgdyBQYcWEc3R3YSByb3p3w7NqIGkgcG9tw7NjIGRvdHJ6ZcSH
-IHogdMSFIG9mZXJ0xIUgZG8gd2nEmWtzemVnbyBncm9uYSBvZGJpb3Jjw7N3LiBQb3p5Y2pvbnVq
-xJkgc3Ryb255IHd3dywgZHppxJlraSBjemVtdSBnZW5lcnVqxIUgxZt3aWV0bnkgcnVjaCB3IHNp
-ZWNpLgoKTW/FvGVteSBwb3Jvem1hd2lhxIcgdyBuYWpibGnFvHN6eW0gY3phc2llPwoKUG96ZHJh
-d2lhbQpLYW1pbCBUcmFsZXdza2kKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0My1kZXZAbGlzdHMuaW5mcmFkZWFk
-Lm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2I0My1kZXYK
+From: Arnd Bergmann <arnd@arndb.de>
+
+clang warns about an unpacked structure inside of a packed one:
+
+drivers/net/wireless/broadcom/b43/b43.h:654:4: error: field data within 'struct b43_iv' is less aligned than 'union (unnamed union at /home/arnd/arm-soc/drivers/net/wireless/broadcom/b43/b43.h:651:2)' and is usually due to 'struct b43_iv' being packed, which can lead to unaligned accesses [-Werror,-Wunaligned-access]
+
+The problem here is that the anonymous union has the default alignment
+from its members, apparently because the original author mixed up the
+placement of the __packed attribute by placing it next to the struct
+member rather than the union definition. As the struct itself is
+also marked as __packed, there is no need to mark its members, so just
+move the annotation to the inner type instead.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/wireless/broadcom/b43/b43.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43/b43.h b/drivers/net/wireless/broadcom/b43/b43.h
+index 9fc7c088a539..67b4bac048e5 100644
+--- a/drivers/net/wireless/broadcom/b43/b43.h
++++ b/drivers/net/wireless/broadcom/b43/b43.h
+@@ -651,7 +651,7 @@ struct b43_iv {
+ 	union {
+ 		__be16 d16;
+ 		__be32 d32;
+-	} data __packed;
++	} __packed data;
+ } __packed;
+ 
+ 
+-- 
+2.39.2
+
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
