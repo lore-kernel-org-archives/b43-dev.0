@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91BC4C77B7E
-	for <b43-dev@archiver.kernel.org>; Thu, 25 May 2023 19:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DB30BC7EE29
+	for <b43-dev@archiver.kernel.org>; Thu, 25 May 2023 19:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
 	Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=DoamHdaa7gFZeoB+N6cwFLIEHZ1plPSLm8fTvQu5I0I=; b=KQbt7qQh+7YU6c
-	v6blJJmBT4P6VBvf9cCOuTUqGErh0U3TM9f6asRV7NxmOGewL2livO59/Bo6MmkV7k+WWoqNLmIv8
-	MTCrUX0UhUgA89yQtJiRf8x/4Ra7nyXGDO04W5/6Lc1/h7blqVFu7H7tzt5Tjz70d9iWw58uiJnSt
-	AJdMoFD98wNiWnFzluCP3UkzvhHmkEjglzawuwUxaFfeTlWmlYGIT7iD2DijNN7Bt8hLhdOqdyiPZ
-	9YSXhcGDaQPc5dJRwzW/AykKYK7r19KslpjgmAvNeLR2A/0F0LI2zNqqikcriFfEBjecgK60bIEwC
-	8UX+nTr3+6VrA5ZmWrNw==;
+	List-Owner; bh=BIjynZnHr0oSLoFsmqqofULOOTXdCj0rQxa3db3CbLA=; b=xGQzGpUnRf15DL
+	ZzlKgIohTani85WfRy3I+gopXmSf6iO3hHWLM7/HRPtq/GbOAA7pUobEb4ICtqRrvzFTjdQ2P6YQx
+	31GS2S/UYB9QgP/JPRCnGBIXIMv6NmvPyFl4iyvBT2f3Idp1MX0xVzpKeVvzY4858vkTrq+s45iLf
+	283kZma98ILU5gwHLFZ4trHL4Hh41yEEWWzMIcEQDrNkLsfvJSqbdveZsKhKvtCt1rkdH0V1QVRoA
+	ICECsJfAm7JQpDkbuYSDkSbzuHUX13idtluQ+BbFx64n5yqtnGi8fAd6dinrwloopCvc8q5tooyKZ
+	nZseCRGb3EVMb3G7UXsw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1q2Grk-00HatN-1H;
-	Thu, 25 May 2023 19:43:16 +0000
+	id 1q2GtK-0000Ks-26;
+	Thu, 25 May 2023 19:44:54 +0000
 Received: from desiato.infradead.org ([2001:8b0:10b:1:d65d:64ff:fe57:4e05])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1q2Gri-00Hasz-1c
+	id 1q2GtJ-0000KR-0v
 	for b43-dev@bombadil.infradead.org;
-	Thu, 25 May 2023 19:43:14 +0000
+	Thu, 25 May 2023 19:44:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
 	:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Sender:Reply-To:Content-ID:Content-Description;
-	bh=JNFcLzjs7YbQK1UIVtmYUPx8QM4JWoMXfw0AVwMEeZ8=; b=Lwmf2zkvD41lRdXpu77s7X/dmu
-	daIKmL24WfP30Qn9uAaMHt1SKBEZD1PWSG4ELTdl+u+FP5/ttnMfwlGloi50o/hN7F5hA4wJwB0AY
-	TLgp4xNNp/ScNBc8Ig0beA02SU0Q2X0AU+l38ZcEehXFT7UMS8FO//72k1eeenXCz2CsHlnRSLpxy
-	/SFDgDmjwvXv8uiLtgTAEHC91pncXp/Wkhl5rsfcQ6nmNhGMLzANN62yqV/xEklxcgvuj6Wm5ei8e
-	Pw75b8E9lSdFAcy8mgn5q1nvYOUUOcsBPL7yfvHz4eOiV+NuNo4EjXOre7izhy75kvhyJ0IDLtgWm
-	1mAs29gw==;
+	bh=1nfDnGj77TD4L643z5eWkf8Ytjm3aqu2DyJv2vT/JLc=; b=E6IT6ICf96DzykrchfWATy9OIq
+	i7rFweCJrUnP6r7iS+EelD77++49Ox2X2NBCSzG6yBsqoWSqrYVwD9OTXEhLgkYKdj12CPvGPe4p0
+	xqmrDEOlXds0p4XgpQ/hZgzBGJ211mI26czw7Xc6DOICo63JC2G4o7VNBxSnpQTNOBaQHQjkVLlXq
+	nE7LoRM/BYbGDTA8yEZOAXuxVfTQE51uvsl1TViFXiXrPCSWeXGDiF6AH2qCOFisL5wkGM3QytKTs
+	qCUDeCTDqniP10zAto8NVJ324PH3Ab4eNTKwc9rjZXQ2W0Pbmpng3B7MvSau/b9IHPyh87Fl5/ZdG
+	NLtk6vgg==;
 Received: from dfw.source.kernel.org ([2604:1380:4641:c500::1])
 	by desiato.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1q2FxS-006eAY-1q
+	id 1q2Fw8-006e5e-35
 	for b43-dev@lists.infradead.org;
-	Thu, 25 May 2023 18:45:09 +0000
+	Thu, 25 May 2023 18:43:47 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.source.kernel.org (Postfix) with ESMTPS id 5B6CC60F11;
-	Thu, 25 May 2023 18:45:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C639C433EF;
-	Thu, 25 May 2023 18:45:03 +0000 (UTC)
+	by dfw.source.kernel.org (Postfix) with ESMTPS id 9E20A6496D;
+	Thu, 25 May 2023 18:43:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69D6C433EF;
+	Thu, 25 May 2023 18:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1685040304;
-	bh=aql5NXzheAYQGdrzLD5fzib1YS8adfuPpeMQmFo/SR4=;
+	s=k20201202; t=1685040223;
+	bh=ODzEe5MTMPERDf+zXbuLdOTQOBegDNhuK6ZJ0a/0Ze4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=c5mXoxZAiZcY8iDe6vCIlTN03oNXgq+06RMHByKdoompPR7xhqR+b/XUlGwZ3cCW4
-	 QEnxIJzjo6/PukA2GgMVyLf49xsu4kg+zZAM+63jTeElznHe14I9STqK1gSlUdL8eK
-	 d2Ileb4AMLJOmvfK6jSMvXcSnUOni/+3g9rP6vt0ktbtyyzs/dvJK2fJuqquGRaBpI
-	 FYotsiJor8Auig9i3Bqo0KdOPoLoCN2bXi0XJvxYRpSr4IuENAY0tCBLpVY44pQaFZ
-	 lauZjUSCSi6w0ZSVFFLHnrw9jg2ArKRr4wkSn/VO9zOKEpoFYf8HxzAalzUCDK4qJv
-	 u8RU4q2LDShoA==
+	b=UGFYXzNfBZtr9YlhBRqOMkscEE0JLRZmtuLWWgKjNIsO6hIqfBEqucoEoVWVZa5b1
+	 fZycht2qRt4hl0x7zyMsuKUwzDPA/vaEAe6Q4glA069gDzYkmVm1UAhaV1wX/a+PZ4
+	 kcfdjkmdK6pklfOW+h27JIhqiv77ugxp5+WeT5fyG1+dP3ttN3xvHOsT+B4zc4CjMc
+	 Xmm87kAiBcW6Mj8r0ORKp/2ZTonsMDtqnf8JlLgW7yohoSA2GKRGzo4dRE05PUyg+x
+	 oRRTbfRCpfIZyodGCSj9ZNPEgcmLlqpyIJP/KbQEtwnd3X61eUREbBrsxOO193qb6E
+	 GLdlwGtJqi9hw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -74,17 +74,17 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	linux-wireless@vger.kernel.org,
 	b43-dev@lists.infradead.org,
 	llvm@lists.linux.dev
-Subject: [PATCH AUTOSEL 4.19 23/27] wifi: b43: fix incorrect __packed annotation
-Date: Thu, 25 May 2023 14:43:49 -0400
-Message-Id: <20230525184356.1974216-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 23/27] wifi: b43: fix incorrect __packed annotation
+Date: Thu, 25 May 2023 14:42:32 -0400
+Message-Id: <20230525184238.1943072-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230525184356.1974216-1-sashal@kernel.org>
-References: <20230525184356.1974216-1-sashal@kernel.org>
+In-Reply-To: <20230525184238.1943072-1-sashal@kernel.org>
+References: <20230525184238.1943072-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20230525_194507_494977_96C42BD6 
+X-CRM114-CacheID: sfid-20230525_194345_389370_AC8C5ACA 
 X-CRM114-Status: GOOD (  16.03  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -132,7 +132,7 @@ ZGNvbS9iNDMvYjQzLmggICAgICAgICAgICAgfCAyICstCiBkcml2ZXJzL25ldC93aXJlbGVzcy9i
 cm9hZGNvbS9iNDNsZWdhY3kvYjQzbGVnYWN5LmggfCAyICstCiAyIGZpbGVzIGNoYW5nZWQsIDIg
 aW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93
 aXJlbGVzcy9icm9hZGNvbS9iNDMvYjQzLmggYi9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNv
-bS9iNDMvYjQzLmgKaW5kZXggYjc3ZDFhOTA0ZjdlNi4uYTQ0OTU2MWZjY2YyOCAxMDA2NDQKLS0t
+bS9iNDMvYjQzLmgKaW5kZXggOWZjN2MwODhhNTM5ZS4uNjdiNGJhYzA0OGU1OCAxMDA2NDQKLS0t
 IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL2I0My5oCisrKyBiL2RyaXZlcnMv
 bmV0L3dpcmVsZXNzL2Jyb2FkY29tL2I0My9iNDMuaApAQCAtNjUxLDcgKzY1MSw3IEBAIHN0cnVj
 dCBiNDNfaXYgewogCXVuaW9uIHsKIAkJX19iZTE2IGQxNjsKIAkJX19iZTMyIGQzMjsKLQl9IGRh
