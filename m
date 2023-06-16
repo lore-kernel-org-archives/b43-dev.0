@@ -4,61 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03969EB64DA
-	for <b43-dev@archiver.kernel.org>; Wed, 14 Jun 2023 08:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 54BB2EB64D8
+	for <b43-dev@archiver.kernel.org>; Fri, 16 Jun 2023 08:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Date:Cc:To:From:Subject:Message-ID:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=2SEohH234H4GlWteq10J+nc7Bb7vwCMYNDA8KuZS7mg=; b=yiMISOoR6acsX4
-	GNhusRDOtRuJjuom2cSow04tCCwklg+vSeru/A053M/soXRnRMjhe4JWs6Ry4vA3ue02nGKKP/FoN
-	NXu++Wun2RzqMav7hPneOATZ8tOTRa8cwGl1fP+xKrZfHe9wU6TeK+WFzBnYZGIb7R4r7vkOHYKgC
-	pn1/uQo7TjD3QQPnp8IWiv8ZfNMaTMGzFu4HKMBzl/irNtJjHNXsECTOf8XA11KM+4crjQ9rbC83W
-	4Wg8YG16l5CgmWUa9S/AiBWOHRpvOLYijBEBEtU3rkKRy+b8q45FJ9eBNW7/AAna4UgCb5aZzxs8G
-	enxMY149ixC4CJ1AbwHQ==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
+	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
+	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=u4JsqMaLC7XXCV2777rJQtnn0l6mgUQNDGZG9VDbwtQ=; b=atZy7brRnLcyyq
+	lz/UEP5L//UVTmeomAoGMKdDQDPudV1AEMTpQ9YqHukVN2xtq8E2/Aebk96j6rqriYiZSBBZlY3XJ
+	M2FxKgD9cXI8x8yEFnSjA+eeJpGLT0RCCx8Dh4GxFkWufAvaICWdM7w5RGOWCZS1Ot1j5KYoke5EP
+	mo/kWW3p771muGs0sReCnnIjyEJL5gD3zM2ho1OxGh49hhmRnZcPUA2dsGghW48CNsGLMCiud1t3G
+	E8ZuP5TO01RzDk1f1TdAhINiAdMameyL1tySURX4yOwkRu4G6JNLftCCK8ngSqjqhudQI2VyQR2so
+	oAYoEWZGdxGTpZh0Jx+w==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1q9Lgo-00Ar5x-1F;
-	Wed, 14 Jun 2023 08:17:14 +0000
-Received: from s3.sipsolutions.net ([2a01:4f8:191:4433::2] helo=sipsolutions.net)
+	id 1qA4TX-00HEDg-1T;
+	Fri, 16 Jun 2023 08:06:31 +0000
+Received: from mail.sayblast.pl ([51.68.191.154])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1q9Lgk-00Ar5C-22
+	id 1qA4TS-00HECv-30
 	for b43-dev@lists.infradead.org;
-	Wed, 14 Jun 2023 08:17:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=hss47gyp6BYYMhFB7hAoae1QAy3auKS104enX9ZgrIY=;
-	t=1686730630; x=1687940230; b=MX5Q1OKNaxE0pbxo5ugU8AJumLk781/uUL6I1kbJzJdPBDi
-	jk12HTceTWGFIwu/CXwcmOY6wmZ9zz0rVXIpgUyN/svuQMlHtpcCl/+uRbfrueJg5xGjQT/RaX32k
-	4UhoIWHXVXGvInF5NRHgiK3Ys4IuKYQuczgGOpyc30nrDQ1vVT8ZfwkbvDA4jVCQ9FWgZH2l+haC2
-	er+4EjXg4XMPxwlMZGuLPM0asGs70+XuKnLEfujzVF6flZA/G2kQ58vLyN6rNJyzrQNY+OO1lCDjJ
-	Pa1lHfGLEut5F+N8R0d92pp16rcZyvvHjbrPIg9QxjUwZs3UbeUa9ZXXrROBziyA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1q9LgY-0060G9-2h;
-	Wed, 14 Jun 2023 10:16:59 +0200
-Message-ID: <058dd31ef48495f8641f5b66839aaea039af0f08.camel@sipsolutions.net>
-Subject: Re: [PATCH] b43legacy: Remove unneeded variable
-From: Johannes Berg <johannes@sipsolutions.net>
-To: wuyonggang001@208suo.com, Larry.Finger@lwfinger.net, kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 14 Jun 2023 10:16:57 +0200
-In-Reply-To: <12c1079d6e73f8f62c33b8a53dff7ff4de0728dc.camel@sipsolutions.net>
-References: <20230614075250.29097-1-zhanglibing@cdjrlc.com>
-	 <194e8e87fda5f02664fcfac3717458f2@208suo.com>
-	 <12c1079d6e73f8f62c33b8a53dff7ff4de0728dc.camel@sipsolutions.net>
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+	Fri, 16 Jun 2023 08:06:28 +0000
+Received: by mail.sayblast.pl (Postfix, from userid 1002)
+	id C426AA34B7; Fri, 16 Jun 2023 08:06:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sayblast.pl; s=mail;
+	t=1686902783; bh=q8IxNbavXIq8RjJbsN7cVOB0yFuMbjX2Tq8i/XIxWAs=;
+	h=Date:From:To:Subject:From;
+	b=Gqffm7CilWFN79OzKbEFryWxnfYfkdVzVHKE5sjh3Wi14qzvTw1K7hZRGN4FSqT2y
+	 b/IqZ2Qe4jwH7waQkohiM4wSY9GdXi4MI9yBijM652562HBZY94th3ZDEZUZbk/ZgH
+	 lYkkdk6KFkzoBZPf4dRdYHzBMLHQ1MvK7vuMgi2/LI7ygRd+dQPk/hI/ffohHHVBYt
+	 4Wkw/IpkXeklAGqegt2AQS1K/nLNo2bsXMQvKIYtVt4Wmf0j/XC/VXhfmlIIGH4N3q
+	 j6vM+PcK35Ff58cISXMYGPpoD8ANgpX/cEsaBrJ+OMr6DQkdiIaR4fZpBI9cIsxabK
+	 03zfFpxj2Lotw==
+Received: by mail.sayblast.pl for <b43-dev@lists.infradead.org>; Fri, 16 Jun 2023 08:06:03 GMT
+Message-ID: <20230616064500-0.1.at.2czo3.0.i127fm4qja@sayblast.pl>
+Date: Fri, 16 Jun 2023 08:06:03 GMT
+From: =?UTF-8?Q?"Karol_G=C3=B3rka"?= <karol.gorka@sayblast.pl>
+To: <b43-dev@lists.infradead.org>
+Subject: Kredytowanie na podstawie obrotu z terminala
+X-Mailer: mail.sayblast.pl
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20230614_011710_692835_E55049F1 
-X-CRM114-Status: GOOD (  10.21  )
+X-CRM114-CacheID: sfid-20230616_010627_232237_7F926433 
+X-CRM114-Status: UNSURE (   1.69  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -70,33 +61,21 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-On Wed, 2023-06-14 at 10:02 +0200, Johannes Berg wrote:
-> On Wed, 2023-06-14 at 15:55 +0800, wuyonggang001@208suo.com wrote:
-> > Fix the following coccicheck warning:
-> > 
-> > drivers/net/wireless/broadcom/b43legacy/debugfs.c:68:9-14: Unneeded 
-> > variable: "count".
-> 
-> Hey, no. Please stop it already. This won't even _compile_. Just don't.
-> There's really not much value in cleaning up those coccicheck warnings
-> in the first place. You're just wasting everyone's time (including your
-> own).
-
-And BTW, I've just looked at all your other contributions to other areas
-of the kernel, and heard from others as well - not doing any better!
-
-I can only suggest that you stop all of your patch submissions and re-
-evaluate what you're even trying to do. And not just you personally, but
-all of the @208suo.com folks who popped up recently.
-
-johannes
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+RHppZcWEIGRvYnJ5LAoKaW50ZXJlc3VqZSBQYcWEc3R3YSB1enlza2FuaWUgZmluYW5zb3dhbmlh
+IGJleiB6YsSZZG5laiBwYXBpZXJvbG9naWksIHphxZt3aWFkY3plxYQgaSB6YWJlenBpZWN6ZW5p
+YSwgeiBiZXpvYnPFgnVnb3fEhSBzcMWCYXTEhSBpIGJyYWtpZW0gb2RzZXRlaz8KClphcGV3bmlh
+bXkgcm96d2nEhXphbmllIG5hIHVwcm9zemN6b255Y2ggemFzYWRhY2gsIGt0w7NyZSBvcGFydGUg
+amVzdCBvIMWbcmVkbmkgdXRhcmcgbmEgdGVybWluYWx1IHDFgmF0bmljenltIHogMTIgbWllc2nE
+mWN5LCBhIHJhdGEgemFsZcW8eSBvZCB3eXNva2/Fm2NpIG9icm90w7N3IC0gZ2R5IHPEhSBtbmll
+anN6ZSByYXRhIG1hbGVqZSwgZ2R5IG9icsOzdCB3enJhc3RhLCBmaW5hbnNvd2FuaWUgc3DFgmFj
+YSBzacSZIHN6eWJjaWVqLiAKCsWacm9ka2kgd3lwxYJhY2FteSBuYXdldCBkbyA3Mmggb2QgesWC
+b8W8ZW5pYSB3bmlvc2t1IG9ubGluZS4gU8SFIFBhxYRzdHdvIHphaW50ZXJlc293YW5pIHRha2lt
+IHJvendpxIV6YW5pZW0/CgoKUG96ZHJhd2lhbQpLYXJvbCBHw7Nya2EKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0
+My1kZXZAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2I0My1kZXYK
