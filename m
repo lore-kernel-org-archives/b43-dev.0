@@ -4,56 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C8C90EE57E0
-	for <b43-dev@archiver.kernel.org>; Fri,  8 Sep 2023 08:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5013DEEB565
+	for <b43-dev@archiver.kernel.org>; Sat,  9 Sep 2023 00:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
-	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
-	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=Tk9qvIFOt6zmBTabiiVk7KZiGXaBPtLJDuCjIiZhjto=; b=1I8a4HY9FVrnQT
-	9Gv5YpnCElJBqNTtsYARWqeNnJy896u95VqT4YeMbCFy6qxRpyu0xXcG/pCg3ffbFC33mW7dyuJcO
-	c7I1NxnTqum2fjTybbJGUOfQprj3fPILAr8BApgWL3lYhElKqHOAKyh2eg2MgraOmS28beAi439Iw
-	jV0jte08SPanardBnB3Q1rMLDgn94BUoq7nwIrazNprA6QsNMGKwygw7f3nXDluh44G8UrfBTdFVJ
-	N+S3WeFBs4yFqn3pgGMuAG5WTv+yc+57UGZ/5Qsx+61MOkjehDY8xt28WdgzS6CtWMjwcqByYPSe4
-	KQ1c/JCCQMfypS6VC//g==;
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
+	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=jjOSxbYm8qOpW/7lUS8/vgVhN6ArgAUhrQVarHiVO3k=; b=cAiQygGROPQXcy
+	mOjswzHm2WmPvZyOhp06oMQwhfXWR7O1/h6j8v9d8aslCL/2TyOrRpQYfz07HWH6xFtcY3tj3FUO6
+	fBb6qO7WtUYxZmR338rjV2XhAZYAiTuCjT8O7E7izY3M2z6ZAKKu8wpn2/b2bkXLD1wudVXBgjBS8
+	4N+oSI8Lh+6ih7QDy70IgblhyDwCHaKWC2ud+jK8jLKelxDSUEV2ngau83gE4yD9BTq0cyLKrjmPA
+	3l8Q5aoV530bCgvecxvaz0dmMhFDc/4zUUL1ttRC/9//kHlSS/TAae+jxxbwvH2uavPmBGro+gXOe
+	29ixK+lJKpnnF6ownmDQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1qeWaD-00DISq-0A;
-	Fri, 08 Sep 2023 08:11:17 +0000
-Received: from [162.19.155.126] (helo=mail.commercesolutions.pl)
+	id 1qeloo-00EliZ-1A;
+	Sat, 09 Sep 2023 00:27:22 +0000
+Received: from r9221.ps.combzmail.jp ([160.16.65.130])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1qeWa7-00DIS7-2z
+	id 1qelok-00EliF-2Y
 	for b43-dev@lists.infradead.org;
-	Fri, 08 Sep 2023 08:11:13 +0000
-Received: by mail.commercesolutions.pl (Postfix, from userid 1002)
-	id 5C1B7246C4; Fri,  8 Sep 2023 08:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=commercesolutions.pl;
-	s=mail; t=1694160668;
-	bh=PcMncQpBfIZCnTOfZJY5G1G+gaLn4c9QPfFvoXrE4rA=;
-	h=Date:From:To:Subject:From;
-	b=TsCakSVx5ZqCnEYfRpjUIVU3iNJfbEs3CGmCe2p9UEDUTUf7KqPsEd6rkjUqsF6u+
-	 otzNXrAYJITubXrA0Gbwjyxs5vKcBhQvvMG2MZObJiaaX6Gi+yPtc56GMlVU/Q8N8F
-	 gIR/Ee4N14tzUOGjKFzbYhaF/6RRiyG5UOG3sMCsDDny9XOha0LgfP+lbQcuqu5si4
-	 uZsN3Q85K0eD8r25Sys6vJ65RoHvSqjUlAl+zuQn55CXnRkv22wnRPoM/I3W5uS73c
-	 uNK/l5o56Pr2mXrmmlESjMlX8IQfWDYfMlX43HcCKbpQqxqgtBb2BgkJ/z45tt3stI
-	 V3LnIl74egctA==
-Received: by mail.commercesolutions.pl for <b43-dev@lists.infradead.org>; Fri,  8 Sep 2023 08:11:02 GMT
-Message-ID: <20230908064500-0.1.8j.1lnd2.0.r4cm06xjq1@commercesolutions.pl>
-Date: Fri,  8 Sep 2023 08:11:02 GMT
-From: "Kamil Tralewski" <kamil.tralewski@commercesolutions.pl>
-To: <b43-dev@lists.infradead.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.commercesolutions.pl
-MIME-Version: 1.0
+	Sat, 09 Sep 2023 00:27:20 +0000
+Received: by r9221.ps.combzmail.jp (Postfix, from userid 99)
+	id 86E6DE3856; Sat,  9 Sep 2023 09:15:32 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9221.ps.combzmail.jp 86E6DE3856
+To: b43-dev@lists.infradead.org
+From: info@fc-seminar.work
+X-Ip: 734363783235690
+X-Ip-source: k85gj7y648dnsau7u0p6gd
+Precedence: bulk
+Subject: =?ISO-2022-JP?B?GyRCR2M8aEBsTGdFORsoQiAbJEIlVSVpJXMbKEI=?=
+ =?ISO-2022-JP?B?GyRCJUElYyUkJTolNyU5JUYlYEBiTEAycRsoQg==?=
+Mime-Version: 1.0
+X-MagazineId: y6u7
+X-uId: 6761304738485765615170261009
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20230909001540.86E6DE3856@r9221.ps.combzmail.jp>
+Date: Sat,  9 Sep 2023 09:15:32 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20230908_011112_112731_9B3629BE 
-X-CRM114-Status: UNSURE (   1.87  )
+X-CRM114-CacheID: sfid-20230908_172719_069024_E68A9E1E 
+X-CRM114-Status: UNSURE (  -0.02  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
-Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -62,18 +58,116 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKemFwb3puYcWCZW0gc2nEmSB6IFBhxYRzdHdhIG9mZXJ0xIUgaSB6IHBy
-enlqZW1ub8WbY2nEhSBwcnp5em5hasSZLCDFvGUgcHJ6eWNpxIVnYSB1d2FnxJkgaSB6YWNoxJlj
-YSBkbyBkYWxzenljaCByb3ptw7N3LiAKClBvbXnFm2xhxYJlbSwgxbxlIG1vxbxlIG3Ds2fFgmJ5
-bSBtaWXEhyBzd8OzaiB3a8WCYWQgdyBQYcWEc3R3YSByb3p3w7NqIGkgcG9tw7NjIGRvdHJ6ZcSH
-IHogdMSFIG9mZXJ0xIUgZG8gd2nEmWtzemVnbyBncm9uYSBvZGJpb3Jjw7N3LiBQb3p5Y2pvbnVq
-xJkgc3Ryb255IHd3dywgZHppxJlraSBjemVtdSBnZW5lcnVqxIUgxZt3aWV0bnkgcnVjaCB3IHNp
-ZWNpLgoKTW/FvGVteSBwb3Jvem1hd2lhxIcgdyBuYWpibGnFvHN6eW0gY3phc2llPwoKUG96ZHJh
-d2lhbQpLYW1pbCBUcmFsZXdza2kKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0My1kZXZAbGlzdHMuaW5mcmFkZWFk
-Lm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2I0My1kZXYK
+新規事業をお探しの経営者様・事業オーナー様へ
+
+
+いつもお世話になります。
+
+
+法人の新規事業として、リスクを抑えてスタートできる、
+フランチャイズ事業のオンライン説明会をご案内いたします。
+
+
+業界未経験／社員1名でスタートできるので
+ご興味があれば是非お申込みください。
+
+
+　　※　Zoomのウェビナー機能による発信形式のため
+　　　　視聴者のお顔やお声が表に出ることはございません。
+
+
+　　■　セミナー視聴後のアンケートで個別説明へ
+　　　　お申込みされた方には書籍をプレゼント。
+　　　　　　　　　 ▼　書籍紹介　▼
+　　　　https://www.amazon.co.jp/dp/4478114706
+　　　　―　2022年3月　ダイヤモンド社出版　―
+　　　　　　株式会社エンパワー（買取大吉 運営本部）
+　　　　　　代表 増井俊介 著
+　　　　　　「学歴なし、人脈なしなら、社長になれ!」
+
+
+　9月12日　フランチャイズ事業　オンライン説明会
+----------------------------------------------------------
+
+　　　　　　　　　全国650店舗
+　　　　 　 10年間の店舗継続率97.4%
+　　　 　　　　　　買取専門店
+　　　　　　　　―　買取大吉　―
+
+　　　　買い取り「専門」だから実現できる
+　　　　低リスク／高収益のビジネスモデル
+
+
+　　　　　　　▼  詳細・申込  ▼
+　　　 　https://fc-event.biz/220000/
+
+　　　　　　　◆　 　提供　　 ◆
+　　　　　　　株式会社エンパワー
+　　　　　　　（買取大吉FC本部）
+
+　　日程１　：　9月12日 （火）14:00〜14:30　※
+　　日程２　：　9月27日 （水）14:00〜14:30　※
+　　対　象　：　新規事業をお考えの法人or個人事業主
+　　※　両日程とも内容は同じです
+
+　　　　　　　◇　コンテンツ　◇
+　　―　買い取ったあとの儲けのカラクリは？
+　　―　リサイクルショップとの違いは？
+　　―　未経験で査定はどうするのか？
+　　―　メルカリ、ヤフオクに負けているのでは？
+　　―　新規事業としての収益性・リスク・継続性は？　etc...
+
+----------------------------------------------------------
+
+
+ご紹介するのは「　買取専門店　」のフランチャイズです。
+
+
+一般的にリユース事業は買い取ってから販売するまで在庫を抱えるため
+「在庫リスク」「価格変動リスク」「資金不足リスク」といった３大リスクが伴います。
+
+
+こうしたリスクを取り除くのが、買い取った瞬間に利益が確定する「買取専門店」です。
+
+
+このビジネスモデルが受け入れられ、買取大吉は業界2位の650店舗まで拡大しました。
+
+
+しかし、まだまだ伸長するリユース市場に対して店舗が足りていないため
+一緒に取り組んでいただける加盟店を募集しています。
+
+
+本説明会にて儲けのカラクリや収益性・リスク・継続性などをお伝えしますので
+新規事業の立ち上げをお考えの方は是非ともご参加ください。
+
+
+　　日程１　：　9月12日 （火）14:00〜14:30　※
+　　日程２　：　9月27日 （水）14:00〜14:30　※
+　　※　どちらの日程も内容は同じです　※
+
+
+　　▼　お申込は下記URLよりお願いします　▼
+
+　　　 　https://fc-event.biz/220000/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　フランチャイズセミナー　運営事務局
+　電話：0120-891-893
+  住所：東京都中央区銀座７−１３−６
+―――――――――――――――――――――――――――――――
+　本メールのご不要な方には大変ご迷惑をおかけいたしました。
+　配信停止ご希望の方は、お手数ですが「配信不要」とご返信いただくか、
+　下記アドレスより、お手続きをお願いいたします。
+　┗　https://fc-event.biz/mail/
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
