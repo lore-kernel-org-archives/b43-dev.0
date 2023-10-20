@@ -4,78 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE344CDB474
-	for <b43-dev@archiver.kernel.org>; Fri, 20 Oct 2023 09:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 47BE2CDB474
+	for <b43-dev@archiver.kernel.org>; Fri, 20 Oct 2023 09:36:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-Id:Date:Subject:Cc
-	:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=VtjfXMKaAbCzUy+q2qQWLhYDtNU0mdGQN+jE2d7KIwY=; b=FpKzGVODxxaig8
-	ElVTrmY4j8FOG4nqimj/VlFnekJKQCOedEBX4LAq8bA63W92vOMk5OWPriIF4J9XXCw07yoILSTmt
-	uKXJroO83DT/H0iZD4u3AKM9FVd5F0BlU1BfWTgy/EYpYyLqf6yqazksp0L2ML0r/YFYUEXFgXwgz
-	t1U0f5et2iniSDWdEUb3IWEkvIlfQ0lwYrkdulrikgXAyCwGCI9lHGSoy6VaNwRd/PsGm4j2Yr6kt
-	qbOptCJbKA5xW0jH8secJ0qYZ5IZj0sdZvAv3tvvwuiKFOEu/+bAr0Eb7GsME8IJc27kZrhtKx3rm
-	kIpEO+1q6aje++LJhDeg==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=OhqUN5uDMOHjGYe9AyLi5OGdP9vh90MCLed+4SMe+m8=; b=zpVvdNKzljqxF6NDUhuuGZbPLJ
+	W84v14iS8vkt9TExMBu+W8deVJvcURn9nuoRgkt6Yu8dj41pbfNLC1/63rys/sOIv4e5huT8nrKCW
+	75v62YlEWK6LlGrgyY8SMbHTOY+xlwjTwBmfw/G+XOarpERRsstjfYjk6oqmNN/dL2TIHHtwM4zaq
+	AEFAfpgq6OwnoJHAE3Yvk+F1qOUM9p73hk6PCBT4y3rVW8x2tEEUs8xiVTGS3Y0PtEpxlnmgDaU7/
+	eDeU3xEEIIN6aNo+65YFi+sxnCEWUHpMIoSnNYmilbzqELwSzSTqb1/GzTQ/ChlAnPiDj4FW+/3JB
+	UWLWyrAQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1qtlnJ-001gKW-10;
-	Fri, 20 Oct 2023 09:27:49 +0000
-Received: from mail-pl1-x634.google.com ([2607:f8b0:4864:20::634])
+	id 1qtlvE-001h7O-0z;
+	Fri, 20 Oct 2023 09:36:00 +0000
+Received: from bues.ch ([2a01:138:9005::1:4])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1qtlnF-001gHx-2O
+	id 1qtlvB-001h6L-2h
 	for b43-dev@lists.infradead.org;
-	Fri, 20 Oct 2023 09:27:47 +0000
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1ca6809fb8aso4457745ad.1
-        for <b43-dev@lists.infradead.org>; Fri, 20 Oct 2023 02:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697794062; x=1698398862; darn=lists.infradead.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JB3fxO2mMO19Xlf/r34jd/yfK5QtzNwJph3CXQR1Z6M=;
-        b=T7BZnXrBG7CTrn0mhjedpBfis1g4W6zQSyzP+Be7QoJDg6XGcdI4GtumWbIXJuvSVf
-         qbw/NTSe/3JYHhw9d5Y+XI/MIeO/OipjyZT5vxcnzGg1v536L9iNnWA45VGhUAW9MulW
-         W935YNaCoYnWVbcIVL/DxJjwuwD3Higiz1c7BKEsp3dwUrJCurTX3hcbp+XFzjdtBD91
-         zLTFVgYWZpef62bp3tixGaq2XMbtXm+BsFU0cx4VnOU0UWIhBpMqXQ19wDsGeS62gT2R
-         PZn3uCVZwtQOLAkCv0LurOwnuXAizSJaL9R4CjZSjvdVeOGjeTlM3Rk2QRBpQekQWdET
-         jMOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697794062; x=1698398862;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JB3fxO2mMO19Xlf/r34jd/yfK5QtzNwJph3CXQR1Z6M=;
-        b=Ms9PKm4DIaUpu4Sl0SW/sCyBlW7l8khr7gYRH4+o6oW3+7Z2zpTCFvtzQyZGfi42hu
-         F5Ch5he4YaAXp1+ujz6aEkbd1GYF9RiXotSH6aCXxfPtounEuUyiEWwFgU4i1YJIYcsG
-         V88rDK+W186JV1c8g9Jh6u+5EfypU5dFgRw2qZswSvqmQOvLqKpFn0YCxAyo3+GUqPyX
-         WSY5+bNJb01O9l173LpV/rzUr6LZvzu2hx6eH1AkRgpos2xyaW4mTEqIZIR+F3xA21PM
-         IV4XeEgkzNOJSHHM5hhKidnXSfYlXgZ5+DZXj4aMu6XKAUgvzZSee9qcas8/ebW03orJ
-         7pOQ==
-X-Gm-Message-State: AOJu0YziJKqbf38BlV3a+Pb5VZaRy908yRceyM125VB9C9bSVuSYb3DV
-	WqljLGJR/0ACyxPECen8D3I=
-X-Google-Smtp-Source: AGHT+IEbfA+/ZX8gL3S93KhB/qdw24YwWGgUJzP5euruthpeBkMm0GYMS9JN7bc1IaxPSsGaLqVx4A==
-X-Received: by 2002:a17:903:1251:b0:1c9:c01a:e9c7 with SMTP id u17-20020a170903125100b001c9c01ae9c7mr1412192plh.28.1697794062209;
-        Fri, 20 Oct 2023 02:27:42 -0700 (PDT)
-Received: from brag-vm.. ([59.182.194.226])
-        by smtp.gmail.com with ESMTPSA id e12-20020a170902ed8c00b001c60c8d6b4asm1086071plj.149.2023.10.20.02.27.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 02:27:41 -0700 (PDT)
-From: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
-To: Larry.Finger@lwfinger.net,
-	kvalo@kernel.org
-Cc: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>,
-	linux-wireless@vger.kernel.org,
-	b43-dev@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] b43legacy: Removed unneeded variable in debugfs
-Date: Fri, 20 Oct 2023 14:57:35 +0530
-Message-Id: <20231020092735.2565-1-bragathemanick0908@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Fri, 20 Oct 2023 09:35:59 +0000
+Received: by bues.ch with esmtpsa (Exim 4.96)
+	(envelope-from <m@bues.ch>)
+	id 1qtlv2-0001rL-2F;
+	Fri, 20 Oct 2023 11:35:47 +0200
+Date: Fri, 20 Oct 2023 11:35:14 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
+Cc: Larry.Finger@lwfinger.net, kvalo@kernel.org,
+ linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] b43legacy: Removed unneeded variable in debugfs
+Message-ID: <20231020113514.122bfb6e@barney>
+In-Reply-To: <20231020092735.2565-1-bragathemanick0908@gmail.com>
+References: <20231020092735.2565-1-bragathemanick0908@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20231020_022745_777518_0BBC8DE1 
-X-CRM114-Status: GOOD (  12.32  )
+X-CRM114-CacheID: sfid-20231020_023557_871290_31AACA43 
+X-CRM114-Status: UNSURE (   7.28  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -87,79 +58,70 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============7049444989787838716=="
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Removed unneeded variable. Issue identified using Coccinelle semantic.
-No functional impact
+--===============7049444989787838716==
+Content-Type: multipart/signed; boundary="Sig_/kfDnOujsaQJS.7yl4+DvrH0";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 
-Signed-off-by: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
----
- drivers/net/wireless/broadcom/b43legacy/debugfs.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+--Sig_/kfDnOujsaQJS.7yl4+DvrH0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/debugfs.c b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-index 6b0e8d117061..184b0b4bdd94 100644
---- a/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-@@ -65,7 +65,6 @@ struct b43legacy_dfs_file * fops_to_dfs_file(struct b43legacy_wldev *dev,
- /* wl->irq_lock is locked */
- static ssize_t tsf_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufsize)
- {
--	ssize_t count = 0;
- 	u64 tsf;
- 
- 	b43legacy_tsf_read(dev, &tsf);
-@@ -73,7 +72,7 @@ static ssize_t tsf_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufs
- 		(unsigned int)((tsf & 0xFFFFFFFF00000000ULL) >> 32),
- 		(unsigned int)(tsf & 0xFFFFFFFFULL));
- 
--	return count;
-+	return 0;
- }
- 
- /* wl->irq_lock is locked */
-@@ -91,7 +90,6 @@ static int tsf_write_file(struct b43legacy_wldev *dev, const char *buf, size_t c
- /* wl->irq_lock is locked */
- static ssize_t ucode_regs_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufsize)
- {
--	ssize_t count = 0;
- 	int i;
- 
- 	for (i = 0; i < 64; i++) {
-@@ -99,7 +97,7 @@ static ssize_t ucode_regs_read_file(struct b43legacy_wldev *dev, char *buf, size
- 			b43legacy_shm_read16(dev, B43legacy_SHM_WIRELESS, i));
- 	}
- 
--	return count;
-+	return 0;
- }
- 
- /* wl->irq_lock is locked */
-@@ -125,7 +123,6 @@ static ssize_t shm_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufs
- static ssize_t txstat_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufsize)
- {
- 	struct b43legacy_txstatus_log *log = &dev->dfsentry->txstatlog;
--	ssize_t count = 0;
- 	unsigned long flags;
- 	int i, idx;
- 	struct b43legacy_txstatus *stat;
-@@ -166,7 +163,7 @@ static ssize_t txstat_read_file(struct b43legacy_wldev *dev, char *buf, size_t b
- out_unlock:
- 	spin_unlock_irqrestore(&log->lock, flags);
- 
--	return count;
-+	return 0;
- }
- 
- /* wl->irq_lock is locked */
--- 
-2.34.1
+On Fri, 20 Oct 2023 14:57:35 +0530
+Bragatheswaran Manickavel <bragathemanick0908@gmail.com> wrote:
 
+> Removed unneeded variable. Issue identified using Coccinelle semantic.
+> No functional impact
+
+This patch is completely wrong. It would not even compile.
+Please compile your patches before submitting them!
+
+And it is the second time we see this nonsense.
+The code is correct as-is. There is no unused variable.
+
+NACK.
+
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
+
+--Sig_/kfDnOujsaQJS.7yl4+DvrH0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmUySdIACgkQ9TK+HZCN
+iw7mtxAAiVUycpeZTGhcQXIsXI5dmrqAsTA2Nsxr01vvreRpLZDZUFLOg7ou4rXz
+JD5nD+4ZdIbQnlSyF4CVgpZbstsYSa0FGeC4yHnASIAX0Ou6x3bqhX28K+Gdb/RH
+isjualTrLUR94jQJqjnFrTKjVD2ezTjG5i0NJSwP3roTohMXUfUApyJE7CV/URIA
+SosRMc6aKnrfdd4pHidRLW1BVNKpY5NiK++rjwaPzxqy2riEzVyHKkZoQaJB2lHm
+DBTDeRHj3D5ZUSlB0U/nlR0eyg3jixvtCONvXls2CDWOtLApSUh86Zm2BIE39HX7
+3uxqnAsf+RmtuKxb4IhyqBAkHj6In8VQ4HL7yOflRdAZkKo3JkJBaoE9idYvP20Y
+gWWi3NoIeLybwVRID/iAb/5SDGKHmjX4gBsxonOhH9066++kPWvdVHWDzdN5ibfQ
+EEiX3r+l1rCuQfAlNrqgHR0UNgMxzCxAnWCmlR5RJbSCxmNU87qwafLmZBN9rYaN
++XDOFrLm1fSNfOtFTdN2ee85mzOEJoGpIoHqytnYPO2RY98q6HotCMRIO+o76BTG
+ULhxVYvSEQIvQIGwUycT60eehKD7T4wb5xvzB61m/aP60SG4fQq/uH7K2dvxPU5D
+mI79wh855Geu4H1NJr3rgOlyUDYnVFkUSdbWTspvif9VYsNQ2wQ=
+=wS4g
+-----END PGP SIGNATURE-----
+
+--Sig_/kfDnOujsaQJS.7yl4+DvrH0--
+
+
+--===============7049444989787838716==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
+
+--===============7049444989787838716==--
+
