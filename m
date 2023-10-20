@@ -4,52 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2F244CDB474
-	for <b43-dev@archiver.kernel.org>; Fri, 20 Oct 2023 06:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE344CDB474
+	for <b43-dev@archiver.kernel.org>; Fri, 20 Oct 2023 09:27:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
-	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-Id:Date:Subject:Cc
+	:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=p77HOVAXR6v3VWQBOuyKKFDHUC4sCQP4VdWngtFZTdk=; b=Brwb6s1amp36Ia
-	VPBgnDWxYu1vQr3Skz1R5hyImSiPkGVH4NkZE4D5OE7L25Bs232xaAdFqwB0No0wK6rdk2n4dUwH1
-	w1GTsOKRyCw/SmBDqZMAO585YgbtyW2nkWRKhBF96Y0H7IIYU0VYdORrlu/i1aUfOvJfRqlp0gopq
-	bl02kOp57oAySc4dXy97EE/eJJGTHWi2TxDTS6Vn7VE/aMs1rtREPYjOMWNpkFcwqQSFNuOpxAqZM
-	IUpbaIJ4bDBF1FfTkLT5qld1/y1cuQ590NJG8Nq+SSAwUpisVFSWY0E2nWjystqG0cIr5m4EZ4s89
-	6XbK2u3usEDvMK6zX1mA==;
+	List-Owner; bh=VtjfXMKaAbCzUy+q2qQWLhYDtNU0mdGQN+jE2d7KIwY=; b=FpKzGVODxxaig8
+	ElVTrmY4j8FOG4nqimj/VlFnekJKQCOedEBX4LAq8bA63W92vOMk5OWPriIF4J9XXCw07yoILSTmt
+	uKXJroO83DT/H0iZD4u3AKM9FVd5F0BlU1BfWTgy/EYpYyLqf6yqazksp0L2ML0r/YFYUEXFgXwgz
+	t1U0f5et2iniSDWdEUb3IWEkvIlfQ0lwYrkdulrikgXAyCwGCI9lHGSoy6VaNwRd/PsGm4j2Yr6kt
+	qbOptCJbKA5xW0jH8secJ0qYZ5IZj0sdZvAv3tvvwuiKFOEu/+bAr0Eb7GsME8IJc27kZrhtKx3rm
+	kIpEO+1q6aje++LJhDeg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1qtiyi-001Kx4-2M;
-	Fri, 20 Oct 2023 06:27:24 +0000
-Received: from r9216.ps.combzmail.jp ([160.16.66.19])
+	id 1qtlnJ-001gKW-10;
+	Fri, 20 Oct 2023 09:27:49 +0000
+Received: from mail-pl1-x634.google.com ([2607:f8b0:4864:20::634])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1qtiyZ-001Kwg-2t
+	id 1qtlnF-001gHx-2O
 	for b43-dev@lists.infradead.org;
-	Fri, 20 Oct 2023 06:27:18 +0000
-Received: by r9216.ps.combzmail.jp (Postfix, from userid 99)
-	id 02C50FEA69; Fri, 20 Oct 2023 15:14:52 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9216.ps.combzmail.jp 02C50FEA69
-To: b43-dev@lists.infradead.org
-From: info@fc-seminar.jp
-X-Ip: 551923721353207
-X-Ip-source: k85gj7cj48dnsaziu0p6gd
-Precedence: bulk
-Subject: =?ISO-2022-JP?B?GyRCR2M8aEBsTGdFORsoQiAbJEIlVSVpJXMbKEI=?=
- =?ISO-2022-JP?B?GyRCJUElYyUkJTolNyU5JUYlYEBiTEAycRsoQg==?=
-Mime-Version: 1.0
-X-MagazineId: cjzi
-X-uId: 6761315843485766734270431043
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20231020061504.02C50FEA69@r9216.ps.combzmail.jp>
-Date: Fri, 20 Oct 2023 15:14:52 +0900 (JST)
+	Fri, 20 Oct 2023 09:27:47 +0000
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1ca6809fb8aso4457745ad.1
+        for <b43-dev@lists.infradead.org>; Fri, 20 Oct 2023 02:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697794062; x=1698398862; darn=lists.infradead.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JB3fxO2mMO19Xlf/r34jd/yfK5QtzNwJph3CXQR1Z6M=;
+        b=T7BZnXrBG7CTrn0mhjedpBfis1g4W6zQSyzP+Be7QoJDg6XGcdI4GtumWbIXJuvSVf
+         qbw/NTSe/3JYHhw9d5Y+XI/MIeO/OipjyZT5vxcnzGg1v536L9iNnWA45VGhUAW9MulW
+         W935YNaCoYnWVbcIVL/DxJjwuwD3Higiz1c7BKEsp3dwUrJCurTX3hcbp+XFzjdtBD91
+         zLTFVgYWZpef62bp3tixGaq2XMbtXm+BsFU0cx4VnOU0UWIhBpMqXQ19wDsGeS62gT2R
+         PZn3uCVZwtQOLAkCv0LurOwnuXAizSJaL9R4CjZSjvdVeOGjeTlM3Rk2QRBpQekQWdET
+         jMOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697794062; x=1698398862;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JB3fxO2mMO19Xlf/r34jd/yfK5QtzNwJph3CXQR1Z6M=;
+        b=Ms9PKm4DIaUpu4Sl0SW/sCyBlW7l8khr7gYRH4+o6oW3+7Z2zpTCFvtzQyZGfi42hu
+         F5Ch5he4YaAXp1+ujz6aEkbd1GYF9RiXotSH6aCXxfPtounEuUyiEWwFgU4i1YJIYcsG
+         V88rDK+W186JV1c8g9Jh6u+5EfypU5dFgRw2qZswSvqmQOvLqKpFn0YCxAyo3+GUqPyX
+         WSY5+bNJb01O9l173LpV/rzUr6LZvzu2hx6eH1AkRgpos2xyaW4mTEqIZIR+F3xA21PM
+         IV4XeEgkzNOJSHHM5hhKidnXSfYlXgZ5+DZXj4aMu6XKAUgvzZSee9qcas8/ebW03orJ
+         7pOQ==
+X-Gm-Message-State: AOJu0YziJKqbf38BlV3a+Pb5VZaRy908yRceyM125VB9C9bSVuSYb3DV
+	WqljLGJR/0ACyxPECen8D3I=
+X-Google-Smtp-Source: AGHT+IEbfA+/ZX8gL3S93KhB/qdw24YwWGgUJzP5euruthpeBkMm0GYMS9JN7bc1IaxPSsGaLqVx4A==
+X-Received: by 2002:a17:903:1251:b0:1c9:c01a:e9c7 with SMTP id u17-20020a170903125100b001c9c01ae9c7mr1412192plh.28.1697794062209;
+        Fri, 20 Oct 2023 02:27:42 -0700 (PDT)
+Received: from brag-vm.. ([59.182.194.226])
+        by smtp.gmail.com with ESMTPSA id e12-20020a170902ed8c00b001c60c8d6b4asm1086071plj.149.2023.10.20.02.27.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Oct 2023 02:27:41 -0700 (PDT)
+From: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
+To: Larry.Finger@lwfinger.net,
+	kvalo@kernel.org
+Cc: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	b43-dev@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] b43legacy: Removed unneeded variable in debugfs
+Date: Fri, 20 Oct 2023 14:57:35 +0530
+Message-Id: <20231020092735.2565-1-bragathemanick0908@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20231019_232716_157723_1A0E83ED 
-X-CRM114-Status: UNSURE (   0.25  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20231020_022745_777518_0BBC8DE1 
+X-CRM114-Status: GOOD (  12.32  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
+Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -58,114 +87,77 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="iso-2022-jp"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-新規事業をお探しの経営者様・事業オーナー様へ
+Removed unneeded variable. Issue identified using Coccinelle semantic.
+No functional impact
 
+Signed-off-by: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
+---
+ drivers/net/wireless/broadcom/b43legacy/debugfs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-いつもお世話になります。
+diff --git a/drivers/net/wireless/broadcom/b43legacy/debugfs.c b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
+index 6b0e8d117061..184b0b4bdd94 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/debugfs.c
++++ b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
+@@ -65,7 +65,6 @@ struct b43legacy_dfs_file * fops_to_dfs_file(struct b43legacy_wldev *dev,
+ /* wl->irq_lock is locked */
+ static ssize_t tsf_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufsize)
+ {
+-	ssize_t count = 0;
+ 	u64 tsf;
+ 
+ 	b43legacy_tsf_read(dev, &tsf);
+@@ -73,7 +72,7 @@ static ssize_t tsf_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufs
+ 		(unsigned int)((tsf & 0xFFFFFFFF00000000ULL) >> 32),
+ 		(unsigned int)(tsf & 0xFFFFFFFFULL));
+ 
+-	return count;
++	return 0;
+ }
+ 
+ /* wl->irq_lock is locked */
+@@ -91,7 +90,6 @@ static int tsf_write_file(struct b43legacy_wldev *dev, const char *buf, size_t c
+ /* wl->irq_lock is locked */
+ static ssize_t ucode_regs_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufsize)
+ {
+-	ssize_t count = 0;
+ 	int i;
+ 
+ 	for (i = 0; i < 64; i++) {
+@@ -99,7 +97,7 @@ static ssize_t ucode_regs_read_file(struct b43legacy_wldev *dev, char *buf, size
+ 			b43legacy_shm_read16(dev, B43legacy_SHM_WIRELESS, i));
+ 	}
+ 
+-	return count;
++	return 0;
+ }
+ 
+ /* wl->irq_lock is locked */
+@@ -125,7 +123,6 @@ static ssize_t shm_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufs
+ static ssize_t txstat_read_file(struct b43legacy_wldev *dev, char *buf, size_t bufsize)
+ {
+ 	struct b43legacy_txstatus_log *log = &dev->dfsentry->txstatlog;
+-	ssize_t count = 0;
+ 	unsigned long flags;
+ 	int i, idx;
+ 	struct b43legacy_txstatus *stat;
+@@ -166,7 +163,7 @@ static ssize_t txstat_read_file(struct b43legacy_wldev *dev, char *buf, size_t b
+ out_unlock:
+ 	spin_unlock_irqrestore(&log->lock, flags);
+ 
+-	return count;
++	return 0;
+ }
+ 
+ /* wl->irq_lock is locked */
+-- 
+2.34.1
 
-
-法人の新規事業として、リスクを抑えてスタートできる、
-フランチャイズ事業のオンライン説明会をご案内いたします。
-
-
-業界未経験／社員1名でスタートできるので
-ご興味があれば是非お申込みください。
-
-
-　　※　Zoomのウェビナー機能による発信形式のため
-　　　　視聴者のお顔やお声が表に出ることはございません。
-
-
-　　■　セミナー視聴後のアンケートで個別説明へ
-　　　　お申込みされた方には書籍をプレゼント。
-　　　　　　　　　 ▼　書籍紹介　▼
-　　　　https://www.amazon.co.jp/dp/4478114706
-　　　　―　2022年3月　ダイヤモンド社出版　―
-　　　　　　株式会社エンパワー（買取大吉 運営本部）
-　　　　　　代表 増井俊介 著
-　　　　　　「学歴なし、人脈なしなら、社長になれ!」
-
-
-　10月26日　フランチャイズ事業　オンライン説明会
-----------------------------------------------------------
-
-　　　　　　　　　全国650店舗
-　　　　 　 10年間の店舗継続率97.4%
-　　　 　　　　　　買取専門店
-　　　　　　　　―　買取大吉　―
-
-　　　　買い取り「専門」だから実現できる
-　　　　低リスク／高収益のビジネスモデル
-
-
-　　　　　　　▼  詳細・申込  ▼
-　　　 https://fc-event.biz/220000dai3/
-
-　　　　　　　◆　 　提供　　 ◆
-　　　　　　　株式会社エンパワー
-　　　　　　　（買取大吉FC本部）
-
-　　日程１　：　10月 26日 （木）14:00〜14:30　※
-　　日程２　：　11月  9日 （木）14:00〜14:30　※
-　　対　象　：　新規事業をお考えの法人or個人事業主
-　　※　両日程とも内容は同じです
-
-　　　　　　　◇　コンテンツ　◇
-　　―　買い取ったあとの儲けのカラクリは？
-　　―　リサイクルショップとの違いは？
-　　―　未経験で査定はどうするのか？
-　　―　メルカリ、ヤフオクに負けているのでは？
-　　―　新規事業としての収益性・リスク・継続性は？　etc...
-
-----------------------------------------------------------
-
-
-ご紹介するのは「　買取専門店　」のフランチャイズです。
-
-
-一般的にリユース事業は買い取ってから販売するまで在庫を抱えるため
-「在庫リスク」「価格変動リスク」「資金不足リスク」といった３大リスクが伴います。
-
-
-こうしたリスクを取り除くのが、買い取った瞬間に利益が確定する「買取専門店」です。
-
-
-このビジネスモデルが受け入れられ、買取大吉は業界2位の650店舗まで拡大しました。
-
-
-しかし、まだまだ伸長するリユース市場に対して店舗が足りていないため
-一緒に取り組んでいただける加盟店を募集しています。
-
-
-本説明会にて儲けのカラクリや収益性・リスク・継続性などをお伝えしますので
-新規事業の立ち上げをお考えの方は是非ともご参加ください。
-
-
-　　日程１　：　10月 26日 （木）14:00〜14:30　※
-　　日程２　：　11月  9日 （木）14:00〜14:30　※
-　　※　どちらの日程も内容は同じです　※
-
-
-　　▼　お申込は下記URLよりお願いします　▼
-
-　　　 https://fc-event.biz/220000dai3/
-
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　フランチャイズセミナー　運営事務局
-　電話：0120-891-893
-  住所：東京都中央区銀座７−１３−６
-―――――――――――――――――――――――――――――――
-　本メールのご不要な方には大変ご迷惑をおかけいたしました。
-　配信停止ご希望の方は、お手数ですが「配信不要」とご返信いただくか、
-　下記アドレスより、お手続きをお願いいたします。
-　┗　https://fc-event.biz/mail/
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 _______________________________________________
 b43-dev mailing list
