@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 63412C35274
-	for <b43-dev@archiver.kernel.org>; Mon, 18 Dec 2023 16:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 42AB1C41535
+	for <b43-dev@archiver.kernel.org>; Tue, 19 Dec 2023 08:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=+LGzZUA14V8ALADezmTqtmjU1/+kp8BhOUN8Uw9kF4M=; b=riVtWxTg87r0wAYHorJNk+BaIV
-	G5FyFEgsoqM/DnYO0OBd5LJqdXVtaml/N0NJQi09f91S5eO0Uc3lY4qU/mQoJJDaB6cQN+ipzwHjB
-	/3IRu2PvdXcZ8RRkV2oTvY/LHUYMV1GWQhwKqYt5KViscYbKyGi4F66pWcuHA0z3hCMMPBwhFpTwC
-	Mm6hB3a9mlFOVHS46WgsTOZq679pZOkHloKCOdDdCj3Aext1xqBBrijEzkHyuHnNAs2HWpFu0hbjB
-	4kevpROlq3aSOVyxcLvHhqqzgAmHdCKFx2lri/ARCMEdT74aCnRqNDGhPN6UGOABwFR/fmuxmzM8V
-	2zyDOK1A==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
+	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
+	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=n0KW5pKhbqGZjaa0+HUI21K6dxXMh26MneJHm2/Jihg=; b=g12mYEoFhHAbaU
+	6/KLpKw0QVDJ9B7s7ajGRTfyPS/qPZ6nG56Xgkuawdm6bV2nzqFMF9S2MKExVNf0LCqWv3CBBimBo
+	5ni6M7n+FV+krnyCUzUTgJ+rDa6ZPnkcLo3AEYibdDghZQGGAz2o16sLkTbi3Szi03eK9YsPlajlQ
+	+M00WCGQHZeLG+prI9yUIFD3FlsrumgLPD3jzyX3ufiwBFZuGSOINCHppoA1Fp/ZklXNDDv5kyo7s
+	whnxZDy5tbT2H4vgr328TmkYTQcSCSGsHRIr+UyVMW2zFqP8cLQ6cB8XYttXn/1TEov2poLebmvPq
+	x5I160FqR3ngFFki30Wg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1rFGJL-00BPYt-1O;
-	Mon, 18 Dec 2023 16:17:43 +0000
-Received: from bues.ch ([2a01:138:9005::1:4])
+	id 1rFVeC-00DL6Y-0t;
+	Tue, 19 Dec 2023 08:40:16 +0000
+Received: from mail.centiscomp.com ([217.61.16.230])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1rFGJI-00BPXP-0u
+	id 1rFVe3-00DL6F-34
 	for b43-dev@lists.infradead.org;
-	Mon, 18 Dec 2023 16:17:42 +0000
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1rFGIr-000A6d-38;
-	Mon, 18 Dec 2023 17:17:13 +0100
-Date: Mon, 18 Dec 2023 17:16:29 +0100
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] bcma,ssb: simplify dependency handling for bcma and ssb
- drivers
-Message-ID: <20231218171629.5cf95fd3@barney>
-In-Reply-To: <CAKXUXMxh3rM8da9kJG_=Sy8fQqqf7f8xXaHDHPLvpvRiYg1e5w@mail.gmail.com>
-References: <20231218115802.15859-1-lukas.bulwahn@gmail.com>
- <26207725d5025318b831dd5a5feca67248aaa221.camel@sipsolutions.net>
- <87o7ensgjv.fsf@kernel.org>
- <CAKXUXMxh3rM8da9kJG_=Sy8fQqqf7f8xXaHDHPLvpvRiYg1e5w@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	Tue, 19 Dec 2023 08:40:09 +0000
+Received: by mail.centiscomp.com (Postfix, from userid 1002)
+	id 4607382514; Tue, 19 Dec 2023 09:31:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=centiscomp.com;
+	s=mail; t=1702974680;
+	bh=aPpvhEuPbHJwVr9tQnSpSwT5tWIGM6AvZoUfefX5c+c=;
+	h=Date:From:To:Subject:From;
+	b=XJ+X+vQ4v8DXAQdLce2kW26m9U7Sd4/ttGgR7BYC2dYb0ZCQh6Q5ZAUucJPCv2Vr4
+	 0ks8EHMPOisid1VTDbQMUFFILjg+gze07EE/Qvy7iJoQwLJ3TFMtX5kCu0m+1+8Ox1
+	 QKuUUi/8yAi5CAPAodjvo6XVZrLz0/4m9NWY8bCTlyV+OIi6OL40xSK5g1LT3dxIeo
+	 0wjiXxV90u7cbfAHitNtFAQRpsEa8L5TySTKzUTdct7As1eRYj63frUFrbHwDIVlIO
+	 OJNxg+MoiJpx4KEJmjdBeIa7T83yODvVhAAVzqtA5qWSmgVFMX9IcrrRG0QlUskp0+
+	 NDHH7bmo+vGCg==
+Received: by mail.centiscomp.com for <b43-dev@lists.infradead.org>; Tue, 19 Dec 2023 08:31:08 GMT
+Message-ID: <20231219084500-0.1.g.pnp.0.bvrd4fxnxs@centiscomp.com>
+Date: Tue, 19 Dec 2023 08:31:08 GMT
+From: "Maxwell Atlee" <maxwell.atlee@centiscomp.com>
+To: <b43-dev@lists.infradead.org>
+Subject: Fruits and vegetables freeze-dried
+X-Mailer: mail.centiscomp.com
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20231218_081740_318470_DB36C68A 
-X-CRM114-Status: GOOD (  12.76  )
+X-CRM114-CacheID: sfid-20231219_004008_128400_CD4B75AF 
+X-CRM114-Status: UNSURE (   2.58  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -58,91 +62,28 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Cc: brcm80211-dev-list.pdl@broadcom.com, Arend van Spriel <aspriel@gmail.com>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>, SHA-cyfmac-dev-list@infineon.com, b43-dev@lists.infradead.org, netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, Paolo Abeni <pabeni@redhat.com>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>
-Content-Type: multipart/mixed; boundary="===============8798769116170925412=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
---===============8798769116170925412==
-Content-Type: multipart/signed; boundary="Sig_/Q7GEDofx/o0YmJSgzfmcjUH";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+Dear Sir/Madam,
 
---Sig_/Q7GEDofx/o0YmJSgzfmcjUH
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Are you open to collaborating with a renowned supplier of organic freeze-dried fruits and vegetables in various forms (whole/pieces/powders)?
 
-Hi Lukas,
+With our ingredients, you have the opportunity to create an organic product, free from allergens, entirely natural, while standing out in taste, color, and nutritional value.
 
-thanks for your patch.
+With years of experience in creating more advanced products using freeze-drying techniques (such as smoothie dices, keto smoothies), we provide support in developing your concept and transforming it into an actual product.
 
-On Mon, 18 Dec 2023 16:03:54 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+We adapt to your needs and expectations, ensuring flexible production methods, professional collaboration with the R&D department, tests and samples, as well as advanced progress reports.
 
-> While reading through the code, I was
-> confused on what the dependencies were trying to tell me, as the
-> config symbols and conditions seemed to repeat over and over in
-> different places.
-
-The {SSB,BCMA}_POSSIBLE constants are defining the conditions under
-which it is possible to 'select' SSB/BCMA.
-SSB and BCMA are usually 'select'ed rather than depended on, for better
-user experience while configuring.
-
-> I thought it was worth a clean up and this was the patch I came up
-> with in the end.
-
-IMO this does not clean up or simplify the code.
-It rather makes it more complicated to maintain.
-
-The idea behind the POSSIBLE constants it to _not_ spread the
-conditions all across the drivers. That has significant advantages, if
-the condition changes.
-
-I also don't see the redundancy in the resulting dependency conditions
-as a bad thing. It's better if every option explicitly defines its
-dependencies rather than expecting something else to depend on it.
-That's fragile.
-
-NAK from me.
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/Q7GEDofx/o0YmJSgzfmcjUH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmWAcF0ACgkQ9TK+HZCN
-iw5l7BAAgpdZdzT7v2hPcLw7K9DpHS31i4y/GGlvC4rtJuMzznJNJQGs1MQDH5qM
-xo1mioY+gzeH17iRop1VCJynuzBTwOkJNz0cKPq6Iia2dS1z+YNZWwaJp0jvF0aQ
-0OQO+rzX+z2ydUmiE9jSbeS1CO9l1Pk9pvKBQhp/Axg/fq1Om+MOQSdngezPdH/7
-pgJnhM7XYnEy5xyKEjB5yPzcR3LuCC5NPnq964J7/+Y4A5HfWGtQBKLO6F0+XWBF
-xeUlNl7uvmXilz6MwSsQkiIoSmkQBJKQwpYXV1uXi4VXiz7man3cY+ZuayqlyuVL
-JfgM0pbmldVPiiXTeL0ds+LuZm+1/xiXQtmoWNp4O1VxBR+XdPKoDxL2nkC4GB4W
-Okq2+TA6n1WKPIrI4WAdhASvw+skaIx8HawIoM4jhGrc4tFaX93DA80gNOQuJ1Yt
-PH752DI0wcM03qnYoPIrkcfYxrdX/h7sYEY8BCYJfetRjWwSsZT8y7CtVz47qszE
-WhwU2E1sMSLM5rHV+W8t8RXmvzZEo2AUMNDQ2V1PFtn/FALO52cQ3HvwbOee1OjE
-HZeMAJE3m2g5xxm2O/omOXSPwm8H7QE6DhPhA3JmrSSqjFv1vSVEx/3n/DuX8DmG
-JkmrPATbaZbRYQFthprmECBBXcOgnAhCa4ZDDja1+/lL3q0ArCY=
-=fqXM
------END PGP SIGNATURE-----
-
---Sig_/Q7GEDofx/o0YmJSgzfmcjUH--
+I would appreciate information on whether we can have a discussion.
 
 
---===============8798769116170925412==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Best regards
+Maxwell Atlee
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
-
---===============8798769116170925412==--
-
