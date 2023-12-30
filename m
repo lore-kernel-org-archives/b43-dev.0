@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7E9D4C47077
-	for <b43-dev@archiver.kernel.org>; Sat, 30 Dec 2023 04:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 354EEC46CD2
+	for <b43-dev@archiver.kernel.org>; Sat, 30 Dec 2023 04:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Subject:Cc:From
-	:To:Date:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=KoFhkV/aSHBlZqhAtmoaTYpGaUSd1e/Xc/fTX19dL6A=; b=LAl4JrYXeM1QTI
-	hFBZg6jFSYKukV9bOybuEwJ3H9Hv2oU5WgZhmTVZXrq/o0m8Qcmd/lxxcNxlDeoP+pEoGPj06ioHq
-	bJqxDVIhLaRMdmgySH5OsrLUIpbN5K1FmGV5Rv0/QwoZRpstiB4KyYVtp98EKpB0fs/9zNICdXq2F
-	jzD9h7giR1tKN4M5toHB+6ZbDcAeUfCXuPAZ5LhTgoTJxrxIRP/BcsIAeQyzSIGLVEpoMb9uzlpHX
-	3BZqRh6rml1FPZNX3cefLbv5OfTk7fHhm15E/A7f6qvzlujLS70VBvgUo2KeTSJPGlrN+stZvSSIO
-	8WeWAOMvAF2lPfrtwzXw==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-ID:Subject:Cc:From:To:Date:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=5lUbCdsDntg/V0ipbnmoMonOTiWnVRum4xc03ZhmwbY=; b=zjYd7RUDzGZMz8
+	WF4T6lBpahS58ZKoxKSj4qJOVEnp4fjb0Pp25dWhoN+qD7aAz8di4Ffg9nPMPg/pOTiEEZrrvB29J
+	iHSNN9fkt4gE4fzGKls8+nl97bjyJcQd4KFj/U/q73aTmm8Mzz0DdxUjBcqAIeaYYoHOWLSRW44bk
+	VUiBm4Bg/I7gOjAWG0k70ILtnNRWGWInHdgmbt9SxSqsCuk9TSUMHDA6j/HuYzgZ5ki+X9j/J19on
+	9mhNl2rmR+RDUk8hrD0Akq+8MVnX446YKv+8+9qsNakHBwIZTGlPUvO80/FefVSKxJWqA5M6zqp0O
+	3IvWo9VsHF9LTyUG9bqw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJRKD-002A7B-0C;
-	Sat, 30 Dec 2023 04:51:53 +0000
-Received: from mail-40134.protonmail.ch ([185.70.40.134])
+	id 1rJRKd-002AFk-2g;
+	Sat, 30 Dec 2023 04:52:19 +0000
+Received: from mail-40133.protonmail.ch ([185.70.40.133])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJRK6-002A6S-2h
+	id 1rJRKa-002AB9-3A
 	for b43-dev@lists.infradead.org;
-	Sat, 30 Dec 2023 04:51:48 +0000
+	Sat, 30 Dec 2023 04:52:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1703911895; x=1704171095;
-	bh=Bb2hc/iRnBAHpF2TK4kdPjCrMxFKX5qQZIMIQTkGeCc=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=E8QScfN83edDrT6Vr12+bVBQzHTeJz5l9FdscK4pWbEk7slPLj12cXtVuuVtgnrlm
-	 tcrLdx/Svz7f/zqzStOCuEAEuvE0J75DVnaT42rEgjQN1Ip/iFWyM0ExSmeEF5nDwy
-	 fHgrBRQtnFa5UssysBN3jB32rL4iy9Hd4HFHd22AoPUtaLdsjoJGieEmGe/Gbz/f28
-	 DOzlrnGSOTS1Lkyxc3lm/zDXKnwzk4WtyAwL/G5xmUO+Rbe3ACxAe9xIzoQ5iWF6Z+
-	 z4+M87rWxOKt3tgOlzGpsXG0DKhrI0DYf8YjJ6rWxioDmPcmkEv52zPzSTZvwBkN9j
-	 rMAwc/AUA71JA==
-Date: Sat, 30 Dec 2023 04:51:23 +0000
+	s=protonmail3; t=1703911924; x=1704171124;
+	bh=rgfZsgOJu+BPxq6BKookU94qgH8Sx+gD893GO289ygE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=BMA6j+KPHs0BKzmnYdHabhNlX82XaPT4Vs19q/lBXsgjVM5tM/MqSixLrmxuXd/QX
+	 MmfJ18Ces8sM86qOBw+PaZdvO4Hdh/48gGhzydD/7XQ3NPwsApCx7JuhWJyLrdvp3t
+	 EtX4C1LCu3qb/S0lxxS5hZIy8HMmZPxwpK5FDeLzBRBl8SpJOyarHn4dqy1upWEcAe
+	 2+U32hBm/eofBgVW/6gXQw9ev2QTGv+SmA4m+mVglTTbOunDEZ9nD4gBarsMavVf4y
+	 PSXFpQNOP8Tv1Pmuaj6z46XZabqljZJEz7px+Xo9Y1EZWZ/SLOn3TGLhIGcfc5jgOu
+	 Y/HslpOMx/o1g==
+Date: Sat, 30 Dec 2023 04:51:45 +0000
 To: Kalle Valo <kvalo@kernel.org>
 From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org, Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Subject: [PATCH wireless 0/5] wifi: b43: Various QoS-related fixes
-Message-ID: <20231230045105.91351-1-sergeantsagara@protonmail.com>
+Subject: [PATCH wireless 4/5] wifi: b43: Stop correct queue in DMA worker when QoS is disabled
+Message-ID: <20231230045105.91351-5-sergeantsagara@protonmail.com>
+In-Reply-To: <20231230045105.91351-1-sergeantsagara@protonmail.com>
+References: <20231230045105.91351-1-sergeantsagara@protonmail.com>
 Feedback-ID: 26003777:user:proton
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20231229_205147_064332_F256042B 
-X-CRM114-Status: UNSURE (   6.74  )
+X-CRM114-CacheID: sfid-20231229_205217_175563_B00DEC4F 
+X-CRM114-Status: UNSURE (   8.10  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -66,34 +69,49 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Recently acquired a MacBookPro8,3, which has a bcm4331 card. Noticed some issues
-with the wireless driver, specifically related to QoS, when using this device.
+When QoS is disabled, the queue priority value will not map to the correct
+ieee80211 queue since there is only one queue. Stop queue 0 when QoS is
+disabled to prevent trying to stop a non-existent queue and failing to stop
+the actual queue instantiated.
 
-Out of the box, applications like ssh appear to not work with the device when
-QoS is enabled. This series attempts to improve the out-of-box experience while
-cleaning up some fundamental issues in the driver when QoS is disabled, either
-by the related kernel parameter or the newly introduced QoS disablement
-function.
+Fixes: bad691946966 ("b43: avoid packet losses in the dma worker code.")
+Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+---
+ drivers/net/wireless/broadcom/b43/main.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Running FW 666.2 during testing.
-
-Log:
-    [  +0.169771] b43-phy7: Loading firmware version 666.2 (2011-02-23 01:15:07)
-    [  +0.249032] b43-phy7: Loading firmware version 666.2 (2011-02-23 01:15:07)
-    [  +1.394130] b43-phy7: Loading firmware version 666.2 (2011-02-23 01:15:07)
-
-Rahul Rameshbabu (5):
-  wifi: b43: Correct OpenFW QoS capability warning conditional
-  wifi: b43: Stop/wake correct queue in DMA Tx path when QoS is disabled
-  wifi: b43: Stop/wake correct queue in PIO Tx path when QoS is disabled
-  wifi: b43: Stop correct queue in DMA worker when QoS is disabled
-  wifi: b43: Support advertising lack of QoS capability
-
- drivers/net/wireless/broadcom/b43/dma.c  | 10 ++++++--
- drivers/net/wireless/broadcom/b43/main.c | 32 +++++++++++++++++++-----
- drivers/net/wireless/broadcom/b43/pio.c  | 17 ++++++++++---
- 3 files changed, 48 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index c81117a22ebf..b6ac1526c0e8 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -3603,7 +3603,10 @@ static void b43_tx_work(struct work_struct *work)
+ 				err = b43_dma_tx(dev, skb);
+ 			if (err == -ENOSPC) {
+ 				wl->tx_queue_stopped[queue_num] = true;
+-				ieee80211_stop_queue(wl->hw, queue_num);
++				if (dev->qos_enabled)
++					ieee80211_stop_queue(wl->hw, queue_num);
++				else
++					ieee80211_stop_queue(wl->hw, 0);
+ 				skb_queue_head(&wl->tx_queue[queue_num], skb);
+ 				break;
+ 			}
+@@ -3636,11 +3639,12 @@ static void b43_op_tx(struct ieee80211_hw *hw,
+ 	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
+ 
+ 	skb_queue_tail(&wl->tx_queue[skb->queue_mapping], skb);
+-	if (!wl->tx_queue_stopped[skb->queue_mapping]) {
++	if (!wl->tx_queue_stopped[skb->queue_mapping])
+ 		ieee80211_queue_work(wl->hw, &wl->tx_work);
+-	} else {
++	else if (wl->current_dev->qos_enabled)
+ 		ieee80211_stop_queue(wl->hw, skb->queue_mapping);
+-	}
++	else
++		ieee80211_stop_queue(wl->hw, 0);
+ }
+ 
+ static void b43_qos_params_upload(struct b43_wldev *dev,
 -- 
 2.42.0
 
