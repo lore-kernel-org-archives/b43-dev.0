@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0A49C4706F
-	for <b43-dev@archiver.kernel.org>; Sat, 30 Dec 2023 17:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4C68CC46CD2
+	for <b43-dev@archiver.kernel.org>; Sat, 30 Dec 2023 17:42:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Subject:Cc:From:To:Date:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=HfJO5a5tMzaaN5uaGhRL2KrgEOWHIvLua8Hgmag1aow=; b=tE6ajrjEe/g+em
-	8cR7+tQwEidghwG4CZtPgc3Y+r/iw6GB/oUXSoyEP13NduPmmLU89cfoeFajs2v6IGUsL3szaXJMf
-	YFjMHMIsIdk3EVJEZSrH8qqQXBHuj3U8AoG06DJUtmQl/tN2gs9gPrbKRxvJ/c5PnwutGgLz/4ZwA
-	8bb/9jHNvLD1W9B6cgoRKVhFUrT7EGzMtFfAwRk6WCPdS9AZPe7HRQOYvmD0FD0DTorlrcHqEOLNS
-	vDf2wQe1sh1ZA/LyREgWalcsPJBf+ObYT4pjSHFn3zbCALOuq875XnehIPM39B71qJrV32HilatoL
-	gYzyBxw4CnQvXfru4r+Q==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Vnpv3iugjNDjkZvXodDfK8yvBSUO1PyijN3RxNjJpQM=; b=3KVJad35IaR2N9zNDnfkHeq+Zp
+	jRX2SqCwHBy2zakWewJ/CtuLgwk3pgbYhw1LfAy06d09efbIpFBvKB/ZKhYzBunAZFTjJsAOk8C+z
+	YHm1x5YjqS3C/f+SW9tE/3VCriJLCkL7/t4AdwcRbsuZqskzT46v0JpaE0m+yfz+5xGOhDwLK2j9Z
+	ywKBELWRY5hs6v0lVgs6Z3+UixedfsGtuIIXIuP8j6PmuGZaSZIwZzLXr/pc1A2HnP8Lg9IRS/4ss
+	wTSwBG9Btz3wYmyyTTd14F+DShFo87kmDTDvyOzhS1EAaOCx+9hA3y5b6syEKbVAmo71f6UZ2jdMQ
+	4ZLxf5LQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJcyB-0039bL-1u;
-	Sat, 30 Dec 2023 17:17:55 +0000
-Received: from mail-40134.protonmail.ch ([185.70.40.134])
+	id 1rJdLT-003E15-1K;
+	Sat, 30 Dec 2023 17:41:59 +0000
+Received: from bues.ch ([2a01:138:9005::1:4])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJcy8-0039Zt-2h
+	id 1rJdLP-003DyM-1V
 	for b43-dev@lists.infradead.org;
-	Sat, 30 Dec 2023 17:17:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1703956671; x=1704215871;
-	bh=QQ0ltPLjZpeG5P5hw0GwaUTAFyp/TZCuilQIFffY7L4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=BH6JKtWmsCx/bk+7ArCWqZLg3Ym49iUdiCkEvm5KWnafwtYLvqpJDX/ee71Nf9PyL
-	 jRyTggQa5u8GUTm9RCCXE2fSr3Enz04U1YdCIoeQ1ZpFYZwfsAf6cTY0niQttQsRuR
-	 9VIzjxhA7k32R+usnLJ5XjPlLnpUCOgK+C73qQpWzHVAbAOTqvkgj/zuXZJElUdILs
-	 3w78rHinKJNCt5glyUgaOleGgn7/qe43O98vddIOwuEhrChXaOkLOeuerv9x25+HMi
-	 HLPA1DczAuavfbH8LN7GpM/+mGJZ7awU3Eu25JQHhcSH4TfUXzUz48ypx2onZ0L+ka
-	 4+OfozbHgTPoA==
-Date: Sat, 30 Dec 2023 17:17:40 +0000
-To: =?utf-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
-From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH wireless 1/5] wifi: b43: Correct OpenFW QoS capability warning conditional
-Message-ID: <874jfzk3tb.fsf@protonmail.com>
-In-Reply-To: <20231230143455.4d64ffc7@barney>
-References: <20231230045105.91351-1-sergeantsagara@protonmail.com> <20231230045105.91351-2-sergeantsagara@protonmail.com> <20231230143455.4d64ffc7@barney>
-Feedback-ID: 26003777:user:proton
+	Sat, 30 Dec 2023 17:41:57 +0000
+Received: by bues.ch with esmtpsa (Exim 4.96)
+	(envelope-from <m@bues.ch>)
+	id 1rJdLD-000Fqk-2g;
+	Sat, 30 Dec 2023 18:41:42 +0100
+Date: Sat, 30 Dec 2023 18:41:13 +0100
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: Julian Calaby <julian.calaby@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+ linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH wireless 2/5] wifi: b43: Stop/wake correct queue in DMA
+ Tx path when QoS is disabled
+Message-ID: <20231230184113.3ecfed4f@barney>
+In-Reply-To: <878r5bk3x9.fsf@protonmail.com>
+References: <20231230045105.91351-1-sergeantsagara@protonmail.com>
+	<20231230045105.91351-3-sergeantsagara@protonmail.com>
+	<CAGRGNgWYLTmRfvw94Ok_FfcEVGPa0tRg-ELxkD8K6nxTTNZ9jg@mail.gmail.com>
+	<20231230144036.7f48b739@barney>
+	<878r5bk3x9.fsf@protonmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.39; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20231230_091753_034144_EF2ADFCB 
-X-CRM114-Status: GOOD (  12.12  )
+X-CRM114-CacheID: sfid-20231230_094155_502863_63129CB3 
+X-CRM114-Status: GOOD (  22.12  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -63,36 +62,100 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============5770779512707847788=="
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-T24gU2F0LCAzMCBEZWMsIDIwMjMgMTQ6MzQ6NTUgKzAxMDAgTWljaGFlbCBCw7xzY2ggPG1AYnVl
-cy5jaD4gd3JvdGU6Cj4gW1tQR1AgU2lnbmVkIFBhcnQ6VW5kZWNpZGVkXV0KPiBPbiBTYXQsIDMw
-IERlYyAyMDIzIDA0OjUxOjI5ICswMDAwCj4gUmFodWwgUmFtZXNoYmFidSA8c2VyZ2VhbnRzYWdh
-cmFAcHJvdG9ubWFpbC5jb20+IHdyb3RlOgo+Cj4+IFRyaWdnZXIgdGhlIHdhcm5pbmcgbWVzc2Fn
-ZSBzaG91bGQgYmUgd2hlbiB0aGUgT3BlbkZXIGNhcGFiaWxpdHkgZm9yIFFvUwo+PiBkb2VzIG5v
-dCBhZHZlcnRpc2UgUW9TIHN1cHBvcnQuIFByZXZpb3VzbHksIHRoZSB3YXJuaW5nIHdvdWxkIGJl
-Cj4+IGluY29ycmVjdGx5IHRyaWdnZXJlZCB3aGVuIE9wZW5GVyByZXBvcnRlZCBRb1MgY2FwYWJp
-bGl0eSBpcyBwcmVzZW50Lgo+Cj4+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29t
-L2I0My9tYWluLmMKPj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL21h
-aW4uYwo+PiBAQCAtMjcxMyw3ICsyNzEzLDcgQEAgc3RhdGljIGludCBiNDNfdXBsb2FkX21pY3Jv
-Y29kZShzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYpCj4+ICAJCQlkZXYtPmh3Y3J5cHRvX2VuYWJsZWQg
-PSBmYWxzZTsKPj4gIAkJfQo+PiAgCQkvKiBhZGRpbmcgUW9TIHN1cHBvcnQgc2hvdWxkIHVzZSBh
-biBvZmZsaW5lIGRpc2NvdmVyeSBtZWNoYW5pc20gKi8KPj4gLQkJV0FSTihmd2NhcGEgJiBCNDNf
-RldDQVBBX1FPUywgIlFvUyBpbiBPcGVuRlcgbm90IHN1cHBvcnRlZFxuIik7Cj4+ICsJCVdBUk4o
-IShmd2NhcGEgJiBCNDNfRldDQVBBX1FPUyksICJRb1MgaW4gT3BlbkZXIG5vdCBzdXBwb3J0ZWRc
-biIpOwo+PiAgCX0gZWxzZSB7Cj4+ICAJCWI0M2luZm8oZGV2LT53bCwgIkxvYWRpbmcgZmlybXdh
-cmUgdmVyc2lvbiAldS4ldSAiCj4+ICAJCQkiKDIwJS4yaS0lLjJpLSUuMmkgJS4yaTolLjJpOiUu
-MmkpXG4iLAo+Cj4gSSBkb24ndCB0aGluayB0aGlzIHBhdGNoIGlzIGNvcnJlY3QuCj4gSXQgc2hv
-dWxkIHdhcm4sIGlmIHRoZSBmaXJtd2FyZSBhZHZlcnRpc2VzIFFvUywgYmVjYXVzZSB0aGF0IGlz
-IG5vdAo+IHN1cHBvcnRlZCBieSBiNDMgaW4gY2FzZSBvZiBPcGVuRlcuCgpUaGFua3MuIEkgaGFk
-IGEgaGFyZCB0aW1lIHVuZGVyc3RhbmRpbmcgdGhlIGludGVudGlvbiBvZiB0aGlzIHdhcm5pbmcu
-IEkKZmlndXJlZCBpdCBjb3VsZCBiZSB0aGUgY2FzZSB3aGVyZSB0aGUgd2FybmluZyBpcyBhYm91
-dCB0aGUgZHJpdmVyCmRpc2FibGluZyBRb1Mgd2hlbiBmaXJtd2FyZSBoYXMgc3VwcG9ydCBidXQg
-d2FzIG5vdCBzdXJlLiBXaWxsIGRyb3AgdGhpcwpwYXRjaCBnb2luZyBmb3J3YXJkLgoKLS0KVGhh
-bmtzLAoKUmFodWwgUmFtZXNoYmFidQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0My1kZXZAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2I0My1k
-ZXYK
+--===============5770779512707847788==
+Content-Type: multipart/signed; boundary="Sig_/Uq+rLFv4DO4EPBBI8EmpMES";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+
+--Sig_/Uq+rLFv4DO4EPBBI8EmpMES
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, 30 Dec 2023 17:15:18 +0000
+Rahul Rameshbabu <sergeantsagara@protonmail.com> wrote:
+
+> On Sat, 30 Dec, 2023 14:40:36 +0100 Michael B=C3=BCsch <m@bues.ch> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > On Sat, 30 Dec 2023 18:48:45 +1100
+> > Julian Calaby <julian.calaby@gmail.com> wrote: =20
+> >> > --- a/drivers/net/wireless/broadcom/b43/dma.c
+> >> > +++ b/drivers/net/wireless/broadcom/b43/dma.c
+> >> > @@ -1399,7 +1399,10 @@ int b43_dma_tx(struct b43_wldev *dev, struct =
+sk_buff *skb)
+> >> >             should_inject_overflow(ring)) {
+> >> >                 /* This TX ring is full. */
+> >> >                 unsigned int skb_mapping =3D skb_get_queue_mapping(s=
+kb);
+> >> > -               ieee80211_stop_queue(dev->wl->hw, skb_mapping);
+> >> > +               if (dev->qos_enabled)
+> >> > +                       ieee80211_stop_queue(dev->wl->hw, skb_mappin=
+g);
+> >> > +               else
+> >> > +                       ieee80211_stop_queue(dev->wl->hw, 0);   =20
+> >>=20
+> >> Would this be a little cleaner if we only look up the queue mapping if
+> >> QOS is enabled? I.e. =20
+> >
+> > No. It would break the other uses of skb_mapping.
+> >
+> > But I am wondering why skb_mapping is non-zero in the first place.
+> > I think the actual bug might be somewhere else. =20
+>=20
+> Right, skb_mapping is used to map to the correct software structures DMA
+> mapped to the device. The reason the mapping for the best effort queue
+> (the default/defacto when QoS is disabled) is not zero is due to the way
+> initialization of the queues/rings occurs in the driver. The best effort
+> queue is mapped as the third queue, which leads to this issue when QoS
+> is disabled. Would it make more sense to change the mappings in
+> initialization such that the best effort queue is by default mapped to
+> zero, so we would not need such conditionals?
+
+Maybe it is a good idea to find the patch that broke non-QoS.
+That possibly helps to understand the situation.
+
+Non-QoS used to work just fine.
+
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
+
+--Sig_/Uq+rLFv4DO4EPBBI8EmpMES
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmWQVjkACgkQ9TK+HZCN
+iw49Pw/+OSp4u8E/XFogM6vVJaqKJw9sYD9qgkn04hS8cv7d5h3WGups0qQiTyzk
+OgcjjycPyt3vOkm7Lg4GcN6x6PApkgIBnLsA6VDs3kHAT/1z2OX/D9noghgABXik
+S9puZtr1M6DnuqJgVNNRGrIlo0yikCURKsvxYFHHenv82NL1QNbZcxtTcpjKfqGL
+T7MUn2kq3sc1aUt25WXpI268fpQFc09H7PpgIyKJODLEnG59ksjpKKSegMjnF1sq
+CW5r9GEoKOAuLV0W0QFJmFikvez0hHfPTMDZ81iTsrbJ2Q/n3q+4lxi8zqzA1I+N
+MTH+amHfEqqgFnaS18bD+Fr1pKgncC5WiUq75Sf178CbTpJs2dbPVPcWyQ77JlfM
+D0X+9SxZ+pD8aUY5noEdPIxTUG0FpQPa0JdbmsnPacjEgftXoKYiiIKBGIiukXGl
+uTQ2VjpE9inmCkBH2xdtM20EKon7MQ9hC1ex1W94QJKeJKJS8Zw4vPxWTMRd1ALv
+gnMUXavjLZ8PkxJSNCFFi9fFCRmQ8ulDeIRlrNp+lVGYS2A0BkeiDqveYwhXM9lz
+fzSki2tiOE36XJsYRi56xN0nuDKqioCqkRve5xm8ay5oK3ERV2N97W3QXz+enQCm
+S3ZGBw0G6vosvXpJy4P4jjE18Ea2789IFCUDDSSSeW4EYhp61to=
+=fL9U
+-----END PGP SIGNATURE-----
+
+--Sig_/Uq+rLFv4DO4EPBBI8EmpMES--
+
+
+--===============5770779512707847788==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
+
+--===============5770779512707847788==--
+
