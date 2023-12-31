@@ -4,54 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3103BC3DA6E
-	for <b43-dev@archiver.kernel.org>; Sun, 31 Dec 2023 05:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83703C3DA6E
+	for <b43-dev@archiver.kernel.org>; Sun, 31 Dec 2023 09:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Subject:Cc:From:To:Date:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=wC6NyO9e4DbJjXOpYLC4jL6Jomjf+2qbJHLOjHgPv/8=; b=g/ZoIwkwa/dDyv
-	praKRFrhDUujetyjuIQLEbZWYis6Alm9q0mYk80d5AOj3kVlvmgyVsXeqjuEdynvIXfO5gAY2L4wb
-	cNy0G0iUvhUgCHgQsNsgtHz9bXfSKcpoex6SfqehWxzEjacSLFBA4eV+SO6VH0WgluNkVZ5Wbg9Sb
-	kJodvPDvYJUL2OxWdj32EUtfy69FJj5Pf5r8LtXnqu00bsC1ZbIz9LrgKrECvZby2PtxAr69nfqLG
-	htVffohUl+XpEXe8Ai2iTxQ1AjpTnBntBKWTTqOiHq+HdZPsEbOElT1Sbn5DCU/OfJYq37ANcIO8w
-	BNYxfPaS33XaA1RqEq8w==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=l2n/b329H2E296EGkcA/r46vBoRQVyI3vKCW+MHSu2o=; b=Z5S/1cokw0J2/0Y0MSIHbXpvDw
+	qxWb0TcMF4dd4lvpLRRq/wf1C3XiWMo0LSto9gFDfNsx2QSH2hFdKJf21cPgqndgM+7AFkqIMnCWL
+	dUZ52bGCbL9DM1yI6nEPVmKayn1tl4iRM0Lec95SouGFrSGDWkZ1BluLSWpcDM6WQKWeMdR18SPik
+	teUZm/O198pKzQEp0Rr42tNWwT4548c3rUWdI8zxvl6V2mwPUzkLLj4D9kfbSKA2GB5DpHfCfMkXi
+	uNeRVXD7BUgovWPvo3CM/NSe2sb3sU4ytvC4VG6aX1df8AoX4IjYDh7EM4xMJI9BxjH3/Srd0ZAmM
+	YTOAtsWg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJnzk-003yO2-0V;
-	Sun, 31 Dec 2023 05:04:16 +0000
-Received: from mail-4322.protonmail.ch ([185.70.43.22])
+	id 1rJs6T-004HrN-07;
+	Sun, 31 Dec 2023 09:27:29 +0000
+Received: from bues.ch ([2a01:138:9005::1:4])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJnzh-003yMu-0s
+	id 1rJs6Q-004Hqm-1i
 	for b43-dev@lists.infradead.org;
-	Sun, 31 Dec 2023 05:04:14 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1703999051; x=1704258251;
-	bh=lFqzWO9IoWJvWf0zvyPqX/iTXV5Tg5hARwJdoUqbE50=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=KYp4vBy8y1jA1fcOQ60rmUC+TkiGIDOXUGAA6ry296whZr8UaibPGJ7vtGg69MNLv
-	 ZtkXKuYbqZ8srsu5C5AAMs6oTyOwuMqV1lJbAQl8kIL3BSt7cHF9KwSYjB6tyY2V0Z
-	 OSxkOLQCqzIisMeYGnFEYdFCriE6uZzMPWkcfkZrW9QP07RaisEGybyWbFflqySkX4
-	 gx1mdBnQwf3X6vkGCjPajDuERTpYxkfbHLQUuUcJQ95PtZtiMB2KdlXtgxtMoK08pp
-	 BrRBStg5hVluzJTPSzWiNTxvENQhPKBIXQGEPPnmNuD55JE6FPUFyjCcCMpdheMkuU
-	 Njb39fRsZynwA==
-Date: Sun, 31 Dec 2023 05:03:58 +0000
-To: Kalle Valo <kvalo@kernel.org>, Larry Finger <Larry.Finger@lwfinger.net>, =?utf-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, Julian Calaby <julian.calaby@gmail.com>
-From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org, Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Subject: [PATCH wireless v2 4/4] wifi: b43: Disable QoS for bcm4331
-Message-ID: <20231231050300.122806-5-sergeantsagara@protonmail.com>
+	Sun, 31 Dec 2023 09:27:27 +0000
+Received: by bues.ch with esmtpsa (Exim 4.96)
+	(envelope-from <m@bues.ch>)
+	id 1rJs66-0006lb-2N;
+	Sun, 31 Dec 2023 10:27:05 +0100
+Date: Sun, 31 Dec 2023 10:26:32 +0100
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Larry Finger <Larry.Finger@lwfinger.net>,
+ Julian Calaby <julian.calaby@gmail.com>, linux-wireless@vger.kernel.org,
+ b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH wireless v2 0/4] wifi: b43: Various QoS-related fixes
+Message-ID: <20231231102632.4e6f39eb@barney>
 In-Reply-To: <20231231050300.122806-1-sergeantsagara@protonmail.com>
 References: <20231231050300.122806-1-sergeantsagara@protonmail.com>
-Feedback-ID: 26003777:user:proton
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.39; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20231230_210413_506394_BB39F27C 
-X-CRM114-Status: GOOD (  10.15  )
+X-CRM114-CacheID: sfid-20231231_012726_570180_12EDDA1C 
+X-CRM114-Status: UNSURE (   8.98  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -63,66 +58,77 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0658093431644177573=="
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-YmNtNDMzMSBzZWVtcyB0byBub3QgZnVuY3Rpb24gY29ycmVjdGx5IHdpdGggUW9TIHN1cHBvcnQu
-IFRoaXMgbWF5IGJlIGR1ZQp0byBpc3N1ZXMgd2l0aCBjdXJyZW50bHkgYXZhaWxhYmxlIGZpcm13
-YXJlIG9yIHBvdGVudGlhbGx5IGEgZGV2aWNlCnNwZWNpZmljIGlzc3VlLgoKV2hlbiBxdWV1ZXMg
-dGhhdCBhcmUgbm90IG9mIHRoZSBkZWZhdWx0ICJiZXN0IGVmZm9ydCIgcHJpb3JpdHkgYXJlCnNl
-bGVjdGVkLCB0cmFmZmljIGFwcGVhcnMgdG8gbm90IHRyYW5zbWl0IG91dCBvZiB0aGUgaGFyZHdh
-cmUgd2hpbGUgbm8KZXJyb3JzIGFyZSByZXR1cm5lZC4gVGhpcyBiZWhhdmlvciBpcyBwcmVzZW50
-IGFtb25nIGFsbCB0aGUgb3RoZXIgcHJpb3JpdHkKcXVldWVzOiB2aWRlbywgdm9pY2UsIGFuZCBi
-YWNrZ3JvdW5kLiBXaGlsZSB0aGlzIGNhbiBiZSB3b3JrZWQgYXJvdW5kIGJ5CnNldHRpbmcgYSBr
-ZXJuZWwgcGFyYW1ldGVyLCB0aGUgZGVmYXVsdCBiZWhhdmlvciBpcyBwcm9ibGVtYXRpYyBmb3Ig
-bW9zdAp1c2VycyBhbmQgbWF5IGJlIGRpZmZpY3VsdCB0byBkZWJ1Zy4gVGhpcyBwYXRjaCBvZmZl
-cnMgYSB3b3JraW5nIG91dC1vZi1ib3gKZXhwZXJpZW5jZSBmb3IgYmNtNDMzMSB1c2Vycy4KCkxv
-ZyBvZiB0aGUgaXNzdWUgKHVzaW5nIHNzaCBsb3ctcHJpb3JpdHkgdHJhZmZpYyBhcyBhbiBleGFt
-cGxlKToKICAgIHNzaCAtVCAtdnZ2diBnaXRAZ2l0aHViLmNvbQogICAgT3BlblNTSF85LjZwMSwg
-T3BlblNTTCAzLjAuMTIgMjQgT2N0IDIwMjMKICAgIGRlYnVnMTogUmVhZGluZyBjb25maWd1cmF0
-aW9uIGRhdGEgL2V0Yy9zc2gvc3NoX2NvbmZpZwogICAgZGVidWcyOiBjaGVja2luZyBtYXRjaCBm
-b3IgJ2hvc3QgKiBleGVjICIvbml4L3N0b3JlL3ExYzJmbGN5a2dyNHd3ZzVhNmg0NTBoeGJrNGNo
-NTg5LWJhc2gtNS4yLXAxNS9iaW4vYmFzaCAtYyAnL25peC9zdG9yZS9jMDE1YXJtbmtocjZ2MTh6
-YTByeXBtN3NoMWk4anM4dy1nbnVwZy0yLjQuMS9iaW4vZ3BnLWNvbm5lY3QtYWdlbnQgLS1xdWll
-dCB1cGRhdGVzdGFydHVwdHR5IC9ieWUgPi9kZXYvbnVsbCAyPiYxJyInIGhvc3QgZ2l0aHViLmNv
-bSBvcmlnaW5hbGx5IGdpdGh1Yi5jb20KICAgIGRlYnVnMzogL2V0Yy9zc2gvc3NoX2NvbmZpZyBs
-aW5lIDU6IG1hdGNoZWQgJ2hvc3QgImdpdGh1Yi5jb20iJwogICAgZGVidWcxOiBFeGVjdXRpbmcg
-Y29tbWFuZDogJy9uaXgvc3RvcmUvcTFjMmZsY3lrZ3I0d3dnNWE2aDQ1MGh4Yms0Y2g1ODktYmFz
-aC01LjItcDE1L2Jpbi9iYXNoIC1jICcvbml4L3N0b3JlL2MwMTVhcm1ua2hyNnYxOHphMHJ5cG03
-c2gxaThqczh3LWdudXBnLTIuNC4xL2Jpbi9ncGctY29ubmVjdC1hZ2VudCAtLXF1aWV0IHVwZGF0
-ZXN0YXJ0dXB0dHkgL2J5ZSA+L2Rldi9udWxsIDI+JjEnJwogICAgZGVidWczOiBjb21tYW5kIHJl
-dHVybmVkIHN0YXR1cyAwCiAgICBkZWJ1ZzM6IC9ldGMvc3NoL3NzaF9jb25maWcgbGluZSA1OiBt
-YXRjaGVkICdleGVjICIvbml4L3N0b3JlL3ExYzJmbGN5a2dyNHd3ZzVhNmg0NTBoeGJrNGNoNTg5
-LWJhc2gtNS4yLXAxNS9iaW4vYmFzaCAtYyAnL25peC9zdG9yZS9jMDE1YXJtbmtocjZ2MTh6YTBy
-IicKICAgIGRlYnVnMjogbWF0Y2ggZm91bmQKICAgIGRlYnVnMTogL2V0Yy9zc2gvc3NoX2NvbmZp
-ZyBsaW5lIDk6IEFwcGx5aW5nIG9wdGlvbnMgZm9yICoKICAgIGRlYnVnMzogZXhwYW5kZWQgVXNl
-cktub3duSG9zdHNGaWxlICd+Ly5zc2gva25vd25faG9zdHMnIC0+ICcvaG9tZS9iaW5hcnktZWF0
-ZXIvLnNzaC9rbm93bl9ob3N0cycKICAgIGRlYnVnMzogZXhwYW5kZWQgVXNlcktub3duSG9zdHNG
-aWxlICd+Ly5zc2gva25vd25faG9zdHMyJyAtPiAnL2hvbWUvYmluYXJ5LWVhdGVyLy5zc2gva25v
-d25faG9zdHMyJwogICAgZGVidWcyOiByZXNvbHZpbmcgImdpdGh1Yi5jb20iIHBvcnQgMjIKICAg
-IGRlYnVnMzogcmVzb2x2ZV9ob3N0OiBsb29rdXAgZ2l0aHViLmNvbToyMgogICAgZGVidWczOiBj
-aGFubmVsX2NsZWFyX3RpbWVvdXRzOiBjbGVhcmluZwogICAgZGVidWczOiBzc2hfY29ubmVjdF9k
-aXJlY3Q6IGVudGVyaW5nCiAgICBkZWJ1ZzE6IENvbm5lY3RpbmcgdG8gZ2l0aHViLmNvbSBbMTky
-LjMwLjI1NS4xMTNdIHBvcnQgMjIuCiAgICBkZWJ1ZzM6IHNldF9zb2NrX3Rvczogc2V0IHNvY2tl
-dCAzIElQX1RPUyAweDQ4CgpGaXhlczogZTZmNWI5MzRmYmE4ICgiYjQzOiBBZGQgUU9TIHN1cHBv
-cnQiKQpTaWduZWQtb2ZmLWJ5OiBSYWh1bCBSYW1lc2hiYWJ1IDxzZXJnZWFudHNhZ2FyYUBwcm90
-b25tYWlsLmNvbT4KLS0tCgpOb3RlczoKICAgIENoYW5nZXM6CiAgICAKICAgICAgICB2MS0+djI6
-CiAgICAgICAgICAgIC0gU2ltcGxpZmllZCBsb2dpYyB0byBzb2xlbHkganVzdCBkaXNhYmxlIFFv
-UyBmb3IKICAgICAgICAgICAgICBiY200MzMxIChzdWdnZXN0ZWQgYnkgTWljaGFlbCBCw7xzY2gg
-PG1AYnVlcy5jaD4pCgogZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL21haW4uYyB8
-IDMgKystCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL21haW4uYyBiL2Ry
-aXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29tL2I0My9tYWluLmMKaW5kZXggOTdkOGJkZWFhMDZj
-Li5lZmZiNmMyM2Y4MjUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29t
-L2I0My9tYWluLmMKKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL21haW4u
-YwpAQCAtMjU4Nyw3ICsyNTg3LDggQEAgc3RhdGljIHZvaWQgYjQzX3JlcXVlc3RfZmlybXdhcmUo
-c3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQogCiBzdGFydF9pZWVlODAyMTE6CiAJd2wtPmh3LT5x
-dWV1ZXMgPSBCNDNfUU9TX1FVRVVFX05VTTsKLQlpZiAoIW1vZHBhcmFtX3FvcyB8fCBkZXYtPmZ3
-Lm9wZW5zb3VyY2UpCisJaWYgKCFtb2RwYXJhbV9xb3MgfHwgZGV2LT5mdy5vcGVuc291cmNlIHx8
-CisJICAgIGRldi0+ZGV2LT5jaGlwX2lkID09IEJDTUFfQ0hJUF9JRF9CQ000MzMxKQogCQl3bC0+
-aHctPnF1ZXVlcyA9IDE7CiAKIAllcnIgPSBpZWVlODAyMTFfcmVnaXN0ZXJfaHcod2wtPmh3KTsK
-LS0gCjIuNDIuMAoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
-cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
+--===============0658093431644177573==
+Content-Type: multipart/signed; boundary="Sig_/oU+WI7IVMn8P07XG25DRyrC";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+
+--Sig_/oU+WI7IVMn8P07XG25DRyrC
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, 31 Dec 2023 05:03:27 +0000
+Rahul Rameshbabu <sergeantsagara@protonmail.com> wrote:
+
+> Rahul Rameshbabu (4):
+>   wifi: b43: Stop/wake correct queue in DMA Tx path when QoS is disabled
+>   wifi: b43: Stop/wake correct queue in PIO Tx path when QoS is disabled
+>   wifi: b43: Stop correct queue in DMA worker when QoS is disabled
+>   wifi: b43: Disable QoS for bcm4331
+>=20
+>  drivers/net/wireless/broadcom/b43/b43.h  | 16 ++++++++++++++++
+>  drivers/net/wireless/broadcom/b43/dma.c  |  4 ++--
+>  drivers/net/wireless/broadcom/b43/main.c | 16 +++++++++-------
+>  drivers/net/wireless/broadcom/b43/pio.c  |  6 +++---
+>  4 files changed, 30 insertions(+), 12 deletions(-)
+>=20
+
+
+Acked-by: Michael B=C3=BCsch <m@bues.ch>
+
+for the whole v2 series.
+
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
+
+--Sig_/oU+WI7IVMn8P07XG25DRyrC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmWRM8gACgkQ9TK+HZCN
+iw6Tbw/8DfJ057LLYYSvsQWxSxjEXCFP5kXzwtf+Mz3BfpJLJ5bThfAGCLx8qW7W
+xAeTc/53XvHSjNnsV5i4bMF29eW2gdXQxzXY1b6xiDCSV8YuJFQp7TtO5q+LXpMP
+ReflOhXfpbg8d6pcTj/wbGVCBJYN9Ycw12q9QrsrhOn7FsjRXdzq1Sv7wMOsF1GT
+ye8djWsHoREH4LYYPgPa/+Y9k3l5Y94yOJbsjE71suecVzTgwKWBjTdFwSD1oi2F
+MfDp+5cFM98I99CnPIXBdNMjeULCeWloDvI2j+oJ9l7o+o/QA4ypS7a3WzTfEdDU
+IldGcAZ+4wQoigM249CbmRAHN0z0L0yjsZgPSbkdzAOqil9Tkm8ZhVz+yhtkdiS+
+3a7exfcSf25TTBnzH/asC0qLrzCMW+9h2uZWc2DZpSABbYQB3tPiPDSL5buAkJ70
+njctvYoiE9IPtXIjpXpGtztRw3e7CKJRvFfickX/0x9uMWVXM5uh1y4ecbZQSIF9
+kCJekQdW8+pYv6SZCKg7WAZ42ggTbbbKNYF2OqMgxtRwQIMu4y9QMlyZkkH30twp
+P+JIt9vn2Otm48db2z10vpjhUdzdpNCDORpNfh/d9oU8WrsID2YO2hMairlpUBfa
+7ywJ0gXRIjKtFZSf1JQQ6wQjH39Tz4zRTZ7JFDHdUU9jIIM+i58=
+=m0zx
+-----END PGP SIGNATURE-----
+
+--Sig_/oU+WI7IVMn8P07XG25DRyrC--
+
+
+--===============0658093431644177573==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
+
+--===============0658093431644177573==--
+
