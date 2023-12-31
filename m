@@ -4,84 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7921BC46CD2
-	for <b43-dev@archiver.kernel.org>; Sat, 30 Dec 2023 22:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BE8C5C46CD2
+	for <b43-dev@archiver.kernel.org>; Sun, 31 Dec 2023 00:03:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
-	Content-Transfer-Encoding:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:In-Reply-To:From:References:Cc:To:Subject:
-	MIME-Version:Date:Message-ID:Reply-To:Content-ID:Content-Description:
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-ID:Subject:Cc:From:To:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=IxQTzz1OPwrvCEatMEEwA43b+F01/+ScAq9Ydt0SAJ0=; b=iu6ysVNqoAbZFD
-	RIg/CJ0R8KuHPe5HjGyzswN5YpEkBmFhL0d7IWYLPKBbV65M1s/AmcrBDWWRHlh3OxuGzAHPGm9WB
-	MDZY7Bd+3JCahRPkE+9Iy7Soq6rKJ9zTa1JUZaE/Eo7DmrBTr7QH0XInfPvfd0zxXDL1FGsv5RSsA
-	0/sEMM2GL7klz+kE84/MKp6igflbyPkz1m2Tu6CVsPmvJRdinbifDABYLF+ypfesreX4zFYpYpRn4
-	jBzpWF5aymftygNeOV5dC+z6Wi7od1cBOTGaoI1wWngNuwCZ0ZIpIqJZU2A3Dm6EdQiwNalRHTCK3
-	1HyeQau7Udbanb4A+L3g==;
+	List-Owner; bh=L6X1sHeLqe4iyR7bT2UUadq0g4vGsybuBaJdHY8ZPwE=; b=17CZK3xFfJuc3T
+	T1ZjiGKT5IqoQG/pMOePIbqQ5RMfBrjXbddc8wSgd6FKK4U3HCfMyG9Z7i4XiceOL0iutUOjQTR3n
+	KRMYbzoRB1eAunex76IQMD3Oi1mPcFsjC43l1kJYadSHCVRvtof1WiJI0MLbd7phcWvz4oDOtskaE
+	ORkJsQrs71eTI8VWzx5OMEuSGUHfTfvqad2wt2hdB/GR/6KmDFGMt7yNmrBXv491J8QPwq8FLZ83g
+	FMPfcc5s4KZr9uPggawhjngFh2c3/X8TpHsyYY0Ssu/sBy4ypnwUY7DbqCIBV4YR94fIJJzVkyG3D
+	9QBOFa9MjqsSZt+oFX6Q==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJhkV-003Weh-2G;
-	Sat, 30 Dec 2023 22:24:07 +0000
-Received: from mail-qv1-xf33.google.com ([2607:f8b0:4864:20::f33])
+	id 1rJjI6-003cUj-0u;
+	Sun, 31 Dec 2023 00:02:54 +0000
+Received: from mail-40133.protonmail.ch ([185.70.40.133])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1rJhkS-003WeB-0v
+	id 1rJjI3-003cTn-1D
 	for b43-dev@lists.infradead.org;
-	Sat, 30 Dec 2023 22:24:06 +0000
-Received: by mail-qv1-xf33.google.com with SMTP id 6a1803df08f44-67f911e9ac4so62829406d6.3
-        for <b43-dev@lists.infradead.org>; Sat, 30 Dec 2023 14:24:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703975043; x=1704579843; darn=lists.infradead.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ytqw2FHmhrz2Q/Vvd/gZICZv8ex4sbCt21vyO6FDogw=;
-        b=Tkx5N0LQnuhbSRGxX8et1annVXbNzq3P/RR7k82kPzfPqvJ2iZ/eB3qsJt9O7XA8KM
-         Ldh4eCpnO5LhmTC1YwCgsvhTabrVtwKUXgHHGiqxf0qgcTLoSfYQFzEAWXYrQhhnP9gf
-         hhLm3AnwVhsvqD+AXrE4fGUfrHeaaX9lX0VvSXGCQw9Uk+OLq2cdoWHsu2iZLY5jYOO5
-         Sx/CizqVjK7NLx+dhlIlDLjtnw2fCetIaRe7CT0AkXmIvT/udnRmf2a06w4w3C6yqjPM
-         sXMasthtLVLWqjikU5qhU7ka3D43pTDjZRLTvKFh5AeyAJFZfYUvrKNPcUdx9xeRC/N1
-         mRpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703975043; x=1704579843;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ytqw2FHmhrz2Q/Vvd/gZICZv8ex4sbCt21vyO6FDogw=;
-        b=DmzCDYJCbmkcOq11O1+Qcyo31QgPJs5MX3NA0fJ+eilJ/slGlUT5RjlN/dpMUmVphC
-         O13QG+L9e7bS8S/onou834uZHeqhCo+eBLIZTEARcbZcS27Lo8eMT2EfilnuyE+huLRa
-         wKtxml7nzyADIDeqlXA0xTz3shDKER1R8FKSPZxF2V912KXDhEqXaaQqdUtPzl3lDm3r
-         mI3mDSjtQb52gbNGcmBVCB/beY98UCB0xrOXpKGIBJC6iuuDQsL6/AORSYYm50+O4kHh
-         AjeazIXziZRQTBaD8kT/jilCNLnWIk4gbuOEtgDc+7oFgLvDoGZ2YkuK2UFr/dX1CR/J
-         4iqA==
-X-Gm-Message-State: AOJu0YwgA2eX9JZQyGoDE9iPnuWzRVPxvowfj3ggtPd9QhSmANKklgrj
-	a0n4g8tsxZWwfvPaU6A8bZI=
-X-Google-Smtp-Source: AGHT+IGTWXvfDNFHuJs/2JwYmQDseU7HorFDI4IceT3cAbf4f88WDlSNXxN5ZhWt0jW2njXpvMCx1Q==
-X-Received: by 2002:a05:620a:1aa9:b0:781:5c68:a5ee with SMTP id bl41-20020a05620a1aa900b007815c68a5eemr9616536qkb.45.1703975042959;
-        Sat, 30 Dec 2023 14:24:02 -0800 (PST)
-Received: from [192.168.0.162] ([216.130.59.33])
-        by smtp.gmail.com with ESMTPSA id u11-20020a9d4d8b000000b006d9fb0458cdsm3232223otk.39.2023.12.30.14.24.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Dec 2023 14:24:02 -0800 (PST)
-Message-ID: <ca357d13-7da9-490f-9e69-4674c6ede057@lwfinger.net>
-Date: Sat, 30 Dec 2023 16:23:58 -0600
+	Sun, 31 Dec 2023 00:02:52 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1703980964; x=1704240164;
+	bh=NzTBAR3J7TqlmV8UyI1UxV71fO1hFB/qVw412kUFJcE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=PIa1/FwtZTQ2ITyhtpzTfs/gpygu8d9/KHHnrAJtDv1Xd5EDlYHD6Y2lK2fBQ9hJ5
+	 bYvAyydeznYtidorMjMsDKqDvUJLEsQG7YU3mpBKcgZ856InCtlZbQ46szMFVXkqZ+
+	 YkPVnwZuRTRWAWiqUFJIUPbCza8ekXKxENakMYQvAhFXrywiO0+CAOiXYp86Z9pH/t
+	 GcDY0PgdweMxYRN8J6TTRSBj9QtmAKvtlSs/0lGoZmawwaLBcA+65b652hn5S/TqeI
+	 TH24Ow2ChDV66qWMggBShd0qnJR7A7cUas/eb3bRRWZH433l+cabad9veH4cu75skM
+	 DvIjG2PA9s4/Q==
+Date: Sun, 31 Dec 2023 00:02:32 +0000
+To: Larry Finger <Larry.Finger@lwfinger.net>
+From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH wireless 3/5] wifi: b43: Stop/wake correct queue in PIO Tx path when QoS is disabled
+Message-ID: <874jfzutm5.fsf@protonmail.com>
+In-Reply-To: <ca357d13-7da9-490f-9e69-4674c6ede057@lwfinger.net>
+References: <20231230045105.91351-1-sergeantsagara@protonmail.com> <20231230045105.91351-4-sergeantsagara@protonmail.com> <cb9dcb49-ad94-40df-9f01-a28df3daf6c3@lwfinger.net> <877ckvwk5v.fsf@protonmail.com> <ca357d13-7da9-490f-9e69-4674c6ede057@lwfinger.net>
+Feedback-ID: 26003777:user:proton
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH wireless 3/5] wifi: b43: Stop/wake correct queue in PIO Tx
- path when QoS is disabled
-Content-Language: en-US
-To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20231230045105.91351-1-sergeantsagara@protonmail.com>
- <20231230045105.91351-4-sergeantsagara@protonmail.com>
- <cb9dcb49-ad94-40df-9f01-a28df3daf6c3@lwfinger.net>
- <877ckvwk5v.fsf@protonmail.com>
-From: Larry Finger <Larry.Finger@lwfinger.net>
-In-Reply-To: <877ckvwk5v.fsf@protonmail.com>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20231230_142404_366811_5E9640FC 
-X-CRM114-Status: GOOD (  10.77  )
+X-CRM114-CacheID: sfid-20231230_160251_572637_6BECECF6 
+X-CRM114-Status: GOOD (  11.76  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -93,28 +63,37 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-On 12/30/23 13:43, Rahul Rameshbabu wrote:
-> Unfortunately, new firmware would not prevent the need to fix up the
-> code with regards to QoS being disabled via the kernel parameter or
-> using OpenFW. That said, new firmware could help us drop the fifth patch
-> in this series. I am thinking about using b43-fwcutter to extract
-> proprietary fw from a newer release of broadcom-wl to see if that makes
-> a difference. That said, I am a bit puzzled since the device I am
-> testing on released in early 2011, and I used firmware released in late
-> 2012.
-
-Unfortunately, it is very difficult to get the parameters for fwcutter from an 
-x86 binary. Some of the other architectures are easier.
-
-Larry
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+T24gU2F0LCAzMCBEZWMsIDIwMjMgMTY6MjM6NTggLTA2MDAgIkxhcnJ5IEZpbmdlciIgPExhcnJ5
+LkZpbmdlckBsd2Zpbmdlci5uZXQ+IHdyb3RlOgo+IE9uIDEyLzMwLzIzIDEzOjQzLCBSYWh1bCBS
+YW1lc2hiYWJ1IHdyb3RlOgo+PiBVbmZvcnR1bmF0ZWx5LCBuZXcgZmlybXdhcmUgd291bGQgbm90
+IHByZXZlbnQgdGhlIG5lZWQgdG8gZml4IHVwIHRoZQo+PiBjb2RlIHdpdGggcmVnYXJkcyB0byBR
+b1MgYmVpbmcgZGlzYWJsZWQgdmlhIHRoZSBrZXJuZWwgcGFyYW1ldGVyIG9yCj4+IHVzaW5nIE9w
+ZW5GVy4gVGhhdCBzYWlkLCBuZXcgZmlybXdhcmUgY291bGQgaGVscCB1cyBkcm9wIHRoZSBmaWZ0
+aCBwYXRjaAo+PiBpbiB0aGlzIHNlcmllcy4gSSBhbSB0aGlua2luZyBhYm91dCB1c2luZyBiNDMt
+ZndjdXR0ZXIgdG8gZXh0cmFjdAo+PiBwcm9wcmlldGFyeSBmdyBmcm9tIGEgbmV3ZXIgcmVsZWFz
+ZSBvZiBicm9hZGNvbS13bCB0byBzZWUgaWYgdGhhdCBtYWtlcwo+PiBhIGRpZmZlcmVuY2UuIFRo
+YXQgc2FpZCwgSSBhbSBhIGJpdCBwdXp6bGVkIHNpbmNlIHRoZSBkZXZpY2UgSSBhbQo+PiB0ZXN0
+aW5nIG9uIHJlbGVhc2VkIGluIGVhcmx5IDIwMTEsIGFuZCBJIHVzZWQgZmlybXdhcmUgcmVsZWFz
+ZWQgaW4gbGF0ZQo+PiAyMDEyLgo+Cj4gVW5mb3J0dW5hdGVseSwgaXQgaXMgdmVyeSBkaWZmaWN1
+bHQgdG8gZ2V0IHRoZSBwYXJhbWV0ZXJzIGZvciBmd2N1dHRlciBmcm9tIGFuCj4geDg2IGJpbmFy
+eS4gU29tZSBvZiB0aGUgb3RoZXIgYXJjaGl0ZWN0dXJlcyBhcmUgZWFzaWVyLgoKSnVzdCB0cmll
+ZCB0aGlzIHdpdGggdGhlIHg4NiBiaW5hcnkganVzdCBiZWNhdXNlIGFuZCByYW4gaW50byBleHRy
+YWN0aW9uCmlzc3VlcyBhcyBleHBlY3RlZC4gSSBjb3VsZCBub3QgZmluZCBvdGhlciBhcmNoaXRl
+Y3R1cmUgb3B0aW9ucyBmcm9tCkJyb2FkY29tJ3MgZG93bmxvYWQgcGFnZSwgYnV0IEkgbWF5IG5v
+dCBoYXZlIGJlZW4gbG9va2luZyB3ZWxsIGVub3VnaC4uLgoKICDina8gYjQzLWZ3Y3V0dGVyIC4v
+d2xjX2h5YnJpZC5vX3NoaXBwZWQKICBTb3JyeSwgdGhlIGlucHV0IGZpbGUgaXMgZWl0aGVyIHdy
+b25nIG9yIG5vdCBzdXBwb3J0ZWQgYnkgYjQzLWZ3Y3V0dGVyLgogIFRoaXMgZmlsZSBoYXMgYW4g
+dW5rbm93biBNRDVzdW0gNjg4OWRiZDI0YWJmODAwNmRlNWNjNmVkZGQxMzg1MTguCgogIGh0dHBz
+Oi8vd3d3LmJyb2FkY29tLmNvbS9zdXBwb3J0L2Rvd25sb2FkLXNlYXJjaD9wZz1XaXJlbGVzcytF
+bWJlZGRlZCtTb2x1dGlvbnMrYW5kK1JGK0NvbXBvbmVudHMmcGY9TGVnYWN5K1dpcmVsZXNzJnBu
+PSZwYT1Ecml2ZXImcG89JmRrPUJDTTQzMzEmcGw9Jmw9dHJ1ZQoKSSBndWVzcywgZm9yIG5vdywg
+d2UgY2FuIGtlZXAgdGhlIGV4Y2VwdGlvbiBmb3IgYmNtNDMzMSBhbmQgc2VlIGlmCmZ1dHVyZSBm
+aXJtd2FyZSBleHRyYWN0aW9ucyBoZWxwLgoKLS0KVGhhbmtzLAoKUmFodWwgUmFtZXNoYmFidQoK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmI0My1kZXYg
+bWFpbGluZyBsaXN0CmI0My1kZXZAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
+cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2I0My1kZXYK
