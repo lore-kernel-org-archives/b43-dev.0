@@ -4,63 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E195C4707B
-	for <b43-dev@archiver.kernel.org>; Wed, 10 Jan 2024 14:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 87654C4707B
+	for <b43-dev@archiver.kernel.org>; Sat, 13 Jan 2024 16:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-ID:Cc:To:References:
-	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=ARZKA/zrQFQSDVu4VGHdIzqxZySD2jHaXtpbZ0cYFIk=; b=k6pVwvJdC1FVxo
-	IgSFHZl1N4pD83kn/MqysD0ou5Xf2Fa5gIoz0bgKgj47A7sd4OS36Dao+NQek/V7g7C/UtfGexRkt
-	XHbYBdo168HFZZDBsnveu6csPOSNQgZMwD3RRqSGJoSI/ISQjQIRhdZAXQGDXsKXUlZJ44KQH7el7
-	9/FwcpICB5ZrZ62QT53VbhQ+ZRcrhCJrsSEpC/1G/rdffrQa483PEXc7cDhUZOYD6Vo1BTR5oOCph
-	ycNWvFUQPQ6oIajLMqojA/i5VRYjWn1P3JwNJJaccR/cvdXSUj0RUJAd1ddu+E96spadprqGzIDx4
-	FduJf7WICtuXm5uHvajQ==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:In-Reply-To:
+	Date:References:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=LI0CFG46YNQ4guKv/aXT5+3gGV0yRsN7jKBkY2BrxyQ=; b=uCzcb5nG2zXi8u
+	RRaWj2/MAePUgLuJD/uDGxuE9GK2f59ziHr6r9QeUQ2mXPRRgcFsUNtejhePBva5VxO4eE9mUGz6W
+	0PQYM8y3Q982Bd30Yv1fTU3TRXrj9ku7Hfld5QtgWPrTbcWLvEcfTpD6uE+2J2z6DQ8U7wGXLsJI+
+	yMvKv7bdGZFYkIT0F/nayQ7UTqgqIpRCs8ms3sjTwa1yuN9Bs5A30jS3PAxtA/Ff0i9lLOptRVu56
+	RoUO6SPIcE1T4NJMmg4wpCCmNmsCb1ctGCbXj7049L8OIlNKHK7XT1rppHCk9xqXUcfxfpsn1p1kQ
+	QfEwdRhoI5bVKInSfe+g==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.96 #2 (Red Hat Linux))
-	id 1rNa0b-00CRcU-1g;
-	Wed, 10 Jan 2024 14:56:45 +0000
-Received: from dfw.source.kernel.org ([2604:1380:4641:c500::1])
+	id 1rOhAC-005Puz-1q;
+	Sat, 13 Jan 2024 16:47:16 +0000
+Received: from dfw.source.kernel.org ([139.178.84.217])
 	by bombadil.infradead.org with esmtps (Exim 4.96 #2 (Red Hat Linux))
-	id 1rNa0T-00CRZu-1s
+	id 1rOhA3-005PuZ-3A
 	for b43-dev@lists.infradead.org;
-	Wed, 10 Jan 2024 14:56:39 +0000
+	Sat, 13 Jan 2024 16:47:09 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
-	by dfw.source.kernel.org (Postfix) with ESMTP id DBC056178A;
-	Wed, 10 Jan 2024 14:56:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6733C43394;
-	Wed, 10 Jan 2024 14:56:34 +0000 (UTC)
+	by dfw.source.kernel.org (Postfix) with ESMTP id 80CCC60B7D;
+	Sat, 13 Jan 2024 16:46:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 929E8C433C7;
+	Sat, 13 Jan 2024 16:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704898596;
-	bh=YV4MSzWqR5MrClPlCoETOF1qOvvIjjrlffKA1DQUN/o=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=YCBmA3ijqrWNy9FVp2WsGjrdjEpoafo8akysbokHW/LQepPfdSBda1Vv8h0puUnCq
-	 qAXPbplCGjx/3qvbISzlCyjcasbw50sS1hO8N2HEKLuLuRgL5YS+9HvyKa0oLnLjmp
-	 4v//2WvXsgKZQ18u5/BwfUdE4gMTXDTc/3+Qm6d91PMgxSkYcMaof5eyKf7i2K71rS
-	 cmkFN5bD1I64kd5zrnKR0NTlIkCFop2iaUeZfhy+43FToaaeEsbDsunbL0DbbNo0Gn
-	 DDX7dv010GTXk1bl8pXB5a14rmGXcIzjQpYLLEMzsp/Xhill8Zkh7i5Fzrk9PX1nHf
-	 uoqLJbFswUzKg==
-MIME-Version: 1.0
-Subject: Re: [PATCH wireless v2 1/4] wifi: b43: Stop/wake correct queue in DMA
- Tx
- path when QoS is disabled
+	s=k20201202; t=1705164396;
+	bh=VUclddjcZSmohXUG3CiQi1jaoQVq1DeF2h3vDJ15cM0=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=gJq2aJdkcuDG9gBOJkweuzqeMhuqAU2QPyebUb1kQqVYfhyYvlge5Y6HWGGnexmXf
+	 4010MJ57Uqa8naU4hMWlZ4HRMmnYs8QUK5C73K0bXtYvYhxm1cVdY1lF3pbtKWv54I
+	 rgPFo60mMj2vxShOfggXIfIsmG95e/tSdAaJgFxPLeTVedFt+QSy8LUceWpHdDuItv
+	 tYiNNOWKV7CfGN5zlAKkB5l4WPleLnLT7iYgdEjNM+UI5rqlAUleTW8j/+F5TDj3T/
+	 VvmEKMYVatzICO7F25ETsEd/+G7JS3I6/TQjOAE4sxMLtjdToqXuOcy65Ul1P1J1um
+	 SpfrazZltzCTw==
 From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20231231050300.122806-2-sergeantsagara@protonmail.com>
-References: <20231231050300.122806-2-sergeantsagara@protonmail.com>
-To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>,
- =?utf-8?q?Michael_B=C3=BCsch?= <m@bues.ch>,
- Julian Calaby <julian.calaby@gmail.com>, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org,
- Rahul Rameshbabu <sergeantsagara@protonmail.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <170489859318.471554.6341498732808881676.kvalo@kernel.org>
-Date: Wed, 10 Jan 2024 14:56:34 +0000 (UTC)
+To: Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>
+Cc: Yang Li <yang.lee@linux.alibaba.com>,  Larry.Finger@lwfinger.net,
+  linux-wireless@vger.kernel.org,  b43-dev@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  Abaci Robot <abaci@linux.alibaba.com>
+Subject: wireless: cleanup patches
+References: <20231220011209.127586-1-yang.lee@linux.alibaba.com>
+	<20231220102307.7dd1f187@barney>
+Date: Sat, 13 Jan 2024 18:46:32 +0200
+In-Reply-To: <20231220102307.7dd1f187@barney> ("Michael =?utf-8?Q?B=C3=BCs?=
+ =?utf-8?Q?ch=22's?= message of
+	"Wed, 20 Dec 2023 10:23:07 +0100")
+Message-ID: <87mst989lj.fsf_-_@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240110_065637_707515_99F91E12 
-X-CRM114-Status: GOOD (  12.99  )
+X-CRM114-CacheID: sfid-20240113_084708_083640_BEC710BC 
+X-CRM114-Status: GOOD (  19.96  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -72,129 +71,47 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Rahul Rameshbabu <sergeantsagara@protonmail.com> wrote:
-
-> When QoS is disabled, the queue priority value will not map to the correct
-> ieee80211 queue since there is only one queue. Stop/wake queue 0 when QoS
-> is disabled to prevent trying to stop/wake a non-existent queue and failing
-> to stop/wake the actual queue instantiated.
-> 
-> Log of issue before change (with kernel parameter qos=0):
->     [  +5.112651] ------------[ cut here ]------------
->     [  +0.000005] WARNING: CPU: 7 PID: 25513 at net/mac80211/util.c:449 __ieee80211_wake_queue+0xd5/0x180 [mac80211]
->     [  +0.000067] Modules linked in: b43(O) snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat xt_MASQUERADE nf_nat xfrm_user xfrm_algo xt_addrtype overlay ccm af_packet amdgpu snd_hda_codec_cirrus snd_hda_codec_generic ledtrig_audio drm_exec amdxcp gpu_sched xt_conntrack nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_rpfilter ipt_rpfilter xt_pkttype xt_LOG nf_log_syslog xt_tcpudp nft_compat nf_tables nfnetlink sch_fq_codel btusb uinput iTCO_wdt ctr btrtl intel_pmc_bxt i915 intel_rapl_msr mei_hdcp mei_pxp joydev at24 watchdog btintel atkbd libps2 serio radeon btbcm vivaldi_fmap btmtk intel_rapl_common snd_hda_codec_hdmi bluetooth uvcvideo nls_iso8859_1 applesmc nls_cp437 x86_pkg_temp_thermal snd_hda_intel intel_powerclamp vfat videobuf2_vmalloc coretemp fat snd_intel_dspcfg crc32_pclmul uvc polyval_clmulni snd_intel_sdw_acpi loop videobuf2_memops snd_hda_codec tun drm_suballoc_helper polyval_generic drm_ttm_helper drm_buddy tap ecdh_generic videobuf2_v4l2 gf128mul macv
- lan ttm ghash_clmulni_intel ecc tg3
->     [  +0.000044]  videodev bridge snd_hda_core rapl crc16 drm_display_helper cec mousedev snd_hwdep evdev intel_cstate bcm5974 hid_appleir videobuf2_common stp mac_hid libphy snd_pcm drm_kms_helper acpi_als mei_me intel_uncore llc mc snd_timer intel_gtt industrialio_triggered_buffer apple_mfi_fastcharge i2c_i801 mei snd lpc_ich agpgart ptp i2c_smbus thunderbolt apple_gmux i2c_algo_bit kfifo_buf video industrialio soundcore pps_core wmi tiny_power_button sbs sbshc button ac cordic bcma mac80211 cfg80211 ssb rfkill libarc4 kvm_intel kvm drm irqbypass fuse backlight firmware_class efi_pstore configfs efivarfs dmi_sysfs ip_tables x_tables autofs4 dm_crypt cbc encrypted_keys trusted asn1_encoder tee tpm rng_core input_leds hid_apple led_class hid_generic usbhid hid sd_mod t10_pi crc64_rocksoft crc64 crc_t10dif crct10dif_generic ahci libahci libata uhci_hcd ehci_pci ehci_hcd crct10dif_pclmul crct10dif_common sha512_ssse3 sha512_generic sha256_ssse3 sha1_ssse3 aesni_intel usbcore scsi_mo
- d libaes crypto_simd cryptd scsi_common
->     [  +0.000055]  usb_common rtc_cmos btrfs blake2b_generic libcrc32c crc32c_generic crc32c_intel xor raid6_pq dm_snapshot dm_bufio dm_mod dax [last unloaded: b43(O)]
->     [  +0.000009] CPU: 7 PID: 25513 Comm: irq/17-b43 Tainted: G        W  O       6.6.7 #1-NixOS
->     [  +0.000003] Hardware name: Apple Inc. MacBookPro8,3/Mac-942459F5819B171B, BIOS 87.0.0.0.0 06/13/2019
->     [  +0.000001] RIP: 0010:__ieee80211_wake_queue+0xd5/0x180 [mac80211]
->     [  +0.000046] Code: 00 45 85 e4 0f 85 9b 00 00 00 48 8d bd 40 09 00 00 f0 48 0f ba ad 48 09 00 00 00 72 0f 5b 5d 41 5c 41 5d 41 5e e9 cb 6d 3c d0 <0f> 0b 5b 5d 41 5c 41 5d 41 5e c3 cc cc cc cc 48 8d b4 16 94 00 00
->     [  +0.000002] RSP: 0018:ffffc90003c77d60 EFLAGS: 00010097
->     [  +0.000001] RAX: 0000000000000001 RBX: 0000000000000002 RCX: 0000000000000000
->     [  +0.000001] RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff88820b924900
->     [  +0.000002] RBP: ffff88820b924900 R08: ffffc90003c77d90 R09: 000000000003bfd0
->     [  +0.000001] R10: ffff88820b924900 R11: ffffc90003c77c68 R12: 0000000000000000
->     [  +0.000001] R13: 0000000000000000 R14: ffffc90003c77d90 R15: ffffffffc0fa6f40
->     [  +0.000001] FS:  0000000000000000(0000) GS:ffff88846fb80000(0000) knlGS:0000000000000000
->     [  +0.000001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->     [  +0.000001] CR2: 00007fafda7ae008 CR3: 000000046d220005 CR4: 00000000000606e0
->     [  +0.000002] Call Trace:
->     [  +0.000003]  <TASK>
->     [  +0.000001]  ? __ieee80211_wake_queue+0xd5/0x180 [mac80211]
->     [  +0.000044]  ? __warn+0x81/0x130
->     [  +0.000005]  ? __ieee80211_wake_queue+0xd5/0x180 [mac80211]
->     [  +0.000045]  ? report_bug+0x171/0x1a0
->     [  +0.000004]  ? handle_bug+0x41/0x70
->     [  +0.000004]  ? exc_invalid_op+0x17/0x70
->     [  +0.000003]  ? asm_exc_invalid_op+0x1a/0x20
->     [  +0.000005]  ? __ieee80211_wake_queue+0xd5/0x180 [mac80211]
->     [  +0.000043]  ieee80211_wake_queue+0x4a/0x80 [mac80211]
->     [  +0.000044]  b43_dma_handle_txstatus+0x29c/0x3a0 [b43]
->     [  +0.000016]  ? __pfx_irq_thread_fn+0x10/0x10
->     [  +0.000002]  b43_handle_txstatus+0x61/0x80 [b43]
->     [  +0.000012]  b43_interrupt_thread_handler+0x3f9/0x6b0 [b43]
->     [  +0.000011]  irq_thread_fn+0x23/0x60
->     [  +0.000002]  irq_thread+0xfe/0x1c0
->     [  +0.000002]  ? __pfx_irq_thread_dtor+0x10/0x10
->     [  +0.000001]  ? __pfx_irq_thread+0x10/0x10
->     [  +0.000001]  kthread+0xe8/0x120
->     [  +0.000003]  ? __pfx_kthread+0x10/0x10
->     [  +0.000003]  ret_from_fork+0x34/0x50
->     [  +0.000002]  ? __pfx_kthread+0x10/0x10
->     [  +0.000002]  ret_from_fork_asm+0x1b/0x30
->     [  +0.000004]  </TASK>
->     [  +0.000001] ---[ end trace 0000000000000000 ]---
-> 
->     [  +0.000065] ------------[ cut here ]------------
->     [  +0.000001] WARNING: CPU: 0 PID: 56077 at net/mac80211/util.c:514 __ieee80211_stop_queue+0xcc/0xe0 [mac80211]
->     [  +0.000077] Modules linked in: b43(O) snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat xt_MASQUERADE nf_nat xfrm_user xfrm_algo xt_addrtype overlay ccm af_packet amdgpu snd_hda_codec_cirrus snd_hda_codec_generic ledtrig_audio drm_exec amdxcp gpu_sched xt_conntrack nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_rpfilter ipt_rpfilter xt_pkttype xt_LOG nf_log_syslog xt_tcpudp nft_compat nf_tables nfnetlink sch_fq_codel btusb uinput iTCO_wdt ctr btrtl intel_pmc_bxt i915 intel_rapl_msr mei_hdcp mei_pxp joydev at24 watchdog btintel atkbd libps2 serio radeon btbcm vivaldi_fmap btmtk intel_rapl_common snd_hda_codec_hdmi bluetooth uvcvideo nls_iso8859_1 applesmc nls_cp437 x86_pkg_temp_thermal snd_hda_intel intel_powerclamp vfat videobuf2_vmalloc coretemp fat snd_intel_dspcfg crc32_pclmul uvc polyval_clmulni snd_intel_sdw_acpi loop videobuf2_memops snd_hda_codec tun drm_suballoc_helper polyval_generic drm_ttm_helper drm_buddy tap ecdh_generic videobuf2_v4l2 gf128mul macv
- lan ttm ghash_clmulni_intel ecc tg3
->     [  +0.000073]  videodev bridge snd_hda_core rapl crc16 drm_display_helper cec mousedev snd_hwdep evdev intel_cstate bcm5974 hid_appleir videobuf2_common stp mac_hid libphy snd_pcm drm_kms_helper acpi_als mei_me intel_uncore llc mc snd_timer intel_gtt industrialio_triggered_buffer apple_mfi_fastcharge i2c_i801 mei snd lpc_ich agpgart ptp i2c_smbus thunderbolt apple_gmux i2c_algo_bit kfifo_buf video industrialio soundcore pps_core wmi tiny_power_button sbs sbshc button ac cordic bcma mac80211 cfg80211 ssb rfkill libarc4 kvm_intel kvm drm irqbypass fuse backlight firmware_class efi_pstore configfs efivarfs dmi_sysfs ip_tables x_tables autofs4 dm_crypt cbc encrypted_keys trusted asn1_encoder tee tpm rng_core input_leds hid_apple led_class hid_generic usbhid hid sd_mod t10_pi crc64_rocksoft crc64 crc_t10dif crct10dif_generic ahci libahci libata uhci_hcd ehci_pci ehci_hcd crct10dif_pclmul crct10dif_common sha512_ssse3 sha512_generic sha256_ssse3 sha1_ssse3 aesni_intel usbcore scsi_mo
- d libaes crypto_simd cryptd scsi_common
->     [  +0.000084]  usb_common rtc_cmos btrfs blake2b_generic libcrc32c crc32c_generic crc32c_intel xor raid6_pq dm_snapshot dm_bufio dm_mod dax [last unloaded: b43]
->     [  +0.000012] CPU: 0 PID: 56077 Comm: kworker/u16:17 Tainted: G        W  O       6.6.7 #1-NixOS
->     [  +0.000003] Hardware name: Apple Inc. MacBookPro8,3/Mac-942459F5819B171B, BIOS 87.0.0.0.0 06/13/2019
->     [  +0.000001] Workqueue: phy7 b43_tx_work [b43]
->     [  +0.000019] RIP: 0010:__ieee80211_stop_queue+0xcc/0xe0 [mac80211]
->     [  +0.000076] Code: 74 11 48 8b 78 08 0f b7 d6 89 e9 4c 89 e6 e8 ab f4 00 00 65 ff 0d 9c b7 34 3f 0f 85 55 ff ff ff 0f 1f 44 00 00 e9 4b ff ff ff <0f> 0b 5b 5d 41 5c 41 5d c3 cc cc cc cc 0f 1f 80 00 00 00 00 90 90
->     [  +0.000002] RSP: 0000:ffffc90004157d50 EFLAGS: 00010097
->     [  +0.000002] RAX: 0000000000000001 RBX: 0000000000000002 RCX: 0000000000000000
->     [  +0.000002] RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff8882d65d0900
->     [  +0.000002] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
->     [  +0.000001] R10: 00000000000000ff R11: ffff88814d0155a0 R12: ffff8882d65d0900
->     [  +0.000002] R13: 0000000000000000 R14: ffff8881002d2800 R15: 00000000000000d0
->     [  +0.000002] FS:  0000000000000000(0000) GS:ffff88846f800000(0000) knlGS:0000000000000000
->     [  +0.000003] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->     [  +0.000002] CR2: 00007f2e8c10c880 CR3: 0000000385b66005 CR4: 00000000000606f0
->     [  +0.000002] Call Trace:
->     [  +0.000001]  <TASK>
->     [  +0.000001]  ? __ieee80211_stop_queue+0xcc/0xe0 [mac80211]
->     [  +0.000075]  ? __warn+0x81/0x130
->     [  +0.000004]  ? __ieee80211_stop_queue+0xcc/0xe0 [mac80211]
->     [  +0.000075]  ? report_bug+0x171/0x1a0
->     [  +0.000005]  ? handle_bug+0x41/0x70
->     [  +0.000003]  ? exc_invalid_op+0x17/0x70
->     [  +0.000004]  ? asm_exc_invalid_op+0x1a/0x20
->     [  +0.000004]  ? __ieee80211_stop_queue+0xcc/0xe0 [mac80211]
->     [  +0.000076]  ieee80211_stop_queue+0x36/0x50 [mac80211]
->     [  +0.000077]  b43_dma_tx+0x550/0x780 [b43]
->     [  +0.000023]  b43_tx_work+0x90/0x130 [b43]
->     [  +0.000018]  process_one_work+0x174/0x340
->     [  +0.000003]  worker_thread+0x27b/0x3a0
->     [  +0.000004]  ? __pfx_worker_thread+0x10/0x10
->     [  +0.000002]  kthread+0xe8/0x120
->     [  +0.000003]  ? __pfx_kthread+0x10/0x10
->     [  +0.000004]  ret_from_fork+0x34/0x50
->     [  +0.000002]  ? __pfx_kthread+0x10/0x10
->     [  +0.000003]  ret_from_fork_asm+0x1b/0x30
->     [  +0.000006]  </TASK>
->     [  +0.000001] ---[ end trace 0000000000000000 ]---
-> 
-> Fixes: e6f5b934fba8 ("b43: Add QOS support")
-> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-> Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
-
-4 patches applied to wireless-next.git, thanks.
-
-9636951e4468 wifi: b43: Stop/wake correct queue in DMA Tx path when QoS is disabled
-77135a38f6c2 wifi: b43: Stop/wake correct queue in PIO Tx path when QoS is disabled
-581c8967d66c wifi: b43: Stop correct queue in DMA worker when QoS is disabled
-09795bded2e7 wifi: b43: Disable QoS for bcm4331
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20231231050300.122806-2-sergeantsagara@protonmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+TWljaGFlbCBCw7xzY2ggPG1AYnVlcy5jaD4gd3JpdGVzOgoKPiBPbiBXZWQsIDIwIERlYyAyMDIz
+IDA5OjEyOjA5ICswODAwCj4gWWFuZyBMaSA8eWFuZy5sZWVAbGludXguYWxpYmFiYS5jb20+IHdy
+b3RlOgo+Cj4+IENsb3NlczogaHR0cHM6Ly9idWd6aWxsYS5vcGVuYW5vbGlzLmNuL3Nob3dfYnVn
+LmNnaT9pZD03NzgzCj4KPiBUaGlzIGxpbmsgaXMgbm90IHB1YmxpY2x5IGFjY2Vzc2libGUuCj4K
+Pj4gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDNsZWdhY3kvZG1hLmMgKysrCj4+
+IGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzbGVnYWN5L2RtYS5jIEBAIC0xNzQs
+OCArMTc0LDggQEAKPj4gc3RhdGljIHN0cnVjdCBiNDNsZWdhY3lfZG1hcmluZyAqcHJpb3JpdHlf
+dG9fdHhyaW5nKCB7Cj4+ICAJc3RydWN0IGI0M2xlZ2FjeV9kbWFyaW5nICpyaW5nOwo+PiAgCj4+
+IC0vKkZJWE1FOiBGb3Igbm93IHdlIGFsd2F5cyBydW4gb24gVFgtcmluZy0xICovCj4+IC1yZXR1
+cm4gZGV2LT5kbWEudHhfcmluZzE7Cj4+ICsJLypGSVhNRTogRm9yIG5vdyB3ZSBhbHdheXMgcnVu
+IG9uIFRYLXJpbmctMSAqLwo+PiArCXJldHVybiBkZXYtPmRtYS50eF9yaW5nMTsKPj4gIAo+PiAg
+CS8qIDAgPSBoaWdoZXN0IHByaW9yaXR5ICovCj4+ICAJc3dpdGNoIChxdWV1ZV9wcmlvcml0eSkg
+ewo+Cj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoLgo+Cj4gQnV0IGFjdHVhbGx5LCBJIGFtIGtpbmQg
+b2YgYW5ub3llZCBieSB0aGUgY29uc3RhbnQgc3RyZWFtIG9mIHdoaXRlc3BhY2UKPiBmaXhpbmcg
+YW5kIGRlYWQgY29kZSByZW1vdmFsIGFuZCBvdGhlciB0cml2aWFsIGNoYW5nZXMgdG8gdGhpcyBs
+ZWdhY3kKPiBkcml2ZXIuCj4KPiBJdCBkb2VzIG5vdCBpbXByb3ZlIHRoZSBjb2RlIHRvIGFkZCB0
+d28gdGFicyB0byB0aGlzIF9hbmNpZW50XyBjb2RlLgo+Cj4gQW5kIEkgY2FuIGFscmVhZHkgc2Vl
+IHRoZSBuZXh0IHBhdGNoIGNvbWluZyB0aGF0IHJlbW92ZXMgdGhlIGRlYWQgY29kZQo+IGFmdGVy
+IHRoaXMgRklYTUUgcmV0dXJuLiBBbmQgdGhlbiB0aGUgbmV4dCBwYXRjaCB3aWxsIGNvbWUgdG8g
+cmVtb3ZlCj4gdGhpcyBmdW5jdGlvbiBhbHRvZ2V0aGVyLCBhbmQgc28gb24gYW5kIHNvIG9uLgo+
+Cj4gVGhpcyBkcml2ZXIgaGFzIGEgX2xvdF8gb2Ygc3VjaCBjb2RlLCBiZWNhdXNlIGl0IGlzIGJh
+c2VkIG9uIHJldmVyc2UKPiBlbmdpbmVlcmVkIGtub3dsZWRnZSB3aXRoIG1hbnkgbWFueSB1bmtu
+b3ducy4KPgo+IElNTyB0aGlzIGp1c3QgY3JlYXRlcyBhZGRpdGlvbmFsIG1haW50ZW5hbmNlIHdv
+cmsgYW5kIHByZXNzdXJlIG9uIG91cgo+IG1haW50YWluZXJzIGZvciBubyBnb29kIHJlYXNvbi4K
+ClllYWgsIHRoZSBjbGVhbnVwIHBhdGNoZXMgYXJlIGEgcHJvYmxlbS4gRXZlbiBtb3JlIHNvIHRo
+YXQgdGhlcmUgY2FuIGJlCnBlb3BsZSB3aG8gZGVsaWJlcmF0ZWx5IHRyeSB0byBzdWJtaXQgY29t
+cHJvbWlzZWQgY29kZToKCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyMTA1MDUxMDA1
+LjQ5QkZBQkNFQGtlZXNjb29rLwoKYnJ0ZnMgaGFzIGEgcHJldHR5IGdvb2Qgc3VtbWFyeSBhYm91
+dCB0aGVpciBmZWVsaW5ncyB0b3dhcmRzIGNsZWFudXAKcGF0Y2hlczoKCmh0dHBzOi8vYnRyZnMu
+cmVhZHRoZWRvY3MuaW8vZW4vbGF0ZXN0L2Rldi9EZXZlbG9wZXItcy1GQVEuaHRtbCNob3ctbm90
+LXRvLXN0YXJ0CgpKb2hhbm5lcyBhbmQgbWUgaGF2ZSBiZWVuIHRhbGtpbmcgdGhhdCB3ZSBzaG91
+bGQgd3JpdGUgc29tZXRoaW5nIHNpbWlsYXIKZm9yIHdpcmVsZXNzLiBNYXliZSB3ZSBzaG91bGQg
+c3RhcnQgYnkgYWRkaW5nIHRoYXQgbGluayB0byBvdXIKZG9jdW1lbnRhdGlvbiA6KQoKLS0gCmh0
+dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC13aXJlbGVzcy9saXN0LwoK
+aHR0cHM6Ly93aXJlbGVzcy53aWtpLmtlcm5lbC5vcmcvZW4vZGV2ZWxvcGVycy9kb2N1bWVudGF0
+aW9uL3N1Ym1pdHRpbmdwYXRjaGVzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2
+Cg==
