@@ -4,56 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D9C47C47422
-	for <b43-dev@archiver.kernel.org>; Mon, 29 Jan 2024 09:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EA086C48297
+	for <b43-dev@archiver.kernel.org>; Fri,  9 Feb 2024 04:05:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
-	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
-	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=Tk9qvIFOt6zmBTabiiVk7KZiGXaBPtLJDuCjIiZhjto=; b=dlzFshp7cG/8nb
-	KYSRPNYrwWqFUDzS5XGxulRFLmmhy1ucNZSbF3irY0FbsAlC2gyNNKgyjM7avO+v1TR7/ncROvhXa
-	8IaFWNZE9ZBj/JsSLwuLG631JM2Yhlmxj9RDscf+YWW51rt2QWMcFJ7I6D4cro7tGVngWZMvja/Aa
-	OZNegZgjvSkLvIIKDDy09U4a+HDr5TWtmoJuFoAD6XZgzAmS4mPtb2kXAgEGami3RYfGNqSnia2Ub
-	FdvNE+ea55Rp8xp0NMA5UUtI27K3nbItb7lr0g5f2Aszda9RtIb1wm+TX+qWY5L1ilBU0ggHXU7o9
-	EW0qmT1yw39h4lVXQ91Q==;
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
+	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=ZwZJj2+xJIWesPJ5d+V4X2HXYWYjS27IGLyF2dN+yCk=; b=0Nl2Q8vh67ZDDK
+	LOtrPUAwVUy6KhFXwr5jLClzytoYnTvZx30XVj0ERUPPCHJx0IOVo86dkmtT1e4eypK431srqduWk
+	wgd7RLmvSUAHtr8uZSw1ZT7bkTD/oI+BdsO5nYnuvnSVj3MB1bUxpEK+Bfnf51K83/Wvk91V+quSP
+	zvsdPgsyujLswfTsTuPf5HMQT9HH+C8c/mnB7SXkmvMRvFNnnHgD1sli+l+K2xKtbQ6+XqgMUlYNE
+	KU+Vn8TIPjp0zLlk88C4hJjBoSho9K3y9MzlKMDF2GcfBWUsrPyWirdXl46WwdpFRyGvFDvyN6Sty
+	skbjFRZXASlL1nuXyL3A==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rUNun-0000000C0UL-2ClN;
-	Mon, 29 Jan 2024 09:26:53 +0000
-Received: from [162.19.155.126] (helo=mail.commercesolutions.pl)
+	id 1rYI8I-0000000G5K4-367I;
+	Fri, 09 Feb 2024 04:04:58 +0000
+Received: from r9221.ps.combzmail.jp ([160.16.65.130])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rUNug-0000000C0Q9-1JRT
+	id 1rYI8B-0000000G5JD-2Man
 	for b43-dev@lists.infradead.org;
-	Mon, 29 Jan 2024 09:26:49 +0000
-Received: by mail.commercesolutions.pl (Postfix, from userid 1002)
-	id 24962229C0; Mon, 29 Jan 2024 09:26:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=commercesolutions.pl;
-	s=mail; t=1706520399;
-	bh=PcMncQpBfIZCnTOfZJY5G1G+gaLn4c9QPfFvoXrE4rA=;
-	h=Date:From:To:Subject:From;
-	b=QsVdfjCCNyn1iC3UlnXid32ch6q8f06itDmXl6XTMdTCxPiQUR9dE87g+LualUgj4
-	 oI6okz8S6e/KaycWq+LtePBgQqaNQSjImrhOZ/RZfc4Knvqe1YqzE9lbRQLLcB/8/u
-	 +EimE97lbJlJELm2MlPIaAbBJI2oI6F02E9jhp+XlAkUB+vnDT4R9EGI/94OvUSTwY
-	 hWfPIDLPHI1AFvyfHdg0kaEK1mMh+sFiWrkCREoKEVyfwoYhkuS3mHxLFdyGVO+/up
-	 16DAGYWNSBbR7NhohWRABV24fesDETvg8L+OnXNRV4ze7f0KOoeNeRyQYhJSOpWvhY
-	 9PyDrjSk+arEw==
-Received: by mail.commercesolutions.pl for <b43-dev@lists.infradead.org>; Mon, 29 Jan 2024 09:25:58 GMT
-Message-ID: <20240129091233-0.1.ba.2gif8.0.j8knsrqixy@commercesolutions.pl>
-Date: Mon, 29 Jan 2024 09:25:58 GMT
-From: "Kamil Tralewski" <kamil.tralewski@commercesolutions.pl>
-To: <b43-dev@lists.infradead.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.commercesolutions.pl
-MIME-Version: 1.0
+	Fri, 09 Feb 2024 04:04:53 +0000
+Received: by r9221.ps.combzmail.jp (Postfix, from userid 99)
+	id 71EDCE373E; Fri,  9 Feb 2024 13:01:56 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9221.ps.combzmail.jp 71EDCE373E
+To: b43-dev@lists.infradead.org
+From: info@ibj-bridal.jp
+X-Ip: 4152791755161634
+X-Ip-source: k85gj7p648dnsa2wu0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCPzc1LDt2NkgkSCQ3JEYkTjdrOidBakNMGyhC?=
+ =?ISO-2022-JP?B?GyRCPWobKEI=?=
+Mime-Version: 1.0
+X-MagazineId: p62w
+X-uId: 6762234742485858624264351033
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20240209040445.71EDCE373E@r9221.ps.combzmail.jp>
+Date: Fri,  9 Feb 2024 13:01:56 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240129_012647_127583_4E663904 
-X-CRM114-Status: UNSURE (   1.88  )
+X-CRM114-CacheID: sfid-20240208_200451_807218_C8245668 
+X-CRM114-Status: UNSURE (   0.81  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
-Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -62,18 +59,100 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKemFwb3puYcWCZW0gc2nEmSB6IFBhxYRzdHdhIG9mZXJ0xIUgaSB6IHBy
-enlqZW1ub8WbY2nEhSBwcnp5em5hasSZLCDFvGUgcHJ6eWNpxIVnYSB1d2FnxJkgaSB6YWNoxJlj
-YSBkbyBkYWxzenljaCByb3ptw7N3LiAKClBvbXnFm2xhxYJlbSwgxbxlIG1vxbxlIG3Ds2fFgmJ5
-bSBtaWXEhyBzd8OzaiB3a8WCYWQgdyBQYcWEc3R3YSByb3p3w7NqIGkgcG9tw7NjIGRvdHJ6ZcSH
-IHogdMSFIG9mZXJ0xIUgZG8gd2nEmWtzemVnbyBncm9uYSBvZGJpb3Jjw7N3LiBQb3p5Y2pvbnVq
-xJkgc3Ryb255IHd3dywgZHppxJlraSBjemVtdSBnZW5lcnVqxIUgxZt3aWV0bnkgcnVjaCB3IHNp
-ZWNpLgoKTW/FvGVteSBwb3Jvem1hd2lhxIcgdyBuYWpibGnFvHN6eW0gY3phc2llPwoKUG96ZHJh
-d2lhbQpLYW1pbCBUcmFsZXdza2kKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0My1kZXZAbGlzdHMuaW5mcmFkZWFk
-Lm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2I0My1kZXYK
+　―　婚活ビジネス 説明会　―
+
+
+いつもお世話になります。
+
+
+新規事業として低リスクでスタートできる
+
+“　結婚相談所ビジネス　”
+
+の説明会ご案内につきご連絡差し上げました。
+
+
+設備投資もいらず、本業のスタッフが兼務も
+できるので、個人の独立開業だけでなく
+新規事業として取り組む企業も増えています。
+
+
+説明会では詳しいビジネスモデルや
+収益性などをお伝えします。
+
+
+新たな事業をお考えの方は
+この機会に是非ご参加ください。
+
+
+　▼　セミナー詳細情報＆申込はこちら　▼
+　 　 https://ibj-bridal.biz/2300/
+
+
+　2月度　全国　各会場開催
+　―――――――――――――――――――――
+
+
+　◇　婚活ビジネス　説明会
+　設備投資ゼロ／本業スタッフ兼務
+　ミニマムスタートできる「 結婚相談所 」
+
+
+　◇　主催
+　株式会社IBJ
+　(加盟相談所数:4,125社／登録会員数:85,854名)
+
+
+　◇　2月度　会場
+
+　　　北海道／秋田
+　　　東京／神奈川／埼玉／栃木
+　　　新潟／石川／福井
+　　　愛知／静岡
+　　　大阪
+　　　岡山／広島／鳥取／島根／香川
+　　　福岡／佐賀／熊本／宮崎／鹿児島
+
+
+　　　※ 全日程・会場とも内容は同じです。
+　　　※ 日程・会場の詳細情報は
+　　　　 セミナーページにてご確認ください。
+
+
+　▼　セミナー詳細情報＆申込はこちら　▼
+　 　 https://ibj-bridal.biz/2300/
+
+
+　―――――――――――――――――――――
+　 参加費：　無料
+　 対　象：　法人／個人　どちらでも可能です
+　―――――――――――――――――――――
+
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+　株式会社IBJ　セミナー事務局
+　東京都新宿区西新宿1-23-7
+　新宿ファーストウエスト 12F
+　080-7027-7621
+
+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥
+　本メールのご不要な方には大変
+　ご迷惑をおかけいたしました。
+　今後、ご案内が不要な方は、お手数ですが
+　「配信不要」とご返信いただくか、
+　下記URLより配信停止登録を承っておりますので
+　お手続きをお願いいたします。
+　　https://ibj-bridal.biz/mail/
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
