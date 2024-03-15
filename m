@@ -4,49 +4,153 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B373FC54E60
-	for <b43-dev@archiver.kernel.org>; Thu, 14 Mar 2024 18:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1A95AC54E60
+	for <b43-dev@archiver.kernel.org>; Fri, 15 Mar 2024 01:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=t6jSyffuH9f6ZydL9VEh0B2lJ0Y6epYVXS+cEL9wgTE=; b=Nk9d9lenB7aMS0GPZ4/47vgizm
-	Ubn1/jyMgCLuIPHAy32bRGjdpnjcMTcIdmlDxqMZ9CpXIglNrXwU8EHgdpknoHlKcfmgh4Dfw4N0g
-	E8OnPHlR2grh3EkuPqzSMYLhHgFBfnzweTGSMT6Hqd3UAuG1uqqEBhJVIP7bJH/QliHRqnIMV0ijV
-	OsLMg//lWsLFVnBkA9x8QKCFucd4pL68OsEzqRfavPy7f29t4qAOmDXaQjVHQznyP0Jynb2MkZFwN
-	SJ+D9LerR1z2aqPVlsrpTyhsgW7xhhlcXEkV77euGxLNQKxwidmI4O9QO1EKGG6wpAATzyx0xcGrS
-	HNGV5hyQ==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Content-ID:In-Reply-To:
+	References:Message-ID:Date:Subject:CC:To:From:Reply-To:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=w/wkYAq9+qAY1fErgrL0o0Zf/4MUdrwuTHD99fbnlhg=; b=4gGhubWATRdzao
+	dySaft62CHMTgHaYsaZwW8GkNCVdszTJQToJm1X05ZVUj6t0Xpq496X5/qL8Ax+GeA0h6wQfDvrR0
+	v7Sfl1tE3U1cI8kjWk/7snIOUq1RZ1XkEqjOPmJTxdBaG2nNBLCk2UpsctpXIXgqiWCLwFuVPOoa1
+	3B1l7VWmkDTuUNx06oM1w+oYntKuziGhsIxMutyFmPNOnfUTe4hRpQ9dyeoYZRMmd8GyP+xtH1NgC
+	+n2fHTWoMyPlFPwRzBErFLX19umH+Su+TARJb6Kw0CVr1nl/mKgFa53T5jueiNE6EUKfNcu26wPrR
+	Dh+T+xK5nmhw+arRQg9w==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rkptO-0000000FK3p-0NUV;
-	Thu, 14 Mar 2024 18:33:26 +0000
-Received: from bues.ch ([2a01:138:9005::1:4])
+	id 1rkwBL-0000000GGRd-0mna;
+	Fri, 15 Mar 2024 01:16:23 +0000
+Received: from esa9.fujitsucc.c3s2.iphmx.com ([68.232.159.90])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rkptL-0000000FK1s-1z1O
+	id 1rkwBH-0000000GGPu-0vIX
 	for b43-dev@lists.infradead.org;
-	Thu, 14 Mar 2024 18:33:25 +0000
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1rkpt2-0012GJ-0E;
-	Thu, 14 Mar 2024 19:33:03 +0100
-Date: Thu, 14 Mar 2024 19:32:15 +0100
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: linux-kernel@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
- Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org
+	Fri, 15 Mar 2024 01:16:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1710465380; x=1742001380;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=DVxDsBflY6kZ69SFyzdl5ZAMx6899FxhXPUbMXpzdu8=;
+  b=fsZLTeElSzV+2sv2XFHnU29kMT0GU/gPGOELWl1oeNWJtgah6uP/nFJS
+   qRnFHpFyj1Kmd8A/2FgWtAnStpSK3OCr6/7cR1S7YuVWtIL4NAq1VA0/D
+   pXq5pP3Kd0YxaqG1aCAHtg3LbJMPa/QlR0OBjJBWVK9frRhSzd83y3bML
+   khTdelZSqjtU6ZB/WUvQGUR+tAdjgImat1LppEmocATTe1SxLQa8SC3HU
+   D18HKS3UK1dlmWMhtBwzgL6hzPisfJ4vloFFQjnB+EGJSml5oMPUpx436
+   yCVqBATH1LYbmyhetK16biObKNPP6BN/tdmAuoDL+jwsM6c7TSp/Bmrhh
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11013"; a="114208371"
+X-IronPort-AV: E=Sophos;i="6.07,127,1708354800"; 
+   d="scan'208";a="114208371"
+Received: from mail-tycjpn01lp2168.outbound.protection.outlook.com (HELO JPN01-TYC-obe.outbound.protection.outlook.com) ([104.47.23.168])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2024 10:16:12 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JB92qP4hUohurSZcrS0y9qFbxtSCjea0JcER6sjkzobaTeotg5iqlmDL/U0LwNUCwDkHSs71d7VW/aSTabqE+mgr3KeyzAC4K6Xo5TR99SVVV243jxCHQL7atYrmtOxlfRQQcn4nlmiHlBXLngveFqzoFqv35kjFXzWYFq7Wu1AZykmpVFTmgtC1Mqns9t3sWDeXKiI71dp+mxqu4BX/Biusgdkn3rrRsBIli1QOvZSRfzgm5hf1kcgtFfSTzfc4hXwBXvdo31yOmbLOowV2gc+c1VZ55msf3gOU6vaX+lckTnueHO9uXQeJdSDAvesN82qA37gYzwncIbiljO59sA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DVxDsBflY6kZ69SFyzdl5ZAMx6899FxhXPUbMXpzdu8=;
+ b=EFMf6qkgFfvZ9AkN1M0Ji/3jlS4LsX1Hmp9q1RfGEFK6YCk+8wDECI9rUqLcdLKSCCSxc+yA+UNqv3PRRHZh+f3G69NOB5/KEaO+IVxEWI5GnbBl0d/xGACGcFswBKOAZSyCt589FNl5WemPxZNAPAC7iwRBaDv9GDQolaPIC18VraQniY1eXj2Yb4oYDcB6P/LjPiaTKVhfv1PUgSDIp0tXSBlAl0iqLOjEPTK4fYIKgWObxju/cE3xW6kswYbrapjZVA+hFOqucnlkum7BEILCaHroAZUUxE3EGectl5PJLnlO3lgf3EwkZ4yLYg0YAdR43MzcNpCjyblnHx0qmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+Received: from TYAPR01MB5818.jpnprd01.prod.outlook.com
+ (2603:1096:404:8059::10) by OS3PR01MB9739.jpnprd01.prod.outlook.com
+ (2603:1096:604:1ed::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.18; Fri, 15 Mar
+ 2024 01:16:07 +0000
+Received: from TYAPR01MB5818.jpnprd01.prod.outlook.com
+ ([fe80::c52a:473a:a14f:7f0e]) by TYAPR01MB5818.jpnprd01.prod.outlook.com
+ ([fe80::c52a:473a:a14f:7f0e%3]) with mapi id 15.20.7386.017; Fri, 15 Mar 2024
+ 01:16:07 +0000
+From: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+To: =?utf-8?B?TWljaGFlbCBCw7xzY2g=?= <m@bues.ch>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Larry
+ Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
 Subject: Re: [PATCH 2/3] net: b43: Convert sprintf/snprintf to sysfs_emit
-Message-ID: <20240314193215.74aac927@barney>
-In-Reply-To: <20240314094823.1324898-2-lizhijian@fujitsu.com>
+Thread-Topic: [PATCH 2/3] net: b43: Convert sprintf/snprintf to sysfs_emit
+Thread-Index: AQHadfTI2s7BUux6ekGPp1x+w9aTsLE3j/aAgABw1QA=
+Date: Fri, 15 Mar 2024 01:16:07 +0000
+Message-ID: <191ee62c-ab5e-498c-86d1-951771c9834f@fujitsu.com>
 References: <20240314094823.1324898-1-lizhijian@fujitsu.com>
-	<20240314094823.1324898-2-lizhijian@fujitsu.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+ <20240314094823.1324898-2-lizhijian@fujitsu.com>
+ <20240314193215.74aac927@barney>
+In-Reply-To: <20240314193215.74aac927@barney>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYAPR01MB5818:EE_|OS3PR01MB9739:EE_
+x-ms-office365-filtering-correlation-id: 7cd895e6-4d50-4bae-d91a-08dc448d7e29
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jZkJWhPZErGLqy+wDT0mD16z9mWqDOPx0rKIJ0ILs75/1BTrv/VD7NQad+Wn4aWb55ZAzhHEfIjEShuwVbXWxt3gXvnqKVX2d1BC+RVG9cttDO6/quT4y8hYT5DpffvK+Ztz59j1YHP38k3Civr1bdh7YYpmShmLWGqyqNB+McQNrUFMH77rgqkLmPk6kJZCnFO4mbuZq1kXW0jRJ4ojpvYFvhjwJkMo/64QeWOoPb/YFHoe+7y9x3R2NuZ/C2d1P8V9h7W6DwUkitntleRG+YLXaTIcqICNUVnVKgJscVcVC72dEObMJpB2d9KUNeBrBhZdcM61svcdsBXeABv05BPPFKZ52ISg3dOYn3e+L3vYmcNh7E62qsu6O8NF2qiGGgwmChv0krBBbLFmbo/c9/JOHlMfHJxcIAA+seVQX7oK+1lcG00t2o3HttxBWRzI9MTEJiuW7MMPH7/kQ6612rM/B7NKZmyT+ptMyYRns5+4zMXqWs0kzNtVXPsjSvS1anpos7ybHPaqcql6J/ruiTxsBgDr/Lt2nkNg/PLQIWaOX9bP1q/MiNJmGqkorKWnQuhJH6z/aBFaRJ4uRqw8rxEnxKoY7DtkFBEI8HPPItwX9eH5+7aP6hAfLVJ99ifROuA1+xZ4NedKMVg8u2GCNF2FtQiki03OMTqrm+tiHQIO5v16OPRfjQoCgyx5ummsIicAjC3DodcOfWjl+AkunzZBZ29rWIIgZDp0bti59lnsXUBEs8sS/FtbFMC/qIou
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB5818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(1580799018)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?anNsVWthUHpiUDdBRVZiM2J1Mk5VbkpLVUZJd2dTbnpWOVcxVTZlejlrYXFM?=
+ =?utf-8?B?SWhFQ0xwaVJkT2xUbGJqY3VHSXZrWmlWaXpNc2R4WmdXNWF6NmNaeUtrblM3?=
+ =?utf-8?B?OHk0NGVzVnhTZDZFODgxZGZTeEpLb01XY3Axd2hmWU9xRlFLMTBCbk9QUmM4?=
+ =?utf-8?B?QndsN2ZvSFhCbktUaENuK0N4bDFrWlNaaUM3VmluUWJLRmVscGdLZUpqcGEv?=
+ =?utf-8?B?dHAxMjdBQUp2aWFxR05SV2ZDMGVPaEpianZ5dUJ2YXRHbTkyRmY0ODJaKzRw?=
+ =?utf-8?B?SVR0ankwaFVDMGhidUQ3WFdORm96NjIrNW1BOVFSVlJKQmQ3NnFUbnlpaEZj?=
+ =?utf-8?B?SHJWQms2aWRuVk5qaU15Z0pGVFdRTDRnZU1ERXlBdC9oaW5NSXhVdTBzNWhD?=
+ =?utf-8?B?UjdGTkx6VjVuMlhYNnZsQVlZbmtyNE9EaWZsQmZDRDVOc1ZGa0sxTmVTS3U3?=
+ =?utf-8?B?a2UrUzdaT0JGNU9BVzluM0hPSUFRSWc2RkdXRjhnaUc5OXNOOVVCRzFjSkla?=
+ =?utf-8?B?YnJwNTJ2U0dZZk1idStaay82ZEFjQjlmWFJWc0wwYnZFa2F2VWJ2UE5xdVVX?=
+ =?utf-8?B?Q2p2OVhFWDVLNmwzcFJvekx3N0Y0ZlVlUThKWExIUEhPNXJKMS8yVWhvN29Z?=
+ =?utf-8?B?NmorZHBNSURkbDRYN3RIZEl0UURBUHphOXBDNmdXZjkrQ1lHU21oZG5ybWhr?=
+ =?utf-8?B?K1lMaE9uUUhVWjJIckR1bEcrQnpSakp3US9JNUpKeEg3aDcrcXBuL0tDaWpB?=
+ =?utf-8?B?bHFYZlNEZzBFamFhUzF0Wm9NYUQ3Z1lJenM1ZzdVaEl4YWFKWGp2OUFRWm1k?=
+ =?utf-8?B?MkZXeDdSWGl3UllscXN2NkdHRnZ6aDBqd1pNd0JCR0dTbWFEaDdPYTJ1RldF?=
+ =?utf-8?B?aU1JTkVzQXZNc3Uybi9CcExvdTVuUXI0cW9jTXpFUzZvZ2RHSGVqUVRNVXNV?=
+ =?utf-8?B?Nzk2R0R5SWhQWUFrbVE5cDYxYVliMGs3WVVDc3prSmxOanl6Ry9XZlNMTDlR?=
+ =?utf-8?B?ZnJHY2VzZVorbXovdU9QbE90Z1FDUTlrM1BKWTVBelZKdEhJbFBGR0h1NVZr?=
+ =?utf-8?B?UWRwSUxIaWNydGhSNllHT2N2cTNtNGp0S1p6blpmUnJvSEg3cVorbGczV2d1?=
+ =?utf-8?B?OFBEcGw1R3N6NUJRZVAzYk54RnMzSnRDMlI3cDJyVFpaOXJMSDBhNURCL09m?=
+ =?utf-8?B?Rit2ay82SUV3YmZPc1FobjJKbUlVZHVlcXF6clhuUzA3YUFwTENBK3VTQTcx?=
+ =?utf-8?B?THF0aktvMG5QcFNGbGpxSGx4VkZUQ0t5M091ZVBMSlBLbEk4Qm4wbjAwREdr?=
+ =?utf-8?B?QnlJeEg2K3pxQXZ0NldkOGVNSk5raXVhaHFjOWQxSHE4Wkx0bjNLRTZWcmk1?=
+ =?utf-8?B?allVWnVGNWRlb3lzOUNqYlVEYWFaanNnWVZVeVd1anFUS1o3bXQzSjB1QjVa?=
+ =?utf-8?B?ZHRONlgzQjY1K2R6a2c2M2ZVSE8vb1VCbFFDekk0aHY1T01DYWpMVE1TM2JO?=
+ =?utf-8?B?M0VUMkEvbTRHZGFUMWR6Y20wL0N3WHJzZlZHVUF3VHAweDllN3hOVjVNSkY1?=
+ =?utf-8?B?bUVGV2VxN3FZbFpPcFd2UVN3b09oZUcxc29ScVRtbmZGbitNWXZvMDJkVVlr?=
+ =?utf-8?B?OTN3RW1PaWYzcUozMDRoWW1yOXJDVkRtMnpQem4wRGd2SWM3RXJxekZ1MDlI?=
+ =?utf-8?B?NUFIL0lTd3RUcFVGRUhBNG5ZRkpxYkUycmNDL2hTWEUrc3dUcnlDRWlHYkZD?=
+ =?utf-8?B?UWc0Q2taTlhOZEhKK2JBMFRkZjRzcVFDKzN6eCtIMjhqRHZrQjlpbGN4V2ZO?=
+ =?utf-8?B?NnNkMVFyZTYwZm54VHpWVlkyKzZhTVdvQktWekhVOXlWZDY0MXpRSXNBNUlr?=
+ =?utf-8?B?NDdYendLZlFpNWNXYWJsQ3k0dnovS1FlVC9lcjRnR3FJZXlIcXdGUW5TWnl5?=
+ =?utf-8?B?Q2pDRmZuR0J0NW50OHRPc0llTWdiMHZaZFFsRjBSY3QzTXptb2ZBVS9IK29m?=
+ =?utf-8?B?bmJsMndmL3A3M21SbW9KdkJ3Yms3WThJeFR2Y3krNEcyS2YvZE51bDh3SXpC?=
+ =?utf-8?B?VWdVRDlyR0w1a2RzMnR1bWtNME54azlkNVFGOW8yc1JvejZGT1NIVEY1eEwy?=
+ =?utf-8?B?WnBGUTgvYnZKaWVMMEdET3pRT2xlZE9UQTlFWnZVR0FEQ3pNV1BYbGxPbkhB?=
+ =?utf-8?B?S2c9PQ==?=
+Content-ID: <B96E88789B20AB479E041DAFFEF02B7A@jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 3d1X+zHGnFg69TUxaRpnEzJI8UbHVfIJ/bYkVZlm6NVSHdcgYmJNY3uk3Cc4pUoB3srIQUoy7H+l54OvHEGXNUcbJIEQP7rDuT3YMVFmgJCT4SrhLjrxWOZY3zxiMxCOl5F4ZwnGIqF/XWIDCgq5rKksdyB2OOd16zPzDU/sZvCQuSvn3AZ4N8zsoES2YBwgCrgBbtnimU3q3Ex0gXfo5RkOzTMhyQ1WqX02WhhU8DQ2fAfGlWq1iisIl9KWxir5cDwOaPDEhW8d4Fr5My7RK/gMPOd0McSwpt1jJGhF8T9WhaL3QqxwXNB5InSsOM3ZIELe1e54vpoFYHNQVckZww2SejIOhtC03atbvMnmwTcK/u9wh326Xqhr2WKAyg3xVJ+te95XM2Cck2YadEfVXUd4ooJmBN1mZL3NBqwKg3GREYcFSzLeL9cxsOS6KoNExIXWUOwtmrDs0bHrY0FgF/m9nRcIjfPV9oLrxsnXdxdmuR8pdPQigeILBnhdSlYkuri3Wy0j6q7k5jfiFvj3rAZwFfA7jNbxYpXAZ0izlUKhlbR5JbFmz95aINMkPFYI39Gv20QOGtAmNG+7/4IiW4ma5zoc6hBOqK6HMESxYx/ioyZ1GvBjGqjKrK4TzPPr
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB5818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cd895e6-4d50-4bae-d91a-08dc448d7e29
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Mar 2024 01:16:07.7125
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XiRXqLJqOC6XRQA+7SiDlzGUs0bOQBSxtLBgbb4UJAttYmht8hGF7OppLG33/QtmA0MEdu6F2kjXwIkjsPy6SQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9739
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240314_113323_537133_7FFFFB84 
-X-CRM114-Status: UNSURE (   7.36  )
+X-CRM114-CacheID: sfid-20240314_181619_558358_F4FCE5D7 
+X-CRM114-Status: UNSURE (   8.33  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -59,80 +163,26 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============3545970955380634420=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
---===============3545970955380634420==
-Content-Type: multipart/signed; boundary="Sig_/lQpcmYwR9PeRUh3dx42=9yH";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-
---Sig_/lQpcmYwR9PeRUh3dx42=9yH
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 14 Mar 2024 17:48:22 +0800
-Li Zhijian <lizhijian@fujitsu.com> wrote:
-
->  	case B43legacy_INTERFMODE_NONE:
-> -		count =3D snprintf(buf, PAGE_SIZE, "0 (No Interference"
-> -				 " Mitigation)\n");
-> +		count =3D sysfs_emit(buf, "0 (No Interference" " Mitigation)\n");
->  		break;
-
->  	if (wldev->short_preamble)
-> -		count =3D snprintf(buf, PAGE_SIZE, "1 (Short Preamble"
-> -				 " enabled)\n");
-> +		count =3D sysfs_emit(buf, "1 (Short Preamble" " enabled)\n");
->  	else
-> -		count =3D snprintf(buf, PAGE_SIZE, "0 (Short Preamble"
-> -				 " disabled)\n");
-> +		count =3D sysfs_emit(buf, "0 (Short Preamble" " disabled)\n");
-> =20
-
-Please either leave the line break in place, or remove the string continuat=
-ion.
-
-
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/lQpcmYwR9PeRUh3dx42=9yH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmXzQq8ACgkQ9TK+HZCN
-iw4/lg/+JasVyWxAy739KHA2FtfgNev/rh0gwiIISYBJd72k164TItI6CoOK/vFE
-RaufsC77oYVzcIpuGitLAgyGnl0voXywJPnMSsce57eqqXnjeblJpXP2IWmpykGv
-2VBmXKY8SwwtOwjvYfRxCCT48n0uRNCtflLrbIlD5nVYVLDGwcDpFAz1Eas27vfy
-xHCf3FtCL5Hu0kC3y0Y0GZHTNRH/fOd8dVJ/6QBjRyB8i7f7FpTdRW8t9M8TJbW4
-FcfiVnisM8WgC5T4dTzsZ776EaUHsxHM2XV78oywcfEr/Shj8OOQGoIqbAj7oyRI
-4QgdMmQjJnTJkJVUpIxYxm+nUmGK8zz3HhNyX3dBTUi2wfidOSs2H2b8NI7VZLeB
-1FD3sc7CR7OQFhfsoDr6oDHNDug1ryun67hXK1AY+Qtr35Mz+C7l1YfiyzSKc8og
-bTJAyFsBttDjbMYsHqxY9PEKrmRC9ubZWAcfz6/6Ir9RC7SHh8WNrX8F7v3BIWxy
-N5BUVjjppQw5SiFgYUny1fNM1gHvzy9IScUIiv21zMb1ei02GmU4qw/pAe0oIKCP
-pQFV4BJhHtBgI7aL3vIXe2yYRO9fNdxt5h4TJ6ZWVD1QCFzKbC7MihxHCtLZakma
-nzc+UwY/uniy5LtQmwQirsrBr+5Zc2WSrVvziK2sD0tzYFRp9w0=
-=1+TG
------END PGP SIGNATURE-----
-
---Sig_/lQpcmYwR9PeRUh3dx42=9yH--
-
-
---===============3545970955380634420==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
-
---===============3545970955380634420==--
-
+DQoNCk9uIDE1LzAzLzIwMjQgMDI6MzIsIE1pY2hhZWwgQsO8c2NoIHdyb3RlOg0KPiBPbiBUaHUs
+IDE0IE1hciAyMDI0IDE3OjQ4OjIyICswODAwDQo+IExpIFpoaWppYW4gPGxpemhpamlhbkBmdWpp
+dHN1LmNvbT4gd3JvdGU6DQo+IA0KPj4gICAJY2FzZSBCNDNsZWdhY3lfSU5URVJGTU9ERV9OT05F
+Og0KPj4gLQkJY291bnQgPSBzbnByaW50ZihidWYsIFBBR0VfU0laRSwgIjAgKE5vIEludGVyZmVy
+ZW5jZSINCj4+IC0JCQkJICIgTWl0aWdhdGlvbilcbiIpOw0KPj4gKwkJY291bnQgPSBzeXNmc19l
+bWl0KGJ1ZiwgIjAgKE5vIEludGVyZmVyZW5jZSIgIiBNaXRpZ2F0aW9uKVxuIik7DQo+PiAgIAkJ
+YnJlYWs7DQo+IA0KPj4gICAJaWYgKHdsZGV2LT5zaG9ydF9wcmVhbWJsZSkNCj4+IC0JCWNvdW50
+ID0gc25wcmludGYoYnVmLCBQQUdFX1NJWkUsICIxIChTaG9ydCBQcmVhbWJsZSINCj4+IC0JCQkJ
+ICIgZW5hYmxlZClcbiIpOw0KPj4gKwkJY291bnQgPSBzeXNmc19lbWl0KGJ1ZiwgIjEgKFNob3J0
+IFByZWFtYmxlIiAiIGVuYWJsZWQpXG4iKTsNCj4+ICAgCWVsc2UNCj4+IC0JCWNvdW50ID0gc25w
+cmludGYoYnVmLCBQQUdFX1NJWkUsICIwIChTaG9ydCBQcmVhbWJsZSINCj4+IC0JCQkJICIgZGlz
+YWJsZWQpXG4iKTsNCj4+ICsJCWNvdW50ID0gc3lzZnNfZW1pdChidWYsICIwIChTaG9ydCBQcmVh
+bWJsZSIgIiBkaXNhYmxlZClcbiIpOw0KPj4gICANCj4gDQo+IFBsZWFzZSBlaXRoZXIgbGVhdmUg
+dGhlIGxpbmUgYnJlYWsgaW4gcGxhY2UsIG9yIHJlbW92ZSB0aGUgc3RyaW5nIGNvbnRpbnVhdGlv
+bi4NCg0KR29vZCBjYXRjaCwgaSB3aWxsIHVwZGF0ZSBpdC4NCg0KDQpUaGFua3MNClpoaWppYW4N
+Cg0KPiANCj4gDQo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
+cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
