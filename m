@@ -4,59 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9FEBFC54E68
-	for <b43-dev@archiver.kernel.org>; Thu, 21 Mar 2024 15:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7CFCCD11DB
+	for <b43-dev@archiver.kernel.org>; Tue, 26 Mar 2024 09:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-ID:Cc:To:References:
-	In-Reply-To:From:Subject:MIME-Version:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=H3I97cDsSt7JV4N4sacYGNTTH5yuXKiKr5ulUwcd/tU=; b=EPAdgX0myp6WTD
-	35n9grEUpPtsh7gIDoOKfnLmpYb3u5vhPq/pfhqIapnjCbqV/O2DJZ+GsE9rvUAvcJYuo4BS9+lBe
-	3vSRCsxi0TT9qv0CXQvz1XE9xKslUHsYiB1QGavZHjgWnZEViJl/VrdvVEdn6Ik7quzCUPbkZJM5r
-	cIKZGChQvG2q3sE5TgYnyyZa4MwbMg63pzht+v3v/KPtMKsMOpHPvnXCVq5IJBz8DxZ8TJxhI4cZo
-	99NXaj6ejhj9gFZ67ytZQQOFz8C32Lj/PmgFMUntr1RIYvD7pkFgZ+WDn1AORxB0BT0sy0nLLTpK7
-	b5eEnYw7RYSNA1eIDUVw==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
+	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
+	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=BeklD/dSi7PydDGa+1pxr2KjtXQNg7nqmWG7EfUIHag=; b=KtP/lrp7nPhHwU
+	c8ZHPVxdcSPTK8QW/7wMG9vXW6Cte3GidtSWx0kywRI9vwSeTxv/x9jYWU8NZvQ7DKMejnCIAtvhZ
+	MJ89ATS7156PLokrZ3Zi6x4UsySWGk9XeoM/JKHPRGc2ITRDRPi8uh7bie9ujULzkrA4dAmoWxVDd
+	bHIp8JFNQtr84KsQOrxTFtD6ZN5gWERgGy/MgZ5DiETIIHu4qsKyWPenxglXn+MRbex1nMFAAG90e
+	SeBJb9BKVtXEnq/YecyMN0hWwhfnfVGie4bDEB8UbieJ/5aLPNcU/Vf8+R/Y/c7pKILHkfNdhbYjg
+	OdRHUa0UZRIW7AtCfjbg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rnK1d-00000003Pcb-0ao3;
-	Thu, 21 Mar 2024 15:08:13 +0000
-Received: from sin.source.kernel.org ([2604:1380:40e1:4800::1])
+	id 1rp2ji-00000003jXN-2r94;
+	Tue, 26 Mar 2024 09:04:50 +0000
+Received: from mail.venturevista.pl ([162.19.205.13])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rnK1X-00000003PbT-22Ic
+	id 1rp2jc-00000003jVs-1yFM
 	for b43-dev@lists.infradead.org;
-	Thu, 21 Mar 2024 15:08:09 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
-	by sin.source.kernel.org (Postfix) with ESMTP id 1916DCE1385;
-	Thu, 21 Mar 2024 15:08:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065E3C43399;
-	Thu, 21 Mar 2024 15:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711033684;
-	bh=hLsN1wuBSXuii/uxujeNF1gsp0KfDr8KW6XetaBIe2U=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=b7lmdoFcrvtwHpkxNoQKmHgZvuDlkmrTHvQ4xHJkxH3U8SIsiZqpS2coFYDQ/jdSf
-	 UOMW+iJZUmsCxufcGYN2kqPHfI85m0DGI5TYoh711gGoIF/GJumwCcvPUiwq0pulr+
-	 P+jDZcmiZu5ei12PpbSz9kVMYU98jAc4c9QSnwOUuD8aA1EQBUqzH96UGZfH+EaKeM
-	 lr7HHknPQ3z5hfdu8Z/rYvBfdtrRy8YVbXcGPODm54/YFY+t+glAHVJJ6QPwX0HGR3
-	 C4WET+4NiM6H1bGYDDep8zp+GW9jhGAPsf3WZli0vxuYsylnhdOJoHBkVozgrcZKIE
-	 35vB9o2t21LYg==
+	Tue, 26 Mar 2024 09:04:46 +0000
+Received: by mail.venturevista.pl (Postfix, from userid 1002)
+	id 9E6A12506C; Tue, 26 Mar 2024 08:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturevista.pl;
+	s=mail; t=1711443358;
+	bh=DjNALEe96gRlzA4ffLINmOD2oI1cqzpVK/E4I+uckvQ=;
+	h=Date:From:To:Subject:From;
+	b=Iitc6Ev5FiJIcGhxVu+FUK8nZ6taKSjdO1+SpBMJ/bq+D1XPge+5Biea1nbHcZV15
+	 L91lpmLHMkZhE6H4vLZ9/XGOGGfkCdleTaDzRDMcflTx+q1nO4tnBstmMdxS91sBg9
+	 aDWxbixyQ+DCmCM6K35363u/oKrIZ3fN9gwALYbIbXMe9ZXmSFTIkgZtfqHjDeSzCb
+	 xLOQWsphrlpMPCi9g2TA/wU5v3E2cjzU8VjU1HH+Da9NrQAC8lcWm3RAjtiY4jx1Y2
+	 WmjHke7r9i/iySEvk368Lhrn5dnAhLTxG2gVNFh1UsW6jRG6IK/imUW83C/36HffqJ
+	 xNABwEkmXBTmQ==
+Received: by mail.venturevista.pl for <b43-dev@lists.infradead.org>; Tue, 26 Mar 2024 08:55:39 GMT
+Message-ID: <20240326074500-0.1.9d.eta8.0.f9q9bah5g8@venturevista.pl>
+Date: Tue, 26 Mar 2024 08:55:39 GMT
+From: "Wojciech Mroczka" <wojciech.mroczka@venturevista.pl>
+To: <b43-dev@lists.infradead.org>
+Subject: Instalacja pv
+X-Mailer: mail.venturevista.pl
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/3] wifi: b43: Convert sprintf/snprintf to sysfs_emit
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240315055211.1347548-2-lizhijian@fujitsu.com>
-References: <20240315055211.1347548-2-lizhijian@fujitsu.com>
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: linux-kernel@vger.kernel.org, Li Zhijian <lizhijian@fujitsu.com>,
- Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171103368135.103792.8592804467389574911.kvalo@kernel.org>
-Date: Thu, 21 Mar 2024 15:08:02 +0000 (UTC)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240321_080807_817570_34299F95 
-X-CRM114-Status: GOOD (  10.45  )
+X-CRM114-CacheID: sfid-20240326_020444_670325_28D78850 
+X-CRM114-Status: UNSURE (   1.77  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -68,46 +62,18 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Li Zhijian <lizhijian@fujitsu.com> wrote:
-
-> Per filesystems/sysfs.rst, show() should only use sysfs_emit()
-> or sysfs_emit_at() when formatting the value to be returned to user space.
-> 
-> coccinelle complains that there are still a couple of functions that use
-> snprintf(). Convert them to sysfs_emit().
-> 
-> sprintf() will be converted as weel if they have.
-> 
-> Generally, this patch is generated by
-> make coccicheck M=<path/to/file> MODE=patch \
-> COCCI=scripts/coccinelle/api/device_attr_show.cocci
-> 
-> No functional change intended
-> 
-> CC: Larry Finger <Larry.Finger@lwfinger.net>
-> CC: Kalle Valo <kvalo@kernel.org>
-> CC: linux-wireless@vger.kernel.org
-> CC: b43-dev@lists.infradead.org
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-
-2 patches applied to wireless-next.git, thanks.
-
-6db5c15c8b6a wifi: b43: Convert sprintf/snprintf to sysfs_emit
-48be5774b21b wifi: ti: Convert sprintf/snprintf to sysfs_emit
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240315055211.1347548-2-lizhijian@fujitsu.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+RHppZcWEIGRvYnJ5LAoKY3p5IHPEhSBQYcWEc3R3byBvdHdhcmNpIG5hIG5pZXpvYm93acSFenVq
+xIVjxIUgcm96bW93xJkgbmEgdGVtYXQgZm90b3dvbHRhaWtpPwoKSmFrbyBmaXJtYSBzcGVjamFs
+aXp1asSFY2Egc2nEmSB3IGluc3RhbGFjamkgaSBzZXJ3aXNpZSBuYWpsZXBzenljaCBqYWtvxZtj
+aW93byBwYW5lbGkgc8WCb25lY3pueWNoIG5hIHJ5bmt1IGNoY2lhxYJieW0gcHJ6ZWRzdGF3acSH
+IHByb3BvenljasSZLCBqYWvEhSB3c3DDs2xuaWUgeiB6ZXNwb8WCZW0gcHJ6eWdvdG93YWxpxZtt
+eSBkbGEgUGHFhHN0d2Egb2JpZWt0dS4KCkLEmWTEmSB3ZHppxJljem55IHphIHdpYWRvbW/Fm8SH
+IG9kIFBhxYRzdHdhIGN6eSBtb8W8ZW15IHBvcm96bWF3aWHEhwoKClBvemRyYXdpYW0KV29qY2ll
+Y2ggTXJvY3prYQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
