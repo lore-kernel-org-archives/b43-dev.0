@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7CFCCD11DB
-	for <b43-dev@archiver.kernel.org>; Tue, 26 Mar 2024 09:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2E99CD1288
+	for <b43-dev@archiver.kernel.org>; Fri, 29 Mar 2024 08:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=BeklD/dSi7PydDGa+1pxr2KjtXQNg7nqmWG7EfUIHag=; b=KtP/lrp7nPhHwU
-	c8ZHPVxdcSPTK8QW/7wMG9vXW6Cte3GidtSWx0kywRI9vwSeTxv/x9jYWU8NZvQ7DKMejnCIAtvhZ
-	MJ89ATS7156PLokrZ3Zi6x4UsySWGk9XeoM/JKHPRGc2ITRDRPi8uh7bie9ujULzkrA4dAmoWxVDd
-	bHIp8JFNQtr84KsQOrxTFtD6ZN5gWERgGy/MgZ5DiETIIHu4qsKyWPenxglXn+MRbex1nMFAAG90e
-	SeBJb9BKVtXEnq/YecyMN0hWwhfnfVGie4bDEB8UbieJ/5aLPNcU/Vf8+R/Y/c7pKILHkfNdhbYjg
-	OdRHUa0UZRIW7AtCfjbg==;
+	List-Owner; bh=uJbJHngCtapVcTcnMU+XMmyzGucPG0yfaftEZPAopM0=; b=MxeZ2BKRVUPjEM
+	4hqLfIuepmEkWIZfn+qaSauz9z0BX+4+SGVeNYcZ7dVuVCrybM/zsfp96TrMWWbVC5DFPcOgbTuoq
+	/UNUJKV3ENcFyDhDLhNvt+tSo29xRNSmIJy69/7xf+VDDuyy0ADdIn8R7bu8QvqeojAAsq3N1J3YC
+	7CTB418cAuWkhP/TPOyZrqgbHBSax0QjkE0y/5LDaziwtCVNu6IScRWZ7/0Vict/dgPSuLQGBBjaI
+	SCJtdfIDEoDzGrQeqZlzVEgjU2c5SsYzfQWfU+9xmO6RQvKNaStIB2OIi+UNkzBTEg9MfUSCDvqMQ
+	78VK6cOWot+UTlT0L5yQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rp2ji-00000003jXN-2r94;
-	Tue, 26 Mar 2024 09:04:50 +0000
-Received: from mail.venturevista.pl ([162.19.205.13])
+	id 1rq7kf-0000000HLnd-3iB0;
+	Fri, 29 Mar 2024 08:38:17 +0000
+Received: from mail.venturelabo.com ([217.61.16.210])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rp2jc-00000003jVs-1yFM
+	id 1rq7kb-0000000HLnB-0Ig2
 	for b43-dev@lists.infradead.org;
-	Tue, 26 Mar 2024 09:04:46 +0000
-Received: by mail.venturevista.pl (Postfix, from userid 1002)
-	id 9E6A12506C; Tue, 26 Mar 2024 08:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturevista.pl;
-	s=mail; t=1711443358;
-	bh=DjNALEe96gRlzA4ffLINmOD2oI1cqzpVK/E4I+uckvQ=;
+	Fri, 29 Mar 2024 08:38:14 +0000
+Received: by mail.venturelabo.com (Postfix, from userid 1002)
+	id 73FE083038; Fri, 29 Mar 2024 09:30:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelabo.com;
+	s=mail; t=1711701060;
+	bh=oVYciwbxp9yZz27tJe420FcSGVopAaIKXnmPDsbSoXg=;
 	h=Date:From:To:Subject:From;
-	b=Iitc6Ev5FiJIcGhxVu+FUK8nZ6taKSjdO1+SpBMJ/bq+D1XPge+5Biea1nbHcZV15
-	 L91lpmLHMkZhE6H4vLZ9/XGOGGfkCdleTaDzRDMcflTx+q1nO4tnBstmMdxS91sBg9
-	 aDWxbixyQ+DCmCM6K35363u/oKrIZ3fN9gwALYbIbXMe9ZXmSFTIkgZtfqHjDeSzCb
-	 xLOQWsphrlpMPCi9g2TA/wU5v3E2cjzU8VjU1HH+Da9NrQAC8lcWm3RAjtiY4jx1Y2
-	 WmjHke7r9i/iySEvk368Lhrn5dnAhLTxG2gVNFh1UsW6jRG6IK/imUW83C/36HffqJ
-	 xNABwEkmXBTmQ==
-Received: by mail.venturevista.pl for <b43-dev@lists.infradead.org>; Tue, 26 Mar 2024 08:55:39 GMT
-Message-ID: <20240326074500-0.1.9d.eta8.0.f9q9bah5g8@venturevista.pl>
-Date: Tue, 26 Mar 2024 08:55:39 GMT
-From: "Wojciech Mroczka" <wojciech.mroczka@venturevista.pl>
+	b=V9FnxOnKI1/rO55igOHiECVJQqBcz/qRZypawfu8gZRkdUUSMCVi8pqX0DEHts47M
+	 yQwt5AjBwE9DwgSBCCLk5aZtOxZo0+DT9tbW/zG3xCwiwZgyc+dr9JUM6Lli+LFCvE
+	 Rxi31kjTfCKY+/zrwU7qxz6Rw9XmI2CQSJuVs13OysZjkiKvjTJ2ice4jYSzmz/l7v
+	 5C6Z+IcKCEeNJCZ2mX9a+lM7rQm8WrrDCouEY9owmFarC7jDz5l6qHQtXejF8OJ5GN
+	 OW7u3unxYV1vJ3ickxJk/UUYQyYl4LM57IAEJIdhRg9T16MZgYsccUkIW/B7glgSaK
+	 6T2uZsvHMC/1g==
+Received: by mail.venturelabo.com for <b43-dev@lists.infradead.org>; Fri, 29 Mar 2024 08:30:37 GMT
+Message-ID: <20240329084500-0.1.1g.3mcz.0.mlgakeyb9n@venturelabo.com>
+Date: Fri, 29 Mar 2024 08:30:37 GMT
+From: "Hugh Felton" <hugh.felton@venturelabo.com>
 To: <b43-dev@lists.infradead.org>
-Subject: Instalacja pv
-X-Mailer: mail.venturevista.pl
+Subject: Tailored educational solutions.
+X-Mailer: mail.venturelabo.com
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240326_020444_670325_28D78850 
-X-CRM114-Status: UNSURE (   1.77  )
+X-CRM114-CacheID: sfid-20240329_013813_277947_4DB92FBE 
+X-CRM114-Status: UNSURE (   2.92  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -62,18 +62,30 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKY3p5IHPEhSBQYcWEc3R3byBvdHdhcmNpIG5hIG5pZXpvYm93acSFenVq
-xIVjxIUgcm96bW93xJkgbmEgdGVtYXQgZm90b3dvbHRhaWtpPwoKSmFrbyBmaXJtYSBzcGVjamFs
-aXp1asSFY2Egc2nEmSB3IGluc3RhbGFjamkgaSBzZXJ3aXNpZSBuYWpsZXBzenljaCBqYWtvxZtj
-aW93byBwYW5lbGkgc8WCb25lY3pueWNoIG5hIHJ5bmt1IGNoY2lhxYJieW0gcHJ6ZWRzdGF3acSH
-IHByb3BvenljasSZLCBqYWvEhSB3c3DDs2xuaWUgeiB6ZXNwb8WCZW0gcHJ6eWdvdG93YWxpxZtt
-eSBkbGEgUGHFhHN0d2Egb2JpZWt0dS4KCkLEmWTEmSB3ZHppxJljem55IHphIHdpYWRvbW/Fm8SH
-IG9kIFBhxYRzdHdhIGN6eSBtb8W8ZW15IHBvcm96bWF3aWHEhwoKClBvemRyYXdpYW0KV29qY2ll
-Y2ggTXJvY3prYQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
-Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
+Hi,
+
+We support curriculum creators, scientific equipment providers, and textbook publishers in delivering innovative and effective educational tools.
+
+With over 92 years of experience in creating educational products for students and teachers, our presence in international markets allows us to share our expertise from the perspective of various needs and challenges.
+
+Our solutions enrich the teaching process of STEM subjects, increase student engagement, and improve learning outcomes.
+
+We offer a wide range of products, starting from laboratory equipment (biology, chemistry, physics) for all educational levels, to biological specimens (live and preserved organisms), anatomical models, laboratory chemicals, scientific equipment, and ready-made sets for working with students in lessons.
+
+Our curriculum programs tailored for elementary schools, middle schools, and higher education institutions provide support on multiple fronts, allowing for utilization in various educational environments, including remote learning.
+
+Could I present how our products can contribute to the development of your company?
+
+
+Best regards
+Hugh Felton
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
