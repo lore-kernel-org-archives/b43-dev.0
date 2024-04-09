@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2E99CD1288
-	for <b43-dev@archiver.kernel.org>; Fri, 29 Mar 2024 08:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 56D17C67861
+	for <b43-dev@archiver.kernel.org>; Tue,  9 Apr 2024 08:24:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=uJbJHngCtapVcTcnMU+XMmyzGucPG0yfaftEZPAopM0=; b=MxeZ2BKRVUPjEM
-	4hqLfIuepmEkWIZfn+qaSauz9z0BX+4+SGVeNYcZ7dVuVCrybM/zsfp96TrMWWbVC5DFPcOgbTuoq
-	/UNUJKV3ENcFyDhDLhNvt+tSo29xRNSmIJy69/7xf+VDDuyy0ADdIn8R7bu8QvqeojAAsq3N1J3YC
-	7CTB418cAuWkhP/TPOyZrqgbHBSax0QjkE0y/5LDaziwtCVNu6IScRWZ7/0Vict/dgPSuLQGBBjaI
-	SCJtdfIDEoDzGrQeqZlzVEgjU2c5SsYzfQWfU+9xmO6RQvKNaStIB2OIi+UNkzBTEg9MfUSCDvqMQ
-	78VK6cOWot+UTlT0L5yQ==;
+	List-Owner; bh=mrjNdmaF1YyhQEBcagSgeP2yBMvcXDfpkeED8Z7oUr4=; b=SJv8QSe0LdSTcC
+	9cc+NSQZaAVd+ZOpdOE08KK9HFbnacaLQtMy/BSW2WtxZt/nPaUpoS0v6Rn2B5S2gW6zjbKmBuYP+
+	8k12aRK4uYjSCVavUryyStSbN5UvG1r2Js3AvqdFutgKMwxSrfYGOyZtiDvPS2wDAfv9HTZW6sH3+
+	Mo5b6Jp6hjbaJKOmY3P8QS6ZgwVlE5ag93yC3mhemDCZuTSm0d0/7amvrogGi7aKMYQwiK6+6e3Rj
+	XCjyjbnwEI/DV+iTkcmbgktGb1S8Xc5K5gXhmuvo/tDNaTKsFqOJ1YgERaExb9HLsbATgBP2wx2R9
+	cP2qtX0leEUPb9nDy3Ig==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rq7kf-0000000HLnd-3iB0;
-	Fri, 29 Mar 2024 08:38:17 +0000
-Received: from mail.venturelabo.com ([217.61.16.210])
+	id 1ru6ls-00000000wT3-1oNH;
+	Tue, 09 Apr 2024 08:24:00 +0000
+Received: from mail.thrivehub.pl ([164.132.48.43])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rq7kb-0000000HLnB-0Ig2
+	id 1ru6li-00000000wQ6-1lZb
 	for b43-dev@lists.infradead.org;
-	Fri, 29 Mar 2024 08:38:14 +0000
-Received: by mail.venturelabo.com (Postfix, from userid 1002)
-	id 73FE083038; Fri, 29 Mar 2024 09:30:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelabo.com;
-	s=mail; t=1711701060;
-	bh=oVYciwbxp9yZz27tJe420FcSGVopAaIKXnmPDsbSoXg=;
+	Tue, 09 Apr 2024 08:23:52 +0000
+Received: by mail.thrivehub.pl (Postfix, from userid 1002)
+	id E9CAF25DF3; Tue,  9 Apr 2024 07:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=thrivehub.pl; s=mail;
+	t=1712649388; bh=m3ZUCTPRVLoDFM+cXi7VhHW+xNF3eUdGHrj1eDbLwQI=;
 	h=Date:From:To:Subject:From;
-	b=V9FnxOnKI1/rO55igOHiECVJQqBcz/qRZypawfu8gZRkdUUSMCVi8pqX0DEHts47M
-	 yQwt5AjBwE9DwgSBCCLk5aZtOxZo0+DT9tbW/zG3xCwiwZgyc+dr9JUM6Lli+LFCvE
-	 Rxi31kjTfCKY+/zrwU7qxz6Rw9XmI2CQSJuVs13OysZjkiKvjTJ2ice4jYSzmz/l7v
-	 5C6Z+IcKCEeNJCZ2mX9a+lM7rQm8WrrDCouEY9owmFarC7jDz5l6qHQtXejF8OJ5GN
-	 OW7u3unxYV1vJ3ickxJk/UUYQyYl4LM57IAEJIdhRg9T16MZgYsccUkIW/B7glgSaK
-	 6T2uZsvHMC/1g==
-Received: by mail.venturelabo.com for <b43-dev@lists.infradead.org>; Fri, 29 Mar 2024 08:30:37 GMT
-Message-ID: <20240329084500-0.1.1g.3mcz.0.mlgakeyb9n@venturelabo.com>
-Date: Fri, 29 Mar 2024 08:30:37 GMT
-From: "Hugh Felton" <hugh.felton@venturelabo.com>
+	b=Qi61eI6WopDX5wzoWSE24ofrDRIeDQELk0qBZxl8uYdG5/s7KGzhyl4daSS1khp2J
+	 DwxRXJPnWND7o7A6txSPdDztD7YlqztgHNeZ9/QehduRcM9fDBNYWhKZCvsZItKd2O
+	 F+DDy3EUYFg5sPZk5xp05b0YCXCKNYpa9kVaZ4rY2VejWI6Rtk1gVGrhAqtiI+TsUh
+	 VP+bln+eTrgrt5meq37vDU6XVcYlI/6QItcbZ2EO1Xj+3ZxB+6Wph9meopiiE1b81g
+	 Eref/JR7fkJHMyZZ5a+X1R2xEDW89jLASOjr48t2Ft62sDn32IC+IOmDVdsx5sc2hA
+	 8fYSVQqwN0pFg==
+Received: by mail.thrivehub.pl for <b43-dev@lists.infradead.org>; Tue,  9 Apr 2024 07:55:33 GMT
+Message-ID: <20240409064500-0.1.5o.2ixts.0.i71ojbdmbl@thrivehub.pl>
+Date: Tue,  9 Apr 2024 07:55:33 GMT
+From: "Szymon Jankowski" <szymon.jankowski@thrivehub.pl>
 To: <b43-dev@lists.infradead.org>
-Subject: Tailored educational solutions.
-X-Mailer: mail.venturelabo.com
+Subject: Zapytanie ofertowe 
+X-Mailer: mail.thrivehub.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240329_013813_277947_4DB92FBE 
-X-CRM114-Status: UNSURE (   2.92  )
+X-CRM114-CacheID: sfid-20240409_012351_194910_7817D5AB 
+X-CRM114-Status: UNSURE (   2.15  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -62,30 +61,16 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Hi,
-
-We support curriculum creators, scientific equipment providers, and textbook publishers in delivering innovative and effective educational tools.
-
-With over 92 years of experience in creating educational products for students and teachers, our presence in international markets allows us to share our expertise from the perspective of various needs and challenges.
-
-Our solutions enrich the teaching process of STEM subjects, increase student engagement, and improve learning outcomes.
-
-We offer a wide range of products, starting from laboratory equipment (biology, chemistry, physics) for all educational levels, to biological specimens (live and preserved organisms), anatomical models, laboratory chemicals, scientific equipment, and ready-made sets for working with students in lessons.
-
-Our curriculum programs tailored for elementary schools, middle schools, and higher education institutions provide support on multiple fronts, allowing for utilization in various educational environments, including remote learning.
-
-Could I present how our products can contribute to the development of your company?
-
-
-Best regards
-Hugh Felton
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+RHppZcWEIGRvYnJ5LAoKUG96d29sacWCZW0gc29iaWUgbmEga29udGFrdCwgcG9uaWV3YcW8IGpl
+c3RlbSB6YWludGVyZXNvd2FueSB3ZXJ5ZmlrYWNqxIUgbW/FvGxpd2/Fm2NpIG5hd2nEhXphbmlh
+IHdzcMOzxYJwcmFjeS4KCldzcGllcmFteSBmaXJteSB3IHBvenlza2l3YW5pdSBub3d5Y2gga2xp
+ZW50w7N3IGJpem5lc293eWNoLgoKQ3p5IG1vxbxlbXkgcG9yb3ptYXdpYcSHIHcgY2VsdSBwcnpl
+ZHN0YXdpZW5pYSBzemN6ZWfDs8WCb3d5Y2ggaW5mb3JtYWNqaT8gCgoKUG96ZHJhd2lhbQpTenlt
+b24gSmFua293c2tpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
+cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
