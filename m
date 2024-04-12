@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 56D17C67861
-	for <b43-dev@archiver.kernel.org>; Tue,  9 Apr 2024 08:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 95323C4345F
+	for <b43-dev@archiver.kernel.org>; Fri, 12 Apr 2024 07:46:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=mrjNdmaF1YyhQEBcagSgeP2yBMvcXDfpkeED8Z7oUr4=; b=SJv8QSe0LdSTcC
-	9cc+NSQZaAVd+ZOpdOE08KK9HFbnacaLQtMy/BSW2WtxZt/nPaUpoS0v6Rn2B5S2gW6zjbKmBuYP+
-	8k12aRK4uYjSCVavUryyStSbN5UvG1r2Js3AvqdFutgKMwxSrfYGOyZtiDvPS2wDAfv9HTZW6sH3+
-	Mo5b6Jp6hjbaJKOmY3P8QS6ZgwVlE5ag93yC3mhemDCZuTSm0d0/7amvrogGi7aKMYQwiK6+6e3Rj
-	XCjyjbnwEI/DV+iTkcmbgktGb1S8Xc5K5gXhmuvo/tDNaTKsFqOJ1YgERaExb9HLsbATgBP2wx2R9
-	cP2qtX0leEUPb9nDy3Ig==;
+	List-Owner; bh=BeklD/dSi7PydDGa+1pxr2KjtXQNg7nqmWG7EfUIHag=; b=WWto+Oeb7trAfH
+	nXjNfnOmOyI7oCpR8wXFgrqVMRdW5ylBUKyeu6luu97elamOqKhdNqnAxnrjHi0oqqGvfDgz0kKT8
+	54rR96scbYf6brZMjUAKQiZhtgVEwtKuCUtLOEqJ0t2b7goGceB830Up+w6rZ/3iJffZgTnMsLLXp
+	vmzigHuYQsmG8O3gUlY3aWywBEBItuOffVmb0XZiCoCGBMDJb0Y7gY0ZiGB7ybsczkrru+eiowHq6
+	fEAeXDkmI0Hh71i4Ex2hr/81lHnb7GNgg4s1EIIjQ8WLa2BNRI831oGaSEWC1nnVwlDvJqfMackON
+	fCA4RfxP34K45PwPb15g==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ru6ls-00000000wT3-1oNH;
-	Tue, 09 Apr 2024 08:24:00 +0000
-Received: from mail.thrivehub.pl ([164.132.48.43])
+	id 1rvBcJ-0000000FuUc-47xm;
+	Fri, 12 Apr 2024 07:46:35 +0000
+Received: from mail.venturevista.pl ([162.19.205.13])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ru6li-00000000wQ6-1lZb
+	id 1rvBcD-0000000FuTr-1tdJ
 	for b43-dev@lists.infradead.org;
-	Tue, 09 Apr 2024 08:23:52 +0000
-Received: by mail.thrivehub.pl (Postfix, from userid 1002)
-	id E9CAF25DF3; Tue,  9 Apr 2024 07:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=thrivehub.pl; s=mail;
-	t=1712649388; bh=m3ZUCTPRVLoDFM+cXi7VhHW+xNF3eUdGHrj1eDbLwQI=;
+	Fri, 12 Apr 2024 07:46:31 +0000
+Received: by mail.venturevista.pl (Postfix, from userid 1002)
+	id 7BCCD2516F; Fri, 12 Apr 2024 09:46:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturevista.pl;
+	s=mail; t=1712907983;
+	bh=DjNALEe96gRlzA4ffLINmOD2oI1cqzpVK/E4I+uckvQ=;
 	h=Date:From:To:Subject:From;
-	b=Qi61eI6WopDX5wzoWSE24ofrDRIeDQELk0qBZxl8uYdG5/s7KGzhyl4daSS1khp2J
-	 DwxRXJPnWND7o7A6txSPdDztD7YlqztgHNeZ9/QehduRcM9fDBNYWhKZCvsZItKd2O
-	 F+DDy3EUYFg5sPZk5xp05b0YCXCKNYpa9kVaZ4rY2VejWI6Rtk1gVGrhAqtiI+TsUh
-	 VP+bln+eTrgrt5meq37vDU6XVcYlI/6QItcbZ2EO1Xj+3ZxB+6Wph9meopiiE1b81g
-	 Eref/JR7fkJHMyZZ5a+X1R2xEDW89jLASOjr48t2Ft62sDn32IC+IOmDVdsx5sc2hA
-	 8fYSVQqwN0pFg==
-Received: by mail.thrivehub.pl for <b43-dev@lists.infradead.org>; Tue,  9 Apr 2024 07:55:33 GMT
-Message-ID: <20240409064500-0.1.5o.2ixts.0.i71ojbdmbl@thrivehub.pl>
-Date: Tue,  9 Apr 2024 07:55:33 GMT
-From: "Szymon Jankowski" <szymon.jankowski@thrivehub.pl>
+	b=jDvPWMS7AoQFK3bx8Tt23pU/hSUDwPv/3LaFyeuDpDK6iai7xd/GZlGn5/4Gj919I
+	 de1OfiaQbYe1BtG+NOyUqw1VsijjbSQLVGUvTveCKeS70rnXcOPZ8N3dyfAXZbt9Ce
+	 ZRNMvTkLf7bjI6cTm5IBuR5QfETxbb+vMveu9QGIOq+S2LcI4Xitq8tLtNwwPPfKzB
+	 59C0g4gzXa54QuZjdkClmVm+AN/uA8YIAexUItwE4AO0wWED0JKmI5hzTzyF08BgHh
+	 E+FUeTMcy7IiNvAXi6DQzP/8Bf3PKj5ZLw1tWGlFtfvl1perPlV1OsDzpk6Qw5FpUH
+	 zjOuRbxAZ3Mow==
+Received: by mail.venturevista.pl for <b43-dev@lists.infradead.org>; Fri, 12 Apr 2024 07:46:18 GMT
+Message-ID: <20240412084500-0.1.9p.eta8.0.emj284cdnq@venturevista.pl>
+Date: Fri, 12 Apr 2024 07:46:18 GMT
+From: "Wojciech Mroczka" <wojciech.mroczka@venturevista.pl>
 To: <b43-dev@lists.infradead.org>
-Subject: Zapytanie ofertowe 
-X-Mailer: mail.thrivehub.pl
+Subject: Instalacja pv
+X-Mailer: mail.venturevista.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240409_012351_194910_7817D5AB 
-X-CRM114-Status: UNSURE (   2.15  )
+X-CRM114-CacheID: sfid-20240412_004630_305798_80E53D2D 
+X-CRM114-Status: UNSURE (   0.75  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -66,11 +67,13 @@ Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKUG96d29sacWCZW0gc29iaWUgbmEga29udGFrdCwgcG9uaWV3YcW8IGpl
-c3RlbSB6YWludGVyZXNvd2FueSB3ZXJ5ZmlrYWNqxIUgbW/FvGxpd2/Fm2NpIG5hd2nEhXphbmlh
-IHdzcMOzxYJwcmFjeS4KCldzcGllcmFteSBmaXJteSB3IHBvenlza2l3YW5pdSBub3d5Y2gga2xp
-ZW50w7N3IGJpem5lc293eWNoLgoKQ3p5IG1vxbxlbXkgcG9yb3ptYXdpYcSHIHcgY2VsdSBwcnpl
-ZHN0YXdpZW5pYSBzemN6ZWfDs8WCb3d5Y2ggaW5mb3JtYWNqaT8gCgoKUG96ZHJhd2lhbQpTenlt
-b24gSmFua293c2tpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
-cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
+RHppZcWEIGRvYnJ5LAoKY3p5IHPEhSBQYcWEc3R3byBvdHdhcmNpIG5hIG5pZXpvYm93acSFenVq
+xIVjxIUgcm96bW93xJkgbmEgdGVtYXQgZm90b3dvbHRhaWtpPwoKSmFrbyBmaXJtYSBzcGVjamFs
+aXp1asSFY2Egc2nEmSB3IGluc3RhbGFjamkgaSBzZXJ3aXNpZSBuYWpsZXBzenljaCBqYWtvxZtj
+aW93byBwYW5lbGkgc8WCb25lY3pueWNoIG5hIHJ5bmt1IGNoY2lhxYJieW0gcHJ6ZWRzdGF3acSH
+IHByb3BvenljasSZLCBqYWvEhSB3c3DDs2xuaWUgeiB6ZXNwb8WCZW0gcHJ6eWdvdG93YWxpxZtt
+eSBkbGEgUGHFhHN0d2Egb2JpZWt0dS4KCkLEmWTEmSB3ZHppxJljem55IHphIHdpYWRvbW/Fm8SH
+IG9kIFBhxYRzdHdhIGN6eSBtb8W8ZW15IHBvcm96bWF3aWHEhwoKClBvemRyYXdpYW0KV29qY2ll
+Y2ggTXJvY3prYQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
