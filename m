@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 45744C04FFE
-	for <b43-dev@archiver.kernel.org>; Mon, 20 May 2024 07:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C5662C25B74
+	for <b43-dev@archiver.kernel.org>; Fri, 24 May 2024 08:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=+ShiyLQKtp9pnQZxjrr+6iKlYDvb33Z58UWlL4UqPWU=; b=1IJys4hWgvY9Vi
-	VD4NvWQRkIDDLXx/KDhYip55klznac25SqrNEVNifSagPDMGt4ALncgWj4r43fulkqQZzmBrx6Xwh
-	6kNkrgh9sz1+JUMLysFRIEH11onP8AZhLCdWvVYIj3Lnm5vS2bQ8e9p65an57PdN1VJhkz50+c/PO
-	8WGD8+j90rifqDSqJig8RQGDsVYS64NQwej6Og5Ru32JkLgeIJs7xq4BpVwZxwbKVJplUubNaHlQx
-	kd5JB9v55i/D+HKPhUAM2NaJ3bcpwH+DyUgHsFBDru3JCyR287YBiLXe9MFjeci/v6kF82fg2MjRs
-	2wzGnXRQwZviBc+oNorQ==;
+	List-Owner; bh=RHoiHFFtzD/zj4wS1wNA5/7qiWQibKYik6zMa9pWXLY=; b=yqS1Y38OZsthrB
+	u54PCI0fBFz+XGq2WSDOs+euj+0m89b65S4fIkdloghxK0gFzV3An0c975B2Ptyw5PazaGLgL41wA
+	29d6MQnyKT4d+xy81rr0DLJDikn2Og5YezOJGMMAEPPH5pzckgt2TLneiVtnVawhxUkfUv24C/bSc
+	Wo0SaOyVJPqpc43b0TPgez7YrliKzXbnT1feVLldzsrfliTqfW7DdgOQfeSdjgRv1ATqGwSQJ4ugu
+	h6n6eoORkh5UJyWBUup+voZBaFgfgwFNH/vFgcXvFvhUgzxkjrOoZrl07IBFisDqUoS1jMOnHTxwK
+	klr9OqMgVVZM0qU1z9wQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s8xUU-0000000Dm4O-1Szp;
-	Mon, 20 May 2024 07:31:26 +0000
-Received: from techtrek.pl ([89.46.78.144] helo=mail.TechTrek.pl)
+	id 1sAPwR-00000008LEW-2LUD;
+	Fri, 24 May 2024 08:06:19 +0000
+Received: from mail.allbizfusion.com ([217.61.112.80])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s8xUN-0000000Dm3F-02L3
+	id 1sAPwJ-00000008LDo-1vYF
 	for b43-dev@lists.infradead.org;
-	Mon, 20 May 2024 07:31:21 +0000
-Received: by mail.TechTrek.pl (Postfix, from userid 1002)
-	id 562E48273A; Mon, 20 May 2024 09:30:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=TechTrek.pl; s=mail;
-	t=1716190271; bh=FxyPhH2l2BxQItEGwiWL4QKUB0I2gcfDxdaj0IeciOg=;
+	Fri, 24 May 2024 08:06:14 +0000
+Received: by mail.allbizfusion.com (Postfix, from userid 1002)
+	id 77D9182BEA; Fri, 24 May 2024 10:06:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=allbizfusion.com;
+	s=mail; t=1716537968;
+	bh=c+kRQ7kyHoXmXpoyvNRUW9LaTdrRac/1YOBM//m2/tc=;
 	h=Date:From:To:Subject:From;
-	b=cPY676NfuLlqSiugnsyAIuJb4v4hlYl8Zfx+mLVSYkf8BXfdXZOq7pA9oYRBbC9S/
-	 kpfU+PWgaEj43SnMSZvhD+Z1SDCuB0h190ya+urgymEBamFv8PimEyQZS2c7Qfjher
-	 hRw4VPD8yTT90d3wRza4VS5W22hmTtcRItRWWKFPlsiBZ4A5weTUUsg0RWR5kRznBc
-	 YoYfuVqCO9zglQQpqqvaSnkMUeSUmbScIqWU32hezfbn3RTR78i8OzGLxwV0VThk7X
-	 QiANLVSXXBlTuch2zv3FErnNfLiWOkfkECy5PU9wGgwepLbWa45e+301BiTfpWMEd+
-	 5F8Seu9TES0eg==
-Received: by mail.TechTrek.pl for <b43-dev@lists.infradead.org>; Mon, 20 May 2024 07:30:20 GMT
-Message-ID: <20240520084500-0.1.c.17q9.0.41i49mrzq6@TechTrek.pl>
-Date: Mon, 20 May 2024 07:30:20 GMT
-From: "Szymon Jankowski" <szymon.jankowski@techtrek.pl>
+	b=UYM0HviBFbmheGzemnXb2Yo9xXB62np1GMrcwXWYytqLTIv82ZgQhsVL9jsIIfjmz
+	 DXnTxfbNrPC0v5rJFRMUCHur4IkTj5gFQIqqF1vkjz16cKXlT1MJLkpJ/fUmML4Fn0
+	 +SWHf7H9RLMbac0XwcbheQZPR1Lx+tr0ylOt86CaLfYewRlObD0fWSlHoR/0zSnPB2
+	 Db2+6FYLdayAfse6oaXNX3QBrxvka8a/qHxbVTU0nMVx12qVJ8zv6Kj8ohXfx/odYa
+	 sP6XdfB72i8RW6i0nxukcbGlacZ2O972zTI9IRK2VRfTCT17LvElgk/OTPqpaYw7yP
+	 byjgtyJQc9j/g==
+Received: by mail.allbizfusion.com for <b43-dev@lists.infradead.org>; Fri, 24 May 2024 08:06:02 GMT
+Message-ID: <20240524084500-0.1.5l.dq7u.0.pr9t18l0lg@allbizfusion.com>
+Date: Fri, 24 May 2024 08:06:02 GMT
+From: "Hannes Frankrone" <hannes.frankrone@allbizfusion.com>
 To: <b43-dev@lists.infradead.org>
-Subject: Zapytanie ofertowe 
-X-Mailer: mail.TechTrek.pl
+Subject: Machine distribution
+X-Mailer: mail.allbizfusion.com
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240520_003119_891144_877F23AC 
-X-CRM114-Status: UNSURE (   1.44  )
+X-CRM114-CacheID: sfid-20240524_010611_645898_840A9D20 
+X-CRM114-Status: UNSURE (   1.18  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -61,16 +62,27 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKUG96d29sacWCZW0gc29iaWUgbmEga29udGFrdCwgcG9uaWV3YcW8IGpl
-c3RlbSB6YWludGVyZXNvd2FueSB3ZXJ5ZmlrYWNqxIUgbW/FvGxpd2/Fm2NpIG5hd2nEhXphbmlh
-IHdzcMOzxYJwcmFjeS4KCldzcGllcmFteSBmaXJteSB3IHBvenlza2l3YW5pdSBub3d5Y2gga2xp
-ZW50w7N3IGJpem5lc293eWNoLgoKQ3p5IG1vxbxlbXkgcG9yb3ptYXdpYcSHIHcgY2VsdSBwcnpl
-ZHN0YXdpZW5pYSBzemN6ZWfDs8WCb3d5Y2ggaW5mb3JtYWNqaT8KCgpQb3pkcmF3aWFtClN6eW1v
-biBKYW5rb3dza2kKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0My1kZXZAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRw
-Oi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2I0My1kZXYK
+Hi,
+
+I would like to propose cooperation as a provider of high-quality devices for processing current rails.
+
+Our products may interest your clients and find application in your portfolio of offerings. The devices are characterized not only by reliability and efficiency but also by a rich service package, which ensures top-level support.
+
+Our 40 years of experience, dedication, and international prestige create a unique opportunity if you are seeking dynamic development possibilities.
+
+If your company is interested in considering our proposal, please let me know.
+
+
+Best regards
+Hannes Frankrone
+
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
