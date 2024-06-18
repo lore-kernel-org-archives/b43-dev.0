@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6DE18C25B76
-	for <b43-dev@archiver.kernel.org>; Tue, 11 Jun 2024 06:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E0E16C2BA15
+	for <b43-dev@archiver.kernel.org>; Tue, 18 Jun 2024 07:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
-	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=q2PLOmAsQS/8KqS2MYJIeNpB3lvi9PkOTXtn/VZ5Lj8=; b=rnCfsrS/ABJIR+
-	8Zocmd5Jn66FfmWSxsBj5vIWT02EnSAO3hamE1Fov85C/B8b7VPGlWNgHrNGqWG6ZKIVpf5uH88y2
-	bsjXsL/mRp6+xeTK+NhCYjI8iFGDS/kdL2K88/WFsav0i5fvw9GbqH17h52491br2WJX1rBa3HuUA
-	KKetJGApp60/Ha3eLr8xpqaYnNSR7r0+gQmbYwxfbWjJZw8ruEd2nx6+YW06Fdzqa7k23Hso3lA6m
-	S9rZWxlvWRDnVM4ib0kGJ+HEeuRBnqQAqiJBbHfpC6FpgUmvKOjXaw02fFut2vEowqA+qoctxbQDv
-	KeGq9mMJX97qr0EUQXFQ==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
+	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
+	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=M0GXBtHJr7nhVQCi6jQZEXsQl4wkehKu0WSEFPDUNdc=; b=miAwbyQVXRtNcd
+	/Gctfe2qa3UcgU+7tcGxCACu52gpkoR57JhqMb4KkilRKuc2g7RBI99mT+Wc864+Cw56KeXKLAheI
+	iyQmE5i0dV6xV7Yzx21x6vbaDoLBlt6Oz6Y/XYL2MHnwr5b+Sz1TdxNf43KaAErYz2LUQhIJ6CucU
+	Dz8HkULXXNCyP9jWb3FCg+Z8G3oWjMTszmFzlwAG9skWbJerleP5oATlRYzPKQaT/vz8yLR7DiquU
+	JPO27Rco57D0ubED6Lsfap+LwbkRj76MGONO1ZKKSlPpuyWIAjBcko10eWReBBXmnxZY8H6tnff1Y
+	CKOreFPfG7Kin2iOE8bA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGv7P-00000007iz1-2sE8;
-	Tue, 11 Jun 2024 06:36:31 +0000
-Received: from r9221.ps.combzmail.jp ([160.16.65.130])
+	id 1sJTP9-0000000DyQU-3FGT;
+	Tue, 18 Jun 2024 07:37:23 +0000
+Received: from mail.suavjarvi.pl ([195.231.81.125])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGv7K-00000007ixu-3xBm
+	id 1sJTOW-0000000DyPC-1gJZ
 	for b43-dev@lists.infradead.org;
-	Tue, 11 Jun 2024 06:36:29 +0000
-Received: by r9221.ps.combzmail.jp (Postfix, from userid 99)
-	id A722BE40A1; Tue, 11 Jun 2024 15:35:39 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9221.ps.combzmail.jp A722BE40A1
-To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCNjUwaTt2NkgbKEI=?= =?ISO-2022-JP?B?GyRCQGIbKEI=?=
- =?ISO-2022-JP?B?GyRCTEAycRsoQg==?= <info@fc-seminar.jp>
-X-Ip: 665127676585774
-X-Ip-source: k85gj7ra48dnsa5pu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCJDMkSSRiJE4lVyVtJTAlaSVfJXMlMCEiGyhC?=
- =?ISO-2022-JP?B?GyRCNjUwaTt2NkghIRsoQkZDGyRCQGJMQDJxGyhC?=
-Mime-Version: 1.0
-X-MagazineId: ra5p
-X-uId: 6762274944485862644368461034
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20240611063620.A722BE40A1@r9221.ps.combzmail.jp>
-Date: Tue, 11 Jun 2024 15:35:39 +0900 (JST)
+	Tue, 18 Jun 2024 07:36:46 +0000
+Received: by mail.suavjarvi.pl (Postfix, from userid 1002)
+	id B772282A9C; Tue, 18 Jun 2024 09:36:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=suavjarvi.pl; s=mail;
+	t=1718696200; bh=EywM+E+OIUr7RnYatSz3YfoNTVB6dOfImeA7tdj3yJA=;
+	h=Date:From:To:Subject:From;
+	b=dUf8UzJM2KV4BokMzHkKdxtknOSzvAJ+vZq2pjWkvVZnXofldWIljNSa1QJ7DEOOG
+	 nJAPr8+4NsAlyJ5zNSMugucQN73z54t8rf+Q55eHkxozrF7+5E3UHue/9o/FRc31hx
+	 8ZD2M77uLhP0/eEgjoigtyh93YpjNlR5frb4dATuyL76zU+lJnS91ofJr2f0/ublf8
+	 mMOda40d3nY9pb0OJxQAAlngXVdI0O68LwKkFNaytK1UIr+2p+t83SA7vw7wcsh9PF
+	 2i6JTn8iAcsA7LSAXYPD4kde1EiUvryjjM+ox+Uc4krb8pH8Nqxg2Fz3pCddFmbkPk
+	 Bo0+f3MG80wsQ==
+Received: by mail.suavjarvi.pl for <b43-dev@lists.infradead.org>; Tue, 18 Jun 2024 07:36:25 GMT
+Message-ID: <20240618084500-0.1.47.am64.0.ea76pje5ih@suavjarvi.pl>
+Date: Tue, 18 Jun 2024 07:36:25 GMT
+From: "Kamil Tralewski" <kamil.tralewski@suavjarvi.pl>
+To: <b43-dev@lists.infradead.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.suavjarvi.pl
+MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240610_233627_155685_4AD75216 
-X-CRM114-Status: UNSURE (   0.90  )
+X-CRM114-CacheID: sfid-20240618_003645_073153_04F0E901 
+X-CRM114-Status: UNSURE (   1.29  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
+Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -60,86 +61,19 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-いつもお世話になります。
-
-
-日本の将来を担う、こどもの教育にたずさわるフランチャイズ事業の
-加盟パートナーを募集するオンライン説明会をご案内申し上げます。
-
-
-業界未経験・社員1名でスタートができ、実際にオーナー様の
-9割以上は異業種から新規参入されています。
-
-
-新規事業をお考えの方はこの機会に是非ご参加くださいませ。
-
-
-　6月26日（水）　14:00〜15:00　オンライン開催
-----------------------------------------------------------
-
-
-　　　　　　　　不況に強い「教育事業」
-　　　　　　 新規参入 オンラインセミナー
-
-　　　　　 〜少子化でこそ、成長する理由〜
-
-　　　　　　　　　▼  詳細・申込  ▼
-　　　　　　 https://wam-edu-fc.jp/wam2/
-
-　  　　　　　　　◆　ご案内事業　◆
-　　　プログラミング教育＆個別指導学習塾 WAM（ワム）
-
-　　　　　　　　　◇　　 提供 　　◇
-　　　　　　　  エイチ・エム・グループ
-
-
-----------------------------------------------------------
-
-『少子化なのに、教育事業？』と思うかもしれませんが、
-実は子ども一人にかける教育費の増加に伴い、市場は成長し続けています。
-
-
-また、教育費は不況時でも削減されにくいため
-コロナ下でも大きく落ち込むことなく底堅さを見せました。
-
-
-幼児教育無償化などの国策もあり、今後も教育投資の増加が予想されます。
-
-
-そこでご紹介するのが、「プログラミング×個別指導」のハイブリッド教育事業です。
-
-
-プログラミングは小学校で必修化されたため、保護者の関心も高まっています。
-
-
-本事業のスタートは業界未経験・社員１名で可能です。
-
-
-新たな事業収益づくりをお考えの方は、是非ご参加ください。
-
-
-　6月26日（水）　14:00〜15:00　オンライン開催
-　▼  詳細・申込  ▼
-　https://wam-edu-fc.jp/wam2/
-
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　教育事業FCセミナー事務局
-　電話：0120-891-893
-  住所：東京都中央区銀座7-13-6
-―――――――――――――――――――――――――――――――
-　本メールのご不要な方には大変ご迷惑をおかけいたしました。
-　今後ご案内が不要な方は、お手数ですが「配信不要」とご返信いただくか、
-　下記URLより、お手続きをお願いいたします。
-　┗　https://wam-edu-fc.jp/mail/
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+RHppZcWEIGRvYnJ5LAoKemFwb3puYcWCZW0gc2nEmSB6IFBhxYRzdHdhIG9mZXJ0xIUgaSB6IHBy
+enlqZW1ub8WbY2nEhSBwcnp5em5hasSZLCDFvGUgcHJ6eWNpxIVnYSB1d2FnxJkgaSB6YWNoxJlj
+YSBkbyBkYWxzenljaCByb3ptw7N3LiAKClBvbXnFm2xhxYJlbSwgxbxlIG1vxbxlIG3Ds2fFgmJ5
+bSBtaWXEhyBzd8OzaiB3a8WCYWQgdyBQYcWEc3R3YSByb3p3w7NqIGkgcG9tw7NjIGRvdHJ6ZcSH
+IHogdMSFIG9mZXJ0xIUgZG8gd2nEmWtzemVnbyBncm9uYSBvZGJpb3Jjw7N3LiBQb3p5Y2pvbnVq
+xJkgc3Ryb255IHd3dywgZHppxJlraSBjemVtdSBnZW5lcnVqxIUgxZt3aWV0bnkgcnVjaCB3IHNp
+ZWNpLgoKTW/FvGVteSBwb3Jvem1hd2lhxIcgdyBuYWpibGnFvHN6eW0gY3phc2llPwoKClBvemRy
+YXdpYW0KS2FtaWwgVHJhbGV3c2tpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2
+Cg==
