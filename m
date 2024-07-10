@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E539AC3271E
-	for <b43-dev@archiver.kernel.org>; Mon,  8 Jul 2024 08:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9538EC38150
+	for <b43-dev@archiver.kernel.org>; Wed, 10 Jul 2024 07:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=M0GXBtHJr7nhVQCi6jQZEXsQl4wkehKu0WSEFPDUNdc=; b=4+a19ph/E11/VV
-	ZcVGMpgtTArJqB7OydySZRr1krdvj5TwGhmYqxs93MmryKV2OBZMaXlxIlLlIknQggmkeY5dIopGv
-	LDTHtljG6zGFNpvFpWtS5HnKSWcsK8pjOIh1upslvX/phFx7sW7BpBNTHMZn+nmPdgSFomFEcypY7
-	rGMAAHVMMXccCLVB26gihYvl6OD8fmOdU+q0C4AMxPAtTJs5bplGmbR+y9sUcfRoWO1NPmU+L2uTn
-	49JgOVCkatCfSOIgPZGyXbyb093XEsVUPWzV398p8Xo5cmEFhN+e6btnS/eCIcYW6jHQXPG/2d79/
-	0MI+ZRiuE9eEglReubbg==;
+	List-Owner; bh=BeklD/dSi7PydDGa+1pxr2KjtXQNg7nqmWG7EfUIHag=; b=itH/YZURzq+Hek
+	Up0KuDplQxquAlfut226r7g38+3vg442bM7ccHBeZx/+94AdT951SVMAzFQjMIgDHmL36SVVLgS7p
+	k5QiSSamOaRUt1PMBlqQT6mQwzwnqbSqCrj+gprn+k61x1g4ZtOuKZQRher14pT7ZRMAARLebtdxA
+	Lf6ltYO2U/eU/7hOCcw/ZdcQShcX40Vu0D4ekI5le1jr1Zd0iWMwuR7VVMcgCnpjHXqfaTZaeSAIf
+	yNNm7I9NEI0BIDASN2wt8NALRhskPh2vd8AEKaafLgkYAT/dXELI0NklcVwnECff6dFiE2RnizzPF
+	5XDQRorFXKexfyPdgUJw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sQjQM-000000037vN-0R7F;
-	Mon, 08 Jul 2024 08:08:38 +0000
-Received: from mail.interestingperspective.pl ([217.61.97.94])
+	id 1sRRww-00000009lXg-2SWb;
+	Wed, 10 Jul 2024 07:41:14 +0000
+Received: from mail.venturevista.pl ([162.19.205.13])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sQjQG-000000037uo-3HX3
+	id 1sRRwq-00000009lVK-0wit
 	for b43-dev@lists.infradead.org;
-	Mon, 08 Jul 2024 08:08:34 +0000
-Received: by mail.interestingperspective.pl (Postfix, from userid 1001)
-	id 22A8384E0E; Mon,  8 Jul 2024 09:06:41 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=interestingperspective.pl; s=mail; t=1720426013;
-	bh=EywM+E+OIUr7RnYatSz3YfoNTVB6dOfImeA7tdj3yJA=;
+	Wed, 10 Jul 2024 07:41:10 +0000
+Received: by mail.venturevista.pl (Postfix, from userid 1002)
+	id 6FF0125899; Wed, 10 Jul 2024 09:40:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturevista.pl;
+	s=mail; t=1720597262;
+	bh=DjNALEe96gRlzA4ffLINmOD2oI1cqzpVK/E4I+uckvQ=;
 	h=Date:From:To:Subject:From;
-	b=t5Vl01+vx4Muag5deFA7/cQke540k+Wm2KtksOKVik8NZ9fR3xjbWUj1L+7R6a+QD
-	 1NAPoJ0hxoaZbqPyHHNuIUk83Ca6MZdJpkqnGv4oD2CUHFVlRpLmwzR+E2io6vuigE
-	 g1GswFDUCi16mmjRdaEIQ2uG8ZiTqf6dUvzBasUR1UFTG026P/jV3He9OGhcQsuU0O
-	 N8UdndCz8T1WmOGgFKDaC0/ATPnH/PLyrYZU1JV2RZPJC1fgZWARGTV7MzRf/8zCnC
-	 vNHxTZ0/WfnIuyDuPaPgym5co92CGmro3GYQyE7976zYfc57oiGB+1Cyf+ZqdaRnPK
-	 l7SrpGj4oqVXA==
-Received: by mail.interestingperspective.pl for <b43-dev@lists.infradead.org>; Mon,  8 Jul 2024 08:05:31 GMT
-Message-ID: <20240708074501-0.1.dt.1f0t2.0.ce5pcq8pn7@interestingperspective.pl>
-Date: Mon,  8 Jul 2024 08:05:31 GMT
-From: "Kamil Tralewski" <kamil.tralewski@interestingperspective.pl>
+	b=OXobajT99PHIUtaf0yy6hv2Vcm4IWyQxFVYEpHElwzgb0s+6hZLVq9jrvYNl5rXRR
+	 ZZm6ipu6Wl1Crd2zQ38yhJJ8XlFK4Qadl6ffrIN5NY/MfM60qtxG0cv12qcyR5HvQB
+	 4+fpDyc/UdBaH4EbJOb3PBpW1r/NWJbaqg/Neom/773lIBbKPl261luuNtD8BG+mhz
+	 GOiemq0HJL8BoNImN5RwBWaSCKMyFf19Hrg75i+PB2hwDkuLXCdq9gfc5U14UGTMQc
+	 km9dVW/N4ouYU4tNFGr5uM0TlwWq+9bZn2JIbwOhuOPcmvc7ndNVvn9qwXsn0fANBn
+	 +6ChjHtB/cxkg==
+Received: by mail.venturevista.pl for <b43-dev@lists.infradead.org>; Wed, 10 Jul 2024 07:40:53 GMT
+Message-ID: <20240710084500-0.1.be.eta8.0.n0o3ajkkkk@venturevista.pl>
+Date: Wed, 10 Jul 2024 07:40:53 GMT
+From: "Wojciech Mroczka" <wojciech.mroczka@venturevista.pl>
 To: <b43-dev@lists.infradead.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.interestingperspective.pl
+Subject: Instalacja pv
+X-Mailer: mail.venturevista.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240708_010832_971355_33AEEFEF 
-X-CRM114-Status: UNSURE (   2.76  )
+X-CRM114-CacheID: sfid-20240710_004108_998797_5ED538BB 
+X-CRM114-Status: UNSURE (   1.35  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -67,14 +67,13 @@ Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKemFwb3puYcWCZW0gc2nEmSB6IFBhxYRzdHdhIG9mZXJ0xIUgaSB6IHBy
-enlqZW1ub8WbY2nEhSBwcnp5em5hasSZLCDFvGUgcHJ6eWNpxIVnYSB1d2FnxJkgaSB6YWNoxJlj
-YSBkbyBkYWxzenljaCByb3ptw7N3LiAKClBvbXnFm2xhxYJlbSwgxbxlIG1vxbxlIG3Ds2fFgmJ5
-bSBtaWXEhyBzd8OzaiB3a8WCYWQgdyBQYcWEc3R3YSByb3p3w7NqIGkgcG9tw7NjIGRvdHJ6ZcSH
-IHogdMSFIG9mZXJ0xIUgZG8gd2nEmWtzemVnbyBncm9uYSBvZGJpb3Jjw7N3LiBQb3p5Y2pvbnVq
-xJkgc3Ryb255IHd3dywgZHppxJlraSBjemVtdSBnZW5lcnVqxIUgxZt3aWV0bnkgcnVjaCB3IHNp
-ZWNpLgoKTW/FvGVteSBwb3Jvem1hd2lhxIcgdyBuYWpibGnFvHN6eW0gY3phc2llPwoKClBvemRy
-YXdpYW0KS2FtaWwgVHJhbGV3c2tpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVh
-ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2
-Cg==
+RHppZcWEIGRvYnJ5LAoKY3p5IHPEhSBQYcWEc3R3byBvdHdhcmNpIG5hIG5pZXpvYm93acSFenVq
+xIVjxIUgcm96bW93xJkgbmEgdGVtYXQgZm90b3dvbHRhaWtpPwoKSmFrbyBmaXJtYSBzcGVjamFs
+aXp1asSFY2Egc2nEmSB3IGluc3RhbGFjamkgaSBzZXJ3aXNpZSBuYWpsZXBzenljaCBqYWtvxZtj
+aW93byBwYW5lbGkgc8WCb25lY3pueWNoIG5hIHJ5bmt1IGNoY2lhxYJieW0gcHJ6ZWRzdGF3acSH
+IHByb3BvenljasSZLCBqYWvEhSB3c3DDs2xuaWUgeiB6ZXNwb8WCZW0gcHJ6eWdvdG93YWxpxZtt
+eSBkbGEgUGHFhHN0d2Egb2JpZWt0dS4KCkLEmWTEmSB3ZHppxJljem55IHphIHdpYWRvbW/Fm8SH
+IG9kIFBhxYRzdHdhIGN6eSBtb8W8ZW15IHBvcm96bWF3aWHEhwoKClBvemRyYXdpYW0KV29qY2ll
+Y2ggTXJvY3prYQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
