@@ -4,48 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2FC16C3DA62
-	for <b43-dev@archiver.kernel.org>; Wed, 17 Jul 2024 17:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9BC35C3DA5D
+	for <b43-dev@archiver.kernel.org>; Fri, 19 Jul 2024 08:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LY87/D0Hw1fwo6620iq3Mt171JC1o+yEKXV69DhWAUc=; b=gCDonBcJya16aSozVOiUyciF1V
-	le6USJjn21/elYroA6sAG1M0I+9mzXnfP807Ts1Z7CK2S+R60TrHZulm12GpGHZtV3jd8zqSsRyKT
-	9LmQTmJn3YHvI8IiWfBhbhseObIRG2sBaql4RmrK068DgtUnLgN80Oxks4AXBe6ylMtfSqoYmQIuI
-	3ayUkJ1880HbE8yb5kwe3nucUc/LuvmSMxKHtND72ivXh9o8+wrGakUlcoQBGp39Rcv66yagdHqZt
-	U6EcWfZKZJOIUkHWPTKHBhd63lwW40PUPR5jrMIFSGzSkKGzKqDXuQJUMC3F/T1W4PPDaVJI5kaDG
-	dhWJc6iw==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
+	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
+	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=M0GXBtHJr7nhVQCi6jQZEXsQl4wkehKu0WSEFPDUNdc=; b=W8QOfG2/xlRqp5
+	4M9msF990d8q7dngCVq8VxAHiEQBC5sZrTC1HtDVJTYEgQ9mdNU3OR12pKbHevvJCqNJAJXGlZ1Uq
+	iWWlfsECTf8mR5y7muZIwvoafBthbxZZ0cELGUhbaOwJQQexGMUfu/RFf2JP1yO3P/uNF5QjJYkCN
+	CNVByEy9OW3HAkTYulB3hwJmpizaZIq+fVmVvAXNrMDSWySKSzHQjG74m2arKZwEujwruvS6nFbxq
+	dtuglVmsPLUc0LtZSOmkzPEhE4Eedw05AdQ/toqylCgX+6+pqgJVHWsDQmtrekobHTKk/P+M2t+La
+	9bl4ba2tphTLDAHkuRGg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sU8vM-0000000EYAV-0hsG;
-	Wed, 17 Jul 2024 17:58:44 +0000
-Received: from bues.ch ([2a01:138:9005::1:4])
+	id 1sUidv-00000001zvc-1hgL;
+	Fri, 19 Jul 2024 08:07:07 +0000
+Received: from mail.originateinc.pl ([217.61.97.94])
 	by bombadil.infradead.org with esmtps (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sU8v3-0000000EY8m-3iQO
+	id 1sUidp-00000001zv8-3qNO
 	for b43-dev@lists.infradead.org;
-	Wed, 17 Jul 2024 17:58:43 +0000
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1sU8um-0007OE-25;
-	Wed, 17 Jul 2024 19:58:06 +0200
-Date: Wed, 17 Jul 2024 19:57:43 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org
-Subject: Re: [PATCH] wifi: b43: Constify struct lpphy_tx_gain_table_entry
-Message-ID: <20240717195743.31bdb01d@barney>
-In-Reply-To: <38528f48c8069187823b774a6b2a53088f6c9599.1721161231.git.christophe.jaillet@wanadoo.fr>
-References: <38528f48c8069187823b774a6b2a53088f6c9599.1721161231.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	Fri, 19 Jul 2024 08:07:03 +0000
+Received: by mail.OriginateInc.pl (Postfix, from userid 1001)
+	id 12F3C86951; Fri, 19 Jul 2024 09:06:50 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=OriginateInc.pl;
+	s=mail; t=1721376420;
+	bh=EywM+E+OIUr7RnYatSz3YfoNTVB6dOfImeA7tdj3yJA=;
+	h=Date:From:To:Subject:From;
+	b=QdmNYXR71xGAG8QM9lFIBk2RNLu5aWTds85ihLYsf6F8YhYH+q8o0oiZjSfHtR92n
+	 M8/t0vr64qoXtKG/DAwpTT+Rk15XAE7S4q1B3QXRHrrN4YA5w8G/WFBNv7sCJ67j7S
+	 XaholF6VVOJgyHn0If1Jl/+KZaPwMY5Zsdrw//qLmhJrsKnr3sHas2917Ontp2Y1dL
+	 FkFeMjYSPlp+gGFYJOZMfmykPITezirueaYJGGd0ZBs9CGoJ0w2p0SbnnK4UcbSmDu
+	 f0nHiBF7h7FReYv2rApQfl7C4rXj+JuET8DCUe/pfQh0pHxkYv7qQKXp18nqY6hxpQ
+	 CAhc0H4gCX9tg==
+Received: by mail.OriginateInc.pl for <b43-dev@lists.infradead.org>; Fri, 19 Jul 2024 08:05:53 GMT
+Message-ID: <20240719074502-0.1.e2.1f0t2.0.pwqn38j7hc@OriginateInc.pl>
+Date: Fri, 19 Jul 2024 08:05:53 GMT
+From: "Kamil Tralewski" <kamil.tralewski@originateinc.pl>
+To: <b43-dev@lists.infradead.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.OriginateInc.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20240717_105825_942206_5EF2F24E 
-X-CRM114-Status: GOOD (  10.03  )
+X-CRM114-CacheID: sfid-20240719_010702_107712_5029C112 
+X-CRM114-Status: UNSURE (   2.72  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -57,93 +62,19 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============5431683004458695361=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
---===============5431683004458695361==
-Content-Type: multipart/signed; boundary="Sig_/_1L7b6zKYTmbBsNJwFixW/C";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-
---Sig_/_1L7b6zKYTmbBsNJwFixW/C
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 16 Jul 2024 22:21:13 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
->  static void lpphy_rev0_1_write_gain_table(struct b43_wldev *dev, int off=
-set,
-> -				struct lpphy_tx_gain_table_entry data)
-> +				const struct lpphy_tx_gain_table_entry data)
->  {
->  	u32 tmp;
-> =20
-> @@ -2356,7 +2356,7 @@ static void lpphy_rev0_1_write_gain_table(struct b4=
-3_wldev *dev, int offset,
->  }
-> =20
->  static void lpphy_rev2plus_write_gain_table(struct b43_wldev *dev, int o=
-ffset,
-> -				struct lpphy_tx_gain_table_entry data)
-> +				const struct lpphy_tx_gain_table_entry data)
->  {
->  	u32 tmp;
-> =20
-> @@ -2383,7 +2383,7 @@ static void lpphy_rev2plus_write_gain_table(struct =
-b43_wldev *dev, int offset,
->  }
-> =20
->  void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
-> -			    struct lpphy_tx_gain_table_entry data)
-> +			    const struct lpphy_tx_gain_table_entry data)
->  {
->  	if (dev->phy.rev >=3D 2)
->  		lpphy_rev2plus_write_gain_table(dev, offset, data);
-> @@ -2392,7 +2392,7 @@ void lpphy_write_gain_table(struct b43_wldev *dev, =
-int offset,
->  }
-
-These three changes look like they are not necessary.
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/_1L7b6zKYTmbBsNJwFixW/C
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmaYBhcACgkQ9TK+HZCN
-iw5bBxAArMV5z7DK4ihRk2DaDq4XdBhLERO3rXRBSQthMrWcbAq7Iqzyd/dPLKzF
-NkDVf5Ids2daRDsmZIczjXb8L6IrGnkfrEvZ8x/No4OchgV9osiellRq1yVOOZCx
-z7wvlylhgupjCkJ2tT4dZS4uKWlqRj6kh7eo+p48xgH4sxfHXpAWSTd9PtJIbJe0
-I2a8QGgwLXzxKePsnpdt+OeH/UoFblhKtPvBYoBqzc4wl3FCQ4stZS+o0gumRakw
-bZNP06PapMtVW/+fjby+iD8/21XQIEQoSCmeGizKYkiKhO6eXK9DxO7ETeVEO/y/
-1lrvKf0dRh1MzgMq53LP1/XpLc3Cd71et7z8xwYCDI/mZuCfU7bhVEGRVNll2Y3V
-Y7XQaz4WqdNeVQc9fctLr09rwB2o5Y3XNi/7pZ8phVTmKEUBgTH/Uaj83hoTDHwd
-2c1OGKXhrMXMre4GFjyxREA7PhWovAkJmSxGmeaQk98yOZTuKGkFW8glq2l/6wYs
-avXU/aGcAtF/+7/a56Hu3M1SSau7S1NlKiWM88wX/guHfzmY6bQE9YsjVOkkyoao
-h/gADABg2SZsXoYXyvxV0KVGaXj5dXiLXhZ9agLBYKMG/yCE4NyvNgbE1VMjT89p
-VKFSAFnXj/kzSfgi+2wLt2kZKZVa011PxsFerUVhFNGnUdFrEe8=
-=J7sR
------END PGP SIGNATURE-----
-
---Sig_/_1L7b6zKYTmbBsNJwFixW/C--
-
-
---===============5431683004458695361==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
-
---===============5431683004458695361==--
-
+RHppZcWEIGRvYnJ5LAoKemFwb3puYcWCZW0gc2nEmSB6IFBhxYRzdHdhIG9mZXJ0xIUgaSB6IHBy
+enlqZW1ub8WbY2nEhSBwcnp5em5hasSZLCDFvGUgcHJ6eWNpxIVnYSB1d2FnxJkgaSB6YWNoxJlj
+YSBkbyBkYWxzenljaCByb3ptw7N3LiAKClBvbXnFm2xhxYJlbSwgxbxlIG1vxbxlIG3Ds2fFgmJ5
+bSBtaWXEhyBzd8OzaiB3a8WCYWQgdyBQYcWEc3R3YSByb3p3w7NqIGkgcG9tw7NjIGRvdHJ6ZcSH
+IHogdMSFIG9mZXJ0xIUgZG8gd2nEmWtzemVnbyBncm9uYSBvZGJpb3Jjw7N3LiBQb3p5Y2pvbnVq
+xJkgc3Ryb255IHd3dywgZHppxJlraSBjemVtdSBnZW5lcnVqxIUgxZt3aWV0bnkgcnVjaCB3IHNp
+ZWNpLgoKTW/FvGVteSBwb3Jvem1hd2lhxIcgdyBuYWpibGnFvHN6eW0gY3phc2llPwoKClBvemRy
+YXdpYW0KS2FtaWwgVHJhbGV3c2tpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2
+Cg==
