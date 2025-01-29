@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A7222C02183
-	for <b43-dev@archiver.kernel.org>; Fri, 17 Jan 2025 09:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91509C02196
+	for <b43-dev@archiver.kernel.org>; Wed, 29 Jan 2025 08:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=EOmaL/7VwMGKjqIwIDGPOsS4bpPG1P3wH3MGgsffDxE=; b=R/tJIDNTJrbMUO
-	LBW56XvRb1dWHvCxZyB7dZOO9se0igz5qmxesyIwFFLzdnN07c55AwnnsfROiYKSR0tuYb0Ts33qR
-	I/7euEd+8/iyxvGA0lO4z61L8LFgAdwWTMCQvhSr2NYGEHttNgfKfTaw/ZqPIUNJLvAhwfWwOR3ax
-	k47SBFMgHPXdx2168FcM9y7Xk98O2mTWK88CdDeDTKr4e4EG7e9M1CWNadAwOik4KwFss8v0gHqFx
-	y1+KtqvGL97Luh8zqIvdlI6TNCYKUjuWfY302JxHD7VouKKs54jMjqn8RIQKDWXfekC1AcBRN62Xq
-	aLZmb169arEfT6rFzEig==;
+	List-Owner; bh=BeklD/dSi7PydDGa+1pxr2KjtXQNg7nqmWG7EfUIHag=; b=JUK2dHcBsKj2qP
+	r5UmRKgEGIeSpc7+MmNDa5rY/hvHuvXIUdC/joAzwjHx/tTJMXmSoWsJDkQ1SpC1Xsr4OH1dqg0QQ
+	dwkjg6OM35xFubTbnz2PL4KJIyYY+Dd7NeXT3sQZBxOPqGEkhEkOajLBgAgG83IolpaFRLz667Vrr
+	FG1o+8wRbBfg64LLIqWIzTB2QBOVMSPYR8gdPHaSJ1EMAKKXK6A065FHTjfYWmn2khkYraagMD7FL
+	AmMbHgl6b98+njVEy6h8muTKmDgs/ixUH2uOkCsIWrY9c8DevsJZ2nqLkxnVQQd4AZu14p7x7MtCf
+	YbGhVwuySl0nE2WebJWg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYiRy-0000000HQYQ-32Hy;
-	Fri, 17 Jan 2025 09:15:34 +0000
-Received: from mail.firmator24.pl ([141.94.203.229])
+	id 1td3l8-00000006a5z-3grU;
+	Wed, 29 Jan 2025 08:49:18 +0000
+Received: from mail.venturebloom.pl ([162.19.205.13])
 	by bombadil.infradead.org with esmtps (Exim 4.98 #2 (Red Hat Linux))
-	id 1tYiRt-0000000HQW2-19Ky
+	id 1td3l1-00000006a4v-3rXH
 	for b43-dev@lists.infradead.org;
-	Fri, 17 Jan 2025 09:15:31 +0000
-Received: by mail.firmator24.pl (Postfix, from userid 1002)
-	id 72CCFAA316; Fri, 17 Jan 2025 10:15:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firmator24.pl;
-	s=mail; t=1737105324;
-	bh=E2JvZO680IjB10WY6NEM5q3hCpq1b/SED7AbH5YTrrw=;
+	Wed, 29 Jan 2025 08:49:14 +0000
+Received: by mail.venturebloom.pl (Postfix, from userid 1002)
+	id 9E3A625E42; Wed, 29 Jan 2025 09:46:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturebloom.pl;
+	s=mail; t=1738140435;
+	bh=DjNALEe96gRlzA4ffLINmOD2oI1cqzpVK/E4I+uckvQ=;
 	h=Date:From:To:Subject:From;
-	b=qSov0JyiUB1s9rmOCCOVVkZUGUCJ38a27q26o/tsBNSh3OBivyqtos2sRdwxZh0gV
-	 31UYGrZaJZ2m8DQqmLrPHunAOo7hr/lnTZKt284XBr5S8QCtccgTsM1MUgpJTVoZ2C
-	 4ivciozXTbLtvG7geT7Ah9zSONGc+npA3Gn0QS+CcZ6XkzVVNrvq4yio/TgEAmTj/N
-	 z31dXBYvDv3lu9ZLxL6jjDS2GzyX4Rp3ok+z32KR77+Hq1zgfgI4USW96JTomXrYl3
-	 2owOce6IQvdTfqpRq6FpCOyhkQkCXWT2OYPU+II0OL7mI9LlWIrPlqgFZC1fJNX0Ye
-	 uydGiUqbkhqbA==
-Received: by mail.firmator24.pl for <b43-dev@lists.infradead.org>; Fri, 17 Jan 2025 09:15:10 GMT
-Message-ID: <20250117084500-0.1.ih.19swk.0.mxnlq71on3@firmator24.pl>
-Date: Fri, 17 Jan 2025 09:15:10 GMT
-From: "Dominik Strzelczyk" <dominik.strzelczyk@firmator24.pl>
+	b=zr3qySEmNNFhEp6dOGkdx+WOA0DPnuc4EfQ0S2utnbvyPVkx3r+AA6XeIQkoih7F9
+	 YRYGG5MXHIadD0obc/o95T1mXv6PSJvlm5bj2mn0QUvPsOC6lDboDmzkoryrANnoHc
+	 CFsX4U01vvrEY0fYrOeuat+gvf5kPZojKU1r+OUtKOAsSyTZtR3M38rXYadvwlOM0B
+	 +YTvjqzH1dBwp5SVYz7icn76jjEdzrPCcWZH0p+PWNfEquAHs4KZx+WNlBL7JqC+TN
+	 mTvADT6MrnA11aI2XgDtltQWMLMdbq+uiQZitNB3KPidw2aJEPs9A8rKX2tY6s8pEi
+	 YBzSLowuM3vWw==
+Received: by mail.venturebloom.pl for <b43-dev@lists.infradead.org>; Wed, 29 Jan 2025 08:46:20 GMT
+Message-ID: <20250129084500-0.1.f9.iqf9.0.ch0yidi0pd@venturebloom.pl>
+Date: Wed, 29 Jan 2025 08:46:20 GMT
+From: "Wojciech Mroczka" <wojciech.mroczka@venturebloom.pl>
 To: <b43-dev@lists.infradead.org>
-Subject: =?UTF-8?Q?Pytanie_o_ofert=C4=99?=
-X-Mailer: mail.firmator24.pl
+Subject: Instalacja pv
+X-Mailer: mail.venturebloom.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20250117_011529_992897_3BD328D9 
-X-CRM114-Status: UNSURE (   2.00  )
+X-CRM114-CacheID: sfid-20250129_004912_642950_D4B41C97 
+X-CRM114-Status: UNSURE (   2.37  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -67,10 +67,13 @@ Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKQ3p5IHBvdHJ6ZWJ1asSFIFBhxYRzdHdvIGFrdHVhbG5pZSBub3d5Y2gg
-a2xpZW50w7N3ID8KClNrdXRlY3puaWUgcG9tYWdhbXkgcm96cG9jenluYcSHIHJvem1vd3kgaGFu
-ZGxvd2UgeiBrbGllbnRhbWkgemFpbnRlcmVzb3dhbnltaSBQYcWEc3R3YSBvZmVydMSFLgoKWmFw
-cmFzemFtIGRvIGtvbnRha3R1IHp3cm90bmVnby4KCgpQb3pkcmF3aWFtIHNlcmRlY3puaWUKRG9t
-aW5payBTdHJ6ZWxjenlrCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcK
-aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
+RHppZcWEIGRvYnJ5LAoKY3p5IHPEhSBQYcWEc3R3byBvdHdhcmNpIG5hIG5pZXpvYm93acSFenVq
+xIVjxIUgcm96bW93xJkgbmEgdGVtYXQgZm90b3dvbHRhaWtpPwoKSmFrbyBmaXJtYSBzcGVjamFs
+aXp1asSFY2Egc2nEmSB3IGluc3RhbGFjamkgaSBzZXJ3aXNpZSBuYWpsZXBzenljaCBqYWtvxZtj
+aW93byBwYW5lbGkgc8WCb25lY3pueWNoIG5hIHJ5bmt1IGNoY2lhxYJieW0gcHJ6ZWRzdGF3acSH
+IHByb3BvenljasSZLCBqYWvEhSB3c3DDs2xuaWUgeiB6ZXNwb8WCZW0gcHJ6eWdvdG93YWxpxZtt
+eSBkbGEgUGHFhHN0d2Egb2JpZWt0dS4KCkLEmWTEmSB3ZHppxJljem55IHphIHdpYWRvbW/Fm8SH
+IG9kIFBhxYRzdHdhIGN6eSBtb8W8ZW15IHBvcm96bWF3aWHEhwoKClBvemRyYXdpYW0KV29qY2ll
+Y2ggTXJvY3prYQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
