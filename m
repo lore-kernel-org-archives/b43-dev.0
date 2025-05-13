@@ -4,55 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ACC53C3ABC5
-	for <b43-dev@archiver.kernel.org>; Fri,  9 May 2025 00:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D588AC3ABCB
+	for <b43-dev@archiver.kernel.org>; Tue, 13 May 2025 00:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Date:Message-Id:Subject:To
-	:From:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
+	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=v0bwatOTBZ4hmxpZWnQ0vAH+2WpKO3uPugTLXp7ogz4=; b=rSN74QAoM68o3m
-	MMW1/K/b3u0nPSnQoR7T+PXPEDuxKGbz2HUID1GJso/DP7ZQ8ylYsI2xjJPjadBCDU8uM7lg56mai
-	P0aHbXpA6VDnAwcZK+u93gRZ0WVNu7Asn0uN+ATVAtuBNUQOngieIpWKsZQi7BveQm3+NDzLfOTaj
-	FGk3qtxhMUO7jJxqb/q/9T7kzJFOZZS0lGvAoUFYj+mLdhojEf1LyhL/2aLnvLTVIVNfOKpDDT0Xy
-	V/hJIlfekp38rZXbfn0+sjADq2BUiDXO8BTHTuqUoRDRPGnHOtbdCbS74RUJkmb09lN9/IO3X5s/a
-	vjJLywrbesyMYEP1n6lw==;
+	List-Owner; bh=KH/WmB23JlpRRjxVM54kDclg7VklEKc8GgwUznALhRY=; b=ZuckGhNHR4Viih
+	akdZ3hc/btxWEWYNhmgasuqmCTQ/xyekSxTdJTDdItNfhy/piNPsugfVf5/Zqvp14ZmLybIUmtOu+
+	vqgw/IhVxKGENBhRoL1G1PzAYuuOLpJ7dkZ+3aWi2KXCjHEdd2LomsceiLVDfVHf4DVKvhddjOvoQ
+	hOftDtFk8CIzdg5rgM96+q1qlH1YNLTcBGpAnvpXDHxW0U6GYEN+4JvKD8LJiigvEySCjyg8Mmzuc
+	3z0DkounO8DRc8fVw87oq27Lm6oDhqfnH8r+KSnBaVrx9VzQDH7PpGtyf3CWiV8NP+LExiwuv367X
+	qVhLbg7yzCAEow84ChIw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uDBhV-000000026Mx-2kWh;
-	Fri, 09 May 2025 00:34:53 +0000
-Received: from b32503.am.arara.com ([118.67.107.48])
+	id 1uEdYa-0000000AzqG-1vqI;
+	Tue, 13 May 2025 00:31:40 +0000
+Received: from r9148.ps.combzmail.jp ([49.212.15.184])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uDBhP-000000026MX-3gc2
+	id 1uEdYV-0000000Azpu-2OdI
 	for b43-dev@lists.infradead.org;
-	Fri, 09 May 2025 00:34:49 +0000
-Received: from unknown (HELO) (172.18.130.110)
-  by b325.am.arara.com with SMTP; Fri, 09 May 2025 09:19:56 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ibj-marriage.jp;
-	s=re202407; t=1746749996;
-	bh=Az66nxUceJu7kyA7sNhQYhtoPzkggc4NzkoUmpR7VSM=;
-	h=From:To:List-Unsubscribe:List-Unsubscribe-Post:Subject:Message-Id:
-	 Date:MIME-Version:Content-Transfer-Encoding;
-	b=Pbb0j6bjX8175RgkuQMTRxUsppEgP1Iw6/JwGOWGBWXxL6AaQaYXMDDOAIuozblZj
-	 3kQifl5goYrNFHkEaMmrRPux6jEitgsuYsM7DHZGU1Y4qDb601FeCxm782SSf8CuQg
-	 pV79Qt3vcDxp5Towui+OObNcq/UP/8ajwB0KHn/U=
-From: =?UTF-8?B?aW5mb0BpYmotbWFycmlhZ2UuanA=?= <info@ibj-marriage.jp>
+	Tue, 13 May 2025 00:31:37 +0000
+Received: by r9148.ps.combzmail.jp (Postfix, from userid 99)
+	id 470828C771; Tue, 13 May 2025 09:04:24 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9148.ps.combzmail.jp 470828C771
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pupneo.jp;
+	s=s48261973; t=1747095091;
+	bh=GHcWaRsC7dQeTB6vpVxANTLyCLVlUtsWWHzuWYIdGzE=;
+	h=To:From:List-Unsubscribe:Subject:Date:From;
+	b=SMskZOHwP14+03AUOh3amI0qNSVIDGq2HEV+x/PQ18YP3ZAa1NiSiu+iTfqXUp1qK
+	 kEcinUIGVbVZCEthooLHbJ827gSMlKD+xrbONL9oDxi+3ztZnwICnCBzBHkX5p6Uvn
+	 TuxBItVklHGdxNvj73P2k5F310fr8Yo9BwCGloUA6GhXr/8bMWLhzjgN7qh7oBDNbv
+	 +ko0WAknXQzIvhtN2EOuvtoiEpk8nqsdRcTQWTkQply1Kg7LpzDop+aE9bkdYcBZkn
+	 zAZ4wP3+7Ka0fBwzvSYGwud6DyRq8O0a/JFp+qonArp4bCg2i3eOBjfkZeZjsioI/m
+	 lg9PkYwhNOmdQ==
 To: b43-dev@lists.infradead.org
+From: =?ISO-2022-JP?B?GyRCOzNLXBsoQg==?= =?ISO-2022-JP?B?GyRCQllNNRsoQg==?= <info@pupneo.jp>
+X-Ip: 6860532534554258
+X-Ip-source: k85gj7y548dnsaq7u0p6gd
+Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?UTF-8?B?5paw6KaP5LqL5qWt44Go44GX44Gm44Gu57WQ5ama55u46KuH5omA?=
-Message-Id: <00t1kj-030u5@bam001.am.arara.com>
-Date: Fri, 09 May 2025 09:19:56 +0900
-MIME-Version: 1.0
-X-SE-GID: 00t1kj@bam001.am.arara.com
-X-SE-HID: b325.am.arara.com.1746749996765585
+Subject: =?ISO-2022-JP?B?GyRCPFJEOSQsNFYwYyQmGyhCIA==?=
+ =?ISO-2022-JP?B?GyRCST4yQUApRVkkTk1uJDc3ahsoQg==?=
+Mime-Version: 1.0
+X-MagazineId: y5q7
+X-uId: 6763265137485961655135711018
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20250513001131.470828C771@r9148.ps.combzmail.jp>
+Date: Tue, 13 May 2025 09:04:24 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20250508_173448_346245_25020EB2 
-X-CRM114-Status: UNSURE (   1.36  )
+X-CRM114-CacheID: sfid-20250512_173136_144898_22479A38 
+X-CRM114-Status: UNSURE (   0.88  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
-Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -61,51 +69,109 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-44CA4oCV44CA5ama5rS744OT44K444ON44K5IOOCquODs+ODqeOCpOODs+iqrOaYjuS8muOAgOKA
-lQoKCuOBhOOBpOOCguOBiuS4luipseOBq+OBquOCiuOBvuOBmeOAggoKCuaWsOimj+S6i+alreOB
-qOOBl+OBpuS9juODquOCueOCr+OBp+OCueOCv+ODvOODiOOBp+OBjeOCiwoK4oCc44CA57WQ5ama
-55u46KuH5omA44OT44K444ON44K544CA4oCdCgrjga7oqqzmmI7kvJrjgZTmoYjlhoXjgavjgaTj
-gY3jgZTpgKPntaHlt67jgZfkuIrjgZLjgb7jgZfjgZ/jgIIKCgroqK3lgpnmipXos4fjgoLjgYTj
-gonjgZrjgIHmnKzmpa3jga7jgrnjgr/jg4Pjg5XjgYzlhbzli5njgoIK44Gn44GN44KL44Gu44Gn
-44CB5YCL5Lq644Gu54us56uL6ZaL5qWt44Gg44GR44Gn44Gq44GPCuaWsOimj+S6i+alreOBqOOB
-l+OBpuWPluOCiue1hOOCgOS8gealreOCguWil+OBiOOBpuOBhOOBvuOBmeOAggoKCuiqrOaYjuS8
-muOBp+OBr+ips+OBl+OBhOODk+OCuOODjeOCueODouODh+ODq+OChArlj47nm4rmgKfjgarjganj
-gpLjgYrkvJ3jgYjjgZfjgb7jgZnjgIIKCgrmlrDjgZ/jgarkuovmpa3jgpLjgYrogIPjgYjjga7m
-lrnjga8K44GT44Gu5qmf5Lya44Gr5piv6Z2e44GU5Y+C5Yqg44GP44Gg44GV44GE44CCCgoK44CA
-4pa844CA44K744Of44OK44O86Kmz57Sw5oOF5aCx77yG55Sz6L6844Gv44GT44Gh44KJ44CA4pa8
-CuOAgOOAgCBodHRwczovL2liai1vbmxpbmUuYml6LzI1b25saW5lLwoKCuOAgOOCquODs+ODqeOC
-pOODs+mWi+WCrArjgIDigJXigJXigJXigJXigJXigJXigJXigJXigJXigJXigJXigJXigJXigJXi
-gJXigJXigJXigJXigJXigJXigJUKCgrjgIDil4fjgIDlqZrmtLvjg5Pjgrjjg43jgrnjgIDoqqzm
-mI7kvJoK44CA6Kit5YKZ5oqV6LOH44K844Ot77yP5pys5qWt44K544K/44OD44OV5YW85YuZCuOA
-gOODn+ODi+ODnuODoOOCueOCv+ODvOODiOOBp+OBjeOCi+OAjCDntZDlqZrnm7joq4fmiYAg44CN
-CgoK44CA4peH44CA5Li75YKsCuOAgOagquW8j+S8muekvklCSgrjgIAo5Yqg55uf55u46KuH5omA
-5pWwOjQsNDg056S+77yP55m76Yyy5Lya5ZOh5pWwOjk1LDczNuWQjSkKCgrjgIDil4fjgIDplovl
-gqzmlrnlvI/jgIDigLsK44CA44Kq44Oz44Op44Kk44Oz44Gr44Gm5a6f5pa9CuOAgOKAu+OAgOOB
-iueUs+i+vOOBv+W+jOOAgemWi+WCrOaXpeOBvuOBp+OBqwrjgIDjgIDjgIDoppbogbTmlrnms5Xj
-gpLjgZTmoYjlhoXjgZfjgb7jgZkKCgrjgIDil4fjgIDml6XnqIvigLsK44CA44CA44CANeaciDEw
-5pel77yI5Zyf77yJMTQ6MDDvvZ4xNTowMArjgIDjgIDjgIA15pyIMTLml6XvvIjmnIjvvIkxNDow
-MO+9njE1OjAwCuOAgOOAgOOAgDXmnIgxNeaXpe+8iOacqO+8iTE0OjAw772eMTU6MDAK44CA44CA
-44CA4oC75YWo5pel56iL5YaF5a6544Gv5ZCM44GY44Gn44GZCgoK44CA4pa844CA44K744Of44OK
-44O86Kmz57Sw5oOF5aCx77yG55Sz6L6844Gv44GT44Gh44KJ44CA4pa8CuOAgOOAgCBodHRwczov
-L2liai1vbmxpbmUuYml6LzI1b25saW5lLwoKCuOAgOKAleKAleKAleKAleKAleKAleKAleKAleKA
-leKAleKAleKAleKAleKAleKAleKAleKAleKAleKAleKAleKAlQrjgIAg5Y+C5Yqg6LK777ya44CA
-54Sh5paZCuOAgCDlr77jgIDosaHvvJrjgIDms5XkurrvvI/lgIvkurrjgIDjganjgaHjgonjgafj
-goLlj6/og73jgafjgZkK44CA4oCV4oCV4oCV4oCV4oCV4oCV4oCV4oCV4oCV4oCV4oCV4oCV4oCV
-4oCV4oCV4oCV4oCV4oCV4oCV4oCV4oCVCgoK4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
-4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSBCgrjgIDmoKrlvI/kvJrnpL5JQkrj
-gIDjgrvjg5/jg4rjg7zkuovli5nlsYAK44CA5p2x5Lqs6YO95paw5a6/5Yy66KW/5paw5a6/MS0y
-My03CuOAgOaWsOWuv+ODleOCoeODvOOCueODiOOCpuOCqOOCueODiCAxMkYKCuKApeKApeKApeKA
-peKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApeKApQrj
-gIDjg6Hjg7zjg6vnhKHnlKjjgarmlrnjgavjga/lpKflpInjgZTov7fmg5HjgpLjgYrjgYvjgZHj
-gYTjgZ/jgZfjgb7jgZfjgZ/jgIIK44CA5LuK5b6M44CB5LiN5b+F6KaB44Gq5pa544Gv44CB44GK
-5omL5pWw44Gn44GZ44GMCuOAgOS4i+iomFVSTOOCiOOCiuOBq+aJi+e2muOBjeOCkuOBiumhmOOB
-hOOBhOOBn+OBl+OBvuOBmeOAggrjgIDjgIBodHRwczovL2liai1vbmxpbmUuYml6L21haWwvCgri
-lIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHi
-lIHilIHilIEKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
-L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
+　
+　ある日突然
+　　「社長、ちょっとご相談が・・」と、ならないために。
+　
+　
+　査定が引き金でキーパーソンが離職し、業績が落ちる
+　
+　そんな失敗を防ぐ、4,300人の経営者が共感した
+　「労使共に納得する評価制度」を知る、ウェビナーのご案内です。
+　
+　
+　>> 詳細はこちら（所要1分）  
+　　  https://shikigaku-pupneo.jp/2505h/
+　
+　
+--------------------------- P-UP×識学 ----　
+
+　テーマ： 優秀な社員のモチベーション低下
+　　　　　 突然の離職を防止して
+　　　　　 成果につながる、評価制度8つのポイント
+
+　日程　： 5/15(木)・5/22(木) 各13:00スタート
+　　　　　 ※両日内容は同じです
+
+　会場　： Zoom開催
+　定員　： 先着200人
+　登壇者： 大熊 憲二 / 村松 洋平  
+　　　　　 YouTube「識学マネジメントTV」登録18,000人
+
+　特典　： セミナー資料を進呈
+--------------------------------------------
+※貴重なノウハウの為、経営層の方限定です
+　
+　
+　本セミナーは4,300人以上の経営層が受講した
+　マネジメント理論「識学」の「評価制度」を
+　
+　ビジネスの実務家として実体験をベースに
+　経営者目線でお伝えいたします。
+　
+ 
+　多くの部分で共感いただけるセミナーと
+　なっておりますのでぜひご参加ください。
+　
+　［ 内 容 ］
+　　1．なぜ評価制度が必要なのか
+　　2．絶対に押さえるべきポイント
+　　3．間違った評価制度
+　　4．導入企業の事例
+　　5．質疑応答
+　
+　
+　こんなお悩みありませんか？
+　
+　　優秀な社員のモチベーション低下
+　　理由を曖昧にされた、突然の退職
+　
+　これらは、「評価制度」の問題かもしれません。
+　
+　制度が十分に機能していないと評価の時期に
+　モチベーション低下が続き、突然の離職へ
+　結果、全社パフォーマンスに悪影響を与えます。
+　
+　
+　しかし、
+　労使共に納得できる、自社に適切な評価制度を
+　ゼロから考えるのはとても難易度が高いです。
+　
+　そんな経営者や役員の方へ、
+　ビジネスからスポーツ組織でも使える汎用性の高い
+　　「間違いない」評価制度をお伝えします。
+　
+　
+　従来型の評価制度の問題点や改善方法について
+　丁寧に解説し、組織の評価制度を変革できる
+　経営者や役員の皆様にとって、有益な情報を提供いたします。
+　
+　このセミナーが、評価制度の改善を考える
+　機会になればうれしいです。
+　
+　>> 詳細はこちら（所要1分）  
+　　  https://shikigaku-pupneo.jp/2505h/
+　
+　
+　ご興味をお持ちいただけましたら、
+　ご参加のお申込みを頂けますと幸いです。
+
+------------------------
+　P-UP×識学 セミナー事務局
+　東京都台東区池之端1丁目2-18
+　電話：03-5829-8444
+
+　メールが不必要な方は大変残念ではございますが、
+　以下URLからの登録でワンクリック解除できます。  
+　https://shikigaku-pupneo.jp/mail/
+　
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
