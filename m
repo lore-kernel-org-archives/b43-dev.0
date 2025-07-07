@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A1D2C83000
-	for <b43-dev@archiver.kernel.org>; Mon, 30 Jun 2025 07:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6CD44C83F07
+	for <b43-dev@archiver.kernel.org>; Mon,  7 Jul 2025 08:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=rohV0QMEg3fB4k/HQlkO8YaURuO7z7mmwI6WFgElbgM=; b=EA7cBmGuA3E+m8
-	8DzRSLnrSt2suJj02sNF0mNbgaxrUMqsTg1p67bNw5RcmLXfAuZe2vUaSWml7tHp5x+qxscq0qAeW
-	eG+iZqcIZxFoZZ6wvGpFPfwGoxmBHITq3Wl4jKtC/JotQvLqdnZvCVOui2FtcwmVkMD6umiAOAGRp
-	ODKrmhC1mLFjDz7tU//a/69NEL0XcFb+aZtvsLJaxBlv5JtnmMPkzALR3M9s2hAjSEk8osBeGaEQS
-	yH8qRJS+UdMx7q6ETshEUo9/EhhWESWdkO4FbygDoPsO2+hPSwESouux6FPE57L0IEeCg766i0KWX
-	iU0pAAoP0RrrK9k83Ldg==;
+	List-Owner; bh=BeklD/dSi7PydDGa+1pxr2KjtXQNg7nqmWG7EfUIHag=; b=ruGMPAYu4f1idF
+	Ty1C+thwJsSNejFaqUly2Bi1sha3H56VV8YMW7UjfjYRMWTrdQD3iL37gcFJY02GlqgI45Nteu8VM
+	50m8XhH1Bo/DtKbVngykSRrWCIWUAkBO3N9PLpCTtXlfIE5qgCdrwc6pUHZnPgFFGUXscmG4n71IV
+	VKCbrXZszvvNTg69kfhMKkD2odjZ8wgLDb6m/GhTORN6u6THLP9wZHeubv3brHHkUSJ24unxg0/hy
+	M0AEBeEvAh7ksvxU3TifRG2SU0JADm02qrF0hgP+x+a1CJ49w/80gznaCjELizwrUrUcT8F6YLCpu
+	Cr3UBF+LTwYi0qpuPnHg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uW94X-00000001T0q-10af;
-	Mon, 30 Jun 2025 07:37:01 +0000
-Received: from mail.growdeal.pl ([141.95.55.73])
+	id 1uYgyv-00000001pBf-32fq;
+	Mon, 07 Jul 2025 08:13:45 +0000
+Received: from mail.biznator.pl ([162.19.205.13])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uW935-00000001SoY-0UJZ
+	id 1uYgPD-00000001iFs-2tw8
 	for b43-dev@lists.infradead.org;
-	Mon, 30 Jun 2025 07:35:33 +0000
-Received: by mail.growdeal.pl (Postfix, from userid 1002)
-	id C02DB23C06; Mon, 30 Jun 2025 07:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=growdeal.pl; s=mail;
-	t=1751268925; bh=nU0fzD5wnLwbt9yoUSBeMInFHzMm7DGirLXtUO2ZpV8=;
+	Mon, 07 Jul 2025 07:36:53 +0000
+Received: by mail.biznator.pl (Postfix, from userid 1002)
+	id 7B33A269A9; Mon,  7 Jul 2025 09:35:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=biznator.pl; s=mail;
+	t=1751873763; bh=DjNALEe96gRlzA4ffLINmOD2oI1cqzpVK/E4I+uckvQ=;
 	h=Date:From:To:Subject:From;
-	b=rxXvJZGx0uJ4Nu41a8NEmyILqA+aWn4fN3eRrSl4VuClhFvECG4+AEXCpuuwBAKDu
-	 Pjnz40d13QiuUwZ23KHmDW6sqZlz7UADitApqKw2F7iCJ+f9Xb9EFHt3JGV+KrK2P+
-	 D0zpRQ27EgCorN9skyR+88/rHXLGZBR3W7S1DxQeDnDR7wbcKpbP+CwiTo3GFPfM4J
-	 ApUwplboFAMryeCIl8nZhAjTgfyVPSa0QX1SbAayQDW8UqWGUixIbp2iuauj0lMwA2
-	 18hLTNga9tcyo7/UkmiBahxGY3Y2pd4ptPvH6J4gUQPCPouMafiwUsD75dIlHTD58h
-	 M2NP2q4+wpJ9A==
-Received: by mail.growdeal.pl for <b43-dev@lists.infradead.org>; Mon, 30 Jun 2025 07:35:18 GMT
-Message-ID: <20250630064500-0.1.37.1j8ab.0.7v9ae9nbfu@growdeal.pl>
-Date: Mon, 30 Jun 2025 07:35:18 GMT
-From: =?UTF-8?Q?"Pawe=C5=82_Zajdlicz"?= <pawel.zajdlicz@growdeal.pl>
+	b=lyxwnVvfyAb5xHuLgxbTijiDqEzl80rt+V6cqXC2OqFL/XnBr0F4OjB9Jg8e5QwGI
+	 JOI98a0on+++K0s+sqkmsgzkgG23nfoLgietuoEF6kDc1TlCWDL/q4mnrcehWt01tL
+	 BlcMMx3pztww5DkfZWq8bcQMDC3LU1ZyrHOU01l/0WT5VC11sGEV1i7D6RObdUheij
+	 5bAHXepNyu0KpErck+CDmvN159p+/PQPG9R4YzU2H3Bsl9FbOJ9BsTK35MOnoN9REl
+	 xB6S2LK+NeOropu9N/pRP8lowNDNi0bi52nOUl5EjXN0jbAOM7Okjga5N4JqvzaYXU
+	 E26HZKZHN+iZw==
+Received: by mail.biznator.pl for <b43-dev@lists.infradead.org>; Mon,  7 Jul 2025 07:35:20 GMT
+Message-ID: <20250707084500-0.1.ia.124tr.0.iv3dd08fmb@biznator.pl>
+Date: Mon,  7 Jul 2025 07:35:20 GMT
+From: "Wojciech Mroczka" <wojciech.mroczka@biznator.pl>
 To: <b43-dev@lists.infradead.org>
-Subject: Rekrutacja handlowca 
-X-Mailer: mail.growdeal.pl
+Subject: Instalacja pv
+X-Mailer: mail.biznator.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20250630_003531_851082_AA8AAA1A 
-X-CRM114-Status: UNSURE (   2.37  )
+X-CRM114-CacheID: sfid-20250707_003652_419787_0EB2DC53 
+X-CRM114-Status: UNSURE (   1.39  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -66,11 +66,13 @@ Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-V2l0YW0sCgpDenkgbWFqxIUgUGHFhHN0d2EgYWt0dWFsbmllIHBvdHJ6ZWJ5IHogemFrcmVzdSBy
-ZWtydXRhY2ppIG9zw7NiIGRvIGR6aWHFgnUgaGFuZGxvd2Vnbz8gCgpQb21hZ2FteSBza3V0ZWN6
-bmllIHJla3J1dG93YcSHIG9zb2J5IG5hIHN0YW5vd2lza2EgUHJ6ZWRzdGF3aWNpZWxhIEhhbmRs
-b3dlZ28sIFNhbGVzIE1hbmFnZXJhLCBhIHRha8W8ZSBLYWRyeSBNYW5hZ2Vyc2tpZWogdyBvYnN6
-YXJ6ZSBzcHJ6ZWRhxbx5LgoKQ3p5IG1vxbxlbXkgcG9yb3ptYXdpYcSHPwoKClBvemRyYXdpYW0K
-UGF3ZcWCIFphamRsaWN6CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcK
-aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
+RHppZcWEIGRvYnJ5LAoKY3p5IHPEhSBQYcWEc3R3byBvdHdhcmNpIG5hIG5pZXpvYm93acSFenVq
+xIVjxIUgcm96bW93xJkgbmEgdGVtYXQgZm90b3dvbHRhaWtpPwoKSmFrbyBmaXJtYSBzcGVjamFs
+aXp1asSFY2Egc2nEmSB3IGluc3RhbGFjamkgaSBzZXJ3aXNpZSBuYWpsZXBzenljaCBqYWtvxZtj
+aW93byBwYW5lbGkgc8WCb25lY3pueWNoIG5hIHJ5bmt1IGNoY2lhxYJieW0gcHJ6ZWRzdGF3acSH
+IHByb3BvenljasSZLCBqYWvEhSB3c3DDs2xuaWUgeiB6ZXNwb8WCZW0gcHJ6eWdvdG93YWxpxZtt
+eSBkbGEgUGHFhHN0d2Egb2JpZWt0dS4KCkLEmWTEmSB3ZHppxJljem55IHphIHdpYWRvbW/Fm8SH
+IG9kIFBhxYRzdHdhIGN6eSBtb8W8ZW15IHBvcm96bWF3aWHEhwoKClBvemRyYXdpYW0KV29qY2ll
+Y2ggTXJvY3prYQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
