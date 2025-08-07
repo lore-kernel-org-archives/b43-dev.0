@@ -4,52 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52046C87FCB
-	for <b43-dev@archiver.kernel.org>; Wed,  6 Aug 2025 07:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 230A3C87FCF
+	for <b43-dev@archiver.kernel.org>; Thu,  7 Aug 2025 07:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=Zq/Yf8O2tpiI0k82nyiK051wyA7JvLQq5BEtYqGNRag=; b=vKY9HLeMCgf5PY
-	PqZJ/I+QgTwW7HpGZwcZV8pOd5pzJWRRe0H/nUK9f9EgrDu/C2gRdQq2xda0ULGZkzsIIsXm4wo/5
-	SO2hDSGefBEcbVUgc6/HJQuupDZKJOpMxHczPmbnKtf9H7SQWfIv2isptbVzgE3WfOaRoWL7fXH7J
-	cIyNvSZ9vwMH8Fu4ytjBklMvpTELDTSaLalNWUXqQfIPNATaVALvSRsQV2UBlWWL+8aaGTP1qh9ho
-	XeQwKrOzyLrS5dKQ2zO676Kn1i4p9+ljFtDR1mLr8PNQlYzi45SiZ89npIElADWIea69zSQUtpu1C
-	Ogat4Z9YCN6aTEZf8stg==;
+	List-Owner; bh=ikefElddZtVsDT64pJ8G91l46nTf0yWkFOKxQ952Oms=; b=e4lrsY9GiTEf5Y
+	fgJMf4JNYm4gZkuMVfSQ0ptmL/I9McyXTn/2X8BlxyZR/AOMBZzf5/qL63rHWSWaU2QDo/XbbuSdR
+	kKq+vBKAWLlG/cs3b4+oNhhPD/4eoD12CWzvwF4UaPjaPLQ6EhZvcRHamUi5pC88jyRKunZ3yPfu6
+	lcLZVodmxX73JK3yufWRLoU421oY4R5xX9hXs6cq4lkN8TAk5ve/cs8T1hxHzkBBfTvGjewt9NDt1
+	WrbqUfxLMF/sWxMVUMC/SrlRSJxHUyf5lhM30O/uYmxM8NK9lQ4x3dIRxOPLrHemNPwBdK2AHMl9S
+	fa/2INvabi249nNoIVfQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujZ17-0000000EZWk-2iyH;
-	Wed, 06 Aug 2025 07:56:57 +0000
-Received: from mail.stratspark.pl ([51.38.99.212])
+	id 1ujvED-0000000HTxm-1ZHL;
+	Thu, 07 Aug 2025 07:39:57 +0000
+Received: from desiato.infradead.org ([2001:8b0:10b:1:d65d:64ff:fe57:4e05])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujZ12-0000000EZVx-3l7m
+	id 1ujv7h-0000000HTQg-02Wi
+	for b43-dev@bombadil.infradead.org;
+	Thu, 07 Aug 2025 07:33:13 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Subject:To:From:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=h3k5zkAZf6tEpPtEQC0QHe2u0TTQ7ZFRjUanCKLrdLo=; b=Q7uS+LBPF8mOuthD9CTh5Yd2ti
+	qYQQfUXnBwonH58VxG/B9ndc7wzgBoiQB/wbB41/tMdUFzVU6bQdG12OP5Q69HfeMxuIX3GoEzuMY
+	gYqfvHMmjAdYf5ibrjOOqEfg8a7rS21OX+w/uJ48xWmcJ4fiehpFqKmDzMkJGukKvTw+waB2RpViq
+	B2TdCem6ijWgUpG5mAETSAWJg+G5q1sdushQ9tC4K+adQdYEsvoHZH10SrBmUWsBnLAgagqjMmAPp
+	1Jv/Ro0NZY2EN4WvXwZC5/AOtl2fx8QNFgVgXUb4omaqd6iq4+iy38M+/sDRDROYvEtuMpFgbaJCj
+	nuQ2ikhQ==;
+Received: from mail.biznator.pl ([162.19.205.13])
+	by desiato.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujv7d-0000000EcaE-3ss9
 	for b43-dev@lists.infradead.org;
-	Wed, 06 Aug 2025 07:56:54 +0000
-Received: by mail.stratspark.pl (Postfix, from userid 1002)
-	id 093E326E1D; Wed,  6 Aug 2025 09:56:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stratspark.pl;
-	s=mail; t=1754466967;
-	bh=q2/tbLIfTSm7GKqHZN0Ihz9HwqgGTvRpJYVCUpsySQ0=;
+	Thu, 07 Aug 2025 07:33:11 +0000
+Received: by mail.biznator.pl (Postfix, from userid 1002)
+	id 8B9FA26FC8; Thu,  7 Aug 2025 09:31:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=biznator.pl; s=mail;
+	t=1754551980; bh=h3k5zkAZf6tEpPtEQC0QHe2u0TTQ7ZFRjUanCKLrdLo=;
 	h=Date:From:To:Subject:From;
-	b=Zf444jKLGNFdmQL6tYojxumu66oTZXI+t1n39KT1ECpo+W8YcKLA2TIf2vhvnhQxO
-	 EkTozoQtmaCblthLUF7I+8LBxUyWx7N/vieM/Xv4KXrt+ucATscS9Ch6zy+pKBa8zt
-	 dLRR/4kcxyYXboerofAONLlAHMDJqiOBqiQDQeumwrONunUgigmidL8p3YN9wzSKxF
-	 ByaTiF1Drmm0dd47+wdJClDcOf2gYx89RkqO3CIRt1nCvAdLmFVEs3VKGbNRILb4ze
-	 UYV3+kKcPpDJbi18cesDa3MrG1JuAqyzoEHYo+y7w8Cw0mbUKIv+TPv9N6KCbnsZSD
-	 MHniXhPwG6y1g==
-Received: by mail.stratspark.pl for <b43-dev@lists.infradead.org>; Wed,  6 Aug 2025 07:55:58 GMT
-Message-ID: <20250806084500-0.1.k3.4ivh4.0.4eieeig6r9@stratspark.pl>
-Date: Wed,  6 Aug 2025 07:55:58 GMT
-From: "Adam Charachuta" <adam.charachuta@stratspark.pl>
+	b=HjK7DeS+brk/rlT8G/FLxm3wHKtU5CJ51qi52rq9upqO90FKdh0JhO0tqxAOJOVt3
+	 3eKwXYerYrXI1/7vXnKwmUSY46oePdpT5Js/+nyCaXW3XcqFYE/4gHAklaFeM78s42
+	 qGealaJ2CaR/wSlW3WCZMpYV0yoSafBvH5sZLT0w9D78h8RyJu/5yNy1jf8Tm4bavm
+	 N1TbRnqDSH2mBQcB2reKKHHjowLpr25hZLKQIJlANFcKrntSl0qUa3yOOJrdW67TJW
+	 72NT9TLxZfftAxvAEVDcaURXR6Y3PKCuN0gHVuU3+7OTrrUKkLMYLPhVRRtCKXkoc9
+	 iZqZCxYJrk3Uw==
+Received: by mail.biznator.pl for <b43-dev@lists.infradead.org>; Thu,  7 Aug 2025 07:30:49 GMT
+Message-ID: <20250807084501-0.1.ix.1fmxg.0.0npzepf5p0@biznator.pl>
+Date: Thu,  7 Aug 2025 07:30:49 GMT
+From: "Wojciech Mroczka" <wojciech.mroczka@biznator.pl>
 To: <b43-dev@lists.infradead.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.stratspark.pl
+Subject: Fotowoltaika dla firm
+X-Mailer: mail.biznator.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20250806_005653_203669_C5E13F18 
-X-CRM114-Status: UNSURE (   1.39  )
+X-CRM114-CacheID: sfid-20250807_083310_176886_2E8DF265 
+X-CRM114-Status: UNSURE (   1.07  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -67,14 +81,13 @@ Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKemFwb3puYcWCZW0gc2nEmSB6IFBhxYRzdHdhIHN0cm9uxIUgaSB6IHBy
-enlqZW1ub8WbY2nEhSBwcnp5em5hasSZLCDFvGUgcHJ6eWNpxIVnYSB1d2FnxJkgaSB6YWNoxJlj
-YSBkbyBkYWxzenljaCByb3ptw7N3LiAKClBvbXnFm2xhxYJlbSwgxbxlIG1vxbxlIG3Ds2fFgmJ5
-bSBtaWXEhyBzd8OzaiB3a8WCYWQgdyBQYcWEc3R3YSByb3p3w7NqIGkgcG9tw7NjIGRvdHJ6ZcSH
-IHogdMSFIG9mZXJ0xIUgZG8gd2nEmWtzemVnbyBncm9uYSBvZGJpb3Jjw7N3LiBQb3p5Y2pvbnVq
-xJkgc3Ryb255IHd3dywgZHppxJlraSBjemVtdSBnZW5lcnVqxIUgxZt3aWV0bnkgcnVjaCB3IHNp
-ZWNpLgoKTW/FvGVteSBwb3Jvem1hd2lhxIcgdyBuYWpibGnFvHN6eW0gY3phc2llPwoKClBvemRy
-YXdpYW0KQWRhbSBDaGFyYWNodXRhCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVh
-ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2
-Cg==
+RHppZcWEIGRvYnJ5LAoKcG9tYWdhbXkgbWlrcm8sIG1hxYJ5bSBpIMWbcmVkbmltIHByemVkc2nE
+mWJpb3JzdHdvbSBvYm5pxbx5xIcga29zenR5IGVuZXJnaWkgZWxla3RyeWN6bmVqIGR6acSZa2kg
+bW9udGHFvG93aSBpbnN0YWxhY2ppIGZvdG93b2x0YWljem5lai4gCgpBa3R1YWxuaWUgcHJvcG9u
+dWplbXkgYmV6a29ua3VyZW5jeWpuZSB3YXJ1bmtpIHdzcMOzxYJwcmFjeSwgb2QgcGxhbnUgcG9w
+cnpleiByZWFsaXphY2rEmSBhxbwgcG8gc2Vyd2lzLgoKUHJvc3rEmSBvIGluZm9ybWFjasSZIGN6
+eSBtb8W8ZW15IHByemVkc3Rhd2nEhyBwcm9wb3p5Y2plIGRsYSBQYcWEc3R3YSBmaXJteT8KCgpQ
+b3pkcmF3aWFtLApXb2pjaWVjaCBNcm9jemthCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmlu
+ZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9i
+NDMtZGV2Cg==
