@@ -4,66 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 230A3C87FCF
-	for <b43-dev@archiver.kernel.org>; Thu,  7 Aug 2025 07:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 755FEC87FD2
+	for <b43-dev@archiver.kernel.org>; Mon, 11 Aug 2025 08:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
 	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
 	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=ikefElddZtVsDT64pJ8G91l46nTf0yWkFOKxQ952Oms=; b=e4lrsY9GiTEf5Y
-	fgJMf4JNYm4gZkuMVfSQ0ptmL/I9McyXTn/2X8BlxyZR/AOMBZzf5/qL63rHWSWaU2QDo/XbbuSdR
-	kKq+vBKAWLlG/cs3b4+oNhhPD/4eoD12CWzvwF4UaPjaPLQ6EhZvcRHamUi5pC88jyRKunZ3yPfu6
-	lcLZVodmxX73JK3yufWRLoU421oY4R5xX9hXs6cq4lkN8TAk5ve/cs8T1hxHzkBBfTvGjewt9NDt1
-	WrbqUfxLMF/sWxMVUMC/SrlRSJxHUyf5lhM30O/uYmxM8NK9lQ4x3dIRxOPLrHemNPwBdK2AHMl9S
-	fa/2INvabi249nNoIVfQ==;
+	List-Owner; bh=hNNPpEvvJBG1EO9Q0wAQhB7RPwf/RhhYK8ZxvZr4NW4=; b=d3qzImphvriY0v
+	gWpf9PXxKjMNfz3pijmf9H/aL30hRlqC1eab17n4k849SF1CDYdpBF5QrcZIxMc2m5eXd07bzOHHm
+	Qoaxopt/uhmm3n5UMfoV8cXLc2h1ICNqRP+0I8J7XBxjhVQ5n9yV4VsshlZ6JOwlkqh/6+GwnPxoE
+	T0MgpHHTvcbd7ZxTG4613Rqu+9mpL34o6VA+9pmvVjb2SYI0MjXyw2yQpeKx+dJ28ShJ4uLjYq8TM
+	Q3piVvHhy4N5YegvU751zP+Yk3aSsuDDR7/FX5kBdmdxISyu7Vwt3Z/k5a+HxCn7p+hNciDxCafVI
+	EG5mqeHnSWgbRBHKrC3A==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujvED-0000000HTxm-1ZHL;
-	Thu, 07 Aug 2025 07:39:57 +0000
-Received: from desiato.infradead.org ([2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+	id 1ulO7A-00000006sxd-31TZ;
+	Mon, 11 Aug 2025 08:42:44 +0000
+Received: from mail.novafirma.pl ([151.80.57.52])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujv7h-0000000HTQg-02Wi
-	for b43-dev@bombadil.infradead.org;
-	Thu, 07 Aug 2025 07:33:13 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Subject:To:From:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=h3k5zkAZf6tEpPtEQC0QHe2u0TTQ7ZFRjUanCKLrdLo=; b=Q7uS+LBPF8mOuthD9CTh5Yd2ti
-	qYQQfUXnBwonH58VxG/B9ndc7wzgBoiQB/wbB41/tMdUFzVU6bQdG12OP5Q69HfeMxuIX3GoEzuMY
-	gYqfvHMmjAdYf5ibrjOOqEfg8a7rS21OX+w/uJ48xWmcJ4fiehpFqKmDzMkJGukKvTw+waB2RpViq
-	B2TdCem6ijWgUpG5mAETSAWJg+G5q1sdushQ9tC4K+adQdYEsvoHZH10SrBmUWsBnLAgagqjMmAPp
-	1Jv/Ro0NZY2EN4WvXwZC5/AOtl2fx8QNFgVgXUb4omaqd6iq4+iy38M+/sDRDROYvEtuMpFgbaJCj
-	nuQ2ikhQ==;
-Received: from mail.biznator.pl ([162.19.205.13])
-	by desiato.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujv7d-0000000EcaE-3ss9
+	id 1ulNca-00000006oWZ-1Irr
 	for b43-dev@lists.infradead.org;
-	Thu, 07 Aug 2025 07:33:11 +0000
-Received: by mail.biznator.pl (Postfix, from userid 1002)
-	id 8B9FA26FC8; Thu,  7 Aug 2025 09:31:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=biznator.pl; s=mail;
-	t=1754551980; bh=h3k5zkAZf6tEpPtEQC0QHe2u0TTQ7ZFRjUanCKLrdLo=;
+	Mon, 11 Aug 2025 08:11:12 +0000
+Received: by mail.novafirma.pl (Postfix, from userid 1002)
+	id 5FE47A45E4; Mon, 11 Aug 2025 10:11:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novafirma.pl; s=mail;
+	t=1754899864; bh=6e7m2oCltpDJ6Z385exoCtdAMDYbdCGRZj9R1h6ceWs=;
 	h=Date:From:To:Subject:From;
-	b=HjK7DeS+brk/rlT8G/FLxm3wHKtU5CJ51qi52rq9upqO90FKdh0JhO0tqxAOJOVt3
-	 3eKwXYerYrXI1/7vXnKwmUSY46oePdpT5Js/+nyCaXW3XcqFYE/4gHAklaFeM78s42
-	 qGealaJ2CaR/wSlW3WCZMpYV0yoSafBvH5sZLT0w9D78h8RyJu/5yNy1jf8Tm4bavm
-	 N1TbRnqDSH2mBQcB2reKKHHjowLpr25hZLKQIJlANFcKrntSl0qUa3yOOJrdW67TJW
-	 72NT9TLxZfftAxvAEVDcaURXR6Y3PKCuN0gHVuU3+7OTrrUKkLMYLPhVRRtCKXkoc9
-	 iZqZCxYJrk3Uw==
-Received: by mail.biznator.pl for <b43-dev@lists.infradead.org>; Thu,  7 Aug 2025 07:30:49 GMT
-Message-ID: <20250807084501-0.1.ix.1fmxg.0.0npzepf5p0@biznator.pl>
-Date: Thu,  7 Aug 2025 07:30:49 GMT
-From: "Wojciech Mroczka" <wojciech.mroczka@biznator.pl>
+	b=mQlmSDQOo91t4XEFek6NCbKG1XEKdv0ajVEhn/XgQqNO2eu/nlWDxaPCrWLDkhBup
+	 jVa2o1HORxKWukoEF4kd0qwx3zXGf0QZtVZE0KpCcd5gcl0b8agxhxTC2iKeN+/ElA
+	 l2MkRXBcT8E28PsGrOgB0EH4WuAqSwjel0Uaj6F9MpvdSWxeygbC8yi0rIsNTz9rRj
+	 gbeFkjbZL7NIstagi9OSPLfnajQtZ/faYwuqiwyZ78Rl563tDhOhx2vbSgOE6ngjg5
+	 fWV9njl/0bynLn1FwBdLev6jtOtK2sTd4ijXTlkKWSqcTGatBVvm7XtM1poQFt9OaS
+	 GT6YAv3w3CcWw==
+Received: by mail.novafirma.pl for <b43-dev@lists.infradead.org>; Mon, 11 Aug 2025 08:11:01 GMT
+Message-ID: <20250811084500-0.1.px.2kdzx.0.rd8iijoj29@novafirma.pl>
+Date: Mon, 11 Aug 2025 08:11:01 GMT
+From: "Jakub Olejniczak" <jakub.olejniczak@novafirma.pl>
 To: <b43-dev@lists.infradead.org>
-Subject: Fotowoltaika dla firm
-X-Mailer: mail.biznator.pl
+Subject: Szansa dla firm z Wielkopolskiego
+X-Mailer: mail.novafirma.pl
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20250807_083310_176886_2E8DF265 
-X-CRM114-Status: UNSURE (   1.07  )
+X-CRM114-CacheID: sfid-20250811_011108_630154_E793E86F 
+X-CRM114-Status: UNSURE (   1.25  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -81,13 +66,17 @@ Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-RHppZcWEIGRvYnJ5LAoKcG9tYWdhbXkgbWlrcm8sIG1hxYJ5bSBpIMWbcmVkbmltIHByemVkc2nE
-mWJpb3JzdHdvbSBvYm5pxbx5xIcga29zenR5IGVuZXJnaWkgZWxla3RyeWN6bmVqIGR6acSZa2kg
-bW9udGHFvG93aSBpbnN0YWxhY2ppIGZvdG93b2x0YWljem5lai4gCgpBa3R1YWxuaWUgcHJvcG9u
-dWplbXkgYmV6a29ua3VyZW5jeWpuZSB3YXJ1bmtpIHdzcMOzxYJwcmFjeSwgb2QgcGxhbnUgcG9w
-cnpleiByZWFsaXphY2rEmSBhxbwgcG8gc2Vyd2lzLgoKUHJvc3rEmSBvIGluZm9ybWFjasSZIGN6
-eSBtb8W8ZW15IHByemVkc3Rhd2nEhyBwcm9wb3p5Y2plIGRsYSBQYcWEc3R3YSBmaXJteT8KCgpQ
-b3pkcmF3aWFtLApXb2pjaWVjaCBNcm9jemthCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmlu
-ZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9i
-NDMtZGV2Cg==
+U3phbm93bmkgUGHFhHN0d28sCgp3IHJhbWFjaCB3c3BhcmNpYSBkbGEgcHJ6ZWRzacSZYmlvcmPD
+s3cgemFwZXduaWFteSBrb21wbGVrc293ZSBtb8W8bGl3b8WbY2kgZmluYW5zb3dhbmlhIG5hIGF0
+cmFrY3lqbnljaCB3YXJ1bmthY2guCgpPZmVydWplbXkgZWxhc3R5Y3puZSByb3p3acSFemFuaWEg
+a3JlZHl0b3dlLCBrdMOzcmUgbW9nxIUgd2VzcHJ6ZcSHIHJvenfDs2ogaSBzdGFiaWxuZSBmdW5r
+Y2pvbm93YW5pZSBQYcWEc3R3YSBkemlhxYJhbG5vxZtjaS4gCgpOYXN6ZSBwcm9wb3p5Y2plIHRv
+IG0uaW4uIGtyZWR5dCB3IHJhY2h1bmt1IGRvIDEgbWxuIFBMTiB6IGd3YXJhbmNqxIUgQkdLLCBy
+YXRhbG55IGJleiB6YWJlenBpZWN6ZW5pYSBoaXBvdGVjem5lZ28geiBtYXLFvMSFIDMlIGkgbmEg
+MTIwIG1pZXNpxJljeSBvcmF6IGlud2VzdHljeWpueSBuYSBidWRvd8SZIGN6eSB6YWt1cCBuaWVy
+dWNob21vxZtjaSB6IG1vxbxsaXdvxZtjacSFIG5lZ29jamFjamkgd2FydW5rw7N3LgoKQ3p5IHPE
+hSBQYcWEc3R3byB6YWludGVyZXNvd2FuaSBlbGFzdHljem55bSBmaW5hbnNvd2FuaWVtIHN3b2pl
+Z28gYml6bmVzdT8KCgpQb3pkcmF3aWFtCkpha3ViIE9sZWpuaWN6YWsKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0
+My1kZXZAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2I0My1kZXYK
