@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BC06ECA1007
-	for <b43-dev@archiver.kernel.org>; Tue,  2 Sep 2025 01:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99CE4CAC582
+	for <b43-dev@archiver.kernel.org>; Tue,  9 Sep 2025 23:58:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=2RZneXZPA0Z/h7l7fJOVD/zWwukowq/+Oh3hCdYzujU=; b=UFbrlgXEqVKxBw
-	B/qLUs7ZiknvrEkSdp9/O5T7rCrn/qHybEYRwWgBfN6p1GKfnHkWy6aeeMy1w15nnL3dhmSVKdESe
-	9Vl8sOtlpCKkq4LLZp2OX4Aki1DLQ7U2x+t5YhK5if5IgZbRXUSzGh2u6aZk/CXjOg0BwGFLMpRdZ
-	OjEFEuXzLHgNEQM4IQA3Cl3DoELUlHuVum1ywH9/+uS7uabC+QzhFkJaz75NS4OMPVtGO8kyPrZJk
-	oosQ3J0krL4tl5ikLvL3zanyef2Z8aVugvmIxoXS5NcUvXA3rjmJe9kDwY7eNL5dUv3GagNO9dEgt
-	2KOZWKt8YuwXePhn4SbA==;
+	List-Owner; bh=a9fvMCDWd4hfCbDeWnyPahS3X6u1htcAzsS1PxYqE+g=; b=polChecMeNOgJ9
+	flGmKKzq+KSuvgEsvKYJEsMyMgjimp4tAEXUbumwl6IC6wh2zSHCXOBx8kNKFD5YaBy8AEzPhaVt9
+	ekQt26cTP5jQvhb5oyK1EwYa+CtZz4Shc5IfA3FhT31kEfy3BYEa5BR4SevQulTNMZFFvqBq7zqco
+	50tJW6/HeF39x1I72BA/n4AEFhnoOoau2a9TS/YKqoGK6zRjDJ0C4bY+DW+tlIEyt51VRm+/GIbeW
+	Vn0u28KxOSAOW9fV6+25uKUdiLQWHs5nE1Pzh23pMUtKnowr3guWH23ySYA9xgolrijzHg57HDB0X
+	giuCccUabOFEiQm2X/ng==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utG21-0000000Ejdp-3EKc;
-	Tue, 02 Sep 2025 01:41:57 +0000
-Received: from r9110.ps.combzmail.jp ([49.212.36.116])
+	id 1uw8Do-0000000B1h9-0hO2;
+	Tue, 09 Sep 2025 23:58:00 +0000
+Received: from r9204.ps.combzmail.jp ([160.16.62.132])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utG1v-0000000EjbC-3Mjd
+	id 1uw8Dh-0000000B1fG-2b46
 	for b43-dev@lists.infradead.org;
-	Tue, 02 Sep 2025 01:41:53 +0000
-Received: by r9110.ps.combzmail.jp (Postfix, from userid 99)
-	id 906681886B6; Tue,  2 Sep 2025 10:40:49 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9110.ps.combzmail.jp 906681886B6
+	Tue, 09 Sep 2025 23:57:55 +0000
+Received: by r9204.ps.combzmail.jp (Postfix, from userid 99)
+	id A73F5103583; Wed, 10 Sep 2025 08:56:42 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9204.ps.combzmail.jp A73F5103583
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCNjUwaSVVJWklcyVBJWMlJCU6JTslXyVKITw7dkwzNkkbKEI=?= <info@fc-session.jp>
-X-Ip: 6026592441533703
-X-Ip-source: k85gj7ra48dnsa5pu0p6gd
+From: =?ISO-2022-JP?B?GyRCP0BFRCFDJUolbCVDJTglaiVzJS8bKEI=?= <info@knowledgelink-corp.jp>
+X-Ip: 5927432509143847
+X-Ip-source: k85gj73p48dnsa9wu0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCQ08waCRHPWkkTiVPJSQlViVqJUMlSTc/GyhC?=
- =?ISO-2022-JP?B?GyRCM1g9LD1OJHIhIyVRITwlSCVKITxKZz04GyhC?=
+Subject: =?ISO-2022-JP?B?GyRCPT42SDB3JE41a00/JE43aCRhSn0bKEI=?=
 Mime-Version: 1.0
-X-MagazineId: ra5p
-X-uId: 6763304039485965554235711022
+X-MagazineId: 3p9w
+X-uId: 6763304837485965624884461016
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20250902014146.906681886B6@r9110.ps.combzmail.jp>
-Date: Tue,  2 Sep 2025 10:40:49 +0900 (JST)
+Message-Id: <20250909235736.A73F5103583@r9204.ps.combzmail.jp>
+Date: Wed, 10 Sep 2025 08:56:42 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20250901_184151_954695_5A7DCF76 
-X-CRM114-Status: UNSURE (   1.59  )
+X-CRM114-CacheID: sfid-20250909_165753_777778_BC250CAB 
+X-CRM114-Status: UNSURE (   0.69  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -65,81 +64,91 @@ Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
 　
-　―　地域貢献しながら、利益率50％以上
-　―　未経験でも初月から黒字化
-　―　ストック型で長期安定収益
 　
-　さらに、176万円減額・体験生徒30名サポートを実施して
-　不安やリスクの低減にこだわり続けています。
+　ある日突然、
+　社長 ちょっとご相談が・・と、ならないために。
 　
-　サイバーエージェント社が開発したプログラミング教材を活用し、
-　他の塾ではマネできない、
-　　「ハイブリッド型の教育事業」をぜひご検討ください。
+　査定が引き金でキーパーソンが離職し、業績が落ちる
+　そんな失敗を防ぐ、4,300人の経営者が共感した
+　　「従業員の給与の決め方」を知る、ウェビナーのご案内です。
 　
-　>> オンラインセミナーのご視聴はこちら
-   　https://wam-edu-fc.jp/wam2/
 　
-　※講師経験や塾業界の知識などは不要で、
-　　未経験から開業できます。
+　>> ご視聴予約はこちら
+　　 https://fc-knowledgelink-corp.jp/seminar_25/
+　
+--------------------------------------------　
 
-　スタートは「業界未経験」「社員１名」で可能ですので
-　一度ご視聴ください。
-
-━…‥‥…━…‥‥…━…‥‥…━…‥…━…‥…━
-　◆ 高い集客力と収益性。塾フランチャイズ説明会 ◆
-━…‥‥…━…‥‥…━…‥‥…━…‥…━…‥…━
-
-　テーマ：プログラミング教育×個別指導WAM
-
-　日　時：9月17日（水）14:00〜15:00
-　形　式：オンライン
-　定　員：先着50社
-　※マイク・カメラOFF、費用は不要でご視聴頂けます
-ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+　テーマ： 労使共に納得できる。
+　　　　　 失敗しない、「給与の決め方」
 　
-　セミナーでは、皆様から良くご質問頂く
-　
-　なぜ、少子化の時代に教育事業なのか？
-　生徒や講師を集められないのでは？
-　
-　開業した後、いつ・どのくらいの利益がでるのか？
-　長期安定的なキャッシュフローは見込めるか？
+　日程　： 9月17日（水）13:00〜15:00
+　　　 　　10月1日（水）13:00〜15:00
+　会場　： Zoom開催
+　定員　： 150名　※経営層の方限定です
+　費用　： 無料
+　特典　： セミナー資料を進呈
+　備考　： 両日内容は同じです
+--------------------------------------------
 
-　について、
+　本セミナーは4,300人以上の経営層が受講した
+　マネジメント理論：識学の「給与の決め方」を
 　
-　業界29年、全国300校舎を誇る個別指導WAMが
-
-　　〇 早期黒字化と長期収益化の秘訣
-　　〇 生徒と塾講師の募集に強い理由
-
-　とあわせてお答えします。
+　ビジネスの実務家として実体験をベースに
+　経営者目線でお伝えいたします。
+　
+　多くの部分で共感いただけるセミナーと
+　なっておりますのでぜひご参加ください。
+　
+　［ 内 容 ］
+　　1．評価と査定と連動させる方法
+　　2．絶対に押さえるべきポイント
+　　3．間違った評価制度
+　　4．導入企業の事例
+　　5．質疑応答
 　
 　
-　◆セミナーで得られること
-　　・教育市場の動向と少子化にも強い理由
-　　・なぜ、初月から黒字化を目指せるのか
-　　・SNS活用など、広告会社を母体に持つ強み
-　　・オンライン授業による塾講師不足の解決
-　　・プログラミング×個別指導のメリットと事業モデル
-
-
-　”安定収益”を得るか、機会を見送るか──。  
-　まずは無料説明会でフランチャイズシステムをご確認ください。
- 
-  　>> ご視聴予約はこちら
-   　https://wam-edu-fc.jp/wam2/
+　昇給・昇格に対する納得感を得られず、
+　組織パフォーマンスが低調になっていませんか？
 　
-　スタートは「業界未経験」「社員１名」で可能です。
-　新事業による収益づくりをお考えの方は、ぜひご視聴ください。
+　　昇給、昇格、賃金テーブルの要件が曖昧で
+　　労使共に納得できる状態とは言い難い。
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　教育フランチャイズセミナー事務局
-　電話：0120-891-893
-　住所：東京都中央区銀座7-13-6
-―――――――――――――――――――――――――――――――
-　メール案内が不要な方は、こちらから停止のお手続きをお願いいたします
-　┗　https://wam-edu-fc.jp/mail/
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　これらは、「給与の決め方」の問題かもしれません。
+　
+　給与制度が機能不全に陥ると、公平性・透明性に疑義が生じ、
+　人事評価に対する不信やモチベーションの低下、
+　ひいては優秀人材の流出といった深刻なリスクにつながりかねません。
+　
+　
+　一方で、自社に最適化された給与制度をゼロから
+　設計することは容易ではなく、高度な知見と実行力が求められます。
+　
+　
+　そこで本セミナーでは、ビジネス組織からスポーツチームまで
+　幅広く応用可能な、汎用性の高い
+　「給与の決め方」フレームワークをご紹介いたします。
+
+
+　このセミナーが、最適な給与制度を考える
+　機会となれば幸いです。
+　
+　>> ご視聴予約はこちら
+　　 https://fc-knowledgelink-corp.jp/seminar_25/
+　
+　
+　ご興味をお持ちいただけましたら、
+　ご参加のお申込みを頂けますと幸いです。
+-----------------------
+　一般社団法人 ナレッジリンク
+　東京都千代田区神田小川町1-8-3
+　電話：03-5256-7638
+
+　配信が不要な方は大変残念ではございますが、
+　下記URLより手続き下さいませ。
+　
+　メールの停止はこちら
+　https://fc-knowledgelink-corp.jp/mail/
+　
 
 _______________________________________________
 b43-dev mailing list
