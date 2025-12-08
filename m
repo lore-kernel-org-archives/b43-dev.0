@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A725AD10397
-	for <b43-dev@archiver.kernel.org>; Wed, 26 Nov 2025 09:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26376D2CE17
+	for <b43-dev@archiver.kernel.org>; Mon,  8 Dec 2025 01:39:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Subject:To:From:Date:
-	Message-ID:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From
-	:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=PuzW0tYtqqFZcOqkC8WJ5p75cEBoxblbgaa/yFpKDI4=; b=3Gn1fgiIBL7OYm
-	owdntvvwwIFRW3bx9j/wApbsa7FS/zMOTt53m0K002uYZghosqadMRAAnC3V1B8llcki4FLoLhirq
-	PziB3w6Ohf/RAS6VsktCx8RnH1zko71MIZikZJ0eDi61pNV1fXhwiz9Ib51viAbMT7UcFRu/XNu97
-	ytHJWgZl+82Gf6f+kBg9PjZSka15RgTFyy4Ivvst4sAZ3jqzSD0dazUVWtunhjb6Kh5A3qL3zz/bm
-	989oDBFIzt1zazPM9JD+Ff0eL/wi9513zHgvK+pmNqhmUcwwYs+k7gkzZk8ZUSTM1XUdOoBFOKW8J
-	wyEzwNGwG2AZSt60ZnEQ==;
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
+	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=grvZa2gMga8T3r/3iMPR4z8PRYsPX/ljGdLK3J2CIfU=; b=tIYjTAiMSh7FJ5
+	3955k7LkAG0l31PETa+bf2W7gd9h3y8+my2eDSE5AXgvhwNXguzzR6rzRiRO4/i+812nytE9VgirY
+	3FN6k1Ell/FaWTCSqW4T/9rv3CIqyT3juySgr4Z8uORmVCro6RbeDQK4+iqEfVC3l87URJ1Z4ON84
+	YGJKwQVDIcg685m7oPlYqPBE7zIRXfznR/AiRTuOO7Jl5Pjk4YlVVMkoJgf8BKiThH4U8JujTlM/a
+	XmnR8dQb2pRYhHxK2z+987ZWmQanzcHb5cfDnJ1wng625HJbXLN2yju4HROW3elGCy4XmiVwxoiRQ
+	8HjGhu6wgcr6VgX+7hoQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vOBTf-0000000EgIF-1hIX;
-	Wed, 26 Nov 2025 09:06:19 +0000
-Received: from mail.traksy.pl ([37.187.225.180])
+	id 1vSQDc-0000000COtv-1Lhg;
+	Mon, 08 Dec 2025 01:39:16 +0000
+Received: from r9205.ps.combzmail.jp ([160.16.62.121])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vOBTa-0000000EgHf-2EEW
+	id 1vSQDU-0000000COtG-2yLr
 	for b43-dev@lists.infradead.org;
-	Wed, 26 Nov 2025 09:06:15 +0000
-Received: by mail.traksy.pl (Postfix, from userid 1002)
-	id 1738E22ED4; Wed, 26 Nov 2025 10:05:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=traksy.pl; s=mail;
-	t=1764147969; bh=h/tMd3Fmva2aWv3ZncwumZun0fgHUvfIhd5NrSFYPpg=;
-	h=Date:From:To:Subject:From;
-	b=NZYENl8/vURHoGN+NuXA9VJE9rsx9zK3B6g4yHV9lCm/oX7QxfdjQ4Q5y12gz0EQN
-	 LIRMHyob/B2pVfbC4gKI+zsllQkfy/VZgGzh8xGS8aWtFQzl9LNlMo8ibYdJO1U075
-	 pgrEE0kTbjoEdMf7dHRziGA13j5lzrPhZhcCP32KXFcy4U2dMSskxxlhVBRhv+Qh+G
-	 ii035M7eDf8lIElZ7Tlh+Z9lhjWq8mNc+R5Z4f+CTK7rIBYSnutEp1XX1a4A4jebpn
-	 CHO4S2CXHWkdaW7iyLUSuPWOdSo8i+IKDmrMlExciSqofvI1Ts4Fys4W82iuncx6eY
-	 mloC6FjCNycKA==
-Received: by mail.traksy.pl for <b43-dev@lists.infradead.org>; Wed, 26 Nov 2025 09:05:31 GMT
-Message-ID: <20251126084500-0.1.o9.31uy2.0.dxqre0paqk@traksy.pl>
-Date: Wed, 26 Nov 2025 09:05:31 GMT
-From: "Karolina Dylkiewicz" <karolina.dylkiewicz@traksy.pl>
-To: <b43-dev@lists.infradead.org>
-Subject: Ochrona pracodawcy - prawo pracy
-X-Mailer: mail.traksy.pl
-MIME-Version: 1.0
+	Mon, 08 Dec 2025 01:39:10 +0000
+Received: by r9205.ps.combzmail.jp (Postfix, from userid 99)
+	id 3C7A5C49A3; Mon,  8 Dec 2025 10:37:28 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9205.ps.combzmail.jp 3C7A5C49A3
+To: b43-dev@lists.infradead.org
+From: =?ISO-2022-JP?B?GyRCSiE7YyVVJWklcyVBJWMlJCU6S1xJdBsoQg==?= <info@fc-tocotoco.jp>
+X-Ip: 139197884821342
+X-Ip-source: k85gj73348dnsaq6u0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCJF4kayRKJDJKITtjO3Y2SBsoQg==?=
+Mime-Version: 1.0
+X-MagazineId: 33q6
+X-uId: 6763334638485968585055251032
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20251208013857.3C7A5C49A3@r9205.ps.combzmail.jp>
+Date: Mon,  8 Dec 2025 10:37:28 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20251126_010614_834598_D99DCF6E 
-X-CRM114-Status: UNSURE (   2.83  )
+X-CRM114-CacheID: sfid-20251207_173908_862538_7F20B6F2 
+X-CRM114-Status: UNSURE (   0.06  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
-Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -61,24 +58,96 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-U3phbm93bmkgUGHFhHN0d28sCgp3IHJlbGFjamFjaCBwcmFjb2Rhd2Nh4oCTcHJhY293bmlrIHBv
-em9ybmllIGRyb2JuZSBuaWVkb3BhdHJ6ZW5pZSB3IGRva3VtZW50YWNqaSBtb8W8ZSBwcm93YWR6
-acSHIGRvIHBvd2HFvG55Y2ggcHJvYmxlbcOzdyBwcmF3bnljaCBpIGZpbmFuc293eWNoLgoKxZp3
-aWFkY3rEmSBzdGHFgsSFIG9ic8WCdWfEmSBwcmF3bsSFIGRsYSBwcnplZHNpxJliaW9yY8OzdyB3
-IHpha3Jlc2llIGluZHl3aWR1YWxuZWdvIGkgemJpb3Jvd2VnbyBwcmF3YSBwcmFjeS4gV3JheiB6
-IHplc3BvxYJlbSB6YWptdWplbXkgc2nEmSBwcnp5Z290b3dhbmllbSBpIG5lZ29jamFjamFtaSB1
-bcOzdyBvcmF6IGtvbnRyYWt0w7N3LCB3c3BpZXJhbXkgdyBwcm9jZXNhY2ggemF0cnVkbmllbmlh
-IGkgcmVzdHJ1a3R1cnl6YWNqaSwgYSB0YWvFvGUgcHJ6ZXByb3dhZHphbXkgYXVkeXR5IHByYXdu
-b3ByYWNvd25pY3plIChkdWUgZGlsaWdlbmNlKS4KCk5hc3p5bSBjZWxlbSBqZXN0LCBieSBUd29q
-ZSBkemlhxYJhbmlhIGpha28gcHJhY29kYXdjeSBiecWCeSBiZXpwaWVjem5lLCB6Z29kbmUgeiBw
-cnplcGlzYW1pIGkgZG9icnplIHVkb2t1bWVudG93YW5lLgoKQ3p5IG1vZ8SZIG9wb3dpZWR6aWXE
-hyB3acSZY2VqIG8gdHltLCBqYWsgd3lnbMSFZGEgdGFrYSB3c3DDs8WCcHJhY2EgdyBwcmFrdHlj
-ZT8KCgpQb3pkcmF3aWFtCkthcm9saW5hIER5bGtpZXdpY3oKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0My1kZXZA
-bGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2I0My1kZXYK
+　
+　新規事業をご検討中の経営者様へ
+
+　いつもお世話になっております。
+
+　「社会貢献性の高い事業で、確実な収益を上げたい」
+
+　そう考え、成長著しい福祉市場にご関心をお持ちのことと存じます。
+　しかし、同時にこうも考えていませんか？
+　
+　「市場は魅力的だが、専門的な法規制や複雑な運営、人材採用は荷が重すぎる…」
+　「もし失敗したら、多額の投資が無駄になってしまうのでは…」
+
+　ご安心ください。その不安こそ、私たちが解決したい最大の課題でした。
+
+　この障壁を根本から取り除くのが、私たちtocotocoだけの
+　【運営本部代行プラン】です。
+
+　煩雑な運営業務は全て本部がプロフェッショナルとして代行します。
+　オーナー様には、「投資家」として市場の確実な成長という
+　最大の果実のみを受け取っていただきます。
+―――――――――――
+
+　廃業率0.055％　業態を選べる
+　 　障がい福祉フランチャイズ
+
+　　 <ご視聴予約はこちら>
+　https://fc-tocotoco.work/25/
+
+〇オンラインで開催中
+　12月9日（火）10:00〜11:00
+　12月17日（水）15:00〜16:00
+
+ご都合の良い日程をお選びいただけます。
+―――――――――――
+
+　■ 失敗の不安を解消。本部代行プランの3大メリット
+　１．専門知識、一切不要
+　　複雑な行政への請求や法改正対応、専門スタッフの採用・管理まで、全て本部が代行します。
+　　異業種出身であることを気にする必要は一切ありません。
+
+　２．早期の投資回収を実現
+　　煩雑な運営業務から解放され、オーナー様は事業拡大、
+　　そして投資利回り50%以上、6ヶ月&#12316;での投資回収実績を持つ、
+　　確実な収益構造の構築に専念できます。
+
+　３．廃業率0.055％の安定性を最大限享受
+　　業界トップクラスの実績とノウハウを持つ本部が現場を担うため、
+　　「運営不安による失敗」というリスクが限りなくゼロに近づきます。
+
+
+　■ 市場の確実性を数字で証明
+　　・市場規模：4兆円超え
+　　・需要：障がい者数 毎月4万人増加
+　　・安定性：廃業率0.055％（行政による総量規制で事業が守られています）
+
+　この巨大かつ安定した市場で、本部が代行することで、
+　より確実性の高い事業運営が実現します。
+
+
+　【運営代行プラン】は説明会でのみ詳細を公開
+　
+　投資したいが運営までは荷が重い、という経営者様のために開発されたこの特別プランと、
+　5つの高収益業態（訪問看護、グループホームなど）の具体的な収益モデルは、
+　下記の説明会でのみ公開しております。
+
+　新規事業のリスクを最小化し、確実な収益源を確保したい方は、
+　ぜひこの機会にご参加ください。
+
+
+　▼ 詳細はこちら
+　https://fc-tocotoco.work/25/
+
+―――
+　tocotoco株式会社　セミナー事務局
+　東京都千代田区九段南2丁目3−25
+ 　03-5256-7578
+‥‥‥‥
+　本メールのご不要な方には大変ご迷惑をおかけいたしました。
+　メール停止ご希望の方は、お手数ですが下記URLにて、
+　お手続きをお願いいたします。
+　https://fc-tocotoco.work/mail/
+―――
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
