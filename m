@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 40145D3B7EA
-	for <b43-dev@archiver.kernel.org>; Tue,  9 Dec 2025 02:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 843ADD41D74
+	for <b43-dev@archiver.kernel.org>; Fri, 12 Dec 2025 02:57:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=VOp461DIKH/GfnP6g0zya51B6MMk7u4FLppyY3fp6Ag=; b=Srp6Bi9ZLdKj3h
-	vobQtYtd4lUc9b5E1JREB5qv2pr5kFQZTHMoc3p93GkbUZf3JbXe84aSTP7CfScsi8PQBFd9qxXvp
-	3Fe6jPhLpn//x/v6wYe7qvhRD/33mGmTV/wjzXbWWzYbN63z6R6sUqIrA1PJGHq7k5CX6dWhLA0G1
-	xh2k3HOI1HyhzKRGiukrLoaLu/HgCosNxfVBzVMHAIW16MxWIWvuhqLlQ1QqOsCOUzcaXnYk53q8J
-	EVvkiwicF7jBo8CDKuJkk4ekl1IFxmIRTf/0HhClzP5jc9L3OTxj1PVCmQjETz2MMYzHTaXks/nJi
-	i6KpUdrjRjxXnBX+P79Q==;
+	List-Owner; bh=AyXqYtSV4Rr+Jyd0yLlkI6xTpgnT/AnpOcuhvBHrmNQ=; b=kdr0v7LvTTiYVv
+	zvS51WNXhbtOFhbZRz8AN9b5u4Og91A04YRcxxlH19qldhuI1bsyvszQGAdD31kw4scK0gaepmCRe
+	5aetEfYMFU3+tHGZBbFUfHvMOc/0Zdua95npbAfYzQKISxXBVwI6VM1OfHqyhQ1qWwEo8w/idMBb+
+	V7Os/ijhQE5q8qMSLm35E9XEFG6yCjo+PiEozaw/e+k1aYlOXuLIlMZx2cNz/E8eq8W2mZe3Di4Li
+	u01SlYyOd3O8V8CGg0ouv1nIAaBxS0XPl7XWop/vqIymfMa2lAqh147F5bGxcL8qAqs2o+JNQJv4+
+	hyrXe88LQeSqeqM4eSMA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vSn6y-0000000Dj05-1vaQ;
-	Tue, 09 Dec 2025 02:05:56 +0000
-Received: from r9110.ps.combzmail.jp ([49.212.36.116])
+	id 1vTtLE-0000000HZeC-1uMi;
+	Fri, 12 Dec 2025 02:57:12 +0000
+Received: from r9204.ps.combzmail.jp ([160.16.62.132])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vSn6q-0000000Dizh-3eGE
+	id 1vTtL7-0000000HZdG-35TV
 	for b43-dev@lists.infradead.org;
-	Tue, 09 Dec 2025 02:05:50 +0000
-Received: by r9110.ps.combzmail.jp (Postfix, from userid 99)
-	id 6397A18A0B1; Tue,  9 Dec 2025 10:58:18 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9110.ps.combzmail.jp 6397A18A0B1
+	Fri, 12 Dec 2025 02:57:07 +0000
+Received: by r9204.ps.combzmail.jp (Postfix, from userid 99)
+	id 16804103317; Fri, 12 Dec 2025 11:56:26 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9204.ps.combzmail.jp 16804103317
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCJTglcyU4JVYhQzpOTVE7WTFnNzgbKEI=?= <info@jinjibu-event.jp>
-X-Ip: 9656161305201725
-X-Ip-source: k85gj70748dnsa86u0p6gd
+From: =?ISO-2022-JP?B?GyRCJSQlcyVTJS8lPyU5GyhC?= <info@sales-innovation.jp>
+X-Ip: 6635601337686911
+X-Ip-source: k85gj71e48dnsau6u0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCOWJCNDpOTVEkTjVrTT8kTjdoJGFKfRsoQg==?=
+Subject: =?ISO-2022-JP?B?GyRCQyYhIiVJOixALTFENkgbKEI=?=
 Mime-Version: 1.0
-X-MagazineId: 0786
-X-uId: 6763334738485968614959681057
+X-MagazineId: 1eu6
+X-uId: 6763335040485968654188161016
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20251209020434.6397A18A0B1@r9110.ps.combzmail.jp>
-Date: Tue,  9 Dec 2025 10:58:18 +0900 (JST)
+Message-Id: <20251212025655.16804103317@r9204.ps.combzmail.jp>
+Date: Fri, 12 Dec 2025 11:56:26 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20251208_180549_027870_07BBFB44 
-X-CRM114-Status: UNSURE (   0.54  )
+X-CRM114-CacheID: sfid-20251211_185705_891230_7926DE29 
+X-CRM114-Status: UNSURE (   0.21  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -64,68 +64,86 @@ Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
 　
-　お世話になります。
+　「もう一度、営業で結果を出したい」
 　
-　「ナビサイトに掲載しても、ほとんど応募が来ない」
-　「会社の魅力が学生に伝わらない」
-　
-　という課題と闘っている、高卒採用の責任者様へ。
+　そう本気で思い、悩む。
+　営業マンのためのセミナーです。
 　
 　
-　「応募が来る会社」と「来ない会社」を分けるのは、
-　もはや認知度だけではありません。
-　給与を武器に変える戦略が、”ある”か”ない”かです。
+　かつての“根性論”や“感覚営業”から脱し、
+　AI時代に沿った、再現性のある
 　
-　ぜひこの機会に「応募が来る、給与の新基準」を
-　ダウンロード頂き、戦略づくりにお役立てください。
-　
-───────────────[ジンジブ]──
-　
-　 　〜 高卒人材の給与を考える 〜
-　　　　 実態と設定のポイント　
-　
-　　ダウンロードはこちら（期間限定公開）
- 　　 https://jinjibu.biz/salary/
+　「売れる営業」スタイルを構築する方法を
+　“伝説の営業マネージャー”が、分かりやすく丁寧にお伝えします。
 
-──────────────────────　
+　　　　　　 ◆視聴予約はこちら◆
+　　   https://eassist-corp.jp/Invictus/
+───────────────────────────
+　
+【講 師】
+　　株式会社インビクタス　代表取締役 岡哲也
+　
+　　東京工業大学卒業後、博報堂に入社。
+　　その後プルデンシャル生命保険にヘッドハントされ営業職を経験。
+
+　　4年連続で保険業界上位1％のトップセールスパーソンだけが
+　　入会できるMDRTの会員となる。
+　　YouTube登録者は約3.8万人超
+
+【日 時】
+　　2025年12月16日（火）15:00-16:30 Zoom
+
+【定 員】
+　　15名まで。費用は不要です
+
+【備 考】
+　　法人営業の方は対象外です
+───────────────────────────
+　
+　営業という仕事は、数字で評価される厳しい世界です。
+
+　しかし、「売れない時期」があるのは、
+　才能の問題ではありません。
+
+　原因は、時代とともに“売れる型”が変わっているだけです。
+
+　・以前ほど、契約がスムーズに決まらなくなった
+　・トークは悪くないはずなのに、なぜか響かない
+　・気づけば、自信よりも焦りのほうが大きくなっている
+
+　この様に感じている方は、
+　ぜひ、セミナーをご視聴ください。
+　
+　　　　　　 ◆視聴予約はこちら◆
+　　　 https://eassist-corp.jp/Invictus/
 　
 　
-　知名度で大手に劣る地方企業こそ、学生が最も注目する
-　「給与・待遇」を、戦略的に設計し、提示する必要があります。
+【セミナーで得られること】
+
+　・「なぜ売れないのか？」を一緒に言語化
+　・営業プロセスごとの解決策の提示
+　・継続的に”売れる”ためのトレーニング法
+
+
+　私たちは、どんな人間でも
+　「ハイパフォーマー」になれると信じています。
 　
-　コロナ前から変わらない、従来の給与モデルや
-　提示方法のままでは、優秀な学生は求人票をクリックすらしてくれません。
+　あなた自身の営業スタイルと向き合い、
+　課題の正体を一緒に言語化。叱責でも指導でもない、
+　“寄り添い型”のフィードバックで、突破口を見つけ出すセミナーです
 　
-　採用の打ち手を考える前に、まずこの資料を参考に
-　戦略を見直して、貴社の求人票を「応募を引き寄せる新基準」に
-　アップデートしてみて下さい。
-　
-　スムーズな高卒採用の戦略づくりに活かして頂ければ嬉しいです。
-　
-　
-　〇 このような方におすすめ
-　　応募が来ない理由が分からない方
-　　自社の魅力が学生に伝わらない方
-　　採用後の定着率に課題を感じている、担当者様
-　
-　
-　〇 目次のご紹介
-　　・高卒における給与の重要度
-　　・高卒人材の給与水準
-　　・給与の決ま型３つのポイント
-　
-　
-　期間限定でダウンロードいただけますので
-　ご興味ある方はお気軽に申し込みください。
-　
-――――――――――――――――――――――――――――
-　本メールのご不要な方には大変ご迷惑をおかけいたしました。
-　配信停止ご希望の方は、下記URLよりお手続き願います。
-　 https://jinjibu.biz/mail/
-――――――――――――――――――――――――――――
-　株式会社ジンジブ 
-　大阪府大阪市中央区南本町2-6-12 サンマリオンタワー14階
-――――――――――――――――――――――――――――
+　ご興味あれば、ぜひこの機会にご参加ください。
+
+
+-----　セミナー事務局　--------------
+株式会社インビクタス
+東京都港区西新橋2-15-6 FACE 虎ノ門4F
+--------------------------------------
+
+メール不要な方には大変申し訳ございませんでした。
+お手数ではございますが、
+下記よりメール停止のお手続きください。
+https://eassist-corp.jp/Invictus/mail/
 
 _______________________________________________
 b43-dev mailing list
