@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 843ADD41D74
-	for <b43-dev@archiver.kernel.org>; Fri, 12 Dec 2025 02:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 06DF6D59D99
+	for <b43-dev@archiver.kernel.org>; Mon, 15 Dec 2025 06:36:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=AyXqYtSV4Rr+Jyd0yLlkI6xTpgnT/AnpOcuhvBHrmNQ=; b=kdr0v7LvTTiYVv
-	zvS51WNXhbtOFhbZRz8AN9b5u4Og91A04YRcxxlH19qldhuI1bsyvszQGAdD31kw4scK0gaepmCRe
-	5aetEfYMFU3+tHGZBbFUfHvMOc/0Zdua95npbAfYzQKISxXBVwI6VM1OfHqyhQ1qWwEo8w/idMBb+
-	V7Os/ijhQE5q8qMSLm35E9XEFG6yCjo+PiEozaw/e+k1aYlOXuLIlMZx2cNz/E8eq8W2mZe3Di4Li
-	u01SlYyOd3O8V8CGg0ouv1nIAaBxS0XPl7XWop/vqIymfMa2lAqh147F5bGxcL8qAqs2o+JNQJv4+
-	hyrXe88LQeSqeqM4eSMA==;
+	List-Owner; bh=NUQC73y+tb9eikNEvT5a6nV1LibisN5+TNuuGAfQp74=; b=CkUUA4sOtLYt0S
+	YKeLQfBHpWByS5G87d+keJ8ySwnUn9TogFsoECUrEJNa3nCkcVlUiSQhgAB9w3Yq1gu58UOumPZeT
+	72uuOfqM9oe5WHs9EhQ0Puf06A2NkgxV93mOXyrZkIVOeN2z0jp0t+R5fFLg0Ff68+NhC+gxO7SDn
+	s76m5zDnYWyaXwC9h2tCE2smcbVm8p0zZ37Mi57myST4TRyA1mcbrQxezqx7A/kMOmx3t9zn8YRnm
+	a+qT3vOdOecP43X+biFjZStYuMMFz/nVTxdTOhBm476FykkQsm43VQRZ0RSB93PMkCzpek6vRGnJX
+	Ji1CwggO5WS1vaeJJ3dg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vTtLE-0000000HZeC-1uMi;
-	Fri, 12 Dec 2025 02:57:12 +0000
-Received: from r9204.ps.combzmail.jp ([160.16.62.132])
+	id 1vV2C8-000000039de-2FmU;
+	Mon, 15 Dec 2025 06:36:32 +0000
+Received: from r9214.ps.combzmail.jp ([160.16.66.31])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vTtL7-0000000HZdG-35TV
+	id 1vV2BP-000000039c6-2CVB
 	for b43-dev@lists.infradead.org;
-	Fri, 12 Dec 2025 02:57:07 +0000
-Received: by r9204.ps.combzmail.jp (Postfix, from userid 99)
-	id 16804103317; Fri, 12 Dec 2025 11:56:26 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9204.ps.combzmail.jp 16804103317
+	Mon, 15 Dec 2025 06:36:05 +0000
+Received: by r9214.ps.combzmail.jp (Postfix, from userid 99)
+	id 7124AC2EFE; Mon, 15 Dec 2025 15:33:50 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9214.ps.combzmail.jp 7124AC2EFE
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCJSQlcyVTJS8lPyU5GyhC?= <info@sales-innovation.jp>
-X-Ip: 6635601337686911
-X-Ip-source: k85gj71e48dnsau6u0p6gd
+From: =?ISO-2022-JP?B?GyRCJVolQyVISl04bjtZMWclOyVfJUohPBsoQg==?= <info@onelife-lab.jp>
+X-Ip: 5379001658890797
+X-Ip-source: k85gj77948dnsa46u0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCQyYhIiVJOixALTFENkgbKEI=?=
+Subject: =?ISO-2022-JP?B?GyRCJVolQyVIMCYkciRiJEQhIjdQMUQ8VE1NGyhC?=
+ =?ISO-2022-JP?B?GyRCJFgbKEI=?=
 Mime-Version: 1.0
-X-MagazineId: 1eu6
-X-uId: 6763335040485968654188161016
+X-MagazineId: 7946
+X-uId: 6763335343485968684679751042
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20251212025655.16804103317@r9204.ps.combzmail.jp>
-Date: Fri, 12 Dec 2025 11:56:26 +0900 (JST)
+Message-Id: <20251215063536.7124AC2EFE@r9214.ps.combzmail.jp>
+Date: Mon, 15 Dec 2025 15:33:50 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20251211_185705_891230_7926DE29 
-X-CRM114-Status: UNSURE (   0.21  )
+X-CRM114-CacheID: sfid-20251214_223553_171353_45863FE4 
+X-CRM114-Status: UNSURE (   0.59  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -63,87 +64,98 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
+　ペット愛の心をもつ、経営者様へ
 　
-　「もう一度、営業で結果を出したい」
+　動物の尊い命を救い、働く喜びを支援する
+　革新的な新規事業を始めませんか？
+
+−−−−−−−−−−−−−−−−−−−−−−−
+　■ フランチャイズシステム説明会 ■
+
+　社会貢献と高収益を両立！
+
+　ペット保護×就労継続支援B型事業
+　”ONEPET（ワンペット）”
+
+　※本部が徹底サポート！「経験や資格が無くても」
+　　リスクを抑えて安心して始められます。
+
+　■ 開催方式
+　　オンライン（申込後に参加方法をご案内）
+
+　■ 日程
+　　12月17日（水）17：00〜18：30　残1枠
+　　12月19日（金）16：00〜17：30
+　　12月26日（金）17：00〜18：30
 　
-　そう本気で思い、悩む。
-　営業マンのためのセミナーです。
+　■ 定員
+　　各回4名 ／ 1社2名まで
+
+　■ 視聴予約はこちら
+   　https://onelife-pet.jp/onepet/
+−−−−−−−−−−−−−−−−−−−−−−−
 　
+　お世話になります。
 　
-　かつての“根性論”や“感覚営業”から脱し、
-　AI時代に沿った、再現性のある
+　この度は、「保護犬・猫」と「就労支援」を組み合わせた、
+　革新的なフランチャイズ事業の説明会をご案内いたします。
+
+　私たちがご提供する ONEPET（ワンペット） は、
+　　「殺処分を待つ命を救う」
+　　「働きたいと願う人々の自立を支援する」
+
+　という、二つの大きな社会課題を同時に
+　解決するビジネスモデルです。
 　
-　「売れる営業」スタイルを構築する方法を
-　“伝説の営業マネージャー”が、分かりやすく丁寧にお伝えします。
-
-　　　　　　 ◆視聴予約はこちら◆
-　　   https://eassist-corp.jp/Invictus/
-───────────────────────────
-　
-【講 師】
-　　株式会社インビクタス　代表取締役 岡哲也
-　
-　　東京工業大学卒業後、博報堂に入社。
-　　その後プルデンシャル生命保険にヘッドハントされ営業職を経験。
-
-　　4年連続で保険業界上位1％のトップセールスパーソンだけが
-　　入会できるMDRTの会員となる。
-　　YouTube登録者は約3.8万人超
-
-【日 時】
-　　2025年12月16日（火）15:00-16:30 Zoom
-
-【定 員】
-　　15名まで。費用は不要です
-
-【備 考】
-　　法人営業の方は対象外です
-───────────────────────────
-　
-　営業という仕事は、数字で評価される厳しい世界です。
-
-　しかし、「売れない時期」があるのは、
-　才能の問題ではありません。
-
-　原因は、時代とともに“売れる型”が変わっているだけです。
-
-　・以前ほど、契約がスムーズに決まらなくなった
-　・トークは悪くないはずなのに、なぜか響かない
-　・気づけば、自信よりも焦りのほうが大きくなっている
-
-　この様に感じている方は、
-　ぜひ、セミナーをご視聴ください。
-　
-　　　　　　 ◆視聴予約はこちら◆
-　　　 https://eassist-corp.jp/Invictus/
+　社会貢献事業は、収益がイマイチ。と、思わないでください。
 　
 　
-【セミナーで得られること】
-
-　・「なぜ売れないのか？」を一緒に言語化
-　・営業プロセスごとの解決策の提示
-　・継続的に”売れる”ためのトレーニング法
-
-
-　私たちは、どんな人間でも
-　「ハイパフォーマー」になれると信じています。
+　ONEPETでは、“動物と関わる”という圧倒的な差別化コンテンツを持つことで
+　利用者から「やってみたい」と選ばれ、極めて高い集客力を誇ります。
+　（オープン2ヶ月で400件超の問合せを達成）
 　
-　あなた自身の営業スタイルと向き合い、
-　課題の正体を一緒に言語化。叱責でも指導でもない、
-　“寄り添い型”のフィードバックで、突破口を見つけ出すセミナーです
+　さらに、国の給付金によるストック型収益と
+　ペット事業による店舗収益の二本柱で、
+　景気に左右されにくい安定経営を実現しています。
 　
-　ご興味あれば、ぜひこの機会にご参加ください。
+　事実、年商7,000万円／営業利益率40％を目指せる高収益事業として、
+　多くの経営者様にご注目いただいています。
+　
+　
+　ここまでこの文章を読まれたということは、
+　あなたも動物への深い愛情と、社会に貢献したいという
+　強い意志をお持ちなのではないでしょうか。
+　
+　先輩FCオーナー様も福祉業界の経験がなくても、
+　「定員満員までWeb広告費本部負担」
+　「稼働率50％までロイヤリティ無料」
+　
+　といった、本部の手厚いサポートのもと
+　事業を成功させています。
+　
+　この革新的なビジネスモデルの詳細を聞き逃さないよう、
+　新規事業を探している経営者様は、この機会にぜひご視聴ください。
+　
+　
+　「社会課題解決」と「安定収益」を両立する、
+　新しい社会貢献のカタチを一緒につくっていきましょう。
 
+■ 視聴予約はこちら
+    https://onelife-pet.jp/onepet/
 
------　セミナー事務局　--------------
-株式会社インビクタス
-東京都港区西新橋2-15-6 FACE 虎ノ門4F
---------------------------------------
++++++++++++++++++++++++++++++++++++++++
 
-メール不要な方には大変申し訳ございませんでした。
-お手数ではございますが、
-下記よりメール停止のお手続きください。
-https://eassist-corp.jp/Invictus/mail/
+本メールのご不要な方には大変ご迷惑をおかけいたしました。
+お手数お掛けしますが、メール解除のお手続きは
+下記よりお願いいたします。
+<依頼フォーム>
+https://onelife-pet.jp/mail/
+
++++++++++++++++++++++++++++++++++++++++
+
+ONEPET（ワンペット）　フランチャイズ本部　
+群馬県前橋市広瀬町3-18-15
+TEL：080-7723-6089
 
 _______________________________________________
 b43-dev mailing list
