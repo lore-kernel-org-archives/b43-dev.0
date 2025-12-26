@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 06DF6D59D99
-	for <b43-dev@archiver.kernel.org>; Mon, 15 Dec 2025 06:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85EA1E7AD73
+	for <b43-dev@archiver.kernel.org>; Fri, 26 Dec 2025 00:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=NUQC73y+tb9eikNEvT5a6nV1LibisN5+TNuuGAfQp74=; b=CkUUA4sOtLYt0S
-	YKeLQfBHpWByS5G87d+keJ8ySwnUn9TogFsoECUrEJNa3nCkcVlUiSQhgAB9w3Yq1gu58UOumPZeT
-	72uuOfqM9oe5WHs9EhQ0Puf06A2NkgxV93mOXyrZkIVOeN2z0jp0t+R5fFLg0Ff68+NhC+gxO7SDn
-	s76m5zDnYWyaXwC9h2tCE2smcbVm8p0zZ37Mi57myST4TRyA1mcbrQxezqx7A/kMOmx3t9zn8YRnm
-	a+qT3vOdOecP43X+biFjZStYuMMFz/nVTxdTOhBm476FykkQsm43VQRZ0RSB93PMkCzpek6vRGnJX
-	Ji1CwggO5WS1vaeJJ3dg==;
+	List-Owner; bh=oL+G23BTcCn1DOlSk7TGYhVaPWdUjSPQ2aX92xI+hdY=; b=dt8HmQ90Pjw3p6
+	OcmCy7W2E6Ac2nsZUT1Z0gUV0vi0h9kFxXK4y0HEaQqiDg79KbIRlBKvzJaXipSlwDo8V7pJPtdEb
+	qJktrOhp2m34CUsTznmTsiQXSWV4pFfdwV+jb3OpcMogHslXaAOMG44skm0BOgt5uzfQP+ASS9LQ2
+	g3ZTuV7Y61mWn+z2ywdPFfqHhqsmTNAMf0i1EI3DwKTHOrkenVeJGVGVYqrbPrLDUW9qym46SIjUo
+	JSBx6ScfBuWbxsHTFu5FeF+J5Deumr+aulf6sec417K7147y2qmEP6T/QXRzLXW+LHAC0XKCJsCJd
+	GpWDlALoTH/ebIMdZaaA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vV2C8-000000039de-2FmU;
-	Mon, 15 Dec 2025 06:36:32 +0000
-Received: from r9214.ps.combzmail.jp ([160.16.66.31])
+	id 1vYvS0-00000000mAH-0kBF;
+	Fri, 26 Dec 2025 00:13:00 +0000
+Received: from r9110.ps.combzmail.jp ([49.212.36.116])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vV2BP-000000039c6-2CVB
+	id 1vYvRn-00000000m9t-2wDq
 	for b43-dev@lists.infradead.org;
-	Mon, 15 Dec 2025 06:36:05 +0000
-Received: by r9214.ps.combzmail.jp (Postfix, from userid 99)
-	id 7124AC2EFE; Mon, 15 Dec 2025 15:33:50 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9214.ps.combzmail.jp 7124AC2EFE
+	Fri, 26 Dec 2025 00:12:54 +0000
+Received: by r9110.ps.combzmail.jp (Postfix, from userid 99)
+	id 8FED61875FA; Fri, 26 Dec 2025 09:11:56 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9110.ps.combzmail.jp 8FED61875FA
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCJVolQyVISl04bjtZMWclOyVfJUohPBsoQg==?= <info@onelife-lab.jp>
-X-Ip: 5379001658890797
-X-Ip-source: k85gj77948dnsa46u0p6gd
+From: =?ISO-2022-JP?B?GyRCP0BFRCE/JUolbCVDJTglaiVzJS8bKEI=?= <info@knowledge-seminar.jp>
+X-Ip: 2885521444682853
+X-Ip-source: k85gj72848dnsad1u0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCJVolQyVIMCYkciRiJEQhIjdQMUQ8VE1NGyhC?=
- =?ISO-2022-JP?B?GyRCJFgbKEI=?=
+Subject: =?ISO-2022-JP?B?NDMwMBskQj9NJE43UDFEPFQkLEEqJHMkQBsoQg==?=
+ =?ISO-2022-JP?B?GyRCISI1a00/JTslXyVKITwbKEI=?=
 Mime-Version: 1.0
-X-MagazineId: 7946
-X-uId: 6763335343485968684679751042
+X-MagazineId: 28d1
+X-uId: 6763336437485968785053241026
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20251215063536.7124AC2EFE@r9214.ps.combzmail.jp>
-Date: Mon, 15 Dec 2025 15:33:50 +0900 (JST)
+Message-Id: <20251226001237.8FED61875FA@r9110.ps.combzmail.jp>
+Date: Fri, 26 Dec 2025 09:11:56 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20251214_223553_171353_45863FE4 
-X-CRM114-Status: UNSURE (   0.59  )
+X-CRM114-CacheID: sfid-20251225_161247_911788_3D4BBA18 
+X-CRM114-Status: UNSURE (   0.79  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -64,98 +64,95 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-　ペット愛の心をもつ、経営者様へ
+　お世話になります。ナレッジリンク セミナー事務局です。
 　
-　動物の尊い命を救い、働く喜びを支援する
-　革新的な新規事業を始めませんか？
+　
+　ある日突然
+　「社長、ちょっとご相談が・・・」
+　
+　そんな言葉をきっかけに、キーパーソンが離職してしまった。
+　
+　査定が引き金となり、組織全体の士気が下がり、
+　業績に悪影響をもたらす。
+　
+　そんな“痛い失敗”を防ぐため、4,300人の経営者が共感した
+　「給与の決め方」をお伝えする、オンラインセミナーを開催いたします。
 
-−−−−−−−−−−−−−−−−−−−−−−−
-　■ フランチャイズシステム説明会 ■
+　>> 視聴予約はこちら
+　　 https://knowledge-corp.jp/shikigaku/
 
-　社会貢献と高収益を両立！
+----------------------------- セミナー概要 ----　
+　
+　テーマ ：失敗しない「給与の決め方」
+　
+　日 程　：1月13日（火）13:00〜
+　　　　　 1月14日（水）13:00〜
+　　　　　 1月15日（木）13:00〜
+　会 場　：Zoom開催
+　定 員　：先着150名（費用は不要）
+　特 典　：セミナー資料進呈
+----------------------------------------------
+　※経営層の方限定です
 
-　ペット保護×就労継続支援B型事業
-　”ONEPET（ワンペット）”
 
-　※本部が徹底サポート！「経験や資格が無くても」
-　　リスクを抑えて安心して始められます。
+　本セミナーでは、識学マネジメント理論を
+　ベースに、“経営者の視点”から
+　給与制度を実務的に解説します。
+　
+　評価と報酬の連動設計、
+　制度導入の落とし穴、
+　そして、「働かないおじさん」問題の本質まで。
+　
+　【内容】
+　1．評価と査定を正しく連動させる方法
+　2．絶対に外せない制度設計のポイント
+　3．やってはいけない評価制度の共通点
+　4．導入企業の成功・失敗事例
+　5．質疑応答
+　
+　
+　こんなお悩み、ありませんか？
+　
+　・昇給・昇格の要件が曖昧で社員の不満が溜まっている
+　・成果を出していない社員の給与が高止まりしている
+　・制度を作ったが、結局うまく運用できていない
+　
+　それは、「給与の決め方」が原因かもしれません。
+　
+　制度が曖昧なままでは、
+　査定のたびに不公平感が生まれ、
+　離職リスクが高まります。
+　
+　一方で、納得度の高い給与制度が
+　整えば、人材が定着し
+　組織全体のパフォーマンスが上がります。
+　
+　　
+　しかし、労使共に納得できる、
+　自社に適切な給与制度を
+　ゼロから考えるのはとても難易度が高いです。
+　
+　そんな経営者や役員の方へ、
+　ビジネスからスポーツ組織でも使える
+　汎用性の高い、「給与の決め方」をお伝えします。
 
-　■ 開催方式
-　　オンライン（申込後に参加方法をご案内）
+　>> 視聴予約はこちら
+　　 https://knowledge-corp.jp/shikigaku/
+　
+　
+　この機会にぜひご視聴ください。
 
-　■ 日程
-　　12月17日（水）17：00〜18：30　残1枠
-　　12月19日（金）16：00〜17：30
-　　12月26日（金）17：00〜18：30
-　
-　■ 定員
-　　各回4名 ／ 1社2名まで
+-----------------------
+　一般社団法人 ナレッジリンク
+　東京都千代田区神田小川町1-8-3
+　電話：03-5256-7638
 
-　■ 視聴予約はこちら
-   　https://onelife-pet.jp/onepet/
-−−−−−−−−−−−−−−−−−−−−−−−
+　セミナーのご案内が不要な方は大変残念ではございますが、
+　下記URLより手続き下さいませ。
 　
-　お世話になります。
+　メール配信のワンクリック解除はこちら
+　https://fc-knowledgelink-corp.jp/mail/
 　
-　この度は、「保護犬・猫」と「就労支援」を組み合わせた、
-　革新的なフランチャイズ事業の説明会をご案内いたします。
-
-　私たちがご提供する ONEPET（ワンペット） は、
-　　「殺処分を待つ命を救う」
-　　「働きたいと願う人々の自立を支援する」
-
-　という、二つの大きな社会課題を同時に
-　解決するビジネスモデルです。
-　
-　社会貢献事業は、収益がイマイチ。と、思わないでください。
-　
-　
-　ONEPETでは、“動物と関わる”という圧倒的な差別化コンテンツを持つことで
-　利用者から「やってみたい」と選ばれ、極めて高い集客力を誇ります。
-　（オープン2ヶ月で400件超の問合せを達成）
-　
-　さらに、国の給付金によるストック型収益と
-　ペット事業による店舗収益の二本柱で、
-　景気に左右されにくい安定経営を実現しています。
-　
-　事実、年商7,000万円／営業利益率40％を目指せる高収益事業として、
-　多くの経営者様にご注目いただいています。
-　
-　
-　ここまでこの文章を読まれたということは、
-　あなたも動物への深い愛情と、社会に貢献したいという
-　強い意志をお持ちなのではないでしょうか。
-　
-　先輩FCオーナー様も福祉業界の経験がなくても、
-　「定員満員までWeb広告費本部負担」
-　「稼働率50％までロイヤリティ無料」
-　
-　といった、本部の手厚いサポートのもと
-　事業を成功させています。
-　
-　この革新的なビジネスモデルの詳細を聞き逃さないよう、
-　新規事業を探している経営者様は、この機会にぜひご視聴ください。
-　
-　
-　「社会課題解決」と「安定収益」を両立する、
-　新しい社会貢献のカタチを一緒につくっていきましょう。
-
-■ 視聴予約はこちら
-    https://onelife-pet.jp/onepet/
-
-+++++++++++++++++++++++++++++++++++++++
-
-本メールのご不要な方には大変ご迷惑をおかけいたしました。
-お手数お掛けしますが、メール解除のお手続きは
-下記よりお願いいたします。
-<依頼フォーム>
-https://onelife-pet.jp/mail/
-
-+++++++++++++++++++++++++++++++++++++++
-
-ONEPET（ワンペット）　フランチャイズ本部　
-群馬県前橋市広瀬町3-18-15
-TEL：080-7723-6089
 
 _______________________________________________
 b43-dev mailing list
