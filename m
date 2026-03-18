@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 09FF3FB5E8B
-	for <b43-dev@archiver.kernel.org>; Tue, 17 Mar 2026 00:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D168AFCD0A7
+	for <b43-dev@archiver.kernel.org>; Wed, 18 Mar 2026 04:12:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=OpPnTP9tEzhEFVf9PgsKouvpsRuxGfWAzEoyFETixsk=; b=2TCZuSwDJ005H1
-	/2WEEQdWEfr3KtKi/Jw/jopxspvbCszK+I4864oEI8rOjt70pDqm7+3ZP+ZS1QWi6kDm8krO5Mz4o
-	uRYx9NyM4KFJqCcjAtD75s+7D8wTk7fQTI6F3tj1VyMu6s8r6rL2Jy9Vc2026Au/AIt9j4OUC8fdv
-	RVqnCrH9PHH5J5neu6Nz3Efki6yErUMaVkVHdHOXuIlNa3TaCmm2zHvvFsKakjaRJ/QeOs8+mWKoA
-	lbpfK/AdE8XWjsYxI/6uujsl54j+8Wx39c0uwO55FjBhixAyYhEQkEjpUab2K7AwZCpCF1PadZgnx
-	2ru33TTGIMlDrMcG1Fsg==;
+	List-Owner; bh=6rcas4MG6MXjnfJhcjQ7IBvS73F+z6O5GYH3TYrGb9s=; b=ft3OXHwVNXZ3LS
+	0tjzuUIf67gqX5G6HO+YDgXjoofogCG0y7gdybFzDsmmIAZTrWR4L3vlOVh+m1PVUcwszKco9dx6D
+	BEcA/t39rYuK5CKAQvAWY4oEbRa25G131e02mtAsTLpFLfJEqci5G1+JVDwZ0jeZ5cLMeFyza1m/7
+	zPAIQA/vj3I1wJqYwtqxUcYygCKmpMiCHv0UXmoZzW5yYl/1sih6BDDtul6ZlhiUQdQfCCcBQNWCW
+	60sS0wXAUleP0K3ks9j4xkyBco8+UWeCYG63vr3ClD57XdA6PX2U0bK1CzCLOjxKXjPhHq35/Jaqz
+	ejVEc0hE+hpA3aoAlTQw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w2I69-000000057Oe-09E8;
-	Tue, 17 Mar 2026 00:15:49 +0000
-Received: from r9103.ps.combzmail.jp ([49.212.47.32])
+	id 1w2iGG-00000007kbo-2hCk;
+	Wed, 18 Mar 2026 04:12:00 +0000
+Received: from r9214.ps.combzmail.jp ([160.16.66.31])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w2I60-000000057N5-15tg
+	id 1w2iG6-00000007kbN-0tnx
 	for b43-dev@lists.infradead.org;
-	Tue, 17 Mar 2026 00:15:42 +0000
-Received: by r9103.ps.combzmail.jp (Postfix, from userid 99)
-	id 44E40188A28; Tue, 17 Mar 2026 09:15:20 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9103.ps.combzmail.jp 44E40188A28
+	Wed, 18 Mar 2026 04:11:53 +0000
+Received: by r9214.ps.combzmail.jp (Postfix, from userid 99)
+	id 2AA1CC30A1; Wed, 18 Mar 2026 13:10:37 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9214.ps.combzmail.jp 2AA1CC30A1
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCQFBFaBsoQg==?= =?ISO-2022-JP?B?GyRCPFM1KBsoQg==?= <info@fc-session.jp>
-X-Ip: 412187328855292
-X-Ip-source: k85gj7ra48dnsa5pu0p6gd
+From: =?ISO-2022-JP?B?GyRCP0BFRCE/JUolbCVDJTglaiVzJS8bKEI=?= <info@knowledge-seminar.jp>
+X-Ip: 3569812115751869
+X-Ip-source: k85gj72848dnsad1u0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPGo3eCQkPzc7djZIISNGfEtcJE4+LU1oGyhC?=
- =?ISO-2022-JP?B?GyRCJHJDNCQmISIkMyRJJGI2NTBpGyhC?=
+Subject: =?ISO-2022-JP?B?GyRCPFJEOSROGyhCTkcbJEI5VEYwGyhC?=
 Mime-Version: 1.0
-X-MagazineId: ra5p
-X-uId: 6764245538486059695034541009
+X-MagazineId: 28d1
+X-uId: 6764245641486059714435611032
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20260317001524.44E40188A28@r9103.ps.combzmail.jp>
-Date: Tue, 17 Mar 2026 09:15:20 +0900 (JST)
+Message-Id: <20260318041139.2AA1CC30A1@r9214.ps.combzmail.jp>
+Date: Wed, 18 Mar 2026 13:10:37 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260316_171540_417474_63C34142 
-X-CRM114-Status: UNSURE (   0.39  )
+X-CRM114-CacheID: sfid-20260317_211150_478852_7A3073E6 
+X-CRM114-Status: UNSURE (   0.62  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -64,70 +63,96 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-　新しい事業をお考えの方向けに、
+　お世話になります。ナレッジリンクセミナー事務局です。
+　
+　
+　「社員のモチベーションを上げようと声をかける」
+　「部下の相談に乗り、一緒に悩んであげる」
+　「現場のトラブルに、自ら先頭に立って対応する」
+　
+　もし社長がこれらを率先しているようであれば、
+　残念ながら、その組織の成長はそこで止まります。
+　
+　社長のその“優しさ”が、社員の甘えを生み、責任感を奪い、
+　「指示待ち人間」を量産する装置になっているからです。
+　
+　
+　4,800社の経営者が衝撃を受けた、
+　良かれと思ってやってしまう「社長のNG行動」の正体。
+　
+　組織を劇的に変えるための、
+　オンラインセミナーを開催いたします。
+　
+　1つでも心当たりがあれば、一度ご視聴ください。　
+　
+　>>視聴予約はこちら
+　https://knowledge-corp.jp/shikigaku5/
+　
+----------------------------------------------
+　
+　テーマ ：　それ、危険です 『社長のNG行動』
+　　　　　 〜 その行動が、組織崩壊を招く 〜
+　
 
-　日本の将来を担う、こども教育にたずさわる
-　事業パートナー募集のオンライン説明会を
-　ご視聴頂きたく、ご連絡いたしました。
+　日 程　： 3月19日（木）13:00〜15:00　残り14枠
+　　　　　  4月14日（火）13:00&#12316;15:00
+　　　　　  4月21日（火）13:00&#12316;15:00
+　　　　　※どちらの日程も内容は同じ
+　会 場　：Zoom開催
+　定 員　：先着100名（費用は不要）
+----------------------------------------------
+　※経営層の方限定です
 　
-　本事業は9割以上、異業種から新規参入されており
-　「未経験」「社員1名」でスタート可能です。
 　
-　本業はそのままに、収益づくりをお考えの方はぜひご視聴ください。
+　なぜ、社員は「言われたこと」しかやらないのか。
+　なぜ、次世代のリーダー候補が育たないのか。
+　
+　それは、能力の問題ではなく、
+　
+　良かれと思って続けている「社長の配慮」こそが、
+　組織成長を止める、最大のボトルネックかもしれません。
+　
+　本セミナーでは、4,800社以上が導入した
+　独自の組織論「識学」に基づき、社長の「NG行動」と
+　真の経営者へ脱皮するためのマインドセットを伝授します。
+　
+　
+　【セミナー内容(一部抜粋)】
+　 ○ NG行動3選
+　 ○ なぜ優秀なNo.2や部長が育たないのか
+　 ○ マネジメントスタイルの変革について
+　 ○ 導入企業の事例
+　
+　「管理職が育ったら任せる」ではなく「任せるから育つ」
+　という思考の逆転を提言。
+　
+　現場から「冷たくなった」と思われることを恐れず、
+　機能的な階層構造（仕組み）を作ることで
 
------------------------------------------------------------
+　結果として社員全員を守り、
+　利益を最大化させる道筋を明示します。
 
- 　　　不況に強く、少子化でも成長する
- 　　　 プログラミング教育×個別指導
-　― 地域に"初"のハイブリッド型学習塾を ―
-　
-　日時：3月26日(木) 15:00〜16:00
-　形式：オンライン開催
-　提供：エイチ・エム・グループ
+　「優しさ」で人を動かすのではなく、
+　「正しさ」で組織を動かす。
 
-　　　　　　＜ご視聴はこちら＞
-　　　　https://wam-edu-fc.jp/wam2/
+　音声やお顔が表に出ることはございませんので
+　お気軽にご視聴ください。
+　
+　>>視聴予約はこちら
+　https://knowledge-corp.jp/shikigaku5/
+　
+　
+-----------------------
+　一般社団法人 ナレッジリンク
+　東京都千代田区神田小川町1-8-3
+　電話：03-5256-7638
 
------------------------------------------------------------
+　セミナーのご案内が不要な方は大変残念ではございますが、
+　下記URLより手続き下さいませ。
 　
+　メール配信のワンクリック解除はこちら
+　https://fc-knowledgelink-corp.jp/mail/
 　
-　『少子化なのに、教育事業？』と、思うかもしれませんが
-　
-　実は、教育無償化などの国策もあり、子ども一人にかける
-　教育費の増加に伴い、市場は成長し続けています。
-　
-　また、教育費は不況時でも削減されにくいため
-　コロナ下でも大きく落ち込むことなく底堅さを見せました。
-　
-　そんな教育業界の中でも、プログラミング（IT教育）は
-　小学校で必修化されたため、保護者の関心が非常に高まっています。
-　
-　
-　そこで今回ご紹介するのが、全国300校舎、継続率97.6％を誇る
-　ハイブリッド教育事業「個別指導WAM」です。
-　
-　サイバーエージェント社開発の教材を活用した
-　「プログラミング×個別指導」という
-　他塾にはない独自の教育事業を提供しています。
-
-　いったい、教育市場にどのようなビジネスチャンスがあるのか？
-
-　オンラインセミナーで分かりやすく丁寧に
-　お伝えしますので、ぜひご視聴ください。
-　
-　　　　　　＜ご視聴はこちら＞
-　　　　https://wam-edu-fc.jp/wam2/
-　
-　
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　教育事業FCセミナー事務局
-　電話：0120-889-859
-　住所：東京都中央区銀座7-13-6
-―――――――――――――――――――――――――――――――
-　本メールのご不要な方には大変ご迷惑をおかけいたしました。
-　今後ご案内が不要な方は下記URLよりお手続きをお願いいたします。
-　┗　https://wam-edu-fc.jp/mail/
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 _______________________________________________
 b43-dev mailing list
