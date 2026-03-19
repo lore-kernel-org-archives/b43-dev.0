@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D168AFCD0A7
-	for <b43-dev@archiver.kernel.org>; Wed, 18 Mar 2026 04:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B34611088E64
+	for <b43-dev@archiver.kernel.org>; Thu, 19 Mar 2026 02:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=6rcas4MG6MXjnfJhcjQ7IBvS73F+z6O5GYH3TYrGb9s=; b=ft3OXHwVNXZ3LS
-	0tjzuUIf67gqX5G6HO+YDgXjoofogCG0y7gdybFzDsmmIAZTrWR4L3vlOVh+m1PVUcwszKco9dx6D
-	BEcA/t39rYuK5CKAQvAWY4oEbRa25G131e02mtAsTLpFLfJEqci5G1+JVDwZ0jeZ5cLMeFyza1m/7
-	zPAIQA/vj3I1wJqYwtqxUcYygCKmpMiCHv0UXmoZzW5yYl/1sih6BDDtul6ZlhiUQdQfCCcBQNWCW
-	60sS0wXAUleP0K3ks9j4xkyBco8+UWeCYG63vr3ClD57XdA6PX2U0bK1CzCLOjxKXjPhHq35/Jaqz
-	ejVEc0hE+hpA3aoAlTQw==;
+	List-Owner; bh=7PYrrRQaw/uW5Z7/GfWFla1VxEk0AFsrjhV5yb4IPtU=; b=TSPnBEKNocW8a8
+	LUjtUveB7Aq8OCdMaPa2BIA8qS3CxebfKo7Ydjz22y3wefi5VOMxKk2MiKNi/hAZ8CkXW1o2w4YKg
+	DRl+CTdEBGBymC2AMjDVcbFH5AjrV2pnKCTao7BCE3MFkGkaeNx9u4/f6PagCqwL7RGIOABqtPXcV
+	FW+Up/M/mxXh0kLxazl37eiBqtJHtd9F/569TaVWMeTdsJ/iEo09eqIepaJsH6EXJvFu7HXqUHWz6
+	Dd7edBnH+05yIX0WAc5KVz1oBPhzgR/wrsu8z76kEhR9ix9S1IMgbBPnLEHUTNRPI66srfNLDw8aA
+	bNbF6RnvLISfPlddU1ew==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w2iGG-00000007kbo-2hCk;
-	Wed, 18 Mar 2026 04:12:00 +0000
-Received: from r9214.ps.combzmail.jp ([160.16.66.31])
+	id 1w32st-00000009i8l-3WqV;
+	Thu, 19 Mar 2026 02:13:15 +0000
+Received: from r9205.ps.combzmail.jp ([160.16.62.121])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w2iG6-00000007kbN-0tnx
+	id 1w32sr-00000009i7y-1N38
 	for b43-dev@lists.infradead.org;
-	Wed, 18 Mar 2026 04:11:53 +0000
-Received: by r9214.ps.combzmail.jp (Postfix, from userid 99)
-	id 2AA1CC30A1; Wed, 18 Mar 2026 13:10:37 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9214.ps.combzmail.jp 2AA1CC30A1
+	Thu, 19 Mar 2026 02:13:15 +0000
+Received: by r9205.ps.combzmail.jp (Postfix, from userid 99)
+	id 1E4FEC3FF1; Thu, 19 Mar 2026 11:12:41 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9205.ps.combzmail.jp 1E4FEC3FF1
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCP0BFRCE/JUolbCVDJTglaiVzJS8bKEI=?= <info@knowledge-seminar.jp>
-X-Ip: 3569812115751869
-X-Ip-source: k85gj72848dnsad1u0p6gd
+From: =?ISO-2022-JP?B?GyRCJEgkLSRvRGIlVSVpJXMlQSVjJSQlOjt2TDM2SRsoQg==?= <info@gosso.biz>
+X-Ip: 4781401148826048
+X-Ip-source: k85gj76048dnsareu0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPFJEOSROGyhCTkcbJEI5VEYwGyhC?=
+Subject: =?ISO-2022-JP?B?VFYbJEIkRyRiT0NCaiEiPkZGeSVTJTglTSU5JE4bKEI=?=
+ =?ISO-2022-JP?B?GyRCQGJMQDJxGyhC?=
 Mime-Version: 1.0
-X-MagazineId: 28d1
-X-uId: 6764245641486059714435611032
+X-MagazineId: 60re
+X-uId: 6764245739486059724170651020
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20260318041139.2AA1CC30A1@r9214.ps.combzmail.jp>
-Date: Wed, 18 Mar 2026 13:10:37 +0900 (JST)
+Message-Id: <20260319021303.1E4FEC3FF1@r9205.ps.combzmail.jp>
+Date: Thu, 19 Mar 2026 11:12:41 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260317_211150_478852_7A3073E6 
-X-CRM114-Status: UNSURE (   0.62  )
+X-CRM114-CacheID: sfid-20260318_191313_500436_A62E0093 
+X-CRM114-Status: UNSURE (   0.95  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -63,96 +64,65 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-　お世話になります。ナレッジリンクセミナー事務局です。
 　
 　
-　「社員のモチベーションを上げようと声をかける」
-　「部下の相談に乗り、一緒に悩んであげる」
-　「現場のトラブルに、自ら先頭に立って対応する」
-　
-　もし社長がこれらを率先しているようであれば、
-　残念ながら、その組織の成長はそこで止まります。
-　
-　社長のその“優しさ”が、社員の甘えを生み、責任感を奪い、
-　「指示待ち人間」を量産する装置になっているからです。
+　新たな事業をお考えの経営者様へ
 　
 　
-　4,800社の経営者が衝撃を受けた、
-　良かれと思ってやってしまう「社長のNG行動」の正体。
+　いつもお世話になります。
 　
-　組織を劇的に変えるための、
-　オンラインセミナーを開催いたします。
+　TBSテレビ『坂上＆指原のつぶれない店』で取り上げられるなど、
+　今話題の、待ち時間0秒の飲み放題を提供する
 　
-　1つでも心当たりがあれば、一度ご視聴ください。　
+　焼肉酒場「 ときわ亭 」のフランチャイズシステム説明会をご案内いたします。
 　
-　>>視聴予約はこちら
-　https://knowledge-corp.jp/shikigaku5/
+　わずか2年半で全国80店舗展開した
+　「0秒レモンサワー　ときわ亭」の
 　
-----------------------------------------------
+　ビジネスモデル、収益性や最新の飲食市場実態を
+　オンラインによる説明会形式で分かりやすく、丁寧にお伝えします。
 　
-　テーマ ：　それ、危険です 『社長のNG行動』
-　　　　　 〜 その行動が、組織崩壊を招く 〜
+　※セミナー参加＆店舗オープンの場合、特典あり※
+　　研修費用50万円を本部支援。
+　　専門家による、資金調達相談が無料。　
 　
+　
+　このような方におススメ
+　・飲食店の経営に興味がある
+　・焼肉屋の経営実態がしりたい
+　・銀行融資を受けやすくなるコツをしりたい
 
-　日 程　： 3月19日（木）13:00〜15:00　残り14枠
-　　　　　  4月14日（火）13:00&#12316;15:00
-　　　　　  4月21日（火）13:00&#12316;15:00
-　　　　　※どちらの日程も内容は同じ
-　会 場　：Zoom開催
-　定 員　：先着100名（費用は不要）
-----------------------------------------------
-　※経営層の方限定です
+　こういった方は、ぜひお気軽にご視聴くださいませ。
 　
 　
-　なぜ、社員は「言われたこと」しかやらないのか。
-　なぜ、次世代のリーダー候補が育たないのか。
+　▼　オンラインセミナーのご視聴予約はこちら　▼
+　　　https://tokiwatei-fc.work/web/
 　
-　それは、能力の問題ではなく、
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
 　
-　良かれと思って続けている「社長の配慮」こそが、
-　組織成長を止める、最大のボトルネックかもしれません。
+　■ テーマ
+　　 0秒レモンサワー　仙台ホルモン焼肉酒場ときわ亭
+　　〜 新業態の焼肉店で、一気に地域の人気店へ 〜
 　
-　本セミナーでは、4,800社以上が導入した
-　独自の組織論「識学」に基づき、社長の「NG行動」と
-　真の経営者へ脱皮するためのマインドセットを伝授します。
+　■ 開催日程
+　　・3月31日（火）15:00〜16:30　＠オンライン開催
 　
+　■ 定員
+　　・10社限定
 　
-　【セミナー内容(一部抜粋)】
-　 ○ NG行動3選
-　 ○ なぜ優秀なNo.2や部長が育たないのか
-　 ○ マネジメントスタイルの変革について
-　 ○ 導入企業の事例
+　■ 参加費
+　　・不要
 　
-　「管理職が育ったら任せる」ではなく「任せるから育つ」
-　という思考の逆転を提言。
-　
-　現場から「冷たくなった」と思われることを恐れず、
-　機能的な階層構造（仕組み）を作ることで
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+本メールが不要の方には大変失礼しました。
+今後ご案内が不要な際は、下記URLにて配信解除を承っています。
+https://tokiwatei-fc.work/mail/
 
-　結果として社員全員を守り、
-　利益を最大化させる道筋を明示します。
-
-　「優しさ」で人を動かすのではなく、
-　「正しさ」で組織を動かす。
-
-　音声やお顔が表に出ることはございませんので
-　お気軽にご視聴ください。
-　
-　>>視聴予約はこちら
-　https://knowledge-corp.jp/shikigaku5/
-　
-　
------------------------
-　一般社団法人 ナレッジリンク
-　東京都千代田区神田小川町1-8-3
-　電話：03-5256-7638
-
-　セミナーのご案内が不要な方は大変残念ではございますが、
-　下記URLより手続き下さいませ。
-　
-　メール配信のワンクリック解除はこちら
-　https://fc-knowledgelink-corp.jp/mail/
-　
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+主催：GOSSO株式会社（ときわ亭フランチャイズ本部）
+東京都渋谷区宇田川町14-13 宇田川ビルディング6F
+03-6316-8191　
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 _______________________________________________
 b43-dev mailing list
