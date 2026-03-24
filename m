@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B34611088E64
-	for <b43-dev@archiver.kernel.org>; Thu, 19 Mar 2026 02:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CBBB9F532C0
+	for <b43-dev@archiver.kernel.org>; Tue, 24 Mar 2026 01:52:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=7PYrrRQaw/uW5Z7/GfWFla1VxEk0AFsrjhV5yb4IPtU=; b=TSPnBEKNocW8a8
-	LUjtUveB7Aq8OCdMaPa2BIA8qS3CxebfKo7Ydjz22y3wefi5VOMxKk2MiKNi/hAZ8CkXW1o2w4YKg
-	DRl+CTdEBGBymC2AMjDVcbFH5AjrV2pnKCTao7BCE3MFkGkaeNx9u4/f6PagCqwL7RGIOABqtPXcV
-	FW+Up/M/mxXh0kLxazl37eiBqtJHtd9F/569TaVWMeTdsJ/iEo09eqIepaJsH6EXJvFu7HXqUHWz6
-	Dd7edBnH+05yIX0WAc5KVz1oBPhzgR/wrsu8z76kEhR9ix9S1IMgbBPnLEHUTNRPI66srfNLDw8aA
-	bNbF6RnvLISfPlddU1ew==;
+	List-Owner; bh=OIvbBA2lccm/WMnZw2p0xEgAhBoomoEM6eeMRjUMLXM=; b=zPDlGtKLMRQZXv
+	lWnk5/8TzBdSn6NUMMGkT/q75dw0q4/m2U2ena9u8V9XKy1IHSnodmwSTvDFFWMOfQFjzHap1PrQd
+	zQsItPlDPbtmvCAjcKA681ZenSRH/O/HtzZFXsPojsoQUEPDiTdANp5NiXspdH7budLlgWTpQ9KTt
+	bbrcmuWh7Mx0z2MJmJLCbYxIwUD4yrmfE2I2RT34cOOUk28A59a3/NNlkrpIj0EUCrEdbU1+yoEMa
+	H1i6/rA0T4y7QlXZCpMXS/Q99O5kOHfTQv/KkCaC7l1FHKkfwtCXgVTR/UzMnpDUoxtMU6+hWSd/P
+	UCP2JY6IB1Y4gLdE1Wbw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w32st-00000009i8l-3WqV;
-	Thu, 19 Mar 2026 02:13:15 +0000
-Received: from r9205.ps.combzmail.jp ([160.16.62.121])
+	id 1w4qwj-00000000Kw1-3zO6;
+	Tue, 24 Mar 2026 01:52:41 +0000
+Received: from r9103.ps.combzmail.jp ([49.212.47.32])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w32sr-00000009i7y-1N38
+	id 1w4qwc-00000000Kur-0IfU
 	for b43-dev@lists.infradead.org;
-	Thu, 19 Mar 2026 02:13:15 +0000
-Received: by r9205.ps.combzmail.jp (Postfix, from userid 99)
-	id 1E4FEC3FF1; Thu, 19 Mar 2026 11:12:41 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9205.ps.combzmail.jp 1E4FEC3FF1
+	Tue, 24 Mar 2026 01:52:35 +0000
+Received: by r9103.ps.combzmail.jp (Postfix, from userid 99)
+	id 9C61C18806F; Tue, 24 Mar 2026 10:51:21 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9103.ps.combzmail.jp 9C61C18806F
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCJEgkLSRvRGIlVSVpJXMlQSVjJSQlOjt2TDM2SRsoQg==?= <info@gosso.biz>
-X-Ip: 4781401148826048
-X-Ip-source: k85gj76048dnsareu0p6gd
+From: =?ISO-2022-JP?B?GyRCM3Q8MDJxPFIlIiU7JUMlSBsoQg==?= <info@asset-corp.jp>
+X-Ip: 9316881210457904
+X-Ip-source: k85gj71k48dnsah1u0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?VFYbJEIkRyRiT0NCaiEiPkZGeSVTJTglTSU5JE4bKEI=?=
- =?ISO-2022-JP?B?GyRCQGJMQDJxGyhC?=
+Subject: =?ISO-2022-JP?B?GyRCR2Q+ZRsoQjI4GyRCR1whIxsoQg==?=
+ =?ISO-2022-JP?B?QUkbJEI7fkJlJE4/NyEmPTg1Uj1RGyhC?=
 Mime-Version: 1.0
-X-MagazineId: 60re
-X-uId: 6764245739486059724170651020
+X-MagazineId: 1kh1
+X-uId: 6764246239486059774180741019
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20260319021303.1E4FEC3FF1@r9205.ps.combzmail.jp>
-Date: Thu, 19 Mar 2026 11:12:41 +0900 (JST)
+Message-Id: <20260324015224.9C61C18806F@r9103.ps.combzmail.jp>
+Date: Tue, 24 Mar 2026 10:51:21 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260318_191313_500436_A62E0093 
-X-CRM114-Status: UNSURE (   0.95  )
+X-CRM114-CacheID: sfid-20260323_185234_221857_B2BDA116 
+X-CRM114-Status: UNSURE (   0.60  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -64,65 +64,66 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-　
-　
-　新たな事業をお考えの経営者様へ
-　
-　
-　いつもお世話になります。
-　
-　TBSテレビ『坂上＆指原のつぶれない店』で取り上げられるなど、
-　今話題の、待ち時間0秒の飲み放題を提供する
-　
-　焼肉酒場「 ときわ亭 」のフランチャイズシステム説明会をご案内いたします。
-　
-　わずか2年半で全国80店舗展開した
-　「0秒レモンサワー　ときわ亭」の
-　
-　ビジネスモデル、収益性や最新の飲食市場実態を
-　オンラインによる説明会形式で分かりやすく、丁寧にお伝えします。
-　
-　※セミナー参加＆店舗オープンの場合、特典あり※
-　　研修費用50万円を本部支援。
-　　専門家による、資金調達相談が無料。　
-　
-　
-　このような方におススメ
-　・飲食店の経営に興味がある
-　・焼肉屋の経営実態がしりたい
-　・銀行融資を受けやすくなるコツをしりたい
+事業オーナー様へ
 
-　こういった方は、ぜひお気軽にご視聴くださいませ。
-　
-　
-　▼　オンラインセミナーのご視聴予約はこちら　▼
-　　　https://tokiwatei-fc.work/web/
-　
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　
-　■ テーマ
-　　 0秒レモンサワー　仙台ホルモン焼肉酒場ときわ亭
-　　〜 新業態の焼肉店で、一気に地域の人気店へ 〜
-　
-　■ 開催日程
-　　・3月31日（火）15:00〜16:30　＠オンライン開催
-　
-　■ 定員
-　　・10社限定
-　
-　■ 参加費
-　　・不要
-　
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-本メールが不要の方には大変失礼しました。
-今後ご案内が不要な際は、下記URLにて配信解除を承っています。
-https://tokiwatei-fc.work/mail/
+今、店舗経営の現場で「静かな、しかし劇的な変化」が
+起きていることにお気づきでしょうか。
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-主催：GOSSO株式会社（ときわ亭フランチャイズ本部）
-東京都渋谷区宇田川町14-13 宇田川ビルディング6F
-03-6316-8191　
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+実は、ユーザーの99.4％がGoogleマップを利用し、
+”近くの〇〇”とAIに相談してお店を決めているのです。
+
+つまり、「AIやマップに認識されない」ということは、
+新規客の60%にとって「存在しない店」と同じなのです。
+
+このような機会損失を避けたい方へ、
+
+80,000店舗以上の実績から導き出した集客ノウハウを
+無料提供しております。
+
+｜――――――――――――――――――――――――
+｜
+｜ 『Googleマップ×生成AI 完全自動化ガイド』
+｜　　 　〜選ばれるお店の3ステップ〜
+｜
+｜ 　  　　　　＜資料はこちら＞
+｜　 　　　https://assetcorp.jp/26/
+｜
+｜――――――――――――――――――――――――
+
+
+本書では、80,000店舗以上の実績から導き出した
+「選ばれるお店」の勝ち筋を、3ステップにまとめています。
+
+資料を手がかりにして、GoogleマップとAIを掛け合わせ
+「自動運用」を始めた、あるネイルサロンでは
+わずか4ヶ月で以下の成果を叩き出しました。
+
+検索表示回数： 113倍
+マップ閲覧数： 3倍
+売上実績： 28倍UP
+
+
+「今の集客に限界を感じている」
+「集客基盤を築きたい」
+
+そう願うオーナー様にとって、
+この資料が現状を打破するきっかけになれば嬉しいです。
+ぜひこの機会にダウンロードしてご活用ください。
+
+[資料ダウンロードURL]　https://assetcorp.jp/26/
+
+
+------------------------------------------
+　株式会社アセット
+　東京都豊島区南池袋2-30-11
+　TEL：03-5256-7570
+------------------------------------------
+　本情報が不必要な方にはご迷惑をおかけし申し訳ございません。
+　配信ストップは下記にて承っております。
+　https://assetcorp.jp/mail/
+
+　お手数お掛けしますがよろしくお願いします。
 
 _______________________________________________
 b43-dev mailing list
