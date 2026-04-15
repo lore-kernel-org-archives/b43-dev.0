@@ -4,52 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2425FA0C2E
-	for <b43-dev@archiver.kernel.org>; Wed, 15 Apr 2026 05:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9252CF41992
+	for <b43-dev@archiver.kernel.org>; Wed, 15 Apr 2026 11:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
-	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=+PhdkOOi44z1+gfKOCsy70nX5LNoO6L6iCxLO72ayYA=; b=EBYXHTgJuSOkIW
-	oUJqcYhoWaLLwvkp16Gb/Ym5JcGG6IlwOLMPIbIDGyjTcLzu0JitWXXWYxPgTsn1rXTaxwRmlC2Wa
-	npGzUkwbV4cAkBGwA4VuTDzCMX+GiN2Ut8wEokK8NB2tDOm5zTW7MdLwSmhQz2f4r89cb9L72QgGN
-	iSIZg0nk4TteF9wVCYmynG4gkZaXRb4Kst9adqbRKVhvVumExRgJWqDwfWb44uLu507At/AdbdJDk
-	CLBVunxRmOjDqDK3VSpSX7n+lpDzfDjKmL2m9DmGi0Ykj4JZKJunZMu1Q5YCAexyUYsaxul4Oq68V
-	xBGDK4PmDzkZZLKbkPaA==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	Content-Transfer-Encoding:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:In-Reply-To:References:Cc:To:From:Subject:Message-Id
+	:Date:Mime-Version:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Ki3LD5V+M40glCQ6aaUTpCa3AjXjHnEx6vPV+SAXkJA=; b=1tKK2N/biw3qX1hu7xPgaHyYyH
+	6jo6B/6FUiMTNxTq/8eDjc5NjcRuJjlrZaLzia42yQiX4f3oPQKOpKVEx6WLZo5eVcUKEZbqigtYo
+	00GbxTudTK59aFXGdknvfQ9h1zG5ZYsKWRkxHU2HyuQftnYRRqM2+BStiD+vPfjLo1/eJ5v6yJvnK
+	rMXsp8orX8c5UQEZtpGiIWkSRj5bMmLeVB3pBGRd7PIRcmmdow3be19zGcI5aBOPhC3ZXnDf2Sy/t
+	4UNVHd4NqW7ltK6an+pYLbSdF7iyL/mR11jK5J/KQ0DAVJtNfjz9JDkDtnAO1WfkZDbQfBtOZINuY
+	YmnSsetg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wCt0g-00000000bss-0QxR;
-	Wed, 15 Apr 2026 05:41:58 +0000
-Received: from r9110.ps.combzmail.jp ([49.212.36.116])
+	id 1wCyfZ-000000013bD-3TUJ;
+	Wed, 15 Apr 2026 11:44:33 +0000
+Received: from smtp.forwardemail.net ([121.127.44.73])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wCt0c-00000000bsX-1VJN
+	id 1wCyfU-000000013af-06sv
 	for b43-dev@lists.infradead.org;
-	Wed, 15 Apr 2026 05:41:56 +0000
-Received: by r9110.ps.combzmail.jp (Postfix, from userid 99)
-	id C97141888ED; Wed, 15 Apr 2026 14:40:37 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9110.ps.combzmail.jp C97141888ED
-To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCP0BFRCE/JUolbCVDJTglaiVzJS8bKEI=?= <info@knowledge-seminar.jp>
-X-Ip: 247897886295399
-X-Ip-source: k85gj72848dnsad1u0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPFJEOSROGyhCTkcbJEI5VEYwGyhC?=
+	Wed, 15 Apr 2026 11:44:29 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ubuntu.com;
+ h=In-Reply-To: References: Cc: To: From: Subject: Message-Id: Date:
+ Content-Type: Content-Transfer-Encoding: Mime-Version; q=dns/txt;
+ s=fe-953a8a3ca9; t=1776253466;
+ bh=RUAMkRMvJIYGpqvgrfry3NMMlM+78pl3rBiEk2MPNJU=;
+ b=YIP9fnaSSqMznYQKUaplW4rCeSsQThuF4oL0HZQXkM7E8yelSjA/NjRlkd0kFUAR5H7dh2aQs
+ XegyCPjzMlPSBFsMT1D2fZJ0Ydf+QtrmrQZLj9iM3QCqdEnSBh+lWswwz/PpnLIP6t2ek2TNeZ0
+ 55qSrbgDKPrB78l7/ZSKyEPXxJbp4SWSu6xQZCBJILTZY8uGnZpjKjTIt01UzbtJO+x4EVTHZH3
+ ZuRqnhPZe7uSILGxi+uI/lIAAVACQSmlx0nFeT37+iS7cLqgcS+iOy2tiPppXb1wErtdXVr6P4+
+ wgCgMuwSPx0+S0NvVSox5XCLRqzbIlJpXnph5vspEpcA==
+X-Forward-Email-ID: 69df7a17289add7dee9f6483
+X-Forward-Email-Sender: rfc822; jpeisach@ubuntu.com, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 2.7.3
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
 Mime-Version: 1.0
-X-MagazineId: 28d1
-X-uId: 6764255342486060684481701052
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20260415054145.C97141888ED@r9110.ps.combzmail.jp>
-Date: Wed, 15 Apr 2026 14:40:37 +0900 (JST)
+Date: Wed, 15 Apr 2026 07:44:21 -0400
+Message-Id: <DHTPAVC76140.1JLO3HNQARQ9Q@ubuntu.com>
+Subject: Re: Firmware for reverse engineering b43?
+From: "Joshua Peisach" <jpeisach@ubuntu.com>
+To: "Jonas Gorski" <jonas.gorski@gmail.com>, "Joshua Peisach"
+ <jpeisach@ubuntu.com>
+Cc: "Johannes Berg" <johannes@sipsolutions.net>,
+ <b43-dev@lists.infradead.org>, <linux-wireless@vger.kernel.org>
+X-Mailer: aerc 0.21.0
+References: <DHS1BJ5XFYRC.GCF9PXS0OSRI@ubuntu.com>
+ <c62a448843f189d78187de18d3fcb955f2779d13.camel@sipsolutions.net>
+ <DHSUDVMGW0PS.2LYWKGG1C1135@ubuntu.com>
+ <CAOiHx==kVm0OKWRKi4VHSEEr6ZygzrpNiA=zj+zEHT6_rgZ3CQ@mail.gmail.com>
+In-Reply-To: <CAOiHx==kVm0OKWRKi4VHSEEr6ZygzrpNiA=zj+zEHT6_rgZ3CQ@mail.gmail.com>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260414_224154_649006_F5185F7A 
-X-CRM114-Status: UNSURE (   0.42  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20260415_044428_419948_8B3AD0B6 
+X-CRM114-Status: GOOD (  27.04  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
+Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -58,102 +74,55 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="Flowed"
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-　お世話になります。ナレッジリンクセミナー事務局です。
-　
-　
-　「社員のモチベーションを上げようと声をかける」
-　「部下の相談に乗り、一緒に悩んであげる」
-　「現場のトラブルに、自ら先頭に立って対応する」
-　
-　もし社長がこれらを率先しているようであれば、
-　残念ながら、その組織の成長はそこで止まります。
-　
-　社長のその“優しさ”が、社員の甘えを生み、責任感を奪い、
-　「指示待ち人間」を量産する装置になっているからです。
-　
-　
-　4,800社の経営者が衝撃を受けた、
-　良かれと思ってやってしまう「社長のNG行動」の正体。
-　
-　組織を劇的に変えるための、
-　オンラインセミナーを開催いたします。
-　
-　1つでも心当たりがあれば、一度ご視聴ください。　
-　
-　>>視聴予約はこちら
-　https://knowledge-corp.jp/shikigaku5/
-　
-----------------------------------------------
-　
-　テーマ ：　それ、危険です 『社長のNG行動』
-　　　　　 〜 その行動が、組織崩壊を招く 〜
-　
-
-　日 程　： 4月21日（火）13:00スタート　※残11席
-　　　　　  5月19日（火）13:00スタート
-　　　　　※どちらの日程も内容は同じ
-　会 場　：Zoom開催
-　定 員　：先着100名（費用は不要）
-----------------------------------------------
-　※経営層の方限定です
-　
-　
-　なぜ、社員は「言われたこと」しかやらないのか。
-　なぜ、次世代のリーダー候補が育たないのか。
-　
-　それは、能力の問題ではなく、
-　
-　良かれと思って続けている「社長の配慮」こそが、
-　組織成長を止める、最大のボトルネックかもしれません。
-　
-　本セミナーでは、4,800社以上が導入した
-　独自の組織論「識学」に基づき、社長の「NG行動」と
-　真の経営者へ脱皮するためのマインドセットを伝授します。
-　
-　
-　【セミナー内容(一部抜粋)】
-　 ○ NG行動3選
-　 ○ なぜ優秀なNo.2や部長が育たないのか
-　 ○ マネジメントスタイルの変革について
-　 ○ 導入企業の事例
-　
-　「管理職が育ったら任せる」ではなく「任せるから育つ」
-　という思考の逆転を提言。
-　
-　現場から「冷たくなった」と思われることを恐れず、
-　機能的な階層構造（仕組み）を作ることで
-
-　結果として社員全員を守り、
-　利益を最大化させる道筋を明示します。
-
-　「優しさ」で人を動かすのではなく、
-　「正しさ」で組織を動かす。
-
-　音声やお顔が表に出ることはございませんので
-　お気軽にご視聴ください。
-　
-　>>視聴予約はこちら
-　https://knowledge-corp.jp/shikigaku5/
-　
-　
------------------------
-　一般社団法人 ナレッジリンク
-　東京都千代田区神田小川町1-8-3
-　電話：03-5256-7638
-
-　セミナーのご案内が不要な方は大変残念ではございますが、
-　下記URLより手続き下さいませ。
-　
-　メール配信のワンクリック解除はこちら
-　https://fc-knowledgelink-corp.jp/mail/
-　
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+T24gVHVlIEFwciAxNCwgMjAyNiBhdCA4OjI0IEFNIEVEVCwgSm9uYXMgR29yc2tpIHdyb3RlOgo+
+IE9uIFR1ZSwgQXByIDE0LCAyMDI2IGF0IDE6MzHigK9QTSBKb3NodWEgUGVpc2FjaCA8anBlaXNh
+Y2hAdWJ1bnR1LmNvbT4gd3JvdGU6Cj4+Cj4+IE9uIFR1ZSBBcHIgMTQsIDIwMjYgYXQgNToxNCBB
+TSBFRFQsIEpvaGFubmVzIEJlcmcgd3JvdGU6Cj4+ID4gSSB0aGluayB0aGVyZSdzIG5vIGVhc3kg
+YW5zd2VyIC0gd2hhdCBhcmUgeW91IGV2ZW4gdHJ5aW5nIHRvIGFjaGlldmU/Cj4+ID4gRG9lcyBi
+NDMgbm90IHdvcmsgc3VmZmljaWVudGx5IHdlbGw/IERvIHlvdSBldmVuIGtub3cgaWYgc29tZSBz
+cGVjaWZpYwo+PiA+IGNhbGlicmF0aW9uIGhhdmUgYSB0ZW5kZW5jeSB0byBnbyBvdXQgb2Ygd2hh
+Y2s/IElzIHRoZXJlIGxhdGVyIGZpcm13YXJlCj4+ID4gdGhhdCBoYXMgc29tZSBhZHZhbnRhZ2Ug
+KGdpdmVuIGhvdyBsaXR0bGUgYWN0dWFsbHkgaGFwcGVucyBpbiBmaXJtd2FyZQo+PiA+IGluIHRo
+ZXNlIGRldmljZXMsIEknZCBiZSBzdXJwcmlzZWQgYnkgdGhhdCkgYnV0IGlzbid0IGNvbXBhdGli
+bGUgd2l0aAo+PiA+IHRoZSBkcml2ZXIgbm93LCBhbmQgeW91IHdhbnQgdG8gY2hhbmdlIHRoYXQ/
+Cj4+ID4KPj4gPiBJJ2QgYmUgdGVtcHRlZCB0byBzYXkgdGhhdCBpZiB0aGVyZSdzIG5vIHByb2Js
+ZW0gdGhlcmUgZG9uJ3QgdHJ5IHRvIGZpeAo+PiA+IGFueXRoaW5nLCB0aGUgaGFyZHdhcmUgaXMg
+YW5jaWVudCBhbnl3YXksIGxpa2VseSBoYXMgZmV3IHVzZXJzLCBhbmQKPj4gPiB0aG9zZSB1c2Vy
+cyB3b3VsZCBwcm9iYWJseSBiZSBmaW5lIHdpdGgganVzdCBsZWF2aW5nIGl0Pwo+PiA+Cj4+ID4g
+am9oYW5uZXMKPj4KPj4gVGhlIEJDTTQzMjEgKG5waHkpIGRvZXNuJ3QgY29ubmVjdCB0byBteSA1
+RyBuZXR3b3JrLCBzbyBJIGZpZ3VyZWQgdGhhdAo+PiBieSBmaWxsaW5nIGluIFRPRE9zIGFuZCBG
+SVhNRSdzLCBJIGNvdWxkIGV2ZW50dWFsbHkgZ2V0IHNvbWV0aGluZwo+PiB3b3JraW5nLgo+Pgo+
+PiBPdGhlciB0aGFuIHRoYXQsIEkgd2FzIHRoaW5raW5nIG9mIG1ha2luZyBpbXByb3ZlbWVudHMg
+Zm9yIHRoZSBzYWtlIG9mCj4+IGltcHJvdmluZyB0aGUgZHJpdmVyLgo+Cj4gVGhlIGluaXRpYWwg
+dmVyc2lvbiBvZiB0aGUgYnJjbTgwMjExIHNvZnRtYWMgZHJpdmVyIFsxXSBzaG91bGQgYWxzbwo+
+IGhlbHAgaW4gbWFraW5nIHNlbnNlIG9mIHNvbWUgb2YgdGhlIGNvZGUgKGZsYWcgbmFtZXMgZXRj
+KS4gV2hpbGUgaXQKPiBvZmZpY2lhbGx5IG9ubHkgc3VwcG9ydHMgQkNNNDMyMjQgYW5kIG5ld2Vy
+IG9uIEJDTUEsIGl0IHN0aWxsIGhhZAo+IHJlbW5hbnRzIG9mIHN1cHBvcnQgZm9yIG9sZGVyIE4t
+UEhZIHJldmlzaW9ucywgc28gbWF5IGhlbHAgaW4gZmluZGluZwo+IGRpZmZlcmVuY2VzIG9yIGV4
+cGxhaW5pbmcgd2hhdCBjb2RlIGRvZXMuCj4KPiBJIG9uY2UgY29uc2lkZXJlZCB0cnlpbmcgdG8g
+Y2xlYW4gdXAgYjQzIGJhc2VkIG9uIGJyY21zbWFjLCBidXQgbmV2ZXIKPiBnb3QgYXJvdW5kIHRv
+IGl0LgoKSXQgZG9lcyBhcHBlYXIgdG8gYmUgc2ltaWxhciAtIGV2ZW4gdGhlIGN1cnJlbnQgYnJj
+bTgwMjExLiBTbyBtdWNoIHNvCnRoYXQgSSBzb21ldGltZXMgbmVlZCB0byB0aGluayBhYm91dCB3
+aGV0aGVyIGI0MyBpcyBhY3R1YWxseSBhCmR1cGxpY2F0ZWQgZHJpdmVyLgoKU2luY2UgYjQzIGlz
+IGluIGFuIG9ycGhhbiBzdGF0ZSwgSSB0aG91Z2h0IGl0IHdvdWxkIGJlIGEgZ3JlYXQgcGxhY2Ug
+dG8Kc3RhcnQgZm9yIGtlcm5lbCBkZXZlbG9wbWVudC4gNUcgZG9lc24ndCB3b3JrIG9uIHRoYXQg
+aU1hYywgc29tZSBvZiB0aGUKUEhZcywgbGlrZSB0aGUgQUMgUEhZcyBhcHBlYXIgdG8gYmUgaW5j
+b21wbGV0ZSAtIGl0IGZlbHQgcmVhc29uYWJsZS4KCkJlY2F1c2UgSSdtIG9uZSBvZiB0aG9zZSAi
+dGhlcmUncyBhbHdheXMgcm9vbSBmb3IgaW1wcm92ZW1lbnQgcGVvcGxlIiwKSSB3YXMgZ29pbmcg
+dG8gdHJ5IHRvIGltcHJvdmUgdGhlIGRyaXZlciwgZmlsbGluZyBvdXQgVE9ET3MsIGZpeGluZwpo
+YXJkY29kZWQgcmVnaXN0ZXIgbnVtYmVycywgZXRjLiBCdXQgaWYgaXQncyBiZXN0IGxlZnQgYWxv
+bmUuLiB0aGVuIEkKZ3Vlc3Mgd2UgY2FuIGRvIHRoYXQuCgpUaGF0IGlzLCBhc3N1bWluZyBiNDMg
+aXMgYWN0dWFsbHkgc3VwcG9zZWQgdG8gYmUgYSBzZXBhcmF0ZSBkcml2ZXIsCmJlY2F1c2UgaWYg
+YnJjbXNtYWMgYmFzaWNhbGx5IGhhcyB0aGUgc2FtZSBjb2RlLCB0aGVuIG1heWJlIHdlIHNob3Vs
+ZApmb2N1cyB0byBjZW50cmFsaXppbmcgZXZlcnl0aGluZz8gQnV0IHRoZW4gdGhlcmUncyBiNDNs
+ZWdhY3kuLiBobS4uLgoKLUpvc2gKCj4KPiBCZXN0IHJlZ2FyZHMsCj4gSm9uYXMKPgo+IFsxXSBo
+dHRwczovL2dpdGh1Yi5jb20vdG9ydmFsZHMvbGludXgvdHJlZS9hOTUzM2U3ZWEzYzQxMGZlZDJm
+NGNkOGIzZTFlMjEzZTQ4NTI5Yjc1L2RyaXZlcnMvc3RhZ2luZy9icmNtODAyMTEKCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcg
+bGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
