@@ -4,86 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72291F433CE
-	for <b43-dev@archiver.kernel.org>; Wed, 15 Apr 2026 22:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 42FB1F4384C
+	for <b43-dev@archiver.kernel.org>; Thu, 16 Apr 2026 06:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
+	List-Archive:List-Unsubscribe:List-Id:Cc:To:Subject:Message-ID:Date:From:
+	In-Reply-To:References:MIME-Version:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=wqf//Xs9ka8RsHaiLL97r/pGHfoyafbjMFmG3rsochg=; b=uci+a6PGG6OAQ5
-	VGAWqvv4aTtkdaYKHCENESRGn5bhPZMXt0DZurweJVzJD2LwUpE/9xAIOoBIaO6iZE8V4F3X+xBS1
-	7MW0xzj8vXIqJDHqK8Vfwqg5kjdK/2+BlbFgF8eAHSwnENgbGgXbSLNWsOFPGFoqLjipaAVloKZjO
-	a4ViNIV+Lswmht50BMaoxRFb8aAw00Kspt6jT47oRT4FNIit9TD9WAfdRFzcVkrDXkCl8/sCyQhsX
-	8Lwdj0+Giih9Cd4jLob4e/y8UjTWXshPpUIWyq0ci6wEBq45+6IeYG/MFFuPrnHyQkMNNilsKDp5x
-	my6tk4EqFFkSE12PW2pQ==;
+	List-Owner; bh=uigAnC9y6CBKrzIhl8WW5JHDcDxt9IPILjpfJ2QNVO8=; b=x9GyujZl609Jdj
+	SNtUWbcL20U79/lAGq+tdis2Sh8E5vKM/2rb2yQM+2N00M9yQfgW5buSquoZ76vVjPf6/BydswUbr
+	BBBOoYR7YFxb42ei/g4bfOZC7KWimwqMa8eqGICbhTXKkIMhnaBtzuVVFthIJfsr6dxdxIQpQVD9x
+	8zRVJ7AbZ34EsoC/bCeeQPaamKSE4NoaeiesvE6y1IBuKyfCrQXfcRVMVp7eAlCLDIUokMvkX+5fh
+	QgPXSN4krEqU9+gk8RDH+xsjtB2Vbl8F6ufaQnMev0Rql1yQ+79E0mdteRw8HI1Jkq9We9NXnIYGj
+	fJASrULJNPtX/IVSB9nw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wD8et-00000001gr5-1pdv;
-	Wed, 15 Apr 2026 22:24:31 +0000
-Received: from mail-wm1-x329.google.com ([2a00:1450:4864:20::329])
+	id 1wDGIq-000000023Js-30gJ;
+	Thu, 16 Apr 2026 06:34:16 +0000
+Received: from mail-yx1-xb12d.google.com ([2607:f8b0:4864:20::b12d])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wD8er-00000001gq3-2fPD
+	id 1wDGIn-000000023JN-28TC
 	for b43-dev@lists.infradead.org;
-	Wed, 15 Apr 2026 22:24:30 +0000
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-488b0e1b870so112201795e9.2
-        for <b43-dev@lists.infradead.org>; Wed, 15 Apr 2026 15:24:29 -0700 (PDT)
+	Thu, 16 Apr 2026 06:34:14 +0000
+Received: by mail-yx1-xb12d.google.com with SMTP id 956f58d0204a3-652f220595fso1025062d50.0
+        for <b43-dev@lists.infradead.org>; Wed, 15 Apr 2026 23:34:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1776321252; cv=none;
+        d=google.com; s=arc-20240605;
+        b=J4tGT3lN8RWELrrOpmrjYqJu+QdjtcmV+ZP6H5Aiv/TFcRvmSQqoA+FvHiS68VBo1G
+         RF82y6qCDomVEtQDlKIDmtlC0BEXrbp0yRSJ78Acvg5zJVEyh5ALiQLDFk+ra27CkOeE
+         GvPrtHMMymWg86kHlfuWoh3uXK5pPtfJb6ConNkaoCTgw/Sw0xZTy7q4YS68twt5mV3I
+         DNmkEKttIUdPJNclW1QJlZagRv7Fe0Nr4vAhswvMt7LlNtZNN8IarM425KI5fqrTh/HR
+         LJVDxaQN07D+BVmI9yf+05cPDpyReUBTsjXB4QXzb6NsNPl1Eoexc/eJObxcdClAZfok
+         WZog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ohAIqVNFWeW5tgnSvTKQEG5CsHX/rC4S8Y4fjn1RWXM=;
+        fh=nSIbVfFPKmlu1qqZ80rQ6yztsZwREEDOafpjy16VJjI=;
+        b=b3gYp6TMlt2r2NTfXflgGue171YPsf0JW6uG86BH+R1WU9jKqWQ4Mwogi7yooU8Z50
+         royuxY+C5kyL5JbS6qzgTMq7+A1JXBDqX1CgF5JNerdSQqnXm4mhOw5HUfk869qsd5Bc
+         E3uzriPPZEWY7xz6piYDUxb6VtUsqQo2zjq1eS0AvL5EuF51ObU0ZSFPLGtcmDOEse4M
+         VPn+9bMdwinisQQ694nrKSD04ed7ufkTiN6xOgf0laIlQ6LwqOUQnaH8bOrAiGk3wKCU
+         Ydf4Mqu3bGLq6dMas20pRfOus/bw4unc35kzNaxxR6SrSm3o2ePX21gajGCIVuJw6SkK
+         8JOA==;
+        darn=lists.infradead.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776291868; x=1776896668; darn=lists.infradead.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1776321252; x=1776926052; darn=lists.infradead.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3UvqfCfAgGuJWO3zcP6mrlM40Xh9+MbBRmx0d87Lp0E=;
-        b=j3u/7VURHILvE1Z9GMADij19ukZ61LB7CofVGhrGOIqCnIqhURfR8ny7ju5SjxdKKR
-         t9ms42VfIJ01YXE2LlFRLf/scoB7U4WOPVIBCazUHAXCts58669XJqjXyZxn+0LXYqZu
-         ttG0DnZFpQvwN9TwYGZwqLNELTZr6Uz5i3Bm0Vwbv1qEscVFKbMYncm5o5eYrymB99q9
-         beMiZh3Q86I5vGrrvnGzUXFusDMeWR2KBA5mXZS0LM5wu6E/QEHYhfaPM8FOei2J+mLn
-         qvP6+FDp6gR2ZWH7qP8aSDTkgNR7kyE9y7hpETzixngwJx7ffbJrm+WlAN6fxDQZjM4d
-         ZWVQ==
+        bh=ohAIqVNFWeW5tgnSvTKQEG5CsHX/rC4S8Y4fjn1RWXM=;
+        b=aMMasxe3EwQJikveVG100D1GNWd/5UHpQBsEu/qgjqe5jtngv7T5U6UK77OsRxeRO7
+         5lh2x1IdX2lqfTAAQwaU99x/dU6Lg/eS3IXNADYxjD2BWoTHz/vEEXUI192zyiCGP8Qn
+         rRN5kmYLx1F8inZ7QfHCbcNa2/7TeweIH2ySJ7WTV/B+V8P4zqDSJOK2IO5ZD5akb2zZ
+         DjTFj3qJ9V4q+ksj/jcvINY+/iaE3SqcYIGLh8H8id6VDL0l+PRdR6oMJvdUH2tUpbPd
+         jRKCnsyQThi/5fwYVEeEcB3/lYw+3uloIFEvvB10bCHbFQzaq4510gkdj3QURNFU+btv
+         d8kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776291868; x=1776896668;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1776321252; x=1776926052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=3UvqfCfAgGuJWO3zcP6mrlM40Xh9+MbBRmx0d87Lp0E=;
-        b=STsYs5v7fRCOl4F7WUJbAPgIl6uqvhZ0dU7O8pOwL1J6KcF+UXaVSUV+xYZBp3Ztub
-         50ef3QYZH6JbRAA8PSqWlZgYZ+7QnSNPnD+pxlD5V47pcdV2WCC/UHgUtzNTwQDWlKMC
-         g7u65NwBc+AtF0rQEF4jsZO1bpvGnq5wqNDqao4hPDSbvDoiyuVLd7+JehTz1xnCNyjU
-         lx0E2qB1yPVLqL6yRpgB2iqDgMN4kW8uDEhiFtcN7abQPfr8/H8dSmr6g5n8cB/DRU71
-         WOsoAuRGz8ilEsNNLD04FfuRxeYC/u/6vRouxhXCZfu+ekxg9C4HyARMrZbZFyNqK6fD
-         QaEA==
-X-Forwarded-Encrypted: i=1; AFNElJ8omDpMvlwwhzV7xujw4GJvt6EBh7cPdh5pj5R8WGz7ivwWddt19A+MF+g2DG/wM6tXuS4+lfSJ@lists.infradead.org
-X-Gm-Message-State: AOJu0YwKFE2lGtt95ocndY80JAeqyjRhZEblJsFXa0G/aQmguYVhYk82
-	/O/8rxafJsZwg964xlPr/JZqovIIHgEKWxzebUd5GO874IhZXus1xEY=
-X-Gm-Gg: AeBDiesPc1jHmqDOJI0O+vxlAjFJdT5xV/0oEhfN03pPE7vD3XamWcWakOPpM8wNlQT
-	36lXczeEQ+LcHgHDwAs2GetwwbB6e6/iRMhgVi8xt98kn9Qt6+nCVrrX54j15pS/8ADCacYkLd3
-	ww2tpYteFrWlNTWIsi+6THgkXy+W2lCbw4wkcCkhyftbmT57T4GeLODexcWaRbHWYD36E7GrGu8
-	LhX3V+XYRZlKzQhsSSqVmm6o+H2OxTrdayUsNJAOTjp1iaX+s/fCA8qQkMhiXIOyGvDs4g3AH9E
-	X30cyomnbv2i8WHt6SodUd87mQxanlbv6Z2O8/hcObysopSq+gMwE5QcmZlFMb0hys8QONYl2gO
-	A00KOhbe1Mzh47363re21fnqyuEC9i4yCZC9waVMcAwlh2LsuiQUNBQ+kkRUM4LBO8yiOEYa7pd
-	6Y8Wg=
-X-Received: by 2002:a05:600c:4504:b0:488:9db9:5235 with SMTP id 5b1f17b1804b1-488d6867c23mr319790915e9.22.1776291867682;
-        Wed, 15 Apr 2026 15:24:27 -0700 (PDT)
-Received: from debian.. ([2001:41d0:303:db6b::])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488f5813954sm1896615e9.3.2026.04.15.15.24.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2026 15:24:27 -0700 (PDT)
-From: Tristan Madani <tristmd@gmail.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org,
-	b43-dev@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] wifi: b43: fix infinite loop from invalid hardware DMA RX slot
-Date: Wed, 15 Apr 2026 22:24:24 +0000
-Message-ID: <20260415222425.1544638-2-tristmd@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260415222425.1544638-1-tristmd@gmail.com>
-References: <20260415222425.1544638-1-tristmd@gmail.com>
+        bh=ohAIqVNFWeW5tgnSvTKQEG5CsHX/rC4S8Y4fjn1RWXM=;
+        b=Z8Oxmaq8UnkGHNTccufbjjgerOWzbN8C6NIXWrmVzCHIUHeWm71qRKXZGEme2zTgHp
+         j6fnQ01vvOETidSxVFZ1ibUniX9bZYC323kh0zSFAa+I/bw2TF7Gp0up+l4kusiwmrAB
+         rPhU85bpkZgv4wn5g3851Y2tMD9266hUUWQV0WHzibjnTCn7nqOzCbm0h05Sk8RTTkQd
+         RisOLhscGwPkhlleLdJp+dyFR1kMYMoltGypEIPTjtP1nEsgffFAc5pdcAJiRmQ2TLGn
+         H0ntCTS+/iJ36GMNIwP56eWYo2aBgHP7cReLgcoPqkzK4BtqB03rWyl1/f3PLkCzI1cw
+         9UHA==
+X-Forwarded-Encrypted: i=1; AFNElJ/75kAP6UdQ0QnHJi2yirs3VCs5Wcf1Ggs8UrEW9ZupCK0Qmd0pnIthz4TEm9hCH38J9KgCzTEy@lists.infradead.org
+X-Gm-Message-State: AOJu0YyBvGorRVbQ5omadPg7AqIeWeds2NL1Hcpy2oiO1OdrBFUBlOix
+	JsoUvYjkBkSVFfUYGJfh1c9SB/MQiC/IabvqlelSjo7N3WKwx1KbU8Z2WakxM3PAQutQjcX8z8/
+	k1vwEMoVCZxjLtfm9G9IyeBfRQbT2mss=
+X-Gm-Gg: AeBDiesjbd75ZwUW+X+GShHJ7kYld8+1L6akIO8PqqxscaGC7vbzDOXHZLzgLqCCwR9
+	XAJDhcWdI77K0QwoARW0Xby+VIk9ReGIgtktUQ3hv3FY/IM0MVeEhSgXhIUC4qSvI2TOCGwBO5A
+	gh/QeUGtdSEBUCB6IoK7uU2RMPSeeB95Y7jJjqlxxkYURrzuo4EI4c01rYbNEJVFXgGIjKg+q1y
+	li9tMcWThgTs0I81IwB3VTQV2N8wneuvyPUo9LxdFpL6sayDof3zVwE+4ctDeIK3VxGSrYBDTdV
+	/hwouCkQe4XEQeoMaYD/1gQmVzTHgCzbONIAT4Ne2+bV9ohLCLDuux/X2uemmekzZw==
+X-Received: by 2002:a05:690e:b48:b0:651:b73f:2046 with SMTP id
+ 956f58d0204a3-651b73f26fbmr15448092d50.59.1776321252113; Wed, 15 Apr 2026
+ 23:34:12 -0700 (PDT)
 MIME-Version: 1.0
+References: <20260415222425.1544638-1-tristmd@gmail.com> <20260415222425.1544638-2-tristmd@gmail.com>
+In-Reply-To: <20260415222425.1544638-2-tristmd@gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Thu, 16 Apr 2026 08:34:00 +0200
+X-Gm-Features: AQROBzCQGSycL_FiW1klCKpwdUQrdt6fQm8Yx0hL54YnaAFFXmZplvFsiMyW7iU
+Message-ID: <CAOiHx=nuUvf31J5khj4e4Kzv2wK4++TeZevXu3Z53qB66RagdQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] wifi: b43: fix infinite loop from invalid hardware
+ DMA RX slot
+To: Tristan Madani <tristmd@gmail.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, 
+	b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260415_152429_699989_B99A9EE3 
-X-CRM114-Status: GOOD (  13.40  )
+X-CRM114-CacheID: sfid-20260415_233413_558813_E494976A 
+X-CRM114-Status: GOOD (  18.09  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -95,47 +112,39 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-From: Tristan Madani <tristan@talencesecurity.com>
-
-b43_dma_rx() reads current_slot from hardware via get_current_rxslot().
-If the value is >= ring->nr_slots, the B43_WARN_ON only warns but
-continues. The for loop then never terminates because next_slot() wraps
-modulo nr_slots and can never reach the out-of-range current_slot.
-
-Replace the B43_WARN_ON with an explicit bounds check that returns
-early when the hardware reports an invalid slot index.
-
-Fixes: e4d6b7951812 ("[B43]: add mac80211-based driver for modern BCM43xx devices")
-Signed-off-by: Tristan Madani <tristan@talencesecurity.com>
----
-drivers/net/wireless/broadcom/b43/dma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/broadcom/b43/dma.c b/drivers/net/wireless/broadcom/b43/dma.c
-index XXXXXXX..XXXXXXX 100644
---- a/drivers/net/wireless/broadcom/b43/dma.c
-+++ b/drivers/net/wireless/broadcom/b43/dma.c
-@@ -1693,7 +1693,10 @@ void b43_dma_rx(struct b43_dmaring *ring)
- 	B43_WARN_ON(ring->tx);
- 	current_slot = ops->get_current_rxslot(ring);
--	B43_WARN_ON(!(current_slot >= 0 && current_slot < ring->nr_slots));
-+	if (!(current_slot >= 0 && current_slot < ring->nr_slots)) {
-+		B43_WARN_ON(1);
-+		return;
-+	}
-
- 	slot = ring->current_slot;
- 	for (; slot != current_slot; slot = next_slot(ring, slot)) {
---
-2.43.0
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+SGksCgpPbiBUaHUsIEFwciAxNiwgMjAyNiBhdCAxMjoyNOKAr0FNIFRyaXN0YW4gTWFkYW5pIDx0
+cmlzdG1kQGdtYWlsLmNvbT4gd3JvdGU6Cj4KPiBGcm9tOiBUcmlzdGFuIE1hZGFuaSA8dHJpc3Rh
+bkB0YWxlbmNlc2VjdXJpdHkuY29tPgo+Cj4gYjQzX2RtYV9yeCgpIHJlYWRzIGN1cnJlbnRfc2xv
+dCBmcm9tIGhhcmR3YXJlIHZpYSBnZXRfY3VycmVudF9yeHNsb3QoKS4KPiBJZiB0aGUgdmFsdWUg
+aXMgPj0gcmluZy0+bnJfc2xvdHMsIHRoZSBCNDNfV0FSTl9PTiBvbmx5IHdhcm5zIGJ1dAo+IGNv
+bnRpbnVlcy4gVGhlIGZvciBsb29wIHRoZW4gbmV2ZXIgdGVybWluYXRlcyBiZWNhdXNlIG5leHRf
+c2xvdCgpIHdyYXBzCj4gbW9kdWxvIG5yX3Nsb3RzIGFuZCBjYW4gbmV2ZXIgcmVhY2ggdGhlIG91
+dC1vZi1yYW5nZSBjdXJyZW50X3Nsb3QuCj4KPiBSZXBsYWNlIHRoZSBCNDNfV0FSTl9PTiB3aXRo
+IGFuIGV4cGxpY2l0IGJvdW5kcyBjaGVjayB0aGF0IHJldHVybnMKPiBlYXJseSB3aGVuIHRoZSBo
+YXJkd2FyZSByZXBvcnRzIGFuIGludmFsaWQgc2xvdCBpbmRleC4KPgo+IEZpeGVzOiBlNGQ2Yjc5
+NTE4MTIgKCJbQjQzXTogYWRkIG1hYzgwMjExLWJhc2VkIGRyaXZlciBmb3IgbW9kZXJuIEJDTTQz
+eHggZGV2aWNlcyIpCj4gU2lnbmVkLW9mZi1ieTogVHJpc3RhbiBNYWRhbmkgPHRyaXN0YW5AdGFs
+ZW5jZXNlY3VyaXR5LmNvbT4KPiAtLS0KPiBkcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9i
+NDMvZG1hLmMgfCA1ICsrKystCj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb24oLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNv
+bS9iNDMvZG1hLmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMvZG1hLmMKPiBp
+bmRleCBYWFhYWFhYLi5YWFhYWFhYIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNz
+L2Jyb2FkY29tL2I0My9kbWEuYwo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29t
+L2I0My9kbWEuYwo+IEBAIC0xNjkzLDcgKzE2OTMsMTAgQEAgdm9pZCBiNDNfZG1hX3J4KHN0cnVj
+dCBiNDNfZG1hcmluZyAqcmluZykKPiAgICAgICAgIEI0M19XQVJOX09OKHJpbmctPnR4KTsKPiAg
+ICAgICAgIGN1cnJlbnRfc2xvdCA9IG9wcy0+Z2V0X2N1cnJlbnRfcnhzbG90KHJpbmcpOwo+IC0g
+ICAgICAgQjQzX1dBUk5fT04oIShjdXJyZW50X3Nsb3QgPj0gMCAmJiBjdXJyZW50X3Nsb3QgPCBy
+aW5nLT5ucl9zbG90cykpOwo+ICsgICAgICAgaWYgKCEoY3VycmVudF9zbG90ID49IDAgJiYgY3Vy
+cmVudF9zbG90IDwgcmluZy0+bnJfc2xvdHMpKSB7Cj4gKyAgICAgICAgICAgICAgIEI0M19XQVJO
+X09OKDEpOwo+ICsgICAgICAgICAgICAgICByZXR1cm47Cj4gKyAgICAgICB9CgpCNDNfV0FSTl9P
+TigpIHJldHVybnMgdGhlIGNvbmRpdGlvbidzIHJlc3VsdCwgc28geW91IGNhbiBzaG9ydGVuIHRo
+aXMgdG8KCmlmIChCNDNfV0FSTl9PTighKGN1cnJlbnRfc2xvdCA+PSAwICYmIGN1cnJlbnRfc2xv
+dCA8IHJpbmctPm5yX3Nsb3RzKSkpCiAgICAgICAgcmV0dXJuOwoKQmVzdCByZWdhcmRzLApKb25h
+cwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYjQzLWRl
+diBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5p
+bmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
