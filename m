@@ -4,83 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 154A5F43692
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F21C3F43691
 	for <b43-dev@archiver.kernel.org>; Fri, 17 Apr 2026 11:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=RGZIywr7H4UP6QMK7XtYuAMywOaa78OQb+TYb95flyk=; b=RbbdDR6EqG4Gmr
-	wosydRCHbxkbdsCTij0C9eDFX/S2noXgSvCkCcFvtj2/gOfJz+mnEor4mFgDdBZN9dxb0vneUwApy
-	yn24TDVivB0j4opgQrjzK1h9RJ0xlUVo1mee4RSd/t0j8oczT600nJFH4WmP8ZRnJOdnI9JXlVhUN
-	O24+wSU0JQ3OU/j2R5IjdU3GkYCBkpzH2kEl+72dU6nSZ2Xi1PyJS9y5N9cohx7dyyTwEogNAFbU4
-	QdvPL5zJ0rgcnAMTlYJtuYz9f9Yt3GsBAI4dnU5ryRuV8aqi/8FUl4c832aX6DZN9xyaInHq6guVM
-	3VxRExQTe7w2tx086uNQ==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Date:Subject:To
+	:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=Xka+BBu9Jk9etyQHtY4GwJg60aQ8dYcfqcYrPmlQusE=; b=iHtVDI2LfeUCFL
+	AqbwD41Mm/aHgpkcp5lIhBZ3GC1VngP0fYBbawZugGBB2BlINOgruUNcf0q5yYcDt+86g8+uPy4Gm
+	rgb7y662DI7Pxn6Vf9M5nVtEYFt2dhXD7n3w2RPkyyKPRhGBEkyDEms80mWoREaKB54ixOAFKGOu/
+	3sOGa4zQiYdoXuP5jKDFDNNYnCQHQYT69bumWb0TrhsSKuG5/DT6vrFVOsc+kkxI7DxrPyluu3wBM
+	Gdvynin1fUxk1lRBTqbXXjmfcsoX8erNYdZWf9n2YMdHnpF7HDKxcrJebd9DpEHUkD/t4OkN89URY
+	Pk6GL5wrdJI2ow6RLoMg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wDh72-00000003xZi-3rBB;
-	Fri, 17 Apr 2026 11:11:52 +0000
-Received: from mail-wm1-x333.google.com ([2a00:1450:4864:20::333])
+	id 1wDh70-00000003xYz-2dsD;
+	Fri, 17 Apr 2026 11:11:50 +0000
+Received: from mail-wm1-x32f.google.com ([2a00:1450:4864:20::32f])
 	by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wDh6z-00000003xYA-1fY5
+	id 1wDh6y-00000003xY5-2JQP
 	for b43-dev@lists.infradead.org;
-	Fri, 17 Apr 2026 11:11:51 +0000
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-488a8ca4aadso6818305e9.3
+	Fri, 17 Apr 2026 11:11:49 +0000
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-48897fd88ebso5972845e9.2
         for <b43-dev@lists.infradead.org>; Fri, 17 Apr 2026 04:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20251104; t=1776424307; x=1777029107; darn=lists.infradead.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZN3gfZee7R57N4dlGIBXrBPV0sAI+/BLIAVKZCa0Ck=;
-        b=IYb0kAbO048kZf+HgutG+6dlGuT+UZvidatNhG0up9XYv5dkD8OTIhwOeRCwOeTxBO
-         vtWvptKhC6zb7R0GvUYs/W6rf4f/c3olT63qfY77wQmuGfxKEB0CIWRvoQhjupkKMexa
-         507Oy/hA6Ro5uGBhOdItv0rVjL/cONrMf6glfme+mjv33ee+WOvWcu3Zbq3Zb8hPjjwI
-         GK7FSTXpWbo9vAqSzoUOHqWJFJ0hedmPhtgNFN3LFITsHjLYFIet9ke4xG17Gts+d8zJ
-         JVHFvlcyOcYqQ0z20KDSJZpeCvcLFEjnh/ubo6Fo8k6glv4a3gPTs1t6+gDulyVZw85z
-         0S9w==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lILZ9xCRIhsyc5RGRj7FW3WYBtZ8SuhhYrZ8gfxfmyY=;
+        b=JxLGDCbX/Ec9EvxFCj5+ESjGz2icT5MHq5GjEuqtAZ3Hcsa2N3ccKxmYcbWuwtyx2G
+         3NTjKofyLQ06Bwu/mpKK14T/AMM5/w3i0DkhFOqnCOh7ZubsXkFpSiYQh3osRAjNdveX
+         sIM0UPFfTp8iD5AXQLVrp0ZsoN8olQkyzaoooHr+oIUG8GhzffYrvEcH4dTPKbbEBcY8
+         Gvc+6wqqSg3d+Epc6r1C8nrFdQB8HmSve2IamdBPdHhIwMaGSvC78sbBpYQiK9I8MsBA
+         1VYSd4rPHKRH225atXiKSjfXLS5TLZ22QNsbvg/1OmYCqeo9yWVk+sFIxtaqN4HjO3za
+         rtCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1776424307; x=1777029107;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OZN3gfZee7R57N4dlGIBXrBPV0sAI+/BLIAVKZCa0Ck=;
-        b=kIKMZtVhRI67RTnrhpaAexSvg9fO9SsBOlkj3DokkZ91ww+6crvNyhgBlh1jIEwI1t
-         rgf3rH4mGyj1ENK9zruHUzkMB4jgA0UcortZPDhd9Mxwb+BgoH0iswx77f6LB9o1hvVX
-         19gLlbJnAd6MyBRNoGvtXtUarKifExW75v4+Rjo+WyZTkm2Wg+C1oA7XJamZYlzGBisW
-         POIG7vrje3X2RqVhDoutZJxeqk/gw8W5mKC0dRShs7wnFid6ovKblERe2o01gnavIdah
-         0J5aZ65lKQ7bwpTN081+OsykFQGnVE/6WCVNSrLaSgWpf92v4+W8dS0mUnOeEmouIe1w
-         PEqw==
-X-Forwarded-Encrypted: i=1; AFNElJ8/ECz+D4jFkUCEgREq7/ziIiGULY+g1m2tm7XQ7gtdcq8G8o5RNwLBZixjfep7vm2kKeg0+cZ8@lists.infradead.org
-X-Gm-Message-State: AOJu0YyHkHPaMaEOitU6mLydXR5MHyls7Hf3kK7poTQqaNM6/tnI8iEr
-	nhZlxecBmKLSdeuWhaW4uGMV3vKBTk7815ApL5XxD6/cMgxqHzFdyGc=
-X-Gm-Gg: AeBDievmJlS/XwywWkLobvdYZHCxX94+8VLRENF1+0Ek8dg+evWduQyRrH00AB8ninv
-	TP/orCC0JcCT0ix7NIZ4Ghrd9OoY6JFdRIk9q/4pDyXkRBOXEZ0URf/mFYIzYzNbVMWQC7MbK/x
-	m2Tfk+D9T0CDuJGKq8Nl7YiKQbdehfXfLkwFk2h0MbcbUWdEkr5A9H60d1Ek779dnipVOW4U/92
-	T1SLnqtmFaOk/gPy+1WBehw1+MjrrQO2Xgpd1svzTjPJuaBQ5Vy4YjQG6t+EnuwLMDiJ7+N5Plm
-	GuyGt6L3+90thdqWy6hAD0wORTTkeHVlBeYr+s7FpUfIBXN9AsbvWTpK833eoPnxzuMYvX/Edg1
-	4rfQ9bJLSIIstzn2S9DnQlVd37NaSNXKYvqhjz282gD8s45ktHPWy/i0inENofZ5/1Yf6Y8svMR
-	r2yc4=
-X-Received: by 2002:a05:600d:8408:b0:488:be58:bb5b with SMTP id 5b1f17b1804b1-488fb773f0cmr25674465e9.24.1776424307402;
-        Fri, 17 Apr 2026 04:11:47 -0700 (PDT)
-Received: from debian.. ([2001:41d0:303:db6b::])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fc0f82bbsm62121235e9.3.2026.04.17.04.11.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lILZ9xCRIhsyc5RGRj7FW3WYBtZ8SuhhYrZ8gfxfmyY=;
+        b=BIFsy/EBa769RxiZfW2+oZj9mvshw6F6Pqdn4Tw+jTbUiIoYP0Ii3CWVmC7tQ5tLr/
+         OiTWGEVyNHsUM9NwE3HWZNPCXviUZpIFdibCf6+REziE8YvsmXUHHQHglNgEk2PJxini
+         KxgYouwm027T1L/tDpx3UCaPJCba4BRY5sEJD24a6zAmfW6X6aHmHzJjl1jvLWGK2ULe
+         AgvmovsNNm3UOo+Afc2sIKQO7vR/QXcvsqoa8HKhAbFY9iduSAqwg2Q4VevxtbvayVMX
+         Y6hPBhLf4ZeWOgIonaZhxRJLhF8nMgT8+D8GrQPbqjJ4RaaBqJxRV098Yhf8dFHTWHBX
+         KEBQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+QyeGi8RtcquCyiq+dEK7NS0hYYYL9a0pApe63Pi9xtintc/5LEmD4qX4ACIsIMWs6cJIsGpqD@lists.infradead.org
+X-Gm-Message-State: AOJu0YzUvdClabroIGCGeqeJvehyVv3GXLUaUcUZOGdzEYKoMTs6CDpQ
+	GmAU0LF029PBwbjdIExMNOTFLeEJMI5rzlImMiFAEwXL4Tnsa5P1tgoh6HS5lBI=
+X-Gm-Gg: AeBDievCGmL88rhPMYhDsA3kx44D+1+/NJJlUIVqmf/Y+ipTsL0gQce1xlv1OrFocmi
+	C9GFAr1AoNSoGpmr5RizzuV+OVZwa6MtbNy7PLttneATNL0TakR1afaDKT5yaNXlDzbXCSjvhAr
+	1ZhhT++xxwpuf//39YISrw+0xhEwBH8ZKVlrcqO71y/zViIgIHF5Usss63Wq93Czo/+D6h4k9+I
+	cGSZAJjjKUNfCC++dqiYj5gdCLqg/wFkFBURykQRo5EHLrzlp1DHE7tv3H/rutsy+84VMrA8iRe
+	5rFVIZjt28Wp4tBzRORm9ugj0rAbO82V1aCh5GBzP6ZWoH+TRI51GzMHJMvFqkNhLUNjiFvXi6f
+	WuSXT3RZ/CIK/tSq17WqPOOHB9h/oUyGtIBljsx6rq5qrbwVJtj86AtS413jzMWpgfKmbxow0ET
+	8PexI=
+X-Received: by 2002:a05:600c:3e05:b0:487:575:5e1 with SMTP id 5b1f17b1804b1-488fb78280bmr36497025e9.24.1776424306538;
         Fri, 17 Apr 2026 04:11:46 -0700 (PDT)
+Received: from debian.. ([2001:41d0:303:db6b::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fc0f82bbsm62121235e9.3.2026.04.17.04.11.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2026 04:11:45 -0700 (PDT)
 From: Tristan Madani <tristmd@gmail.com>
 To: linux-wireless@vger.kernel.org
-Subject: [PATCH v3 2/2] wifi: b43legacy: enforce bounds check on firmware key index in RX path
-Date: Fri, 17 Apr 2026 11:11:45 +0000
-Message-ID: <20260417111145.2694196-2-tristmd@gmail.com>
+Subject: [PATCH v3 1/2] wifi: b43: enforce bounds check on firmware key index in b43_rx()
+Date: Fri, 17 Apr 2026 11:11:44 +0000
+Message-ID: <20260417111145.2694196-1-tristmd@gmail.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260417111145.2694196-1-tristmd@gmail.com>
-References: <20260417111145.2694196-1-tristmd@gmail.com>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260417_041149_442596_DECEE1B3 
-X-CRM114-Status: GOOD (  11.39  )
+X-CRM114-CacheID: sfid-20260417_041148_593559_99E9F0AC 
+X-CRM114-Status: GOOD (  11.03  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -93,46 +90,35 @@ List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
 Cc: stable@vger.kernel.org, johannes@sipsolutions.net, b43-dev@lists.infradead.org, m@bues.ch
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-From: Tristan Madani <tristan@talencesecurity.com>
-
-Same fix as b43: the firmware-controlled key index in b43legacy_rx()
-can exceed dev->max_nr_keys. The existing B43legacy_WARN_ON is
-non-enforcing in production builds, allowing an out-of-bounds read of
-dev->key[].
-
-Make the check enforcing by dropping the frame for invalid indices.
-
-Fixes: 75388acd0cd8 ("[B43LEGACY]: add mac80211-based driver for legacy BCM43xx devices")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tristan Madani <tristan@talencesecurity.com>
----
- drivers/net/wireless/broadcom/b43legacy/xmit.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/broadcom/b43legacy/xmit.c b/drivers/net/wireless/broadcom/b43legacy/xmit.c
-index efd63f4ce..ee199d4ea 100644
---- a/drivers/net/wireless/broadcom/b43legacy/xmit.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/xmit.c
-@@ -476,7 +476,8 @@ void b43legacy_rx(struct b43legacy_wldev *dev,
- 		 * key index, but the ucode passed it slightly different.
- 		 */
- 		keyidx = b43legacy_kidx_to_raw(dev, keyidx);
--		B43legacy_WARN_ON(keyidx >= dev->max_nr_keys);
-+		if (B43legacy_WARN_ON(keyidx >= dev->max_nr_keys))
-+			goto drop;
- 
- 		if (dev->key[keyidx].algorithm != B43legacy_SEC_ALGO_NONE) {
- 			/* Remove PROTECTED flag to mark it as decrypted. */
--- 
-2.47.3
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+RnJvbTogVHJpc3RhbiBNYWRhbmkgPHRyaXN0YW5AdGFsZW5jZXNlY3VyaXR5LmNvbT4KClRoZSBm
+aXJtd2FyZS1jb250cm9sbGVkIGtleSBpbmRleCBpbiBiNDNfcngoKSBjYW4gZXhjZWVkIHRoZSBk
+ZXYtPmtleVtdCmFycmF5IHNpemUgKDU4IGVudHJpZXMpLiBUaGUgZXhpc3RpbmcgQjQzX1dBUk5f
+T04gaXMgbm9uLWVuZm9yY2luZyBpbgpwcm9kdWN0aW9uIGJ1aWxkcywgYWxsb3dpbmcgYW4gb3V0
+LW9mLWJvdW5kcyByZWFkLgoKTWFrZSB0aGUgQjQzX1dBUk5fT04gY2hlY2sgZW5mb3JjaW5nIGJ5
+IGRyb3BwaW5nIHRoZSBmcmFtZSB3aGVuIHRoZQpmaXJtd2FyZSByZXR1cm5zIGFuIGludmFsaWQg
+a2V5IGluZGV4LgoKU3VnZ2VzdGVkLWJ5OiBKb25hcyBHb3Jza2kgPGpvbmFzLmdvcnNraUBnbWFp
+bC5jb20+CkFja2VkLWJ5OiBNaWNoYWVsIELDvHNjaCA8bUBidWVzLmNoPgpGaXhlczogZTRkNmI3
+OTUxODEyICgiW0I0M106IGFkZCBtYWM4MDIxMS1iYXNlZCBkcml2ZXIgZm9yIG1vZGVybiBCQ000
+M3h4IGRldmljZXMiKQpDYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZwpTaWduZWQtb2ZmLWJ5OiBU
+cmlzdGFuIE1hZGFuaSA8dHJpc3RhbkB0YWxlbmNlc2VjdXJpdHkuY29tPgotLS0KIGRyaXZlcnMv
+bmV0L3dpcmVsZXNzL2Jyb2FkY29tL2I0My94bWl0LmMgfCAzICsrLQogMSBmaWxlIGNoYW5nZWQs
+IDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0
+L3dpcmVsZXNzL2Jyb2FkY29tL2I0My94bWl0LmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9h
+ZGNvbS9iNDMveG1pdC5jCmluZGV4IDc2NTFiMWJkYi4uZjBiMDgyNTk2IDEwMDY0NAotLS0gYS9k
+cml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMveG1pdC5jCisrKyBiL2RyaXZlcnMvbmV0
+L3dpcmVsZXNzL2Jyb2FkY29tL2I0My94bWl0LmMKQEAgLTcwMiw3ICs3MDIsOCBAQCB2b2lkIGI0
+M19yeChzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYsIHN0cnVjdCBza19idWZmICpza2IsIGNvbnN0IHZv
+aWQgKl9yeGhkcikKIAkJICoga2V5IGluZGV4LCBidXQgdGhlIHVjb2RlIHBhc3NlZCBpdCBzbGln
+aHRseSBkaWZmZXJlbnQuCiAJCSAqLwogCQlrZXlpZHggPSBiNDNfa2lkeF90b19yYXcoZGV2LCBr
+ZXlpZHgpOwotCQlCNDNfV0FSTl9PTihrZXlpZHggPj0gQVJSQVlfU0laRShkZXYtPmtleSkpOwor
+CQlpZiAoQjQzX1dBUk5fT04oa2V5aWR4ID49IEFSUkFZX1NJWkUoZGV2LT5rZXkpKSkKKwkJCWdv
+dG8gZHJvcDsKIAogCQlpZiAoZGV2LT5rZXlba2V5aWR4XS5hbGdvcml0aG0gIT0gQjQzX1NFQ19B
+TEdPX05PTkUpIHsKIAkJCXdsaGRyX2xlbiA9IGllZWU4MDIxMV9oZHJsZW4oZmN0bCk7Ci0tIAoy
+LjQ3LjMKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpi
+NDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
+c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
