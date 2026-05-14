@@ -4,89 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 005FCCD3427
-	for <b43-dev@archiver.kernel.org>; Mon, 11 May 2026 04:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E824CCD37AC
+	for <b43-dev@archiver.kernel.org>; Thu, 14 May 2026 02:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Date:Subject:Cc
-	:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
+	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=11P+zFBT1Xp2sLntErGpzwTTNDwJBiJfUqrzqlmUbOg=; b=d5L6oIdp8c6HeH
-	KQD+4aPj7UdYYiOHnfP0sEiIKgGETb4UlGQ3jaBmqLoss2cY+QVEx9fIvKiIhLkb7yGW+nrD3i6r8
-	wvlx31lgMckkr3EtO5/gSRRoworl6Xy8WIWo46fUMl29369kzf6+12EiRPhPnAIDZI6qiTaFhqy/F
-	FTWaVSTKZEzS4KAkXtyLKommaMcDKpNB8tBFjFOcjSjTvNKFrcl8BdIP2MW16s7WgMPrjcibliYzs
-	JnsdWV+41kk/ngaAaT6aGs2CV4FDeIOOWhmMXAdvSMGjmnjmD67XXxk6kTLM0lhkQBE7rz+j7e8mg
-	/bl9lm7pqB1sK1yJvSjA==;
+	List-Owner; bh=BsEe3gR9UFd/11yfaQ0zBBU+bIToRMMoutvGL68yMMA=; b=gVXvHv0Y9effOJ
+	comnrRvIlClLuDCfoavsCUkgM4qHqobmUKV1U66dVco32264C2rVKo+2n0ktwck8G91agfnZIEfwQ
+	d/zRpRpLyroR7yWPitHG8oycz6wcv30Q6t5xLf0qkYC6pq//xSL08ceENdKD0s+s5+2MRivclV7yL
+	rqdaVej9r97yp1qFaoJFHMUn7Y44xozIkKe7M4h0CLawSLWSsQ5S3ThBQD608SXq7q1Wzsgpgfj5f
+	K+HD3C3beysjNGxyVYMBXS7BFQJ6o3IduAihguk+4sTbvkWRxGAd/fSQKqk4rPx7FapVYMOlS+Yx3
+	NLEy5dssMqUM7KBS7oHw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wMI7b-0000000CFSD-1ARW;
-	Mon, 11 May 2026 04:19:59 +0000
-Received: from mail-pf1-x42d.google.com ([2607:f8b0:4864:20::42d])
+	id 1wNLaj-00000004LDR-1Uvn;
+	Thu, 14 May 2026 02:14:25 +0000
+Received: from r9206.ps.combzmail.jp ([160.16.62.99])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wMI7V-0000000CFRK-0DN1
+	id 1wNLaY-00000004LCW-40nZ
 	for b43-dev@lists.infradead.org;
-	Mon, 11 May 2026 04:19:54 +0000
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-83659d38e38so1643992b3a.1
-        for <b43-dev@lists.infradead.org>; Sun, 10 May 2026 21:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778473192; x=1779077992; darn=lists.infradead.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yuGDf9iNAynlSPvBXud+v9E3yiQ53OcQ/UBsB/xF9OA=;
-        b=GN3NorO6vtAA1eByNzdWzc+0JS+XJ3MSAudCnUPHw+2mjozd1rjNRIL7Q+vCHQign0
-         zTbQsZ0swA4TwL+hQmLX82GWqiKqs2toI3uC8zacPbZXeFKd8Aa+iGyKCCA83+kgl+90
-         jK3lHK3U/4u4ptmN9U9kQqCVuP4GSjj+s3igKTZO6xT1meVnYt5qjqW6cJLtVBn8HZFy
-         sJSH1CJQQTu1ggl4OAUtjUlI5hMlTXAtmTOJZi1B0+Qlfmtpg8sdg7oBHVuttk1BpxFJ
-         617Y3iz15vVajZoTwWCLgH0UTdBlI08W0zDU52Xb0kbFphIWIK/pguqI5wIRPp4zP6K7
-         DCew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778473192; x=1779077992;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yuGDf9iNAynlSPvBXud+v9E3yiQ53OcQ/UBsB/xF9OA=;
-        b=U2KR94Xe4kadFdulqJPKUOK6Vp9FA6Y6846ftoPeMjCZtxyvLb1BzOd3uAyOmHJoJw
-         5QTvAmsW4ziRrK0PW5zUi1MW0AGMUvb0OYuRcMhqHG6oUVVOcwsfkHOv7YGV4YgUKyh1
-         /UfpqFF9FUFG/OYewZPLRTQnzGvWXMvm5p/mquHpDgQ9k+J5kOcWLMLo+FKeNx7Nmv3S
-         Ucgb0+1yl89HTWdz1QPgUicgQqA9Iehco1m6OTeRrA8yhBuwCRuDAjp16A2f3MQ8EYgc
-         oNOvPxB/CPBwqz0jIyfB/fD1Ydzj8VKizuWjupJxvaRmzll+vAl+s9VSVC9x9GD86uZ9
-         5oMw==
-X-Forwarded-Encrypted: i=1; AFNElJ+dn0pfcSzt3gVyNV0m6a5IPSz4x9GAMipEG3wvCxpIqhXhdENPYBimL+qPdEF8CC8sxIt5lAlI@lists.infradead.org
-X-Gm-Message-State: AOJu0YyJpuajvZLLvXhIfI1Ff4e0uTEhWOhUr313U1cVXfu5fswwfoyg
-	dQoPLxZSyCooKQQhZPNO5oZViBXJ6LCNH3HBLKUeQSMZKVOvkltXJAf8MFShMKoS
-X-Gm-Gg: Acq92OFAx2dw+rkoe/DVmksgyJ4fY0m8B13iZoQjUHlgK6C9eyUSil4s8Z1+yEMAxm+
-	Dw4ANlVTHAVn75W4qb/AOnWBB/sxsnZOj+qGqgE++U4Uz7edJC9aLHnnL79YxB4dhIH7ogzvHNr
-	20c61Wf7R49ryMQsbUm6wkZXbEVD+w/uEAIvezLDa4UXFXn+Lndi/wtMaGUCqjzAUKfCMCzzBTd
-	KsT8GoWY9MhWQjMPEIdeHEwFGvYoGlloaDmKrtZ7Zv2mcP1dXHjWMH/Tk45p4gnuyzOmCkbnMR1
-	Wtxb9hFuceim653meLufuKYm/8UaK1oYAb1kdjRD/IY4xaCBMyN4zdhENwsRAQel+rrNMefVXr+
-	V7lCB1vZ2fnqsiVdV15hqKRl+nCIwk0scXNNRd0xX3+GX+pT42lijTecZ5Xv5rYmLpcb7cXtf4T
-	sT7Yw8nb4LhnlvwQhwc6MQusI622UvBJkt1mKF4LifHge/znTBgTeWHwGu5TSGWQoVejC7M3fU2
-	coX5mbRUtZWLFzbXLmUtAZslfSpi32Filx4o4nq8EAkng==
-X-Received: by 2002:a05:6a00:2e90:b0:831:7f71:c810 with SMTP id d2e1a72fcca58-83a5d96fa9dmr22809905b3a.35.1778473192058;
-        Sun, 10 May 2026 21:19:52 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-839659498f1sm23736106b3a.17.2026.05.10.21.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 May 2026 21:19:51 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	b43-dev@lists.infradead.org (open list:B43LEGACY WIRELESS DRIVER),
-	linux-kernel@vger.kernel.org (open list),
-	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
-Subject: [PATCH wireless-next] wifi: b43legacy: Use flexible array for DMA metadata
-Date: Sun, 10 May 2026 21:19:34 -0700
-Message-ID: <20260511041934.378209-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.54.0
-MIME-Version: 1.0
+	Thu, 14 May 2026 02:14:17 +0000
+Received: by r9206.ps.combzmail.jp (Postfix, from userid 99)
+	id BFF0B103437; Thu, 14 May 2026 11:13:32 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9206.ps.combzmail.jp BFF0B103437
+To: b43-dev@lists.infradead.org
+From: =?ISO-2022-JP?B?GyRCRnxLXCVaJUMlSCVbJUYlazYoMnEbKEI=?= <info@j-pet-hotel.jp>
+X-Ip: 7855201435179847
+X-Ip-source: k85gj72w48dnsa51u0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCJVolQyVIJHIwJiQ5JGshIjdQMUQ8VE1NGyhC?=
+ =?ISO-2022-JP?B?GyRCJFgbKEI=?=
+Mime-Version: 1.0
+X-MagazineId: 2w51
+X-uId: 6764265239486061674169731027
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20260514021405.BFF0B103437@r9206.ps.combzmail.jp>
+Date: Thu, 14 May 2026 11:13:32 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260510_211953_096127_583AD6C5 
-X-CRM114-Status: GOOD (  15.39  )
+X-CRM114-CacheID: sfid-20260513_191415_253699_73BDFEF5 
+X-CRM114-Status: UNSURE (   0.28  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
-Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -95,123 +59,108 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Store the per-descriptor metadata in the DMA ring allocation instead of
-allocating it separately.
+　
+　ペットを愛する、経営者様へ
+　
+　
+　地域で愛犬を安心して預けられる
+　ペットホテル・トリミング事業を始めませんか？
+　
+　
+　■　フランチャイズシステム説明会　■
+　
+　　　愛犬家のオーナー多数！
+　　　ペットホテル・トリミングサロン
+　　　“ONE LUKE（ワンルーク）”
+　
+　　　※「開業パック」をご用意しているので
+　　　　経験や資格が無くても始められます。
+　
+　
+　■　開催方式
+　　　オンライン（申込後に参加方法をご案内）
+　
+　■　日程
+　　　5月19日（火）11:00〜12:00
+　　　5月21日（木）11:00〜12:00
+　　　5月22日（金）11:00〜12:00
 
-This ties the metadata lifetime directly to the ring, removes a separate
-allocation failure path, and keeps the descriptor count available for
-__counted_by() bounds checking.
-
-Assisted-by: Codex:GPT-5.5
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/wireless/broadcom/b43legacy/dma.c | 24 ++++++++-----------
- drivers/net/wireless/broadcom/b43legacy/dma.h |  4 ++--
- 2 files changed, 12 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/wireless/broadcom/b43legacy/dma.c
-index a9557356c9ab..6c3d847242bb 100644
---- a/drivers/net/wireless/broadcom/b43legacy/dma.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
-@@ -610,25 +610,25 @@ struct b43legacy_dmaring *b43legacy_setup_dmaring(struct b43legacy_wldev *dev,
- 	int nr_slots;
- 	dma_addr_t dma_test;
- 
--	ring = kzalloc_obj(*ring);
-+	if (for_tx)
-+		nr_slots = B43legacy_TXRING_SLOTS;
-+	else
-+		nr_slots = B43legacy_RXRING_SLOTS;
-+
-+	ring = kzalloc_flex(*ring, meta, nr_slots);
- 	if (!ring)
- 		goto out;
-+
-+	ring->nr_slots = nr_slots;
- 	ring->type = type;
- 	ring->dev = dev;
- 
--	nr_slots = B43legacy_RXRING_SLOTS;
--	if (for_tx)
--		nr_slots = B43legacy_TXRING_SLOTS;
--
--	ring->meta = kzalloc_objs(struct b43legacy_dmadesc_meta, nr_slots);
--	if (!ring->meta)
--		goto err_kfree_ring;
- 	if (for_tx) {
- 		ring->txhdr_cache = kcalloc(nr_slots,
- 					sizeof(struct b43legacy_txhdr_fw3),
- 					GFP_KERNEL);
- 		if (!ring->txhdr_cache)
--			goto err_kfree_meta;
-+			goto err_kfree_ring;
- 
- 		/* test for ability to dma to txhdr_cache */
- 		dma_test = dma_map_single(dev->dev->dma_dev, ring->txhdr_cache,
-@@ -643,7 +643,7 @@ struct b43legacy_dmaring *b43legacy_setup_dmaring(struct b43legacy_wldev *dev,
- 					sizeof(struct b43legacy_txhdr_fw3),
- 					GFP_KERNEL | GFP_DMA);
- 			if (!ring->txhdr_cache)
--				goto err_kfree_meta;
-+				goto err_kfree_txhdr_cache;
- 
- 			dma_test = dma_map_single(dev->dev->dma_dev,
- 					ring->txhdr_cache,
-@@ -660,7 +660,6 @@ struct b43legacy_dmaring *b43legacy_setup_dmaring(struct b43legacy_wldev *dev,
- 				 DMA_TO_DEVICE);
- 	}
- 
--	ring->nr_slots = nr_slots;
- 	ring->mmio_base = b43legacy_dmacontroller_base(type, controller_index);
- 	ring->index = controller_index;
- 	if (for_tx) {
-@@ -694,8 +693,6 @@ struct b43legacy_dmaring *b43legacy_setup_dmaring(struct b43legacy_wldev *dev,
- 	free_ringmemory(ring);
- err_kfree_txhdr_cache:
- 	kfree(ring->txhdr_cache);
--err_kfree_meta:
--	kfree(ring->meta);
- err_kfree_ring:
- 	kfree(ring);
- 	ring = NULL;
-@@ -720,7 +717,6 @@ static void b43legacy_destroy_dmaring(struct b43legacy_dmaring *ring)
- 	free_ringmemory(ring);
- 
- 	kfree(ring->txhdr_cache);
--	kfree(ring->meta);
- 	kfree(ring);
- }
- 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.h b/drivers/net/wireless/broadcom/b43legacy/dma.h
-index b5c1a51db2a4..edd06225b64f 100644
---- a/drivers/net/wireless/broadcom/b43legacy/dma.h
-+++ b/drivers/net/wireless/broadcom/b43legacy/dma.h
-@@ -122,8 +122,6 @@ enum b43legacy_dmatype {
- struct b43legacy_dmaring {
- 	/* Kernel virtual base address of the ring memory. */
- 	void *descbase;
--	/* Meta data about all descriptors. */
--	struct b43legacy_dmadesc_meta *meta;
- 	/* Cache of TX headers for each slot.
- 	 * This is to avoid an allocation on each TX.
- 	 * This is NULL for an RX ring.
-@@ -161,6 +159,8 @@ struct b43legacy_dmaring {
- 	/* Last time we injected a ring overflow. */
- 	unsigned long last_injected_overflow;
- #endif /* CONFIG_B43LEGACY_DEBUG*/
-+	/* Meta data about all descriptors. */
-+	struct b43legacy_dmadesc_meta meta[] __counted_by(nr_slots);
- };
- 
- 
--- 
-2.54.0
-
+　■　定員
+　　　5名
+　
+　■　参加申込はこちら
+　　　https://oneluke-fc-seminar.jp/lp/
+　
+　
+　お世話になります。
+　
+　この度は、ペットホテル・トリミングサロンの
+　フラチャイズ事業説明会の開催をご案内いたします。
+　
+　ペットホテルとトリミングサービスを提供する
+　
+　ONE LUKE（ワンルーク）
+　
+　は、ワンちゃんが好きすぎる創業者が実際に
+　ペットホテルに預けたときに感じた不安や
+　思ったことを施設づくりに活かしています。
+　
+　
+　例えばワンちゃんが泊まるときに、少しでも
+　広く、心地よく過ごして欲しいという思いから、
+　鉄のゲージではなくオーダーで職人さんに
+　「お部屋」をつくっていただいています。
+　　
+　そうした愛犬家目線のきめ細かいサービスが支持され、
+　ワンルークを利用した方は高い確率でリピートしてくれます。
+　
+　
+　日本ではいまや「8世帯に1世帯」がペットを飼うまでに
+　増えてきましたが、ペットホテルはまだまだ店舗数が
+　足りていないため、今後も成長が期待できます。
+　
+　
+　ここまでこの文章を読まれたということは、
+　あなたもワンちゃんが大好きなのではないでしょうか。
+　
+　ワンルークのFCオーナー様も愛犬家が多く、中には
+　ご自身が利用者だった、という方もいらっしゃいます。
+　
+　
+　説明会にて詳しいビジネスモデルをお伝えしますので、
+　新規事業を探している愛犬家の経営者様は
+　この機会にぜひご参加ください。
+　
+　
+　地域のペットライフを豊かにし、愛犬が安心して
+　過ごせる空間を一緒につくっていきましょう。
+　
+　
+　■　フランチャイズシステム説明会　■
+　
+　　　愛犬家のオーナー多数！
+　　　ペットホテル・トリミングサロン
+　　　“ONE LUKE（ワンルーク）”
+　
+　■　参加申込はこちら
+　　　https://oneluke-fc-seminar.jp/lp/
+　
+***********************************************************************
+本メールのご不要な方には大変ご迷惑をおかけいたしました。
+お手数お掛けしますが、メール不要のお手続きは
+下記URLよりお願いいたします。
+<メール停止フォーム>
+　https://oneluke-fc-seminar.jp/mail/
+***********************************************************************
+日本ペットホテル協会株式会社
+愛知県名古屋市千種区内山3丁目9-23 3F
+TEL:052-784-8416
+***********************************************************************
 
 _______________________________________________
 b43-dev mailing list
