@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8CB3BCD4F3D
-	for <b43-dev@archiver.kernel.org>; Mon, 18 May 2026 01:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CBEBDCD4F3C
+	for <b43-dev@archiver.kernel.org>; Mon, 18 May 2026 01:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:In-Reply-To:References:Cc:To:From:
 	Subject:MIME-Version:Date:Message-ID:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=IaxY4b2BytdSFEJolTwvUW9/qhwNSryKsgGBriC7sCA=; b=b+a/N8cpkMaYEB
-	U9HQXSdPo3X33VnZ4yNXj9Y2XxuIueLRab+D+++mMOh5LpleGC/sXpY8n52cc/T/p8x4pqX2HQiGN
-	GqVi+bL2mmaaszslVFzI2b0JL4Ns6QkxI8ZzUHq0EJJPpnQHw+nUq9/3UPls70XwVccfiAOE1hhEz
-	4m+YQSXLTqkMfr+pSvR1QBpPfnL560g7W4iOJ+caUWxsqfw2UBgE0VQZlewgZLOVuFilXF80smjqQ
-	dOwO/A/yCOCq/J3tXTZqlQIXiljr3JmfMQLCe6h8R1ZOXvhy/mI+6IrwKbFhV31KDg1VaOY6kK9he
-	HnNiCT+0NifbR7oBQitA==;
+	List-Owner; bh=zRGNPAEeb28xt6YzA0RYxz7cN9AZPr+yP294myt1U6Q=; b=qGwwG0fPhLVxed
+	gVy31f4PRnj0glXUtvqsJFVtAHt/uPH4QhWW1NLxec5D7HXxe4It/gpQqfUL6kP3CjQdRDT0kE6Or
+	LKSYYQ0T5oBOvUuJZnrKmAhmTLRo0Yxtp04jVcmUTfFilKB1aPzfthNqK66a8z6S49yf7cHs/gBxB
+	fE+JWfx4f1Jxx0oXzjAsvCVOusyVdaRDZGwEa1hcfErGlF8Y8/A5V4kawZ/3WPx0GJzCCYfzW2GKJ
+	5MDEgS8PQ4KjVYYUbsrfiNeDAdVrvZT3nsZUNFi04ICJQQK4WmHM0oYpTxlLR6s1HD2k7U2dAv+mT
+	VODPag/mrtSCNqIs9t2g==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wOnBY-0000000DsEX-0gkg;
-	Mon, 18 May 2026 01:54:24 +0000
+	id 1wOnCB-0000000DsMV-1Y0L;
+	Mon, 18 May 2026 01:55:03 +0000
 Received: from smtpdh20-1.aruba.it ([62.149.155.164])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wOnBV-0000000Ds75-08LL
+	id 1wOnC8-0000000Ds75-2NNB
 	for b43-dev@lists.infradead.org;
-	Mon, 18 May 2026 01:54:22 +0000
+	Mon, 18 May 2026 01:55:01 +0000
 Received: from [192.168.1.83] ([79.20.159.46])
 	by Aruba SMTP with ESMTPSA
-	id OnBUwqtX3EZ9tOnBUwfr8L; Mon, 18 May 2026 03:54:20 +0200
+	id OnC7wqtkaEZ9tOnC7wfrBg; Mon, 18 May 2026 03:55:00 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1779069260; bh=hz7MrT7mnFSUTsm2B+ndFKrzdRHLoKRmLnkAUnEZNKI=;
+	t=1779069300; bh=5gwCkCWIBz50Rn5n49EQqgUTxuK9Jjy1Zr54t/an8fM=;
 	h=Date:MIME-Version:Subject:From:To:Content-Type;
-	b=hgfrmLWJfeq/1e0q5sH8l6jYHr0al9qgWAGX+Np6ZeoQ/zZz7ZDUI9TKvFcFjURu6
-	 zfVALkVx9zN6MeFIHX+mYkyREq35CX7LxzQ0yR+5dLtbibbAq6tQYdfJTK7WpO6w71
-	 Q/Cv1mVaQdWkJE155738nMT5g5hstT6dy1YLf8MzmbJLavdQ8IoWx1Aje58wAN2nyE
-	 n4WZh0DiqxrNvnEypdnn9wMpFSBZ+ELVbMT8Jsq1XsbzV4S8/hGxT5/Twfqe5I+kzu
-	 ItsKchJGl9mo7QX0C+b5jDhK7Kjqvix0utGM8cyx3mbYc07MWC7zjv7+IwXArrU3Zg
-	 nZGmJLb+nblLQ==
-Message-ID: <c38ef41c-0358-413f-bf7b-c01f994111b0@mythread.it>
-Date: Mon, 18 May 2026 03:54:20 +0200
+	b=QoK0UFx9wJBHKuzxTUgsWprSb5m8MSzlQDJDXT3Vb8e7q6r2mhPBI2kNSqJqPDUaw
+	 MjnhKziAe+YikNnayFfCClJINbU/VL/TvIgTrvSxTXlTrAJ4LH8Ki+KSxMUVMrwxna
+	 KqZ9gMi+rUXLM1JTFgOBKR7gxHG+z0Pg0yyd+PWYXOwCUJFcBwjJ8NKkikiyuiS6ua
+	 ZXpXQ7emxKoLPKlas3zLSsCBZl7EsLNKK9RW9lxTPbe4GzNbdAbEkXQ3n2R1J882pJ
+	 iuCqWMZIhRnCVzJonI2av8Y7LN+bdnlqcKZMO8BkiQdjWsXsaOaawAJgLtKuHuG5rG
+	 Go9k92aPURUgg==
+Message-ID: <b6865fd7-e4fd-4d99-870e-5c7ff103663b@mythread.it>
+Date: Mon, 18 May 2026 03:54:59 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 5/6] b43: add channel info table for N-PHY r8 + radio 2057 r8
+Subject: [PATCH 6/6] b43: add RF power offset for N-PHY r8 + radio 2057 r8
 Content-Language: it
 From: Alessio Ferri <alessio.ferri@mythread.it>
 To: linux-wireless@vger.kernel.org
@@ -51,12 +51,12 @@ Cc: b43-dev@lists.infradead.org, kvalo@kernel.org,
  linux-kernel@vger.kernel.org
 References: <8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it>
 In-Reply-To: <8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it>
-X-CMAE-Envelope: MS4xfMCgR4Gon6FZwgrDF8ToEOuNGr5G3q0NfMcJLls6O8z5zig+VDn8IWhLmoUIMR1nYVA3mLbDnJbDA0+lwj4VStL96HInPH9HA2AqQXChiRLM0G/0f5VM
- 2Djnnk4CYNAUyx/g+u+1ZnIMy1OOLd89os5KUFD0M+pyXz7jd7c0GrsCcLyCdcKtshYmN8w3OvQRf+dXdtM3SSLYcztCDNQwzdkQqsf/WqWJqvtd7qNfuhF5
- LQ2eu09PyB6fU9EzbnpMWdKgOUGBO+M/11VBgTMlDFqlVsAq4hBcY/pU8lgK8Sfq69A1+pNwp1BAXeDkqQmOFA==
+X-CMAE-Envelope: MS4xfEV+FgEZjDr7wElVwNDrVsoho3D+ICj7D1FAxO1boKBXEYtpuzP1fti743QcggKEnr7SWguIQaAmTCUIs2XYTNEOJDOsmAoL1RQDWU0Ze1/6051S10Xl
+ UoakDMDOdbnwe8kuEsHiye7r1yUnQrRZzqtcpOpsLqLFZwST7cvPfh6Qo+3roPtHicAu0Ds32hIjxNj1LWgC2Zyk3FTsf/1Rxbof3fbGXSzW45n5OCiRWSuT
+ djoQruKfmINP5dw80xvSWuprSFlsEiOFTD3IQ4yI3bFYDyc1uUHkQHxRxWfMxxDTRNv0gbafSxvYFpp7tYr8/g==
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260517_185421_243309_A58E1888 
-X-CRM114-Status: GOOD (  11.77  )
+X-CRM114-CacheID: sfid-20260517_185500_782326_D06BA813 
+X-CRM114-Status: GOOD (  12.86  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -73,157 +73,80 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Add the 2.4 GHz channel info table for N-PHY rev 8 paired with
-radio 2057 rev 8 and wire it to the existing dispatcher in
-r2057_get_chantabent_rev7().
+Add the 2.4 GHz RF power offset table for N-PHY rev 8 paired with
+radio 2057 rev 8 and wire it to the existing dispatcher.
 
-The dispatcher's case 8 currently handles radio_rev == 5 only.
-For radio_rev == 8 both output pointers stay NULL,
-b43_nphy_set_channel() returns an error and channel switch to
-the default channel fails.
+b43_ntab_get_rf_pwr_offset_table() currently dispatches on phy->rev
+== 17 (radio_rev 14) and phy->rev == 16 (radio_rev 9) for 2.4 GHz.
+phy->rev == 8 falls through and the function logs:
 
-The new b43_nphy_chantab_phy_rev8_radio_rev8[] is 14 entries
-covering the standard 2.4 GHz channel set (2412..2472 in 5 MHz
-steps, plus 2484 for channel 14). Each entry uses the
-b43_nphy_chantabent_rev7_2g struct layout already defined in this
-file: 18 RADIOREGS7_2G fields followed by 6 PHYREGS (SFO config).
+    b43-phyX ERROR: No 2GHz RF power table available for this device
 
-Values extracted from an MMIO dump of the proprietary Broadcom wl
-driver running on BCM6362 silicon (wl driver 6.30.102.7). Field
-ordering and encoding cross-validated by re-deriving the in-tree
-b43_nphy_chantab_phy_rev8_radio_rev5 table from the same source
-through the same extraction - the result matches the existing
-in-tree table byte-for-byte.
+Add a phy->rev == 8 / radio_rev == 8 case returning the new table.
+
+The values are sourced from the proprietary Broadcom wl driver's
+nphy_papd_padgain_dlt_2g_2057rev5 array. Reusing the rev 5 values
+is structurally appropriate: the IPA TX gain table added by the
+preceding patch in this series shares the low 24 bits of every
+entry with rev 5 - same gain step amplitudes, only the PAD-gain
+selector byte differs. b43's pad_gain extraction in
+b43_nphy_tx_pwr_ctl_init() reads bits 19..23 of the gain entry,
+which sit in the shared low-24-bit range; the same gain index
+therefore maps to the same physical PAD gain code on both
+revisions and warrants the same per-index dB offset.
+
+Note that b43_nphy_tx_gain_table_upload() currently has a "TODO:
+Enable this once we have gains configured" early-return for
+phy->rev >= 7. With that early-return in place, this table is
+fetched (silencing the b43err that would otherwise abort PHY
+init) but its values are not yet written to MMIO. Resolving the
+TODO is a separate investigation outside the scope of this
+series; the values supplied here are documented now so that, once
+the upload path is enabled, the correct rev 8 offsets are
+already in tree.
 
 Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 ---
- .../net/wireless/broadcom/b43/radio_2057.c    | 106 ++++++++++++++++++
- 1 file changed, 106 insertions(+)
+ .../net/wireless/broadcom/b43/tables_nphy.c   | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/net/wireless/broadcom/b43/radio_2057.c b/drivers/net/wireless/broadcom/b43/radio_2057.c
-index 9f693d92b..e761f899b 100644
---- a/drivers/net/wireless/broadcom/b43/radio_2057.c
-+++ b/drivers/net/wireless/broadcom/b43/radio_2057.c
-@@ -445,6 +445,109 @@ static const struct b43_nphy_chantabent_rev7_2g b43_nphy_chantab_phy_rev17_radio
- 	},
+diff --git a/drivers/net/wireless/broadcom/b43/tables_nphy.c b/drivers/net/wireless/broadcom/b43/tables_nphy.c
+index 84e8d718d..ecd660b9c 100644
+--- a/drivers/net/wireless/broadcom/b43/tables_nphy.c
++++ b/drivers/net/wireless/broadcom/b43/tables_nphy.c
+@@ -2923,6 +2923,21 @@ static const s16 b43_ntab_rf_pwr_offset_2057_rev9_5g[] = {
+ 	0,
  };
  
-+/* Extracted from MMIO dump of 6.30.102.7 */
-+static const struct b43_nphy_chantabent_rev7_2g b43_nphy_chantab_phy_rev8_radio_rev8[] = {
-+	{
-+		.freq			= 2412,
-+		RADIOREGS7_2G(0x48, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x6c,
-+			      0x09, 0x0f, 0x09, 0x07, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03c9, 0x03c5, 0x03c1, 0x043a, 0x043f, 0x0443),
-+	},
-+	{
-+		.freq			= 2417,
-+		RADIOREGS7_2G(0x4b, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x71,
-+			      0x09, 0x0f, 0x09, 0x07, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03cb, 0x03c7, 0x03c3, 0x0438, 0x043d, 0x0441),
-+	},
-+	{
-+		.freq			= 2422,
-+		RADIOREGS7_2G(0x4e, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x76,
-+			      0x09, 0x0f, 0x09, 0x06, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03cd, 0x03c9, 0x03c5, 0x0436, 0x043a, 0x043f),
-+	},
-+	{
-+		.freq			= 2427,
-+		RADIOREGS7_2G(0x52, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x7b,
-+			      0x09, 0x0f, 0x09, 0x06, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03cf, 0x03cb, 0x03c7, 0x0434, 0x0438, 0x043d),
-+	},
-+	{
-+		.freq			= 2432,
-+		RADIOREGS7_2G(0x55, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x80,
-+			      0x09, 0x0f, 0x09, 0x06, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03d1, 0x03cd, 0x03c9, 0x0431, 0x0436, 0x043a),
-+	},
-+	{
-+		.freq			= 2437,
-+		RADIOREGS7_2G(0x58, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x85,
-+			      0x09, 0x0f, 0x09, 0x06, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03d3, 0x03cf, 0x03cb, 0x042f, 0x0434, 0x0438),
-+	},
-+	{
-+		.freq			= 2442,
-+		RADIOREGS7_2G(0x5c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8a,
-+			      0x09, 0x0f, 0x08, 0x05, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03d5, 0x03d1, 0x03cd, 0x042d, 0x0431, 0x0436),
-+	},
-+	{
-+		.freq			= 2447,
-+		RADIOREGS7_2G(0x5f, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x8f,
-+			      0x09, 0x0f, 0x08, 0x05, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03d7, 0x03d3, 0x03cf, 0x042b, 0x042f, 0x0434),
-+	},
-+	{
-+		.freq			= 2452,
-+		RADIOREGS7_2G(0x62, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x94,
-+			      0x09, 0x0f, 0x08, 0x05, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03d9, 0x03d5, 0x03d1, 0x0429, 0x042d, 0x0431),
-+	},
-+	{
-+		.freq			= 2457,
-+		RADIOREGS7_2G(0x66, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x99,
-+			      0x09, 0x0f, 0x08, 0x05, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03db, 0x03d7, 0x03d3, 0x0427, 0x042b, 0x042f),
-+	},
-+	{
-+		.freq			= 2462,
-+		RADIOREGS7_2G(0x69, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0x9e,
-+			      0x09, 0x0f, 0x08, 0x05, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03dd, 0x03d9, 0x03d5, 0x0424, 0x0429, 0x042d),
-+	},
-+	{
-+		.freq			= 2467,
-+		RADIOREGS7_2G(0x6c, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa3,
-+			      0x09, 0x0f, 0x07, 0x04, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03df, 0x03db, 0x03d7, 0x0422, 0x0427, 0x042b),
-+	},
-+	{
-+		.freq			= 2472,
-+		RADIOREGS7_2G(0x70, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xa8,
-+			      0x09, 0x0f, 0x07, 0x04, 0x61, 0x73, 0xf0, 0x61,
-+			      0x73, 0xf0),
-+		PHYREGS(0x03e1, 0x03dd, 0x03d9, 0x0420, 0x0424, 0x0429),
-+	},
-+	{
-+		.freq			= 2484,
-+		RADIOREGS7_2G(0x78, 0x16, 0x30, 0x1b, 0x0a, 0x0a, 0x30, 0xb4,
-+			      0x09, 0x0f, 0x07, 0x04, 0x61, 0x73, 0xe0, 0x61,
-+			      0x73, 0xe0),
-+		PHYREGS(0x03e6, 0x03e2, 0x03de, 0x041b, 0x041f, 0x0424),
-+	}
++/* Sourced from the rev 5 sibling: the rev 8 IPA TX gain table
++ * shares the low 24 bits of every entry with rev 5 (only the
++ * PAD-gain selector byte differs), so the same gain index maps to
++ * the same physical PAD gain code on both revisions.
++ */
++static const s16 b43_ntab_rf_pwr_offset_2057_rev8_2g[] = {
++	-109, -109, -82, -68, -58,
++	-50,  -44, -39, -35, -31,
++	-28,  -26, -23, -21, -19,
++	-17,  -16, -14, -13, -11,
++	-10,   -9,  -8,  -7,  -5,
++	 -5,   -4,  -3,  -2,  -1,
++	 -1,    0,
 +};
 +
-+
- /* Extracted from MMIO dump of 6.30.223.141 */
- static const struct b43_nphy_chantabent_rev7 b43_nphy_chantab_phy_rev16_radio_rev9[] = {
- 	{
-@@ -678,6 +781,9 @@ void r2057_get_chantabent_rev7(struct b43_wldev *dev, u16 freq,
- 		if (phy->radio_rev == 5) {
- 			e_r7_2g = b43_nphy_chantab_phy_rev8_radio_rev5;
- 			len = ARRAY_SIZE(b43_nphy_chantab_phy_rev8_radio_rev5);
-+		} else if (phy->radio_rev == 8) {
-+			e_r7_2g = b43_nphy_chantab_phy_rev8_radio_rev8;
-+			len = ARRAY_SIZE(b43_nphy_chantab_phy_rev8_radio_rev8);
+ /* Extracted from MMIO dump of 6.30.223.248
+  * Entries: 0, 26, 28, 29, 30, 31 were guessed
+  */
+@@ -3782,6 +3797,10 @@ const s16 *b43_ntab_get_rf_pwr_offset_table(struct b43_wldev *dev)
+ 			if (phy->radio_rev == 9)
+ 				return b43_ntab_rf_pwr_offset_2057_rev9_2g;
+ 			break;
++		case 8:
++			if (phy->radio_rev == 8)
++				return b43_ntab_rf_pwr_offset_2057_rev8_2g;
++			break;
  		}
- 		break;
- 	case 16:
+ 
+ 		b43err(dev->wl,
 -- 
 2.43.0
 
