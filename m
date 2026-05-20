@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F79BCD4F54
-	for <b43-dev@archiver.kernel.org>; Wed, 20 May 2026 21:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7AC35CD4F3D
+	for <b43-dev@archiver.kernel.org>; Wed, 20 May 2026 23:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=G+tTxYH0MT9Do31cuS8iJ5Ljs/WMb2CkMYfg+etxQfw=; b=v21UTGmq2J/PZV
-	7gC6Xs52UhO5uwYgFyy91+1ZAAPFes+9kneWQyWlRb4PMaoWyEhIdWz/gUCyMAqJO9iINdyTMIAS8
-	LFnQSKAGS+xkUF6+fev+LKJTPxFjk2UbgdmiOu8czQvngQpaoLW6hb+D8YtWyDpy0YrUcjNbxv4Io
-	zADjyactt3zyjQJOvQgdocxoV+xE/gGfHd9ko3IJ4fWarGE5zc2uVnQt9yaLmp9+vOuR7nyNmEKAb
-	3xoV0twRDsaytpLRIaw41WbFnbrdbjqSVZ6ayJoTuY5HXJbtuO7SEhMw3rcLhvNA/EyL6bGNeemTt
-	ZX8FEeuFVrpgEBia5ggA==;
+	List-Owner; bh=bSlRviv9sFaPxavQ2fn+sW0SsjsbyLCfLXoA+Lk3p/4=; b=m72xZ3OXieQR3u
+	SKIqWFzgmHb8we4/KG72SdtFVOPIT4WCSClMNXiZCWy5witroVPgvEKKz8hFSSaWNVVRpKn7HdYsd
+	lFPLKCxwEhJZwILQ8O7m0WJfnTH9R9QoUy0W3CUPMQt579lFm8VdHMRaavyASwMfhR3eS1WEP4tVj
+	PivtzgqhPKXtuF3iP5q5WjejBn6qKyzR96fbsdHC0wdZZJI8FvvwqrQ46JXIDwQNcKPCF3Y3P6jKx
+	LL0SNgDluL0CgRfvWpdxGdkFbr4sfDCdTGk5cAnQHuiiGS4QfmtmxG9JxdTeDjqzvjB5MhE8odaYS
+	ndtu58IagNS/pTZ0BFSg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPoQf-00000005qAq-01tc;
-	Wed, 20 May 2026 21:26:13 +0000
-Received: from smtpdh20-2.aruba.it ([62.149.155.165])
+	id 1wPq9e-000000067l6-2EDO;
+	Wed, 20 May 2026 23:16:46 +0000
+Received: from smtpdh20-1.aruba.it ([62.149.155.164])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPoQV-00000005q4G-1SB7
+	id 1wPq9Z-000000067jd-396l
 	for b43-dev@lists.infradead.org;
-	Wed, 20 May 2026 21:26:06 +0000
+	Wed, 20 May 2026 23:16:44 +0000
 Received: from fedora ([94.34.125.0])
 	by Aruba SMTP with ESMTPSA
-	id PoQOwXdFJEZ9tPoQPw3OVl; Wed, 20 May 2026 23:25:57 +0200
+	id Pq9VwYaHKEZ9tPq9Vw3nDO; Thu, 21 May 2026 01:16:37 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1779312357; bh=QiRS2eDU8bKpoVDo418q80Z3Ox4FTtx/mwwg/sLLRZM=;
+	t=1779318997; bh=0vJrEaa3imiV3Dddin5O2cIGKFId1ZKr0iu11mwoN2o=;
 	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=R4pGg+88IEVpNe0Ei/nJ1ocrJT2SThG/bi7VyLr+kZtgLM2uxGsA4IbjWOM7M69TO
-	 VHVZUdYiAjKxd/DF4BZLDVLYQ82XqQiv692nTbOtbp/ntZTlEqtZJrPXNOCYW1ZEkZ
-	 tqm51YarEr4kMwY+Kw5A88XnPzzvIV/igAB7kkR3YcGUvRAeHRFo7eKLvF/X23P3eK
-	 G/980ANyUISBpXXNxgD3SWJ/nUB1ES+au1NoLdbwx6WnRAcRQdWeMiYfxRKyp1tSTF
-	 4gS3QXky6KMBIRvOhPQDSDtIzYXIsyKXBlDM1m64Kwd1PewlOfPVTjTNV7YWQIFeYS
-	 /5bP891lzmw2Q==
-Date: Wed, 20 May 2026 23:25:56 +0200
+	b=kf8IpvR4GAyMqKd+P4bPgyCYH4llRqDkTBWuvXRGA2Ag/vE5cLNqZXrhtS2+P20hN
+	 wBEfgChkmJh87QDawESJae9ek+jnqjREVyNU1Fv0sAEUaJ+RpQ0CZJzUYXasIrCGSg
+	 tsLJo2B+wmzw62IQvIGvWh3pzXgNA+rty0qTV+Y89EyS2aACTzGNN8+rjhspjIZouN
+	 iZiZFCYG6o+7curEyx34ACWIRXdQYDAIYrWIQtUMcQoHjQd4JIL2UuViR01NuOnnDe
+	 w+wjkXzlQiuNw167qsJLNvxW+0vS8QGvvu20LqFYkpWjcNYMfNAjEAqdixUI4uks0c
+	 73VlCky2aKEZA==
+Date: Thu, 21 May 2026 01:16:37 +0200
 From: Alessio Ferri <alessio.ferri@mythread.it>
 To: Johannes Berg <johannes@sipsolutions.net>
 Cc: Michael =?UTF-8?B?QsO8c2No?=  <m@bues.ch>,
@@ -47,7 +47,7 @@ Cc: Michael =?UTF-8?B?QsO8c2No?=  <m@bues.ch>,
  kvalo@kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 0/6] b43: complete N-PHY rev 8 + radio 2057 rev 8
  support
-Message-ID: <20260520232556.0ab23b53@fedora>
+Message-ID: <20260521011637.4e01ae65@fedora>
 In-Reply-To: <a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
 References: <8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it>
 	<20260519175812.7ce97ba1@barney>
@@ -55,13 +55,13 @@ References: <8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it>
 	<a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfFmIfqicFKKsNmggrArSj0nxzixVz7gwZFkbTw/jDGoxJPHNQdtpk1VFSUUIDwQhMoh51QUWqNlhy5578dQElfaIDCbNdSB7NsNKIAuJvx5Vn73Gu6/D
- jkYgMa96OSYP5Zvf7W4dRFS+uWE1fY6H0OpfIr0zRuwJMrpTWXRtJhVY7v0JEYsNHLLBmw6Z+OGjhT1uAye8XYHGP56ZxlI66aI6xpt7McMllhxu7Jt9QFo8
- JgBXgbmii/B/P25Rf1S3WB03/x8mvfY2yfrR1nO3n8pcJPWq1xVwonzV2X9J0F5vUNvizdLUdtI9GGyPiXmmcMi7ynLNfpWd3uA7knv7+3j7g4T7z9Qlarwz
- Fmk3z2Vk
+X-CMAE-Envelope: MS4xfNH/v5k6rjQQnXwKrhZw+4q8JxYNYy/lJUxo7N1WyRBL08tuDXlmygWVYGXWSl+/8uGR05pF08921KOqmku/UPqIIte0ZAP4OMebxNc7SZS7j7Zmm1ud
+ vzFV17PpliBA6AZQH2dngeNogqayn3cWrnd3Rwla+k5Sl52rGA3RBkh0UIWls6bIThh3DDSSjAKDumevd3+SFv8KBFKhMHCjBPF/KJ6ED2eClcvDTCoJXDjZ
+ oBz7PbyK31Nke3UtgJv9bkusGHCfB1u4Lb222l5QKG7kUeNCEL8hnHv5GmDl7mln8q5xyrtha9cniaFTOSSPvSkoqCY5UPElq8H7A2L41lAiSyqJaw52n37z
+ mi36fMyQ
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260520_142603_852742_E6654C13 
-X-CRM114-Status: GOOD (  10.63  )
+X-CRM114-CacheID: sfid-20260520_161642_244559_901DC792 
+X-CRM114-Status: GOOD (  12.19  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -94,8 +94,10 @@ Johannes Berg <johannes@sipsolutions.net> ha scritto:
 > 
 > johannes
 
-Will send a V2 with the required assisted-by in the form:
-Assisted-by: Claude:claude-4.7-opus
+I'm also realizing that i was off by one when i generated the series
+and missed the first commit, the actual series is 7 patches, the "real"
+first one fill the gaps in the firmware mappings, so i would had
+to resend anyway
 
 _______________________________________________
 b43-dev mailing list
