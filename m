@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6698DCD4F54
-	for <b43-dev@archiver.kernel.org>; Wed, 20 May 2026 11:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F79BCD4F54
+	for <b43-dev@archiver.kernel.org>; Wed, 20 May 2026 21:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Date:Cc:To:From:Subject:Message-ID:Reply-To:Content-ID:Content-Description:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=poAzwczczbDuYNS86tGXSkrTtGXTK/mu3ujiMo7gRl4=; b=htywRlET95lxeX
-	nh37vj+xYq9Y09xjNvki704JCjJVwn4KVLqWHTxm6ViqKfbha2YsoKfOjbZ9r96qc7PF1TRt2nGTb
-	3vMPHi9nQaCY0QP++2LZ5M0ZPF1OpaVWDaZnXgB7xssipvACuX4t4OZPW+8EslcwqyGRc3+ZMmzUP
-	ooe44xJmrVU+WCSV7Gr6/mvNmSu5H6VM9eiG2neMnpkejMCRox8GTzCk+7Jc/A3Pi/QWe+DG60RQn
-	Q0M6fRlijBUfWEmP0kLECLjmFqLReIKV0jg43fUTGUU2Q9bSgrSr4wSG1n5krb+QjCYmlnbN9sMBX
-	z7Xm6zhtvMdlwO5BD+hw==;
+	List-Owner; bh=G+tTxYH0MT9Do31cuS8iJ5Ljs/WMb2CkMYfg+etxQfw=; b=v21UTGmq2J/PZV
+	7gC6Xs52UhO5uwYgFyy91+1ZAAPFes+9kneWQyWlRb4PMaoWyEhIdWz/gUCyMAqJO9iINdyTMIAS8
+	LFnQSKAGS+xkUF6+fev+LKJTPxFjk2UbgdmiOu8czQvngQpaoLW6hb+D8YtWyDpy0YrUcjNbxv4Io
+	zADjyactt3zyjQJOvQgdocxoV+xE/gGfHd9ko3IJ4fWarGE5zc2uVnQt9yaLmp9+vOuR7nyNmEKAb
+	3xoV0twRDsaytpLRIaw41WbFnbrdbjqSVZ6ayJoTuY5HXJbtuO7SEhMw3rcLhvNA/EyL6bGNeemTt
+	ZX8FEeuFVrpgEBia5ggA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPekh-00000004PBO-47US;
-	Wed, 20 May 2026 11:06:15 +0000
-Received: from s3.sipsolutions.net ([2a01:4f8:242:246e::2] helo=sipsolutions.net)
+	id 1wPoQf-00000005qAq-01tc;
+	Wed, 20 May 2026 21:26:13 +0000
+Received: from smtpdh20-2.aruba.it ([62.149.155.165])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPekf-00000004PB2-0oNf
+	id 1wPoQV-00000005q4G-1SB7
 	for b43-dev@lists.infradead.org;
-	Wed, 20 May 2026 11:06:14 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=JxAq/A2Eo0vh6lMXCPSjLH099dYwa6FSS5E+bY08TSo=;
-	t=1779275173; x=1780484773; b=DPnt8r286lK2HpraDoOosqy0zdTD1Itas/q+/KqCVIZgF+k
-	bjReCC8wfWvFUNpP8kOVcnmGpfrlBJND3NpirKVIGbuRR/TDlTASm9EBGy61HY2PGLksNWZIEoee2
-	erBFN8l+2Qf0CLvp5Uqv9ddpmqhKJT1PS6CWhGrIROL9v1v3xxl5QCQTseDoiYuWtJTZ6EwII1qwU
-	1CVTYupP+y/94zy7cyehyhWanhzGY3KydSgE4ppTtAlZoKS+gbQOFQD5oGvdsLJ6gv74+8e1bwNEt
-	LbW0aExFppmmCuhUzkwkU6Q/zfVMaGfE3b/JasHuA2I4WY0kwmXVpBvgqarK93FQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1wPekY-0000000AJCb-05xA;
-	Wed, 20 May 2026 13:06:06 +0200
-Message-ID: <a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
-Subject: Re: [PATCH 0/6] b43: complete N-PHY rev 8 + radio 2057 rev 8 support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Alessio Ferri <alessio.ferri@mythread.it>, Michael
- =?ISO-8859-1?Q?B=FCsch?=
-	 <m@bues.ch>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, 
-	kvalo@kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 20 May 2026 13:06:05 +0200
-In-Reply-To: <20260519230241.49489a8f@DELL-MOBILE03.ad.smart.it>
+	Wed, 20 May 2026 21:26:06 +0000
+Received: from fedora ([94.34.125.0])
+	by Aruba SMTP with ESMTPSA
+	id PoQOwXdFJEZ9tPoQPw3OVl; Wed, 20 May 2026 23:25:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
+	t=1779312357; bh=QiRS2eDU8bKpoVDo418q80Z3Ox4FTtx/mwwg/sLLRZM=;
+	h=Date:From:To:Subject:MIME-Version:Content-Type;
+	b=R4pGg+88IEVpNe0Ei/nJ1ocrJT2SThG/bi7VyLr+kZtgLM2uxGsA4IbjWOM7M69TO
+	 VHVZUdYiAjKxd/DF4BZLDVLYQ82XqQiv692nTbOtbp/ntZTlEqtZJrPXNOCYW1ZEkZ
+	 tqm51YarEr4kMwY+Kw5A88XnPzzvIV/igAB7kkR3YcGUvRAeHRFo7eKLvF/X23P3eK
+	 G/980ANyUISBpXXNxgD3SWJ/nUB1ES+au1NoLdbwx6WnRAcRQdWeMiYfxRKyp1tSTF
+	 4gS3QXky6KMBIRvOhPQDSDtIzYXIsyKXBlDM1m64Kwd1PewlOfPVTjTNV7YWQIFeYS
+	 /5bP891lzmw2Q==
+Date: Wed, 20 May 2026 23:25:56 +0200
+From: Alessio Ferri <alessio.ferri@mythread.it>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Michael =?UTF-8?B?QsO8c2No?=  <m@bues.ch>,
+ linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+ kvalo@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] b43: complete N-PHY rev 8 + radio 2057 rev 8
+ support
+Message-ID: <20260520232556.0ab23b53@fedora>
+In-Reply-To: <a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
 References: <8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it>
-		<20260519175812.7ce97ba1@barney>
-	 <20260519230241.49489a8f@DELL-MOBILE03.ad.smart.it>
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+	<20260519175812.7ce97ba1@barney>
+	<20260519230241.49489a8f@DELL-MOBILE03.ad.smart.it>
+	<a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+X-CMAE-Envelope: MS4xfFmIfqicFKKsNmggrArSj0nxzixVz7gwZFkbTw/jDGoxJPHNQdtpk1VFSUUIDwQhMoh51QUWqNlhy5578dQElfaIDCbNdSB7NsNKIAuJvx5Vn73Gu6/D
+ jkYgMa96OSYP5Zvf7W4dRFS+uWE1fY6H0OpfIr0zRuwJMrpTWXRtJhVY7v0JEYsNHLLBmw6Z+OGjhT1uAye8XYHGP56ZxlI66aI6xpt7McMllhxu7Jt9QFo8
+ JgBXgbmii/B/P25Rf1S3WB03/x8mvfY2yfrR1nO3n8pcJPWq1xVwonzV2X9J0F5vUNvizdLUdtI9GGyPiXmmcMi7ynLNfpWd3uA7knv7+3j7g4T7z9Qlarwz
+ Fmk3z2Vk
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260520_040613_233095_CF69ED0C 
-X-CRM114-Status: UNSURE (   7.49  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20260520_142603_852742_E6654C13 
+X-CRM114-Status: GOOD (  10.63  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -78,18 +78,24 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-On Tue, 2026-05-19 at 23:02 +0200, Alessio Ferri wrote:
+Il giorno Wed, 20 May 2026 13:06:05 +0200
+Johannes Berg <johannes@sipsolutions.net> ha scritto:
+
+> On Tue, 2026-05-19 at 23:02 +0200, Alessio Ferri wrote:
+> > 
+> > The patchset is tested on my own DLink DSL 3580L router and
+> > generated by claude from our shared notes, i then reviewed it for
+> > sanity and verified it by navigating from the router with modified
+> > b43 driver with my phone.  
 > 
-> The patchset is tested on my own DLink DSL 3580L router and generated by
-> claude from our shared notes, i then reviewed it for sanity and
-> verified it by navigating from the router with modified b43 driver with
-> my phone.
+> I would ask you to disclose this in the commits per
+> 
+> https://docs.kernel.org/process/coding-assistants.html
+> 
+> johannes
 
-I would ask you to disclose this in the commits per
-
-https://docs.kernel.org/process/coding-assistants.html
-
-johannes
+Will send a V2 with the required assisted-by in the form:
+Assisted-by: Claude:claude-4.7-opus
 
 _______________________________________________
 b43-dev mailing list
