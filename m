@@ -4,67 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B83C7CD4F5B
-	for <b43-dev@archiver.kernel.org>; Tue, 19 May 2026 23:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6698DCD4F54
+	for <b43-dev@archiver.kernel.org>; Wed, 20 May 2026 11:06:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
-	Content-Transfer-Encoding:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:In-Reply-To:References:To:From:Subject:Cc:Message-Id
-	:Date:Mime-Version:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=h+6Doe9LJZBdfLVfsPv1Dwma/p8UcBY7tsb08jW40cM=; b=BNa+KAYZVxYbb8IcBm8vCuPP2Q
-	wubsDFQjeWNYC2wRPbv9Yv3sEXTeLRiyUMErfq0ajnfBKQVDmjKX6h3oCVQNQI17BjB9UWp56u80O
-	GIWtQnkQNfNZl8qVoXLwdMVvHro7BbmjW+OZ+MN8mWal1mkR3cOOdeD2y633/QiPhQC6PcimpmQLL
-	1JV0/6UD06TP2g2VNR7rlkBlnqINPi5TRgBARt25dP8rNi8Z8G6CBbXQk37XYSvvxJBHW3CW3/++E
-	5GYeLMopQNa1n2n//8SdmhiDNENskGVmd4rZK+DBWzX28f3aJRCBFGDicXZHSe1LeOnoX+b7mNuxI
-	j7fJ5U4g==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Date:Cc:To:From:Subject:Message-ID:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=poAzwczczbDuYNS86tGXSkrTtGXTK/mu3ujiMo7gRl4=; b=htywRlET95lxeX
+	nh37vj+xYq9Y09xjNvki704JCjJVwn4KVLqWHTxm6ViqKfbha2YsoKfOjbZ9r96qc7PF1TRt2nGTb
+	3vMPHi9nQaCY0QP++2LZ5M0ZPF1OpaVWDaZnXgB7xssipvACuX4t4OZPW+8EslcwqyGRc3+ZMmzUP
+	ooe44xJmrVU+WCSV7Gr6/mvNmSu5H6VM9eiG2neMnpkejMCRox8GTzCk+7Jc/A3Pi/QWe+DG60RQn
+	Q0M6fRlijBUfWEmP0kLECLjmFqLReIKV0jg43fUTGUU2Q9bSgrSr4wSG1n5krb+QjCYmlnbN9sMBX
+	z7Xm6zhtvMdlwO5BD+hw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPTdk-000000032PT-3RO3;
-	Tue, 19 May 2026 23:14:20 +0000
-Received: from smtp.forwardemail.net ([121.127.44.66])
+	id 1wPekh-00000004PBO-47US;
+	Wed, 20 May 2026 11:06:15 +0000
+Received: from s3.sipsolutions.net ([2a01:4f8:242:246e::2] helo=sipsolutions.net)
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPTdg-000000032O8-463w
+	id 1wPekf-00000004PB2-0oNf
 	for b43-dev@lists.infradead.org;
-	Tue, 19 May 2026 23:14:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ubuntu.com;
- h=In-Reply-To: References: To: From: Subject: Cc: Message-Id: Date:
- Content-Type: Content-Transfer-Encoding: Mime-Version; q=dns/txt;
- s=fe-953a8a3ca9; t=1779232456;
- bh=OpnXccnP1ozNGUSdnlbBvP1rS6zNyiymHfxwBsbuhWU=;
- b=f4QpEGVOk8aV+N+zloC2WNqVBE603YKY3J1YAIqRj+g19EVXYh8ZAV37UMxWXdUw33ElWRejS
- awryzs6J9q95Nd3NTvUtgHOjaxjiv913nWGpzqmn/fJMI1m4FsK0pJhAWO9F+0IT2f8GnhjuUXw
- zgOZuxL3RdCT+4+0sMN6TTMFSlbBIe4N+tsWGxNFhxh18tLth9HxSEcwVvrMd68MW2fBYoMdR3O
- VJWwJP4n7Eq1zxorYuyckYb79OyE0ClbvHQra5WZTScY4LGYwf9sFPvYXCHTtqtWmQsqN90SLbG
- BcpbbTTzTnJY1sMwHiuH/WOsTKPrT0OpYVo53Zv3tLXg==
-X-Forward-Email-ID: 6a0ceeb7dba98f5f2747cad7
-X-Forward-Email-Sender: rfc822; jpeisach@ubuntu.com, smtp.forwardemail.net,
- 121.127.44.66
-X-Forward-Email-Version: 2.8.12
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Mime-Version: 1.0
-Date: Tue, 19 May 2026 19:13:58 -0400
-Message-Id: <DIN19EEVA93R.2R8BXOUKWJ0GA@ubuntu.com>
-Cc: "Alessio Ferri" <alessio.ferri@mythread.it>,
- <linux-wireless@vger.kernel.org>, <b43-dev@lists.infradead.org>,
- <kvalo@kernel.org>, <linux-kernel@vger.kernel.org>, "b43-dev"
- <b43-dev-bounces@lists.infradead.org>
-Subject: Re: [PATCH 0/6] b43: complete N-PHY rev 8 + radio 2057 rev 8
- support
-From: "Joshua Peisach" <jpeisach@ubuntu.com>
-To: =?utf-8?q?Michael_B=C3=BCsch?= <m@bues.ch>, "Joshua Peisach"
- <jpeisach@ubuntu.com>
-X-Mailer: aerc 0.21.0
+	Wed, 20 May 2026 11:06:14 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=JxAq/A2Eo0vh6lMXCPSjLH099dYwa6FSS5E+bY08TSo=;
+	t=1779275173; x=1780484773; b=DPnt8r286lK2HpraDoOosqy0zdTD1Itas/q+/KqCVIZgF+k
+	bjReCC8wfWvFUNpP8kOVcnmGpfrlBJND3NpirKVIGbuRR/TDlTASm9EBGy61HY2PGLksNWZIEoee2
+	erBFN8l+2Qf0CLvp5Uqv9ddpmqhKJT1PS6CWhGrIROL9v1v3xxl5QCQTseDoiYuWtJTZ6EwII1qwU
+	1CVTYupP+y/94zy7cyehyhWanhzGY3KydSgE4ppTtAlZoKS+gbQOFQD5oGvdsLJ6gv74+8e1bwNEt
+	LbW0aExFppmmCuhUzkwkU6Q/zfVMaGfE3b/JasHuA2I4WY0kwmXVpBvgqarK93FQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1wPekY-0000000AJCb-05xA;
+	Wed, 20 May 2026 13:06:06 +0200
+Message-ID: <a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
+Subject: Re: [PATCH 0/6] b43: complete N-PHY rev 8 + radio 2057 rev 8 support
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Alessio Ferri <alessio.ferri@mythread.it>, Michael
+ =?ISO-8859-1?Q?B=FCsch?=
+	 <m@bues.ch>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, 
+	kvalo@kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 20 May 2026 13:06:05 +0200
+In-Reply-To: <20260519230241.49489a8f@DELL-MOBILE03.ad.smart.it>
 References: <8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it>
- <20260519175812.7ce97ba1@barney> <DIMWK04RLFCG.17KT0R0YCUMRW@ubuntu.com>
- <20260519215244.2a0d2b29@barney>
-In-Reply-To: <20260519215244.2a0d2b29@barney>
+		<20260519175812.7ce97ba1@barney>
+	 <20260519230241.49489a8f@DELL-MOBILE03.ad.smart.it>
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+MIME-Version: 1.0
+X-malware-bazaar: not-scanned
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260519_161417_373895_42C1FFF5 
-X-CRM114-Status: GOOD (  15.78  )
+X-CRM114-CacheID: sfid-20260520_040613_233095_CF69ED0C 
+X-CRM114-Status: UNSURE (   7.49  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -76,33 +73,25 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="Flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-T24gVHVlIE1heSAxOSwgMjAyNiBhdCAzOjUyIFBNIEVEVCwgTWljaGFlbCBCw7xzY2ggd3JvdGU6
-Cj4gT24gVHVlLCAxOSBNYXkgMjAyNiAxNTozMjo0NCAtMDQwMAo+ICJKb3NodWEgUGVpc2FjaCIg
-PGpwZWlzYWNoQHVidW50dS5jb20+IHdyb3RlOgo+Cj4+IE9uIFR1ZSBNYXkgMTksIDIwMjYgYXQg
-MTE6NTggQU0gRURULCBNaWNoYWVsIELDvHNjaCB3cm90ZToKPj4gPiBPbiBNb24sIDE4IE1heSAy
-MDI2IDAzOjQ5OjMzICswMjAwCj4+ID4gQWxlc3NpbyBGZXJyaSA8YWxlc3Npby5mZXJyaUBteXRo
-cmVhZC5pdD4gd3JvdGU6Cj4+ID4KPj4gPiBJbiBnZW5lcmFsIHRoaXMgbG9va3MgT2suCj4+ID4g
-RnJvbSB0aGUgc3R5bGUgSSBhc3N1bWUgdGhhdCB0aGlzIGlzIEFJIGdlbmVyYXRlZCwgcmlnaHQ/
-Cj4+ID4gSWYgc28sIGNhbiB5b3UgdGVsbCB1cyBhIGJpdCBtb3JlIGFib3V0IHRoZSBpbnB1dHMg
-dXNlZCBmb3IgdGhlIEFJPwo+PiA+IFdoYXQgaW5mb3JtYXRpb24gaXMgdGhpcyBpbXBsZW1lbnRh
-dGlvbiBiYXNlZCBvbj8gIAo+PiAKPj4gU28uLi4gYXdrd2FyZCBxdWVzdGlvbi4KPgo+IFdoeT8K
-Pgo+PiBXYXNuJ3QgdGhlcmUganVzdCBhIGNvbnZlcnNhdGlvblsxXSBhYm91dCB0aGUKPj4gZnV0
-dXJlIGRldmVsb3BtZW50IG9mIHRoaXMgbW9kdWxlLCB0aGF0IHdhcyBsZWZ0IG9mZiBhdCAiZG9u
-J3QgdG91Y2ggaXQKPj4gdW5sZXNzIHlvdSdyZSBnb2luZyB0byB0aG91cm91Z2hseSB0ZXN0IHRo
-aXMiLAo+Cj4gU3VyZS4gVGhhdCdzIHdoeSBJIGFzayBhYm91dCB0aGUgZGV2ZWxvcG1lbnQgbWV0
-aG9kcyB1c2VkLgo+Cj4+IGFuZCBub3cgd2UgYXJlIGdvaW5nIHRvIGhhdmUgYSAqTExNKiB3b3Jr
-IG9uIHRoaXM/Cj4KPiBJIGRvbid0IGNhcmUgd2hldGhlciBjb2RlIHdhcyBnZW5lcmF0ZWQgd2l0
-aCBhbiBMTE0gb3Igbm90Lgo+IFdoYXQgbWF0dGVycyBpcyB0aGUgZGV2ZWxvcG1lbnQgbWV0aG9k
-cyB1c2VkLgoKRmFpciBlbm91Z2guIEFuZCBpdCB3YXMgdGVzdGVkIGFueXdheSA6KSBzb3JyeSBm
-b3IgYW55IHBlcmNlaXZlZAphcnJvZ2FuY2UuCgpJIHdvdWxkIHRhZyBSZXZpZXdlZC1ieSBidXQg
-SSBkb24ndCBoYXZlIGEgc2NyaXB0IHRvIGNoZWNrIHRoZSB0YWJsZXMKKHRoZXJlIHByb2JhYmx5
-IGlzIHNvbWV3aGVyZS4uLiBpdCdzIGEgcGVyc29uYWwgcHJvYmxlbSAtIGEgInNraWxsCmlzc3Vl
-IiBhcyBJIHNvbWV0aW1lcyBsaWtlIHRvIGNhbGwgaXQpLgoKLUpvc2gKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmI0My1kZXYgbWFpbGluZyBsaXN0CmI0
-My1kZXZAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2I0My1kZXYK
+On Tue, 2026-05-19 at 23:02 +0200, Alessio Ferri wrote:
+> 
+> The patchset is tested on my own DLink DSL 3580L router and generated by
+> claude from our shared notes, i then reviewed it for sanity and
+> verified it by navigating from the router with modified b43 driver with
+> my phone.
+
+I would ask you to disclose this in the commits per
+
+https://docs.kernel.org/process/coding-assistants.html
+
+johannes
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
