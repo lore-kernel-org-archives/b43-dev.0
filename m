@@ -4,64 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7AC35CD4F3D
-	for <b43-dev@archiver.kernel.org>; Wed, 20 May 2026 23:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BFAA8CD5BB1
+	for <b43-dev@archiver.kernel.org>; Thu, 21 May 2026 12:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=bSlRviv9sFaPxavQ2fn+sW0SsjsbyLCfLXoA+Lk3p/4=; b=m72xZ3OXieQR3u
-	SKIqWFzgmHb8we4/KG72SdtFVOPIT4WCSClMNXiZCWy5witroVPgvEKKz8hFSSaWNVVRpKn7HdYsd
-	lFPLKCxwEhJZwILQ8O7m0WJfnTH9R9QoUy0W3CUPMQt579lFm8VdHMRaavyASwMfhR3eS1WEP4tVj
-	PivtzgqhPKXtuF3iP5q5WjejBn6qKyzR96fbsdHC0wdZZJI8FvvwqrQ46JXIDwQNcKPCF3Y3P6jKx
-	LL0SNgDluL0CgRfvWpdxGdkFbr4sfDCdTGk5cAnQHuiiGS4QfmtmxG9JxdTeDjqzvjB5MhE8odaYS
-	ndtu58IagNS/pTZ0BFSg==;
+	Content-Transfer-Encoding:Content-Type:MIME-Version:List-Subscribe:List-Help:
+	List-Post:List-Archive:List-Unsubscribe:List-Id:Message-ID:Date:Subject:To:
+	From:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=61WrDKPPLfVev3QpaiIkTvV96u+LM8KWF3bRxh+1wVg=; b=QMFrx+cRC/Dinq
+	EZ2VLj7YhF+q0SEBm1hDlmkmRLtGHs/PsvMGI3ozlt7IKwh8HdJrVqsx9HBhfafQUAuux0ymHpbP2
+	3HmV09VxPefzQQi3Qk13WQ/K4YFYjOddwzzk3xfNEN33Q4uHf9D0xq5Fvjr0mxcPj0ztYONUm7hZL
+	2iHVd3IZno6No9ZwQ/aK92Az5DuZmjcLgXu9nqbzfMxfwav/mjdXKCefwh1asYiEmNHMoAkskAroI
+	iRzoW9busZUdNGmUixIDhAEStx33PI5rxJiBGXOyvgwmp3RmBnA27NjqeH1rD9cR1hHzNS21txyqa
+	9+k6sWl/bbIRiYWNAfoA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPq9e-000000067l6-2EDO;
-	Wed, 20 May 2026 23:16:46 +0000
-Received: from smtpdh20-1.aruba.it ([62.149.155.164])
+	id 1wQ2nj-00000007lVu-0yPV;
+	Thu, 21 May 2026 12:46:59 +0000
+Received: from mail.btob-mail.work ([180.222.184.211] helo=sub0000529476.hmk-temp.com)
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wPq9Z-000000067jd-396l
+	id 1wQ2nf-00000007lQa-27ai
 	for b43-dev@lists.infradead.org;
-	Wed, 20 May 2026 23:16:44 +0000
-Received: from fedora ([94.34.125.0])
-	by Aruba SMTP with ESMTPSA
-	id Pq9VwYaHKEZ9tPq9Vw3nDO; Thu, 21 May 2026 01:16:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1779318997; bh=0vJrEaa3imiV3Dddin5O2cIGKFId1ZKr0iu11mwoN2o=;
-	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=kf8IpvR4GAyMqKd+P4bPgyCYH4llRqDkTBWuvXRGA2Ag/vE5cLNqZXrhtS2+P20hN
-	 wBEfgChkmJh87QDawESJae9ek+jnqjREVyNU1Fv0sAEUaJ+RpQ0CZJzUYXasIrCGSg
-	 tsLJo2B+wmzw62IQvIGvWh3pzXgNA+rty0qTV+Y89EyS2aACTzGNN8+rjhspjIZouN
-	 iZiZFCYG6o+7curEyx34ACWIRXdQYDAIYrWIQtUMcQoHjQd4JIL2UuViR01NuOnnDe
-	 w+wjkXzlQiuNw167qsJLNvxW+0vS8QGvvu20LqFYkpWjcNYMfNAjEAqdixUI4uks0c
-	 73VlCky2aKEZA==
-Date: Thu, 21 May 2026 01:16:37 +0200
-From: Alessio Ferri <alessio.ferri@mythread.it>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Michael =?UTF-8?B?QsO8c2No?=  <m@bues.ch>,
- linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
- kvalo@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] b43: complete N-PHY rev 8 + radio 2057 rev 8
- support
-Message-ID: <20260521011637.4e01ae65@fedora>
-In-Reply-To: <a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
-References: <8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it>
-	<20260519175812.7ce97ba1@barney>
-	<20260519230241.49489a8f@DELL-MOBILE03.ad.smart.it>
-	<a052e02c8039b06348119a1ec0b18bf1986a999e.camel@sipsolutions.net>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfNH/v5k6rjQQnXwKrhZw+4q8JxYNYy/lJUxo7N1WyRBL08tuDXlmygWVYGXWSl+/8uGR05pF08921KOqmku/UPqIIte0ZAP4OMebxNc7SZS7j7Zmm1ud
- vzFV17PpliBA6AZQH2dngeNogqayn3cWrnd3Rwla+k5Sl52rGA3RBkh0UIWls6bIThh3DDSSjAKDumevd3+SFv8KBFKhMHCjBPF/KJ6ED2eClcvDTCoJXDjZ
- oBz7PbyK31Nke3UtgJv9bkusGHCfB1u4Lb222l5QKG7kUeNCEL8hnHv5GmDl7mln8q5xyrtha9cniaFTOSSPvSkoqCY5UPElq8H7A2L41lAiSyqJaw52n37z
- mi36fMyQ
+	Thu, 21 May 2026 12:46:58 +0000
+Received: (qmail 11415 invoked from network); 21 May 2026 15:04:22 +0900
+Received: from ai126172084120.49.access-internet.ne.jp (HELO DESKTOP-VO6I16E) (126.172.84.120)
+  by mail.btob-mail.work with ESMTPSA (DHE-RSA-AES256-GCM-SHA384 encrypted, authenticated); 21 May 2026 15:04:22 +0900
+From: =?iso-2022-jp?B?GyRCMHs/KUU5JVUlaSVzJUElYyUkJTo7dkwzNkkbKEI=?= <info@gosso.biz>
+To: b43-dev@lists.infradead.org
+Subject: =?iso-2022-jp?B?GyRCJEQkViRsJEokJEU5JEchIk9DQmohIzB7PyklVSVpJXMlQSVjJSQlOhsoQg==?=
+X-Mailer: Mail Magic Professional Version 16
+Date: Thu, 21 May 2026 16:15:10 +0900
+Message-ID: <202605211615100228.C30F7E80247D429CB6C7A9F9BDE4CECD@btob-mail.work>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260520_161642_244559_901DC792 
-X-CRM114-Status: GOOD (  12.19  )
+X-CRM114-CacheID: sfid-20260521_054655_778419_67A4C636 
+X-CRM114-Status: UNSURE (   1.31  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -73,31 +51,92 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Il giorno Wed, 20 May 2026 13:06:05 +0200
-Johannes Berg <johannes@sipsolutions.net> ha scritto:
+　
+　
+　新たな収益の柱として
+「飲食業への新規出店や事業多角化」を
 
-> On Tue, 2026-05-19 at 23:02 +0200, Alessio Ferri wrote:
-> > 
-> > The patchset is tested on my own DLink DSL 3580L router and
-> > generated by claude from our shared notes, i then reviewed it for
-> > sanity and verified it by navigating from the router with modified
-> > b43 driver with my phone.  
-> 
-> I would ask you to disclose this in the commits per
-> 
-> https://docs.kernel.org/process/coding-assistants.html
-> 
-> johannes
+　検討中の経営者様・オーナー様へ
 
-I'm also realizing that i was off by one when i generated the series
-and missed the first commit, the actual series is 7 patches, the "real"
-first one fill the gaps in the firmware mappings, so i would had
-to resend anyway
+　限定10名｜Web開催
+　フランチャイズセミナーのご案内です。
+
+
+−TVで話題の新業態!!−
+
+　地域の「空白地帯」を独占する
+　飲食フランチャイズ説明会
+　
+　日時：5月27日(水) 15:00〜16:30
+　定員：限定10名
+　形式：Zoom配信
+　
+　 　　　　＜詳細はこちら＞ 
+　　https://tokiwatei-fc.work/cohost/
+
+−−−−−−−−−−−−−−−−−−−
+　
+　コスパに厳しい現代の消費者は、
+　もう「とりあえず」では選びません。
+　
+　・会社単位の飲み会は減り、さらに若者は「酒を飲まない」
+　・「徹底的に安い店」 か 「専門的な店」しか選ばれない
+　・人件費、光熱・材料費の高騰は個人店では吸収不可
+　
+　これらを背景に、どこにでもある均質型業態の淘汰は
+　これからさらに加速します。
+　
+　
+　しかし一方で、同じ環境下でありながら
+　「勝ち続ける飲食ブランド」には特徴があります。
+　
+　〇爆発的な話題性で、一気にシェアを築く
+　〇「まちの食堂」として、時流に左右されない型を築く
+　
+　この2つを知って頂きたく、業界でも珍しい共催セミナーを
+　初めてオンライン開催します。
+　
+　
+　■ 登壇ブランド(1)　爆発的な話題性
+　『0秒レモンサワー 仙台ホルモン焼肉酒場 ときわ亭』
+
+　■ 登壇ブランド(2)　長期的な安定性
+　『元祖東京濃厚鶏豚骨 じげもんちゃんぽん』
+　
+　
+　均質型が淘汰される＝市場に「空白」が生まれる
+　ということです。
+　
+　この空白を競合より先に押さえた
+　経営者だけが、次の10年をつくれると私たちは考えています。
+
+　良い立地、良いタイミングは早い者勝ちが現実です。
+
+　 　　　　＜詳細はこちら＞ 
+　　https://tokiwatei-fc.work/cohost/
+　
+　
+　飲食ビジネスをギャンブルではなく
+　「賢明な投資」に変えたい。と思われるオーナー様は
+　ぜひこの機会にご視聴ください。
+　
+　
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+本メールが不要の方には大変失礼しました。
+今後ご案内が不要な際は、下記URLにて配信解除を承っています。
+https://tokiwatei-fc.work/mail/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+主催：GOSSO株式会社（ときわ亭フランチャイズ本部）
+東京都渋谷区宇田川町14-13 宇田川ビルディング6F
+03-6316-8191　
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 _______________________________________________
 b43-dev mailing list
