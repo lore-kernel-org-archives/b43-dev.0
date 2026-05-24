@@ -4,56 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 01A8ACD5BAB
-	for <b43-dev@archiver.kernel.org>; Sun, 24 May 2026 21:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 51FF5CD5BAB
+	for <b43-dev@archiver.kernel.org>; Sun, 24 May 2026 21:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Subject:Cc:To:
-	From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=PXG9J1ewPOP5+yOYiLWJjQ8Pe5XSre22KlzuXNDEkfU=; b=WQNsIL7DMXb/mD
-	45DVUdMXKK9ITUdIaMsvoObuN8NYShhDQrsLUfSI+mlavc2SNrHNe+OIOrwKsqnhD7hulkoDZRzHM
-	32qke3KStcYjLv9PCFE/h2kk6tLBkZvYdHhCPewoQi3z35vvaXxUxT3qPU73M8Swmar6qdjf6ASpR
-	JgBRxJSK655tUkoVsuD651VVkTkvQyehCYAkOxqEsCdMqut+b2QwZ67XhcuY8AFhBNb1mivUqsV4Y
-	ClleYM9gbDd87uUeZmIUAXZfisrg+chUpQoOz5fKtQ+wXkuwlKcjDtYgSBzvRXHdgwpK/uICrCXl6
-	ogzLY2j7VLdAsQFbZs+A==;
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-ID:Subject:To:From:Date:Reply-To:Cc:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=f01C+5obUXqbDEFOH4KOXGC/yEJx16mOElTVgpgNH0E=; b=uab7ITSshL89nD
+	Ru35pTcRPYuObrwhwuwJQptl+J9UXEYGffYKVMGDokkIBhQC53aU+5Tf4rsi0JWSOT76jTCClmBfs
+	/x9kzo+5uX8Tzh2s43pIdkKCmN+CcJ1MHDu9RnNELGqtPqhBkulgbMeqgLDQt+20cpbknBIJTq2J0
+	Akp7vfq3BuHycgaEtGDqQoA+oSURZjBz8WNXLXm6Q4QmXT1ED0hGkqwPFa8/2nHBR1he+3nXTAA2L
+	3XyZUAne/nbNcZaz9pGNGqIbpPNOp5F0r+tSciMcKcAVuDwK/IPKyzC4DOrbs2twW3voUuKiSTTpt
+	i/1jAShC1w9j2L1B+3Xg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRGR7-0000000Fg8K-3JSL;
-	Sun, 24 May 2026 21:32:41 +0000
+	id 1wRGRl-0000000FgIt-3sP5;
+	Sun, 24 May 2026 21:33:21 +0000
 Received: from smtpcmd0641.aruba.it ([62.149.156.41])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRGR0-0000000Fg75-3nQt
+	id 1wRGRj-0000000Fg75-2R58
 	for b43-dev@lists.infradead.org;
-	Sun, 24 May 2026 21:32:37 +0000
+	Sun, 24 May 2026 21:33:20 +0000
 Received: from fedora ([94.34.125.0])
 	by Aruba SMTP with ESMTPSA
-	id RGQuwYwDbdarQRGQuwhVxX; Sun, 24 May 2026 23:32:28 +0200
+	id RGRiwYwaMdarQRGRiwhW2N; Sun, 24 May 2026 23:33:19 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1779658349; bh=m0REJhaxcRJwCTBGdPDcGM5Fijd0rMwrvKjjNFNpgh4=;
+	t=1779658399; bh=ulyB/um8I4Zuj24Mii0xKRyjllYmblKDe6Wn9LoY1+s=;
 	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=NjD8Q/Z4igszcbgU+YW1tkruvgdFro2O9hvqzzV8Q+YFHFar6oJxTBVEEX0TAk0hh
-	 kgGtlPxmXWpAXZKRbGBLZMBK8JAWRkNk5a1uFdNAufnOXpDih1dYPWhLglNrSnJvNe
-	 vgzqn4JY9cdYKzKKg/JepY7pM1LOngOBCwDXbLj9koRPeT0Jex08SNgjFcfgnJFpGm
-	 rYqivDZ0UhBC+epWdXGIp1dTHuTxOXlc2UzCvptdwhb6luhsEvNx7a52L1D7oGdvJ+
-	 m1+ieLrtyBz9AJRJu4s2Amz71pX/bMjnfx2ABXtkdlXcBQcLtbapH1pC7WFgOpinnt
-	 ghTLiFR+vUPjA==
-Date: Sun, 24 May 2026 23:32:28 +0200
+	b=kTexPuxbPpJrIO0gQ3WNQcsfjCtYzcMHZjKkhfcz59eyackm9+PZBvtWddjE6WgHl
+	 nYglnzrDrE+cJn1vzumUo75Rj+7ugtgU7OG/HmhWI3G0wbagIQ60eCONcMcLeHJh2l
+	 nDyO1fsTHNN+5TJ+YXbeVIdOJhVpI1++O+GUftJabysb+irrO39N4xGFQThvS4S08r
+	 NujU3ZZFtVQ6YOMIybEV2av2Dv8lYFDS0mtBrqXzZuUEM/PpVg9q9CcYEQOH0J7vE9
+	 vU3OUj8dDHuPANX/Tmz8nD7zY2bUDeOLDVIkMFzIrheb3YeIUtCtKJ7o/QJys6RLcF
+	 Z1Z11LFHGmx2Q==
+Date: Sun, 24 May 2026 23:33:18 +0200
 From: Alessio Ferri <alessio.ferri@mythread.it>
 To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
  linux-kernel@vger.kernel.org
-Cc: Alessio Ferri <alessio.ferri@mythread.it>
-Subject: [PATCH v2 0/7] b43: complete N-PHY rev 8 + radio 2057 rev 8
-Message-ID: <20260524233228.06b38dba@fedora>
+Subject: Re: [PATCH v2 0/7] b43: complete N-PHY rev 8 + radio 2057 rev 8
+Message-ID: <20260524233318.7cb14643@fedora>
+In-Reply-To: <20260524233228.06b38dba@fedora>
+References: <20260524233228.06b38dba@fedora>
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfHUUC3megLIxOwdKxOE5gl7Z8Rio0EGswsyT/jlAlmxiZ1Olxpd0bG0P0UKKR2z9hP7LeQyhsrokX65guCe4d7CgdCreziIOf8QR6IJHo62gZzKK1ZRJ
- XAWTixZlS00YIdGZtHlksI3ShvieXvFEXASkuIJ0RWyVSHAxKv87r4u9YuIpaBQgMyPZUivKVkuXQkfvr5Xa4pJaZn3X4s6fOVaEUytJwKwU0pZIP6ekh4k9
- yQCCrCNZJLEUQFtmnLhKKQNoWSxeHCwSaqeyZvYPS6ZHIY8JE6PuSqiaCIruV4iKIgPE8+NoeDid1YR0rGP2eg==
+X-CMAE-Envelope: MS4xfFD8Ux+30GB8HizqaImeWNT7J1PIet+7FLEN2O5IOHMqx8hYA+jF5a+eWBUdrIZLnQ5ybihOmMh5dVr6wiIp0gSNnsnrttfigrqNsk4u/ba9fBVZfcFp
+ eCcKDawthC5Xf3rRcPRzlhgJbps4z09x9js4Qu5wK+4hi+v1DbqaFMIiAh5ylv1XYb84t5KWZk5iBlEAFWWzcQkjXX06nhjZiFMYViQjVt2SnUJOYbQgveqh
+ 06S10gCTS9+WU4XXI+R5NMWZ1xTe+ImYQEUL75gdyrY=
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260524_143235_421641_9A6E462C 
-X-CRM114-Status: UNSURE (   8.81  )
+X-CRM114-CacheID: sfid-20260524_143319_790392_B5D9C65E 
+X-CRM114-Status: UNSURE (   9.22  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -72,84 +73,54 @@ Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
 
-This series completes b43 support for the Broadcom N-PHY revision 8
-paired with radio 2057 revision 8. b43 already supports the surrounding
-PHY family - N-PHY rev 8 with radio 2057 rev 5 and rev 7 are handled,
-and rev 16 with radio 2057 rev 9 is handled - but the rev 8 + rev 8
-combination falls through four dispatcher gaps:
-
-  - radio_2057.c, r2057_upload_inittabs(), case 8 lists radio_rev 5
-    and 7 only;
-  - radio_2057.c, r2057_get_chantabent_rev7(), case 8 lists radio_rev
-    5 only;
-  - tables_nphy.c, b43_nphy_get_ipa_gain_table(), case 8 lists
-    radio_rev 5 only;
-  - radio_2057.c carries r2057_rev8_init[] as a 54-entry stub commented
-    out with "TODO: Which devices should use it?".
-
-Two further pieces of plumbing are needed to reach those dispatchers
-in the first place: d11 core revision 0x16 is missing from the b43
-bcma id table, firmware name, and the corerev 22 / radio 2057
-combination needs the 24-bit indirect radio access path that brcmsmac
-uses for the same silicon generation (see brcmsmac/phy/phy_cmn.c 
-read_radio_reg() / write_radio_reg()).
-
-The series:
-
-  1/7  b43: add firmware and initvals names for rev22
-  2/7  b43: add d11 core revision 0x16 to id table
-  3/7  b43: route d11 corerev 22 to 24-bit indirect radio access
-  4/7  b43: support radio 2057 rev 8
-  5/7  b43: add IPA TX gain table for N-PHY r8 + radio 2057 r8
-  6/7  b43: add channel info table for N-PHY r8 + radio 2057 r8
-  7/7  b43: add RF power offset for N-PHY r8 + radio 2057 r8
-
-Patches almost reveal the bringup, the first two are swapped, as 
-applying 2/7 without 1/7 generate an immediate kernel panic caused 
-by a null deref.
-From the third, each one fixes the next visible failure
-in bring-up: 3/7 lets phy versioning read coherent radio identifiers, 
-4/7 unblocks the boot-time radio calibration that otherwise stalls, 
-and 5/7-7/7 fill the remaining 2.4 GHz dispatcher entries so
-b43_nphy_set_channel completes to the default channel and core_init
-proceeds past PHY init.
-
-Tested on a D-Link DSL-3580L (Broadcom BCM6362 SoC, single-die 2.4 GHz
-N-PHY rev 8 + radio 2057 rev 8 in 2.4 GHz IPA mode).
-
-b43 is currently Orphan in MAINTAINERS. These patches do not add a
-new chip family or PHY infrastructure; they fill four explicit
-dispatcher gaps for a combination of an already-supported PHY and
-an already-supported radio.
-
-CHANGELOG:
-v2:
-  - Recovered the first patch of the series, so numbering is now /7
-  - Added Assisted-By header
-v1:
-https://lore.kernel.org/linux-wireless/8c0a07d2-9ec9-43d6-bdf7-f625bbb4a38a@mythread.it/
-
-Signed-off-by: Alessio <alessio.ferri@mythread.it>
+Assisted-by: Claude:claude-4.7-opus
+Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 ---
-Alessio Ferri (7):
-      b43: add firmware mappings and remove comments wondering about
-rev22 initvals b43: add d11 core revision 0x16 to id table
-      b43: route d11 corerev 22 to 24-bit indirect radio access
-      b43: support radio 2057 rev 8
-      b43: add IPA TX gain table for N-PHY r8 + radio 2057 r8
-      b43: add channel info table for N-PHY r8 + radio 2057 r8
-      b43: add RF power offset for N-PHY r8 + radio 2057 r8
+ drivers/net/wireless/broadcom/b43/main.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
- drivers/net/wireless/broadcom/b43/main.c        |  22 ++-
- drivers/net/wireless/broadcom/b43/radio_2057.c  | 230
- ++++++++++++++++++++++--
- drivers/net/wireless/broadcom/b43/tables_nphy.c |  58 ++++++ 3 files
- changed, 290 insertions(+), 20 deletions(-) ---
-base-commit: 8bc67e4db64aa72732c474b44ea8622062c903f0
-change-id:
- 20260521-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-a3125f06e21e
+diff --git a/drivers/net/wireless/broadcom/b43/main.c
+b/drivers/net/wireless/broadcom/b43/main.c index b0e6aeb0b..37c5d9928
+100644 --- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -2344,6 +2344,10 @@ static int b43_try_request_fw(struct
+b43_request_fw_context *ctx) if (phy->type == B43_PHYTYPE_N)
+ 			filename = "ucode16_mimo";
+ 		break;
++	case 22:
++		if (phy->type == B43_PHYTYPE_N)
++			filename = "ucode22_mimo";
++		break;
+ 	case 16 ... 19:
+ 		if (phy->type == B43_PHYTYPE_N)
+ 			filename = "ucode16_mimo";
+@@ -2405,7 +2409,9 @@ static int b43_try_request_fw(struct
+b43_request_fw_context *ctx) else if (rev == 24)
+ 			filename = "n0initvals24";
+ 		else if (rev == 23)
+-			filename = "n0initvals16"; /* What about
+n0initvals22? */
++			filename = "n0initvals16";
++		else if (rev == 22)
++			filename = "n0initvals22";
+ 		else if (rev >= 16 && rev <= 18)
+ 			filename = "n0initvals16";
+ 		else if (rev >= 11 && rev <= 12)
+@@ -2465,7 +2471,9 @@ static int b43_try_request_fw(struct
+b43_request_fw_context *ctx) else if (rev == 24)
+ 			filename = "n0bsinitvals24";
+ 		else if (rev == 23)
+-			filename = "n0bsinitvals16"; /* What about
+n0bsinitvals22? */
++			filename = "n0bsinitvals16";
++		else if (rev == 22)
++			filename = "n0bsinitvals22";
+ 		else if (rev >= 16 && rev <= 18)
+ 			filename = "n0bsinitvals16";
+ 		else if (rev >= 11 && rev <= 12)
 
 -- 
+2.54.0
 
 _______________________________________________
 b43-dev mailing list
