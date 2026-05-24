@@ -4,58 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0F02CD5BB4
-	for <b43-dev@archiver.kernel.org>; Sun, 24 May 2026 21:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A85B0CD5BAB
+	for <b43-dev@archiver.kernel.org>; Sun, 24 May 2026 21:34:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
 	Message-ID:Subject:To:From:Date:Reply-To:Cc:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=jt8sEr2gMjfuclZ8qQMSLe0oMi73qPEjmHNKgllX0Cs=; b=vli9GXxmb6qlXd
-	k78T/Xe6Kag1QRhUnPpyzjQXRcdrIvWR3AAblzMX41QsZsLjusufY5eWeqXOU8o3suxW+0dXxWxaC
-	SzNvDpqVxEqFWFWLu+HrrmmlQ2Ciu42W3GYwWJ37RerOTtMyVxaZKxceo5Ugn4kl91Yvui3xIlB7b
-	dRe4CxfOKIXyPq/BGE4NM8pTyXIP3d8AibirvTvah0NKQ/Xeq2sAIL0Dz2TYPVGyY5LZtbW5rBjLU
-	pxfot3W2C3ywBqd/xBWniFKni3e6bRqTBlpKNnXcnAkbS5c+0sPcEC8v6wFPsQHZj8FfP9YmG5VCq
-	tzttNUedR456NPcUMvzg==;
+	List-Owner; bh=lI+9TtqSTXgd+Hn1+GOfNuJCgsyqbVFomjdaGyUfpfs=; b=oKZoCROthCI5xi
+	HbbnqP1mSCrqOYku3guycTNk+O/jlFY3FfGwgXThL6bKr2YcETG7Hv1BWrnmulbaCSJeQ+xsaI9eQ
+	7PejhnjCKYSvtIqxotDRmkU2a6ffzhHLmBeOLvRLJkhcfA4pLUPTUTXlqkBJBkWP75ZOcfMZPmLvr
+	Jphaczt2hucu/KTpPME7zQHjUG5h562ytzsthdU33e7Cmrum4aeDzYFJIASFtYeYgSyAeIqz5re+0
+	ligDEOdluPCjobGvlmqesWzgo1Yt05vzcUl0vhF2FlbqHYlu61d66U9odsZKwBRMmwBhNWHxQ9uE2
+	thJAG7PkY1XjoILRqwvA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRGSR-0000000FgTv-17Fn;
-	Sun, 24 May 2026 21:34:03 +0000
+	id 1wRGSm-0000000Fgak-1YVd;
+	Sun, 24 May 2026 21:34:24 +0000
 Received: from smtpcmd15176.aruba.it ([62.149.156.176])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRGSO-0000000FgSx-3JrM
+	id 1wRGSk-0000000FgSx-0EFz
 	for b43-dev@lists.infradead.org;
-	Sun, 24 May 2026 21:34:02 +0000
+	Sun, 24 May 2026 21:34:23 +0000
 Received: from fedora ([94.34.125.0])
 	by Aruba SMTP with ESMTPSA
-	id RGSLws9kZwf0DRGSLwF9e0; Sun, 24 May 2026 23:33:58 +0200
+	id RGSjwsAAMwf0DRGSjwF9mP; Sun, 24 May 2026 23:34:21 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1779658438; bh=nGiMuq5oQsggp47VgQXRPVHvJULhPZFlt9aAJxCDgMM=;
+	t=1779658461; bh=RG0KZyQtlU1j74lUouM9Mvo7qOrsOrUFD/m4zDgFqlo=;
 	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=i9dh2itEY0km5/SEoJ5DOUUqITm91LgJTJZ47GTOTNh137Xg3L4bhON81D9E2dcs6
-	 JCgw+Kkd+Q2a9PYdKsNZOqYdOY0aqmADb4WSewbJVinE8VmrFtYPlwOiqTqju2Hc+h
-	 rSZu8gulBm2Z+d+0uPuq+pdi356ML+wF7LEWCLVqagQesnhlD6Kws9o6e7q5yvx/MB
-	 kVyvBn3mCEviQc6fegrWfZPspWXBUOhPImkvCw/kMwFO8dUBXeO7IejmSTuyBPHkpX
-	 y/WKQIA0YnAPXPVpPoromW50rDSXZmhVfzVUdsfceyMrdeBI7qw4fIdgsRNL+/Xiig
-	 LjwCLaeeTpzng==
-Date: Sun, 24 May 2026 23:33:57 +0200
+	b=TIXm0K6+Ud7Otyd9JGISay2DBVJgm6ley7d4uhYVzCpCytA3L46Jej0geZrCk+/lp
+	 rBDSZhjSri8v0AASNCBm36YLaB6EpvjoDaxpL7P6/3nH4lA67a4UgGIhBzyJNBKL78
+	 Qg+4ysAFSMH/EOVC9rGcGGeulQ0sj7xsyxHUoy1T8n2xWqwN5QDK/n9FfafimHCFwh
+	 zToqCzT6YrAW+wiTxl5vjLGFbFjkH502SqLzQqofp9LrMXnHjXKpGGKZQsDrp0C3dy
+	 gXVZo8IakMfHY/7zmorTwhMdd/gu+EGI8zy7pEa+tU53tFOGUiOevTgQcZFnIN1EGf
+	 bPYSqmqVBhLQg==
+Date: Sun, 24 May 2026 23:34:21 +0200
 From: Alessio Ferri <alessio.ferri@mythread.it>
 To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
  linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 0/7] b43: complete N-PHY rev 8 + radio 2057 rev 8
-Message-ID: <20260524233357.0c66e4bb@fedora>
+Message-ID: <20260524233421.3586440f@fedora>
 In-Reply-To: <20260524233228.06b38dba@fedora>
 References: <20260524233228.06b38dba@fedora>
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfJTdJJSA0gvcntBIWyRIkKxZg/g8VWhWAAviSQBQU7kFW2tz5wbjroSqE135QI6LbtqQbkZfNDsT1YSkXFvrgZP1NLjyFZ37s5YEnNUnlwYEWmuH9vty
- ThF8/vO08VstbamSs9Bs0A9genukAgbTcD+CJNJQeeMBk57OmMdC0dLngzw+LQAftI542m1ooI8mTqKlKZJu2pqZLK7e2Fx8gHAGNSLkPZIftwOHhj5Bjze7
- AQNPrvmjLvLSGTMHEDaF6RXip4dQqhJz43GsL90Vo5E=
+X-CMAE-Envelope: MS4xfAjxe4MLZWq4FGrKWsG+dGrIeOwazvdChQn9UJRf7ZGS4bgHXonLXNFPaNn6bgLxjJ9Z24GTtcGakcSxL8puiaJipt3bU9HD5HpEN480QcTmN83t357/
+ D7u560BfcSDpAkYrZRTXtvZp/LO791ZO8IxdwwO6mthh83pMToPOdMbWH/HrtyIxIqc2ze9ty94NFKebR5QxveIGfsR2DSx12351lH3OTo/u755B0yGrowGQ
+ x/ocO8df1icjVYkCrgjsYxlgHrfCNDL5DYW0D9b1nWE=
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260524_143400_995270_67181DBC 
-X-CRM114-Status: UNSURE (   8.90  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20260524_143422_263334_AC25ECEC 
+X-CRM114-Status: GOOD (  11.30  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -73,38 +72,52 @@ Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
 
-Add d11 core revision 0x16 (= 22) to the b43 bcma device id table.
+Rev 22 backports the older 802.11 core but pairs it with a radio
+in the 2057 family, which requires the 24-bit indirect path. With
+the current dispatch, corerev 22 falls into the legacy 4-wire branch,
+reads garbage for radio_id, and bails out with -EOPNOTSUPP at the
+"FOUND UNSUPPORTED RADIO" branch below.
 
-The b43 bcma id table covers d11 revisions 0x11, 0x15, 0x17, 0x18,
-0x1C, 0x1D, 0x1E, 0x28 and 0x2A. Revision 0x16 belongs to the same
-N-PHY family as revisions 0x17 and 0x18 (radio 2057) and needs no
-new PHY or radio code beyond the radio_rev 8 dispatcher entries
-added later in this series - only the device id entry is missing.
-Without it bcma scan enumerates the 802.11 core but no driver binds.
+brcmsmac handles the same silicon family with the equivalent
+dispatch in drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/
+phy_cmn.c read_radio_reg() and write_radio_reg():
 
-The revision is used by the Broadcom BCM6362 single-die integrated
-2.4 GHz wireless block found in xDSL SoCs.
+    if ((D11REV_GE(pi->sh->corerev, 24)) ||
+        (D11REV_IS(pi->sh->corerev, 22)
+         && (pi->pubpi.phy_type != PHY_TYPE_SSN))) {
+            /* radioregaddr / radioregdata (indirect) */
+    } else {
+            /* phy4waddr / phy4wdatalo (legacy)      */
+    }
+
+b43 does not support SSN/SSLPN PHYs - they are rejected earlier in
+b43_phy_versioning() at the "unsupported PHY type" switch - so just
+adding the check corerev == 22 will do.
 
 Assisted-by: Claude:claude-4.7-opus
 Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 ---
- drivers/net/wireless/broadcom/b43/main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/broadcom/b43/main.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/wireless/broadcom/b43/main.c
-b/drivers/net/wireless/broadcom/b43/main.c index 37c5d9928..85ea8fdd9
+b/drivers/net/wireless/broadcom/b43/main.c index 85ea8fdd9..783af26cb
 100644 --- a/drivers/net/wireless/broadcom/b43/main.c
 +++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -117,6 +117,7 @@ MODULE_PARM_DESC(allhwsupport, "Enable support for
-all hardware (even it if over static const struct bcma_device_id
-b43_bcma_tbl[] = { BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x11,
-BCMA_ANY_CLASS), BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x15,
-BCMA_ANY_CLASS),
-+	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x16,
-BCMA_ANY_CLASS), BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x17,
-BCMA_ANY_CLASS), BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x18,
-BCMA_ANY_CLASS), BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x1C,
-BCMA_ANY_CLASS),
+@@ -4563,7 +4563,11 @@ static int b43_phy_versioning(struct b43_wldev
+*dev) radio_id = b43_read16(dev, B43_MMIO_RADIO24_DATA);
+ 
+ 		radio_ver = 0; /* Is there version somewhere? */
+-	} else if (core_rev >= 24) {
++	} else if (core_rev >= 24 || core_rev == 22) {
++		/*
++		 * D11 corerev 22 pairs an older 802.11 core with a
+2057
++		 * radio that requires the 24-bit indirect access path.
++		 */
+ 		u16 radio24[3];
+ 
+ 		for (tmp = 0; tmp < 3; tmp++) {
 
 -- 
 2.54.0
