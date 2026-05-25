@@ -4,58 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 302B6CD5BC9
-	for <b43-dev@archiver.kernel.org>; Mon, 25 May 2026 18:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0482ECD5BC9
+	for <b43-dev@archiver.kernel.org>; Mon, 25 May 2026 19:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=F+TD8B4tmtnBiBA/KnLbNVh9eD9RVojXaozRcT9JAN8=; b=E3eqpdXFOebyhhe+Fcw9j7C5U9
-	k7YYvwVHzZhrQePfdID3f58g6L+vjanqfW+YGqYlO1s3qbmKu00xyzlzZc1v3wiX94mLL3et9E7F5
-	D/sBvUYGAdYvfbnysKlvjORN71X5Ek2ZdaDve25qSC9QlFJgZWpPxbL5758CnDK3sxhHdtKNJtOvv
-	bvmcnyfGyuppH1S1IchC6kGccv7kr8uxjQwzlqh4+c9tXYawTNviYkg/tRQrPbB1bs8FeEUFWtWSQ
-	DUxbbxhueG3C8B9Lw8nZch5WW1UQzsNs7Fm/zt48rJQEFjnWJ0cagQMx+i+Hh9VNMhZ7PfA9hl8g0
-	xxeGIeZQ==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=mLrMTh/Hiwe9MhyIOsWskOxpM4MFd0C9pk57Xlhh8Pk=; b=EV4muZG2YsHHIj
+	G/rLImgMj8xdYK6HUbo6SPwPcwD0KPVq8mDIxgJjgfEoSWKrGpfJyZpBwUkK6ST2LGAy6e7wraPzs
+	gVRI4nEKEN0lgodoczI9LZHfUFqB/v5e45b0EA22Wt4HMvCxMgWiQD598pS4mlWf2bOVUdjFhmFNE
+	balZMuyS6xAXyuLGJ7vwNs2UG03BUVQf7wqvmI3/JXlLldb62tdFezHgY0wYI3JDAI8gSwMByYlCp
+	cxpBT1RyJrchkrTv2vmRt/9L122gF3Pkgkvq1oo5fk6cNsQOTVocZmQ7KoS4j8ATtetXl4+y1/0kY
+	SfgjK3QgjQfA22tiI1SQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRZoy-00000000CjI-230w;
-	Mon, 25 May 2026 18:14:36 +0000
-Received: from bues.ch ([2a01:4f8:1c0c:6e7f::1] helo=mail.bues.ch)
+	id 1wRayD-00000000KLT-2nFa;
+	Mon, 25 May 2026 19:28:13 +0000
+Received: from smtpdh19-2.aruba.it ([62.149.155.149])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRZou-00000000Cie-1C6K
+	id 1wRayA-00000000KKP-0DMh
 	for b43-dev@lists.infradead.org;
-	Mon, 25 May 2026 18:14:34 +0000
-Date: Mon, 25 May 2026 20:14:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bues.ch; s=main;
-	t=1779732869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0WA2do2ECCCRZbPd27JoUNSPxv+tcgUGqeDNxEx3+EQ=;
-	b=bZbyYGXJsQNMNGNk2BdYmHRyHzcPQ1QtXvX8JBiBc1tygHDK/weZFmRfU2kmzAm2rWCwkc
-	M8MQ1gF9/QbhHV07ut870FA/yYcuNGgSnHPe3Wuze8UowjxZ4H5SNpc2o27TIdXJpbpY3Z
-	7akFqDeTevF/DzQtfo7/FUHsgoN/bOvY9BJ9hZN1WglthjOpw3uAypFnqwlRTdyQqOQjTv
-	FovlMeHWP9Uf6tDzfNnSxkTVRbPEVMPuvxCRTeMK3rRNQxy4yQRY7yPBEJTLk1sm55fxzy
-	sdIdGmlszvbf4gGwv7BMhUrYVxn/g0jF9hL2MekEvuIQ7ZAG6r7xV+Z0C/98pg==
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Alessio Ferri <alessio.ferri@mythread.it>
+	Mon, 25 May 2026 19:28:12 +0000
+Received: from fedora ([94.34.125.0])
+	by Aruba SMTP with ESMTPSA
+	id Ray5wLMmpclBZRay5w7bYd; Mon, 25 May 2026 21:28:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
+	t=1779737285; bh=ciiSIPOHoz25geGrQY/X3wqZon1rIzUIMwbhH9fHrYM=;
+	h=Date:From:To:Subject:MIME-Version:Content-Type;
+	b=SCqjHkEMzaO9XKxTM56CJosM8PjVZuMpG3c9reO6kteVwobL1VwcpHWIhj4BTN1dB
+	 kZZJJaMQiEiG65/mi8r40qcIMWJkZRgSxrXpCuJgZegqfjLVSoZh+kYWioOyiESY9A
+	 hLijof27YRSviaJt6BujfP3NiL9M3fn6HeUFBnBwjtp4ploApxSCjgl8ktyUcfKXBF
+	 eqhfSU0l2+Ie97nFOmL4X73N37uYHEiiWUUXPeLNlqBakqGf+DzgSw5sZLFGZfrUX1
+	 9bU80spW5kMr6Pslio1m6mLmlB9DbAbN8n2PgaMMN/RMyG8MhEPheo830DCq9ubdPX
+	 CW6yEdimK37oA==
+Date: Mon, 25 May 2026 21:28:04 +0200
+From: Alessio Ferri <alessio.ferri@mythread.it>
+To: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
 Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
  linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v3 0/7] b43: complete N-PHY rev 8 + radio 2057 rev 8
  support
-Message-ID: <20260525201405.6c60420f@barney>
-In-Reply-To: <20260525140438.265975e7@fedora>
+Message-ID: <20260525212804.7bfbc4fc@fedora>
+In-Reply-To: <20260525201405.6c60420f@barney>
 References: <20260524-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v1-0-cdad2c8526c6@gmail.com>
 	<20260525100752.16cdb59e@barney>
 	<20260525140438.265975e7@fedora>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	<20260525201405.6c60420f@barney>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+X-CMAE-Envelope: MS4xfExFWzYwp0AFqgtYxb1nXLBG/12VzMdzQsyZaES3CJHL1u3kYPtZpgV4+43JqWmygQo56VcMrrBW/+mn2fX/+anfn1Sg8uYwR30YM1IgA5GWetUr0BUS
+ BYRt9iyDY2fZjM+dkbdkOnwy+ph3inhv0ZjNgGA6LAsJWSwq40UHgLVJzen1X3zjFrY4Up0vqgPLi72TsxWWbDpiOv577J0wNsJ8MFAVqrEcu/eddkMoxq0A
+ B6H7G91kHfxnsjpJysvXXXi8Zv/fbXgbcxmi48afQezqg5j6shxOU6nSxAfIaE2Q
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260525_111432_494436_CCC7B8C8 
-X-CRM114-Status: UNSURE (   8.35  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20260525_122810_541954_9A5E663D 
+X-CRM114-Status: GOOD (  10.74  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -67,68 +71,21 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============1380192152534054193=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
---===============1380192152534054193==
-Content-Type: multipart/signed; boundary="Sig_/.MYp7wzPblDhh=wv0hor/qw";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-
---Sig_/.MYp7wzPblDhh=wv0hor/qw
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 25 May 2026 14:04:38 +0200
-Alessio Ferri <alessio.ferri@mythread.it> wrote:
-
-> Please clarify "full expected wireless throughput", HT is
-> not supported by b43, so it runs only with NOHT in g-like speed:
-
-> Enabling HT for N chips is out of scope, also there nothing to
-> gain and a lot to risk, so i won't do it.
-
-That's fine.
-Just wanted to know if there were known problems.
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/.MYp7wzPblDhh=wv0hor/qw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmoUkW0ACgkQ9TK+HZCN
-iw7hQRAAwWCeB2FMbkjfyCYyLJYKhQqWf8RHho76CgqYNVazM/pyfwQ0any2pUHX
-NMdJvIuDlMRMmYLWulKlFlOZpQpq8tzbscfJQZpjhfJQoX4BqZXaLeWaT9Vx/iq7
-6MgHMms7EY/FSPigQj93h7OToAJq2UYeaFppph9VAFT6xixqjDhG0fRJhiqss4AJ
-MzC+zJCqepH5PUEiKuOF0RQU+z7lv3fCsZkbebprysSkKmGqmqlJ/sSbGW9CUtz/
-YzYkBFSaS2eEhMYxFDP8ZBLQ3N0U0KOZICTtEfRDhRV+jH7E6jSW5UeQ9xe7XoOs
-81pHPVvgVlL9kpGJEnHjoitUbF9HG/+Z6hEcSqRBAa7+Hc8XI6/NT2lpOYvHPgyf
-3CPd5yoCuaKwtZvZxGDO4HEFVvqFSWqY6JIVkTxx/gDg26fjV7MD+Yk89waHVglf
-EjGDgwJ6IRk/5iTt0B+bQIIhWq0KHtlITtrPAXd5xNecMfaO0zhnhBCT9ktGGFq/
-e18h8EWzFZbgXRBTupY/bOvhEtDOjXUUwRQ75etDvw/gXO/61G3D+eV6BS5KfnX5
-1VhOI9z3opZDVSq/mH583BNmRhGYzxre6p5TfE3vctrrS+shZf5uzd4Z/oA94Zee
-EyoC4RGgvrmH0E6mgeZtlUxuQYgc836HcuwvtCPEfHjW0t9ljpA=
-=tc0Y
------END PGP SIGNATURE-----
-
---Sig_/.MYp7wzPblDhh=wv0hor/qw--
-
-
---===============1380192152534054193==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
-
---===============1380192152534054193==--
-
+SWwgZ2lvcm5vIE1vbiwgMjUgTWF5IDIwMjYgMjA6MTQ6MDUgKzAyMDAKTWljaGFlbCBCw7xzY2gg
+PG1AYnVlcy5jaD4gaGEgc2NyaXR0bzoKCj4gT24gTW9uLCAyNSBNYXkgMjAyNiAxNDowNDozOCAr
+MDIwMAo+IEFsZXNzaW8gRmVycmkgPGFsZXNzaW8uZmVycmlAbXl0aHJlYWQuaXQ+IHdyb3RlOgo+
+IAo+ID4gUGxlYXNlIGNsYXJpZnkgImZ1bGwgZXhwZWN0ZWQgd2lyZWxlc3MgdGhyb3VnaHB1dCIs
+IEhUIGlzCj4gPiBub3Qgc3VwcG9ydGVkIGJ5IGI0Mywgc28gaXQgcnVucyBvbmx5IHdpdGggTk9I
+VCBpbiBnLWxpa2Ugc3BlZWQ6ICAKPiAKPiA+IEVuYWJsaW5nIEhUIGZvciBOIGNoaXBzIGlzIG91
+dCBvZiBzY29wZSwgYWxzbyB0aGVyZSBub3RoaW5nIHRvCj4gPiBnYWluIGFuZCBhIGxvdCB0byBy
+aXNrLCBzbyBpIHdvbid0IGRvIGl0LiAgCj4gCj4gVGhhdCdzIGZpbmUuCj4gSnVzdCB3YW50ZWQg
+dG8ga25vdyBpZiB0aGVyZSB3ZXJlIGtub3duIHByb2JsZW1zLgo+IAoKRGlkIG5vdCBzZWUgYW55
+IG9idmlvdXMgcHJvYmxlbSBmb3Igbm93LiBJIFdpbGwgdHJ5IHRvIGZpeCBhbnkgaXNzdWVzIGlm
+CnNvbWVvbmUgZmluZCBzb21lCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
