@@ -4,57 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8402DCD5BCB
-	for <b43-dev@archiver.kernel.org>; Sun, 24 May 2026 21:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77F2BCD5BBF
+	for <b43-dev@archiver.kernel.org>; Mon, 25 May 2026 08:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:To:In-Reply-To:References:Message-Id:
-	MIME-Version:Subject:Date:From:Reply-To:Cc:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=AVeyhWbnqhYjw3rg9tDlC5nnkbk77ngwJjEb+bN7Cq4=; b=f/Z5wTpvMKwlvK
-	0dZNRRxM2CUfkrbbbfZnnH+W3EUDNVxm52MB3MlM6CDWiFuR/88Zm+7Et+GK2S0Rnzsvj+3H5YfdC
-	5O3U6PI6myxcaKadmItqwKDvxPqoJ0Xwf+pvUSBpOVDjNp179R1mkwk9z12CukUVcChCOx+Psj7qS
-	M2da9e9Ognj/c0UuGef0cR6xGWc9MfsaXR+qrX3U9Dil0K4iqpzgeYmNv2uPVQgDDwrNdqgRHY73r
-	q5Bs7gIPoG1XQ0L41EsL19vXUe7HJjoVu6QWCZm/VLbI9E7C6DtksXUIt4hXWOxdBpVGgwY0SEVnb
-	W4Urx28Q6T4gxPV3Slng==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=oYrUxdCaNePP8oXbN97mKWgZStkQdMZtEQ96mTlp3pc=; b=EkHXvlXTl5d8gRqC+A/vxHki8G
+	zQ5KUc8v189Wqk9GOd87dUy0CEPLM2j/vmQfhG06tl2sdut+Klzea3SCW3/aCXrhrT4qZYGXBMup2
+	JTUWldk+KEcic7sgFUdkRQn//XE208hWX18sGKb9AwOrE7yDgFr4G61vRv8UYuBzf9b8ttop2yJCy
+	Wh4IUqANxI5Dy9aM/ZzPGjgVZoLdqladCvdUEk8lf0yS/ekmYIRWr5X+MhM/58bfjSNoNtHkBEBPi
+	eRKKbj/vWiVjM2L709ADkmlTjJDZujnTISCu0y0dSgenqJvdfDRWTgesLO9mkgzlG73U/SB0+NgXj
+	uQebFtrg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRGoE-0000000FinT-0CiJ;
-	Sun, 24 May 2026 21:56:34 +0000
-Received: from smtpcmd15176.aruba.it ([62.149.156.176])
+	id 1wRQM7-0000000Gb8O-3b6V;
+	Mon, 25 May 2026 08:08:11 +0000
+Received: from bues.ch ([2a01:4f8:1c0c:6e7f::1] helo=mail.bues.ch)
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wRGo8-0000000FiiP-0KWg
+	id 1wRQM5-0000000Gb7o-0HT6
 	for b43-dev@lists.infradead.org;
-	Sun, 24 May 2026 21:56:31 +0000
-Received: from [192.168.1.237] ([94.34.125.0])
-	by Aruba SMTP with ESMTPSA
-	id RGo5wsRmcwf0DRGo5wFEWU; Sun, 24 May 2026 23:56:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1779659785; bh=FsH4cG99H4gYCr5gM5sye+EXr+DRDoQ2/hID2egt6EM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:To;
-	b=VuSN50nUilfUR5TWyqTYAhRyJ+36HsFUzYiR2s06Z7RhtwNKdxZtqjRkElkyGv2Tt
-	 86fTbbyz0NhKOUJI9HmPZYwaYO2DXQnZDHgLVSkZgJN1FWGz4gkf2VTLjjcvtNtXtC
-	 LsEYfGYGXxRlxj0Z1rLgA9YIH9BMZfMtgp1pP1BpCnKvmMOLpPpWHEmY7RIs8AA5WM
-	 ZcHQvmpJkcPHF5nNXDclefBy7I0OVnm5mWXts628ACurcB9ELmkaDtfmf/swFpftVH
-	 qnTudsgaHu6ZJQHTdXj1a0CfD556oYqbyNYUVlyTBzgkn3v0TiPgg1uiCzMXufuMt8
-	 JgtYeKKt79sIQ==
-From: Alessio Ferri <alessio.ferri@mythread.it>
-Date: Sun, 24 May 2026 23:56:21 +0200
-Subject: [PATCH v3 4/7] b43: support radio 2057 rev 8
-MIME-Version: 1.0
-Message-Id: <20260524-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v1-4-cdad2c8526c6@gmail.com>
-References: <20260524-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v1-0-cdad2c8526c6@gmail.com>
+	Mon, 25 May 2026 08:08:11 +0000
+Date: Mon, 25 May 2026 10:07:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bues.ch; s=main;
+	t=1779696483;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ivGnYQGwHypA/E82Fk3MIbZRzRtPVXV32W0d+O471x8=;
+	b=KRG1fQQvbcUtKDtnKxtLcBMpJiYpE8vHGCAWe47TVMfpBxnfn8LBp4I6b3kcdiU9xXjprp
+	1Rv4SUh0qaK4VCChBCxwD9XGHo7rXdXOHMrf+BWNIqcHp23eZsYpnI2SP677gSussNpzqd
+	0GU/LHoXD0mxCrMHJWIkq9nsxKPaK1ykVEEGo5tl1xWnU4n3u2aNDuSxguboPO4y3JP0dW
+	5XoLE3ommyBi3hHkM+N+emUK4GdJO2LBtWKMgDW6MCG58hT8klghIa25+51BNuMLMTGJBy
+	cyfeaVmIbpCLIfnKdSu7Vju1fDNAWdeVuuE2bp692JqHSD51jxxyzhFCdgxvGA==
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Alessio Ferri <alessio.ferri@mythread.it>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/7] b43: complete N-PHY rev 8 + radio 2057 rev 8
+ support
+Message-ID: <20260525100752.16cdb59e@barney>
 In-Reply-To: <20260524-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v1-0-cdad2c8526c6@gmail.com>
-To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Alessio Ferri <alessio.ferri@mythread.it>
-X-Mailer: b4 0.14.3
-X-CMAE-Envelope: MS4xfK6e4tZhO5nbXI139+tskn3ZldskwfZS0yAkmZzdcOiRqB5wDe+cpYChzUy/iHFxUhoVp6ah5tm/xaN8TPVJUQrwkYksZlAIe9yIAVsmHrTjgL+TX1og
- HjWJnTDeXqY/mLXoEZFeQito8onhlhJuL9iHTYF4Y6kr0garwS6/ceTopffj2vVF27c9FcGjybi74l96GO1XPhhFjz0aw5NclsV5DLN9cDKQNey8hPuI9Mr4
- xsWV1tci4PZrxsE+vgaHc1n3T2mR59exei4b+jy6mXj8/5tJHWS0S4i0M3oMLhO9ROIqQB6eu5UVlcItQfFfdjQNE/BiBtfF/aKPe3zEtco=
+References: <20260524-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v1-0-cdad2c8526c6@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260524_145628_434451_7583B89E 
-X-CRM114-Status: GOOD (  15.03  )
+X-CRM114-CacheID: sfid-20260525_010809_275959_3FF668B3 
+X-CRM114-Status: UNSURE (   9.28  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -66,210 +65,88 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============8253107167044584790=="
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Add support for radio 2057 revision 8, paired with N-PHY rev 8 on
-the Broadcom BCM6362 single-die integrated 2.4 GHz wireless block.
+--===============8253107167044584790==
+Content-Type: multipart/signed; boundary="Sig_/5s+bOMwc0HHsEDOgBDTv5Fv";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 
-Three correlated changes are needed for the same chip:
+--Sig_/5s+bOMwc0HHsEDOgBDTv5Fv
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-  - main.c: the radio_rev allow-list under B43_PHYTYPE_N currently
-    accepts radio 2057 revisions 9 and 14 only; extend to include
-    rev 8.
+On Sun, 24 May 2026 23:56:17 +0200
+Alessio Ferri <alessio.ferri@mythread.it> wrote:
 
-  - radio_2057.c: the existing r2057_rev8_init[] is a 54-entry stub
-    declared inside a TODO comment block and never referenced
-    from r2057_upload_inittabs().
-    Replace it with the full 412-entry register set actually
-    programmed by the proprietary Broadcom wl driver on this radio.
-    I couldn't find the origin of the original 54-entry stub - 8
-    of its entries do not appear at all in the rev 8 register set
-    and 7 more carry different values.
-    Loading it instead of using the real table leaves the radio
-    hanging producing a "Microcode not responding" timeout.
+> Alessio Ferri (7):
+>       b43: add firmware mappings and remove comments wondering about rev2=
+2 initvals
+>       b43: add d11 core revision 0x16 to id table
+>       b43: route d11 corerev 22 to 24-bit indirect radio access
+>       b43: support radio 2057 rev 8
+>       b43: add IPA TX gain table for N-PHY r8 + radio 2057 r8
+>       b43: add channel info table for N-PHY r8 + radio 2057 r8
+>       b43: add RF power offset for N-PHY r8 + radio 2057 r8
+>=20
+>  drivers/net/wireless/broadcom/b43/main.c        |  22 ++-
+>  drivers/net/wireless/broadcom/b43/radio_2057.c  | 230 ++++++++++++++++++=
+++++--
+>  drivers/net/wireless/broadcom/b43/tables_nphy.c |  58 ++++++
+>  3 files changed, 290 insertions(+), 20 deletions(-)
 
-  - radio_2057.c: r2057_upload_inittabs() case 8 handles radio_rev
-    5 and 7 only; add the radio_rev == 8 branch pointing at the
-    new table.
 
-The init table is extracted from an MMIO dump of the radio
-register set programmed during proprietary driver initialisation
-on BCM6362 silicon (Broadcom wl driver 6.30.102.7).
+Looks good and in general low risk because it doesn't change any code
+paths of supported hw revisions.
+I'd still prefer if somebody could test this change on another supported 20=
+57 radio.
+I don't have such a device unfortunately.
 
-Assisted-by: Claude:claude-4.7-opus
-Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
----
- drivers/net/wireless/broadcom/b43/main.c       |   3 +-
- drivers/net/wireless/broadcom/b43/radio_2057.c | 124 +++++++++++++++++++++----
- 2 files changed, 110 insertions(+), 17 deletions(-)
+Does the D-Link DSL-3580L work with full expected wireless throughput after=
+ this change
+or are there any remaining known issues?
 
-diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index 783af26cb..817448e58 100644
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -4617,7 +4617,8 @@ static int b43_phy_versioning(struct b43_wldev *dev)
- 		    radio_id != 0x2057)
- 			unsupported = 1;
- 		if (radio_id == 0x2057 &&
--		    !(radio_rev == 9 || radio_rev == 14))
-+		    !(radio_rev == 8 || radio_rev == 9 ||
-+		      radio_rev == 14))
- 			unsupported = 1;
- 		break;
- 	case B43_PHYTYPE_LP:
-diff --git a/drivers/net/wireless/broadcom/b43/radio_2057.c b/drivers/net/wireless/broadcom/b43/radio_2057.c
-index bd7dafb56..9f693d92b 100644
---- a/drivers/net/wireless/broadcom/b43/radio_2057.c
-+++ b/drivers/net/wireless/broadcom/b43/radio_2057.c
-@@ -73,24 +73,112 @@ static u16 r2057_rev7_init[][2] = {
- 	{ 0x1B7, 0x05 }, { 0x1C2, 0xa0 },
- };
- 
--/* TODO: Which devices should use it?
-+/* Extracted from MMIO dump of 6.30.102.7 */
- static u16 r2057_rev8_init[][2] = {
--	{ 0x00, 0x08 }, { 0x01, 0x57 }, { 0x02, 0x20 }, { 0x31, 0x00 },
--	{ 0x32, 0x00 }, { 0x33, 0x00 }, { 0x51, 0x70 }, { 0x59, 0x88 },
--	{ 0x5C, 0x20 }, { 0x62, 0x33 }, { 0x63, 0x0f }, { 0x64, 0x0f },
--	{ 0x6E, 0x58 }, { 0x75, 0x13 }, { 0x7B, 0x13 }, { 0x7C, 0x0f },
--	{ 0x7D, 0xee }, { 0x81, 0x01 }, { 0x91, 0x3f }, { 0x92, 0x36 },
--	{ 0xA1, 0x20 }, { 0xC9, 0x01 }, { 0xD6, 0x70 }, { 0xDE, 0x88 },
--	{ 0xE1, 0x20 }, { 0xE8, 0x0f }, { 0xE9, 0x0f }, { 0xF3, 0x58 },
--	{ 0xFA, 0x13 }, { 0x100, 0x13 }, { 0x101, 0x0f }, { 0x102, 0xee },
--	{ 0x106, 0x01 }, { 0x116, 0x3f }, { 0x117, 0x36 }, { 0x126, 0x20 },
--	{ 0x14E, 0x01 }, { 0x15E, 0x00 }, { 0x15F, 0x00 }, { 0x160, 0x00 },
--	{ 0x161, 0x00 }, { 0x162, 0x00 }, { 0x163, 0x00 }, { 0x16A, 0x00 },
--	{ 0x16B, 0x00 }, { 0x16C, 0x00 }, { 0x1A4, 0x00 }, { 0x1A5, 0x00 },
--	{ 0x1A6, 0x00 }, { 0x1AA, 0x00 }, { 0x1AB, 0x00 }, { 0x1AC, 0x00 },
--	{ 0x1B7, 0x05 }, { 0x1C2, 0xa0 },
-+	{ 0x0000, 0x0008 }, { 0x0001, 0x0057 }, { 0x0002, 0x0020 }, { 0x0003, 0x001f },
-+	{ 0x0004, 0x0004 }, { 0x0005, 0x0002 }, { 0x0006, 0x0001 }, { 0x0007, 0x0001 },
-+	{ 0x0008, 0x0001 }, { 0x0009, 0x0069 }, { 0x000a, 0x0066 }, { 0x000b, 0x0006 },
-+	{ 0x000c, 0x0018 }, { 0x000d, 0x0003 }, { 0x000e, 0x0020 }, { 0x000f, 0x0020 },
-+	{ 0x0010, 0x0000 }, { 0x0011, 0x007c }, { 0x0012, 0x0042 }, { 0x0013, 0x00bd },
-+	{ 0x0014, 0x0007 }, { 0x0015, 0x0087 }, { 0x0016, 0x0008 }, { 0x0017, 0x0017 },
-+	{ 0x0018, 0x0007 }, { 0x0019, 0x0000 }, { 0x001a, 0x0002 }, { 0x001b, 0x0013 },
-+	{ 0x001c, 0x003e }, { 0x001d, 0x003e }, { 0x001e, 0x0096 }, { 0x001f, 0x0004 },
-+	{ 0x0020, 0x0000 }, { 0x0021, 0x0000 }, { 0x0022, 0x0017 }, { 0x0023, 0x0006 },
-+	{ 0x0024, 0x0001 }, { 0x0025, 0x0006 }, { 0x0026, 0x0004 }, { 0x0027, 0x000d },
-+	{ 0x0028, 0x000d }, { 0x0029, 0x0030 }, { 0x002a, 0x0032 }, { 0x002b, 0x0008 },
-+	{ 0x002c, 0x001c }, { 0x002d, 0x0002 }, { 0x002e, 0x0004 }, { 0x002f, 0x007f },
-+	{ 0x0030, 0x0027 }, { 0x0031, 0x0000 }, { 0x0032, 0x0000 }, { 0x0033, 0x0000 },
-+	{ 0x0034, 0x0000 }, { 0x0035, 0x0020 }, { 0x0036, 0x0018 }, { 0x0037, 0x0007 },
-+	{ 0x0038, 0x0066 }, { 0x0039, 0x0066 }, { 0x003a, 0x0066 }, { 0x003b, 0x0066 },
-+	{ 0x003c, 0x00ff }, { 0x003d, 0x00ff }, { 0x003e, 0x00ff }, { 0x003f, 0x00ff },
-+	{ 0x0040, 0x0016 }, { 0x0041, 0x0007 }, { 0x0042, 0x0029 }, { 0x0043, 0x0007 },
-+	{ 0x0044, 0x0006 }, { 0x0045, 0x0003 }, { 0x0046, 0x0001 }, { 0x0047, 0x0007 },
-+	{ 0x0048, 0x0088 }, { 0x0049, 0x0005 }, { 0x004a, 0x0077 }, { 0x004b, 0x0066 },
-+	{ 0x004c, 0x0066 }, { 0x004d, 0x0000 }, { 0x004e, 0x0004 }, { 0x004f, 0x000c },
-+	{ 0x0050, 0x0000 }, { 0x0051, 0x0070 }, { 0x0056, 0x0007 }, { 0x0057, 0x0000 },
-+	{ 0x0058, 0x0000 }, { 0x0059, 0x0088 }, { 0x005a, 0x0000 }, { 0x005b, 0x001f },
-+	{ 0x005c, 0x0020 }, { 0x005d, 0x0001 }, { 0x005e, 0x0030 }, { 0x005f, 0x0070 },
-+	{ 0x0060, 0x0000 }, { 0x0061, 0x0000 }, { 0x0062, 0x0033 }, { 0x0063, 0x000f },
-+	{ 0x0064, 0x0013 }, { 0x0065, 0x0000 }, { 0x0066, 0x00ee }, { 0x0069, 0x0000 },
-+	{ 0x006a, 0x007e }, { 0x006b, 0x003f }, { 0x006c, 0x007f }, { 0x006d, 0x0078 },
-+	{ 0x006e, 0x0058 }, { 0x006f, 0x0088 }, { 0x0070, 0x0008 }, { 0x0071, 0x000f },
-+	{ 0x0072, 0x00bc }, { 0x0073, 0x0008 }, { 0x0074, 0x0060 }, { 0x0075, 0x001a },
-+	{ 0x0076, 0x0070 }, { 0x0077, 0x0000 }, { 0x0078, 0x0000 }, { 0x0079, 0x0000 },
-+	{ 0x007a, 0x0033 }, { 0x007b, 0x001a }, { 0x007c, 0x0014 }, { 0x007d, 0x00ee },
-+	{ 0x0080, 0x003c }, { 0x0081, 0x0001 }, { 0x0082, 0x000a }, { 0x0083, 0x009d },
-+	{ 0x0084, 0x000a }, { 0x0085, 0x0000 }, { 0x0086, 0x0040 }, { 0x0087, 0x0040 },
-+	{ 0x0088, 0x0088 }, { 0x0089, 0x0010 }, { 0x008a, 0x00f0 }, { 0x008b, 0x0010 },
-+	{ 0x008c, 0x00f0 }, { 0x008d, 0x0000 }, { 0x008e, 0x0000 }, { 0x008f, 0x0010 },
-+	{ 0x0090, 0x0055 }, { 0x0091, 0x003f }, { 0x0092, 0x0036 }, { 0x0093, 0x0000 },
-+	{ 0x0094, 0x0000 }, { 0x0095, 0x0000 }, { 0x0096, 0x0087 }, { 0x0097, 0x0011 },
-+	{ 0x0098, 0x0000 }, { 0x0099, 0x0033 }, { 0x009a, 0x0088 }, { 0x009b, 0x0000 },
-+	{ 0x009c, 0x0087 }, { 0x009d, 0x0011 }, { 0x009e, 0x0000 }, { 0x009f, 0x0033 },
-+	{ 0x00a0, 0x0088 }, { 0x00a1, 0x0020 }, { 0x00a2, 0x003f }, { 0x00a3, 0x0044 },
-+	{ 0x00a4, 0x008c }, { 0x00a5, 0x006c }, { 0x00a6, 0x0022 }, { 0x00a7, 0x00be },
-+	{ 0x00a8, 0x0055 }, { 0x00aa, 0x000c }, { 0x00ab, 0x00aa }, { 0x00ac, 0x0002 },
-+	{ 0x00ad, 0x0000 }, { 0x00ae, 0x0010 }, { 0x00af, 0x0001 }, { 0x00b0, 0x0000 },
-+	{ 0x00b1, 0x0000 }, { 0x00b2, 0x0080 }, { 0x00b3, 0x0060 }, { 0x00b4, 0x0044 },
-+	{ 0x00b5, 0x0055 }, { 0x00b6, 0x0001 }, { 0x00b7, 0x0055 }, { 0x00b8, 0x0001 },
-+	{ 0x00b9, 0x0005 }, { 0x00ba, 0x0055 }, { 0x00bb, 0x0055 }, { 0x00c1, 0x0000 },
-+	{ 0x00c2, 0x0000 }, { 0x00c3, 0x0000 }, { 0x00c4, 0x0000 }, { 0x00c5, 0x0000 },
-+	{ 0x00c6, 0x0000 }, { 0x00c7, 0x0000 }, { 0x00c8, 0x0000 }, { 0x00c9, 0x0001 },
-+	{ 0x00ca, 0x0000 }, { 0x00cb, 0x0000 }, { 0x00cc, 0x0000 }, { 0x00cd, 0x0000 },
-+	{ 0x00ce, 0x005e }, { 0x00cf, 0x000c }, { 0x00d0, 0x000c }, { 0x00d1, 0x000c },
-+	{ 0x00d2, 0x0000 }, { 0x00d3, 0x002b }, { 0x00d4, 0x000c }, { 0x00d5, 0x0000 },
-+	{ 0x00d6, 0x0070 }, { 0x00db, 0x0007 }, { 0x00dc, 0x0000 }, { 0x00dd, 0x0000 },
-+	{ 0x00de, 0x0088 }, { 0x00df, 0x0000 }, { 0x00e0, 0x001f }, { 0x00e1, 0x0020 },
-+	{ 0x00e2, 0x0001 }, { 0x00e3, 0x0030 }, { 0x00e4, 0x0070 }, { 0x00e5, 0x0000 },
-+	{ 0x00e6, 0x0000 }, { 0x00e7, 0x0033 }, { 0x00e8, 0x000f }, { 0x00e9, 0x0013 },
-+	{ 0x00ea, 0x0000 }, { 0x00eb, 0x00ee }, { 0x00ee, 0x0000 }, { 0x00ef, 0x007e },
-+	{ 0x00f0, 0x003f }, { 0x00f1, 0x007f }, { 0x00f2, 0x0078 }, { 0x00f3, 0x0058 },
-+	{ 0x00f4, 0x0088 }, { 0x00f5, 0x0008 }, { 0x00f6, 0x000f }, { 0x00f7, 0x00bc },
-+	{ 0x00f8, 0x0008 }, { 0x00f9, 0x0060 }, { 0x00fa, 0x001a }, { 0x00fb, 0x0070 },
-+	{ 0x00fc, 0x0000 }, { 0x00fd, 0x0000 }, { 0x00fe, 0x0000 }, { 0x00ff, 0x0033 },
-+	{ 0x0100, 0x001a }, { 0x0101, 0x0014 }, { 0x0102, 0x00ee }, { 0x0105, 0x003c },
-+	{ 0x0106, 0x0001 }, { 0x0107, 0x000a }, { 0x0108, 0x009d }, { 0x0109, 0x000a },
-+	{ 0x010a, 0x0000 }, { 0x010b, 0x0040 }, { 0x010c, 0x0040 }, { 0x010d, 0x0088 },
-+	{ 0x010e, 0x0010 }, { 0x010f, 0x00f0 }, { 0x0110, 0x0010 }, { 0x0111, 0x00f0 },
-+	{ 0x0112, 0x0000 }, { 0x0113, 0x0000 }, { 0x0114, 0x0010 }, { 0x0115, 0x0055 },
-+	{ 0x0116, 0x003f }, { 0x0117, 0x0036 }, { 0x0118, 0x0000 }, { 0x0119, 0x0000 },
-+	{ 0x011a, 0x0000 }, { 0x011b, 0x0087 }, { 0x011c, 0x0011 }, { 0x011d, 0x0000 },
-+	{ 0x011e, 0x0033 }, { 0x011f, 0x0088 }, { 0x0120, 0x0000 }, { 0x0121, 0x0087 },
-+	{ 0x0122, 0x0011 }, { 0x0123, 0x0000 }, { 0x0124, 0x0033 }, { 0x0125, 0x0088 },
-+	{ 0x0126, 0x0020 }, { 0x0127, 0x003f }, { 0x0128, 0x0044 }, { 0x0129, 0x008c },
-+	{ 0x012a, 0x006c }, { 0x012b, 0x0022 }, { 0x012c, 0x00be }, { 0x012d, 0x0055 },
-+	{ 0x012f, 0x000c }, { 0x0130, 0x00aa }, { 0x0131, 0x0002 }, { 0x0132, 0x0000 },
-+	{ 0x0133, 0x0010 }, { 0x0134, 0x0001 }, { 0x0135, 0x0000 }, { 0x0136, 0x0000 },
-+	{ 0x0137, 0x0080 }, { 0x0138, 0x0060 }, { 0x0139, 0x0044 }, { 0x013a, 0x0055 },
-+	{ 0x013b, 0x0001 }, { 0x013c, 0x0055 }, { 0x013d, 0x0001 }, { 0x013e, 0x0005 },
-+	{ 0x013f, 0x0055 }, { 0x0140, 0x0055 }, { 0x0146, 0x0000 }, { 0x0147, 0x0000 },
-+	{ 0x0148, 0x0000 }, { 0x0149, 0x0000 }, { 0x014a, 0x0000 }, { 0x014b, 0x0000 },
-+	{ 0x014c, 0x0000 }, { 0x014d, 0x0000 }, { 0x014e, 0x0001 }, { 0x014f, 0x0000 },
-+	{ 0x0150, 0x0000 }, { 0x0151, 0x0000 }, { 0x0154, 0x000c }, { 0x0155, 0x000c },
-+	{ 0x0156, 0x000c }, { 0x0157, 0x0000 }, { 0x0158, 0x002b }, { 0x0159, 0x0084 },
-+	{ 0x015a, 0x0015 }, { 0x015b, 0x000f }, { 0x015c, 0x0000 }, { 0x015d, 0x0000 },
-+	{ 0x015e, 0x0000 }, { 0x015f, 0x0000 }, { 0x0160, 0x0000 }, { 0x0161, 0x0000 },
-+	{ 0x0162, 0x0000 }, { 0x0163, 0x0000 }, { 0x0164, 0x0000 }, { 0x0165, 0x0000 },
-+	{ 0x0166, 0x0000 }, { 0x0167, 0x0000 }, { 0x0168, 0x0000 }, { 0x0169, 0x0000 },
-+	{ 0x016a, 0x0000 }, { 0x016b, 0x0000 }, { 0x016c, 0x0000 }, { 0x016d, 0x0000 },
-+	{ 0x0170, 0x0000 }, { 0x0171, 0x0077 }, { 0x0172, 0x0077 }, { 0x0173, 0x0077 },
-+	{ 0x0174, 0x0077 }, { 0x0175, 0x0000 }, { 0x0176, 0x0003 }, { 0x0177, 0x0037 },
-+	{ 0x0178, 0x0003 }, { 0x0179, 0x0000 }, { 0x017a, 0x0021 }, { 0x017b, 0x0002 },
-+	{ 0x017c, 0x0000 }, { 0x017d, 0x00aa }, { 0x017e, 0x0000 }, { 0x017f, 0x00aa },
-+	{ 0x0180, 0x0000 }, { 0x0190, 0x0000 }, { 0x0191, 0x0077 }, { 0x0192, 0x0077 },
-+	{ 0x0193, 0x0077 }, { 0x0194, 0x0077 }, { 0x0195, 0x0000 }, { 0x0196, 0x0003 },
-+	{ 0x0197, 0x0037 }, { 0x0198, 0x0003 }, { 0x0199, 0x0000 }, { 0x019a, 0x0021 },
-+	{ 0x019b, 0x0002 }, { 0x019c, 0x0000 }, { 0x019d, 0x00aa }, { 0x019e, 0x0000 },
-+	{ 0x019f, 0x00aa }, { 0x01a0, 0x0000 }, { 0x01a1, 0x0002 }, { 0x01a2, 0x000f },
-+	{ 0x01a3, 0x000f }, { 0x01a4, 0x0000 }, { 0x01a5, 0x0000 }, { 0x01a6, 0x0000 },
-+	{ 0x01a7, 0x0002 }, { 0x01a8, 0x000f }, { 0x01a9, 0x000f }, { 0x01aa, 0x0000 },
-+	{ 0x01ab, 0x0000 }, { 0x01ac, 0x0000 }, { 0x01ad, 0x0084 }, { 0x01ae, 0x0060 },
-+	{ 0x01af, 0x0047 }, { 0x01b0, 0x0047 }, { 0x01b1, 0x0000 }, { 0x01b2, 0x0000 },
-+	{ 0x01b3, 0x0000 }, { 0x01b4, 0x0000 }, { 0x01b5, 0x0000 }, { 0x01b6, 0x0000 },
-+	{ 0x01b7, 0x0005 }, { 0x01b8, 0x0000 }, { 0x01b9, 0x0000 }, { 0x01ba, 0x0000 },
-+	{ 0x01bb, 0x0000 }, { 0x01bc, 0x0000 }, { 0x01bd, 0x0000 }, { 0x01be, 0x0000 },
-+	{ 0x01bf, 0x0000 }, { 0x01c0, 0x0000 }, { 0x01c1, 0x0000 }, { 0x01c2, 0x00a0 },
-+	{ 0x01c3, 0x0000 }, { 0x01c4, 0x0000 }, { 0x01c5, 0x0000 }, { 0x01c6, 0x0000 },
-+	{ 0x01c7, 0x0000 }, { 0x01c8, 0x0000 }, { 0x01c9, 0x0000 }, { 0x01ca, 0x0000 },
- };
--*/
- 
- /* Extracted from MMIO dump of 6.30.223.141 */
- static u16 r2057_rev9_init[][2] = {
-@@ -539,6 +627,10 @@ void r2057_upload_inittabs(struct b43_wldev *dev)
- 		} else if (phy->radio_rev == 7) {
- 			table = r2057_rev7_init[0];
- 			size = ARRAY_SIZE(r2057_rev7_init);
-+		} else if (phy->radio_rev == 8) {
-+			/* BCM6362 single-die 2.4 GHz. */
-+			table = r2057_rev8_init[0];
-+			size = ARRAY_SIZE(r2057_rev8_init);
- 		}
- 		break;
- 	case 9:
+Acked-by: Michael B=C3=BCsch <m@bues.ch>
 
--- 
-2.54.0
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
 
+--Sig_/5s+bOMwc0HHsEDOgBDTv5Fv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmoUA1gACgkQ9TK+HZCN
+iw7YQA//ds+rSVNTrHzM08KTsGl/0w5pEIUYEWH7cA8MialR55T3d6B+CEbbvegD
+x2x5YGn20qP9nXHcWf4zt4IE23lRVo/Xd7htUAJv3KSU5reuwWUa9XAFQE56kjXZ
+cU8bPESMlNk8Redqzxdcq2osLxsZ1MmTTXdjPJZB/TWLovGN+ZKNik8BeM1n9IYj
+Hq37z99Y3aUBx6le6TkcqRnt98KdE27thlMU0PM7ucSAUGVQ3NJC9BlHvGvlMR32
+lKToR5PKPKm11Yi1WwphYdilzxpUgxwuCN0vE7DbE3ZUTNJKYHUiEGlwTD1xO8qA
+LLMgLIN7oIrKBnArD1Kro/z5w8Mccg7/d/mMgjUpKeEWzmUFe50poH2lKRmryoGb
+NALzix/c6XSpcaNvZ9u85X+cKSLKdiChwHXmu+MNvtrKUw5i5Crr8qOtPrSkxzCq
+K5FZUEvY/op/z8NkDmwaGkEqthUSrHCokEOIufOCIWMV8W3sxKlojBhQHXSwdDFi
+iXJSZuXnkMcYoaPQFPnEmIM7KN1l3LrM96FDWDmHcoRCGFJkEHQkyzphHxKdjo3Q
+hIQT8WwACvoTiJUCZ+EiuCSZ3Y6fYxEAmgV++a9S5rzqSiKyLwwJt8zo2Nay6hdK
+W4MTceg4dllkP+H4koQ3V7jvGFyX8cm7K+pLM7PT0jinf6cfMxk=
+=ukAu
+-----END PGP SIGNATURE-----
+
+--Sig_/5s+bOMwc0HHsEDOgBDTv5Fv--
+
+
+--===============8253107167044584790==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
+
+--===============8253107167044584790==--
+
