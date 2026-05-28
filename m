@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BA717CD6E4A
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B6D0FCD6E45
 	for <b43-dev@archiver.kernel.org>; Thu, 28 May 2026 17:31:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
@@ -12,38 +12,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Archive:List-Unsubscribe:List-Id:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Subject:Date:From:Reply-To:Cc:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=aLoDGd8MhxDQMGr5Ja9mg0HbJK+ZMgudADAfKNpulyo=; b=Cjegoxe05NhUFH
-	emy2Yrl1XPzvu/0UqSISKm9SBSu4pWGlLrxGKJ5ohn0vMhbqq+csT261zKSJs+Ic/j8YsGA9bkydx
-	88ntAluoGwfOVgP56Ckwt/gXYqyeo5U64lhpYtHc84NbgkeTMSC5IsCcHDC7P+rW3qwlhZaOxUomT
-	3BbUfxn/+lPIfwwg95nHquAH0Tmtd3tsyemAM5lQs0+uj14OfHund7BA3od3wYU5+/CDvARxnARiD
-	bgevx0x3mpltpMxoVArM3CTGEaLngeqbrzAVNZVj3FwEe/eVbodo2HhQPFlCw/IdLZwVJLpTRD5OR
-	tdPLik8vDV8BAk9CROmA==;
+	List-Owner; bh=Pc48R0PL0ATIEV1bn70ZXC/xxSoMZ/bgJKqCF/BA+z4=; b=Y4lBDGbG6gJq6o
+	/Ldjeyl3yZs7z93GqCGKDsypdqYBUXEC+LoFUWC5rZx2f03Yrq2Vzi3vwQnGUnzddz4wNIcIsEnR2
+	8XjjP00wVI2KaYDr5gMerQ3WcePhqiZoAaNDqd2e7af7Fb1CGA7Tc6iVjRNJYZ4MnzU82r9xOtt0+
+	RebgOclq0LOjGpqBKMqOuVmtATsXArXQ1REncpwjvFO69rLh3aJqXbw4GaR8dUZF7Z7JlxSPU2Qnl
+	9lqK5m+GBZ0yPrgvL1wU4GRfNGEawDIYau8WgHCLkD2lHu4n+4TiZoAQxNhoDhzrefeuLH8JiJ+mT
+	ZnS6NcHJTbxV881rsELQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wSeaE-0000000666c-0p7s;
+	id 1wSeaE-0000000666S-0E3C;
 	Thu, 28 May 2026 17:31:50 +0000
 Received: from smtpweb146.aruba.it ([62.149.158.146])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wSeaA-00000006645-1BOB
+	id 1wSeaA-00000006646-1BeB
 	for b43-dev@lists.infradead.org;
 	Thu, 28 May 2026 17:31:49 +0000
 Received: from [192.168.1.237] ([94.34.125.0])
 	by Aruba SMTP with ESMTPSA
-	id Sea5wczvrrbJKSea6w6A3J; Thu, 28 May 2026 19:31:42 +0200
+	id Sea5wczvrrbJKSea6w6A39; Thu, 28 May 2026 19:31:42 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1779989502; bh=SYIv7H7SpupxdJet3IQpOb3GAjuN7nX15ZBOx75fnxU=;
+	t=1779989502; bh=19Z+zdaXGI3FYfSGWQoCBXevBSvCZqWMLW3DMW3r/lw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:To;
-	b=JjfcVLnv8Z9gfg+QYPbUQjBZthMfNSpIwH00Mgq/gLV3IUWNiOVC6erSiHyabCswF
-	 HCPSI8+YsNtzmr1j079ODdWLTrL2vmYR+4t8mB+L9maQ45wtdKiSvV+DpJ25n2MGrt
-	 3uuW6kDy+Nw+VAdhc8en1EkEnbIe3HgRQleXnb03iUP4LY8XDBy23KIojKzO1+0OeK
-	 eMYj3Z3BbcV1tTcsuewJDFPAvDtpQjpRQ/09TNVfNaYMA9Xj0/s993omWdTWnxqDWt
-	 2z6fRv/uJK3jPuYghmaqM63T+H6kkgAlC1npifv6NrnnNhb/eass3hPmUJQGqqiwSs
-	 20gZwMipH1EZA==
+	b=GSetKNajeSjQPvm6v9X83qDUhcXhY4+R2ef8/HQNnHNIEDa7/tdvN0jnNbXn4MEhK
+	 WIvjBgty8cIu5/FzX8DEiP5hTMH6R9XIC0ZSq2IxUO4uaC9ZZYI/eLzdHlP/jKxwWB
+	 KzgfCOPXay1hqZG67LcBSUIGSRvQMNh4n0HybTomHYUalwPZ1le9QJJLy4Kf444oWB
+	 YeJ7YvwUIzeEb1Z66FJSd48X18bF7qX7AAB4vFze16YLhdVgbGSokZOpF0SIU34MUp
+	 kwTmuZKfbhrWC8R1wVqvWyZ/GJo44WOWe8fLpdKZggeVT8lDCskvtojjMuDDPJDklZ
+	 aAQQQzji4M6GA==
 From: Alessio Ferri <alessio.ferri@mythread.it>
-Date: Thu, 28 May 2026 19:31:36 +0200
-Subject: [PATCH v4 2/7] b43: add d11 core revision 0x16 to id table
+Date: Thu, 28 May 2026 19:31:35 +0200
+Subject: [PATCH v4 1/7] b43: add firmware mappings for rev22
 MIME-Version: 1.0
-Message-Id: <20260528-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v4-2-464566194d47@gmail.com>
+Message-Id: <20260528-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v4-1-464566194d47@gmail.com>
 References: <20260528-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v4-0-464566194d47@gmail.com>
 In-Reply-To: <20260528-b43_complete_n_phy_rev_8_radio_2057_rev_8_support-v4-0-464566194d47@gmail.com>
 To: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, 
@@ -53,8 +53,8 @@ X-CMAE-Envelope: MS4xfOUW+OMsbislXLVfjghoLiIMSllfjXG3jKhyT1qtr1TPotfGmGoeb8vIdxF
  29rmtnLnULRa/0VO3EcRCGmWXrooQhLCSqu40xytABMkKlcKB3hRVoC95GKPgsnpJAd3K9lN6GO5nNKsx17R2Mutn7NSdr9S/uiqb1CtsCb/hg8E+yllqt/u
  ISNj8R6MRy9W4IQM8xcXYODVPcwBRGWI658r2/xDq9z4g/xbS34L7GLyOev25WmdqYS+z22dTV35Abi8K3uXSBOpyhKw+cyRTuLnPPUyqtk=
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260528_103146_826011_1C726E60 
-X-CRM114-Status: UNSURE (   8.60  )
+X-CRM114-CacheID: sfid-20260528_103146_842629_2797A20D 
+X-CRM114-Status: UNSURE (   8.64  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -72,36 +72,51 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-Add d11 core revision 0x16 (= 22) to the b43 bcma device id table.
-
-The b43 bcma id table covers d11 revisions 0x11, 0x15, 0x17, 0x18,
-0x1C, 0x1D, 0x1E, 0x28 and 0x2A. Revision 0x16 belongs to the same
-N-PHY family as revisions 0x17 and 0x18 (radio 2057) and needs no
-new PHY or radio code beyond the radio_rev 8 dispatcher entries
-added later in this series - only the device id entry is missing.
-Without it bcma scan enumerates the 802.11 core but no driver binds.
-
-The revision is used by the Broadcom BCM6362 single-die integrated
-2.4 GHz wireless block found in xDSL SoCs.
+add the specific firmware mappings for rev22, and drop comments wondering about rev22 initvals
 
 Assisted-by: Claude:claude-4.7-opus
 Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 ---
- drivers/net/wireless/broadcom/b43/main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/broadcom/b43/main.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index 37c5d9928..85ea8fdd9 100644
+index b0e6aeb0b..37c5d9928 100644
 --- a/drivers/net/wireless/broadcom/b43/main.c
 +++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -117,6 +117,7 @@ MODULE_PARM_DESC(allhwsupport, "Enable support for all hardware (even it if over
- static const struct bcma_device_id b43_bcma_tbl[] = {
- 	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x11, BCMA_ANY_CLASS),
- 	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x15, BCMA_ANY_CLASS),
-+	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x16, BCMA_ANY_CLASS),
- 	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x17, BCMA_ANY_CLASS),
- 	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x18, BCMA_ANY_CLASS),
- 	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_80211, 0x1C, BCMA_ANY_CLASS),
+@@ -2344,6 +2344,10 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+ 		if (phy->type == B43_PHYTYPE_N)
+ 			filename = "ucode16_mimo";
+ 		break;
++	case 22:
++		if (phy->type == B43_PHYTYPE_N)
++			filename = "ucode22_mimo";
++		break;
+ 	case 16 ... 19:
+ 		if (phy->type == B43_PHYTYPE_N)
+ 			filename = "ucode16_mimo";
+@@ -2405,7 +2409,9 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+ 		else if (rev == 24)
+ 			filename = "n0initvals24";
+ 		else if (rev == 23)
+-			filename = "n0initvals16"; /* What about n0initvals22? */
++			filename = "n0initvals16";
++		else if (rev == 22)
++			filename = "n0initvals22";
+ 		else if (rev >= 16 && rev <= 18)
+ 			filename = "n0initvals16";
+ 		else if (rev >= 11 && rev <= 12)
+@@ -2465,7 +2471,9 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
+ 		else if (rev == 24)
+ 			filename = "n0bsinitvals24";
+ 		else if (rev == 23)
+-			filename = "n0bsinitvals16"; /* What about n0bsinitvals22? */
++			filename = "n0bsinitvals16";
++		else if (rev == 22)
++			filename = "n0bsinitvals22";
+ 		else if (rev >= 16 && rev <= 18)
+ 			filename = "n0bsinitvals16";
+ 		else if (rev >= 11 && rev <= 12)
 
 -- 
 2.54.0
