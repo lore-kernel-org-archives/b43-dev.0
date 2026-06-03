@@ -4,83 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0D9B1CD6E55
-	for <b43-dev@archiver.kernel.org>; Wed,  3 Jun 2026 12:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2C7B7CD6E55
+	for <b43-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Date:Subject:Cc
-	:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=5X0JZqN1AcLtliIKf4ugPOX4BBKMSSa6E1DZe5GNE4Y=; b=nnEEEGxTq2/LdK
-	yxTqGpEHFqFxdR3VsGUdFYGEnOfoZRocL1GcgIUOLc5/hxBm0WLDigIBeH8CMGmlfKF24xEBcAT+a
-	w2I5Z73c3mWUhnf07vkel5rCq8NfgHTMfPyI1/wi9ncaeN1O7/XYg9EDOxe6ebN/9vLKg4FWSO7/f
-	bsyj7jV3D45EjfhAdJIc7qrTl878YAlFr39bFqKmkbFaA+5Rpyp0uDkXTlye0B++5tKdCz39Dpr0w
-	K+u+KViIP54DeXmlCw+ncAcNRMnJC25QZvqkvPzA4J5z4IEAms7eBdl2Am2r6/dSkx7dVRc62ZGxV
-	sJjrpGrQKcXvBAlrC+gg==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=inVucwKiCEaEpgNHrKg7d1zszQB+rMQ+cinpr4uQBO4=; b=kdvlKxszlOXQLLhHd3j9PYMDlJ
+	yG1PJPWJRSKgvhCkUyzrnFtuxOj43B3SmYkn96/kQl8ye/8jFgrCu7Vr0EtB2Ukfd+VO4HUqQlZLV
+	LOP91lReDEwcbFl4GEQqtvDmpY3UK8JiDrAVIjdMYda2dEII23odcISNgMGJPOxckvJG8XWVqpYhy
+	U6tUJEwilaWkvdC4wIsw9wcklY6Lhy367iPkv9RZv7K3RBuKrtEIF5/6teO8RFju9K2aMZVdqTwTv
+	LBD0Wuob2WF+hJRHkLWR3n+31csF4DKH80i1VjLV2xx0R7Wg4UjlWkg6txrZJ7tfz9TMjOTBQ05Y/
+	FB5nekaw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wUl6m-0000000F65V-0iiP;
-	Wed, 03 Jun 2026 12:54:08 +0000
-Received: from mail-pl1-x62d.google.com ([2607:f8b0:4864:20::62d])
+	id 1wUnxv-0000000FTbA-19Vs;
+	Wed, 03 Jun 2026 15:57:11 +0000
+Received: from bues.ch ([2a01:4f8:1c0c:6e7f::1] helo=mail.bues.ch)
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wUl6L-0000000F64m-2RL9
+	id 1wUnxs-0000000FTaN-46qR
 	for b43-dev@lists.infradead.org;
-	Wed, 03 Jun 2026 12:53:49 +0000
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-2c0c379e8ffso25575885ad.3
-        for <b43-dev@lists.infradead.org>; Wed, 03 Jun 2026 05:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780491220; x=1781096020; darn=lists.infradead.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RUtxi7gFFBB2jFLI9gsgqqsOc9t5I3VJP9BfFAwjBc=;
-        b=OBSQWZ7xx861sHIkqATQc+1F8pVM1c/5xe32Lo9K0IntNhdq0xdbbOhnWaiN0qyrIz
-         elPPQCVVLYLQrhkMpeaQ13Oe99j5ngtmpOB+HEwGYNDsvwC1qJFqRzisbwV0HjXriVKA
-         ZxZWAf3laV25H+hBLmpvIZsOIHSv9HUGBGcqgTJ6ONV8SvwkGraUn/7Xs2eQScgnMiw0
-         7rnulcsUKjAc2/1VFPJzYpmK/3O/aDkxNU/0ZhVpTvNJX1CUn0t0o3rhQXVddCKHEWbN
-         tLkjeYj+EV4HSvpAftBStlZlN2tmC28ukrb48TWzVnE4VJeG91wMR62Gx3R2qzemQbcf
-         8irQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780491220; x=1781096020;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6RUtxi7gFFBB2jFLI9gsgqqsOc9t5I3VJP9BfFAwjBc=;
-        b=hsZAFUX45CqXUAhUXlOxVr/E23ehgJWIfLmOzakzs9wdkZ+5UlfLKuhjU6W4ha3SgA
-         pPnWewhd4+PqfKaP9XLMh9FCJn/HZi5+0m8xYmQ5IKLvS15KJkLs3uY2ylDZo5G9akqa
-         nyxeD9/R/ZHm2yD5xBd8LoObIrDYJYv1YPtODT592zZQCTlzuWNZ/TvgyuAouxCh0Vu4
-         mDx5Pn/mrZEd02Oqsm28jRDHtvmjfAyg0y0aw+cKq9jQvVc3siEaI0qBtof27epnrW8Z
-         nyH96zVBhK9eCx1p8U/oObPEvbdJDDi5L9cKR3mnp/B30GNWoqbaP0k0Tloq/fRa1hv2
-         /vMw==
-X-Gm-Message-State: AOJu0YweQYjxwhcMlyoQTohxUufVy7nSRD1NYKssZlzNw5VkCzQVs2fe
-	HSRWAXv/7Euz8nqP62p2V1WWPudXVR+OBHnWgVYvQrzMFowc9EwowuJM
-X-Gm-Gg: Acq92OEu4ODrEub5TVJaTEcSQtn1iIpkKjMoY2eUELXbqDYkydtIMuKOOsjcJSOpaPT
-	1LJ4L4MNwpjG8UnoDReo9wJe6b167HJw6YpQmJonicx4s2oaYKKeiosyfyEz3FD5EXtyjUB+R+c
-	cVZ5UdOpKg37U0Hd7YuuG2v+cVJzKrWD82rdbFpr7N5VPjRNPHaxNiIwn3wGrV7GGSR+M1vmk+q
-	APcgfaTHorqjFsZVJs91ddSTRfeY329msoSw7iCm8j2EUer9wP4KO+CXaFCCrcS04gQlORytZ7s
-	TAAAqnCGaHJBbZqL+NwAfd766oUF1UtbZYIBjIqkqSeQP3BS7oWy9eJsc5mXMvckd9I5RqJcF6C
-	mqISgC2CXkYgDeV7gQnCITCFQTSYFSPUvE9mELViV92bcbOkyb/3w/hCKtNMX+DiAtdpBVplZ5Y
-	t5UDzmXSHXsdzdEdKAcSXuH7EJytxNPBbzQg74eozSxjW+s3EV6luq
-X-Received: by 2002:a17:903:2409:b0:2c0:bb11:19c8 with SMTP id d9443c01a7336-2c1641be73fmr37291035ad.36.1780491219737;
-        Wed, 03 Jun 2026 05:53:39 -0700 (PDT)
-Received: from jeevaanandh.. ([223.187.113.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c16649ab01sm24449245ad.71.2026.06.03.05.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2026 05:53:39 -0700 (PDT)
-From: Jeeva Anandh <anandhjeeva215@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: b43-dev@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jeeva Anandh <anandhjeeva215@gmail.com>
-Subject: [PATCH] b43legacy: remove redundant mask bit set
-Date: Wed,  3 Jun 2026 12:53:31 +0000
-Message-ID: <20260603125331.6310-1-anandhjeeva215@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Wed, 03 Jun 2026 15:57:10 +0000
+Date: Wed, 3 Jun 2026 17:56:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bues.ch; s=main;
+	t=1780502222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zrNSRM1Z4CEXimJhWlKdTHX8Qi2VKmaYmJepC+k/Uh8=;
+	b=LdRqLtvBCwu7MaAyQ4Y+4digiuhV8Mss/XeLrk8/j4X0oDmXjjWYklrdknUGNwT1SBOrQY
+	OvHj3EoQcEWDM758+GoVX/4seeTGR47vvR0ojtnyOY5xjlsQio+X0fIOqfTKnSIDOeE0w1
+	ciyd/lMGXziERPaf/ZXjKsgrfkxh0SOQ+fKvRpavQjMJlt76HpQLLV6VeF1iq+letpA27m
+	9vOaKpoA83WXqMN8gvsC6oXM/me0IVLuTODofhtEhghAuv6L7+b2MgjB/hXfrM3kXE2doX
+	bNMu1OQOkW4DmDpI0smlN5IERvQ6fVHPLaDVac06EcWddv+DeYcTMj8+p4SIQQ==
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Jeeva Anandh <anandhjeeva215@gmail.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] b43legacy: remove redundant mask bit set
+Message-ID: <20260603175622.3816e48d@barney>
+In-Reply-To: <20260603125331.6310-1-anandhjeeva215@gmail.com>
+References: <20260603125331.6310-1-anandhjeeva215@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260603_055341_860325_337105EF 
-X-CRM114-Status: UNSURE (   9.57  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20260603_085709_214341_6009FD10 
+X-CRM114-Status: GOOD (  15.81  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -92,38 +63,91 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============0258639100835581276=="
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-mask is initialized to 0x0000001F, which already contains
-the 0x0010 bit. Therefore the conditional OR operation is
-redundant and can be removed.
+--===============0258639100835581276==
+Content-Type: multipart/signed; boundary="Sig_/DwH1_DYjyQLfw_tQzHJPZ2i";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 
-Signed-off-by: Jeeva Anandh <anandhjeeva215@gmail.com>
----
- drivers/net/wireless/broadcom/b43legacy/main.c | 2 --
- 1 file changed, 2 deletions(-)
+--Sig_/DwH1_DYjyQLfw_tQzHJPZ2i
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
-index 6b3e0b2bbca7..d32bffa6f009 100644
---- a/drivers/net/wireless/broadcom/b43legacy/main.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/main.c
-@@ -1904,8 +1904,6 @@ static int b43legacy_gpio_init(struct b43legacy_wldev *dev)
- 		mask |= 0x0200;
- 		set |= 0x0200;
- 	}
--	if (dev->dev->id.revision >= 2)
--		mask  |= 0x0010; /* FIXME: This is redundant. */
- 
- #ifdef CONFIG_SSB_DRIVER_PCICORE
- 	pcidev = bus->pcicore.dev;
--- 
-2.43.0
+On Wed,  3 Jun 2026 12:53:31 +0000
+Jeeva Anandh <anandhjeeva215@gmail.com> wrote:
 
+> mask is initialized to 0x0000001F, which already contains
+> the 0x0010 bit. Therefore the conditional OR operation is
+> redundant and can be removed.
+>=20
+> Signed-off-by: Jeeva Anandh <anandhjeeva215@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/b43legacy/main.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net=
+/wireless/broadcom/b43legacy/main.c
+> index 6b3e0b2bbca7..d32bffa6f009 100644
+> --- a/drivers/net/wireless/broadcom/b43legacy/main.c
+> +++ b/drivers/net/wireless/broadcom/b43legacy/main.c
+> @@ -1904,8 +1904,6 @@ static int b43legacy_gpio_init(struct b43legacy_wld=
+ev *dev)
+>  		mask |=3D 0x0200;
+>  		set |=3D 0x0200;
+>  	}
+> -	if (dev->dev->id.revision >=3D 2)
+> -		mask  |=3D 0x0010; /* FIXME: This is redundant. */
+> =20
+>  #ifdef CONFIG_SSB_DRIVER_PCICORE
+>  	pcidev =3D bus->pcicore.dev;
+
+No, please don't just remove these things.
+There is a FIXME in the comment, because the author already noticed that th=
+is
+was strange and that there probably is an unknown reason for this.
+Just removing this FIXME without clarifying the underlying reason
+does not improve the code quality.
+
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
+
+--Sig_/DwH1_DYjyQLfw_tQzHJPZ2i
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmogTqYACgkQ9TK+HZCN
+iw4rIw/7BmJ/cX5IldAqIHP1+YokL2qpD0dZ5HPwnGDcMV0ftM0+akuzV2xtxQPW
+jr31qZOMDOOlEJ0QivrsGKDpWI4iBKNYKygOfnztdHYCfjIesuz9Mx8zNroNog9A
+3LlNyAmAk9xghW0dd0ehu71rGvshY3UATCZXxcyIhqNhsmODck5RWSfdYaUCI+s/
+R/ns6t/A1cVgm6NqeSgWyEnUYtXXIiWrGL59O34pbxwIK6XsQ2n4p9XBqV5q56eu
+bnISEdgaGSUUilfW1jHMIIvBA1OAr/ZMpp/MISWr04AnUQtpHKFQDUl+OoHpaBJj
+J9rONGQdHV4LTJpOQyvS6ujIlEvdR8EtSxc3fKa9btjGMS1uoJJrqIAi9brrNfR7
+myPzTjArQJFLVtplGLKdDwRvIYGIQ0HP8sD5+MRzL1Nnc1v6UQacmSwK+llMW8EM
+O5Y/gk+S9lYRaVcjKtn5S0N82a4+gPWkVZ8oL0siGOJCCNMLQk2dW0xBS4BQiw2T
+BUt6yzV+NTk9iqSyqkWGhY2ZNg/BvC/2M7Iyogy/f4W3/03JgoZH3tbKId93+1wB
+eL2gyqfFezjuVuKMnUTS75ygkdEC9ea2octVN5OtTYcvKWlyJQORE/Uv2LJHKdpl
+f3eSBLhlz2g0c96cXyw2HfWqOsYNnl8vEddu5x5VgBE2yr4DuG4=
+=m2BT
+-----END PGP SIGNATURE-----
+
+--Sig_/DwH1_DYjyQLfw_tQzHJPZ2i--
+
+
+--===============0258639100835581276==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
+
+--===============0258639100835581276==--
+
