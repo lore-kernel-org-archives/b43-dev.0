@@ -4,63 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33E5FCD98F7
-	for <b43-dev@archiver.kernel.org>; Wed, 17 Jun 2026 21:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 008C3CD98E4
+	for <b43-dev@archiver.kernel.org>; Wed, 17 Jun 2026 21:43:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Cc:To:MIME-Version:Message-Id:Date:
-	Subject:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=U95IvV7VApNTtv5aTI2kS1I+xmnAZx7tKka/pvvWjG0=; b=D1O9wY0Zd93jT4
-	MtmrFlWC7UkL7xKXWiGPhvpNQF9BlOkZzhPGBFL0Oz+f3ngT6rS06zt2mD4/xorWqKgBhL1zP4BIV
-	foab+Pfqldvev8252eG2w+Parv+UbgpfiLXJxTs0dqI0IVvR+MfSSUn7LE7Bp4AiXjRmv49g+v1sC
-	iX4bgdQ2IRMzJEL74g1QfvycGj26si66t/X5zQ+hHjZiISBh8yLWoF2ZLKnDeJxyCFKPrRDvycz88
-	WKI4wV/cvxHLwPQCA0LrVb3TxKeYLeUHL2cmGafioCq7CslEtGZWFIz2zjDBiwB6DQqhIBc0H2Qad
-	9wTQbNHffUocbNhJve1A==;
+	List-Archive:List-Unsubscribe:List-Id:Cc:To:In-Reply-To:References:Message-Id
+	:MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=QHYWE8dGaRA31x8QIzydXSNmllhZt+PyYFT4ezMarNI=; b=MozXzEupNLIjVv
+	/O9VngkfDzBN4u9Hvl1VFu4H4dPvotKJQQ3/xYxnBMi9VE05ma3fJa7iVismRPmGQNfmphckyCn0N
+	HqsS1U9SnihMGP0sB2uJIqWdesHN09geW3bGH7Lq+24Su3hoMb93+yuNN12yJnA5pWP+ExVCojPFm
+	QT2k4S7Fs8Hbn/pbY+Hk2sEwm9F8kEHDxs6d+nt573ZWyVz69EFzEIj8obgRDCgEqIpF7bta0ivfS
+	NJbWmy7UjJekgOJRnSszTtAZZcrG29wqu1OFcQQlB/06ro+ruO93N3fY5mLRLiAlnSLbbNIiHuU9d
+	fx0cKIty3kWKw46riHrA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wZy2Q-00000000MO8-29Vp;
-	Wed, 17 Jun 2026 21:43:10 +0000
+	id 1wZy2R-00000000MP6-1FZT;
+	Wed, 17 Jun 2026 21:43:11 +0000
 Received: from smtpcmd14162.aruba.it ([62.149.156.162])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wZy2E-00000000MMU-3EFH
+	id 1wZy2E-00000000MMV-3FlN
 	for b43-dev@lists.infradead.org;
-	Wed, 17 Jun 2026 21:43:01 +0000
+	Wed, 17 Jun 2026 21:43:03 +0000
 Received: from [192.168.1.237] ([94.34.125.0])
 	by Aruba SMTP with ESMTPSA
-	id Zy28wJnjp4OeoZy28w468w; Wed, 17 Jun 2026 23:42:52 +0200
+	id Zy28wJnjp4OeoZy29w469l; Wed, 17 Jun 2026 23:42:53 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1781732572; bh=f+XtEgkPLZSHekMUUvMVbtdPZm0NJYx2eEDhla3URaM=;
-	h=From:Subject:Date:MIME-Version:Content-Type:To;
-	b=k2VbzSknT7viOgP9pXtVmlAThTv7A0jk7DaiSiD90PeLGjM3tenS+5J+RIkv+ctMc
-	 eF2mx804mgO5X3l9mPnxm4WQ56Ma2UukSEdg/b0z5X52GM7lgWauUeTfAOdx+lltdM
-	 Mlqg9/i69Yl4YVSZ3ujYtSp/nCu0rM5/a2JKZ4ZzdMCCAkPv2448iEQAPrGk6Ey8Zf
-	 ukL1pSQ6JElpUj04o2VoWhLOWZlRDKhRfczqXXs654xPKfataJzMX07Nae2X2EQrag
-	 piG7OvPw8IJXS8gtEjXi5H0Qx5xX8L+c9AG6mruupRlQZ1Mqm7jTrMQ95zDWQW9NYG
-	 7OIwdbBu2vFsg==
+	t=1781732573; bh=RemSfhcYBv9IVakI5chxNmWExg0Vjzc0TBsj1lPl7VE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:To;
+	b=jM0IUaCv+UpqTDEf9wPrzPIQ1qWtMUb/qidcdGLVgc8OQcJZnqeNeft0IkxpB6fum
+	 kdSJV2/IrUva+nPHwyPC63LhM2+wc6vDVK6rNDc2guhkVUjp9VvCHGqVis91sdYBpU
+	 nOG2JshjMsjWuBEJCqi4BWB3EX1YRPGnAxzhFYFgvLYIcXCkBz7FTdOsk1cdjXUUYf
+	 nRpTvLW8uRQMOGR51PX1dkgbFEZORB37NgwLrNHqefo2NawtubEemVK/z/Iih3Fuo/
+	 Z9QMO1wctJZO09EgFeL/gAmhql8GSbyiTTCjns3hoyD/Q1wFkXbUChIpYeYnJRhCM/
+	 0Htc5iTFQaAmg==
 From: Alessio Ferri <alessio.ferri@mythread.it>
-Subject: [PATCH 0/4] bcma/ssb/b43: BCM4352 AC-PHY wip
-Date: Wed, 17 Jun 2026 23:42:07 +0200
-Message-Id: <20260617-b43-add-4352-wip-v1-0-c81323496720@gmail.com>
+Date: Wed, 17 Jun 2026 23:42:10 +0200
+Subject: [PATCH 3/4] ssb: bcma: add SPROM revision 11 extraction
 MIME-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MPQqAMAxA4atIZgO28f8q4lBN1CwqLahQvLvF8
- RveixDEqwToswheLg167Akmz2De3L4KKieDLWxd1KbBqSR0zFhSZfHWExeayRGbquMWUnZ6WfT
- 5l8P4vh8yHx2+YgAAAA==
-X-Change-ID: 20260617-b43-add-4352-wip-f3c3a3d159d8
+Message-Id: <20260617-b43-add-4352-wip-v1-3-c81323496720@gmail.com>
+References: <20260617-b43-add-4352-wip-v1-0-c81323496720@gmail.com>
+In-Reply-To: <20260617-b43-add-4352-wip-v1-0-c81323496720@gmail.com>
 To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
  Michael Buesch <m@bues.ch>
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
  b43-dev@lists.infradead.org, Alessio Ferri <alessio.ferri@mythread.it>, 
  Alessio Ferri <alessio.ferri.3012@gmail.com>
 X-Mailer: b4 0.14.3
-X-CMAE-Envelope: MS4xfLXwwPZf+zvRvaxi04KLBEA+7NwsGZPt9cEHom9ia9PgTlNGuLphhMD0DYzzhzekT46IGqoJ5Ci+Kv0ZjxbyfCH3JefsPZwnhqNHbOgW39uO49hQBP5p
- Splrew9fv0Oh69c1jydST3GMK31ZUjC2UNWnoBedbHQHGbshruON6Pz7A298As4uFC4oG9gmHfKSkUFr2W+nN1X4HXptdwrPjekUYgEDcY6s8vUJt6eqj0Fv
- NkbAHhct2USse8BkK/cgGQoJ+B8SKA7b8l4bZrIvCqox+9UWYLSs2vcQlRgCxJ6rHt3v1JXYEPfKlyHmPkRDv/93Wu1CrnlNm0XJ5MFzVYv2fi8zEwrBkUPR
- w39iFSpaFaIwlk86rmDfMUFWpRSJQHuJ7f6yX/k1jmw6tW/Ke63EXNVeykJ/I3AUlt4Rk1n3
+X-CMAE-Envelope: MS4xfPga/+jcvE7OuVVkZZs2F7agCubGjDhtcpV1hH4MibJtEXcWFUoXf4T1Rcg46b/cSooFJI1uB+/CcAr/9DA2GnTTvr//ENtbOm4ZlZw14Hbjw+y03/8N
+ i44DKnR74un2GonNyUEQSXpwwq/KsP0PseoIwO0fk9zgo2Y9wNj5nojY1FVIJ9Ib6fRVKLYs9RwK8D3eYFjibOy5IqEA6ec+2lisEMwSiQwiwWjH2/zN87eW
+ pJYLaqmC4TX4aKJKhW2DnSD9+Qx5bCTexrywcCV81yUW0vva/8k/WRabCymJEErXpUPCB4SGuhMH9JhqKLdoZThVJi5iGOAeYeNaj5ar55WytF6pCt6C9vOf
+ IFxNgFy2C4Vhx+LQbfeqHKI7f/Due0rsxajeRDiqdC4loLp7fhhxNHhS8H/OrJgZGypV1R8i
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260617_144259_268537_B5983178 
-X-CRM114-Status: GOOD (  10.29  )
+X-CRM114-CacheID: sfid-20260617_144259_292837_F0C422F6 
+X-CRM114-Status: GOOD (  16.89  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -77,65 +75,253 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-This series introduce the initial support for BCM4352, an AC class
-chip, this is just a gentle introduction before the bulk of edits, 
-because in reality i already have AC support working up to RX signal 
-and now debugging TX.
-From the latest dmesg grepped from my router, this patch series allow
-the user to reach to the "Bus registered" message plus the correct init
-of the DMA that took me two weeks to discover.
+From: Alessio Ferri <alessio.ferri.3012@gmail.com>
 
-[   18.280000] bcma-pci-bridge 0000:01:00.0: enabling device (0000 -> 0002)
-[   18.280000] bcma-pci-bridge 0000:01:00.0: bus0: Found chip with id 0x4352, rev 0x03 and package 0x01
-[   18.290000] bcma-pci-bridge 0000:01:00.0: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
-[   18.300000] bcma-pci-bridge 0000:01:00.0: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
-[   18.320000] bcma-pci-bridge 0000:01:00.0: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
-[   18.330000] bcma-pci-bridge 0000:01:00.0: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
-[   18.340000] bcma-pci-bridge 0000:01:00.0: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
-[   18.380000] bcma: bcma: SPROM rev 11 parsed: board=0x0668 rev=4947 ccode=0x0000 txchain=0x3 rxchain=0x3 antswitch=0 subband5gver=4
-[   18.390000] bcma: bcma: SPROM r11 chain0 rxgains 2g={0,0,0} 5gl={3,6,1} 5gm={7,15,1} 5gh={7,15,1}
-[   18.400000] bcma: bcma: SPROM r11 chain1 rxgains 2g={0,0,0} 5gl={3,6,1} 5gm={7,15,1} 5gh={7,15,1}
-[   18.410000] bcma: bcma: SPROM r11 chain2 rxgains 2g={0,0,0} 5gl={3,6,1} 5gm={7,15,1} 5gh={7,15,1}
-[   18.420000] bcma-pci-bridge 0000:01:00.0: bus0: Bus registered
-[   19.340000] b43-phy0: Broadcom 4352 WLAN found (core revision 42)
-[   19.340000] b43-phy0: Found PHY: Analog 12, Type 11 (AC), Revision 1
-[   19.350000] b43-phy0: Found Radio: Manuf 0x17F, ID 0x2069, Revision 4, Version 0
-[   44.250000] b43-phy0: DEBUG pre-PSM_RUN: MACCTL=0x00020504 IRQ_REASON=0x00000000 SHM[UCODEREV]=0x0000
-[   44.260000] b43-phy0: DEBUG post-PSM_RUN: MACCTL=0x00020502 IRQ_REASON=0x00000000
-[   44.260000] b43-phy0: Loading firmware version 784.2 (2012-08-15 21:43:22)
-[   44.270000] b43-phy0: phy-ac: rxgain_init applied (2 cores, UNII-1 5gl, sprom rev 11)
-[   44.280000] b43-phy0: phy-ac: rxgain core0: triso=6 elnagain=3 trelnabyp=1 (gainctx=0x14)
-[   44.290000] b43-phy0: phy-ac: rxgain core1: triso=6 elnagain=3 trelnabyp=1 (gainctx=0x14)
-[   44.500000] b43-phy0: DEBUG dma_setup RX DMA64: base=0x020c0000 alo=0x020c0000 ahi=0x80000000 addrext=0x0 translation=0x80000000 in_low=0 ctl=0x0000084d
-[   44.720000] b43 bcma0:1 phy0-ap0: entered allmulticast mode
-[   44.730000] b43 bcma0:1 phy0-ap0: entered promiscuous mode
+SPROM revision 11 is needed with the BCM4352/BCM4360 family. Extend
+struct ssb_sprom with the rev-11 fields actually parsed (per-band rxgains,
+per-chain maxp/pa power info, 80/160 MHz MCS power offsets, pdoffset40ma)
+and add bcma_sprom_extract_r11(), dispatched from bcma_sprom_get() when the
+SPROM revision word reads as 11. bcma_sprom_get() already probes the rev-11
+buffer size, and bcma_sprom_valid() populates bus->sprom.revision before
+the dispatch. Revisions <= 10 keep the extract_r8 path.
 
-The two patches generated with the help of claude are marked as such.
-The other two are minimal and did not require assistance from claude.
+Header fields (IL0MAC/ANTAVAIL/TXRXC/CCODE) reuse the rev-8 masks/shifts;
+only the absolute offsets moved. CCODE uses 0x96, since rev-8 0x92 collides
+with the middle word of the rev-11 IL0MAC block.
 
-Assisted-by: claude:claude-Opus-4.8
+Assisted-by: Claude:claude-Opus-4.8
 Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 ---
-Alessio Ferri (4):
-      bcma: host_pci: add BCM4352 device ID 0x43b3
-      bcma: pmu: program max resource mask on BCM4352/BCM4360
-      ssb: bcma: add SPROM revision 11 extraction
-      b43: align DMA64 descriptor ring to 64K on AC cores
+ drivers/bcma/sprom.c         | 100 ++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/ssb/ssb.h      |  31 ++++++++++++++
+ include/linux/ssb/ssb_regs.h |  44 +++++++++++++++++++
+ 3 files changed, 174 insertions(+), 1 deletion(-)
 
- drivers/bcma/driver_chipcommon_pmu.c    |   8 +++
- drivers/bcma/host_pci.c                 |   1 +
- drivers/bcma/sprom.c                    | 100 +++++++++++++++++++++++++++++++-
- drivers/net/wireless/broadcom/b43/dma.c |  20 +++++--
- include/linux/ssb/ssb.h                 |  31 ++++++++++
- include/linux/ssb/ssb_regs.h            |  44 ++++++++++++++
- 6 files changed, 199 insertions(+), 5 deletions(-)
----
-base-commit: e771677c937da5808f7b6c1f0e4a97ec1a84f8a8
-change-id: 20260617-b43-add-4352-wip-f3c3a3d159d8
+diff --git a/drivers/bcma/sprom.c b/drivers/bcma/sprom.c
+index e668ad7963fc..514c8149dbe7 100644
+--- a/drivers/bcma/sprom.c
++++ b/drivers/bcma/sprom.c
+@@ -474,6 +474,101 @@ static void bcma_sprom_extract_r8(struct bcma_bus *bus, const u16 *sprom)
+ 	     SSB_SPROM8_TEMPDELTA_HYSTERESIS_SHIFT);
+ }
+ 
++static void bcma_sprom_unpack_rxgains(struct ssb_sprom_rxgains *out,
++				      int chain, u8 packed)
++{
++	out->trelnabyp[chain] = (packed >> 7) & 0x01;
++	out->triso[chain]     = (packed >> 3) & 0x0f;
++	out->elnagain[chain]  =  packed       & 0x07;
++}
++
++static void bcma_sprom_extract_r11(struct bcma_bus *bus, const u16 *sprom)
++{
++	static const u16 pwr_info_offset[] = {
++		SSB_SPROM11_PWR_INFO_CORE0,
++		SSB_SPROM11_PWR_INFO_CORE1,
++		SSB_SPROM11_PWR_INFO_CORE2,
++	};
++	u16 v;
++	int i, j;
++
++	BUILD_BUG_ON(ARRAY_SIZE(pwr_info_offset) >
++		     ARRAY_SIZE(bus->sprom.core_pwr_info));
++
++	/* Header: rev-11 offsets, rev-8 masks/shifts. */
++	for (i = 0; i < 3; i++) {
++		v = sprom[SPOFF(SSB_SPROM11_IL0MAC) + i];
++		*(((__be16 *)bus->sprom.il0mac) + i) = cpu_to_be16(v);
++	}
++
++	SPEX(board_rev, SSB_SPROM8_BOARDREV, ~0, 0);
++	SPEX(board_type, SSB_SPROM1_SPID, ~0, 0);
++
++	SPEX(country_code, SSB_SPROM11_CCODE, ~0, 0);
++	SPEX(ant_available_a, SSB_SPROM11_ANTAVAIL, SSB_SPROM8_ANTAVAIL_A,
++	     SSB_SPROM8_ANTAVAIL_A_SHIFT);
++	SPEX(ant_available_bg, SSB_SPROM11_ANTAVAIL, SSB_SPROM8_ANTAVAIL_BG,
++	     SSB_SPROM8_ANTAVAIL_BG_SHIFT);
++	SPEX(txchain, SSB_SPROM11_TXRXC, SSB_SPROM8_TXRXC_TXCHAIN,
++	     SSB_SPROM8_TXRXC_TXCHAIN_SHIFT);
++	SPEX(rxchain, SSB_SPROM11_TXRXC, SSB_SPROM8_TXRXC_RXCHAIN,
++	     SSB_SPROM8_TXRXC_RXCHAIN_SHIFT);
++	SPEX(antswitch, SSB_SPROM11_TXRXC, SSB_SPROM8_TXRXC_SWITCH,
++	     SSB_SPROM8_TXRXC_SWITCH_SHIFT);
++	SPEX(subband5gver, SSB_SPROM11_SUBBAND5GVER, 0x00ff, 0);
++
++	/* Per-chain power info. */
++	for (i = 0; i < ARRAY_SIZE(pwr_info_offset); i++) {
++		struct ssb_sprom_core_pwr_info *p = &bus->sprom.core_pwr_info[i];
++		u16 base = pwr_info_offset[i];
++
++		p->maxp2ga = sprom[SPOFF(base + SSB_SPROM11_PWR_MAXP2GA)] & 0xff;
++
++		for (j = 0; j < 3; j++)
++			p->pa2ga[j] = sprom[SPOFF(base + SSB_SPROM11_PWR_PA2GA) + j];
++
++		v = sprom[SPOFF(base + SSB_SPROM11_PWR_MAXP5GA)];
++		p->maxp5ga[0] = v & 0xff;
++		p->maxp5ga[1] = (v >> 8) & 0xff;
++		v = sprom[SPOFF(base + SSB_SPROM11_PWR_MAXP5GA) + 1];
++		p->maxp5ga[2] = v & 0xff;
++		p->maxp5ga[3] = (v >> 8) & 0xff;
++
++		for (j = 0; j < 12; j++)
++			p->pa5ga[j] = sprom[SPOFF(base + SSB_SPROM11_PWR_PA5GA) + j];
++
++		v = sprom[SPOFF(base + SSB_SPROM11_PWR_RXGAINS0)];
++		bcma_sprom_unpack_rxgains(&bus->sprom.rxgains_5gm, i,  v       & 0xff);
++		bcma_sprom_unpack_rxgains(&bus->sprom.rxgains_5gh, i, (v >> 8) & 0xff);
++		v = sprom[SPOFF(base + SSB_SPROM11_PWR_RXGAINS1)];
++		bcma_sprom_unpack_rxgains(&bus->sprom.rxgains_2g,  i,  v       & 0xff);
++		bcma_sprom_unpack_rxgains(&bus->sprom.rxgains_5gl, i, (v >> 8) & 0xff);
++	}
++
++	for (i = 0; i < 3; i++)
++		bus->sprom.pdoffset40ma[i] =
++			sprom[SPOFF(SSB_SPROM11_PDOFFSET40MA) + i];
++
++	SPEX(cckbw202gpo,           SSB_SPROM11_CCKBW202GPO,           ~0, 0);
++	SPEX(cckbw20ul2gpo,         SSB_SPROM11_CCKBW20UL2GPO,         ~0, 0);
++	SPEX32(mcsbw202gpo,         SSB_SPROM11_MCSBW202GPO,           ~0, 0);
++	SPEX32(mcsbw402gpo,         SSB_SPROM11_MCSBW402GPO,           ~0, 0);
++	SPEX(dot11agofdmhrbw202gpo, SSB_SPROM11_DOT11AGOFDMHRBW202GPO, ~0, 0);
++	SPEX(ofdmlrbw202gpo,        SSB_SPROM11_OFDMLRBW202GPO,        ~0, 0);
++	SPEX32(mcsbw205glpo,        SSB_SPROM11_MCSBW205GLPO,          ~0, 0);
++	SPEX32(mcsbw405glpo,        SSB_SPROM11_MCSBW405GLPO,          ~0, 0);
++	SPEX32(mcsbw805glpo,        SSB_SPROM11_MCSBW805GLPO,          ~0, 0);
++	SPEX32(mcsbw1605glpo,       SSB_SPROM11_MCSBW1605GLPO,         ~0, 0);
++	SPEX32(mcsbw205gmpo,        SSB_SPROM11_MCSBW205GMPO,          ~0, 0);
++	SPEX32(mcsbw405gmpo,        SSB_SPROM11_MCSBW405GMPO,          ~0, 0);
++	SPEX32(mcsbw805gmpo,        SSB_SPROM11_MCSBW805GMPO,          ~0, 0);
++	SPEX32(mcsbw1605gmpo,       SSB_SPROM11_MCSBW1605GMPO,         ~0, 0);
++	SPEX32(mcsbw205ghpo,        SSB_SPROM11_MCSBW205GHPO,          ~0, 0);
++	SPEX32(mcsbw405ghpo,        SSB_SPROM11_MCSBW405GHPO,          ~0, 0);
++	SPEX32(mcsbw805ghpo,        SSB_SPROM11_MCSBW805GHPO,          ~0, 0);
++	SPEX32(mcsbw1605ghpo,       SSB_SPROM11_MCSBW1605GHPO,         ~0, 0);
++}
++
+ /*
+  * Indicates the presence of external SPROM.
+  */
+@@ -640,7 +735,10 @@ int bcma_sprom_get(struct bcma_bus *bus)
+ 		bcma_warn(bus, "Invalid SPROM read from the PCIe card, trying to use fallback SPROM\n");
+ 		err = bcma_fill_sprom_with_fallback(bus, &bus->sprom);
+ 	} else {
+-		bcma_sprom_extract_r8(bus, sprom);
++		if (bus->sprom.revision == 11)
++			bcma_sprom_extract_r11(bus, sprom);
++		else
++			bcma_sprom_extract_r8(bus, sprom);
+ 		kfree(sprom);
+ 	}
+ 
+diff --git a/include/linux/ssb/ssb.h b/include/linux/ssb/ssb.h
+index e1fb11e0f12c..9d4a13c4eca3 100644
+--- a/include/linux/ssb/ssb.h
++++ b/include/linux/ssb/ssb.h
+@@ -23,6 +23,19 @@ struct ssb_sprom_core_pwr_info {
+ 	u8 itssi_2g, itssi_5g;
+ 	u8 maxpwr_2g, maxpwr_5gl, maxpwr_5g, maxpwr_5gh;
+ 	u16 pa_2g[4], pa_5gl[4], pa_5g[4], pa_5gh[4];
++
++	/* SROM rev 11 */
++	u8 maxp2ga;
++	u8 maxp5ga[4];
++	u16 pa2ga[3];
++	u16 pa5ga[12];
++};
++
++/* Per-band rx gain context, one value per RF chain. SROM rev 11. */
++struct ssb_sprom_rxgains {
++	u8 elnagain[3];
++	u8 triso[3];
++	u8 trelnabyp[3];
+ };
+ 
+ struct ssb_sprom {
+@@ -192,6 +205,24 @@ struct ssb_sprom {
+ 	u16 legofdm40duppo;
+ 	u8 sar2g;
+ 	u8 sar5g;
++
++	/* SROM rev 11. Populated only by the rev 11 extractor; zero on
++	 * rev <= 10 boards.
++	 */
++	struct ssb_sprom_rxgains rxgains_2g;
++	struct ssb_sprom_rxgains rxgains_5gl;
++	struct ssb_sprom_rxgains rxgains_5gm;
++	struct ssb_sprom_rxgains rxgains_5gh;
++	u8 subband5gver;
++	u16 dot11agofdmhrbw202gpo;
++	u16 ofdmlrbw202gpo;
++	u32 mcsbw805glpo;
++	u32 mcsbw805gmpo;
++	u32 mcsbw805ghpo;
++	u32 mcsbw1605glpo;
++	u32 mcsbw1605gmpo;
++	u32 mcsbw1605ghpo;
++	u16 pdoffset40ma[3];
+ };
+ 
+ /* Information about the PCB the circuitry is soldered on. */
+diff --git a/include/linux/ssb/ssb_regs.h b/include/linux/ssb/ssb_regs.h
+index 210f46494065..9fedf5dcdccd 100644
+--- a/include/linux/ssb/ssb_regs.h
++++ b/include/linux/ssb/ssb_regs.h
+@@ -606,6 +606,50 @@
+ #define SSB_SPROM8_BW40PO		0x0196
+ #define SSB_SPROM8_BWDUPPO		0x0198
+ 
++/* SROM revision 11. Only the header fields whose absolute offset moved
++ * are redefined; the bitfield masks/shifts are reused from rev 8.
++ */
++#define SSB_SPROM11_IL0MAC		0x0090	/* 6 byte MAC address */
++#define SSB_SPROM11_CCODE		0x0096	/* 2 byte country code */
++#define SSB_SPROM11_ANTAVAIL		0x00A0
++#define SSB_SPROM11_TXRXC		0x00A8
++#define SSB_SPROM11_PDOFFSET40MA	0x00CA	/* 3 x u16, one per chain */
++#define SSB_SPROM11_SUBBAND5GVER	0x00D6
++
++/* Per-chain power info blocks. Stride 0x28 bytes; field layout given by
++ * SSB_SPROM11_PWR_* below.
++ */
++#define SSB_SPROM11_PWR_INFO_CORE0	0x00D8
++#define SSB_SPROM11_PWR_INFO_CORE1	0x0100
++#define SSB_SPROM11_PWR_INFO_CORE2	0x0128
++
++#define SSB_SPROM11_PWR_MAXP2GA		0x0000	/* u8 in low byte */
++#define SSB_SPROM11_PWR_PA2GA		0x0002	/* 3 x u16 */
++#define SSB_SPROM11_PWR_RXGAINS0	0x0008	/* 5gm (lo) / 5gh (hi) */
++#define SSB_SPROM11_PWR_RXGAINS1	0x000A	/* 2g  (lo) / 5gl (hi) */
++#define SSB_SPROM11_PWR_MAXP5GA		0x000C	/* 2 x u16 -> 4 x u8 */
++#define SSB_SPROM11_PWR_PA5GA		0x0010	/* 12 x u16 */
++
++/* Power-per-rate region. */
++#define SSB_SPROM11_CCKBW202GPO		0x0150
++#define SSB_SPROM11_CCKBW20UL2GPO	0x0152
++#define SSB_SPROM11_MCSBW202GPO		0x0154
++#define SSB_SPROM11_MCSBW402GPO		0x0158
++#define SSB_SPROM11_DOT11AGOFDMHRBW202GPO 0x015C
++#define SSB_SPROM11_OFDMLRBW202GPO	0x015E
++#define SSB_SPROM11_MCSBW205GLPO	0x0160
++#define SSB_SPROM11_MCSBW405GLPO	0x0164
++#define SSB_SPROM11_MCSBW805GLPO	0x0168
++#define SSB_SPROM11_MCSBW1605GLPO	0x016C
++#define SSB_SPROM11_MCSBW205GMPO	0x0170
++#define SSB_SPROM11_MCSBW405GMPO	0x0174
++#define SSB_SPROM11_MCSBW805GMPO	0x0178
++#define SSB_SPROM11_MCSBW1605GMPO	0x017C
++#define SSB_SPROM11_MCSBW205GHPO	0x0180
++#define SSB_SPROM11_MCSBW405GHPO	0x0184
++#define SSB_SPROM11_MCSBW805GHPO	0x0188
++#define SSB_SPROM11_MCSBW1605GHPO	0x018C
++
+ /* Values for boardflags_lo read from SPROM */
+ #define SSB_BFL_BTCOEXIST		0x0001	/* implements Bluetooth coexistance */
+ #define SSB_BFL_PACTRL			0x0002	/* GPIO 9 controlling the PA */
 
-Best regards,
 -- 
-Alessio Ferri <alessio.ferri.3012@gmail.com>
+2.54.0
 
 
 _______________________________________________
