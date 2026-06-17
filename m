@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D94E7CD98F0
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C60E4CD98ED
 	for <b43-dev@archiver.kernel.org>; Wed, 17 Jun 2026 21:43:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
@@ -12,39 +12,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Archive:List-Unsubscribe:List-Id:Cc:To:In-Reply-To:References:Message-Id
 	:MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=h8s1fHapMT2FXXK42AWTkOx08e+TUFasJQSry36Q1kM=; b=GeiYqInbHnDH7Y
-	yQnugB+c8p2bRZml9Sqtovt8w0VTSClsmaBSX0zr34sHB2nJ3qtepFFf+xNeSPZSr3Fb3JXN8l5Hy
-	tu509I/uW+KBj7GydWrNHSDBdhVhoDN67LtOkbEMiDAdpiHLjZizheHPdX5VKnrqtRtqLIMJL1zYV
-	nxztWW7dQ02DF9FRfVlQKXG7dTZa/XbrGkOpK8SXvdnRVXFZwhStZuwbf0wkNgqDqgkwbgrZdRZkm
-	wKGiwgKkm7LhLo5+XWtJ04XYTCSVh8a0bDJp77ezpGVGsVu3K81mGcr0MEle7M50DjNqzQFnG9O/J
-	4Rt58eJ23GSMjsxN3aDw==;
+	List-Owner; bh=MHD/Yfz1BJqMLi4ovkQF8aIe49T10hpyR+tKfo6TswY=; b=L0aVQwLucd5d/h
+	uZ5HEjvCPpo9JQq3/2BNOsunsbJF+91GCnF1xz3YLTFl4bD91WmFxprUPkNMuPrfW+DgHVcs2WCii
+	xEp92+DjrwHuDdaq39348bAbEDAniEXzSR8GQ+pWTBeb8Vmm8rTEijVlt2RXRFwfqKrFWFAeRTmT7
+	sg0ZF8KimdufhKNK+xMpQTUKSPde/LDErdCTLe0XcqNs5N9nWRs1vOZTiqkCoMCmLHoC5d7+Aq39V
+	6tyrUsuiP02PepXfqmE6JeAKR/TuGNFJw6ZJOGcUX69JkD0a/jymWzmOhHwmQgYc9aPvFIHo+TnKE
+	EQxJKbCk9nrXOWtjFATA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wZy2Q-00000000MOr-3E3y;
+	id 1wZy2Q-00000000MOk-2aTu;
 	Wed, 17 Jun 2026 21:43:10 +0000
 Received: from smtpcmd14162.aruba.it ([62.149.156.162])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wZy2E-00000000MMS-3EOu
+	id 1wZy2E-00000000MMT-38mT
 	for b43-dev@lists.infradead.org;
-	Wed, 17 Jun 2026 21:43:02 +0000
+	Wed, 17 Jun 2026 21:43:01 +0000
 Received: from [192.168.1.237] ([94.34.125.0])
 	by Aruba SMTP with ESMTPSA
-	id Zy28wJnjp4OeoZy28w469S; Wed, 17 Jun 2026 23:42:53 +0200
+	id Zy28wJnjp4OeoZy28w4699; Wed, 17 Jun 2026 23:42:52 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1781732573; bh=hjXlednnPAavbfrdO2yxouzQ52Ff1GGT1R6xtl+uF48=;
+	t=1781732572; bh=wbPr2nXaCc8pvhEHTa71CECEb28g9TLw8qb1ftmdqDk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:To;
-	b=c4t6wd+hWnsU/IGOQ0N4aOQ4baitKYwsqm2leoT/5RCJdVe/IiLPHRg7ol2ZidE82
-	 EUpxq/iH8z/h5iT6X2zKIRSlYGtnecCcLP8JYp17euWmrCXB7WWAv5OmoPX4rcLVs4
-	 /W5dQi8hbNbBmfPTNpuHckMUyV59G80ppIcBzfp2jd+SHYOpy2e73+d+PDTxwVly05
-	 rXI0ZAb6e56mUYUBINe+cxUaib1MVOfewYbXr46lyZ0Kdkb3tDs1hKwnkwd/H+XqtQ
-	 EOsUdwXuKsqWunY+IFLaLdpC1xtXKWLTyQIocJEvmrIo67z4SjmUg2KVVuPTAY5+Hb
-	 EeliDjzZU500A==
+	b=D6kXGsZlSYC05UaNjXwV8d23mIMMuKslM7yA0k0Hh7OaIosmov8nkaKBexdSqGi0P
+	 yVJO0T4y9FEvwwupSe+hcgcdIGXhkYqouW7YhmaRR2Vmm8Tpb37drPzebVx8EYLY3N
+	 Eb/3CteJubEYdgGMZLpq+84Kjkgv+ghTExkV4d6f8kZYkX8vXbKtuUHMsYHyNm8x2O
+	 0mVPuftiPMqAIVMS+BNilZU1z56AP9QV4nGMyDp0eP7j5X0DMgqQAUxhH3KezK6qEN
+	 hNoEoMpS0deGyrciE4vhJHU4BddCH6tobZaB5+1lik1SWpKgWjNmtb2XzDKAJDanrF
+	 ygaA6rd62VzDA==
 From: Alessio Ferri <alessio.ferri@mythread.it>
-Date: Wed, 17 Jun 2026 23:42:09 +0200
-Subject: [PATCH 2/4] bcma: pmu: program max resource mask on
- BCM4352/BCM4360
+Date: Wed, 17 Jun 2026 23:42:08 +0200
+Subject: [PATCH 1/4] bcma: host_pci: add BCM4352 device ID 0x43b3
 MIME-Version: 1.0
-Message-Id: <20260617-b43-add-4352-wip-v1-2-c81323496720@gmail.com>
+Message-Id: <20260617-b43-add-4352-wip-v1-1-c81323496720@gmail.com>
 References: <20260617-b43-add-4352-wip-v1-0-c81323496720@gmail.com>
 In-Reply-To: <20260617-b43-add-4352-wip-v1-0-c81323496720@gmail.com>
 To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
@@ -53,13 +52,13 @@ Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
  b43-dev@lists.infradead.org, Alessio Ferri <alessio.ferri@mythread.it>, 
  Alessio Ferri <alessio.ferri.3012@gmail.com>
 X-Mailer: b4 0.14.3
-X-CMAE-Envelope: MS4xfPga/+jcvE7OuVVkZZs2F7agCubGjDhtcpV1hH4MibJtEXcWFUoXf4T1Rcg46b/cSooFJI1uB+/CcAr/9DA2GnTTvr//ENtbOm4ZlZw14Hbjw+y03/8N
- i44DKnR74un2GonNyUEQSXpwwq/KsP0PseoIwO0fk9zgo2Y9wNj5nojY1FVIJ9Ib6fRVKLYs9RwK8D3eYFjibOy5IqEA6ec+2lisEMwSiQwiwWjH2/zN87eW
- pJYLaqmC4TX4aKJKhW2DnSD9+Qx5bCTexrywcCV81yUW0vva/8k/WRabCymJEErXpUPCB4SGuhMH9JhqKLdoZThVJi5iGOAeYeNaj5ar55WytF6pCt6C9vOf
- IFxNgFy2C4Vhx+LQbfeqHKI7f/Due0rsxajeRDiqdC4loLp7fhhxNHhS8H/OrJgZGypV1R8i
+X-CMAE-Envelope: MS4xfLXwwPZf+zvRvaxi04KLBEA+7NwsGZPt9cEHom9ia9PgTlNGuLphhMD0DYzzhzekT46IGqoJ5Ci+Kv0ZjxbyfCH3JefsPZwnhqNHbOgW39uO49hQBP5p
+ Splrew9fv0Oh69c1jydST3GMK31ZUjC2UNWnoBedbHQHGbshruON6Pz7A298As4uFC4oG9gmHfKSkUFr2W+nN1X4HXptdwrPjekUYgEDcY6s8vUJt6eqj0Fv
+ NkbAHhct2USse8BkK/cgGQoJ+B8SKA7b8l4bZrIvCqox+9UWYLSs2vcQlRgCxJ6rHt3v1JXYEPfKlyHmPkRDv/93Wu1CrnlNm0XJ5MFzVYv2fi8zEwrBkUPR
+ w39iFSpaFaIwlk86rmDfMUFWpRSJQHuJ7f6yX/k1jmw6tW/Ke63EXNVeykJ/I3AUlt4Rk1n3
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260617_144259_272348_D41ADC68 
-X-CRM114-Status: UNSURE (   9.79  )
+X-CRM114-CacheID: sfid-20260617_144259_265839_F98A01E5 
+X-CRM114-Status: UNSURE (   8.29  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -79,34 +78,29 @@ Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
 From: Alessio Ferri <alessio.ferri.3012@gmail.com>
 
-bcma_pmu_resources_init() has no case for the BCM4352/BCM4360 family.
-The vendor instead set the max mask for chip rev > 2 with CS bit 5 clear.
-Match the vendor behaviour.
+The BCM4352 is an AC PHY. It is missing from bcma_pci_bridge_tbl[],
+so bcma-pci-bridge does not bind. Add the ID.
+
+The chip identifies as BCM4352 (chip rev 3, PHY type AC); b43 with AC-PHY
+support handles it once bcma reaches the D11 core.
 
 Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 ---
- drivers/bcma/driver_chipcommon_pmu.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/bcma/host_pci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index 263ef6fa1d0f..cdd5f7d668ba 100644
---- a/drivers/bcma/driver_chipcommon_pmu.c
-+++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -188,6 +188,14 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
- 			  BCMA_RES_4314_WL_CORE_READY;
- 		max_msk = 0x3FFFFFFF;
- 		break;
-+	case BCMA_CHIP_ID_BCM4352:
-+	case BCMA_CHIP_ID_BCM4360:
-+		/*
-+		 * Vendor programs the max mask here for chip rev > 2 with ChipStatus bit 5 clear
-+		 */
-+		if (bus->chipinfo.rev > 2 && !(cc->status & BIT(5)))
-+			max_msk = 0x1ff;
-+		break;
- 	default:
- 		bcma_debug(bus, "PMU resource config unknown or not needed for device 0x%04X\n",
- 			   bus->chipinfo.id);
+diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
+index 3dc2985063f1..f6cf722a3798 100644
+--- a/drivers/bcma/host_pci.c
++++ b/drivers/bcma/host_pci.c
+@@ -298,6 +298,7 @@ static const struct pci_device_id bcma_pci_bridge_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a9) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43aa) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43b1) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43b3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4727) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 43227) },	/* 0xa8db, BCM43217 (sic!) */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 43228) },	/* 0xa8dc */
 
 -- 
 2.54.0
