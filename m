@@ -4,53 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6882CCD98F2
-	for <b43-dev@archiver.kernel.org>; Thu, 18 Jun 2026 17:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C2C30C43458
+	for <b43-dev@archiver.kernel.org>; Mon, 29 Jun 2026 15:18:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=klSGdZhZ3zRdvlShr0YqKvtBjtsKIswUrQzXbGP7gNg=; b=VNZZwNW5d3QsarWc2bs8YMIEKM
-	MT4ACZMHc5V4Vcr9z/YXIB1IJMmx28DgrJH9KUSfsth4xKQa4tRhwYs5QkNIPUiqN99t5iimViMUY
-	W85kLtxLHg453CkOgdq5eQxlXXtSIHSnn1flDLFBPvxP6cRyByCgNhYdFLA/PYdRDQY4OUewvOwJN
-	4/B2HNVIGQsLY+LWY5H4ECao/xiQ/Y8X9PisPM5Y+OT9uSFFQiHVgxf6HWZbcFokd74O62jr08a5v
-	MLaL3YZYPwxqgjcZ+eQ054e9AGqiD2lLhD9KKM+/y0x3Nk+QxnyVLNwky9pWSyepRZm9zRwtEe5eu
-	p0t7ai8A==;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:List-Subscribe:List-Help:
+	List-Post:List-Archive:List-Unsubscribe:List-Id:Message-ID:Date:Subject:To:
+	From:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=abDu9IEjogNxPTOk2gkbaK5lcae39RbDAtXOoF6Ov1M=; b=Kbz29T5PgBZdvy
+	oIQnRlj4LJOmy0b/7sUXwvVmBn856dyqaQvzd0B3P8aukpdO4UtMFwKew5kK1tM4Q/u5KKJS6/6tQ
+	Bk5KTZhITOZ+vikUjbodIx4xh9J1XtGFE75V0RQK+Cwu0UAJVOZ8cfR3IiW65W7rbuDJcCWTMcnJn
+	GHvf4ryTo4gu+37AhLBnpGcz2nxlz7YfIQGKAibIhkvgfJNyZIoLRwqt/iq35iHPtkJH5g8cfJFgY
+	/XshjJs8IoWOsSd2VBu7ztnywmnNkP6Xj7/yqEv/s8KAkJaquICHukOkSbEdmEqcPBzx1DXi8D7vn
+	zpiFgW6F8i7R7+GUJi5A==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1waH0Y-00000001fa1-0rKD;
-	Thu, 18 Jun 2026 17:58:30 +0000
-Received: from bues.ch ([2a01:4f8:1c0c:6e7f::1] helo=mail.bues.ch)
+	id 1weDkn-0000000F2kt-1DMo;
+	Mon, 29 Jun 2026 15:18:33 +0000
+Received: from mail.btob-mail.work ([180.222.184.211] helo=sub0000529476.hmk-temp.com)
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1waH0U-00000001fZc-4ACe
+	id 1weDke-0000000F2jc-2nOa
 	for b43-dev@lists.infradead.org;
-	Thu, 18 Jun 2026 17:58:29 +0000
-Date: Thu, 18 Jun 2026 19:57:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bues.ch; s=main;
-	t=1781805500;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gf8+j9kDlIC5pkDl3pjv/qiQOKadn5JWHV7389C8mhE=;
-	b=AgEqRZKKtpeSq3dFPD57xFhHMdEySYJDW/JT2zVQwjka4YZzn1YdZIa89TuvT0S9zKxACP
-	KR2M9HNeHfYPRypfvXxDs+rLMlr7XJf09+X5rzmwX4hkjl95dncw3AspIZHph8a0kstV8E
-	Zp6NyIOyfvJiuD1A3wXsVq9IO1EMbE85oWg34b4DcLbch3VVSozypP9cZSTkD1metj0wNE
-	wbn/jsNv8OVJCOcIr2U7Ojornbja5Z79BB7kJSxXnf+YRJGG64HOn9QCaROSTw5B9A82zN
-	5AEsImgoU/XQcg2gIDvb1U/M4h8lD4H6/xHX40cuuol1iqQh5XtmZH9h3XTIOg==
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Alessio Ferri <alessio.ferri@mythread.it>
-Subject: Re: [PATCH 1/4] bcma: host_pci: add BCM4352 device ID 0x43b3
-Message-ID: <20260618195714.5620e0ec@barney>
-In-Reply-To: <20260617-b43-add-4352-wip-v1-1-c81323496720@gmail.com>
-References: <20260617-b43-add-4352-wip-v1-0-c81323496720@gmail.com>
-	<20260617-b43-add-4352-wip-v1-1-c81323496720@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+	Mon, 29 Jun 2026 15:18:27 +0000
+Received: (qmail 9427 invoked from network); 18 Jun 2026 12:00:39 +0900
+Received: from softdnserror (HELO DESKTOP-VO6I16E) (126.170.156.243)
+  by softdnserror with ESMTPSA (DHE-RSA-AES256-GCM-SHA384 encrypted, authenticated); 18 Jun 2026 12:00:39 +0900
+From: =?iso-2022-jp?B?GyRCPi47MyFDJEgkLSRvRGIlOyVfJUohPEFrOH0bKEI=?= <info@gosso.biz>
+To: b43-dev@lists.infradead.org
+Subject: =?iso-2022-jp?B?GyRCQ09KfSRHTFkkKyRrISI+RkZ5JVMlOCVNJTkbKEI=?=
+X-Mailer: Mail Magic Professional Version 16
+Date: Thu, 18 Jun 2026 13:12:30 +0900
+Message-ID: <202606181312300252.D17F380904B84079876A21E6A87F413C@btob-mail.work>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260618_105827_246175_C43FAA80 
-X-CRM114-Status: GOOD (  14.88  )
+X-CRM114-CacheID: sfid-20260629_081824_914545_D3980FCC 
+X-CRM114-Status: UNSURE (   0.77  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -62,92 +51,70 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Cc: Alessio Ferri <alessio.ferri.3012@gmail.com>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============0447906573198514499=="
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
---===============0447906573198514499==
-Content-Type: multipart/signed; boundary="Sig_/jAjpHEYdavIonoaH4M5Uz/v";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+新たな事業をお考えの経営者様へ
+　
+　
+　いつもお世話になります。
+　
+　TBSテレビ『坂上＆指原のつぶれない店』で取り上げられるなど、
+　今話題の、待ち時間0秒の飲み放題を提供する
 
---Sig_/jAjpHEYdavIonoaH4M5Uz/v
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+　焼肉酒場「 ときわ亭 」のフランチャイズ説明会をご案内いたします。
+　　
+　わずか2年半で全国80店舗展開した
+　「0秒レモンサワー　ときわ亭」の
+　
+　ビジネスモデル、収益性や最新の飲食市場実態を
+　オンラインによる説明会形式で分かりやすく、丁寧にお伝えします。
+　
+　※本セミナー参加、店舗オープンの場合
+　　研修費用50万円を本部支援！
+　
+　
+　このような方におススメ
+　・銀行融資を受けやすくなるコツをしりたい
+　・飲食店の経営に興味がある
+　・焼肉屋の経営実態がしりたい
 
-On Wed, 17 Jun 2026 23:42:08 +0200
-Alessio Ferri <alessio.ferri@mythread.it> wrote:
+　こういった方は、ぜひお気軽にご視聴くださいませ。
+　
+　
+　▼　オンライン説明会のご視聴予約はこちら　▼
+　　　https://tokiwatei-fc.work/web/
 
-> From: Alessio Ferri <alessio.ferri.3012@gmail.com>
->=20
-> The BCM4352 is an AC PHY. It is missing from bcma_pci_bridge_tbl[],
-> so bcma-pci-bridge does not bind. Add the ID.
->=20
-> The chip identifies as BCM4352 (chip rev 3, PHY type AC); b43 with AC-PHY
-> support handles it once bcma reaches the D11 core.
->=20
-> Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
-> ---
->  drivers/bcma/host_pci.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
-> index 3dc2985063f1..f6cf722a3798 100644
-> --- a/drivers/bcma/host_pci.c
-> +++ b/drivers/bcma/host_pci.c
-> @@ -298,6 +298,7 @@ static const struct pci_device_id bcma_pci_bridge_tbl=
-[] =3D {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a9) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43aa) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43b1) },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43b3) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4727) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 43227) },	/* 0xa8db, BCM43217 (sic=
-!) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 43228) },	/* 0xa8dc */
->=20
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Please submit this patch last, after the driver is expected to actually work
-on the device.
+　■　ご説明するフランチャイズシステム
+　　0秒レモンサワー　仙台ホルモン焼肉酒場ときわ亭
 
---=20
-Michael B=C3=BCsch
-https://bues.ch/
+　■　開催日程
+　・6月25日（木）15:00〜16:30　残り2枠
+ 　＠オンライン開催
+　
+　■　定員
+　・先着10社
+　
+　■　参加費
+　・不要
 
---Sig_/jAjpHEYdavIonoaH4M5Uz/v
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+本メールが不要の方には大変失礼しました。
+今後ご案内が不要な際は、下記URLにて配信解除を承っています。
+https://tokiwatei-fc.work/mail/
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmo0MXoACgkQ9TK+HZCN
-iw79/xAApSa8gie6f7YYYepTM2teMOo7lqt5rKHR0iK5rWqhgF8kca4QFukgP0gs
-Ijlj5yyGZ/HOVA5l7bE0BIpJ0bPvjQBwOSbo4xpzNLPVN9dnJbqNu+HLsXRYI9Ze
-10c5h75tkEpYq5acGzZ8wmq2hKRWWe24u553qfMm+4QhTDdJF8l6dtp6cQqDDfWI
-sUeyfThcdd8YwVBnrLVhHLLPlL1qru/6QMIX3yNuKu5aneI6h3GOMhrMJMz+UH61
-rhYmA4wABTP2dnwkvwAjy52K/w0M4Ykg7RKiEyvisJhm10d4ms9i+SywApjNaTUh
-hGI2dVBBiRSyWkKtfeVwGxu3fbMsU/rW0wwD/SAMkxgtfvYlROilVQRjwk7WCD7i
-JDm8HXq0cfBR7qnPAKr8gN2VsPO3XAHtzRebQP+Ew/SHCoEi/SjFzVVltvQcHrcf
-NdY9gIVYY+6qDeDiq2fzCT/rEWSLpEe4aTd2HeFqXn5n3CU3SAYkDUOhPmbuHASy
-sZb6AsKSYEjtCNQ4wLLgOnG+v1KlSnXqi74Bm6beTrX19ABP/bekM5n3AMBqIN2F
-CHT+6mNjr3PBp1erXEB7XUMZU7xxEaRfaUjtBdFAljdKdLADP8HaJytLcUkrYY8g
-Nz5ubxeLP7YM5qulAa7+gI0Vs6kDzzl+YLUxp4ShveB8JBZicJQ=
-=htaX
------END PGP SIGNATURE-----
-
---Sig_/jAjpHEYdavIonoaH4M5Uz/v--
-
-
---===============0447906573198514499==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+主催：GOSSO株式会社（ときわ亭フランチャイズ本部）
+東京都渋谷区宇田川町14-13 宇田川ビルディング6F
+03-6316-8191　
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 _______________________________________________
 b43-dev mailing list
 b43-dev@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/b43-dev
-
---===============0447906573198514499==--
-
