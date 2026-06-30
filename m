@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F1416C43458
-	for <b43-dev@archiver.kernel.org>; Tue, 30 Jun 2026 11:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5469AC43458
+	for <b43-dev@archiver.kernel.org>; Tue, 30 Jun 2026 11:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Cc:To:In-Reply-To:References:Message-Id
 	:MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=51VgQYHeQf0Zn7dmgEzlzJa9Re3MwyJ2/rq7t+UiUgc=; b=zQATKEmIU7UnD+
-	PbclIa2eywRKh6KCJj10Lthx2e4t1t8Fy+mQQxmCH6kzeHniro8jmVyeK5VRfdY8UJTGKQjlxCqIG
-	tWjMqCzZ5lUBhv8Fhr1NytlOYfWHPsvxPy9JZ7HL8tOXfsFfO67tFofNYDSs80ddXQLxngyo+7ZYp
-	giwAXyttMOfDSJTN05/Io1FqLfANvqr9/n8xO1MBmWVDwaRGlyXKUruo0HTH+2LnXMR0PCMZtnCmv
-	ODH0MpPd2AnieKHs/3gezzylmV7f/df7XRB/37Bpg0d6LGkLA0NImkesT+95KFVCDbsbZNwQ6xXFz
-	PImEl0XdMOVUFXD93F3Q==;
+	List-Owner; bh=eP0Y3lz4IkjRURHRH2vwCo0AD85G8EXAr2W++GMBfwo=; b=vGgRFrJQZik0hX
+	IfC1Z5nAnIhcN5pK+qgfvp3w2WCZEb0IOz2kX1r1dn2K/2MLE/k83jaIlA0XqAW24CvqqJGRH6ihl
+	FKwPkgcMZopsjMACqM/FPUz39AYNIB2HYKT3py1veNleu85IOSn3tKkH32eVWUqsJ1qRxIHo0tN6F
+	7VBbjSm6mEWd00i6qwC2SKyXFB+riQ6J8zu+dUyKaafB2q6kOr7VanM+RoejOKAoT4yDpb2B2CmdQ
+	MfVaGCTltSqUZpTVOvLPYNzRq290zt19CVmw3qjKPVOWI+i846tXfZ7jgXX9kdKtcfpPuYdccQRxL
+	dy2jZH15IFjAMMdbZdQQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weWCD-0000000Gkli-2kqL;
-	Tue, 30 Jun 2026 11:00:05 +0000
-Received: from sea.source.kernel.org ([172.234.252.31])
+	id 1weWCH-0000000Gks1-3i7y;
+	Tue, 30 Jun 2026 11:00:09 +0000
+Received: from sea.source.kernel.org ([2600:3c0a:e001:78e:0:1991:8:25])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weWCB-0000000Gkhg-1HpD;
-	Tue, 30 Jun 2026 11:00:03 +0000
+	id 1weWCG-0000000Gkpw-1UZ2;
+	Tue, 30 Jun 2026 11:00:08 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 1412840E06;
+	by sea.source.kernel.org (Postfix) with ESMTP id 1F12B40E06;
+	Tue, 30 Jun 2026 11:00:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736051F00A3D;
 	Tue, 30 Jun 2026 11:00:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1A51F000E9;
-	Tue, 30 Jun 2026 10:59:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782817203;
-	bh=qVNG6A0QrvVc3Q5VGETu2ZNN6OFwwV/HGShrasBWJk4=;
+	s=k20260515; t=1782817208;
+	bh=nCZadshr+DzQYVkCBh6cy/RM40zwNi0ZS4nnwSr8GpY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ZMVGaWI9VL4Ex4gSsvHRdpL8r28sBJeHwMEuL7+lauPlew2FTdOEsgs2ATl1+atca
-	 5LYGcr4dixAyl65dQrx1zaB/Glfflj9NCXAqVLtCfj8sE2er5nqspknawJYfva0Chv
-	 vKRhkeVapVUnpfeuyh4J75IHXPeUUpy5UPveQh5Llp1phBnJX8oYOScCnmkcIBSI6q
-	 EkJvpcSINDcZQKSJ/otkSjIulmeOQfuTzYU9nqou8/TxgPQebt/GjHstOjzw9cPTO7
-	 WUMbUxdHMl15cDSi+gs3tI/IEI0Ne+cwtcQB5Ilb6oLY2SCNlfdksJjYyFL7tCxlDT
-	 rQgDawk1deirQ==
+	b=BHxEq6ExepayPqMVcba1gAOZBamGomKzGI5/5rbn4FkcDA6n30f9+6e3ho9P8OwWU
+	 6+ENTujmQC9oE2fr15f3DfD685ltql5+ulTzniflHu/5xHjg8Eppf3qb9Hh+2qgUDA
+	 ME464175cHxtguWUsZhBztIo+dKhzs8PG5IC/96hm29yd4Z0iwNPkTO33p6idcdDp/
+	 FjithW/WlildOFWxaLjCMKyGZXhKmpBpkXf96s/l1exvCtkqBxQaNyn0n5UfWOeBNn
+	 SVmcV8YVyeBAmrNTxPQHtglqbphZVG5c+ST+4B2ZpMQqg9IQ18aRQQ7t+8J2hG1Npu
+	 aIQxG92cvPCBw==
 From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-Date: Tue, 30 Jun 2026 13:59:26 +0300
-Subject: [PATCH net-next 7/8] sfc: use kmalloc() to allocate logging buffer
+Date: Tue, 30 Jun 2026 13:59:27 +0300
+Subject: [PATCH net-next 8/8] wlcore: allocate aggregation and firmware log
+ buffers with kzalloc()
 MIME-Version: 1.0
-Message-Id: <20260630-b4-drivers-net-v1-7-672162a91f37@kernel.org>
+Message-Id: <20260630-b4-drivers-net-v1-8-672162a91f37@kernel.org>
 References: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
 In-Reply-To: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
 To: Andrew Lunn <andrew+netdev@lunn.ch>, 
@@ -78,11 +79,11 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-efx_mcdi_init() allocates a logging buffer for MCDI firmware
-communication diagnostics.
+wlcore_alloc_hw() uses __get_free_pages() to  allocate TX aggregation
+and firmware log buffers used for software data staging.
 
-This buffer can be allocated with kmalloc() as there's nothing special
-about it to go directly to the page allocator.
+These buffer can be allocated with kmalloc() as there's nothing special
+about them to go directly to the page allocator.
 
 kmalloc() provides a better API that does not require ugly casts and
 kfree() does not need to know the size of the freed object.
@@ -94,54 +95,74 @@ fast path allocations.
 For the slow path the performance is anyway determined by the amount of
 reclaim involved rather than by what allocator is used.
 
-Replace use of __get_free_page() with kmalloc() and free_page() with
+Replace use of __get_free_pages() with kzalloc() and free_pages() with
 kfree().
 
 Link: https://lore.kernel.org/all/635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- drivers/net/ethernet/sfc/mcdi.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ti/wlcore/main.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/sfc/mcdi.c b/drivers/net/ethernet/sfc/mcdi.c
-index e65db9b70724..b806d3d90c42 100644
---- a/drivers/net/ethernet/sfc/mcdi.c
-+++ b/drivers/net/ethernet/sfc/mcdi.c
-@@ -7,6 +7,7 @@
- #include <linux/delay.h>
- #include <linux/moduleparam.h>
- #include <linux/atomic.h>
-+#include <linux/slab.h>
- #include "net_driver.h"
- #include "nic.h"
- #include "io.h"
-@@ -71,7 +72,7 @@ int efx_mcdi_init(struct efx_nic *efx)
- 	mcdi->efx = efx;
- #ifdef CONFIG_SFC_MCDI_LOGGING
- 	/* consuming code assumes buffer is page-sized */
--	mcdi->logging_buffer = (char *)__get_free_page(GFP_KERNEL);
-+	mcdi->logging_buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
- 	if (!mcdi->logging_buffer)
- 		goto fail1;
- 	mcdi->logging_enabled = mcdi_logging_default;
-@@ -112,7 +113,7 @@ int efx_mcdi_init(struct efx_nic *efx)
- 	return 0;
- fail2:
- #ifdef CONFIG_SFC_MCDI_LOGGING
--	free_page((unsigned long)mcdi->logging_buffer);
-+	kfree(mcdi->logging_buffer);
- fail1:
- #endif
- 	kfree(efx->mcdi);
-@@ -138,7 +139,7 @@ void efx_mcdi_fini(struct efx_nic *efx)
- 		return;
+diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+index be583ae331c0..5595f7a1fc0c 100644
+--- a/drivers/net/wireless/ti/wlcore/main.c
++++ b/drivers/net/wireless/ti/wlcore/main.c
+@@ -6354,7 +6354,6 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
+ 	struct ieee80211_hw *hw;
+ 	struct wl1271 *wl;
+ 	int i, j, ret;
+-	unsigned int order;
  
- #ifdef CONFIG_SFC_MCDI_LOGGING
--	free_page((unsigned long)efx->mcdi->iface.logging_buffer);
-+	kfree(efx->mcdi->iface.logging_buffer);
- #endif
+ 	hw = ieee80211_alloc_hw(sizeof(*wl), &wl1271_ops);
+ 	if (!hw) {
+@@ -6434,8 +6433,7 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
+ 	mutex_init(&wl->flush_mutex);
+ 	init_completion(&wl->nvs_loading_complete);
  
- 	kfree(efx->mcdi);
+-	order = get_order(aggr_buf_size);
+-	wl->aggr_buf = (u8 *)__get_free_pages(GFP_KERNEL, order);
++	wl->aggr_buf = kmalloc(round_up(aggr_buf_size, PAGE_SIZE), GFP_KERNEL);
+ 	if (!wl->aggr_buf) {
+ 		ret = -ENOMEM;
+ 		goto err_wq;
+@@ -6449,7 +6447,7 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
+ 	}
+ 
+ 	/* Allocate one page for the FW log */
+-	wl->fwlog = (u8 *)get_zeroed_page(GFP_KERNEL);
++	wl->fwlog = kzalloc(PAGE_SIZE, GFP_KERNEL);
+ 	if (!wl->fwlog) {
+ 		ret = -ENOMEM;
+ 		goto err_dummy_packet;
+@@ -6474,13 +6472,13 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
+ 	kfree(wl->mbox);
+ 
+ err_fwlog:
+-	free_page((unsigned long)wl->fwlog);
++	kfree(wl->fwlog);
+ 
+ err_dummy_packet:
+ 	dev_kfree_skb(wl->dummy_packet);
+ 
+ err_aggr:
+-	free_pages((unsigned long)wl->aggr_buf, order);
++	kfree(wl->aggr_buf);
+ 
+ err_wq:
+ 	destroy_workqueue(wl->freezable_wq);
+@@ -6509,9 +6507,9 @@ int wlcore_free_hw(struct wl1271 *wl)
+ 
+ 	kfree(wl->buffer_32);
+ 	kfree(wl->mbox);
+-	free_page((unsigned long)wl->fwlog);
++	kfree(wl->fwlog);
+ 	dev_kfree_skb(wl->dummy_packet);
+-	free_pages((unsigned long)wl->aggr_buf, get_order(wl->aggr_buf_size));
++	kfree(wl->aggr_buf);
+ 
+ 	wl1271_debugfs_exit(wl);
+ 
 
 -- 
 2.53.0
