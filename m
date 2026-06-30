@@ -4,65 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5469AC43458
-	for <b43-dev@archiver.kernel.org>; Tue, 30 Jun 2026 11:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 37551C43458
+	for <b43-dev@archiver.kernel.org>; Tue, 30 Jun 2026 14:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Cc:To:In-Reply-To:References:Message-Id
-	:MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=eP0Y3lz4IkjRURHRH2vwCo0AD85G8EXAr2W++GMBfwo=; b=vGgRFrJQZik0hX
-	IfC1Z5nAnIhcN5pK+qgfvp3w2WCZEb0IOz2kX1r1dn2K/2MLE/k83jaIlA0XqAW24CvqqJGRH6ihl
-	FKwPkgcMZopsjMACqM/FPUz39AYNIB2HYKT3py1veNleu85IOSn3tKkH32eVWUqsJ1qRxIHo0tN6F
-	7VBbjSm6mEWd00i6qwC2SKyXFB+riQ6J8zu+dUyKaafB2q6kOr7VanM+RoejOKAoT4yDpb2B2CmdQ
-	MfVaGCTltSqUZpTVOvLPYNzRq290zt19CVmw3qjKPVOWI+i846tXfZ7jgXX9kdKtcfpPuYdccQRxL
-	dy2jZH15IFjAMMdbZdQQ==;
+	List-Owner; bh=jM157rjQdlR1RsB7AH22fxfvhfHr/LQO9dQ4Nkt+gvo=; b=WWzbTTONUyANMW
+	qpxi1nCEZIfk6G8FlC8hcKXieprm85FNFfmnql5y3yhXhMoCExA653nTcAeLsgrXkXlFBxNGdvJuk
+	cokl+B+dses7zv5eLP7rmbkIZINuj2Wv0haHj6j33r93oKsE5pW9EMzOr4oLtskY+LkUqPgf6UuQo
+	eLxA2/I4eKUvhlqeFrIoNJmpqhqfBglms+Fv9gHwDVrvbAkNoN7k1KUvaacQ9n25GOaH7+2Ta4bYn
+	1RNUuP4riruenW7+myebxn8AImThnXRBE2axmIUrbRmFdRNctYogdx71nIH2f7WuDkelk4ORAqPP6
+	rrTaydcYmb1PKt4RYbLg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weWCH-0000000Gks1-3i7y;
-	Tue, 30 Jun 2026 11:00:09 +0000
-Received: from sea.source.kernel.org ([2600:3c0a:e001:78e:0:1991:8:25])
+	id 1weZNM-0000000HH5D-3AGL;
+	Tue, 30 Jun 2026 14:23:48 +0000
+Received: from tor.source.kernel.org ([172.105.4.254])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weWCG-0000000Gkpw-1UZ2;
-	Tue, 30 Jun 2026 11:00:08 +0000
+	id 1weZNK-0000000HH4v-2BDX;
+	Tue, 30 Jun 2026 14:23:46 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 1F12B40E06;
-	Tue, 30 Jun 2026 11:00:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736051F00A3D;
-	Tue, 30 Jun 2026 11:00:03 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id B217B601DC;
+	Tue, 30 Jun 2026 14:23:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4E91F000E9;
+	Tue, 30 Jun 2026 14:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782817208;
-	bh=nCZadshr+DzQYVkCBh6cy/RM40zwNi0ZS4nnwSr8GpY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=BHxEq6ExepayPqMVcba1gAOZBamGomKzGI5/5rbn4FkcDA6n30f9+6e3ho9P8OwWU
-	 6+ENTujmQC9oE2fr15f3DfD685ltql5+ulTzniflHu/5xHjg8Eppf3qb9Hh+2qgUDA
-	 ME464175cHxtguWUsZhBztIo+dKhzs8PG5IC/96hm29yd4Z0iwNPkTO33p6idcdDp/
-	 FjithW/WlildOFWxaLjCMKyGZXhKmpBpkXf96s/l1exvCtkqBxQaNyn0n5UfWOeBNn
-	 SVmcV8YVyeBAmrNTxPQHtglqbphZVG5c+ST+4B2ZpMQqg9IQ18aRQQ7t+8J2hG1Npu
-	 aIQxG92cvPCBw==
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-Date: Tue, 30 Jun 2026 13:59:27 +0300
-Subject: [PATCH net-next 8/8] wlcore: allocate aggregation and firmware log
- buffers with kzalloc()
-MIME-Version: 1.0
-Message-Id: <20260630-b4-drivers-net-v1-8-672162a91f37@kernel.org>
-References: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
+	s=k20260515; t=1782829425;
+	bh=4Hhhr2XcfubTUcrvTbwWhwLy7CUCWTZEVOLPtuGC1E4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=FAKx/t6uR6e0YnXhUD4OAIvzCSGSFQqB0vFZUhEgy2dgiJnluy0duaFK6NLRYiwtu
+	 fVDfi6acLZR+l3CUXlY5hftQWt/eE24AJXi/lvEcSdMFqXuJ4frYnZ0itSCqWXgRpl
+	 NkxGX/Z1g2YgctN43YDAMXODPkhFFnXpPr67j43JUyr96RZ4YBioADsYLsm1iFUxvL
+	 kodoBEkjnvidKLPf8W0IWgLBeeikaJ/MwZ32d9NW2RcMvE5Z8DmTV/IfxrRD1LrLCw
+	 CIGyHDS/uvzs9a2YLUoQJ/+oG9AWfESzK2/RaL5bmBD/3DuJWQPM2GV+9y8JozF2SR
+	 aMsyqYRgaYGUQ==
+Date: Tue, 30 Jun 2026 07:23:44 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Brian Norris <briannorris@chromium.org>, Edward Cree
+ <ecree.xilinx@gmail.com>, Francesco Dolcini <francesco@dolcini.it>, Manish
+ Chopra <manishc@marvell.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Sudarsana Kalluru <skalluru@marvell.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, b43-dev@lists.infradead.org,
+ intel-wired-lan@lists.osuosl.org, libertas-dev@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-net-drivers@amd.com, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 0/8] drivers/net: replace __get_free_pages()
+ with kmalloc()
+Message-ID: <20260630072344.159b5d99@kernel.org>
 In-Reply-To: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Brian Norris <briannorris@chromium.org>, 
- Edward Cree <ecree.xilinx@gmail.com>, 
- Francesco Dolcini <francesco@dolcini.it>, 
- Manish Chopra <manishc@marvell.com>, Mike Rapoport <rppt@kernel.org>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Sudarsana Kalluru <skalluru@marvell.com>, 
- Tony Nguyen <anthony.l.nguyen@intel.com>, b43-dev@lists.infradead.org, 
- intel-wired-lan@lists.osuosl.org, libertas-dev@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-net-drivers@amd.com, 
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-X-Mailer: b4 0.15.2
+References: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
+MIME-Version: 1.0
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -79,94 +77,23 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-wlcore_alloc_hw() uses __get_free_pages() to  allocate TX aggregation
-and firmware log buffers used for software data staging.
+On Tue, 30 Jun 2026 13:59:19 +0300 Mike Rapoport (Microsoft) wrote:
+>  drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c    |  6 +--
+>  drivers/net/ethernet/intel/ice/ice_gnss.c         |  5 +-
+>  drivers/net/ethernet/sfc/mcdi.c                   |  7 +--
+>  drivers/net/ethernet/sfc/siena/mcdi.c             |  7 +--
+>  drivers/net/wireless/broadcom/b43/debugfs.c       | 12 ++---
+>  drivers/net/wireless/broadcom/b43legacy/debugfs.c | 11 ++--
+>  drivers/net/wireless/marvell/libertas/debugfs.c   | 39 ++++++--------
+>  drivers/net/wireless/marvell/mwifiex/debugfs.c    | 62 ++++++++++-------------
+>  drivers/net/wireless/ti/wlcore/main.c             | 14 +++--
 
-These buffer can be allocated with kmalloc() as there's nothing special
-about them to go directly to the page allocator.
+You gotta split this, wireless and ethernet go via separate trees.
+BTW cocci also suggests folding in a memset, IDK if it's worth it.
 
-kmalloc() provides a better API that does not require ugly casts and
-kfree() does not need to know the size of the freed object.
-
-Performance difference between kmalloc() and __get_free_pages() is not
-measurable as both allocators take an object/page from a per-CPU list for
-fast path allocations.
-
-For the slow path the performance is anyway determined by the amount of
-reclaim involved rather than by what allocator is used.
-
-Replace use of __get_free_pages() with kzalloc() and free_pages() with
-kfree().
-
-Link: https://lore.kernel.org/all/635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- drivers/net/wireless/ti/wlcore/main.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-index be583ae331c0..5595f7a1fc0c 100644
---- a/drivers/net/wireless/ti/wlcore/main.c
-+++ b/drivers/net/wireless/ti/wlcore/main.c
-@@ -6354,7 +6354,6 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
- 	struct ieee80211_hw *hw;
- 	struct wl1271 *wl;
- 	int i, j, ret;
--	unsigned int order;
- 
- 	hw = ieee80211_alloc_hw(sizeof(*wl), &wl1271_ops);
- 	if (!hw) {
-@@ -6434,8 +6433,7 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
- 	mutex_init(&wl->flush_mutex);
- 	init_completion(&wl->nvs_loading_complete);
- 
--	order = get_order(aggr_buf_size);
--	wl->aggr_buf = (u8 *)__get_free_pages(GFP_KERNEL, order);
-+	wl->aggr_buf = kmalloc(round_up(aggr_buf_size, PAGE_SIZE), GFP_KERNEL);
- 	if (!wl->aggr_buf) {
- 		ret = -ENOMEM;
- 		goto err_wq;
-@@ -6449,7 +6447,7 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
- 	}
- 
- 	/* Allocate one page for the FW log */
--	wl->fwlog = (u8 *)get_zeroed_page(GFP_KERNEL);
-+	wl->fwlog = kzalloc(PAGE_SIZE, GFP_KERNEL);
- 	if (!wl->fwlog) {
- 		ret = -ENOMEM;
- 		goto err_dummy_packet;
-@@ -6474,13 +6472,13 @@ struct ieee80211_hw *wlcore_alloc_hw(size_t priv_size, u32 aggr_buf_size,
- 	kfree(wl->mbox);
- 
- err_fwlog:
--	free_page((unsigned long)wl->fwlog);
-+	kfree(wl->fwlog);
- 
- err_dummy_packet:
- 	dev_kfree_skb(wl->dummy_packet);
- 
- err_aggr:
--	free_pages((unsigned long)wl->aggr_buf, order);
-+	kfree(wl->aggr_buf);
- 
- err_wq:
- 	destroy_workqueue(wl->freezable_wq);
-@@ -6509,9 +6507,9 @@ int wlcore_free_hw(struct wl1271 *wl)
- 
- 	kfree(wl->buffer_32);
- 	kfree(wl->mbox);
--	free_page((unsigned long)wl->fwlog);
-+	kfree(wl->fwlog);
- 	dev_kfree_skb(wl->dummy_packet);
--	free_pages((unsigned long)wl->aggr_buf, get_order(wl->aggr_buf_size));
-+	kfree(wl->aggr_buf);
- 
- 	wl1271_debugfs_exit(wl);
- 
-
+drivers/net/wireless/broadcom/b43legacy/debugfs.c:217:8-15: WARNING: kzalloc should be used for buf, instead of kmalloc/memset
 -- 
-2.53.0
-
+pw-bot: cr
 
 _______________________________________________
 b43-dev mailing list
