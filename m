@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0C59C43327
-	for <b43-dev@archiver.kernel.org>; Tue, 30 Jun 2026 10:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 55F29C43602
+	for <b43-dev@archiver.kernel.org>; Tue, 30 Jun 2026 10:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Cc:To:In-Reply-To:References:Message-Id
 	:MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=hccnl4CZgMZeAuo4RUDRBz+6tI6lPvvm2jl2J/qU8MU=; b=QhzrCefVESJi/y
-	1atHe5wUU76+OjvQ82sAFAOFa2Qtt+atBp4VLYd2tNQhjwmj8GpJk0y4ntaeFZ0AO70G74qadq2vE
-	7eY9LnrOUjPhTIHtYt9Zcq4zLmv1jN8yWSh+Odvmkm2ydb6hpPqXScUxs4ZwPfpBFwWuLP39N4kf2
-	oyTab6aoWjIZReG/Bdx1b8Q39BVbUeEKJVNBEixn+G5puzwlhnwT4j2RMxQm+HWde/2u86ldZAvDm
-	GdCOycoZgOuXoK2LLFjHtTGnsUGovJL6ZLOG2kTXLqRiSIzu6QU/wcrqMV7ykioNpmJzm5THUfqvz
-	1mCkxd4YDUaPnPeu/iFQ==;
+	List-Owner; bh=zVcUQdwaM8qyVs3S066Z6bUF9JdLFQ241GRmQEjh5pA=; b=s+cNkJWcQucCzG
+	LKpEP7WJfzC7yQwD2nkFLHu7lXzGdhAK3S/YcLAT6GirXJuOt3FXgE4Vvwv1cj3LzKQHWoZWJVFcW
+	uEzo2NkCPNMVm9zvyTLl/ELMXz49ONJEQc0lZEA/xfMwcG0asEIvquJGhqRyi4ZOBATz/0GzQb5bp
+	p4P2R2tSlHv4Tt65N2QWZOKsPZKZZMrvatOx71lr5DnvmN8/3CMpM0j2Q3tQYvIENM2nyGBW4H/2I
+	KX531NhtZnOst8rH6DW5MALSB0aayKsFdg9SwMDd3I4XRhb29HoYWIjlhgfS33VhR9nnF2tCkgae2
+	Ril+8t2wtF9u7pj/pnZQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weWBk-0000000GkAa-37sV;
-	Tue, 30 Jun 2026 10:59:36 +0000
-Received: from tor.source.kernel.org ([2600:3c04:e001:324:0:1991:8:25])
+	id 1weWBn-0000000GkCu-059e;
+	Tue, 30 Jun 2026 10:59:39 +0000
+Received: from sea.source.kernel.org ([172.234.252.31])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weWBh-0000000Gk8x-36XQ;
-	Tue, 30 Jun 2026 10:59:33 +0000
+	id 1weWBm-0000000GkC1-1JXh;
+	Tue, 30 Jun 2026 10:59:38 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id 0D28D600DA;
+	by sea.source.kernel.org (Postfix) with ESMTP id DD18941711;
+	Tue, 30 Jun 2026 10:59:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 403D61F00A3D;
 	Tue, 30 Jun 2026 10:59:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385961F00A3A;
-	Tue, 30 Jun 2026 10:59:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782817172;
-	bh=udqDNDVFCOySMLOfAhXC2bToWftZ0GPwWAg1pyNOXMM=;
+	s=k20260515; t=1782817177;
+	bh=KN3v4O8jkhd6Mt2HpgZaziumJD8qk36FkI+IylasYd4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=NanyFOkuNnCFD4REgVloCb2Qcv70ieoZFHA+glnEOoTfDGSW1U/DDx8oMUE+zS2Sp
-	 DgmvDEy3oMXzkgJ2B9g8E75PPjHjioMBmgt09WDdrO65JYRO3Q+WAyS9Dp/wmfkjck
-	 YdFb/qB8cTjmYhjXSQ/v9LQz/ASgDqkj+RmSdyAYxAkOse/s5AJkfLYDagOoOM3SMz
-	 JWxJliS0qGvgbCmMqIzDh9OsIaYURy3OPl9KFwhVkB+hKup9gPdjpCqzj6cUBo48fC
-	 IXOiJjMJAOuhnoI/IV/anZGDbOmTj3wcZRGg4bFg7bH4Io93W18rY3rdjqoxpZ8jHR
-	 X/kBU7tjuYfOA==
+	b=MXQEF3aHWSiWNFSvYXHU4R7tW6cLU800PWaoSIs368VJxA7phfv+Es8c+cLkEeAW6
+	 N+cXvy7GWxnDbC1bFm9jgfCrZuJ7NcmOzPRxV0f8rFe0NonrUKVi/oDpm1r0R9GiMH
+	 cFOmtV0Vf+osCftv3+z9BekM2fYxe3pkef2/XzhRaonSJCjH2k1BUQb+abz3ksERB5
+	 ID+PK5GmcE2FHvH8VaVrrDkXHHS9PnbWWtmKluZc/es6TuUdTPfONxggTOYT41WBK/
+	 yoD9s2qt4xuVYdBtBHU1XDZGLStlv3wqrZawLDg0DkelNXb1Y5TLnaXGaGmtkKIZNf
+	 utF9NJfRkg01A==
 From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-Date: Tue, 30 Jun 2026 13:59:20 +0300
-Subject: [PATCH net-next 1/8] b43, b43legacy: debugfs: use kmalloc() to
- allocate formatting buffers
+Date: Tue, 30 Jun 2026 13:59:21 +0300
+Subject: [PATCH net-next 2/8] bnx2x: use kzalloc() to allocate mac
+ filtering list
 MIME-Version: 1.0
-Message-Id: <20260630-b4-drivers-net-v1-1-672162a91f37@kernel.org>
+Message-Id: <20260630-b4-drivers-net-v1-2-672162a91f37@kernel.org>
 References: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
 In-Reply-To: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
 To: Andrew Lunn <andrew+netdev@lunn.ch>, 
@@ -79,136 +79,62 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-b43* debugfs functions allocate 16 KiB buffers for formatting debug output
-text using __get_free_pages().
+bnx2x_mcast_enqueue_cmd() allocates memory for mac filtering list using
+__get_free_pages().
+
+This memory can be allocated with kzalloc() as there's nothing special
+about it to go directly to the page allocator.
 
 kmalloc() provides a better API that does not require ugly casts and
-kfree() does not need to know the size of the freed object and for 16 Kib
-allocation kmalloc() will anyway delegate it to buddy.
+kfree() does not need to know the size of the freed object.
 
-Replace use of __get_free_pages() with kmalloc().
+Performance difference between kmalloc() and __get_free_pages() is not
+measurable as both allocators take an object/page from a per-CPU list for
+fast path allocations.
+
+For the slow path the performance is anyway determined by the amount of
+reclaim involved rather than by what allocator is used.
+
+Replace use of __get_free_page() with kzalloc() and free_page() with
+kfree().
 
 Link: https://lore.kernel.org/all/635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- drivers/net/wireless/broadcom/b43/debugfs.c       | 12 +++++-------
- drivers/net/wireless/broadcom/b43legacy/debugfs.c | 11 +++++------
- 2 files changed, 10 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/debugfs.c b/drivers/net/wireless/broadcom/b43/debugfs.c
-index acddae68947a..31a1ff00c1a4 100644
---- a/drivers/net/wireless/broadcom/b43/debugfs.c
-+++ b/drivers/net/wireless/broadcom/b43/debugfs.c
-@@ -495,7 +495,6 @@ static ssize_t b43_debugfs_read(struct file *file, char __user *userbuf,
- 	ssize_t ret;
- 	char *buf;
- 	const size_t bufsize = 1024 * 16; /* 16 kiB buffer */
--	const size_t buforder = get_order(bufsize);
- 	int err = 0;
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
+index 07a908a2c72f..d560524d317d 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
+@@ -26,6 +26,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
+ #include <linux/crc32c.h>
++#include <linux/slab.h>
+ #include "bnx2x.h"
+ #include "bnx2x_cmn.h"
+ #include "bnx2x_sp.h"
+@@ -2664,7 +2665,7 @@ static void bnx2x_free_groups(struct list_head *mcast_group_list)
+ 				      struct bnx2x_mcast_elem_group,
+ 				      mcast_group_link);
+ 		list_del(&current_mcast_group->mcast_group_link);
+-		free_page((unsigned long)current_mcast_group);
++		kfree(current_mcast_group);
+ 	}
+ }
  
- 	if (!count)
-@@ -518,15 +517,14 @@ static ssize_t b43_debugfs_read(struct file *file, char __user *userbuf,
- 	dfile = fops_to_dfs_file(dev, dfops);
- 
- 	if (!dfile->buffer) {
--		buf = (char *)__get_free_pages(GFP_KERNEL, buforder);
-+		buf = kzalloc(bufsize, GFP_KERNEL);
- 		if (!buf) {
- 			err = -ENOMEM;
- 			goto out_unlock;
+@@ -2713,8 +2714,7 @@ static int bnx2x_mcast_enqueue_cmd(struct bnx2x *bp,
+ 				total_elems = BNX2X_MCAST_BINS_NUM;
  		}
--		memset(buf, 0, bufsize);
- 		ret = dfops->read(dev, buf, bufsize);
- 		if (ret <= 0) {
--			free_pages((unsigned long)buf, buforder);
-+			kfree(buf);
- 			err = ret;
- 			goto out_unlock;
- 		}
-@@ -538,7 +536,7 @@ static ssize_t b43_debugfs_read(struct file *file, char __user *userbuf,
- 				      dfile->buffer,
- 				      dfile->data_len);
- 	if (*ppos >= dfile->data_len) {
--		free_pages((unsigned long)dfile->buffer, buforder);
-+		kfree(dfile->buffer);
- 		dfile->buffer = NULL;
- 		dfile->data_len = 0;
- 	}
-@@ -577,7 +575,7 @@ static ssize_t b43_debugfs_write(struct file *file,
- 		goto out_unlock;
- 	}
- 
--	buf = (char *)get_zeroed_page(GFP_KERNEL);
-+	buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
- 	if (!buf) {
- 		err = -ENOMEM;
- 		goto out_unlock;
-@@ -591,7 +589,7 @@ static ssize_t b43_debugfs_write(struct file *file,
- 		goto out_freepage;
- 
- out_freepage:
--	free_page((unsigned long)buf);
-+	kfree(buf);
- out_unlock:
- 	mutex_unlock(&dev->wl->mutex);
- 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/debugfs.c b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-index 3ad99124d522..42cce5e0402d 100644
---- a/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-@@ -192,7 +192,6 @@ static ssize_t b43legacy_debugfs_read(struct file *file, char __user *userbuf,
- 	ssize_t ret;
- 	char *buf;
- 	const size_t bufsize = 1024 * 16; /* 16 KiB buffer */
--	const size_t buforder = get_order(bufsize);
- 	int err = 0;
- 
- 	if (!count)
-@@ -215,7 +214,7 @@ static ssize_t b43legacy_debugfs_read(struct file *file, char __user *userbuf,
- 	dfile = fops_to_dfs_file(dev, dfops);
- 
- 	if (!dfile->buffer) {
--		buf = (char *)__get_free_pages(GFP_KERNEL, buforder);
-+		buf = kmalloc(bufsize, GFP_KERNEL);
- 		if (!buf) {
- 			err = -ENOMEM;
- 			goto out_unlock;
-@@ -228,7 +227,7 @@ static ssize_t b43legacy_debugfs_read(struct file *file, char __user *userbuf,
- 		} else
- 			ret = dfops->read(dev, buf, bufsize);
- 		if (ret <= 0) {
--			free_pages((unsigned long)buf, buforder);
-+			kfree(buf);
- 			err = ret;
- 			goto out_unlock;
- 		}
-@@ -240,7 +239,7 @@ static ssize_t b43legacy_debugfs_read(struct file *file, char __user *userbuf,
- 				      dfile->buffer,
- 				      dfile->data_len);
- 	if (*ppos >= dfile->data_len) {
--		free_pages((unsigned long)dfile->buffer, buforder);
-+		kfree(dfile->buffer);
- 		dfile->buffer = NULL;
- 		dfile->data_len = 0;
- 	}
-@@ -279,7 +278,7 @@ static ssize_t b43legacy_debugfs_write(struct file *file,
- 		goto out_unlock;
- 	}
- 
--	buf = (char *)get_zeroed_page(GFP_KERNEL);
-+	buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
- 	if (!buf) {
- 		err = -ENOMEM;
- 		goto out_unlock;
-@@ -298,7 +297,7 @@ static ssize_t b43legacy_debugfs_write(struct file *file,
- 		goto out_freepage;
- 
- out_freepage:
--	free_page((unsigned long)buf);
-+	kfree(buf);
- out_unlock:
- 	mutex_unlock(&dev->wl->mutex);
- 
+ 		while (total_elems > 0) {
+-			elem_group = (struct bnx2x_mcast_elem_group *)
+-				     __get_free_page(GFP_ATOMIC | __GFP_ZERO);
++			elem_group = kzalloc(PAGE_SIZE, GFP_ATOMIC);
+ 			if (!elem_group) {
+ 				bnx2x_free_groups(&new_cmd->group_head);
+ 				kfree(new_cmd);
 
 -- 
 2.53.0
