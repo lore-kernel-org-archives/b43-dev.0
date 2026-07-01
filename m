@@ -4,71 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34002C43458
-	for <b43-dev@archiver.kernel.org>; Tue, 30 Jun 2026 14:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EDFC9C43458
+	for <b43-dev@archiver.kernel.org>; Wed,  1 Jul 2026 01:36:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=QxaUC8xqO6VIuoID1tas5hkyt9FCSAe46ivWt5SW/qM=; b=W8Wwh0l6WNUXWf
-	UWohfUtj0rUUg/yJx9u4JZnFFfLv+dKMOSACyEaSxnlvVvUt6iIpnzhMgyhIMKsGVbWPv1tPSDw5y
-	Ml4I4ZoN57AH74OS7LLj2+8LUY5C+W++O3Wb6bEHXYJlRVW3zKZF0vX2WrtcX8KlR81YTsbEHqO/y
-	gkvgb6Hi2zyJOPZX4Gxf/Z13b/JkiUhWuhX35elnNijH9r8WShXKY+rlbfDovciUv2c3cyow+yKX9
-	TAwPVkVKcTeIfLvIaLnBmLyZhDiMcfkeurO+XAcj25B8HKFefCGHLPkoti63Ijg3A+dcnX67BF8K9
-	FwAopuSWYJPWuw+6evTw==;
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
+	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=MBaez81ro0SGm8g87DpT8H49JaGBNvdAT3os2NSyIR4=; b=1D3jbayNyiw1/h
+	kZppqwMQ9W2eQyssHRDwQzX92+vqR7xaBsbHjFWGYyHxAZOsLZYRwvVa9FgpFQ1EsGMBFG2Xu5nPa
+	lJAvDcYXDC8IXC9u8Qcmys9yeiayE12+JVKOa2Cm6tcT6OMKbkAxiqscq2X1Za3Fiq4/f2rBQqrTk
+	3nKwsAdfEZfPGoJT+4Fg3brNiI3Z1n9g8UZ9GlNHmhD8gb6INKyBDDvUR1JyH4xCSH0RX+IGbtKmH
+	y3WqRqF9U543boiqqQBZ7kw8ShNrIzjfEKpCfF98LCAygGwnT3fmbyDZOomI0VytEoe3pwy+dZT4/
+	kkLRorLke84XuaE3DIqg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weZdo-0000000HIBJ-3QUi;
-	Tue, 30 Jun 2026 14:40:48 +0000
-Received: from tor.source.kernel.org ([2600:3c04:e001:324:0:1991:8:25])
+	id 1wejrx-00000000SPW-2ZiO;
+	Wed, 01 Jul 2026 01:36:05 +0000
+Received: from r9103.ps.combzmail.jp ([49.212.47.32])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1weZdi-0000000HIB0-3GrS;
-	Tue, 30 Jun 2026 14:40:42 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id D8F40601C1;
-	Tue, 30 Jun 2026 14:40:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 097601F000E9;
-	Tue, 30 Jun 2026 14:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782830441;
-	bh=dvgyW8X4QaOk9VN18ZFlTY30npYMh5LShKDCXGOsMxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UaRdoyQZ1fTRKLAcvtRM8pCPos/hNLQhMFDTOXBDrPIVVOLNJRA7cU6ka14RHMRFR
-	 qWpfgLvKeAkf3XDjCuN2u6VoExWRrn+k9PHdw1xwsfaFYRW6apiRDH/bzW3S/vPXox
-	 NDxnR8QhAiI/zPphXPkt1KolvI83eq3Oxp7pH6P8fycRjVpGLO0mOiNQvzLLw+uZ8w
-	 WRnUBYhp2jcwsX+8wxOOiEB4mT754vZ1T4aD/zr4L6UdrtAvPeJdD/EC+QwUvwBkRC
-	 yr2g0tFvuReybfsvjS3lYxCtUKPjJPqHyXPEmCx9cYMHhnzg+aQfCesR1JnXw5Gekk
-	 GQ0tpKu3Pqrmg==
-Date: Tue, 30 Jun 2026 17:40:34 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Brian Norris <briannorris@chromium.org>,
-	Edward Cree <ecree.xilinx@gmail.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Manish Chopra <manishc@marvell.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Sudarsana Kalluru <skalluru@marvell.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	b43-dev@lists.infradead.org, intel-wired-lan@lists.osuosl.org,
-	libertas-dev@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-net-drivers@amd.com,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 0/8] drivers/net: replace __get_free_pages()
- with kmalloc()
-Message-ID: <akPVYpzxwP8CIQxu@kernel.org>
-References: <20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org>
- <20260630072344.159b5d99@kernel.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260630072344.159b5d99@kernel.org>
+	id 1wejrj-00000000SO9-3CTW
+	for b43-dev@lists.infradead.org;
+	Wed, 01 Jul 2026 01:35:55 +0000
+Received: by r9103.ps.combzmail.jp (Postfix, from userid 99)
+	id A51551888AF; Wed,  1 Jul 2026 10:35:12 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9103.ps.combzmail.jp A51551888AF
+To: b43-dev@lists.infradead.org
+From: =?ISO-2022-JP?B?GyRCM3Q8MDJxPFIlIiU7JUMlSBsoQg==?= <info@asset-corp.jp>
+X-Ip: 159311722778508
+X-Ip-source: k85gj71k48dnsah1u0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCR2Q+ZRsoQjI4GyRCR1whIxsoQg==?=
+ =?ISO-2022-JP?B?QUkbJEI7fkJlJE4/NyEmPTg1Uj1RGyhC?=
+Mime-Version: 1.0
+X-MagazineId: 1kh1
+X-uId: 6764283939486063543243701031
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20260701013544.A51551888AF@r9103.ps.combzmail.jp>
+Date: Wed,  1 Jul 2026 10:35:12 +0900 (JST)
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
+X-CRM114-CacheID: sfid-20260630_183552_050465_6B10486A 
+X-CRM114-Status: UNSURE (   1.08  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
-Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -77,38 +59,70 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-On Tue, Jun 30, 2026 at 07:23:44AM -0700, Jakub Kicinski wrote:
-> On Tue, 30 Jun 2026 13:59:19 +0300 Mike Rapoport (Microsoft) wrote:
-> >  drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c    |  6 +--
-> >  drivers/net/ethernet/intel/ice/ice_gnss.c         |  5 +-
-> >  drivers/net/ethernet/sfc/mcdi.c                   |  7 +--
-> >  drivers/net/ethernet/sfc/siena/mcdi.c             |  7 +--
-> >  drivers/net/wireless/broadcom/b43/debugfs.c       | 12 ++---
-> >  drivers/net/wireless/broadcom/b43legacy/debugfs.c | 11 ++--
-> >  drivers/net/wireless/marvell/libertas/debugfs.c   | 39 ++++++--------
-> >  drivers/net/wireless/marvell/mwifiex/debugfs.c    | 62 ++++++++++-------------
-> >  drivers/net/wireless/ti/wlcore/main.c             | 14 +++--
-> 
-> You gotta split this, wireless and ethernet go via separate trees.
+事業オーナー様へ
 
-Sure.
+今、店舗経営の現場で「静かな、しかし劇的な変化」が
+起きていることにお気づきでしょうか。
 
-> BTW cocci also suggests folding in a memset, IDK if it's worth it.
 
-Same churn, less lines :)
- 
-> drivers/net/wireless/broadcom/b43legacy/debugfs.c:217:8-15: WARNING: kzalloc should be used for buf, instead of kmalloc/memset
-> -- 
-> pw-bot: cr
+実は、ユーザーの99.4％がGoogleマップを利用し、
+”近くの〇〇”とAIに相談してお店を決めているのです。
 
--- 
-Sincerely yours,
-Mike.
+つまり、「AIやマップに認識されない」ということは、
+新規客の60%にとって「存在しない店」と同じなのです。
+
+このような機会損失を避けたい方へ、
+
+80,000店舗以上の実績から導き出した集客ノウハウを
+無料提供しております。
+
+｜――――――――――――――――――――――――
+｜
+｜ 　　　　Googleビジネスプロフィール
+｜ 　　　　「集客の基本」解析BOOK
+｜
+｜ 　  　　　　＜資料はこちら＞
+｜　 　　　https://assetcorp.jp/26/
+｜
+｜――――――――――――――――――――――――
+
+
+本書では、80,000店舗以上の実績から導き出した
+「選ばれるお店」の勝ち筋を、3ステップにまとめています。
+
+資料を手がかりにして、GoogleマップとAIを掛け合わせ
+「自動運用」を始めた、あるネイルサロンでは
+わずか4ヶ月で以下の成果を叩き出しました。
+
+検索表示回数： 113倍
+マップ閲覧数： 3倍
+売上実績： 28倍UP
+
+
+「今の集客に限界を感じている」
+「集客基盤を築きたい」
+
+そう願うオーナー様にとって、
+この資料が現状を打破するきっかけになれば嬉しいです。
+ぜひこの機会にダウンロードしてご活用ください。
+
+[資料ダウンロードURL]　https://assetcorp.jp/26/
+
+------------------------------------------
+　株式会社アセット
+　東京都豊島区南池袋2-30-11
+　TEL：03-5256-7570
+------------------------------------------
+　本情報が不必要な方にはご迷惑をおかけし申し訳ございません。
+　配信ストップは下記にて承っております。
+　https://assetcorp.jp/mail/
+
+　お手数お掛けしますがよろしくお願いします。
 
 _______________________________________________
 b43-dev mailing list
