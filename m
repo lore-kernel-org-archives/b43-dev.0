@@ -4,44 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 71764C43458
-	for <b43-dev@archiver.kernel.org>; Wed,  1 Jul 2026 16:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 97D8FC43602
+	for <b43-dev@archiver.kernel.org>; Tue,  7 Jul 2026 14:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:References:
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=qYLfpzD6EphseVELuRNHpN+stZPpx9AnABxSOuKOvuE=; b=KHN9ccHKHNW+AQ
-	HCt8plWD2+S3FskKaVLHBEe2uCD8o4l+VyUnTml0VFoL2bvDTVOddIeVdst9VPse6CzQBumNNdu/C
-	qVG97hl/r78lJhg3CsorSSDHwVRe0KXd2temE0dY6rUz86UWNXs9WqfIKzV3v5VhCPESMeP/SHPs8
-	d3ZL+vL7e8MvQccDIq1kpbN68VW4HGCuOq/Z2IgZzY+DTdGg+1pYs6YEWxvAIsytVpZrp3pd3IGe1
-	lZCdjKcnrEtydvkNdsD5co3JiI+6HtwwqQLUFlQB6svDSkK8yXucdeme7EZ7g9nhoXRZFUCsVSjrC
-	5wAM+vBbdf68BD/9kf8g==;
+	List-Owner; bh=IsMNPuXRnXL+mGW2yME8UTaafZk5UR/gk8/Rjy/Tni8=; b=BzerMoVOVkxZki
+	/vtWQgl/INuy3MJR76zZ9nJoerQV3d6Hr4oNm5xrblmT/dOaOsF61dJrmkQnOK5HdTFc7jwKe/qZe
+	liXwSvmK5eU15vlRflHHTlyGwKVetTHLuom9vwI2/lKTSIED3OJjdZ9SP4XixGmpbFP69mxx+lbPz
+	BLtdp274YC4rhUioLHA4R2zn7FP1zUZzYbI5bU+rrUjxdE99Po7bbE+5WAdWDaFQ87z8Qc327kURC
+	2rKifGW71cs1XzlUmpvyaUJyAClowOAiKyu335+kNT6VpI3nFn5Lubk/tP644846JcvnnvaDFien0
+	4OBJnQ5qTb7GSJ2oaDyg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wexjZ-00000002Wm1-401e;
-	Wed, 01 Jul 2026 16:24:21 +0000
-Received: from mail11.truemail.it ([217.194.8.81])
+	id 1wh73s-0000000FCLJ-3iDA;
+	Tue, 07 Jul 2026 14:46:12 +0000
+Received: from tor.source.kernel.org ([2600:3c04:e001:324:0:1991:8:25])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wexjW-00000002Wl8-2U5f;
-	Wed, 01 Jul 2026 16:24:21 +0000
-Received: from francesco-nb (2-224-25-112.ip168.fastwebnet.it [2.224.25.112])
-	by mail11.truemail.it (Postfix) with ESMTPA id 893E0228E1;
-	Wed,  1 Jul 2026 18:24:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1782923051;
-	bh=j9BoCiRz+jTMzZ774GPA0gBs0cqXHfYMScxVG2VZtj8=; h=From:To:Subject;
-	b=jnTiTMoL2sl59fl3xrOn7icJksQ1c1zAouKZ6ZN1of6J9D+7GiPp4teflbxHaMEQr
-	 rMesX1MgeXn8rGclp21gk+OXT0xQE0ZTxSuFKYp5fBa1elg63QcS9skrryY7iGJNqB
-	 F+VLwuUevm3RXeRI9/VGBcHWbyedu0qfQQ9Sx5J4U7Yld6SydBWwV3WoRjZEtx4lZb
-	 CrAB6jB72BBRv1PxJ9GnYIQsm3pM+ZXeCz82ey1/7ArYu5oKTodRdQYIaZe/xaiJud
-	 tVOhbYJ8JkyUtmNVR+VgsWRb7T8NiLxaedru0BzkmvJmWoJiVP4b/GnhrYCEXX9FT2
-	 d7odGKWJv/lHg==
-Date: Wed, 1 Jul 2026 18:24:05 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Jeff Chen <jeff.chen_1@nxp.com>
+	id 1wh73n-0000000FCKY-0uV6;
+	Tue, 07 Jul 2026 14:46:07 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	by tor.source.kernel.org (Postfix) with ESMTP id 876DB60018;
+	Tue,  7 Jul 2026 14:46:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2066F1F000E9;
+	Tue,  7 Jul 2026 14:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783435566;
+	bh=38uJr8hVPGVJpV7RT0QtVixAplTyJQKOmyP/3Wvejkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BpkPQxRVjX7WXA/JEprOiZavYtpKUwCoXkGlay8OFTxOO3pBbm4Srga6ztyH+1G9J
+	 lK186j+V1CMVof8L6JnsbKESfM9aIozW2Fx5vLrzsSg8fNxMP82rXmD1RvGKwxmWTR
+	 toZSpjPZFfeMKf8ftXcFnxIWjZ59vBwOUbLfRcTdXK9hM4AdfUY23GHcs17g8mi4Km
+	 sYOaH1qvo7ncsQHtpLwY+T5IIOGF8UlSyExgMxbNm0iIpp7tzTLzlWINFiO2aFZki5
+	 mTuTothfBivZ9KvlFwlGUoGRccKPFG9tF5Q8RAWeV0x0tDP9G04KiXwRTm3QUUMy9E
+	 m4/nOvrkforfQ==
+Date: Tue, 7 Jul 2026 15:46:01 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 Cc: Johannes Berg <johannes.berg@intel.com>,
 	Brian Norris <briannorris@chromium.org>,
 	Francesco Dolcini <francesco@dolcini.it>,
@@ -49,17 +51,13 @@ Cc: Johannes Berg <johannes.berg@intel.com>,
 	libertas-dev@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org, linux-wireless@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: Re: [PATCH 3/4] mwifiex: debugfs: use kzalloc() to allocate
- formatting buffers
-Message-ID: <20260701162405.GA38581@francesco-nb>
+Subject: Re: [PATCH 0/4] drivers/net: replace __get_free_pages() with
+ kmalloc()
+Message-ID: <20260707144601.GH1364329@horms.kernel.org>
 References: <20260701-b4-drivers-wireless-v1-0-60264cdf2efe@kernel.org>
- <20260701-b4-drivers-wireless-v1-3-60264cdf2efe@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260701-b4-drivers-wireless-v1-3-60264cdf2efe@kernel.org>
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260701_092419_691624_F67169A9 
-X-CRM114-Status: GOOD (  11.83  )
+In-Reply-To: <20260701-b4-drivers-wireless-v1-0-60264cdf2efe@kernel.org>
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -76,34 +74,50 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-+Jeff
+On Wed, Jul 01, 2026 at 04:59:09PM +0300, Mike Rapoport (Microsoft) wrote:
+> This is a (small) part of larger work of replacing page allocator calls
+> with kmalloc.
+> 
+> My initial intention a few month ago was to remove ugly casts [1], but then
+> willy pointed out that Linus objected to something like this [2] and it
+> looks like more than a decade old technical debt.
+> 
+> Largely, anything that doesn't need struct page (or a memdesc in the
+> future) should just use kmalloc() or kvmalloc() to allocate memory.
+> kmalloc() guarantees alignment, physical contiguity and working
+> virt_to_phys() and beside nicer API that returns void * on alloc and
+> doesn't require to know the allocation size on free, kmalloc() provides
+> better debugging capabilities than page allocator.
+> 
+> Another thing is that touching these allocation sites gives the reviewers
+> opportunity to see if a PAGE_SIZE buffer is actually needed or maybe
+> another size is appropriate.
+> 
+> For larger allocations that don't need physically contiguous memory
+> kvmalloc() can be a better option that __get_free_pages() because under
+> memory pressure it's is easier to allocate several order-0 pages than a
+> physically contiguous chunk with the same number of pages.
+> 
+> And last, but not least, removing needless calls to page allocator should
+> help with memdesc (aka project folio) conversion. There will be way less
+> places to audit to see if the user was actually using struct page.
+> 
+> Also in git:
+> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git gfp-to-kmalloc/drivers-net-wireless
+> 
+> [1] https://lore.kernel.org/all/20251018093002.3660549-1-rppt@kernel.org/
+> [2] https://lore.kernel.org/all/CA+55aFwp4iy4rtX2gE2WjBGFL=NxMVnoFeHqYa2j1dYOMMGqxg@mail.gmail.com/
+> 
+> ---
+> Changes in v2:
+> - split out wireless drivers from a larger set 
+> - use kzalloc() instead of kmalloc() + memset in b43legacy
+> 
+> v1: https://patch.msgid.link/20260630-b4-drivers-net-v1-0-672162a91f37@kernel.org
 
-Jeff: this is relevant also for nxpwifi.
+For the series:
 
-On Wed, Jul 01, 2026 at 04:59:12PM +0300, Mike Rapoport (Microsoft) wrote:
-> mwifiex debugfs functions allocate buffers for formatting debug output
-> text using get_zeroed_page().
-> 
-> These buffers can be allocated with kmalloc() as there's nothing special
-> about them to go directly to the page allocator.
-> 
-> kmalloc() provides a better API that does not require ugly casts and
-> kfree() does not need to know the size of the freed object.
-> 
-> Performance difference between kmalloc() and __get_free_pages() is not
-> measurable as both allocators take an object/page from a per-CPU list for
-> fast path allocations.
-> 
-> For the slow path the performance is anyway determined by the amount of
-> reclaim involved rather than by what allocator is used.
-> 
-> Replace use of get_zeroed_page() with kzalloc() and free_page() with
-> kfree().
-> 
-> Link: https://lore.kernel.org/all/635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
 _______________________________________________
