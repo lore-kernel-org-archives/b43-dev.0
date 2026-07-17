@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9532AC43458
-	for <b43-dev@archiver.kernel.org>; Fri, 10 Jul 2026 02:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9F7FC4450A
+	for <b43-dev@archiver.kernel.org>; Fri, 17 Jul 2026 00:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=kY628Ku65VdXp+V+H4uTouRIXV2c9Kp61Hftnwx80ZA=; b=VkaN6ORb0cYM7y
-	AGb8UPHfkZkD5nw/pE8wz2n8W0uAMs0NmKCK7S6AJXqU71O+/DwFqWN9XWPkJV3+hjtJRW4bqhpcx
-	al7pLAjymd29ZoF6pxzgtm+iac1BPmyfsgIeugiFmmcUAT1jasR/KEzn0ueH2pOclRlPaq1fAQjFb
-	jsO1wvbiia6eT9KB3ToIeBzFoQRPr2Sx3P+tdhofzvOkav+F6+IffMhh0hRhTpWUOPgBVSFbZTzl3
-	yZCwAik0xcu8htuNVp2d/uLy5mmjXH8fxSHzgP7MlNY7adEzes64Mz6gFU8BZ1kA8qDsbrFcyV5MW
-	KgyccxPLyRUhSluij8Kw==;
+	List-Owner; bh=2QrbMHrR3iXx0uSUzyee/+pICiHcMjaITd4ngalNnCE=; b=A3/CwO9vWkX9VH
+	+smD+N3KfRC4budyX3zqT+/ot7n8Waq/F0RtJTbsoIim4Tgq94laRu75549Ak448gFu36mlCE9sxp
+	IWm5Wmay56SH4qKmNX/6M6NRauVjuYKSLsfdakP9UlI0RJajON5q2tqGhxfXYhNoWRZKaFLnCAAOx
+	qgr9qabXk/cMKIIv3z4XfhdCmTnczJ1b5PLRJYmt5UiYTF4jSyM4y+Qb00BoUs/4K41pfmwSzCzy2
+	zDbcYRkoJuhZbPr/6qAwPdfkrIYOdehYA3s4SrWPBZOcLT5biA1qqwaQI45SMH6LT4C+p/lzG0NLT
+	9vNwHTjUTBF7wJNFjg4w==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wi0cE-00000003wMZ-0ud2;
-	Fri, 10 Jul 2026 02:05:22 +0000
-Received: from r9216.ps.combzmail.jp ([160.16.66.19])
+	id 1wkWoe-00000000rF0-2m21;
+	Fri, 17 Jul 2026 00:52:36 +0000
+Received: from r9221.ps.combzmail.jp ([160.16.65.130])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wi0c4-00000003wLu-3Nr4
+	id 1wkWoX-00000000rDg-3wZO
 	for b43-dev@lists.infradead.org;
-	Fri, 10 Jul 2026 02:05:14 +0000
-Received: by r9216.ps.combzmail.jp (Postfix, from userid 99)
-	id 3316FFEBF3; Fri, 10 Jul 2026 11:04:40 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9216.ps.combzmail.jp 3316FFEBF3
+	Fri, 17 Jul 2026 00:52:32 +0000
+Received: by r9221.ps.combzmail.jp (Postfix, from userid 99)
+	id E4283E3DB0; Fri, 17 Jul 2026 09:51:30 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9221.ps.combzmail.jp E4283E3DB0
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCJVUlaSVzJUElYyUkJTolOyVfJUohPDt2TDM2SSFDGyhC?=
- K Village =?ISO-2022-JP?B?GyRCNFo5cThsGyhC?= <info@kvillage-school.jp>
-X-Ip: 829370947447776
-X-Ip-source: k85gj7fc48dnsa42u0p6gd
+From: =?ISO-2022-JP?B?GyRCPSJPKzBcOVQ7WTFnO3Y2SBsoQg==?= 
+ =?ISO-2022-JP?B?GyRCQGJMQDJxGyhC?= <info@fc-seminar-online.jp>
+X-Ip: 3050124441704790
+X-Ip-source: k85gj7o648dnsaq5u0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCNFo5cSVWITwlYCRLPmgkQyQ/ISI/NzUsGyhC?=
- =?ISO-2022-JP?B?GyRCO3Y2SBsoQg==?=
+Subject: =?ISO-2022-JP?B?GyRCPmMzMjxUJE49Ik8rJHI7WTFnJDkkazt2GyhC?=
+ =?ISO-2022-JP?B?GyRCNkgbKEIgGyRCPzc1LDMrNkglUSE8JUglSiE8GyhC?=
+ =?ISO-2022-JP?B?GyRCSmc9OBsoQg==?=
 Mime-Version: 1.0
-X-MagazineId: fc42
-X-uId: 6764284838486063625052331046
+X-MagazineId: o6q5
+X-uId: 6764285538486063695050471032
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20260710020502.3316FFEBF3@r9216.ps.combzmail.jp>
-Date: Fri, 10 Jul 2026 11:04:40 +0900 (JST)
+Message-Id: <20260717005217.E4283E3DB0@r9221.ps.combzmail.jp>
+Date: Fri, 17 Jul 2026 09:51:30 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260709_190512_963784_E41F458E 
-X-CRM114-Status: UNSURE (   0.87  )
+X-CRM114-CacheID: sfid-20260716_175230_094409_77E30692 
+X-CRM114-Status: UNSURE (   0.59  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -66,95 +67,63 @@ Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
 　
-　お世話になります。
+　下記エリアにおいて、大人の発達障害の方が働くことを支援する
+　「厚労省許認可」の就労移行支援事業の
+　新規開業パートナーを募集しています。
 　
-　新たな事業展開をお考えの経営者様へ、
+　◇１エリア１企業様限定のエリアパートナー制となります◇
 
-　「市場は急成長×少競合×上場企業が運営」3拍子揃った、
-  韓国語教室のフランチャイズ説明会をご案内申し上げます。
+　　　　　　　　　　　〜募集エリア〜
+　　　北海道／青森県／岩手県／宮城県／秋田県／山形県／福島県
+　　　茨城県／栃木県／群馬県／埼玉県／千葉県／東京都／神奈川
 
-━━━━━━━━━━━━━━━━━━━━━━━━
+　　　新潟県／富山県／石川県／福井県／山梨県／長野県／静岡県／愛知県
+
+　　　三重県／滋賀県／京都府／大阪府／兵庫県／和歌山
+　　　鳥取県／島根県／岡山県／広島県／山口県
+
+　　　徳島県／香川県／愛媛県／高知県
+　　　福岡県／佐賀県／長崎県／熊本県／大分県／宮崎県／鹿児島／沖縄県
 　
-　　　7月10日（金）13:00〜14:00
-　　　7月19日（日）11:00〜12:00
-　　　※内容は同じです。
-
-　◆　韓国語ブームを味方に、先行者利益と安定収益を
-
-　　　日本最大級の韓国語スクール
-　　　”K Village 韓国語”
-
-
-　※　オーナー様に韓国語や業界知識などは不要で、
-　　　未経験から開業することができます。
-
-
-　◆　セミナーの視聴予約はこちら
-　　　https://k-village-school.jp/seminar/
-
-━━━━━━━━━━━━━━━━━━━━━━━━
+　 7月30日（木）16:00-17:00　オンライン開催
+----------------------------------------------------------
 　
-　韓国語の学習業界は、K-POP・韓国ドラマ人気の影響で
-　急成長しています。
+　　　　　    −　１エリア１企業 限定　−
+　　　　　　　　
+　　　　 大人の発達障害の方が働くことを支援する
+　　  就労移行支援事業 「ディーキャリア ITエキスパート」
+　　　　　　 新規開業パートナー募集説明会
 
-　その中でもK Village韓国語は、
-　東証プライム上場企業グループのブランド力と集客力を背景に、
+　　　　　　　　　>>詳細・申込<<
+　　　   　　https://decoboco-fc.jp/25m/
 
-　生徒数15,000人・月間の問合せ数1,500件を超える
-　日本最大の韓国語教室です。
+　　　　　　　　 ◆　 　提供　　 ◆
+　　　　　　　　デコボコベース株式会社
+ 　　　 （ディーキャリア ITエキスパート FC運営本部）
+----------------------------------------------------------
 　
-　24年5月までに開校した、直営する19校舎では黒字化を達成し、
-　再現性の高い安定したビジネスモデルの構築に成功しました。
+　いつもお世話になります。
 　
-　そして、このタイミングでマーケットシェアを一気に拡大して
-　競合他社を圧倒する経済性をもつ事業へと成長させるべく、
-
-　フランチャイズ加盟店を募集する運びとなりました。
-　韓国語コミュニティをけん引する私たちと、
-　事業の拡大を共創していきませんか？
+　厚労省認可の「就労移行支援事業」の新規開業パートナーを
+　募集するオンライン説明会のご案内につきご連絡差し上げました。
 　
-　今このタイミングでの加盟は、
-　他にはない特別な成長機会を得られるチャンスです。
-
-　新規事業をお考えでしたらぜひ、ご視聴ください。
-
-━━━━━━━━━━━━━━━━━━━
-
-　■　開催日程
-　　　7月10日（金）13:00〜14:00
-　　　7月19日（日）11:00〜12:00
-　　　※内容は同じです。
-
-　■　開催方式
-　　　・オンライン開催
-
-　■　コンテンツ
-　　　・韓国語ビジネスの市場と魅力について
-　　　・K Villageのビジネスモデル
-　　　・競合優位性と収益の事例
-　　　・フランチャイズについて
-
-　■　主催
-　　　・株式会社 K Village
-
-　■　定員
-　　　・10社／各回
-
-　■　参加費
-　　　・不要です
-
-　■　視聴のご予約はこちら
-　　　https://k-village-school.jp/seminar/
-
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-本メールが不要の方には大変失礼しました。
-今後ご案内が不要な際は、下記URLにてより手続きを承っています。
-https://k-village-school.jp/mail/
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-株式会社 K Village
-東京都新宿区西新宿2-4-1 新宿NSビル7F
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　本事業は業界未経験からスタートができ、地域社会への貢献と
+　ストック型の安定した収益を実現することが可能です。
+　
+　新たなビジネスの展開をご検討でしたら、
+　この機会にまずは本説明会へご参加くださいませ。
+　
+　よろしくお願いします。
+　
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　就労移行支援事業　FC説明会事務局
+　電話：0120-889-859
+　住所：東京都中央区銀座7-13-6
+―――――――――――――――――――――――――――――――
+　本メールのご不要な方には大変ご迷惑をおかけいたしました。
+　下記アドレスより、お手続きをお願いいたします。
+　┗　https://decoboco-fc.jp/mail/
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 _______________________________________________
 b43-dev mailing list
