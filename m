@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9F7FC4450A
-	for <b43-dev@archiver.kernel.org>; Fri, 17 Jul 2026 00:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 09F26C55184
+	for <b43-dev@archiver.kernel.org>; Tue,  4 Aug 2026 00:15:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
 	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=2QrbMHrR3iXx0uSUzyee/+pICiHcMjaITd4ngalNnCE=; b=A3/CwO9vWkX9VH
-	+smD+N3KfRC4budyX3zqT+/ot7n8Waq/F0RtJTbsoIim4Tgq94laRu75549Ak448gFu36mlCE9sxp
-	IWm5Wmay56SH4qKmNX/6M6NRauVjuYKSLsfdakP9UlI0RJajON5q2tqGhxfXYhNoWRZKaFLnCAAOx
-	qgr9qabXk/cMKIIv3z4XfhdCmTnczJ1b5PLRJYmt5UiYTF4jSyM4y+Qb00BoUs/4K41pfmwSzCzy2
-	zDbcYRkoJuhZbPr/6qAwPdfkrIYOdehYA3s4SrWPBZOcLT5biA1qqwaQI45SMH6LT4C+p/lzG0NLT
-	9vNwHTjUTBF7wJNFjg4w==;
+	List-Owner; bh=clzGht4PhyaLjwCORa61GNAjAwozgSJVMcDJGuwRqhE=; b=YQkz+XcHGAAeTs
+	QZQQPsp5bq6zRAeYXJxhJ5Rx1TTu117FWHf6qwx3L0ZTLlMwWQ6R47tV+fqFJO5eHXIfwkVEJzn+j
+	ENuz50qLkgATf28Fb2OK98YCR4pwJbeAJirAelp5Gvx2knye1YFo63KjOk7H8TwmaScFAJ99L7m0m
+	MOQlEXgW/6pFP3Ux6zOxxHGJ161vu0eIVy4Vh9duglohxgbwcYda3awROGxNGF2qfa2oKvDVcCq2U
+	e79m6QSzDBrE6IFr7kZsqK2nC+0d+yNBpBk+9IjdBRxwIlnQPpNzs1JA90PV/MS2LWih+RI8gRB0U
+	dkZScmmbvK5GXUgzPz+Q==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wkWoe-00000000rF0-2m21;
-	Fri, 17 Jul 2026 00:52:36 +0000
-Received: from r9221.ps.combzmail.jp ([160.16.65.130])
+	id 1wr2oZ-00000000k0g-1hfn;
+	Tue, 04 Aug 2026 00:15:27 +0000
+Received: from r9110.ps.combzmail.jp ([49.212.36.116])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wkWoX-00000000rDg-3wZO
+	id 1wr2oQ-00000000k05-3waN
 	for b43-dev@lists.infradead.org;
-	Fri, 17 Jul 2026 00:52:32 +0000
-Received: by r9221.ps.combzmail.jp (Postfix, from userid 99)
-	id E4283E3DB0; Fri, 17 Jul 2026 09:51:30 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9221.ps.combzmail.jp E4283E3DB0
+	Tue, 04 Aug 2026 00:15:22 +0000
+Received: by r9110.ps.combzmail.jp (Postfix, from userid 99)
+	id 61ED61886AB; Tue,  4 Aug 2026 09:14:28 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9110.ps.combzmail.jp 61ED61886AB
 To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCPSJPKzBcOVQ7WTFnO3Y2SBsoQg==?= 
- =?ISO-2022-JP?B?GyRCQGJMQDJxGyhC?= <info@fc-seminar-online.jp>
-X-Ip: 3050124441704790
-X-Ip-source: k85gj7o648dnsaq5u0p6gd
+From: =?ISO-2022-JP?B?GyRCRnxLXCVaJUMlSCVbJUYlazYoMnEbKEI=?= <info@j-pet-hotel.jp>
+X-Ip: 3184731719369248
+X-Ip-source: k85gj72w48dnsa51u0p6gd
 Precedence: bulk
 List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPmMzMjxUJE49Ik8rJHI7WTFnJDkkazt2GyhC?=
- =?ISO-2022-JP?B?GyRCNkgbKEIgGyRCPzc1LDMrNkglUSE8JUglSiE8GyhC?=
- =?ISO-2022-JP?B?GyRCSmc9OBsoQg==?=
+Subject: =?ISO-2022-JP?B?GyRCIVYlWiVDJUgwJiFXMG4kbCRrISI3UDFEGyhC?=
+ =?ISO-2022-JP?B?GyRCPFRNTSRYGyhC?=
 Mime-Version: 1.0
-X-MagazineId: o6q5
-X-uId: 6764285538486063695050471032
+X-MagazineId: 2w51
+X-uId: 6764294238486064565085551008
 X-Sender: CombzMailSender
 X-Url: http://www.combzmail.jp/
-Message-Id: <20260717005217.E4283E3DB0@r9221.ps.combzmail.jp>
-Date: Fri, 17 Jul 2026 09:51:30 +0900 (JST)
+Message-Id: <20260804001511.61ED61886AB@r9110.ps.combzmail.jp>
+Date: Tue,  4 Aug 2026 09:14:28 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260716_175230_094409_77E30692 
-X-CRM114-Status: UNSURE (   0.59  )
+X-CRM114-CacheID: sfid-20260803_171519_206649_D00D968E 
+X-CRM114-Status: UNSURE (   0.63  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -67,63 +65,95 @@ Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
 　
-　下記エリアにおいて、大人の発達障害の方が働くことを支援する
-　「厚労省許認可」の就労移行支援事業の
-　新規開業パートナーを募集しています。
+　「ペット愛」溢れる、経営者様へ
 　
-　◇１エリア１企業様限定のエリアパートナー制となります◇
+　地域で愛犬を安心して預けられる
+　ペットホテル・トリミング事業を始めませんか。
+　
+　
+　■　フランチャイズシステム説明会　■
+　
+　　　愛犬家のオーナー多数！
+　　　ペットホテル・トリミングサロン “ONE LUKE”
+　　　※経験や資格が無くても始められます
+　
+　■　開催方式
+　　　オンライン（申込後に参加方法をご案内）
+　
+　■　日程
+　　　8月5日（水）11:00-12:00
+　　　8月6日（木）11:00-12:00
+　　　8月7日（金）13:00-14:00
+　　　8月10日（月）11:00-12:00
 
-　　　　　　　　　　　〜募集エリア〜
-　　　北海道／青森県／岩手県／宮城県／秋田県／山形県／福島県
-　　　茨城県／栃木県／群馬県／埼玉県／千葉県／東京都／神奈川
+　■　定員
+　　　5名
+　
+　■　ご視聴・詳細はこちら
+　　　https://oneluke-fc-seminar.jp/lp/
+　
+　
+　お世話になります。
+　
+　ペットホテル・トリミングサロンの
+　フラチャイズ説明会のご案内でございます。
 
-　　　新潟県／富山県／石川県／福井県／山梨県／長野県／静岡県／愛知県
-
-　　　三重県／滋賀県／京都府／大阪府／兵庫県／和歌山
-　　　鳥取県／島根県／岡山県／広島県／山口県
-
-　　　徳島県／香川県／愛媛県／高知県
-　　　福岡県／佐賀県／長崎県／熊本県／大分県／宮崎県／鹿児島／沖縄県
+　ペットホテルとトリミングサービスを提供する
+　ONE LUKE（ワンルーク）
 　
-　 7月30日（木）16:00-17:00　オンライン開催
-----------------------------------------------------------
+　ワンちゃんが好きすぎる創業者が
+　ペットホテルに預けたときに感じた
+　不安や思ったことを施設づくりに活かしています。
 　
-　　　　　    −　１エリア１企業 限定　−
-　　　　　　　　
-　　　　 大人の発達障害の方が働くことを支援する
-　　  就労移行支援事業 「ディーキャリア ITエキスパート」
-　　　　　　 新規開業パートナー募集説明会
-
-　　　　　　　　　>>詳細・申込<<
-　　　   　　https://decoboco-fc.jp/25m/
-
-　　　　　　　　 ◆　 　提供　　 ◆
-　　　　　　　　デコボコベース株式会社
- 　　　 （ディーキャリア ITエキスパート FC運営本部）
-----------------------------------------------------------
 　
-　いつもお世話になります。
+　例えばワンちゃんが泊まるときに、少しでも
+　広く、心地よく過ごして欲しいという思いから
+　鉄のゲージではなくオーダーで職人さんに
+　「お部屋」を作っていただいています。
 　
-　厚労省認可の「就労移行支援事業」の新規開業パートナーを
-　募集するオンライン説明会のご案内につきご連絡差し上げました。
+　そうした愛犬家目線のきめ細かいサービスが支持され
+　利用した方は高い確率でリピートしてくれます。
 　
-　本事業は業界未経験からスタートができ、地域社会への貢献と
-　ストック型の安定した収益を実現することが可能です。
 　
-　新たなビジネスの展開をご検討でしたら、
-　この機会にまずは本説明会へご参加くださいませ。
+　日本ではいまや「8世帯に1世帯」がペットを飼うまでに
+　増えてきましたが、ペットホテルはまだまだ店舗数が
+　足りていないため、今後も成長が期待できます。
 　
-　よろしくお願いします。
 　
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　就労移行支援事業　FC説明会事務局
-　電話：0120-889-859
-　住所：東京都中央区銀座7-13-6
-―――――――――――――――――――――――――――――――
-　本メールのご不要な方には大変ご迷惑をおかけいたしました。
-　下記アドレスより、お手続きをお願いいたします。
-　┗　https://decoboco-fc.jp/mail/
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　ここまでこの文章を読まれたということは、
+　あなたもワンちゃんが大好きなのではないでしょうか。
+　
+　ワンルークのFCオーナー様も愛犬家が多く、中には
+　ご自身が利用者だった、という方もいらっしゃいます。
+　
+　説明会にて詳しいビジネスモデルをお伝えしますので、
+　新規事業を探している愛犬家の経営者様は
+　この機会にぜひご参加ください。
+　
+　地域のペットライフを豊かにし、愛犬が安心して
+　過ごせる空間を一緒につくっていきましょう。
+　
+　
+　■　フランチャイズシステム説明会　■
+　
+　　　愛犬家のオーナー多数！
+　　　ペットホテル・トリミングサロン
+　　　“ONE LUKE（ワンルーク）”
+　
+　■　ご視聴はこちら
+　　　https://oneluke-fc-seminar.jp/lp/
+　
+***********************************************************************
+本メールのご不要な方には大変ご迷惑をおかけいたしました。
+お手数お掛けしますが、メール不要のお手続きは
+下記URLよりお願いいたします。
+<メール停止フォーム>
+　https://oneluke-fc-seminar.jp/mail/
+***********************************************************************
+日本ペットホテル協会株式会社
+愛知県名古屋市千種区内山3丁目9-23 3F
+TEL:052-784-8416
+***********************************************************************
 
 _______________________________________________
 b43-dev mailing list
