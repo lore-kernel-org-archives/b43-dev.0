@@ -4,52 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 513C1C55184
-	for <b43-dev@archiver.kernel.org>; Tue,  4 Aug 2026 00:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 28AE8C561E6
+	for <b43-dev@archiver.kernel.org>; Thu,  6 Aug 2026 08:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
-	From:To:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=4p2K+nZDeoaiCpPCxJZfVgZnOJCyOeYC4YYgVz4dqjs=; b=eT/OqZoloaviwd
-	1Fb8NpZdn6xrKj3e9bS7WhelR7sztnzgtb95BjfJ+UIS0JMqKxuCgmbZaLZ6Pl8X/Pa9vdVqFTXMS
-	oir57Dhixipdr0zlZLJd7/q6nIY0OHDnRwo3vcf9aCPzw0XgsXf5oZj1VokVrbL9nvRbRO3NXk3sD
-	Ndu/0CUvxlbpEkDrDTsEaBkHzPCX/ZOnw7Cc1+ay9k+2kUCqLjzGh8NeDApPEMizI83HOJUrEQ0pT
-	8u+zOn1ZtzLN7a0pHQVMFgRTQ06EUiK21UYMmtrrteyklAntubv5Yw6aMw2R5kCXRPb6dUgDvG60v
-	gatxBSaWxc0Dz6W/zhbQ==;
+	List-Owner; bh=f7GOUoco7G8qksLg4Y1DgG9aCUvdPrulgiEVbb8GtoE=; b=gYNw1tuq8ZDRzZ
+	vdRvfszAqIKsEsP5FKXR7WPMOIGII/02AVhDz0FPzmPko37qNqTP0bZrbmOe4w6u1gSzvFkpm0EgH
+	MmOPwLBophOWdlz6up12XPvuW8oMzUuOG6m9WtP2g1JMbB2/fqvrJRpPRHwcm124fMBzB8FPvdOd8
+	dpP0xXXT1gCE2irW+dn6t+6356BQCr3m9m0LqSrS6ZC7ScF6T3hpHiRGztXj1daEcGuGSDoOI64CR
+	K5TPWp7MkPeSB/9w2drWnPLQTSfjWcnoYRxie2Q6LkjiKSnbsY2HGx8OJErbGc6ROzQR+e3MVdmYd
+	QdjMyC+FJrLOm6x71j3Q==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wr35N-00000000kgQ-32F8;
-	Tue, 04 Aug 2026 00:32:49 +0000
-Received: from r9221.ps.combzmail.jp ([160.16.65.130])
+	id 1wrtlv-00000005Hwh-4033;
+	Thu, 06 Aug 2026 08:48:15 +0000
+Received: from smtpcmd10102.aruba.it ([62.149.156.102])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wr35J-00000000kg5-237F
+	id 1wrtlp-00000005Hre-2tDC
 	for b43-dev@lists.infradead.org;
-	Tue, 04 Aug 2026 00:32:47 +0000
-Received: by r9221.ps.combzmail.jp (Postfix, from userid 99)
-	id C30EDE43A7; Tue,  4 Aug 2026 09:29:40 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9221.ps.combzmail.jp C30EDE43A7
-To: b43-dev@lists.infradead.org
-From: =?ISO-2022-JP?B?GyRCJUolbCVDJTglaiVzJS8bKEI=?= <info@knowledgelink-corp.jp>
-X-Ip: 6644061302259389
-X-Ip-source: k85gj73p48dnsa9wu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPFJEOSROGyhCTkcbJEI5VEYwGyhC?=
-Mime-Version: 1.0
-X-MagazineId: 3p9w
-X-uId: 6764294237486064565080501037
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20260804003233.C30EDE43A7@r9221.ps.combzmail.jp>
-Date: Tue,  4 Aug 2026 09:29:40 +0900 (JST)
+	Thu, 06 Aug 2026 08:48:12 +0000
+Received: from DELL-MOBILE03.ad.smart.it ([77.89.54.34])
+	by Aruba SMTP with ESMTPSA
+	id rtliwdfMAIfDkrtliwYU4u; Thu, 06 Aug 2026 10:48:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
+	t=1786006083; bh=WeWgdOo7ZDytIYaKKU/Onqw8G8iiC0gsRwYKQt8aT7k=;
+	h=Date:From:To:Subject:MIME-Version:Content-Type;
+	b=Ix8iffuErGQgzAKnsIi4oR49G8x2FtV7PnkVLOseJaSKwz1UuQhYDL0ftHGeCa1Sc
+	 YlEa60xU4POmfCkAwZlIEnYQZ1Hsb8E/Lw9l0maNMvAEQ828UuiDGTbUePupNTdL6T
+	 /+1lsIuzX8sF3DTgbQJNzZai6qHCM6EPrm3DgnFB8OEimMExmsbb4VE7nO+7mq1X6h
+	 2r9o5fvROb8uwnalOpt1D3o/p04eWiWXgMN9GO1cmp1tPfkiLMW9i/Wx1mEyWVqqK7
+	 y6X1UbDKeOKV6AmFEUAcyzg3yi9uXJasSzm/33rjIgnDF30QvTjIPoL/nSEu+47RX1
+	 gYHPJezlXEh3g==
+Date: Thu, 6 Aug 2026 10:48:02 +0200
+From: Alessio Ferri <alessio.ferri@mythread.it>
+To: Michael Buesch <m@bues.ch>
+Cc: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org
+Subject: b43: multiple parens bugs and double CORDIC_FIXED
+Message-ID: <20260806104802.147ff076@DELL-MOBILE03.ad.smart.it>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+X-CMAE-Envelope: MS4xfIwNugalfKyKKYa0X6tFVmHTaw19c0ck2bxh/8lVA4ZODp7deqLqLSSoxQcgkQElc6kszbI53awt6HEr90QzlrkEPxgg0BXJYJ9rGNkzqro6dlcoxJP0
+ tvnfeeBnGGpZhebcf0Ns32xWKZaT/ZslNyGMliaQAGYYXhP7ivV4bxRTrKabZfWCM+ucn/fb6TpClslR4U6yj150pLW5N5I+8c+ZAsnnlJmpedyCpjqSWhyY
+ gA6nPj2Hm0NOiPHxfqoBgYITHuHgmQmRVmClrV5iaqY=
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260803_173245_715847_E35DAF55 
-X-CRM114-Status: UNSURE (   0.59  )
+X-CRM114-CacheID: sfid-20260806_014810_188710_E5E268F8 
+X-CRM114-Status: UNSURE (   5.32  )
 X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
+Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=unsubscribe>
@@ -58,98 +65,52 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="iso-2022-jp"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-　
-　
-　お世話になります。ナレッジリンクセミナー事務局です。
-　
-　・社員のモチベーションを上げようと声をかける
-　・現場のトラブルに、自ら先頭に立って対応する
-　
-　もし、社長がこれらを率先しているようであれば
-　残念ながら、その組織の成長はそこで止まります。
-　
-　社長の“優しさ”が、社員の甘えを生み、責任感を奪い
-　「指示待ち人間」を量産する装置になっているからです。
-　
-　
-　4,800社の経営者が衝撃を受けた、
-　良かれと思ってやってしまう「社長のNG行動」の正体。
-　
-　組織を劇的に変えるためのウェビナーです。　
-　1つでも心当たりがあれば、一度ご視聴ください。　
-　
-　>>視聴予約はこちら
-　https://knowledge-corp.jp/shikigaku5/
-　
-----------------------------------------------
-　
-　テーマ ：　それ、危険です 『社長のNG行動』
-　　　　　 〜 その行動が、組織崩壊を招く 〜
-　
+I developed a tool to capture io traces of proprietary wl driver by
+hooking on its io accessors and then started to check mainline against
+the captured trace, i already spotted 3 bugs:
 
-　日 程　：8月4日（火）13:00スタート
-　　　　　 8月18日（火）13:00スタート
-　　　　　※どちらの日程も内容は同じ
-　会 場　：Zoom開催
-　定 員　：先着100名（費用は不要）
-----------------------------------------------
-　※経営層の方限定です
-　
-　
-　なぜ、社員は「言われたこと」しかやらないのか。
-　なぜ、次世代のリーダー候補が育たないのか。
-　
-　それは、能力の問題ではなく、
-　
-　良かれと思って続けている「社長の配慮」こそが、
-　組織成長を止める、最大のボトルネックかもしれません。
-　
-　本セミナーでは、4,800社以上が導入した
-　独自の組織論「識学」に基づき、社長の「NG行動」と
-　真の経営者へ脱皮するためのマインドセットを伝授します。
-　
-　
-　【セミナー内容(一部抜粋)】
-　 ○ NG行動3選
-　 ○ なぜ優秀なNo.2や部長が育たないのか
-　 ○ マネジメントスタイルの変革について
-　 ○ 導入企業の事例
-　
-　「管理職が育ったら任せる」ではなく「任せるから育つ」
-　という思考の逆転を提言。
-　
-　現場から「冷たくなった」と思われることを恐れず
-　機能的な階層構造を作ることで
+1) in b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
 
-　結果として社員全員を守り
-　利益を最大化させる道筋を明示します。
+abs should accept only offset[j] and not offset[j] + 4, immediate result
+is failure to reproduce the write 0x3e for the same reads
 
-　「優しさ」で人を動かすのではなく
-　「正しさ」で組織を動かす。
+records #3723-#3740, from "PHY.WR   addr=0x01b8 val=0x003f"
 
-　音声やお顔が表に出ることはございませんので
-　お気軽にご視聴ください。
-　
-　>>視聴予約はこちら
-　https://knowledge-corp.jp/shikigaku5/
-　
-　
------------------------
-　一般社団法人 ナレッジリンク
-　東京都千代田区神田小川町1-8-3
-　電話：03-5256-7638
+2) In b43_nphy_load_samples()
 
-　セミナーのご案内が不要な方は大変残念ではございますが、
-　下記URLより手続き下さいませ。
-　
-　メール配信のワンクリック解除はこちら
-　https://fc-knowledgelink-corp.jp/mail/
-　
+shift has more priority than and, so samples[i].i & 0x3FF << 10 masks
+with 0x3FF << 10 instead of shifting the masked value into place. The
+in-phase component of a sample sits in the low ten bits, so it is
+masked to zero. brcmsmac packs the same table as ((buf[t].i & 0x3ff) <<
+10) | (buf[t].q & 0x3ff), in wlc_phy_loadsampletable_nphy()
+
+3) In b43_nphy_gen_load_samples()
+
+cordic_calc_iq() call CORDIC_FIXED(theta) as the first op, so the
+pre-scaling of rot by 2^16 is wrong. For reference brcmsmac computes
+the step as ((f_kHz * 36) / phy_bw) / 100 into an s32 and passes it in
+unscaled. The wrong scaling and the double CORDIC_FIXED() result in
+wrong values.
+
+with both fixes it reproduce correctly:
+
+records #8638-#8959, from "TBL.WR   id=0x0011 off=0x0000 len=160"
+
+Bonus: with the trace I also found that I introduced too many values
+for the table r2057_rev8_init, while wl write only a subsection of them:
+the ones marked with an extra flag in the raw data.
+
+I'll send patches in a few days once i verified them on hardware, do
+you see any problems with the capture & compare approach?
+
+
+LINK:
+https://github.com/aleferri/b43-6362-wip/raw/refs/heads/main/router-data/dsl-3580l/opinit-ch1-ch6-bw20.decoded
 
 _______________________________________________
 b43-dev mailing list
