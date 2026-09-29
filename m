@@ -4,68 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CFBEBCA5FA1
-	for <b43-dev@archiver.kernel.org>; Tue, 29 Sep 2026 08:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6B500C9832A
+	for <b43-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	Message-ID:Subject:Cc:From:To:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=thA3ePzacnNyaXTIKHkH0Tb9VCR/9NlUHDBqNUEKxxQ=; b=VNpLWvyGAxoJRr
-	rsGb6JM8c27ELmvwXbPjazMMQ501ZK04gP+Ay5Pb5TA33nX7Rdx9Fodt8HY73Xl6Xil/vA9lTvFR3
-	9kU3nPdupA/2l2dQFsk5EUyxGrbpY3medmwND0IExk6+b4dEy/GbYb6gU1gASZPAzjws0lNbPh2yV
-	Su4tquyUUspyRWhV6i3SuJ2umduFxp+cB9kJuzXw/YEYHYoQhcjj7cTI793ayWAh79qVkuz9egqQ9
-	kKPY4zx53k66tCmzeaDplWkWNWV9ujC5gW59/JoJpxAmF6xP96iLkPn90RK/dPIvXlxvbJOt5ARPO
-	9K/lSxdM0uInmpvggm8Q==;
+	List-Owner; bh=o9YS1TYGkfW55MFKXtG7V60egF1vp8+7kat9/ECkBfg=; b=rW9CiYzN/yGEAJ
+	bEgJXCPqT5+Ra3y1HkSBtZTFImURHx38s9CDJiALJxaJRC1RnJ6xS1++NWtLU853Vt7LLDKh//Ra0
+	K2IyjTnof96Y9zKTC0kxG/1tKk+Bj5VyfYAF7a7U1vjjNoepNSqc2SoJuJxdpy/x+kBygbHQAd4F0
+	b0L7WZ2BHQd3Ykf5QSjhFSlIKtgs63LqNISOKahXNuhmAJ0HFNbQO1Imbn7Bqd4iIubwjRGkDH63Y
+	zQhn6z12yMhQzltYNmUTcpQoG+jAyUfWmTAk1cr1Zy3eHHNoZ6yAfyRF6BAcOhf9epS/XI8/U3qzd
+	NnLjstBMgJzoS7rrNKGg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xBTg4-00000002u64-41rH;
-	Tue, 29 Sep 2026 08:59:08 +0000
-Received: from smtpcmd03116.aruba.it ([62.149.158.116])
+	id 1xBZ6F-00000003pRB-0PEd;
+	Tue, 29 Sep 2026 14:46:31 +0000
+Received: from desiato.infradead.org ([2001:8b0:10b:1:d65d:64ff:fe57:4e05])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xBTg1-00000002u5H-09Q9
+	id 1xBZ5l-00000003pGF-0mmU
+	for b43-dev@bombadil.infradead.org;
+	Tue, 29 Sep 2026 14:46:01 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:From:To:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=YqRb0Lt6o6cpf5+myrECVbP/9Jgh1swBc2Lgnr6DRn4=; b=f3i3Z72GzBuzJ1jc4ZQH/PM0/L
+	xsEfMkK991IRhNfZiIVnisDeBdCczBZGqxNsVOMLI1SDGRcT+wmkYkcpDxs9cixwfwWouXnVLkejw
+	IW1giCVp9fr3GGGbByIfHWICdNjnuF9tyq5O8WxMie1qEb5P0xDN4Xsb2brdjwUZKNJVaVdjyXeli
+	L62ti2zpT35mTpEtYgA29F9zD0i3DYfrEv5KhkTPauNl9hRbUdjOfQ0Brfcy4aVMChbLWv8gZedN5
+	CthPiUKm0A5n/6USmthxqQEG85+9uVFISeZYMWkxhqW5EK8mJtez+a11VljwoBoJb+ZiyWXE8twXe
+	N8eHGQJQ==;
+Received: from mail-4319.protonmail.ch ([185.70.43.19])
+	by desiato.infradead.org with esmtps (Exim 4.99.2 #2 (Red Hat Linux))
+	id 1xBZ5h-00000002kg8-38bo
 	for b43-dev@lists.infradead.org;
-	Tue, 29 Sep 2026 08:59:07 +0000
-Received: from DELL-MOBILE03.ad.smart.it ([77.89.54.34])
-	by Aruba SMTP with ESMTPSA
-	id BTfwxW6R0dVTCBTfxx07qk; Tue, 29 Sep 2026 10:59:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1790672341; bh=F770U/ZW9dr6tmV9XMmJ7Hip1w4hincRL7oGr6NNsZc=;
-	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=nU12D5xPKlCl5dTOJfCmY+GmQnImlqBaWDn0RquvwlekMflXGrhHD4hezfbtIQaRT
-	 B9BslVv79tHs65RJhtYrT8sZoi7IMBZEad1Mrq3u/Af262aWIb2IckHN92q9VcI70y
-	 R9hQtGyUX8jMX8mDHqhLJTEWW008qPuV3m1fwmRI1gQqjRY7FWMUcWC4i4GeT4nw2n
-	 fw02iF17f0MEIeTV5hQnOUDSuslhRQyfds/3OR36SoYO/gLe1z7Yz7LgynEVBpNLsj
-	 Wi7py1Z6IhtLt2OzEVJ0KXJpY8KD6b1mhxknT/sZD4TMtBcdsDMYq4pNxeUa4pnNd2
-	 IGiXg17wPf0jg==
-Date: Tue, 29 Sep 2026 10:58:59 +0200
-From: Alessio Ferri <alessio.ferri@mythread.it>
-To: "andreas.wendleder" <andreas.wendleder@proton.me>
-Cc: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>, "b43-dev@lists.infradead.org"
- <b43-dev@lists.infradead.org>, "linux-wireless@vger.kernel.org"
- <linux-wireless@vger.kernel.org>
-Subject: Re: BCM4360 AC-PHY support for b43 =?UTF-8?B?4oCU?=
- reverse-engineered, seeking guidance on a clean path upstream
-Message-ID: <20260929105859.364ea71b@DELL-MOBILE03.ad.smart.it>
-In-Reply-To: <d6tVX7HBAW4Qnebx5Enj79edWG_LVmnRT0bjhcfv9bb1h0cewrTEDHK-VVoSy0NZcMzv3FB8OVEyTFNgA7rs_zaplEfiLXdwcCqhYDeonMo=@proton.me>
-References: <rOzY3WnW4q5L1osv7iagU81dLGldzZEsu3EqHxmH4d7Z4vxubBYvRNT0vsrbr8n-CUSEYyXxGFE3h9PHLHgePjm3_rMK_B_0m5loTpyxX-M=@proton.me>
-	<ih-lXs5OlHxMhydtcZFtKNhGg3cGlR137CEMZ07_zFQcfCYAImW6MRWPDjkdwy-xK9bIwpDK9ImgerqHmQMsAxX3ckEjsiN8QoCSlpvIsSM=@proton.me>
-	<20260928200309.01a36f5e@barney>
-	<DL5AS1oidqGRAmMHt0Jcp3X4T3ob_Fa-lfhTmMMak3ATUnfcyETDn65CQf3iLvVeg4ExYoc_0GW7QMoaB1jEW4nzKAKFDv8bD0hqBEtkUKg=@proton.me>
-	<20260929081403.6076a6da@barney>
-	<20260929093405.79d9f4ec@DELL-MOBILE03.ad.smart.it>
-	<hCBGuqVmDlV3Y7f2t6L8DtnoyBNbC8KghHXm0fZCHLDLrtfaoYw9e0UcCCsQHHK1X4TBz0DuvSL4zmAx_dVS3q54BZ0JZXtjXXNnuSAFtyo=@proton.me>
-	<20260929100544.343ce6d2@DELL-MOBILE03.ad.smart.it>
-	<d6tVX7HBAW4Qnebx5Enj79edWG_LVmnRT0bjhcfv9bb1h0cewrTEDHK-VVoSy0NZcMzv3FB8OVEyTFNgA7rs_zaplEfiLXdwcCqhYDeonMo=@proton.me>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	Tue, 29 Sep 2026 14:46:00 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail2; t=1790693147; x=1790952347;
+	bh=YqRb0Lt6o6cpf5+myrECVbP/9Jgh1swBc2Lgnr6DRn4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=v7zpD7d/tjzU7MDr1QYrvJi3Ol2n5YL6R609Y1xgYAWh6kSelWmrS11nhTN7smA5p
+	 Ii3ijYby2iIBkO0OP4H3/ccdcU1zY/ehPOPXVnEzGRK+KnpwS5KEriws1Fs8Hmw5BC
+	 Ant8I7MEJVKKEN4kVEY8xkl9f4gSAZ7Exy2ZO/w0ENQnGgGtjjw9mEFpv9rrwa3V98
+	 75km9cSAEpqYnecesmpWjjUAClqGQZOTfqy8Fp+YVaOaUoKzvMKMKOXxEUO8XtNFVv
+	 WQYDcgtDztp+cV+6MfhGybMM6jqWtOs8l9uZob3rVcI3w+Vk7Fn0BfZx1Ne1AJUk0r
+	 0yOe70pLsL5uw==
+Date: Tue, 29 Sep 2026 14:45:41 +0000
+To: Alessio Ferri <alessio.ferri@mythread.it>
+From: "andreas.wendleder" <andreas.wendleder@proton.me>
+Cc: "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: =?utf-8?Q?AW:_Re:_BCM4360_AC-PHY_support_for_b43_=E2=80=94_reverse-engineered,_seeking_guidance_on_a_clean_path_upstream?=
+Message-ID: <OG0AU4A6pMu865qvxpXQjF7NvEP6p2bwR_IZRaLxONsn_3Gdxm00PiOOaGuWbYy-AmxhLGRyz29ZPtUKzDwsKJk_UjTLAU1bctgCzdWlNlE=@proton.me>
+In-Reply-To: <20260929113109.2c561844@DELL-MOBILE03.ad.smart.it>
+References: <rOzY3WnW4q5L1osv7iagU81dLGldzZEsu3EqHxmH4d7Z4vxubBYvRNT0vsrbr8n-CUSEYyXxGFE3h9PHLHgePjm3_rMK_B_0m5loTpyxX-M=@proton.me> <20260929081403.6076a6da@barney> <20260929093405.79d9f4ec@DELL-MOBILE03.ad.smart.it> <hCBGuqVmDlV3Y7f2t6L8DtnoyBNbC8KghHXm0fZCHLDLrtfaoYw9e0UcCCsQHHK1X4TBz0DuvSL4zmAx_dVS3q54BZ0JZXtjXXNnuSAFtyo=@proton.me> <20260929100544.343ce6d2@DELL-MOBILE03.ad.smart.it> <d6tVX7HBAW4Qnebx5Enj79edWG_LVmnRT0bjhcfv9bb1h0cewrTEDHK-VVoSy0NZcMzv3FB8OVEyTFNgA7rs_zaplEfiLXdwcCqhYDeonMo=@proton.me> <20260929105859.364ea71b@DELL-MOBILE03.ad.smart.it> <oYmDL00YinKfSdWHxkjmqPRGHWmeA_0SCR6tpafsgCvGyqYAEKuCt0kg7w_C47be5hm7IwFsxRnulMhvPFJEXQNDaDPgZNzMIQ0vfRKnOLw=@proton.me> <20260929113109.2c561844@DELL-MOBILE03.ad.smart.it>
+Feedback-ID: 189422222:user:proton
+X-Pm-Message-ID: 5e49b4a9dc59e1bcd3755f763168d34cb421ad69
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfEjpnqeaAJaKmk86tSb054r59JtrAzJIjBaPxFrSPI24Hc5WRIc6kUncSgii1yRrXvK4+CH+6A9xKyc7qu0OXXIzyZqwbvf5XfL/sJgOKY/MQMUvWkuC
- U7bLpsoWwuCByfZDZkZpgzEgF5ZzQUKGbYkW9eBhKEaIwaFMEhMXjEY5hJI1yxUCeHKb13V2vdK2v+T8TcT+5cTZ4i0vidYsEl31U+d6Y8sBgFpY3UL0BlGE
- r4jkXr4DZOqsU6ty4CewdOCuCcBNBopImYM9nT8PNmBcfRsVIp+h3KjEZPrsNl3cBa/L99Fmx1t0szmifX2qUw==
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20260929_015906_011729_F3AD9771 
-X-CRM114-Status: GOOD (  14.59  )
+X-CRM114-CacheID: sfid-20260929_154558_190148_29E65137 
+X-CRM114-Status: UNSURE (   7.00  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -77,53 +80,24 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-On Tue, 29 Sep 2026 08:27:53 +0000
-"andreas.wendleder" <andreas.wendleder@proton.me> wrote:
-
-> > Least, but not last, the wl order of macro operation and b43 order
-> > are different in multiple places, how did you reconcile the two?  
-> 
-> Good sign: we're core_rev 42 too, so our disassembly and yours should
-> be directly comparable.
-> 
-
-I didn't mass disassemble, i just hooked the io accessors, both because
-it is faster to learn what the driver is doing and less problematic if
-someone ask. Also the trace can be shared, the disassembly does not.
-
-> femctrl/srom: not touched, no handling anywhere in our port. One fixed
-> test board, so we've never hit a different value. No data point to
-> offer - if you find out what it gates, let me know.
-
-So you harcoded your srom?
-
-> 
-> wl order vs b43 order: we captured wl's real register-access sequence
-> live (bpftrace kprobes on its own osl_readl/writel/delay, wl left
-> loaded and bound throughout - never touch its binding while probes
-> attach) and diffed it against our call order, case by case. 
-> 
-> Sharpest example:
-> b43's generic switch_channel calls the per-channel tune, then
-> unconditionally re-applies a captured POR snapshot afterward -
-> captured during wl's first association, on channel 1. So channel 6
-> got tuned correctly, then immediately overwritten back to channel 1's
-> values. wl's real order runs the POR replay once at attach, not after
-> every switch. Cost us a real mistune bug before the trace diff caught
-> it. Smaller example, same category: our TX-cal port was missing one
-> PHY register write wl issues between the gain-table override and
-> starting the test tone - doesn't crash, just makes the measurement
-> never differentiate.
->
-
-But which driver version did you look at? The 6.30 hybrid?
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+PiBJZiB5b3UgYXJlIHVzaW5nIGFuIG9sZGVyIHVjb2RlLCBwcm9iYWJseSBteSBkcml2ZXIgZG9u
+J3Qgd29yayBvbiB5b3VyCj4gZGV2aWNlIGJlY2F1c2UgaXQgaW50ZXJhY3Qgd2l0aCBuZXdlciB1
+Y29kZSwgY2FuIHlvdSBsb29rIGZvciBtYWMKPiBiZWhhdmlvdXIgZGlmZiBmcm9tIHlvdXJzPyBN
+YXliZSB3ZSBjYW4gbWVyZ2UgdGhlIGhhbmRsaW5nIHdpdGggc29tZQo+IGlmcywgcmVwbyBoZXJl
+OiBodHRwczovL2dpdGh1Yi5jb20vYWxlZmVycmkvYjQzLWFjLXdpcAoKIEknbSBvbiB1Y29kZTQy
+LmZ3IChEMTEgY29yZSByZXYgNDIpLCBmaXJtd2FyZSA4MzIuMTI3ICgyMDE0LTA5LTE5KTsgbXkg
+ZHJpdmVyIGNoZWNrcyBTSE0gVUNPREVSRVYgYWdhaW5zdCDiiaQweDEyOC4gSSBkb24ndCBoYXZl
+IGEgY2FwdHVyZWQgcmV2IG51bWJlciB0byBjb21wYXJlIGFnYWluc3QgeW91cnMgb2ZmLWhhbmQg
+4oCUIHdoYXQgdWNvZGUgcmV2L2RhdGUgZG9lcyB5b3VyIGRyaXZlciB0YXJnZXQ/IEkndmUgbWFw
+cGVkIGEgZGVjZW50IGNodW5rIG9mIHRoZSByZWFsIE1BQyBldmVudCBsb29wIChkaXNwYXRjaGVy
+ICsgd2FpdCBwb2ludHMpIGFuZCB0aGUgd2F0Y2hkb2cgdGljayAoU0hNIDB4MTU4LCB+MS4wMjRz
+KSBieSBkZWNvbXBpbGluZyB3bCwgc28gYSBkaWZmIGlzIGRvYWJsZSBpZiBJIGtub3cgd2hhdCB0
+byBkaWZmIGFnYWluc3QuIEdhbWUgZm9yIG1lcmdpbmcgd2l0aCAjaWZkZWZzIGlmIHRoZSBkaXZl
+cmdlbmNlIGlzIHNtYWxsLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5pbmZyYWRlYWQub3Jn
+Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vYjQzLWRldgo=
