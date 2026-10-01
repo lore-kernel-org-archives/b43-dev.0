@@ -4,85 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 455C7CA5FC5
-	for <b43-dev@archiver.kernel.org>; Thu,  1 Oct 2026 07:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 25FB5CA5FB3
+	for <b43-dev@archiver.kernel.org>; Thu,  1 Oct 2026 12:09:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-ID:Subject:Cc:From:To:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=RU2hdnNAzR/G3gTBqAXFnwatu1fWagVGqbN5OVNZMVs=; b=PHqAzfen+0vEeq
-	+jDS8E7q/J1AnMiatyYxy/k98X5uHcrq8RzTNcJIY0XEoINir9egnhjWHJ1RE2mo/kCl8FTrWAmaO
-	B/YvPw7FpsihI/wPKVdgWs33/QiIREscSPPfxwVM1b03Lr4fXSbh7F28zYrGRcvyvRVsoOaqIcM3E
-	MzcBCVmCSVW2CE4KloGE+tCfsMREFuwNZNTnudbyuC5jdpeYQBQQE/fdGmqzi/0pt37Z9YCoYYqrM
-	BtJ6vFdV9s3MgrAUCJ3ucVxhfZVPNsNqENk2KFWiD72omegRSb1HlKn1KxSgXgkKj/rBUdz/IiBM5
-	fdXy3spSEcuEAu+HqBKQ==;
+	List-Owner; bh=JisWDGwUkI/a+eG3ODjl7LY5kHTEE0piFfNHdFmFzmM=; b=ohljhHjZODEOP2
+	30w4wl0sZj1vqdsGE4sJJIi5k6RWRrbEuCiZn2xLn8lhlvM8lmrcVwkdLguPAAtX55FC1FhqFnSE7
+	+1MdWDdrr3485QfAPlLb3jOeENOfGZ4rZIskOeyWitG/66m7V3Qxkl7/9Qh8xq2GkUfDW6g4mV1Kh
+	IufO0lOsZDuF9w6MdGUMXf6zKaD4VAPOZVWA4/6A+7jbY5nhVC4zXNlIfntjE+PKMiNtAzzlj/xWj
+	7ORfOo0LsFtdhk8wcSpoQLbpW9JcraUhxwSIsEvJm8drF7ps3gCftzW/smgjwK3Sja7OPxLxkGgqo
+	8dj6QL96RutVo4VzAe1w==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xCBMY-000000081JC-3Ufj;
-	Thu, 01 Oct 2026 07:37:54 +0000
-Received: from mail-ej2-x24.google.com ([2a00:1450:4864:34::24])
+	id 1xCFb9-00000008ykL-1gEF;
+	Thu, 01 Oct 2026 12:09:15 +0000
+Received: from mail-24426.protonmail.ch ([109.224.244.26])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xCBMW-000000081Hz-2HDM
+	id 1xCFYC-00000008sBr-3Ex8
 	for b43-dev@lists.infradead.org;
-	Thu, 01 Oct 2026 07:37:53 +0000
-Received: by mail-ej2-x24.google.com with SMTP id a640c23a62f3a-c2e27d11f43so83262566b.0
-        for <b43-dev@lists.infradead.org>; Thu, 01 Oct 2026 00:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790840270; x=1791445070; darn=lists.infradead.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=OAi7fW4JIXTaTIa0/z3chJgYpw360FBeTuGIpfI5tbI=;
-        b=DFBcF3FzT/o3NmbONXvvT2WwNcdaclI669A/ly0PAqwlGONYgKbF0DrBVGmddbdydC
-         NtcmD5rggKKZ+9NHvoAg6C+6ncuaf+7jjb4apDWTBLKI4jp3gVlQQciTw8TnaEVH3dXn
-         MQvtsTDyIDwDhdDGiicwTiiHmbVCScMamlgz6glnPsiHyS4JgK/5skFtCyrnDnmaxkOa
-         O5JnaXMYwVKkE9Bx3aMF+biZ/Oz6Lfsw/qrSTCd7Qcq95zvi7ris7FRfk51k2N4opQCf
-         orI41q5qmNDldcjOPM8nHhSCqoj6jGqxe9SmvyDVQ094JT926hreZ5xMw69K9Gdeq9Pu
-         xlmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790840270; x=1791445070;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=OAi7fW4JIXTaTIa0/z3chJgYpw360FBeTuGIpfI5tbI=;
-        b=LYKi0okx0XGgiM329sfod+odHeuu2eMca1w1JrXV3wqkDMyMN0caZbpLlvRClzqn3s
-         QSG6vo5+iq/wHyQ3j7eocyUIO7g5AM8YlL5b75dHYagkzVQ1ong+VuGtFQ7/rnKoIhyK
-         Eff9fgASSOQt+ybR/JNZ2T8UIvxVcSVTcrPBnzfmACQi98Ig4qmsRItp7ZYN+sco+GxI
-         Dxzvch4+HLIvwC5zvHrGbIdRMFUnWGsu2E4rEc4IuYitT5Gy0HNic92pn+C5V9FVbupQ
-         5gNusw6qLrDDh1VHZFWpwif8yvk3maGPaBQSA18oW4KcsXAdbT+Rfql4QidQcDGFzfcd
-         hlZQ==
-X-Gm-Message-State: AFuF++kgJ3dJqGYl7nZu+ltZIrsFfnWUeEJXZ/jkiOEeCr1f0K5ptfes
-	CnO4VdzuK4xFu1866QnixY31+fWgICWxiXSS7WxlfudpSqrcgsUxTsO+0MZMFASzqs53nQ==
-X-Gm-Gg: AYBFou0xcRKEIvjz2tCV2fIqApYm6v5lZMhW9F9D37FhM6mVoSvM4sV+bN5UnObKNSM
-	OUn3FoAvZjjImncdosmq1vxYIYgWu9NF76NQmo3tDOan19SA54RyhAUG2KiOVKomie2R40hRrrN
-	lSKKUvMmfuMux/wH2QSyeYdr6Wb7YAnwMURqh7Kf8UyAs0L1eQGfCBsd8PbiG8xpwifZCKyGIrx
-	JuoFIpS1V5P7JFjIrY351ZGcnSI52FnlHAk4CM6shxwOD1RNPaGN+Ly7xNDiJrsQ2ofTyC7xxqo
-	VY0xeP3fgTIng6NwsDaFz+8mL9BM3XXGy9DMyZ0mlvIM1dOmVY4PtSq/dD0LlB+IMYPN5kGEdM1
-	uiVCI05rM7bHeEZuMZfntyMBt0huWdfCV5QyZDFGYvm0xEmW6l2A6zCf5qJVm9Wxw/0UweaSoI7
-	WcwP9N8lu46mKW0fK7YD5E+zemuXpqPt6g5FWMXq2LIRvMaDKZBtxSZRpgRG3qirgPdSyT/lPB9
-	8VHvQ==
-X-Received: by 2002:a17:906:c14c:b0:c25:f7db:4bef with SMTP id a640c23a62f3a-c2e33e7d4f3mr162862666b.21.1790840270349;
-        Thu, 01 Oct 2026 00:37:50 -0700 (PDT)
-Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2e31c8edfesm100394566b.15.2026.10.01.00.37.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2026 00:37:49 -0700 (PDT)
-Date: Thu, 1 Oct 2026 10:37:46 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: b43-dev@lists.infradead.org
-Cc: "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org
-Subject: [PATCH 2/3] wifi: b43legacy: debugfs: NUL terminate string in debugfs
-Message-ID: <909ea7a88658b5e7c183bf0fda31687a91d73818.1790839793.git.error27@gmail.com>
-References: <cover.1790839793.git.error27@gmail.com>
+	Thu, 01 Oct 2026 12:06:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=pkwlngjezrc55cpgk2kl6o2nye.protonmail2; t=1790856369;
+	x=1791115569; bh=yCNvhw0ESgJSzLHMeRdALP7byAYkz+hVEMOqeWIptR8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=WreAFIcl+KJXRYeohDn0Nh1PVT8Oxqi5sXz4X5uIEVz8lMsJ4W823KFavDCbwuPqd
+	 BrM5CXUcgQM7ciiW+KMJmCQdbUETo4jxxiJSfRzXpsW1P4XMKZfoZ4/90o6kcPNvIf
+	 rig11QZZIRWRBAMprKf2lPH+V150zMw/S3lDq7rVv13awIVjnhAQ+WO2OLAffOebQF
+	 ziiLwNK8jdDefs67y7sJt4jiGuicFRbEPOuFry0ewxwDK3KhCQiPxhH1GUZfg5llms
+	 Rp/9Q7DNzCdY/73xKMRzMn74Kj/Ulja6xpVcHGwtAS4S2gwOX3gBTPuHTJdTMqDjg5
+	 zsiePUSxIyPMw==
+Date: Thu, 01 Oct 2026 12:06:05 +0000
+To: Alessio Ferri <alessio.ferri@mythread.it>
+From: "andreas.wendleder" <andreas.wendleder@proton.me>
+Cc: "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: =?utf-8?Q?AW:_Re:_BCM4360_AC-PHY_support_for_b43_=E2=80=94_reverse-engineered,_seeking_guidance_on_a_clean_path_upstream?=
+Message-ID: <BGzX01_Xw0eP0rtUaqPn6IyCeg06zqkSQ8qKQoE38fN4Pzu_QmUjvB-pw5RuEdVn3hXqB3UAMap8WSTwRa8i6Zfg8XUmkhUEBavoBwppNmM=@proton.me>
+In-Reply-To: <20261001080225.000011d9@mythread.it>
+References: <rOzY3WnW4q5L1osv7iagU81dLGldzZEsu3EqHxmH4d7Z4vxubBYvRNT0vsrbr8n-CUSEYyXxGFE3h9PHLHgePjm3_rMK_B_0m5loTpyxX-M=@proton.me> <d6tVX7HBAW4Qnebx5Enj79edWG_LVmnRT0bjhcfv9bb1h0cewrTEDHK-VVoSy0NZcMzv3FB8OVEyTFNgA7rs_zaplEfiLXdwcCqhYDeonMo=@proton.me> <20260929105859.364ea71b@DELL-MOBILE03.ad.smart.it> <oYmDL00YinKfSdWHxkjmqPRGHWmeA_0SCR6tpafsgCvGyqYAEKuCt0kg7w_C47be5hm7IwFsxRnulMhvPFJEXQNDaDPgZNzMIQ0vfRKnOLw=@proton.me> <20260929113109.2c561844@DELL-MOBILE03.ad.smart.it> <OG0AU4A6pMu865qvxpXQjF7NvEP6p2bwR_IZRaLxONsn_3Gdxm00PiOOaGuWbYy-AmxhLGRyz29ZPtUKzDwsKJk_UjTLAU1bctgCzdWlNlE=@proton.me> <20260929221321.000023a7@mythread.it> <e3-qmDjhrTX2hFaCfmyNZHcixISRArPiYm-26_-33mbTBdryG2n375GF-6ewiqoXzodKocGBPYO2l3kWmr2wlJ9X8GK9-F3lUqmhnDP_TXI=@proton.me> <20261001080225.000011d9@mythread.it>
+Feedback-ID: 189422222:user:proton
+X-Pm-Message-ID: 21d4d098aa2330498780e262331bf02ad6f12de0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <cover.1790839793.git.error27@gmail.com>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261001_003752_585841_261B8821 
-X-CRM114-Status: GOOD (  15.58  )
+X-CRM114-CacheID: sfid-20261001_050613_740539_62C21DFF 
+X-CRM114-Status: UNSURE (   5.85  )
+X-CRM114-Notice: Please train this message.
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -94,43 +65,36 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-The "buf" buffer is PAGE_SIZE and allocated with kzalloc().  We store a
-string from the user in it and then pass it to sscanf() in the write
-functions such as tsf_write_file().  The buffer is only used to store a
-number so we never come close to filling up the whole PAGE_SIZE.  Reserve
-the last character of the page for a NUL terminator.
-
-This is debugfs so it's root only.
-
-Fixes: 75388acd0cd8 ("[B43LEGACY]: add mac80211-based driver for legacy BCM43xx devices")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/net/wireless/broadcom/b43legacy/debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/broadcom/b43legacy/debugfs.c b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-index a04d90d7307c..7ce8bcf12f0a 100644
---- a/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/debugfs.c
-@@ -259,7 +259,7 @@ static ssize_t b43legacy_debugfs_write(struct file *file,
- 
- 	if (!count)
- 		return 0;
--	if (count > PAGE_SIZE)
-+	if (count >= PAGE_SIZE)
- 		return -E2BIG;
- 	dev = file->private_data;
- 	if (!dev)
--- 
-2.53.0
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+SGkgQWxlc3NpbywKClRoYW5rcyBmb3IgdGhlIDIuNCBHSHogdHJhY2Ugd29yay4gU2hvcnQgc3Rh
+dHVzLCB0aGVuIHRoZSBxdWVzdGlvbnMuCgpTdGF0dXM6IGI0MyBub3cgcnVucyBhcyB0aGUgZGFp
+bHkgY29ubmVjdGlvbiBvbiBteSBNYWNCb29rQWlyNiwxIChCQ000MzYwLCBjb3JlIHJldiA0Miwg
+cmFkaW8gMjA2OSByZXYgNCkuIFRoZSAyLjQgR0h6IHN0YXRpb24gd29ya3Mgd2l0aCBsZWdhY3kg
+cmF0ZXMgYW5kIGEgVFggc3RhdHVzIGZpeC4gVXBsb2FkIGlzIGFib3V0IDE4IE1iaXQvcyBhbmQg
+ZG93bmxvYWQgYWJvdXQgMTAuCgpUaGUgb3BlbiBwcm9ibGVtOiBvbmx5IGFib3V0IDIxJSBvZiBm
+cmVzaCBpbml0cyBjYW4gdHJhbnNtaXQuIFRoZSBzdGF0ZSBpcyBmaXhlZCBhdCBpbml0LiBJbiBh
+IGJhZCBpbml0IHRoZSBQSFkgaG9sZHMgQ1JTfFRYRiBhbmQgZXZlcnkgVFggZW5kcyBpbiBhIFBI
+WSB0cmFuc21pc3Npb24gZXJyb3IsIHNvIGF1dGggZnJhbWVzIGFyZSBuZXZlciBBQ0tlZC4gQSBy
+ZWxvYWQgd3JhcHBlciByZXRyaWVzIHVudGlsIGFuIGluaXQgY29ubmVjdHMsIHdoaWNoIHRha2Vz
+IDItNSB0cmllcy4gSSd2ZSBydWxlZCBvdXQgdGVtcGVyYXR1cmUsIERNQSwgQVNQTSwgUExMIGxv
+Y2ssIGNsb2NrcywgVFggY29yZSBtYXNrLCBUWCBwb3dlciBjb250cm9sLCB0aGUgQ1JTIHRocmVz
+aG9sZCBhbmQgdGhlIE1BQyBzZXR1cCBvcmRlci4KCkkndmUgdXBkYXRlZCB0aGUgY2xlYW4tcm9v
+bSBzcGVjICjCpzEwIGNvdmVycyB0aGlzKSBhbmQgY2FuIHNlbmQgaXQgaWYgaXQncyB1c2VmdWwu
+CgpRdWVzdGlvbnM6CgpEbyB5b3UgaGF2ZSBhIGJ1cy1sZXZlbCB0cmFjZSAod2wtbW1pby10cmFw
+KSBvZiBhIDIuNCBHSHogY29sZCBpbml0IGFuZCBmaXJzdCB0cmFuc21pdCBvbiBhIEJDTTQzNjAg
+KGFnY29tYm8gb3IgVEc3ODl2YWMpLCBpbmNsdWRpbmcgdGhlIGNhbGlicmF0aW9uIHBoYXNlPyBJ
+J2QgZGlmZiBpdCBhZ2FpbnN0IG1pbmUgYXQgcmVnaXN0ZXIgbGV2ZWwuCkNhbiB5b3VyIGhhcm5l
+c3Mgc2NvcmUgb3VyIGRyaXZlcidzIHJlZ2lzdGVyLXdyaXRlIHNlcXVlbmNlIGFnYWluc3QgeW91
+ciBjYXB0dXJlcz8gVGhhdCB3b3VsZCBzaG93IHdoZXJlIHdlIGRpdmVyZ2Ugd2l0aG91dCBoYXJk
+d2FyZSB0ZXN0cy4KRG9lcyBzdG9jayB3bCBldmVyIGdpdmUgeW91IGEgImJhZCBpbml0IiBvbiBh
+bnkgb2YgeW91ciBib2FyZHMgKHRoZSBQSFkgY2Fubm90IHRyYW5zbWl0IHVudGlsIHRoZSBuZXh0
+IHJlc2V0KT8gVGhhdCB3b3VsZCB0ZWxsIHVzIHdoZXRoZXIgdGhlIGNhdXNlIGlzIGluIG91ciBp
+bml0IG9yIGluIHRoZSBjaGlwLgoKSWYgeW91ciAyLjQgR0h6IHN1cHBvcnQgbGFuZHMsIEknbGwg
+dGVzdCBpdCBvbiB0aGlzIGxhcHRvcCByaWdodCBhd2F5LgoKVGhhbmtzLApBbmRyZWFzCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxp
+bmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
+ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
