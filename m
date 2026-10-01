@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 84258CA5FD2
-	for <b43-dev@archiver.kernel.org>; Thu,  1 Oct 2026 17:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7690ACA5FCF
+	for <b43-dev@archiver.kernel.org>; Thu,  1 Oct 2026 17:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=RpdGRtYX/nSXv13VN9+0GfVHkPjGnINemgOtm76reuI=; b=BQ4uCRz0xBiqCi
-	St6C4iYpE0GjJWRQpaOq2KHsRjffTTOAnsFya/sOd7tZg++k+LGBy1YxoNif9WtjxncWpMadV6irq
-	qeKXp8Le2HS6EOwsWp7nxjeO9x1HnEa0R7gb3aUaCx24Z3nv46Bril0oOJ7XjMZjukYMBwuUObflz
-	63IAlpBU/I12sDOI+T/evmtXDpiLAv23Iq9sksq5y66wOobB2OwvqqSbrsdBnaSue6nk1DvSC1QRM
-	g5N1eqAMMuAOiVpoVlSOcxi3L08W684+I2+/Obfd9sdluXEfio6bdVis4qOmhxxBoVF0p2C8ciNPt
-	G7uLO0nh966FVPX8+Uww==;
+	List-Owner; bh=EGTPD7xq6Zv/7yeNKXrrlr3LHfCmYUPbwEczT428GY4=; b=0ikhCOkm6lNejW
+	Alvk2GjfVwE99xPJAV5hhnY1bZgCy/Mg4aRdDprvX5boMRVTlUi60HV3PK7Znkss/3C8bWUv9MA1N
+	EMzYm4jRGyNWG3VYsjn6/SSrcprGUPhnrDukUPVj7ZeWajP63aE1yrD+4Yifj5qwqE5rgvnqMQGWG
+	10ulua43kFXlMD8TNB6/pmEVnkiRNwRXYB0goVufCkWRY27CsuWKB0PV179JeaI6fmcqBVKaZquUB
+	PCEzXPRPvoGd0/GoWDif17Hx3IxAZq0gw0/xu+YbCYnkcD7VpmoQaY35glyTdkba7xOC3AWaxzAs3
+	PI5P6+0LPQ26m6hI+/og==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xCKKu-00000009pYU-0Ihw;
-	Thu, 01 Oct 2026 17:12:48 +0000
+	id 1xCKih-00000009ss9-3ZHm;
+	Thu, 01 Oct 2026 17:37:23 +0000
 Received: from smtpcmd03116.aruba.it ([62.149.158.116])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xCKKn-00000009pWK-0yxf
+	id 1xCKic-00000009sqC-3rWA
 	for b43-dev@lists.infradead.org;
-	Thu, 01 Oct 2026 17:12:46 +0000
+	Thu, 01 Oct 2026 17:37:21 +0000
 Received: from localhost ([79.19.61.120])
 	by Aruba SMTP with ESMTPSA
-	id CKKixBNw3BqLeCKKixxYFv; Thu, 01 Oct 2026 19:12:37 +0200
+	id CKiZxBr4VBqLeCKiaxxdEf; Thu, 01 Oct 2026 19:37:16 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1790874757; bh=1EIllXH8ZPZt1z/PvduSpDeCQmmfKDl/WSQqL0I3+/0=;
+	t=1790876236; bh=nmGEjF4CTzLIqCj/vWD0XKLrcbQNRy56Bd3AV576V7Q=;
 	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=cGBf7OFtfXQ/CZ7zPww7Op42kz9g9jmepwu2AiAzUxMn9dt2ehZU2BG3Ra2aqlLQG
-	 6fnyDlZ6kiczFf5PhvGIcSmbX87kJJKY0ifBXfpmHvnOxJw60B5ouvXmyXbNXQKFly
-	 cIfmkUd7gwXqNKy6XcPs8KKPnIQKa3O0Z+U/GCrpv9/L2hehvBjEQS1qJjJXqRza6a
-	 o+uCuxaABKMtF9ihZ0gCR13sJygFcRydg3ICslSmSPD87q9CfozVtXD12cmIk9s0iq
-	 UhF0J01B/vhrcc6pZNOqtYY/9wZEPS8jf3vhKa8UHucWMn5ILXHVC+/4fMprzyGsZa
-	 nBq2xaesXWKPw==
-Date: Thu, 1 Oct 2026 19:12:34 +0200
+	b=GyB6T08rG2om8OlcBFsIoIU7sr8UTX9GL5cc+rQPqp6XfZ3JB8ZJSl1yoskqKuh2j
+	 auOgxJ9TGfXT0rQLOqDUJ5ddzRtue2FmgKXzSc0I51GQDgELFfMHTX+t7r8x/FVR6f
+	 U47vA9gJjkikI6y6cQIAIGki9HGzHe0ukM0Q7xQogz5FsnLeeJnBO0/pZRpApBUb6O
+	 L8WLNoJ0D5Byula68GTRshi1dF+GA8BlfbEYbJkAprRJ8XnO/jpmtuFrXuGzF68vBi
+	 CNOLaEtzbDXHT41gs3OTm0fakLs4doLvMf3SON25VVzlaMDB8Muayt/wcp7fYK3LHp
+	 OxlvASPF0ts0w==
+Date: Thu, 1 Oct 2026 19:37:14 +0200
 From: Alessio Ferri <alessio.ferri@mythread.it>
 To: "andreas.wendleder" <andreas.wendleder@proton.me>
 Cc: "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>,
  "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 Subject: Re: BCM4360 AC-PHY support for b43 =?utf-8?Q?=E2=80=94?=
  reverse-engineered, seeking guidance on a clean path upstream
-Message-ID: <20261001191234.00001cf5@mythread.it>
+Message-ID: <20261001193714.00005f36@mythread.it>
 In-Reply-To: <BGzX01_Xw0eP0rtUaqPn6IyCeg06zqkSQ8qKQoE38fN4Pzu_QmUjvB-pw5RuEdVn3hXqB3UAMap8WSTwRa8i6Zfg8XUmkhUEBavoBwppNmM=@proton.me>
 References: <rOzY3WnW4q5L1osv7iagU81dLGldzZEsu3EqHxmH4d7Z4vxubBYvRNT0vsrbr8n-CUSEYyXxGFE3h9PHLHgePjm3_rMK_B_0m5loTpyxX-M=@proton.me>
 	<d6tVX7HBAW4Qnebx5Enj79edWG_LVmnRT0bjhcfv9bb1h0cewrTEDHK-VVoSy0NZcMzv3FB8OVEyTFNgA7rs_zaplEfiLXdwcCqhYDeonMo=@proton.me>
@@ -60,12 +60,12 @@ References: <rOzY3WnW4q5L1osv7iagU81dLGldzZEsu3EqHxmH4d7Z4vxubBYvRNT0vsrbr8n-CUS
 	<BGzX01_Xw0eP0rtUaqPn6IyCeg06zqkSQ8qKQoE38fN4Pzu_QmUjvB-pw5RuEdVn3hXqB3UAMap8WSTwRa8i6Zfg8XUmkhUEBavoBwppNmM=@proton.me>
 X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfCCgSFsVbt1DApD0f4FTXJ7rnuyr/1Kx6OlMGKy8MGVyd4V2XUxjIRTJnwaA7JqMgCjZNKpIEwKRRasC3TtaLSV2U7wE4twGTn+Zws3eE4qBfUWCVgBD
- RrFkNcH9RxwrKK1R0LX9FOuTwmEFb7fNQexF3pkA9i9K/OBV9xIv6OpYaHbQAKocLNpvaPgVZK6J8UU/tNMNd5Z6qKMiz1RQD4QL/0OU2HhhpU+Wx83MXT0w
- pO3XAnTpCAB5d87DyHy5i7K7eRpnK3sCU6m5CaQ0XpKfP1Tj/gamE9hGlOWE0O1K
+X-CMAE-Envelope: MS4xfKCXubytY/PO1dEMnnFYik3teCHW/iOAs6CvHs/14EHAeAyruyNNx795i6sRvSX8cchUyk36FsTy6akcU0/rI0D/lZLkI+UAn31n2Zmja5tw67vvMGsn
+ 7JIj6pe/9GPLec48mZfOp+uE6sWzmXCOiJyyxkEFs0iZBcYxxoyS4W8xmWQQj0VexA0tWSRNlVYlANbphjYSlxJ6Mrqgu3tK+aeZDrFfHEsYKRfGI8vW+xrn
+ gfQtoMt5Et6hMCSARKN9FHkBDeEHGDzqaqEiqjJVtV9WiGFj7Z08CAtHDcXFpBVJ
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261001_101243_895655_E299D1A1 
-X-CRM114-Status: GOOD (  16.45  )
+X-CRM114-CacheID: sfid-20261001_103719_131982_C20CF55F 
+X-CRM114-Status: GOOD (  14.33  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -104,11 +104,6 @@ Il giorno Thu, 01 Oct 2026 12:06:05 +0000
 > tries. I've ruled out temperature, DMA, ASPM, PLL lock, clocks, TX
 > core mask, TX power control, the CRS threshold and the MAC setup
 > order.
-
-Your phy initialization is still the verbatim copy taken from a run of
-wl or you reconstructed the phy ops? Also, are you reading the srom
-correctly as rev11? I have the bcma code to read it properly in my repo.
-
 > =
 
 > I've updated the clean-room spec (=A710 covers this) and can send it if
@@ -126,18 +121,15 @@ correctly as rev11? I have the bcma code to read it properly in my repo.
 > Does stock wl ever give you a "bad init" on any of your boards (the
 > PHY cannot transmit until the next reset)? That would tell us whether
 > the cause is in our init or in the chip.
-
-Only 5ghz for the 4360 with agcombo, one of the trace is configured
-with wep auth, note that the 5Ghz only 4360 is a 3x3.
-
 > =
 
 > If your 2.4 GHz support lands, I'll test it on this laptop right away.
-
-Thank you, i am trying to reconstruct the phy init for 2.4Ghz from your
-trace
-
 > =
+
+
+Oh, i forgot, you have femctrl =3D 2, all of my boards have femctrl =3D 6,
+so probably the calibration is wrong for your card, but now i try to
+fix it. Thank again!
 
 > Thanks,
 > Andreas
