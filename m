@@ -4,82 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26DD9CCA490
-	for <b43-dev@archiver.kernel.org>; Sun, 18 Oct 2026 20:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0D657CCF2D4
+	for <b43-dev@archiver.kernel.org>; Mon, 19 Oct 2026 02:24:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Date:Subject:To
 	:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Owner; bh=YEMCnQzhonWqLsgxuqrBVapX9JOHCGjBOAdOLiti/mI=; b=mB66HtRDuxRoIh
-	i4aIe2l5tgI0Fj2ZdQdZoA7JeqyGhztrDAkMsqBCEIrszx1iwgWreWe2LnFqTDXEm19QS7zpG/QWY
-	GhcNMzvgIHxbwuzc+dRmcw/wIiTs0BXrO5oZ9K9SrSbvJQRm4bWRE7fF+sfgPDqgE2Kj9Tco3rBNo
-	zxjwMHpMJ+7un7rzeSTWo0cg0MLqFNll4bpuk5GiWY5o6f9IBU6ZrmYitVq1ety9hLltwbJd5SUY8
-	iZ3w2+STFyHGOgyzuvbnUfjR9fwG73bFYRrZqnai+oUg+NRj3RXPkws88vXuwaaZcOpa5V/qOSlzW
-	6bES2nw52b8V4tI8KnLA==;
+	List-Owner; bh=aipbOgR1AUUrJoUULVlI3OAiYwFGmB3sG3iNcLBA2E4=; b=4moN69fc7PNdc6
+	pRzLNghVxyg5h/jVt/+TyeGk9nSoQvCv3oPIHxsDaQ8eZX2epChki7YlYRIt4w3Oe/PZhVCeY9nbL
+	U9hnV6Yvk1+wqnZsVqgTU5jxqTA526FmHA4vH6kts+N70+zzhi57qkqwFBhHeTVEQc8jAGAqfXK91
+	CDyNV2rvN9IcBOEeDHu9Kks5RxKYbsm5QI1vMMEdDOaJhK87aqPs0YA67XDcpL6nhKigfW7SB8hfJ
+	13+qvZw/rS1LHNq9ywJpQFdf3G889W9lk31nACrXHoW/ypPuno1YDhZ84PyIP32E0lEm17XFsKk8d
+	6OgDUizkHQKenJY40YGQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xIXF0-00000006CM7-1e7A;
-	Sun, 18 Oct 2026 20:12:22 +0000
-Received: from mail-dl1-x122f.google.com ([2607:f8b0:4864:20::122f])
+	id 1xId32-00000006Sok-0TCb;
+	Mon, 19 Oct 2026 02:24:24 +0000
+Received: from mail-pj1-x1029.google.com ([2607:f8b0:4864:20::1029])
 	by bombadil.infradead.org with esmtps (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xIXEx-00000006CLk-3gND
+	id 1xId2z-00000006SoM-0s0t
 	for b43-dev@lists.infradead.org;
-	Sun, 18 Oct 2026 20:12:21 +0000
-Received: by mail-dl1-x122f.google.com with SMTP id a92af1059eb24-16079d54c17so3528494c88.0
-        for <b43-dev@lists.infradead.org>; Sun, 18 Oct 2026 13:12:19 -0700 (PDT)
+	Mon, 19 Oct 2026 02:24:22 +0000
+Received: by mail-pj1-x1029.google.com with SMTP id 98e67ed59e1d1-3a7cfe8f761so1749758a91.1
+        for <b43-dev@lists.infradead.org>; Sun, 18 Oct 2026 19:24:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792354339; x=1792959139; darn=lists.infradead.org;
+        d=gmail.com; s=20251104; t=1792376660; x=1792981460; darn=lists.infradead.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=9rxS8cu+8uQMWd8R4vCgJNNQUau1Y5Zq1kaWOXI5jNU=;
-        b=HkKL64fly5Zmv85rluq2NQzVAtTABTSdEKwDSgbzdCH8X00cWNabYAGNwFbjnw2lDB
-         dCy8ozu2SuZuWClfQ5g/4z/a7P4ucAe4yHRxT+la+uXPkXKag9KlxJyjLFE3h9/iSwAC
-         uIIF6uOMh0d2rjMYOEehCwqR1QqqQtGkzAW2gne8gp/sw1HMqAogpvlBX5H4diZoY3sV
-         exBCrJU6OK1GCMq2iEJ0LGdrWNX2qpImP05J7HjIp+cptPN4vRYhfV1WYzhf6Px9EAsB
-         yCQsv3vBmHUDlpTvusioJYGlePoY50XX6SQ+3L7TgXTabu7NnZDj7Cgy49JXe1gGZOlG
-         EFEg==
+        bh=2Gk59ct/zaCRueU3AFoIL4iyqvmR/bVU0l3fys1RicI=;
+        b=ESrj9TBtxts0U+pVcd0fP9vR1uHlWQUZ7fiuVMlrvPlby3cuOmQQ8VFzzLdW+an1Kl
+         UuNScedP84JQBGuwFmjnwoj9lHvkKtqYGC6WdoOvuh1IbcmmdwKo8qLc7RCtwL8Ce8ec
+         xkZHEcqAt+3Y2vCPtKg3lKjOGJY990kSlCuQDtXMWZ4HSZyfQ15fYIVyP6I6Z0MrAk7t
+         Z7LowCP9WXjijZHFxy2A9fiumg4Fb6x7ppfMGyDhirXdKkzkn+/PvHTRTmw0J0l2Aibf
+         9VHHoW0EtZUISndTpBtyX6gZldFs8xlxMNnYWcJaDIz//Q3lWmWONnJ7aBL9H09G0nwI
+         O/ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792354339; x=1792959139;
+        d=1e100.net; s=20260707; t=1792376660; x=1792981460;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9rxS8cu+8uQMWd8R4vCgJNNQUau1Y5Zq1kaWOXI5jNU=;
-        b=T5eH0teP1pvsfDULPY+IYWEl4CIDVeLqe8jB2FekUIM4qKukAK1WN5+NWPf0EjrGuq
-         55IKyGkB5KeCsrMFqokLi82T1vMfDyhbeqt4ck6yHxHmqexdxu+LUFRRaABmBbdZXluf
-         v4r6FTqlwmbDyb6vdbKctYE40xtl/8Uri/g/VrHQTbTs7NAYbCh4FbfVIkq8lUPnEDSM
-         yQO7hKngqsFQgyVtkSRVQ9y7Ds4J55Bwze67QsIYhrMtTghm/XZTdzsXXP3krEPDLh1a
-         WKGJpZwNOxKQejt/Joj7cwJiALyYi5c6uLuJPsw+DmKQNu7zEjxO6Ci8utz0dFY6DOwY
-         N1gQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzHkNro3Hf8cOSOsTAwg6aK7vcQcfeSPwTzOfVe77tlQ4tcyEFFx/762K0nQ3PQPwxiBuikLfh7@lists.infradead.org
-X-Gm-Message-State: AFq9FYIlE/Cnm8CB6eD2wfeoST5VaTfMzIMmGoJuAWrTee2ylxXitJ0x
-	bGoyDgRyhrHUZaH2SIOmBw9uCBIcVQ7cPotEJLlQdj6W+lGZS+X/ce7PN2FyEFXj
-X-Gm-Gg: AYBFou1WUykrQ8g5vfTz4dn/oWduklNFeNrCNCUW+eI6ghAmeE0t4NLEX/TRrB6vUT4
-	Tvjfxz8Uv3Br3KeOPvhr3gN/xh5gAvBwQW6rED44Z/qcIdmm/sOMpQFCBgVm4m/eP1nNATcVbgs
-	viu+DxCGdn6V99rWLigE86mvZ7Uz4bmg46eJuKXRAWbIMkCdLnZOUOsppB03fCqo0OyLDQVCXZR
-	TS4S7XGGFxz/JoODBLgk6bnPW9yiPT3wvDkwOGYJDu6vpGXZTivkkVZuWMve8J+9DiIrS4ffNVM
-	X8TkZONdlzmHD4xDNHzBDJtXx6KhZr+Z2pEFFH/sklfm8wGJqpJweiqxWAWKp4qexo3SZqkS7YQ
-	tzxpYOpB8M1yC9vGE3/83NfP3JVYVctF+yG4e7CP2ibcL+ePAl/Oib8barcADZZy7GYRLGeRoZJ
-	nF4R1rMwLlsPFnvWU2B2gDHH4ezp/Jh3cv1jb0Vu7TH07eC4/GyX1IrfukdZMRRBeWXJIkTyuwb
-	ry/NUyGqIIpthQ0l1WdUd1CIL/jnKm4kbRu2difBF++mwWB75aZg3Dlznd10OlxTOX4A39ciVDB
-	sCMshmZ3z8FKLxtBB3YC+QdVxSRk1o/a2OAGIyH27wAaG++E
-X-Received: by 2002:a05:7022:f512:b0:144:c127:dd1b with SMTP id a92af1059eb24-18514256b0dmr8231019c88.39.1792354338635;
-        Sun, 18 Oct 2026 13:12:18 -0700 (PDT)
+        bh=2Gk59ct/zaCRueU3AFoIL4iyqvmR/bVU0l3fys1RicI=;
+        b=SBcSllxbl5r1ChHwRE+xRxqYhbRrD+kMU1kPmcKN8ruBuJeZ1RCx+wT+rq/5RYMugD
+         VugSkcptzSbPpd48koeKRfSbTbXSZOoWpdWkbM4tTYgVKvwm03LssYGCV/nMcKlXYPWd
+         FTWPFOilgOd0tUv8tOS8l7un+qeyFkWsscLnC+WTk/XFQ6VcrMS2VgRYhnhW8HdQ7DzR
+         i1+GUk/ZjiYUg0KU58ZR3A3uEQWxaS1FdDCq6mKmf4e59Q7mHj9Pj9idLb6mFazIwbvG
+         IcgI2pMciW/o8N5dLHOFu4B+9lGT9Up2qjcQncnbtvMMsp7dD7CYzhzPKaU74EHuJYHC
+         N5WQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwfWav6n/Q1Bl8/SfB0yp4zy9hNAL0vyroeObDpCcHt7oqfbdH/6FI+y1leEdJ9sd4lcHdXU3OM@lists.infradead.org
+X-Gm-Message-State: AFq9FYKxpteTrX9i9+yhWeEhWTQcOI4vyNAoFmCOIjmTfE3Y8Kex/sDF
+	WtWjSu2DYrOtlkHGegMh/pWV42jTDhop+Ra7cNS4jFCGfMTxwyD0sU2d
+X-Gm-Gg: AYBFou1WxEauq9F1yjoS7RejYlvXSrzC63x6K+BMTcRune00pQBP7wU/8ety1jmQWbf
+	qVybEo8abAWYYIXjtp5URFvCRyosFtK+0AzaEOD3T6HgM7TAw6P1qCKPkru5KtMnowet8PlYJR9
+	oB98KbmXhosC7w+mqG8VqAU2U17bSBKMtDmyTroCTX1HoKvJQyXL8OAye/O6sBoUS1AHdcg2m9L
+	uwO8fjXJKZ4y3A7F37plztYS6Qj1dKIsDdyzC8KgndZf/WST5EIAm2hTjSO9KGShNjEFBtDGSLw
+	ml+t0154TELeliQTyG4kPB7tHE9yq0e+s0ihHcYA9QNVGiRVw0+F3RHI50narVJ25wOYP4IS6h9
+	rWM62GQMsoBlItMX9qqFNL8Zu2eZBzjtHSqHenL0ejVm5pA97LrE3/Q3/OehEiZ1CaWZKvuXGW9
+	aeJowOz+q3MxHa8+3k91+38+5tS503XEzWrGwVd8RhIuJFygTxCtmpBVBKXn4iVFG7K88fqTOrK
+	AaqtXWQVMyVY43eZvUCiXsX/SZqDJUdPmSXVvpCKxrOQyU1f9JeKstZTL1dgJvhltN94QHtNZW4
+	3Ii2jdCcP5s9oWcN0sTEcD985JsDx+UgBFf0vR5Mg33Rj4x70hz//b3f8ny5
+X-Received: by 2002:a17:90b:5108:b0:3ac:8741:e2ec with SMTP id 98e67ed59e1d1-3acbb3d5753mr7030690a91.1.1792376659959;
+        Sun, 18 Oct 2026 19:24:19 -0700 (PDT)
 Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-185aaea8b24sm16046825c88.19.2026.10.18.13.12.17
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac9474b52fsm21169534a91.9.2026.10.18.19.24.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Oct 2026 13:12:17 -0700 (PDT)
+        Sun, 18 Oct 2026 19:24:19 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
 To: linux-wireless@vger.kernel.org
-Subject: [PATCH wireless] wifi: b43: keep the HT-PHY TX power control enabled
-Date: Sun, 18 Oct 2026 13:12:16 -0700
-Message-ID: <20261018201216.51975-1-rosenp@gmail.com>
+Subject: [PATCH wireless] wifi: b43: fix 2.4 GHz reception on HT-PHY
+Date: Sun, 18 Oct 2026 19:24:18 -0700
+Message-ID: <20261019022418.236356-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.56.0
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261018_131219_942657_6323FECF 
-X-CRM114-Status: GOOD (  14.47  )
+X-CRM114-CacheID: sfid-20261018_192421_253660_CB5CF1E3 
+X-CRM114-Status: GOOD (  18.82  )
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -97,59 +97,154 @@ Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 Errors-To: b43-dev-bounces+b43-dev=archiver.kernel.org@lists.infradead.org
 
-b43_phy_ht_tx_power_ctl() enables the TX power control by setting the
-enable bits in TXPCTL_CMD_C1, then writes the saved TX power index of
-each core to its command register. For core 1 that register is
-TXPCTL_CMD_C1 itself, so the write clears the enable bits again, as
-does the write of index 0x32 on 5 GHz. A TX power index is saved
-whenever the control is turned off, which b43_phy_ht_op_init() does
-before turning it back on, so the control ends up off and the TX gain
-stays where the saved index left it.
+On a BCM4331 (HT-PHY rev 1, radio 2059 rev 0) b43 barely receives in
+the 2.4 GHz band, with or without HT: against an access point half a
+metre away, 15-45% of the pings are lost and iperf3 runs at 0-3
+Mbit/s each way. The 5 GHz band works.
 
-Change only the index field of the command registers. With that, and
-with the TX power estimates fixed, the hardware TX power control
-(ht_txgain_idx=-1) keeps TXPCTL_CMD_C1 at 0xe019 as with wl, and a
-BCM4331 holds its 2.4 GHz target power of 19 dBm from the SPROM: the
-TX power control status registers report 19-20.3 dBm at gain indices
-14-17.
+An mmiotrace of wl 6.30.223.271 on the same card shows two things b43
+does not do:
 
-Fixes: 60e8fb9233e1 ("b43: HT-PHY: implement controlling TX power control")
+- wl writes PHY table 9, 48 entries, on every PHY init in both bands.
+  b43 never writes it.
+- wl writes the RX gain tables 0, 1 and 40 (one per core) and the gain
+  code tables 2, 3 and 41 on every band change, with different values
+  for 2.4 and 5 GHz. b43 only writes entries 8-11 of tables 0, 1 and
+  40, once at init, with values that are neither.
+
+Write table 9 at PHY init and the gain tables on every channel setup,
+with wl's values for the band. Replaying wl's state on the card showed
+that table 9 is needed for any reception at all, and the gain tables
+for full throughput. This also answers the old question of whether wl
+meant table 2 instead of 40: table 40 is the gain table of core 3.
+
+With an RT-N16 access point on channel 6 without HT, iperf3 now runs
+at 15 Mbit/s each way, and 2 of 40 pings sent right after association
+are lost.
+
+Fixes: 98f8dc72ac50 ("b43: HT-PHY: init: add missing small-tables writes")
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/net/wireless/broadcom/b43/phy_ht.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_ht.c    | 62 ++++++++++++++++---
+ .../net/wireless/broadcom/b43/tables_phy_ht.c | 11 ++++
+ 2 files changed, 65 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/wireless/broadcom/b43/phy_ht.c b/drivers/net/wireless/broadcom/b43/phy_ht.c
-index fab8399c64f7..412e520bbcec 100644
+index fab8399c64f7..b6c200cba715 100644
 --- a/drivers/net/wireless/broadcom/b43/phy_ht.c
 +++ b/drivers/net/wireless/broadcom/b43/phy_ht.c
-@@ -555,16 +555,23 @@ static void b43_phy_ht_tx_power_ctl(struct b43_wldev *dev, bool enable)
- 	} else {
- 		b43_phy_set(dev, B43_PHY_HT_TXPCTL_CMD_C1, en_bits);
+@@ -760,6 +760,58 @@ static void b43_phy_ht_spur_avoid(struct b43_wldev *dev,
+ 	b43_phy_ht_reset_cca(dev);
+ }
  
-+		/*
-+		 * Only touch the index: the enable bits are in the same
-+		 * register for core 1
-+		 */
- 		if (b43_current_band(dev->wl) == NL80211_BAND_5GHZ) {
- 			for (i = 0; i < 3; i++)
--				b43_phy_write(dev, cmd_regs[i], 0x32);
-+				b43_phy_maskset(dev, cmd_regs[i],
-+						~B43_PHY_HT_TXPCTL_CMD_C1_INIT,
-+						0x32);
- 		}
++/*
++ * The RX gain tables depend on the band. Tables 0, 1 and 40 hold the gains
++ * of cores 1, 2 and 3, tables 2, 3 and 41 the matching gain codes. Values
++ * from wl, which writes them on every band change.
++ */
++static void b43_phy_ht_gain_tables(struct b43_wldev *dev,
++				   enum nl80211_band band)
++{
++	static const u8 gain_tbl[] = { 0, 1, 40 };
++	static const u8 code_tbl[] = { 2, 3, 41 };
++	static const u16 gain[2][4][4] = {
++		{ { 0x10, 0x10 }, { 0x0b, 0x11, 0x15, 0x1a },
++		  { 0xfd, 0x07, 0x07, 0x07 } },
++		{ { 0x0d, 0x0d }, { 0x0e, 0x14, 0x18, 0x1c },
++		  { 0xff, 0x07, 0x0b, 0x0b } },
++	};
++	static const u16 code[2][4] = {
++		{ 0, 1, 1, 1 }, { 0, 1, 2, 2 },
++	};
++	bool ghz5 = band == NL80211_BAND_5GHZ;
++	int core, i;
++
++	for (core = 0; core < ARRAY_SIZE(gain_tbl); core++) {
++		u8 g = gain_tbl[core], c = code_tbl[core];
++
++		for (i = 0; i < 2; i++)
++			b43_httab_write(dev, B43_HTTAB16(g, i),
++					gain[ghz5][0][i]);
++		for (i = 0; i < 4; i++) {
++			b43_httab_write(dev, B43_HTTAB16(g, 0x08 + i),
++					gain[ghz5][1][i]);
++			b43_httab_write(dev, B43_HTTAB16(g, 0x10 + i),
++					gain[ghz5][2][i]);
++			b43_httab_write(dev, B43_HTTAB16(c, 0x10 + i),
++					code[ghz5][i]);
++		}
++		for (i = 0; i <= 0xa; i++) {
++			if (ghz5) {
++				b43_httab_write(dev, B43_HTTAB16(g, 0x20 + i),
++						i < 2 ? 0xfa : 0xfd);
++				b43_httab_write(dev, B43_HTTAB16(c, 0x20 + i),
++						i < 2 ? 1 : 2);
++			} else {
++				b43_httab_write(dev, B43_HTTAB16(g, 0x20 + i),
++						i < 0xa ? 0x00 : 0xfd);
++				b43_httab_write(dev, B43_HTTAB16(c, 0x20 + i),
++						i < 0xa ? 1 : 2);
++			}
++		}
++	}
++}
++
+ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
+ 				const struct b43_phy_ht_channeltab_e_phy *e,
+ 				struct ieee80211_channel *new_channel)
+@@ -801,6 +853,8 @@ static void b43_phy_ht_channel_setup(struct b43_wldev *dev,
  
- 		for (i = 0; i < 3; i++)
- 			if (phy_ht->tx_pwr_idx[i] <=
- 			    B43_PHY_HT_TXPCTL_CMD_C1_INIT)
--				b43_phy_write(dev, cmd_regs[i],
--					      phy_ht->tx_pwr_idx[i]);
-+				b43_phy_maskset(dev, cmd_regs[i],
-+						~B43_PHY_HT_TXPCTL_CMD_C1_INIT,
-+						phy_ht->tx_pwr_idx[i]);
- 	}
+ 	b43_phy_ht_spur_avoid(dev, new_channel);
  
- 	phy_ht->tx_pwr_ctl = enable;
++	b43_phy_ht_gain_tables(dev, new_channel->band);
++
+ 	b43_phy_write(dev, 0x017e, 0x3830);
+ }
+ 
+@@ -946,14 +1000,6 @@ static int b43_phy_ht_op_init(struct b43_wldev *dev)
+ 	b43_phy_maskset(dev, B43_PHY_OFDM(0x0141), 0xff00, 0x46);
+ 	b43_phy_maskset(dev, 0x0283, 0xff00, 0x40);
+ 
+-	b43_httab_write_few(dev, B43_HTTAB16(00, 0x8), 4,
+-			    0x09, 0x0e, 0x13, 0x18);
+-	b43_httab_write_few(dev, B43_HTTAB16(01, 0x8), 4,
+-			    0x09, 0x0e, 0x13, 0x18);
+-	/* TODO: Did wl mean 2 instead of 40? */
+-	b43_httab_write_few(dev, B43_HTTAB16(40, 0x8), 4,
+-			    0x09, 0x0e, 0x13, 0x18);
+-
+ 	b43_phy_maskset(dev, B43_PHY_OFDM(0x24), 0x3f, 0xd);
+ 	b43_phy_maskset(dev, B43_PHY_OFDM(0x64), 0x3f, 0xd);
+ 	b43_phy_maskset(dev, B43_PHY_OFDM(0xa4), 0x3f, 0xd);
+diff --git a/drivers/net/wireless/broadcom/b43/tables_phy_ht.c b/drivers/net/wireless/broadcom/b43/tables_phy_ht.c
+index 1acf2df66e5e..7952584c0170 100644
+--- a/drivers/net/wireless/broadcom/b43/tables_phy_ht.c
++++ b/drivers/net/wireless/broadcom/b43/tables_phy_ht.c
+@@ -14,6 +14,16 @@
+ #include "phy_common.h"
+ #include "phy_ht.h"
+ 
++/* Written by wl on every PHY init; without it 2.4 GHz reception fails */
++static const u16 b43_httab_0x09[] = {
++	0x0000, 0x0000, 0x0002, 0x0000, 0x0001, 0x0001, 0x0003, 0x0001,
++	0x0000, 0x0000, 0x0002, 0x0000, 0x0001, 0x0001, 0x0003, 0x0001,
++	0x0000, 0x0000, 0x0002, 0x0000, 0x0001, 0x0001, 0x0003, 0x0001,
++	0x0000, 0x0000, 0x0002, 0x0000, 0x0001, 0x0001, 0x0003, 0x0001,
++	0x0000, 0x0000, 0x0002, 0x0000, 0x0001, 0x0001, 0x0003, 0x0001,
++	0x0000, 0x0000, 0x0002, 0x0000, 0x0001, 0x0001, 0x0003, 0x0001,
++};
++
+ static const u16 b43_httab_0x12[] = {
+ 	0x0000, 0x0008, 0x000a, 0x0010, 0x0012, 0x0019,
+ 	0x001a, 0x001c, 0x0080, 0x0088, 0x008a, 0x0090,
+@@ -796,6 +806,7 @@ void b43_phy_ht_tables_init(struct b43_wldev *dev)
+ 	BUILD_BUG_ON(ARRAY_SIZE(b43_httab_0x1a_0xc0_late) !=
+ 			B43_HTTAB_1A_C0_LATE_SIZE);
+ 
++	httab_upload(dev, B43_HTTAB16(0x09, 0), b43_httab_0x09);
+ 	httab_upload(dev, B43_HTTAB16(0x12, 0), b43_httab_0x12);
+ 	httab_upload(dev, B43_HTTAB16(0x27, 0), b43_httab_0x27);
+ 	httab_upload(dev, B43_HTTAB16(0x26, 0), b43_httab_0x26);
 -- 
 2.56.0
 
