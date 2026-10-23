@@ -2,64 +2,113 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A88606A322
-	for <b43-dev@archiver.kernel.org>; Fri, 23 Oct 2026 20:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834B5606A31A
+	for <b43-dev@archiver.kernel.org>; Fri, 23 Oct 2026 21:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=UvJIOGH0;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=bues.ch header.i=@bues.ch header.a=rsa-sha256 header.s=main header.b=PBI6pUzp
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=S9h5dy0Z;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=Nniog8Et
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20210309; h=Sender:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:Cc:To:Subject:Message-ID:Date:From:
+	In-Reply-To:References:MIME-Version:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=6jc3Yq8zamzsOMWovIoQSiI4UvYlWpmUO9juOUB3t/M=; b=UvJIOGH0NV3S2iwH1fVqpreJ5r
-	YOTlj3dy4wu38qW6TDuiJ4p7fOWpBPSS8ixK8dCn2qte3S6FV2fpGQZ4R1J7w6pRxd0brZV3PU0DQ
-	RJLJ1ccIve5TKyMJUQAWwurvqL3P3arGw3ubHWAeyXBwbLf4BMvg3uwwSzjvB9xKp6Ms/fqfxjwnU
-	k76Bgsc6LTorjV8blkonZ4AumlgsR/17lp20KlUlq8XxxBarAL3x51wWLNid4wLXjON8/OLhRK2UF
-	Drx7vWw94fRYFlOkJzXN5yICN/uAH3HMQeI2rI1viuFkvD5pGL4u1QwMxJrB0OaUwvE9lsXxTRmYr
-	KBolB9Tg==;
+	bh=L0k5TzOmJhDCf3iYIunFjTZ6Pb0bUS4TrKx4uGTP4gE=; b=S9h5dy0ZAK72wZ+P4pxV83CTa7
+	8eNIMuOzEo7+ugnw9P9Sqy868fWXZ9/rch1ZNZApHB+q0opzbqT2tJqUOqje1rUCp3G52CrLg0r2F
+	cJOOatgJ0NoBpEQcni5y+9H2KfO3lNzT9mzMryjrdXp93cDOfYVITBVNoM7RDVO0ZBj5BKDDc+0S6
+	PqLzZmmyDtkO+Ej+ywvxwIWVyh9vKNVU9+e9mFmN8hfnuUDLC8zvGGi2g59fCNdClyxlZIGX4AWtC
+	n8+UCzrD9LSBKXxXdZJhtp3egvQAp/ul5jr5BZpFJx/b+2LD1OgL4/Yot89bX4h/XwcLVx+vKDfIb
+	I+QO2/WQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xKMLN-0000000GxiS-2EYu;
-	Fri, 23 Oct 2026 20:58:29 +0000
-Received: from bues.ch ([2a01:4f8:1c0c:6e7f::1] helo=mail.bues.ch)
+	id 1xKMj2-0000000GzRA-0TR0;
+	Fri, 23 Oct 2026 21:22:56 +0000
+Received: from mail-ed1-x529.google.com ([2a00:1450:4864:20::529])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xKMLK-0000000Gxi6-2vbE
+	id 1xKMhq-0000000GzJs-3P5F
 	for b43-dev@lists.infradead.org;
-	Fri, 23 Oct 2026 20:58:28 +0000
-Date: Fri, 23 Oct 2026 22:57:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bues.ch; s=main;
-	t=1792789104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VW4kqp4jTMad/WOhSJaLgDopHrGhg40Y8hWd4zWrhIc=;
-	b=PBI6pUzp9+L6+6myz44gMsYou2OInsbSs9sNZUrZwCjNUW8lLOt0MLCuuYbom02PEBehxD
-	vBeMWfRHqM1O4MNm9TExHHI2zEdrCR7j/ak3yV4d7nLoPl2Rw9rDracptoT/e0EgpEqgXF
-	cj8BPoEdxTbWdW8SvwtecmAoMSr7gXXxXmrzq/M5zsQjJxvpvRi7oaL1rhJAkN/uOeXtyF
-	k3iqDFLOIwZFIoRVOvFKYOtC2fXG/Mto0fBR5MvMoW6F0+s2ass/GD774JtQVcMvlm6xCK
-	sqKXMyZE12wvj03L4L7VElWALpktvH2+QfaBgjCJM5jwROgelqMaQmWJPefNxQ==
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org, "open list:B43 WIRELESS DRIVER"
- <b43-dev@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH wireless] wifi: b43: map the RX buffers
- DMA_BIDIRECTIONAL
-Message-ID: <20261023225745.696eef3c@barney>
-In-Reply-To: <CAKxU2N_1XgjVPdSrCMYzZx4Rb6yjgEe7kBZYyG4RASyBv5BtMw@mail.gmail.com>
-References: <20261023190653.70741-1-rosenp@gmail.com>
- <20261023221424.2722795e@barney>
- <20261023224140.465903eb@barney>
- <CAKxU2N_1XgjVPdSrCMYzZx4Rb6yjgEe7kBZYyG4RASyBv5BtMw@mail.gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	Fri, 23 Oct 2026 21:22:24 +0000
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-6b3dd83e779so2098055a12.1
+        for <b43-dev@lists.infradead.org>; Fri, 23 Oct 2026 14:21:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792790501; cv=none;
+        d=google.com; s=arc-20260327;
+        b=CuEdqPYbIzlAwHbBxHMbTz+IEjMyL1GqBwwwdE80/X6AGMvI0d1NYfOushZOw8y6rz
+         0Dvjz8vo0F2a54FOsr8bxQq7EbMOXJ2mxv7s9ysjwXj2+CUywhDu0YJmf49XV4ls0SHb
+         yo2RniThfJMlr/erMqbr8tNRklZIgxNBdX3545I25gptaZEuklkgBu+bNxOQlCC+zZJ5
+         MgLnRNfg1x2FIzdRWkZQIqYLb+qARN/lzuKGe7g4d/5Ebjy3akA58twqs0oRlccPD8fX
+         T8Vpg7/iodM5LM7nP9tqCimj1vevsdmoMvgiwPe5C5wzz2WvYadI/YpVr59SY6Vxmy54
+         f8nA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=AE0GbBfNma+sNfNfxTvMZspamc+IJ62E4ebI4HKJzHI=;
+        fh=v+vIMdYwAv2ekD3MMMY6GIl0Pk87KqUDIH6LoLrmgCE=;
+        b=mZJ6z6vYT//nkd5wf2L/5D0eva7rwMzKPTSKjv1pQd9xzdH0MGlEvPQZ/OIJeCXPeb
+         svIo0y2wD18ypPrkb3hEZbK6H68seOplNDEfLMWDZQlZ2GNFlbWHBY0s4phZEfbpCVQj
+         QZFHKFoaYylPa2g8XsoHoc5z4pmWn2Tjy4zPhJE0+COsOWfuB05L5zRmaflUb9q0CnTw
+         puG1AMG0sFOikf71Tl6ZpZ4TxT9jiOm10XsYyPsnp8IY77WqwKmC8usNcD984KIUOgAn
+         i5V3MC+J54mlqINPIwH2QV2RWhPVYpaq8eZMmOfpy1JiMHXfend0dE11NfB3NrvkX7d1
+         gSXg==;
+        darn=lists.infradead.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792790501; x=1793395301; darn=lists.infradead.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=AE0GbBfNma+sNfNfxTvMZspamc+IJ62E4ebI4HKJzHI=;
+        b=Nniog8Etxd9baeRMdB2zr/CEAJbyW03AOU9IQtI5UlPYG9x9M63CxIJuSl3fOsckEj
+         KMzLK9gkMEQhuSM8SQoMwt3AWDLB27KRGaRZE12CvioOcJaHanTFpTZRCv16MDzata9+
+         cSRgm7F5lrVnIWNaztW1bkbgB4GmzwV5cMtOVT14cDajXwVDzy0bw4ekSklU1X4seUf/
+         cxla1NdGQ8pc9bAl7BWtuLvj4RkXO6VHQjpRtgkfIRnnUTqpYG5EC/4vCNWxHEd8+ZBc
+         NFNhK0qbQH0Iy1ITEZDXSSWVwd//O06POUCC21gCrlbzmCMw7UfT0ZQuH/41i4onQQqD
+         i31Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792790501; x=1793395301;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=AE0GbBfNma+sNfNfxTvMZspamc+IJ62E4ebI4HKJzHI=;
+        b=OSEgv5MMYlTIMp+BOz6efn/9rb0+lswuYCPCb7id4pq6eMhaWsBoD1ZF5gLmvkHGTl
+         xDxq/0+lieX1UwjhXb5jUA67kYf3qEvjNq9weTwTvtEPiHL9LQ7vjUmxS+L0vcoXJLpG
+         HEIrTbcT1pey406qW+3eMSCrau1YUNjZ/m+Ys+Lk+50+l7JjSSRUDyPf3lBy8GHJUUMP
+         R/ygfFpru/lk9t1Q9BrmHk7AyJy1GLDS7ZvHPzEgDq2UsImp3LYMdm1to7gHmmusyX9Z
+         BXxwy12CeSTrRl/1PSLKAvicaGX7jyRHM7ZQUehzu/Dt63E3qHKt+rv92PdFh/TmnK8X
+         Jh9A==
+X-Forwarded-Encrypted: i=1; AKwUvBzPkCjFaZdE5kXkcAKdAsT7nQ1OgVLkEnQVSaQRX6HbBaQpncCtCtbH8sOTQd3+f28PryX28YsM@lists.infradead.org
+X-Gm-Message-State: AFq9FYKK8moDKZzQyap9x2+R71PbnIylZ19D5wuPz7O7WvfvbOrG4a7T
+	mFpXFxGOgdAHY4EAqNB3yusg7t2IHLOR4uul4HQmOgOFuke+pOoWvhHFdzLDzvCkaDkAMN88T95
+	9wlFscnAZhVH8WxovL00IVGSNJUnLWII=
+X-Gm-Gg: AYBFou3bIPYK7RTU3+GZSbItRYVSUzy0nzJYhDNrfUJIDDwhTFWuEm8pBRAztBxQIdh
+	8xwlDTkTQxRo2LdGUJ5f4TOwgwYEOx5e/Xcs8apgfmtRjkJ21/Ep8eBI+REAfSqHSYOIrFrqmfd
+	7w65+0PaVWTleO/Pi4wMOh9Exgm4s2qseAehqkdhbvBs5XWiahKwoeqTPnsvoROvgV4EyYWENRJ
+	AizXU8jdlbTTJjUmFWMOaCVJo2dEvzUTED6mnRl8aGTxoIY+bAEi8CPRrXQ3qfT0i+sEAnVxyXL
+	QhCeI72F7mkOgz0kDW/XKWaxaIKuvrxSHCK9+A1Zn9GPJlE40gCvZLgN3qTl/S56TqtOjddr69u
+	lGc1JP564OhtfEh9D3f2VYAVyN4+Ue6EgUXN9gk8Ucj9CtMNYgx8tuF/d8YvueRH5p2tvPSf6cu
+	u4O8Yzh+qK4TBpTA6weSuTbdmp7LLd+dEnNaYqbFj0Y9T74RiZAU2QZmNPnadCkoM7cA1m/lW0g
+	FWSr66VbTV5/LwIkg6gCiJCXQ9tF5T0lVd6OZk44I+dpBenoQ==
+X-Received: by 2002:a05:6402:1cc4:b0:6ac:bd53:d29a with SMTP id
+ 4fb4d7f45d1cf-6b442a80c06mr508793a12.3.1792790500756; Fri, 23 Oct 2026
+ 14:21:40 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+References: <20261023190653.70741-1-rosenp@gmail.com> <20261023221424.2722795e@barney>
+ <20261023224140.465903eb@barney> <CAKxU2N_1XgjVPdSrCMYzZx4Rb6yjgEe7kBZYyG4RASyBv5BtMw@mail.gmail.com>
+ <20261023225745.696eef3c@barney>
+In-Reply-To: <20261023225745.696eef3c@barney>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Fri, 23 Oct 2026 14:21:27 -0700
+X-Gm-Features: AclHuK9GRIFtl9lqIXhWNWjMucByyfNnLezcnXbef4n3dCMQ4w9XYcqaCpFWgVM
+Message-ID: <CAKxU2N9i6Dn1yKmd-_9DvET6P_GNctTywWgOBXYd2tWoWKY=Sg@mail.gmail.com>
+Subject: Re: [PATCH wireless] wifi: b43: map the RX buffers DMA_BIDIRECTIONAL
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
+Cc: linux-wireless@vger.kernel.org, 
+	"open list:B43 WIRELESS DRIVER" <b43-dev@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261023_135826_912082_0AFF035C 
-X-CRM114-Status: UNSURE (   8.34  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20261023_142143_549028_E3F619DC 
+X-CRM114-Status: GOOD (  19.62  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -70,93 +119,46 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============5007572005779122867=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-0.8 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---===============5007572005779122867==
-Content-Type: multipart/signed; boundary="Sig_/d5ecz=YuuTctGtG389yzND7";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-
---Sig_/d5ecz=YuuTctGtG389yzND7
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 23 Oct 2026 13:44:44 -0700
-Rosen Penev <rosenp@gmail.com> wrote:
-
-> All code is tested on an Asus RT-N16. It runs on non-coherent MIPS.
-
-Ok.
-
-Describe your development process in human language during patch submission.
-What has been tested?
-What has not been tested?
-What was wrong?
-What has been fixed?
-Why is this needed?
-Why do we need bidirectional DMA and most important why wasn't it necessary=
- before?
-
-AI is great for code generation, bug finding, etc.
-But for patch submission, pull requests and commit messages it's absolutely=
- unusable.
-Please don't do it.
-Write your commit messages manually, please.
-
-Please make your commit message be to the point and easy to review.
-And please slow the process down.
-You don't need to submit patches right away. Keep them in a queue and STABI=
-LIZE them LOCALLY.
-
-Please do a little bit of research whom to To and Cc. There are scripts for=
- that.
-
-Thanks a lot.
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/d5ecz=YuuTctGtG389yzND7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmrbykkACgkQ9TK+HZCN
-iw6Y1BAAqtGhwT/GhDkRGpMeSnSCZoR5N/CXbPiJ/b0vdeDIiEOuiAzB+drw1i/i
-+0sB6+lXs3ZIqAQvCN1v0mCM1WKLO69xqAM3qBuDnOajw7XEMMxgXsNvgHmpQu82
-y9lW1rNYQco6pLlAeJQW3pkGUbJKPyvcBHqIKy6TM+JEmn1QlaI/8/UasHxwlEU2
-X5Rmf22A3OzY7Mdza1+x/WX+3s8/1u5GfXwVWKaXqcM/egivW7QoOQ6Cehcx6MoB
-Z/Y9LRXNQ/TMgrsNOBYlpC3X43cVTCkR2R+VDRK+op5gu55YbgixygVIrUjtRtYI
-d8zbVV4JxUkjC505Y/VK5dIu+OfomifJvoqdoJu12iEdjfMW+vk+/kPeUoiA6P/v
-n9Ftjw+skt7bmNEvJ/uEupAC7C2GX09Hnx8S4s6p5vr37iBHGxArhdHKdmGFvFZR
-PbElkLNAG/NrdOTYguBhQiolme1OkNtCJZlAbzaiMhSOZ4zYuWMSSezEHQoNw0ly
-tqySBSkRu5qtMbVEpa+Ot5izFU3nzWViwAGOzoTETgG34h815orm57ThEGYWq6GJ
-PqvBzMFfEfyiOBQroTfaQxqZSt1cZDtwfIB8sNBvL7SRld5kzu0b6tzdYCz/f+sm
-l4MYfPEfWXlEQpnwfwAJIr27J+iubLS7oqzsAfSRIv70GSehBnM=
-=EOXg
------END PGP SIGNATURE-----
-
---Sig_/d5ecz=YuuTctGtG389yzND7--
-
-
---===============5007572005779122867==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
-
---===============5007572005779122867==--
-
+T24gRnJpLCBPY3QgMjMsIDIwMjYgYXQgMTo1OOKAr1BNIE1pY2hhZWwgQsO8c2NoIDxtQGJ1ZXMu
+Y2g+IHdyb3RlOgo+Cj4gT24gRnJpLCAyMyBPY3QgMjAyNiAxMzo0NDo0NCAtMDcwMAo+IFJvc2Vu
+IFBlbmV2IDxyb3NlbnBAZ21haWwuY29tPiB3cm90ZToKPgo+ID4gQWxsIGNvZGUgaXMgdGVzdGVk
+IG9uIGFuIEFzdXMgUlQtTjE2LiBJdCBydW5zIG9uIG5vbi1jb2hlcmVudCBNSVBTLgo+Cj4gT2su
+Cj4KPiBEZXNjcmliZSB5b3VyIGRldmVsb3BtZW50IHByb2Nlc3MgaW4gaHVtYW4gbGFuZ3VhZ2Ug
+ZHVyaW5nIHBhdGNoIHN1Ym1pc3Npb24uCkkgYXNzdW1lIHRoYXQgd291bGQgbW9zdGx5IGJlIGFw
+cHJvcHJpYXRlIGZvciBhIGNvdmVyIGxldHRlci4KPiBXaGF0IGhhcyBiZWVuIHRlc3RlZD8KPiBX
+aGF0IGhhcyBub3QgYmVlbiB0ZXN0ZWQ/Cj4gV2hhdCB3YXMgd3Jvbmc/Cj4gV2hhdCBoYXMgYmVl
+biBmaXhlZD8KPiBXaHkgaXMgdGhpcyBuZWVkZWQ/Cj4gV2h5IGRvIHdlIG5lZWQgYmlkaXJlY3Rp
+b25hbCBETUEgYW5kIG1vc3QgaW1wb3J0YW50IHdoeSB3YXNuJ3QgaXQgbmVjZXNzYXJ5IGJlZm9y
+ZT8KQmVjYXVzZSB0aGUgY29kZXBhdGggaXMgbm90IGZhdGFsLiBPbmUgb3IgdHdvIGR1cGxpY2F0
+ZWQgZnJhbWVzLiBCaWcgZGVhbC4KPgo+IEFJIGlzIGdyZWF0IGZvciBjb2RlIGdlbmVyYXRpb24s
+IGJ1ZyBmaW5kaW5nLCBldGMuCj4gQnV0IGZvciBwYXRjaCBzdWJtaXNzaW9uLCBwdWxsIHJlcXVl
+c3RzIGFuZCBjb21taXQgbWVzc2FnZXMgaXQncyBhYnNvbHV0ZWx5IHVudXNhYmxlLgo+IFBsZWFz
+ZSBkb24ndCBkbyBpdC4KPiBXcml0ZSB5b3VyIGNvbW1pdCBtZXNzYWdlcyBtYW51YWxseSwgcGxl
+YXNlLgpJJ3ZlIGJlZW4gYnVybmVkIGJ5IHRoaXMgbWFueSB0aW1lcyBiZWZvcmUgd2hlcmUgbWFp
+bnRhaW5lcnMgYXNrIG1lIHRvCnJld29yZCBvciBtZW50aW9uIHNvbWV0aGluZy4gSXQncyBub3Qg
+cHJhY3RpY2FsIGFuZCB3YXN0ZXMgZXZlcnlvbmUncwp0aW1lLCB3aGljaCBpcyB3aHkgSSdtIGFs
+bW9zdCBiYW5uZWQgZnJvbSBuZXRkZXYuCj4KPiBQbGVhc2UgbWFrZSB5b3VyIGNvbW1pdCBtZXNz
+YWdlIGJlIHRvIHRoZSBwb2ludCBhbmQgZWFzeSB0byByZXZpZXcuCj4gQW5kIHBsZWFzZSBzbG93
+IHRoZSBwcm9jZXNzIGRvd24uCj4gWW91IGRvbid0IG5lZWQgdG8gc3VibWl0IHBhdGNoZXMgcmln
+aHQgYXdheS4gS2VlcCB0aGVtIGluIGEgcXVldWUgYW5kIFNUQUJJTElaRSB0aGVtIExPQ0FMTFku
+CkkgZmlndXJlIHNpbmNlIHdpcmVsZXNzIGRvZXNuJ3QgZGVwZW5kIG9uIHRoZSBtZXJnZSB3aW5k
+b3cgdW5saWtlCndpcmVsZXNzLW5leHQgSSBjYW4gc2VuZCB0aGVtIHdoZW5ldmVyLgo+Cj4gUGxl
+YXNlIGRvIGEgbGl0dGxlIGJpdCBvZiByZXNlYXJjaCB3aG9tIHRvIFRvIGFuZCBDYy4gVGhlcmUg
+YXJlIHNjcmlwdHMgZm9yIHRoYXQuClllYWguIEFsbCBvZiB0aGlzIGdvZXMgdGhyb3VnaCAuL3Nj
+cmlwdHMvZ2V0X21haW50YWluZXIucGwKCkRvIG5vdGUgdGhpcyBpcyBhbiBvcnBoYW5lZCBkcml2
+ZXIuIEkgZXhwZWN0IGZlYXR1cmUgcGF0Y2hlcyB0byBnZXQKY2xvZ2dlZCB1cCBhbmQgRml4ZXM6
+IHRvIGdldCBpbiBhIGJpdCBlYXNpZXIuCj4KPiBUaGFua3MgYSBsb3QuCj4KPiAtLQo+IE1pY2hh
+ZWwgQsO8c2NoCj4gaHR0cHM6Ly9idWVzLmNoLwoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KYjQzLWRldiBtYWlsaW5nIGxpc3QKYjQzLWRldkBsaXN0cy5p
+bmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
+YjQzLWRldgo=
