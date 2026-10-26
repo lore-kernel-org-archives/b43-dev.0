@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6D6606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB4F606A31E
 	for <b43-dev@archiver.kernel.org>; Mon, 26 Oct 2026 18:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=jeA47qo/;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=b0fYkYI6
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=w84Sbj7W;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=RZAv+VDV
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
@@ -14,83 +14,84 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=+ixUq79C1WVma1HovaxORf7/whuhSuOZheczuLaP15c=; b=jeA47qo/R+igKlYKqp4GecGq2L
-	9X8+YoTqlwAjRo0eUu+dkl1SXKKHuZJjZJ4QdrKlqXl7s76HZdOus8txLWJdJKCRZ7wytCdmyg2NL
-	wYL/n7A72DVLD4Y/UnYPzJ9BJzv552HUkGQMBbqD2F7KrKA1IDieAdjRijm2Oe5WOwboCz3VtKPi6
-	WKvIKxmzpaxsOdOGupmX2r0qwpsxbDfKb7KnR6vpkjh3lTcZI+a/CacOj3n5ZnJerujlBiOadX/XJ
-	cxEqEm7zKCdU+LdKobpcTiLMxP9gen5q/cCuUC1QpLKoTq5rp4A+6o9deqVw8wDGiQG2LlvSeEGZs
-	rRmjTUbw==;
+	bh=3UtWauMqnuVRIaUwzBDkvXo5oqbHX1V+Ht25AtxGkbg=; b=w84Sbj7WGYvDPGkmDG2iPGIqkM
+	u42r6BG+koTBnIEc2Wb7hInCQTk4Ka6EzMrzYhAao1lptv0JFM6LQLhtIxnbORTeGAfpT/SbJpoOe
+	xQU77OKQs0/XDSWCKXzRhvpdg35UDFSayQ9OtsZEKTyUt3fdGp7b5Y2MWjqEZZXG4URL2efGYOxzj
+	KxBCKxpX/IqvIT6qDRAOkWUKa8II7wbx2y3fUMUnnJJGE2t4dO0pfy6Al1V7817nnggX0FLw/0YE5
+	vSfsT7xGEu/XrZ9tE0e6RgNDPaZH833BDhig5DoJbb8FmvlH+7b6WVyRwmPrTm0FvQoh51fdI5P9E
+	puNmSQsw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xLPEk-000000033Jv-2h2U;
-	Mon, 26 Oct 2026 18:15:58 +0000
-Received: from mail-wr1-x430.google.com ([2a00:1450:4864:20::430])
+	id 1xLPEm-000000033Ks-0MvY;
+	Mon, 26 Oct 2026 18:16:00 +0000
+Received: from mail-wr1-x42b.google.com ([2a00:1450:4864:20::42b])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xLPEf-000000033HK-2DLl
+	id 1xLPEh-000000033IR-2mCb
 	for b43-dev@lists.infradead.org;
-	Mon, 26 Oct 2026 18:15:55 +0000
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-48b042c0759so1872082f8f.2
-        for <b43-dev@lists.infradead.org>; Mon, 26 Oct 2026 11:15:52 -0700 (PDT)
+	Mon, 26 Oct 2026 18:15:56 +0000
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-48e4831c028so1767354f8f.0
+        for <b43-dev@lists.infradead.org>; Mon, 26 Oct 2026 11:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793038551; x=1793643351; darn=lists.infradead.org;
+        d=gmail.com; s=20251104; t=1793038553; x=1793643353; darn=lists.infradead.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=NsuTrr6wIfPAB8pWsn28L5K8P03qXg+Oz5Zpu1MppRI=;
-        b=b0fYkYI6FGNVmlCTNHlammlc9cOU53Adi2aTQuiQYWEmbz48zkMrN296YfJL1QY1ZS
-         17bEsOh3IAvQPJbCQ+rLraO0iY5hZvfd9sWhcu8yqgS6Il4EkulP8vh5+Ve/2vMp1kvo
-         5bS8lzY4GF7NNj7zgq8c8uFxSi8YOz2nsUgxvCbdhVgZ6pqHqX/m3f9Qwogi2qcuqM1t
-         WBLPVf+fs7+vHp9sGvyz3BU6iDcqxkW+vHMdG9SYSyt0DWAVF7herXe9lKERwUqrytSs
-         nKN64y2cl5GA5aX9tiZ7wxBnVzWAEIUY0uxGVU1nw31Pm0A+S54Ho4IfftYeXjMI1Vb8
-         JGpQ==
+        bh=sfTjKOSajMf1wfY66E+ZCAtL9zvEweN3E+SNMy4fiFU=;
+        b=RZAv+VDVgDpNoJ8SKMKIefbC/kcn+8CTHpQh+k/kB6p0S8jBCUVPZUo8Ka1IqmjX6F
+         UQoUmiHNfFDYmj6BHyAOdaa/7xjLCrgesw3VYUkwIhCGiTPOTuOTidiJF/3xW8ngIRH/
+         PQLuSbgsGXLafuOecJj7FaIEgBG1MEJxjjpNzVrek6rlpwL1fGlALUvFIZZ5rHFAslF+
+         EVwnr4Wae3T9DZvbZ9CB8Y3Nf0Hm2IiR3BXaJ0AApw5CeqNWQHoX+qLz7Yx+6TssrRsd
+         DM6jnHFlQQCXe/YWOvLF3tMGUxgenxE5jLJcGzenrx9mZKDBqF3GzeXIoOZyFEQ2sYHJ
+         wc6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793038551; x=1793643351;
+        d=1e100.net; s=20260707; t=1793038553; x=1793643353;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=NsuTrr6wIfPAB8pWsn28L5K8P03qXg+Oz5Zpu1MppRI=;
-        b=vdOJ+nTA6Ioj6N5FYNeMXsoZnM1VkbL2QkAXwUV1JuFE6B0lzhtj/u+YxexRYrdSvJ
-         UpKNOx0609NDrduwv7672EDDiEBiasM3xYDp0/ggK/iGqIaX5mCvXBJFjgxYxrIocoSh
-         hyc66E/JjPQprKcoHFuJK20fOB4hWjKM+Oot4lJ47S8/nOUGxFOzKNzahueE60uAfq3Y
-         EOQ/i5aOWyaAnKMj2YFms12D94ErLQA/+uDap7RZP/j4vKPhn459vfsfm63yIIB5DVCQ
-         6YfY9JsxQXUNkkaCr+4s7+UELXa+WY5GM/XNkpV8dJ4P2tRTvHQHil/GDIpzchXvRu2w
-         FfUA==
-X-Forwarded-Encrypted: i=1; AKwUvByLrs0m5cdLOmGRsQd+feSGNHwR3RDT1Y1Dsju9qOCpsvmL8UPGdZ9VyHdTOXkG7UZwDZjP3f0W@lists.infradead.org
-X-Gm-Message-State: AFq9FYLL2olJMm99UqajTHIAmS65Q2n5R4pSVOXfm2HoZIrF8vkk6Y8t
-	Ne0eWZpw/DV5fC1lxQ/V6uuOm6YTXilzHQM+dHikOrqdT2Euc87erXcB
-X-Gm-Gg: AYBFou0+Yw3iiVCX6wTWPNF1/iQFQYtY024z6rFffUV/saS02/Ltc14jg76mBBZdLwa
-	ChE98d5YjqNY5oSXKur7V9YdFXFDszKhpIslLvPc1X85kcqpISGSSjh2OlbTuIjUzxz/J/TMpw2
-	+F1zmcREIwdnDeDk9auKzGzqJ5sEeHXaM39G1riRp5wNNoQlR3V+E+basQVkEZuBcv/7CIpYyOJ
-	FVQ96xz1/Gx/ZwHXzrvQb0hqx29k5ilN4nFmLtIEPT82x78zlzMuUgPL8Cz4ye9upiIhuV+70E/
-	Q/vdVDJ5gSEU6ECI6EWZNqKHLfzzeEXyZnk8SIDDazswusTKyiSL5TAM7nrfHQy5xBOfF+jVtFB
-	TvTz/Z2PM1pc8dr77r1VjIZSrt8Q/TR92psbyHWTqnNrhCfC0unAf5PfnvzpK7Vu//qDA68QGYB
-	oBL5mlWkefHwV+rK/A07GDp4YOFEckEzqj4MTr8TEP6ASLA7TEBD+zm4LLQqW6NIxS8Ot1kpAoP
-	QndMb7ayQPgTkdODA0xcPDGXpOXAbXPSCknga1FaHqkXYgebxgbFAbI8dCoOosvfWbC1nrEHMrw
-	GMaT
-X-Received: by 2002:a5d:59c4:0:b0:48e:d7c:4bc8 with SMTP id ffacd0b85a97d-48e3eb46851mr13346093f8f.7.1793038551308;
-        Mon, 26 Oct 2026 11:15:51 -0700 (PDT)
+        bh=sfTjKOSajMf1wfY66E+ZCAtL9zvEweN3E+SNMy4fiFU=;
+        b=Y+pszYtfFuN/RdoMHk2sj20zlZYgEM2kVR7c9gpLOhnEpzeUpel8wCmuZBNLSPEYEX
+         U+mxfv5Tw66HAs6MT5zgObFYSrx05iwpBV2nwEkztRBqVn8aMjGVjzpJnk8R/rjCKOsH
+         sbHNdw/IuhjuxqI4T504QDEGt1w/dXh9iF6IMuRgJ+CI7juqkVbQMaSZvYe7JuiETwHl
+         W4wotCMgq36tQxfmHKmMBwiDOcjMtXXaphmOVG8oJGCHPiOZUFMvLJpVKqzav5MwVuL1
+         tNPqFg4BdnnAv40Jn8d3gQnUSKsrKjgi1VMsOPPl4TKYH9EwUC1H9cxwxIPxUISYkPSK
+         FmHQ==
+X-Forwarded-Encrypted: i=1; AKwUvByfLELQVT41bCyMdiZuFjLlfUIaeynWx6RqpV2KJK1Djvp5z2UFoRAl3ddmTqdjl1TiNmSyhn8Y@lists.infradead.org
+X-Gm-Message-State: AFq9FYKXNKiKR6EoODLVZ/BO3GPEcGm1C+YVDV1IMd8JUvEu0FntZALr
+	HnrU2GAx0cCXhYp1i5AKNk+aGphz6sU70s7/3p1qRQdu33Wm0ORHZo28
+X-Gm-Gg: AYBFou0NrmeyCSetJuTYCnbF0i4l33Uaj1AK60AoXhK31bUcbv2HIdN50cnZs0eqb09
+	bpsGMLwS84ycb1wY5brMwJGlsDrueV8kWzGa/21cg5ifBVhtINyH9TEqhUK/RJoodO7Amqg6mJG
+	SiSeIcHX8t/Pa1jnKB/OYIlUFXVvpI5JzCpJ2eaJMzHX+ZIq7nK+FFUymc6HG+ax4/6H4KCXW37
+	KpqFmBFvPaTVbOUUxspgaJ3NUGU2GMbsN8KQ06JZUqiTd3UCTguN4JJ6BF71ObzD3Yyey5P6UnO
+	dNGUfiQd6GcQPZlBvu02FRbDcrr5qlCova945GcLjVgN8zAvvdGv1tMcLzBR+rZuAnwHFMllPD7
+	MH4yBoWr6er7lFe5rNgrIZ54IEWvtUD7ZRqiY1FgqRZc4Q4cMZ/gmHD+LdWvzjMs0qRtZ8cJRS9
+	DxUct3y2impBPbsVgs9ajxSvDpBAfGciIyoY9nCeCmNYEy+IN7XyevJLEmqUDOyBbdEKL6o8d8E
+	WGQeT8JVT0//XY+oYqu+m97+9XNEf2sHVdIy3ZQcKrElLcfLh/2xmvVNdoixrMfh0Qy2oQc0ZXf
+	ag2a
+X-Received: by 2002:a05:6000:2206:b0:48e:b1a:fa3 with SMTP id ffacd0b85a97d-48e54a0a7f2mr2114417f8f.35.1793038553474;
+        Mon, 26 Oct 2026 11:15:53 -0700 (PDT)
 Received: from luca-HP-ProBook-650-G1.lan ([2001:b07:6454:c33e:6c42:b004:d90b:d191])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd3705sm20967847f8f.45.2026.10.26.11.15.50
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd3705sm20967847f8f.45.2026.10.26.11.15.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 11:15:50 -0700 (PDT)
+        Mon, 26 Oct 2026 11:15:53 -0700 (PDT)
 From: Luca Casati <luk00casati@gmail.com>
 To: linux-wireless@vger.kernel.org
 Cc: johannes@sipsolutions.net,
 	arend.vanspriel@broadcom.com,
 	b43-dev@lists.infradead.org,
 	Luca Casati <luk00casati@gmail.com>
-Subject: [PATCH wireless-next 2/5] b43: N-PHY: fix TX IQ/LO calibration
-Date: Mon, 26 Oct 2026 19:15:40 +0100
-Message-ID: <20261026181543.77763-3-luk00casati@gmail.com>
+Subject: [PATCH wireless-next 5/5] b43: N-PHY: add the missing override to the rev7 TX_PU command
+Date: Mon, 26 Oct 2026 19:15:43 +0100
+Message-ID: <20261026181543.77763-6-luk00casati@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261026181543.77763-1-luk00casati@gmail.com>
 References: <20261026181543.77763-1-luk00casati@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261026_111553_618437_4E26B6EE 
-X-CRM114-Status: GOOD (  23.17  )
-X-Spam-Score: -1.1 (-)
+X-CRM114-CacheID: sfid-20261026_111555_711509_21B0E7C2 
+X-CRM114-Status: UNSURE (   9.88  )
+X-CRM114-Notice: Please train this message.
+X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -103,191 +104,38 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
-	FORGED_GMAIL_RCVD,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Several bugs kept the TX IQ/LO calibration from working, and on rev7+
-it left TX dead afterwards:
-
-- The busy poll on IQLOCAL_CMD was inverted: bits 15:14 are set while a
-  step runs, so it stopped waiting as soon as the step started.
-- The final copy was reversed: it wrote the stale buffer over the best
-  coefficients (table 15 at 96) and read the active ones (at 80), so the
-  result was never applied.
-- TxCalPhyCleanup lacked the rev7+ part of brcmsmac's
-  wlc_phy_txcal_phycleanup_nphy(): the 0x80 and 0x8 (PA power-up) RF
-  overrides set up for the cal were left in place.
-- There was no counterpart to b43_nphy_tx_cal_radio_setup_rev7(), so the
-  TSSI/IQ-cal path stayed switched in. Add one, following
-  wlc_phy_txcal_radio_cleanup_nphy().
-- The TRSW override for the second core used 8, which does not fit the
-  2-bit field on rev7+; use 2 as wl does.
-
-With these, on a BCM43228 (N-PHY rev 16, radio 2057 rev 9) the per-step
-coefficients match the proprietary wl driver's.
+brcmsmac's NPHY_REV7_RfctrlOverride_cmd_tx_pu also sets field 0x4 of
+rev7 override bank 2 (REV7_RF_CTL_OVER5/6); b43 left it out. With it,
+the override writes match brcmsmac and the wl driver on a BCM43228.
 
 Found and fixed with the help of an AI coding assistant (Claude Opus 5.5),
 by comparing mmiotraces of b43 and wl on the same card.
 
 Signed-off-by: Luca Casati <luk00casati@gmail.com>
 ---
- drivers/net/wireless/broadcom/b43/phy_n.c | 89 +++++++++++++++++++++--
- 1 file changed, 84 insertions(+), 5 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_n.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-index 66565c14e..cabf61870 100644
+index cd50614ff..05e8ce19b 100644
 --- a/drivers/net/wireless/broadcom/b43/phy_n.c
 +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-@@ -4775,6 +4775,37 @@ static void b43_nphy_tx_cal_radio_setup_rev7(struct b43_wldev *dev)
- 	}
- }
- 
-+/*
-+ * Undo b43_nphy_tx_cal_radio_setup_rev7(), as brcmsmac's
-+ * wlc_phy_txcal_radio_cleanup_nphy() does. Without it the TSSI/IQ cal
-+ * path stays switched in after a TX IQ/LO cal.
-+ */
-+static void b43_nphy_tx_cal_radio_cleanup(struct b43_wldev *dev)
-+{
-+	struct b43_phy *phy = &dev->phy;
-+	u16 *save = dev->phy.n->tx_rx_cal_radio_saveregs;
-+	int core, off;
-+	u16 r;
-+
-+	if (phy->rev < 7 || phy->rev >= 19)
-+		return;
-+
-+	for (core = 0; core < 2; core++) {
-+		r = core ? 0x20 : 0;
-+		off = core * 11;
-+
-+		b43_radio_write(dev, r + R2057_TX0_TX_SSI_MASTER, save[off + 0]);
-+		b43_radio_write(dev, r + R2057_TX0_IQCAL_VCM_HG, save[off + 1]);
-+		b43_radio_write(dev, r + R2057_TX0_IQCAL_IDAC, save[off + 2]);
-+		b43_radio_write(dev, r + R2057_TX0_TSSI_VCM, save[off + 3]);
-+		b43_radio_write(dev, r + R2057_TX0_TX_SSI_MUX, save[off + 5]);
-+		if (phy->radio_rev != 5)
-+			b43_radio_write(dev, r + R2057_TX0_TSSIA, save[off + 6]);
-+		b43_radio_write(dev, r + R2057_TX0_TSSIG, save[off + 7]);
-+		b43_radio_write(dev, r + R2057_TX0_TSSI_MISC1, save[off + 8]);
-+	}
-+}
-+
- /* https://bcm-v4.sipsolutions.net/802.11/PHY/N/TxCalRadioSetup */
- static void b43_nphy_tx_cal_radio_setup(struct b43_wldev *dev)
- {
-@@ -5033,7 +5064,9 @@ static struct nphy_txgains b43_nphy_get_tx_gains(struct b43_wldev *dev)
- /* https://bcm-v4.sipsolutions.net/802.11/PHY/N/TxCalPhyCleanup */
- static void b43_nphy_tx_cal_phy_cleanup(struct b43_wldev *dev)
- {
--	u16 *regs = dev->phy.n->tx_rx_cal_phy_saveregs;
-+	struct b43_phy *phy = &dev->phy;
-+	struct b43_phy_n *nphy = dev->phy.n;
-+	u16 *regs = nphy->tx_rx_cal_phy_saveregs;
- 
- 	if (dev->phy.rev >= 3) {
- 		b43_phy_write(dev, B43_NPHY_AFECTL_C1, regs[0]);
-@@ -5047,7 +5080,42 @@ static void b43_nphy_tx_cal_phy_cleanup(struct b43_wldev *dev)
- 		b43_phy_write(dev, B43_NPHY_RFCTL_INTC2, regs[8]);
- 		b43_phy_write(dev, B43_NPHY_PAPD_EN0, regs[9]);
- 		b43_phy_write(dev, B43_NPHY_PAPD_EN1, regs[10]);
-+
-+		/*
-+		 * Drop the overrides b43_nphy_tx_cal_phy_setup() set on rev7+
-+		 * (as brcmsmac's wlc_phy_txcal_phycleanup_nphy()). Leaving
-+		 * the 0x8 (PA power-up) override in place kills TX.
-+		 */
-+		if (phy->rev >= 19)
-+			b43_nphy_rf_ctl_override_rev19(dev, 0x80, 0, 0, true,
-+						       1);
-+		else if (phy->rev >= 7)
-+			b43_nphy_rf_ctl_override_rev7(dev, 0x80, 0, 0, true, 1);
-+
- 		b43_nphy_reset_cca(dev);
-+
-+		if (nphy->use_int_tx_iq_lo_cal) {
-+			if (phy->rev >= 19) {
-+				b43_nphy_rf_ctl_override_rev19(dev, 0x8, 0, 0x3,
-+							       true, 0);
-+			} else if (phy->rev >= 8) {
-+				b43_nphy_rf_ctl_override_rev7(dev, 0x8, 0, 0x3,
-+							      true, 0);
-+			} else if (phy->rev == 7) {
-+				bool ghz2 = b43_current_band(dev->wl) ==
-+					    NL80211_BAND_2GHZ;
-+
-+				b43_radio_maskset(dev, ghz2 ?
-+						  R2057_PAD2G_TUNE_PUS_CORE0 :
-+						  R2057_IPA5G_CASCOFFV_PU_CORE0,
-+						  ~1, 1);
-+				b43_radio_maskset(dev, ghz2 ?
-+						  R2057_PAD2G_TUNE_PUS_CORE1 :
-+						  R2057_IPA5G_CASCOFFV_PU_CORE1,
-+						  ~1, 1);
-+				b43_radio_mask(dev, R2057_OVR_REG0, ~(1 << 4));
-+			}
-+		}
- 	} else {
- 		b43_phy_maskset(dev, B43_NPHY_AFECTL_C1, 0x0FFF, regs[0]);
- 		b43_phy_maskset(dev, B43_NPHY_AFECTL_C2, 0x0FFF, regs[1]);
-@@ -5102,7 +5170,12 @@ static void b43_nphy_tx_cal_phy_setup(struct b43_wldev *dev)
- 			b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_PA,
- 						      0, 3);
- 		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW, 2, 1);
--		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW, 8, 2);
-+		/*
-+		 * On rev7+ the TRSW field is 2 bits wide, so the legacy value
-+		 * 8 for the second core ends up as 0; wl uses 2 there.
-+		 */
-+		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW,
-+					      phy->rev >= 7 ? 2 : 8, 2);
- 
- 		regs[9] = b43_phy_read(dev, B43_NPHY_PAPD_EN0);
- 		regs[10] = b43_phy_read(dev, B43_NPHY_PAPD_EN1);
-@@ -5478,12 +5551,16 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
- 			}
- 
- 			b43_phy_write(dev, B43_NPHY_IQLOCAL_CMD, cmd);
-+			/* bits 15:14 stay set while the cal step runs */
- 			for (i = 0; i < 2000; i++) {
- 				tmp = b43_phy_read(dev, B43_NPHY_IQLOCAL_CMD);
--				if (tmp & 0xC000)
-+				if (!(tmp & 0xC000))
- 					break;
- 				udelay(10);
- 			}
-+			if (i == 2000)
-+				b43err(dev->wl, "TX IQ/LO cal step 0x%04x timed out\n",
-+				       cmd);
- 
- 			b43_ntab_read_bulk(dev, B43_NTAB16(15, 96), length,
- 						buffer);
-@@ -5500,8 +5577,9 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
- 		last = (dev->phy.rev < 3) ? 6 : 7;
- 
- 		if (!mphase || nphy->mphase_cal_phase_id == last) {
--			b43_ntab_write_bulk(dev, B43_NTAB16(15, 96), 4, buffer);
--			b43_ntab_read_bulk(dev, B43_NTAB16(15, 80), 4, buffer);
-+			/* apply the result: best coeffs (96) -> active (80) */
-+			b43_ntab_read_bulk(dev, B43_NTAB16(15, 96), 4, buffer);
-+			b43_ntab_write_bulk(dev, B43_NTAB16(15, 80), 4, buffer);
- 			if (dev->phy.rev < 3) {
- 				buffer[0] = 0;
- 				buffer[1] = 0;
-@@ -5540,6 +5618,7 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
- 
- 	b43_nphy_tx_cal_phy_cleanup(dev);
- 	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x110), 2, save);
-+	b43_nphy_tx_cal_radio_cleanup(dev);
- 
- 	if (dev->phy.rev < 2 && (!mphase || nphy->mphase_cal_phase_id == last))
- 		b43_nphy_tx_iq_workaround(dev);
+@@ -220,6 +220,7 @@ static void b43_nphy_rf_ctl_override_one_to_many(struct b43_wldev *dev,
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x4, value, core, off, 0);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x2, value, core, off, 1);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x1, value, core, off, 2);
++		b43_nphy_rf_ctl_override_rev7(dev, 0x4, value, core, off, 2);
+ 		b43_nphy_rf_ctl_override_rev7(dev, 0x0800, 1, core, off, 1);
+ 		break;
+ 	case N_RF_CTL_OVER_CMD_RX_GAIN:
 -- 
 2.43.0
 
