@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BEF606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6D6606A321
 	for <b43-dev@archiver.kernel.org>; Mon, 26 Oct 2026 18:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=199lu7qJ;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ShtrGmnN
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=jeA47qo/;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=b0fYkYI6
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
@@ -14,82 +14,82 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=8jOksQcGjc667Q3g6zCGE8DpAcIR99y66KIumvwk340=; b=199lu7qJqkiyr4lqcKGUTeqiVc
-	99xOmReqH/95YDq/C7FJUZDg4dJ0oULrmiE0dy7BUTTN/wapNCnWQQkBDTzJO2D9nHrFFsMQjIPyQ
-	1j8d8/IEaWFmlUkkewPP//A/UaiVZ1esZiim+8JvhM6GfH1wzI0aLZcUneDmwR55fFecUNurJtmQn
-	A5prOnUIcLgn0MO2ubR9kAonWhFE3R4LZGzQLGQnLbCZOWFFLJY/+nu1QhDHX7vfiGFecUH3vkShx
-	qJWDR4zXqO4XwCI9cgX1ra6zyLsApX86CSTCIzDH4feZLfi4QU2F98/tUcFjDcjt/GmHT2MGVxDHA
-	NXmuQmsw==;
+	bh=+ixUq79C1WVma1HovaxORf7/whuhSuOZheczuLaP15c=; b=jeA47qo/R+igKlYKqp4GecGq2L
+	9X8+YoTqlwAjRo0eUu+dkl1SXKKHuZJjZJ4QdrKlqXl7s76HZdOus8txLWJdJKCRZ7wytCdmyg2NL
+	wYL/n7A72DVLD4Y/UnYPzJ9BJzv552HUkGQMBbqD2F7KrKA1IDieAdjRijm2Oe5WOwboCz3VtKPi6
+	WKvIKxmzpaxsOdOGupmX2r0qwpsxbDfKb7KnR6vpkjh3lTcZI+a/CacOj3n5ZnJerujlBiOadX/XJ
+	cxEqEm7zKCdU+LdKobpcTiLMxP9gen5q/cCuUC1QpLKoTq5rp4A+6o9deqVw8wDGiQG2LlvSeEGZs
+	rRmjTUbw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xLPEl-000000033KM-2zOY;
-	Mon, 26 Oct 2026 18:15:59 +0000
-Received: from mail-wr1-x42d.google.com ([2a00:1450:4864:20::42d])
+	id 1xLPEk-000000033Jv-2h2U;
+	Mon, 26 Oct 2026 18:15:58 +0000
+Received: from mail-wr1-x430.google.com ([2a00:1450:4864:20::430])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xLPEg-000000033Hm-0ffU
+	id 1xLPEf-000000033HK-2DLl
 	for b43-dev@lists.infradead.org;
 	Mon, 26 Oct 2026 18:15:55 +0000
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-48c45111bebso1508521f8f.0
-        for <b43-dev@lists.infradead.org>; Mon, 26 Oct 2026 11:15:53 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-48b042c0759so1872082f8f.2
+        for <b43-dev@lists.infradead.org>; Mon, 26 Oct 2026 11:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793038552; x=1793643352; darn=lists.infradead.org;
+        d=gmail.com; s=20251104; t=1793038551; x=1793643351; darn=lists.infradead.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=IXiEUIeYZfm/Z+uDz/6gAhnO088xmqngV8ebCTTry2o=;
-        b=ShtrGmnN1/vDaPVbsjt5L8Dnjeixwrd14p9JRIPut5Vsppv2mb5MCqXw/kt106E0zD
-         uXznn4Z6v0HXfeGptJAXJud8ftz8BOPDb6e80Vd9Uv9N3qBtim3Vznpg8s3iSppJ+TuK
-         vdwkHoYeV+Nx9L84KyniONCdXq0wwxW9nMrPApKgdAeZu5KpTeZ7sRmSKeixtkH6DyoA
-         pFK4jpWAzkjDkAX4xBsxAEf339j9IOHeBjvhVgNWBYQhiaZQh/Eh7MIVdrAW/e/0ErPI
-         UjQcrs2uakgGtDu+69CiHfFk79kwLXB/Z7Ooly4gz5xQeOhHgYDSblOXFAEMKKp9FyDi
-         0TnQ==
+        bh=NsuTrr6wIfPAB8pWsn28L5K8P03qXg+Oz5Zpu1MppRI=;
+        b=b0fYkYI6FGNVmlCTNHlammlc9cOU53Adi2aTQuiQYWEmbz48zkMrN296YfJL1QY1ZS
+         17bEsOh3IAvQPJbCQ+rLraO0iY5hZvfd9sWhcu8yqgS6Il4EkulP8vh5+Ve/2vMp1kvo
+         5bS8lzY4GF7NNj7zgq8c8uFxSi8YOz2nsUgxvCbdhVgZ6pqHqX/m3f9Qwogi2qcuqM1t
+         WBLPVf+fs7+vHp9sGvyz3BU6iDcqxkW+vHMdG9SYSyt0DWAVF7herXe9lKERwUqrytSs
+         nKN64y2cl5GA5aX9tiZ7wxBnVzWAEIUY0uxGVU1nw31Pm0A+S54Ho4IfftYeXjMI1Vb8
+         JGpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793038552; x=1793643352;
+        d=1e100.net; s=20260707; t=1793038551; x=1793643351;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=IXiEUIeYZfm/Z+uDz/6gAhnO088xmqngV8ebCTTry2o=;
-        b=CcEKlhDRVa2KS/sXUpJQSIVi4B2qCOTaIS9MP/AQCogotUHaUcAPAS6HwIiw11uuyx
-         62GZJ2obOeaXUCF6mPoyIuRDO3MOZ5JD+CLmXynD20HIGR1IFSWrQ8k5Lzm2ji5YRRhE
-         dAMKL4+GBZifQb/k6Z41Gvc+gC8B/954HiUqEhs1V8fheA7GiXEFxiObIy57PVZjy9fS
-         WYD7ezhAXYwTD/DJnikpqneQxgWcARn5ek6s6WMdT53DBu293A4rJ07KcFJA2enpO0s8
-         f5Vl8PpczIh1uGaGuO9Ue39Y94IY+1A9x+AN/AM2/CVP94ExmI6XToxNWPVYivFnbRJA
-         WQPg==
-X-Forwarded-Encrypted: i=1; AKwUvByFxK14CP7ymof9HOfvbK6Vx2H/zbXICfShcW9vRhflXTurvDuWnGFNxkvu23/Bs1d40+RLPARa@lists.infradead.org
-X-Gm-Message-State: AFq9FYKd7ILjjBUcVsWAKPgB5oxfzpvi+WvxfdebH5pk9JzoaUDJUDAd
-	UbmnZUm6gQH2EqzKyHMLx5zEfAS1cKIeyH2v4kaD5hUvBNy2B32CTQStx71U/hAa
-X-Gm-Gg: AYBFou3EQ+6+v48dbFI4sALVQyPlhDM6QdfmqPBHgqrqWUklkc5PKsBgOgh7cVGKVNl
-	cso4GnuPuUaxA5670tPp8Nc1+ehWaY6eMkhSEYsY2INg6ekeJ/gGtJslrpqmIRossXZylchXFUt
-	TS8lBlY4+2KunyvnybORotujV9Sc5GxLqy1k4ETCJ82KfGMTBpEpc6+jMOn1MbkfymA1F0pdhdk
-	RHHRaKaPpr6x3VBz7RwOLERPpL8iNQ6psaar4f22puSMxEh/TzGWYfPbk9ZI529R69koyO3BKtz
-	SpELwxSFZFtORj50s21GR5EVzFa/79jw8V+nAMDypbgg8YOVDeeni06Fmojy+mP6uZLb4euQ+V1
-	OOlHxKXYz2WYEyoUHFbaXIrHA6WoQeZx+ldT8Bv5+06UAVkR9QrfsHEl91qv7p7K34XA0WPIYm6
-	kdGfx7z2sr7XJm7Keif7VpVSlE6AnaZK6D44zT8sVXuIGc8bcmCzySZJCrL/Ofe/POtFPns2jIT
-	AdCTnASjS/JbZrPl3gdPPkkKWRsZ0J6vnEM7CfaPWMUdgiU0+wRCHWftdRvNPSYNfYQIR6Vb+pj
-	2swT
-X-Received: by 2002:a5d:5d10:0:b0:48b:1a0:5630 with SMTP id ffacd0b85a97d-48e3eb9e397mr12917817f8f.41.1793038552064;
-        Mon, 26 Oct 2026 11:15:52 -0700 (PDT)
-Received: from luca-HP-ProBook-650-G1.lan ([2001:b07:6454:c33e:6c42:b004:d90b:d191])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd3705sm20967847f8f.45.2026.10.26.11.15.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=NsuTrr6wIfPAB8pWsn28L5K8P03qXg+Oz5Zpu1MppRI=;
+        b=vdOJ+nTA6Ioj6N5FYNeMXsoZnM1VkbL2QkAXwUV1JuFE6B0lzhtj/u+YxexRYrdSvJ
+         UpKNOx0609NDrduwv7672EDDiEBiasM3xYDp0/ggK/iGqIaX5mCvXBJFjgxYxrIocoSh
+         hyc66E/JjPQprKcoHFuJK20fOB4hWjKM+Oot4lJ47S8/nOUGxFOzKNzahueE60uAfq3Y
+         EOQ/i5aOWyaAnKMj2YFms12D94ErLQA/+uDap7RZP/j4vKPhn459vfsfm63yIIB5DVCQ
+         6YfY9JsxQXUNkkaCr+4s7+UELXa+WY5GM/XNkpV8dJ4P2tRTvHQHil/GDIpzchXvRu2w
+         FfUA==
+X-Forwarded-Encrypted: i=1; AKwUvByLrs0m5cdLOmGRsQd+feSGNHwR3RDT1Y1Dsju9qOCpsvmL8UPGdZ9VyHdTOXkG7UZwDZjP3f0W@lists.infradead.org
+X-Gm-Message-State: AFq9FYLL2olJMm99UqajTHIAmS65Q2n5R4pSVOXfm2HoZIrF8vkk6Y8t
+	Ne0eWZpw/DV5fC1lxQ/V6uuOm6YTXilzHQM+dHikOrqdT2Euc87erXcB
+X-Gm-Gg: AYBFou0+Yw3iiVCX6wTWPNF1/iQFQYtY024z6rFffUV/saS02/Ltc14jg76mBBZdLwa
+	ChE98d5YjqNY5oSXKur7V9YdFXFDszKhpIslLvPc1X85kcqpISGSSjh2OlbTuIjUzxz/J/TMpw2
+	+F1zmcREIwdnDeDk9auKzGzqJ5sEeHXaM39G1riRp5wNNoQlR3V+E+basQVkEZuBcv/7CIpYyOJ
+	FVQ96xz1/Gx/ZwHXzrvQb0hqx29k5ilN4nFmLtIEPT82x78zlzMuUgPL8Cz4ye9upiIhuV+70E/
+	Q/vdVDJ5gSEU6ECI6EWZNqKHLfzzeEXyZnk8SIDDazswusTKyiSL5TAM7nrfHQy5xBOfF+jVtFB
+	TvTz/Z2PM1pc8dr77r1VjIZSrt8Q/TR92psbyHWTqnNrhCfC0unAf5PfnvzpK7Vu//qDA68QGYB
+	oBL5mlWkefHwV+rK/A07GDp4YOFEckEzqj4MTr8TEP6ASLA7TEBD+zm4LLQqW6NIxS8Ot1kpAoP
+	QndMb7ayQPgTkdODA0xcPDGXpOXAbXPSCknga1FaHqkXYgebxgbFAbI8dCoOosvfWbC1nrEHMrw
+	GMaT
+X-Received: by 2002:a5d:59c4:0:b0:48e:d7c:4bc8 with SMTP id ffacd0b85a97d-48e3eb46851mr13346093f8f.7.1793038551308;
         Mon, 26 Oct 2026 11:15:51 -0700 (PDT)
+Received: from luca-HP-ProBook-650-G1.lan ([2001:b07:6454:c33e:6c42:b004:d90b:d191])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd3705sm20967847f8f.45.2026.10.26.11.15.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 11:15:50 -0700 (PDT)
 From: Luca Casati <luk00casati@gmail.com>
 To: linux-wireless@vger.kernel.org
 Cc: johannes@sipsolutions.net,
 	arend.vanspriel@broadcom.com,
 	b43-dev@lists.infradead.org,
 	Luca Casati <luk00casati@gmail.com>
-Subject: [PATCH wireless-next 3/5] b43: N-PHY: fix rev3+ RSSI calibration
-Date: Mon, 26 Oct 2026 19:15:41 +0100
-Message-ID: <20261026181543.77763-4-luk00casati@gmail.com>
+Subject: [PATCH wireless-next 2/5] b43: N-PHY: fix TX IQ/LO calibration
+Date: Mon, 26 Oct 2026 19:15:40 +0100
+Message-ID: <20261026181543.77763-3-luk00casati@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261026181543.77763-1-luk00casati@gmail.com>
 References: <20261026181543.77763-1-luk00casati@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261026_111554_231182_CA069128 
-X-CRM114-Status: GOOD (  13.74  )
+X-CRM114-CacheID: sfid-20261026_111553_618437_4E26B6EE 
+X-CRM114-Status: GOOD (  23.17  )
 X-Spam-Score: -1.1 (-)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -112,65 +112,182 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Three bugs in b43_nphy_rev3_rssi_cal():
+Several bugs kept the TX IQ/LO calibration from working, and on rev7+
+it left TX dead afterwards:
 
-- On rev7+ the selected VCM was written using the loop counter (8 after
-  the search loop) instead of vcm_final; the 3-bit field turned that
-  into VCM 0 on every rev7+ PHY.
-- The distance used I*I + Q*I instead of I*I + Q*Q (brcmsmac
-  wlc_phy_rssi_cal_nphy_rev3()).
-- Negative W1/W2 offsets were rounded as -(abs(x + 4) / 8) instead of
-  -((abs(x) + 4) / 8).
+- The busy poll on IQLOCAL_CMD was inverted: bits 15:14 are set while a
+  step runs, so it stopped waiting as soon as the step started.
+- The final copy was reversed: it wrote the stale buffer over the best
+  coefficients (table 15 at 96) and read the active ones (at 80), so the
+  result was never applied.
+- TxCalPhyCleanup lacked the rev7+ part of brcmsmac's
+  wlc_phy_txcal_phycleanup_nphy(): the 0x80 and 0x8 (PA power-up) RF
+  overrides set up for the cal were left in place.
+- There was no counterpart to b43_nphy_tx_cal_radio_setup_rev7(), so the
+  TSSI/IQ-cal path stayed switched in. Add one, following
+  wlc_phy_txcal_radio_cleanup_nphy().
+- The TRSW override for the second core used 8, which does not fit the
+  2-bit field on rev7+; use 2 as wl does.
+
+With these, on a BCM43228 (N-PHY rev 16, radio 2057 rev 9) the per-step
+coefficients match the proprietary wl driver's.
 
 Found and fixed with the help of an AI coding assistant (Claude Opus 5.5),
 by comparing mmiotraces of b43 and wl on the same card.
 
 Signed-off-by: Luca Casati <luk00casati@gmail.com>
 ---
- drivers/net/wireless/broadcom/b43/phy_n.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_n.c | 89 +++++++++++++++++++++--
+ 1 file changed, 84 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-index cabf61870..44769dbb7 100644
+index 66565c14e..cabf61870 100644
 --- a/drivers/net/wireless/broadcom/b43/phy_n.c
 +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-@@ -2167,7 +2167,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- 				continue;
- 			for (vcm = 0; vcm < 8; vcm++) {
- 				currd = results[vcm][i] * results[vcm][i] +
--					results[vcm][i + 1] * results[vcm][i];
-+					results[vcm][i + 1] * results[vcm][i + 1];
- 				if (currd < mind) {
- 					mind = currd;
- 					minvcm = vcm;
-@@ -2179,12 +2179,16 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- 			results_min[i] = minpoll;
- 		}
+@@ -4775,6 +4775,37 @@ static void b43_nphy_tx_cal_radio_setup_rev7(struct b43_wldev *dev)
+ 	}
+ }
  
--		/* Select the best VCM */
++/*
++ * Undo b43_nphy_tx_cal_radio_setup_rev7(), as brcmsmac's
++ * wlc_phy_txcal_radio_cleanup_nphy() does. Without it the TSSI/IQ cal
++ * path stays switched in after a TX IQ/LO cal.
++ */
++static void b43_nphy_tx_cal_radio_cleanup(struct b43_wldev *dev)
++{
++	struct b43_phy *phy = &dev->phy;
++	u16 *save = dev->phy.n->tx_rx_cal_radio_saveregs;
++	int core, off;
++	u16 r;
++
++	if (phy->rev < 7 || phy->rev >= 19)
++		return;
++
++	for (core = 0; core < 2; core++) {
++		r = core ? 0x20 : 0;
++		off = core * 11;
++
++		b43_radio_write(dev, r + R2057_TX0_TX_SSI_MASTER, save[off + 0]);
++		b43_radio_write(dev, r + R2057_TX0_IQCAL_VCM_HG, save[off + 1]);
++		b43_radio_write(dev, r + R2057_TX0_IQCAL_IDAC, save[off + 2]);
++		b43_radio_write(dev, r + R2057_TX0_TSSI_VCM, save[off + 3]);
++		b43_radio_write(dev, r + R2057_TX0_TX_SSI_MUX, save[off + 5]);
++		if (phy->radio_rev != 5)
++			b43_radio_write(dev, r + R2057_TX0_TSSIA, save[off + 6]);
++		b43_radio_write(dev, r + R2057_TX0_TSSIG, save[off + 7]);
++		b43_radio_write(dev, r + R2057_TX0_TSSI_MISC1, save[off + 8]);
++	}
++}
++
+ /* https://bcm-v4.sipsolutions.net/802.11/PHY/N/TxCalRadioSetup */
+ static void b43_nphy_tx_cal_radio_setup(struct b43_wldev *dev)
+ {
+@@ -5033,7 +5064,9 @@ static struct nphy_txgains b43_nphy_get_tx_gains(struct b43_wldev *dev)
+ /* https://bcm-v4.sipsolutions.net/802.11/PHY/N/TxCalPhyCleanup */
+ static void b43_nphy_tx_cal_phy_cleanup(struct b43_wldev *dev)
+ {
+-	u16 *regs = dev->phy.n->tx_rx_cal_phy_saveregs;
++	struct b43_phy *phy = &dev->phy;
++	struct b43_phy_n *nphy = dev->phy.n;
++	u16 *regs = nphy->tx_rx_cal_phy_saveregs;
+ 
+ 	if (dev->phy.rev >= 3) {
+ 		b43_phy_write(dev, B43_NPHY_AFECTL_C1, regs[0]);
+@@ -5047,7 +5080,42 @@ static void b43_nphy_tx_cal_phy_cleanup(struct b43_wldev *dev)
+ 		b43_phy_write(dev, B43_NPHY_RFCTL_INTC2, regs[8]);
+ 		b43_phy_write(dev, B43_NPHY_PAPD_EN0, regs[9]);
+ 		b43_phy_write(dev, B43_NPHY_PAPD_EN1, regs[10]);
++
 +		/*
-+		 * Select the best VCM. (This used to write the loop counter,
-+		 * 8, which the 3-bit field turned into VCM 0 on every rev7+
-+		 * PHY.)
++		 * Drop the overrides b43_nphy_tx_cal_phy_setup() set on rev7+
++		 * (as brcmsmac's wlc_phy_txcal_phycleanup_nphy()). Leaving
++		 * the 0x8 (PA power-up) override in place kills TX.
 +		 */
- 		if (dev->phy.rev >= 7)
- 			b43_radio_maskset(dev,
- 					  core ? R2057_NB_MASTER_CORE1 :
- 						 R2057_NB_MASTER_CORE0,
--					  ~R2057_VCM_MASK, vcm);
-+					  ~R2057_VCM_MASK, vcm_final);
- 		else
- 			b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC,
- 					  0xE3, vcm_final << 2);
-@@ -2219,7 +2223,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
- 				if (j / 2 == core) {
- 					offset[j] = 232 - poll_results[j];
- 					if (offset[j] < 0)
--						offset[j] = -(abs(offset[j] + 4) / 8);
-+						offset[j] = -((abs(offset[j]) + 4) / 8);
- 					else
- 						offset[j] = (offset[j] + 4) / 8;
- 					b43_nphy_scale_offset_rssi(dev, 0,
++		if (phy->rev >= 19)
++			b43_nphy_rf_ctl_override_rev19(dev, 0x80, 0, 0, true,
++						       1);
++		else if (phy->rev >= 7)
++			b43_nphy_rf_ctl_override_rev7(dev, 0x80, 0, 0, true, 1);
++
+ 		b43_nphy_reset_cca(dev);
++
++		if (nphy->use_int_tx_iq_lo_cal) {
++			if (phy->rev >= 19) {
++				b43_nphy_rf_ctl_override_rev19(dev, 0x8, 0, 0x3,
++							       true, 0);
++			} else if (phy->rev >= 8) {
++				b43_nphy_rf_ctl_override_rev7(dev, 0x8, 0, 0x3,
++							      true, 0);
++			} else if (phy->rev == 7) {
++				bool ghz2 = b43_current_band(dev->wl) ==
++					    NL80211_BAND_2GHZ;
++
++				b43_radio_maskset(dev, ghz2 ?
++						  R2057_PAD2G_TUNE_PUS_CORE0 :
++						  R2057_IPA5G_CASCOFFV_PU_CORE0,
++						  ~1, 1);
++				b43_radio_maskset(dev, ghz2 ?
++						  R2057_PAD2G_TUNE_PUS_CORE1 :
++						  R2057_IPA5G_CASCOFFV_PU_CORE1,
++						  ~1, 1);
++				b43_radio_mask(dev, R2057_OVR_REG0, ~(1 << 4));
++			}
++		}
+ 	} else {
+ 		b43_phy_maskset(dev, B43_NPHY_AFECTL_C1, 0x0FFF, regs[0]);
+ 		b43_phy_maskset(dev, B43_NPHY_AFECTL_C2, 0x0FFF, regs[1]);
+@@ -5102,7 +5170,12 @@ static void b43_nphy_tx_cal_phy_setup(struct b43_wldev *dev)
+ 			b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_PA,
+ 						      0, 3);
+ 		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW, 2, 1);
+-		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW, 8, 2);
++		/*
++		 * On rev7+ the TRSW field is 2 bits wide, so the legacy value
++		 * 8 for the second core ends up as 0; wl uses 2 there.
++		 */
++		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW,
++					      phy->rev >= 7 ? 2 : 8, 2);
+ 
+ 		regs[9] = b43_phy_read(dev, B43_NPHY_PAPD_EN0);
+ 		regs[10] = b43_phy_read(dev, B43_NPHY_PAPD_EN1);
+@@ -5478,12 +5551,16 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 			}
+ 
+ 			b43_phy_write(dev, B43_NPHY_IQLOCAL_CMD, cmd);
++			/* bits 15:14 stay set while the cal step runs */
+ 			for (i = 0; i < 2000; i++) {
+ 				tmp = b43_phy_read(dev, B43_NPHY_IQLOCAL_CMD);
+-				if (tmp & 0xC000)
++				if (!(tmp & 0xC000))
+ 					break;
+ 				udelay(10);
+ 			}
++			if (i == 2000)
++				b43err(dev->wl, "TX IQ/LO cal step 0x%04x timed out\n",
++				       cmd);
+ 
+ 			b43_ntab_read_bulk(dev, B43_NTAB16(15, 96), length,
+ 						buffer);
+@@ -5500,8 +5577,9 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 		last = (dev->phy.rev < 3) ? 6 : 7;
+ 
+ 		if (!mphase || nphy->mphase_cal_phase_id == last) {
+-			b43_ntab_write_bulk(dev, B43_NTAB16(15, 96), 4, buffer);
+-			b43_ntab_read_bulk(dev, B43_NTAB16(15, 80), 4, buffer);
++			/* apply the result: best coeffs (96) -> active (80) */
++			b43_ntab_read_bulk(dev, B43_NTAB16(15, 96), 4, buffer);
++			b43_ntab_write_bulk(dev, B43_NTAB16(15, 80), 4, buffer);
+ 			if (dev->phy.rev < 3) {
+ 				buffer[0] = 0;
+ 				buffer[1] = 0;
+@@ -5540,6 +5618,7 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 
+ 	b43_nphy_tx_cal_phy_cleanup(dev);
+ 	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x110), 2, save);
++	b43_nphy_tx_cal_radio_cleanup(dev);
+ 
+ 	if (dev->phy.rev < 2 && (!mphase || nphy->mphase_cal_phase_id == last))
+ 		b43_nphy_tx_iq_workaround(dev);
 -- 
 2.43.0
 
