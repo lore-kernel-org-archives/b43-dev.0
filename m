@@ -2,67 +2,64 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9C8606A31A
-	for <b43-dev@archiver.kernel.org>; Thu, 29 Oct 2026 07:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE47606A32E
+	for <b43-dev@archiver.kernel.org>; Sat, 31 Oct 2026 09:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=rTN5+61F;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=sipsolutions.net header.i=@sipsolutions.net header.a=rsa-sha256 header.s=mail header.b=VZWHvKQk
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=sFxlT33C;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=VmEeVKJq
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Date:Cc:To:From:Subject:Message-ID:Reply-To:Content-ID:Content-Description:
+	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:To:In-Reply-To:References:Message-Id:
+	MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=0vV/iYfCM/2EoqMkAabMUTPwPI72IVCVcurJkvTSgrY=; b=rTN5+61F0Zf4OD1rmugb4sAxdB
-	gQ9OID0BAmGUpLg1GMJA1OFdqUawfDAU+cMnBhCZQ1L6fx2w59JpuSyvXf+eWdXBaR4exDvf6o/yG
-	HeTKnbdMOpQpA4zQCHyLZhaPBYU9q3RUtwmW5032LJ2y0JTISVJZGxJjnfPp0tXY4h24j7F/jg5Zv
-	qwTSgYB+//lNUgPEj9gqWnWW5iImrmjdd0k7BsKRUgpAr6+CkjdDQYk00DLKcYotCg9997txBw5ov
-	rxI2ywoGHKAXT77BkCB1EhQ0yGILQ12VDLWAf0GXQmzPwyfmAYgosJLfqJh5kDVNOWgj34TCBL2c1
-	yIUOKEvA==;
+	bh=8OtehVsOgZjBGwLOoJZiMd1G3ZR6LNmaHVqfSsJsZnA=; b=sFxlT33CSX5y4PMPKwZCIYiEhC
+	lqDKuxBH2Qgcvq6lXnmZfR2pjY85/GjiyVhsehnWpyd0rh2k08tEcMemyjFXIt8aG3+XiMLDI1ib0
+	cwrswXiQsQtDAW3f/CPyTSxajaM47696Xth9U2DrsHAyw0GzpgIXIzEl9b6++Cv/bdUB1qsenw2E0
+	9M+qwsDtvo48iMkuJHedZzzoEoDrusLpHsFruphW7mitLG8yKmnD6OmbVzuRZjsPxdM2dtOXjBXdW
+	m3jSOmG9vL35zX763bItMTpalLs2sXo/gAM/uXkAr0n05WN1A4DoiD7MiqUk2Ecs7/G43NmN6x7RY
+	xi5pj5Bg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xMKK9-00000008Wvs-0A5K;
-	Thu, 29 Oct 2026 07:13:21 +0000
-Received: from s3.sipsolutions.net ([2a01:4f8:242:246e::2] helo=sipsolutions.net)
+	id 1xN5Be-0000000D7To-0QkQ;
+	Sat, 31 Oct 2026 09:15:42 +0000
+Received: from smtpcmd0986.aruba.it ([62.149.156.86])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xMKJy-00000008WvT-0gxK
+	id 1xN5BV-0000000D7Pj-3Rpj
 	for b43-dev@lists.infradead.org;
-	Thu, 29 Oct 2026 07:13:13 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=WimqeynmBXGGzLPxeEW5Wa98ND5Ah4K5gVVzfixyt4M=;
-	t=1793257990; x=1794467590; b=VZWHvKQkb2hKsSkRKNLUffTLiopLMtI+fkxBUE88zI9Q6Gn
-	Gk5nWYvvnzdrtCeQZ3Va9GhM46SMCJuQjHZ4R/XjqlWAP/tqr9WNVonoM2s5TirUuyZFy5ms3WG91
-	oc5NmQjF4WFUAZgyFEczf7z7/1lmu4SUUqCkz3yoVeieQ2hC9NE2x5so/IprJ0X5fLznsFnsWEuOd
-	T32pyps8eDcANCojTglq/JKs0KfOV/+ekXypjME+PciHk87RP4qqRIjcICy2ONVKhrC56IDT8mLAL
-	1eV5hbeAyUwejC/2+2jQK57ePhtxsfRJDbjYYstkSJRCkikOAv7nSk1Zq4t4n42w==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__ECDSA_SECP256R1_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1xMKJp-0000000GUEh-3YhF;
-	Thu, 29 Oct 2026 08:13:02 +0100
-Message-ID: <2b4bd7bafad25b2f13973e1b1f486395615d0bbc.camel@sipsolutions.net>
-Subject: Re: [PATCH wireless-next 0/5] b43: N-PHY: fix calibrations on rev7+
- (BCM43228)
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Rosen Penev <rosenp@gmail.com>, Luca Casati <luk00casati@gmail.com>, 
-	linux-wireless@vger.kernel.org
-Cc: arend.vanspriel@broadcom.com, b43-dev@lists.infradead.org
-Date: Thu, 29 Oct 2026 08:13:01 +0100
-In-Reply-To: <DMGOAJTSLTRX.3NHOMSGMQXH1X@gmail.com> (sfid-20261028_191212_602985_F54B2DE2)
-References: <20261026181543.77763-1-luk00casati@gmail.com>
-	 <DMGOAJTSLTRX.3NHOMSGMQXH1X@gmail.com>
-	 (sfid-20261028_191212_602985_F54B2DE2)
-User-Agent: Evolution 3.60.2 (3.60.2-3.fc44) 
+	Sat, 31 Oct 2026 09:15:37 +0000
+Received: from [127.0.0.1] ([79.43.52.162])
+	by Aruba SMTP with ESMTPSA
+	id N5BMx1hYL6q8sN5BRxVoV4; Sat, 31 Oct 2026 10:15:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
+	t=1793438129; bh=sPLveYh2c5dZKVXqFU1dIE01tkyk2MNNwMVes4PnLCM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:To;
+	b=VmEeVKJqjxrRZdtUa4Sxp5IEDYBJPir/hBtS2w9dTJez/KM6ZmVZGglQD4yM8fzp7
+	 A2Fu7C5X25TQx3YgTLPbvM6oMrREuFzzpil6GYN3ZpnKLnH4Z5IOqFei9BnQwJxsWT
+	 R3a8hfxc+jzqfF6nZkNhNvw0ee2VfFTrTE7F4EuOhx8PLRvP6OwqFvqamA22++WSkp
+	 me88Oli24rPqaFdivsyGApT5m+6287MgAZ09PmYZFjzxABdsBZ/u5qldWpvL/vsYP/
+	 fbSUfORqgjkUFl6jMbYvXQEiMztp6t73goiqmP+/I+sasroXkYn67FRVnGCVFtaRyN
+	 dz/EwrpMau4pA==
+From: Alessio Ferri <alessio.ferri@mythread.it>
+Date: Sat, 31 Oct 2026 10:15:30 +0100
+Subject: [PATCH wireless-next v3 08/10] firmware: bcm47xx_sprom: read
+ boardflags3 from NVRAM over the SPROM
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Message-Id: <20261031-bcma-ac-rev1-v3-8-1fbe38e8179b@mythread.it>
+References: <20261031-bcma-ac-rev1-v3-0-1fbe38e8179b@mythread.it>
+In-Reply-To: <20261031-bcma-ac-rev1-v3-0-1fbe38e8179b@mythread.it>
+To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
+ Michael Buesch <m@bues.ch>, vit9696 <vit9696@protonmail.com>
+X-Mailer: b4 0.15.2
+X-CMAE-Envelope: MS4xfBquXWVKbtw0SEhOKbdbXouZGKYZ2kXTor0QTiJO8zQvI85TLhqBw8PYg59AlNu1D76ywnY2MifXuPuhC8YHJRxx9Gadh1YXjDH/n70ilvRUd/nX5cgp
+ LYOORtmUFcp1/HKwJDjHpM4WIggOKfwQ5MKsUM5uxr+9xszmNkdAjcu0zp/5Mw8LwyPyQVn2YO+689yVat7rW3goCXT0VbKBfdJ7c5Q2z7YyTrLJ9Fl6A0Og
+ C0wY2Cx87zgQOYQn4QmwkZkBC+dm+tiRm5ZSDGTJa5miqfLDJQGQ1TiJUY1TApotFzYS22MXgKnD7kdhfXR1bi5PyW6E51WFFrRo7GOkNVA/IEWllvTfPWn5
+ +dhg94o/yhFLdqpi1Gb3ZQxqMKuBeO33GWQtQnLuV4O4IFqY2lXyJ3zmcQzUSE8MpdG5z+l3KXxZQd0OWS+TflwWSLEEOw==
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261029_001311_525064_F1B474AD 
-X-CRM114-Status: UNSURE (   6.34  )
+X-CRM114-CacheID: sfid-20261031_021534_416475_B9F86666 
+X-CRM114-Status: UNSURE (   6.71  )
 X-CRM114-Notice: Please train this message.
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
@@ -74,29 +71,43 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org, linux-mips@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, 2026-10-28 at 11:12 -0700, Rosen Penev wrote:
-> 
-> For all of these, Fixes: tags are appropriate. They help linux-stable
-> pick them up. Meaning that wireless, instead of wireless-next is the
-> more appropriate place for them.
+Read boardflags3 along with ledbh4..ledbh15, so that a value in NVRAM
+replaces the word of a SPROM read from the device.
 
-For the record, you could listen to this guy who, by his own admission,
-is nearly banned on netdev and seems to revel in the fact.
+Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
+---
+ drivers/firmware/broadcom/bcm47xx_sprom.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Or you could continue sending patches sanely. A decade(s?) old
-calibration issue doesn't really count as urgent in my book.
+diff --git a/drivers/firmware/broadcom/bcm47xx_sprom.c b/drivers/firmware/broadcom/bcm47xx_sprom.c
+index 46a817d71..39d7ac8c7 100644
+--- a/drivers/firmware/broadcom/bcm47xx_sprom.c
++++ b/drivers/firmware/broadcom/bcm47xx_sprom.c
+@@ -217,6 +217,9 @@ static void bcm47xx_sprom_fill_nvram_only(struct ssb_sprom *sprom,
+ 		nvram_read_u8(prefix, NULL, name, &sprom->gpio_ext[i], 0xff,
+ 			      fallback);
+ 	}
++
++	nvram_read_u32(prefix, NULL, "boardflags3", &sprom->boardflags3, 0,
++		       fallback);
+ }
+ 
+ /* This is one-function-only macro, it uses local "sprom" variable! */
 
-johannes
+-- 
+2.34.1
+
 
 _______________________________________________
 b43-dev mailing list
