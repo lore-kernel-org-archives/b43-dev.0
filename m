@@ -2,65 +2,127 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D39660A2608
-	for <b43-dev@archiver.kernel.org>; Sat, 31 Oct 2026 09:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DE1606A31C
+	for <b43-dev@archiver.kernel.org>; Sat, 31 Oct 2026 21:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=e74zQfax;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=efmgdCLF
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=iu+Vxmwt;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=takio.fi header.i=@takio.fi header.a=rsa-sha256 header.s=201711 header.b=J+Jflpsa;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=takio.fi header.i=@takio.fi header.a=rsa-sha256 header.s=201711 header.b=J+Jflpsa;
+	dkim=neutral header.d=takio.fi header.i=@takio.fi header.a=rsa-sha256 header.s=201711 header.b=Da7CJl2E
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:To:In-Reply-To:References:Message-Id:
-	MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:To:From:Subject:Date:
+	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
 	List-Unsubscribe-Post:List-Owner;
-	bh=u6DCzXAp6MptlKOGO7DeTTa4SI4qSq/68PceCYzloFw=; b=e74zQfaxWP8jrW8/sW53Swhjvx
-	MFMkKw4aWlx3fXifyc6JR8VO2PQr0HIysLPP3q5laDAMoXIewxW4cgmDzFfkqzkzqMqbx5z1y9cvO
-	HY7mkygcmatLRaXHrzYt2DxDfbX3iYaOPWQIAjnHKRvpLlc67LVqT+vt95a7SjLzAlmUSsAYqKNiT
-	NLT3oZA5IfjLUcpTWMN9r41iRNIkLnqpfCnkdYPyMk9OBXedq86wHQS8vEXITc0Od9MtX6/0tj9gw
-	AaseBicsZH7tEGL62QRjvdcIrIJvtTaVm/YhtrL1N7k0eG0c7+KNGd+NrR94WD9nL6U4iZFuXbMmK
-	dsw2dYtA==;
+	bh=58+l9aUxWpkFwTYa7Gkp7Xb7YLRZTgjQUtNqv8SdEow=; b=iu+VxmwtHs2pE4be9agkdBhKjk
+	23pRfpcZiJihOtMorQqxbb5h1fBuYirp06JfY7D8WJKLhSNImkOEikKJRrvQTCfe3bLY5I1Qkzaxj
+	lttEFTkYJxJlPAtsh+Z9B5vUtg+CRM+W3yRUfFtjyaAEgocvn3Byw6St7MLcaGM9yhMtG8a97DGnR
+	h4PihHZwFNbXpTytSjc0LdWKSv2IzvYKgmrs0QM2SqNa6hW80f6fwBH3TEHRTqNDPWsuemhwyFzIz
+	dUcK0DOfBopS9HYIyEoq0OCw93rK5OlgqK/4JHkGW57FN+w3psFxgJ8sNfB5eHgEz+GoAGL6blWNd
+	3Ch3Wl9g==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xN5Be-0000000D7Th-03MZ;
-	Sat, 31 Oct 2026 09:15:42 +0000
-Received: from smtpcmd0986.aruba.it ([62.149.156.86])
+	id 1xNGJU-0000000Dh8r-0srx;
+	Sat, 31 Oct 2026 21:08:32 +0000
+Received: from takio.fi ([93.90.53.5])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xN5BV-0000000D7Pd-45uC
+	id 1xNGJQ-0000000Dh8P-2knO
 	for b43-dev@lists.infradead.org;
-	Sat, 31 Oct 2026 09:15:37 +0000
-Received: from [127.0.0.1] ([79.43.52.162])
-	by Aruba SMTP with ESMTPSA
-	id N5BMx1hYL6q8sN5BQxVoTH; Sat, 31 Oct 2026 10:15:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1793438128; bh=M8e1E3AFMBy9iSve8rW+kLzKE99lCoOKdT27fT8i/1Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:To;
-	b=efmgdCLFM8wYhEdvq7smM4gI0o6HuRKu2QD4FChSzcjR3CCI9RTDcQuGDRt7S5l1o
-	 a31yvkR2o1dvrgIDRw5IcD0+0Qj+bNzMzj66vT58NJrxGyvEghs1XjmS86a2FMkv+b
-	 5kDvMYEc74BZk+F3xUa21M0Mq8qpxsXCZUyqqvTbyTZuwhoQzX9g7X50hSBEYTB6eS
-	 l6XZDMmmJ/Uco+ibUDeqTR8aD53LFrbs8aP1uYOehRzHZHTfWqxDC+gasUFoEOdXS+
-	 xFVLiz4MmtMg9vFY/5rJviV7pI+ZACJ9Pzq8JC7qZNEoj7Y+RyCWCxNx5r88gsyYY8
-	 cZ6Ro5x6qX9Mg==
-From: Alessio Ferri <alessio.ferri@mythread.it>
-Date: Sat, 31 Oct 2026 10:15:24 +0100
-Subject: [PATCH wireless-next v3 02/10] bcma: pmu: init PLL and resources
- on BCM4352/BCM4360
+	Sat, 31 Oct 2026 21:08:30 +0000
+DKIM-Filter: OpenDKIM Filter v2.11.0 takio.fi 4jH9YK2tgnz2wNj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=takio.fi; s=201711;
+	t=1793480901; bh=XYl4sKkizH+z2SuIA4IWSop0wkFoGNRqrW7N5iUdk6A=;
+	h=Date:Subject:From:To:Cc:From;
+	b=J+Jflpsas0vApQtlO4cRjzBLizgzH4zatpBCEYytXgZJGObbWs/s4mBni5iRhyOZn
+	 ZkSZgcd/ElOqlg3oXaTsmneq8oo08Hy9ygxsespYHun2qFJf/H1T+FBfkBP6FEPsYf
+	 KRSMwhY32swwqYPKxI7diuOE39Ug3HrIW/fiDeJWPmZx2nuCzw+57OT2C03Le3RPF1
+	 MWPcjA7UfGhQOqYSG57ncjeG0ClIw+NdnxlBo7d3bH+psgdUzD45tyhkUxKNjjJpfn
+	 xAx0o2quvaeYtEcMkbHD2yaAry7WMF8Y67yxZhn5xJJq2bUT68fVOwBXLnSm/NVMw0
+	 BafSZU//ISTZw==
+Received: from takio.fi (localhost [127.0.0.1])
+	by takio.fi (Postfix) with ESMTP id 4jH9YK2tgnz2wNj
+	for <b43-dev@lists.infradead.org>; Sat, 31 Oct 2026 23:08:21 +0200 (EET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 takio.fi 4jH9YK2Jxgz2wS7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=takio.fi; s=201711;
+	t=1793480901; bh=XYl4sKkizH+z2SuIA4IWSop0wkFoGNRqrW7N5iUdk6A=;
+	h=Date:Subject:From:To:Cc:From;
+	b=J+Jflpsas0vApQtlO4cRjzBLizgzH4zatpBCEYytXgZJGObbWs/s4mBni5iRhyOZn
+	 ZkSZgcd/ElOqlg3oXaTsmneq8oo08Hy9ygxsespYHun2qFJf/H1T+FBfkBP6FEPsYf
+	 KRSMwhY32swwqYPKxI7diuOE39Ug3HrIW/fiDeJWPmZx2nuCzw+57OT2C03Le3RPF1
+	 MWPcjA7UfGhQOqYSG57ncjeG0ClIw+NdnxlBo7d3bH+psgdUzD45tyhkUxKNjjJpfn
+	 xAx0o2quvaeYtEcMkbHD2yaAry7WMF8Y67yxZhn5xJJq2bUT68fVOwBXLnSm/NVMw0
+	 BafSZU//ISTZw==
+Received: by takio.fi (Postfix, from userid 109)
+	id 4jH9YK2Jxgz2wS7; Sat, 31 Oct 2026 23:08:21 +0200 (EET)
+X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
+	aws-us-west-2-korg-listserv-alma10-1
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_ADSP_ALL,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+DKIM-Filter: OpenDKIM Filter v2.11.0 takio.fi 4jH9Y865hBz2wNj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=takio.fi; s=201711;
+	t=1793480892; bh=XYl4sKkizH+z2SuIA4IWSop0wkFoGNRqrW7N5iUdk6A=;
+	h=Date:Subject:From:To:Cc:From;
+	b=Da7CJl2EkW0iz1qCdPXzKvzzUgTr5rq8HhA5vRoQG7aKdMNbt8RamIvDysj9INeA2
+	 sbtFnGDRGZd34e7oKHaAyr/+MkM8o8SISrylUlQaia1ZepG7lNKE5jlki5ZP489sAR
+	 PJQNXO1WlMiTkGd4ga/FT1zwtxElXSipM/2evMjExM6DwmxDONV9MtLFtIH4f9v109
+	 AZFf+yueQhRJy8ao2suQS7W6M5DEKzJ+UBxBtGvn3MOPFGid3010NTCZaXyy230oVy
+	 QpCjblsPo3gROiR2QaZ3QcoBmn4BtvkEGlKCCJodJeQyFKUINHtsWo6DxUq7oWeYgb
+	 YiBz8o8IreSng==
+Received: from webmail.takio.fi (takio.fi [93.90.53.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by takio.fi (Postfix) with ESMTPSA id 4jH9Y865hBz2wNj;
+	Sat, 31 Oct 2026 23:08:12 +0200 (EET)
+Received: from 93.90.53.6
+        by webmail.takio.fi with HTTP;
+        Sat, 31 Oct 2026 23:08:12 +0200
+Message-ID: <2e7baa7fbf1f2e5a282a2330d04ad41a.squirrel@webmail.takio.fi>
+Date: Sat, 31 Oct 2026 23:08:12 +0200
+Subject: [RFC] b43: working AC-PHY support for BCM4352/BCM4360
+From: "Ville Takio" <ville+git@takio.fi>
+To: linux-wireless@vger.kernel.org,
+ b43-dev@lists.infradead.org
+User-Agent: SquirrelMail/1.5.2 [SVN]
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Message-Id: <20261031-bcma-ac-rev1-v3-2-1fbe38e8179b@mythread.it>
-References: <20261031-bcma-ac-rev1-v3-0-1fbe38e8179b@mythread.it>
-In-Reply-To: <20261031-bcma-ac-rev1-v3-0-1fbe38e8179b@mythread.it>
-To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
- Michael Buesch <m@bues.ch>, vit9696 <vit9696@protonmail.com>
-X-Mailer: b4 0.15.2
-X-CMAE-Envelope: MS4xfLXXc5T4eu0nzpLMSWy+X5gfVikXSiNlEnMUR1sGQcqxa6SVj1y5a5wd0dIRkGGZoqwr4hPUxi5I4aohl7w1Fu6FJI/2ZDNSe1Yw8QD+5xrg5es9zSJq
- bG+l3GjKmx7dKTLLx7M7sZ5GB8o518feW0DT5e1Gbqh73uDSat3ZS31rlwytDhnVIuz/dxTbmbY1u4PXnwAWDn/INFjf9kjwXgPedXc4p/k7acy9mAhR033H
- SDXhXP/V5eYCEg50yMUi52TFaydiMm7Xx46MXbDqHcmG2OQ9Eup0t0G5MMnN1ooBkh2IkNMS9DZg/FMEN6nTP7nJD/fp78DT+kp96s0AXXHj6ZtkxVcJi4Il
- NnoIGNBrsJS+ImjydHvTtXFfYTb6w7/MKLrrg75LPB+xXp4AV3u+XHLYiJZtY9f5ULRWNX0/Pm6ox4B4yPuRQibKbgtm6A==
+X-Virus-Scanned: clamav-milter 1.4.6 at takio.fi
+X-Virus-Status: Clean
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261031_021534_404260_608B5095 
-X-CRM114-Status: GOOD (  16.43  )
+X-CRM114-CacheID: sfid-20261031_140828_886840_AE4A20E5 
+X-CRM114-Status: GOOD (  19.25  )
 X-Spam-Score: -2.1 (--)
+X-Spam-Report: Spam detection software, running on the system "bombadil.infradead.org",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ 
+ Content preview:  Hi, b43 has carried an AC-PHY stub (B43_PHY_AC, "BROKEN")
+   since 2015. Alessio Ferri has since written a working AC-PHY and radio 2069
+    implementation [1], and I have spent the last months bringing it up on [...]
+    
+ 
+ Content analysis details:   (-2.1 points, 5.0 required)
+ 
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -0.0 SPF_HELO_PASS          SPF: HELO matches SPF record
+ -0.0 SPF_PASS               SPF: sender matches SPF record
+  0.1 DKIM_SIGNED            Message has a DKIM or DK signature, not necessarily valid
+ -0.1 DKIM_VALID             Message has at least one valid DKIM or DK signature
+ -0.1 DKIM_VALID_EF          Message has a valid DKIM or DK signature from
+                             envelope-from domain
+ -0.1 DKIM_VALID_AU          Message has a valid DKIM or DK signature from author's
+                             domain
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
+ -0.0 DMARC_PASS             DMARC pass policy
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -70,189 +132,94 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org, linux-mips@vger.kernel.org
+Cc: Alessio Ferri <alessio.ferri.3012@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, Rosen Penev <rosenp@gmail.com>, Michael Buesch <m@bues.ch>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	T_SPF_TEMPERROR,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=4.0.1
-X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
-	aws-us-west-2-korg-listserv-alma10-1
 
-Program the PMU as Broadcom's driver does (hndpmu.c):
+Hi,
 
-- on chip rev 3 and later, set the BBPLL to a 960.0098 MHz fractional
-  VCO from the 40 MHz crystal, unless the backplane runs on HT already;
-- set the resource up/down times and, on rev 4 and later, a min
-  resource mask of 0x103;
-- with chipstatus RSRC_INIT_MODE0 clear, program PLL controls 6 and 14,
-  and on rev 4 and later 7 and 15 with REFCLK enabled in chipcontrol 1;
-  on rev 3 and later, set max_res_mask to 0x1ff.
+b43 has carried an AC-PHY stub (B43_PHY_AC, "BROKEN") since 2015. Alessio
+Ferri has since written a working AC-PHY and radio 2069 implementation
+[1], and I have spent the last months bringing it up on a Northstar router
+and fixing what was missing. It now runs as an access point on both bands
+at throughput comparable to Broadcom's wl driver on the same board. Before
+preparing a series for wireless-next I would like to ask how, or whether,
+you would like to receive it.
 
-Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
----
- drivers/bcma/driver_chipcommon_pmu.c        | 81 +++++++++++++++++++++++++++++
- include/linux/bcma/bcma_driver_chipcommon.h | 14 +++++
- 2 files changed, 95 insertions(+)
+Hardware tested
+  ASUS RT-AC66U B1 (same board as RT-AC68U): BCM4708 SoC, two BCM4360
+  (core rev 42, AC-PHY rev 1, radio 2069 rev 4, femctrl 3) on PCIe/bcma.
+  Kernel 6.18 with backports 7.2, as OpenWrt [2].
 
-diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index 263ef6fa1..7a226fcd2 100644
---- a/drivers/bcma/driver_chipcommon_pmu.c
-+++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -11,6 +11,7 @@
- 
- #include "bcma_private.h"
- #include <linux/export.h>
-+#include <linux/math64.h>
- #include <linux/bcma/bcma.h>
- 
- u32 bcma_chipco_pll_read(struct bcma_drv_cc *cc, u32 offset)
-@@ -145,6 +146,78 @@ static void bcma_pmu2_pll_init0(struct bcma_drv_cc *cc, u32 xtalfreq)
- 	/* TODO: Do we need to update OTP? */
- }
- 
-+static void bcma_pmu_4360_pll_init(struct bcma_drv_cc *cc)
-+{
-+	struct bcma_bus *bus = cc->core->bus;
-+	const u32 xtal_hz = 40000000, vco_hz = 960009800;
-+	u32 ctl2;
-+
-+	if (bus->chipinfo.rev < 3)
-+		return;
-+	/* The backplane may be running from the BBPLL. */
-+	if (bcma_cc_read32(cc, BCMA_CLKCTLST) & BCMA_CLKCTLST_HAVEHT)
-+		return;
-+	if (bcma_pmu_get_alp_clock(cc) != xtal_hz) {
-+		bcma_warn(bus, "No 40 MHz crystal, BBPLL left as is\n");
-+		return;
-+	}
-+
-+	ctl2 = (vco_hz / xtal_hz) << BCMA_CC_PMU4360_NDIV_INT_SHIFT |
-+	       BCMA_CC_PMU4360_NDIV_MODE_FRAC << BCMA_CC_PMU4360_NDIV_MODE_SHIFT |
-+	       1 << BCMA_CC_PMU4360_P1DIV_SHIFT;
-+	bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL2, ctl2);
-+	bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL3,
-+			      div_u64((u64)(vco_hz % xtal_hz) << 24, xtal_hz));
-+	bcma_pmu_set32(cc, BCMA_CC_PMU_CTL, BCMA_CC_PMU_CTL_PLL_UPD);
-+}
-+
-+/* Up/down times of resources 0-8 on chip rev 4 and later */
-+static const u32 bcma_pmu_4360b1_res_updown[] = {
-+	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00860002,
-+	0x00000000, 0x00020001, 0x00080001, 0x00000000,
-+};
-+
-+static void bcma_pmu_4360_resources_init(struct bcma_drv_cc *cc,
-+					 u32 *min_msk, u32 *max_msk)
-+{
-+	u8 rev = cc->core->bus->chipinfo.rev;
-+	bool init_mode0 = cc->status & BCMA_CC_CHIPST_4360_RSRC_INIT_MODE0;
-+	unsigned int i;
-+
-+	if (rev < 4) {
-+		bcma_pmu_write32(cc, BCMA_CC_PMU_RES_TABSEL, 6);
-+		bcma_pmu_write32(cc, BCMA_CC_PMU_RES_UPDNTM, 0x00200001);
-+	} else {
-+		for (i = 0; i < ARRAY_SIZE(bcma_pmu_4360b1_res_updown); i++) {
-+			bcma_pmu_write32(cc, BCMA_CC_PMU_RES_TABSEL, i);
-+			bcma_pmu_write32(cc, BCMA_CC_PMU_RES_UPDNTM,
-+					 bcma_pmu_4360b1_res_updown[i]);
-+		}
-+		*min_msk = 0x103;
-+		/* The max mask must cover the min mask before it is written. */
-+		bcma_pmu_set32(cc, BCMA_CC_PMU_MAXRES_MSK, *min_msk);
-+	}
-+
-+	if (init_mode0)
-+		return;
-+
-+	if (rev < 4) {
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL6, 0x09048562);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL14, 0x09048562);
-+	} else {
-+		bcma_chipco_chipctl_maskset(cc, 1, ~0,
-+					    BCMA_CHIPCTL1_4360_REFCLK_EN);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL6, 0x080004e2);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL7, 0xe);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL14, 0x080004e2);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL15, 0xe);
-+	}
-+	bcma_pmu_set32(cc, BCMA_CC_PMU_CTL, BCMA_CC_PMU_CTL_PLL_UPD);
-+
-+	if (rev >= 3)
-+		*max_msk = 0x1ff;
-+}
-+
- static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
- {
- 	struct bcma_bus *bus = cc->core->bus;
-@@ -156,6 +229,10 @@ static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
- 			xtalfreq = 20000;
- 		bcma_pmu2_pll_init0(cc, xtalfreq);
- 		break;
-+	case BCMA_CHIP_ID_BCM4352:
-+	case BCMA_CHIP_ID_BCM4360:
-+		bcma_pmu_4360_pll_init(cc);
-+		break;
- 	}
- }
- 
-@@ -188,6 +265,10 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
- 			  BCMA_RES_4314_WL_CORE_READY;
- 		max_msk = 0x3FFFFFFF;
- 		break;
-+	case BCMA_CHIP_ID_BCM4352:
-+	case BCMA_CHIP_ID_BCM4360:
-+		bcma_pmu_4360_resources_init(cc, &min_msk, &max_msk);
-+		break;
- 	default:
- 		bcma_debug(bus, "PMU resource config unknown or not needed for device 0x%04X\n",
- 			   bus->chipinfo.id);
-diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
-index 0cb6638b5..525155658 100644
---- a/include/linux/bcma/bcma_driver_chipcommon.h
-+++ b/include/linux/bcma/bcma_driver_chipcommon.h
-@@ -107,6 +107,7 @@
- #define  BCMA_CC_CHIPST_4706_PCIE1_DISABLE	BIT(5) /* PCIE1 enable strap pin */
- #define  BCMA_CC_CHIPST_5357_NAND_BOOT		BIT(4) /* NAND boot, valid for CC rev 38 and/or BCM5357 */
- #define  BCMA_CC_CHIPST_4360_XTAL_40MZ		0x00000001
-+#define  BCMA_CC_CHIPST_4360_RSRC_INIT_MODE0	0x00000020
- #define BCMA_CC_JCMD			0x0030		/* Rev >= 10 only */
- #define  BCMA_CC_JCMD_START		0x80000000
- #define  BCMA_CC_JCMD_BUSY		0x80000000
-@@ -500,6 +501,16 @@
- #define BCMA_CC_PMU_PLL_CTL3		3
- #define BCMA_CC_PMU_PLL_CTL4		4
- #define BCMA_CC_PMU_PLL_CTL5		5
-+#define BCMA_CC_PMU_PLL_CTL6		6
-+#define BCMA_CC_PMU_PLL_CTL7		7
-+#define BCMA_CC_PMU_PLL_CTL14		14
-+#define BCMA_CC_PMU_PLL_CTL15		15
-+
-+/* BCM4360 PLL control 2 */
-+#define BCMA_CC_PMU4360_P1DIV_SHIFT		0
-+#define BCMA_CC_PMU4360_NDIV_MODE_SHIFT		4
-+#define  BCMA_CC_PMU4360_NDIV_MODE_FRAC		3
-+#define BCMA_CC_PMU4360_NDIV_INT_SHIFT		7
- 
- #define BCMA_CC_PMU1_PLL0_PC0_P1DIV_MASK	0x00f00000
- #define BCMA_CC_PMU1_PLL0_PC0_P1DIV_SHIFT	20
-@@ -527,6 +538,9 @@
- #define BCMA_CHIPCTL_4331_BT_SHD0_ON_GPIO4	BIT(16)	/* enable bt_shd0 at gpio4 */
- #define BCMA_CHIPCTL_4331_BT_SHD1_ON_GPIO5	BIT(17)	/* enable bt_shd1 at gpio5 */
- 
-+/* BCM4360 ChipControl 1 */
-+#define BCMA_CHIPCTL1_4360_REFCLK_EN		BIT(11)
-+
- /* 43224 chip-specific ChipControl register bits */
- #define BCMA_CCTRL_43224_GPIO_TOGGLE		0x8000		/* gpio[3:0] pins as btcoex or s/w gpio */
- #define BCMA_CCTRL_43224A0_12MA_LED_DRIVE	0x00F000F0	/* 12 mA drive strength */
+Firmware
+  784.2 from Broadcom's 6.30.163.46 driver (ucode42 and the ac1 initvals),
+  extracted with the existing b43-fwcutter.
 
--- 
-2.34.1
+Results (1x1 client at short range, iperf3 down/up, Mbit/s)
+  2.4 GHz HT20      40-47 / 51-55
+  2.4 GHz HT40      59 / 94
+  5 GHz VHT80       134-137 / 139-163
+  wl 7.14 measured on the same router: 119/164 on 5 GHz and 49/50 on 2.4 GHz.
+
+What works
+  - PHY/radio init, channel switching across 20/40/80 MHz, both bands
+  - TX IQ/LO and RX IQ calibration, temperature-driven recalibration
+  - TX power from the SROM (rev 11), including the 2.4 GHz 40 MHz
+    power-detector offset
+  - FEM control for femctrl 3; AGC init/clip gains computed from the SROM
+    RX gain context per sub-band (the AGC registers now match wl on all
+    three cores of both bands except one 2-bit field at 5 GHz 20 MHz)
+  - AP mode via mac80211/hostapd; DFS behind a separate Kconfig option
+    that depends on CFG80211_CERTIFICATION_ONUS
+
+What does not / is untested
+  - only femctrl 3 has a FEM table; other boards are refused on purpose
+    rather than given a table that might damage the front end
+  - only the 4352/4360 family; no 4350/43602
+  - STA mode is untested; no TX beamforming
+  - many values are tables and register writes specific to these chips;
+    they are tied to chip and PHY revision where I could verify it
+
+Size and layout
+  About 18k added lines. Most of it is in new files under b43/ (phy_ac.c,
+  radio_2069.c, tables_phy_ac.c, ppr_ac.c, helpers_phy_ac.c); the rest
+  touches main.c, dma.c, xmit.c and phy_common.c. bcma and ssb need about
+  700 lines for the BCM4352/BCM4360 family and SROM rev 11 fields
+  (PMU/PLL setup, SROM extraction, NVRAM fallbacks on bcm47xx).
+
+How the values were obtained
+  Register and table values were captured from the running hardware
+  under Broadcom's wl driver (stock ASUS firmware and DD-WRT). The
+  sequencing and the formulas (gain split, calibration ladders, power
+  offsets) were derived from analysing the wl 7.14 binary. This is not
+  the two-team clean-room process the original b43 specifications used.
+  If that rules the code out for mainline, I would rather know now.
+
+Questions
+  1. Is a new PHY in b43 (Orphan) still welcome, and through which tree:
+     wireless-next directly, or via bcma first for the bus parts?
+  2. Preferred split? I would propose bcma/ssb first, then the b43 core
+     changes, then the AC-PHY in a few large patches (tables, radio,
+     PHY, calibration), then the fixes on top.
+  3. Is anyone willing to review or co-maintain it? I can test on the
+     BCM4360 boards I have and keep it working.
+
+Authorship: the base AC-PHY implementation is Alessio Ferri's; I have
+asked him for his Signed-off-by and whether he wants to submit his part
+himself [3]. Rosen Penev has N-PHY and HT-PHY patches and suggested
+carrying all of this out of tree in OpenWrt for now [4], which is the
+plan until upstream direction is clear.
+
+The current patches (against backports 7.2) are in [2].
+
+[1] https://github.com/aleferri/b43-ac-wip
+[2] https://github.com/openwrt/openwrt/pull/26349
+[3] https://github.com/aleferri/b43-ac-wip/issues/10
+[4] https://github.com/openwrt/openwrt/pull/26349#issuecomment-6549024998
+
+Thanks,
+Ville Takio
 
 
 _______________________________________________
