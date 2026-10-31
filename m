@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EB360A2606
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D39660A2608
 	for <b43-dev@archiver.kernel.org>; Sat, 31 Oct 2026 09:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=qjP9RR3O;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=OVAbiVTG
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=e74zQfax;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=efmgdCLF
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
@@ -14,52 +14,52 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=ZIw6leBYXiFtuIMhnf1hKFdBFk9pUP2IgM8xsYxH+0c=; b=qjP9RR3OtVnb5eiEQxLI1gfXfD
-	yGg88Gzotdxix+S+9wVyUD+UpCAh7WFjPMC1Y/8JJclX49oOVLz3ZlIV+8f82OPSsmVucW1yiqcUz
-	hx1Z61+0GldtIkT4PyZ/wFSUk6VnlH7vWKrQWoIpL1dMwA/xPbNjI0fcJHmZd0ZWk6PlNlBWJoOsB
-	/uMGridI5Klt2aCtKnrxfa/e6Y7TC2/xIAOmWWE65+SSCF9VnSzMxesPfqeoT9uchndwkBNNf5bkL
-	cZG0D64l6HlxQcIpdBT0Xy2Y70b8J5mizKMdYc9Rt1FgCFyi4/z2iQJb6fJLcO3cqe3+LruLzRMLZ
-	THVH1/jQ==;
+	bh=u6DCzXAp6MptlKOGO7DeTTa4SI4qSq/68PceCYzloFw=; b=e74zQfaxWP8jrW8/sW53Swhjvx
+	MFMkKw4aWlx3fXifyc6JR8VO2PQr0HIysLPP3q5laDAMoXIewxW4cgmDzFfkqzkzqMqbx5z1y9cvO
+	HY7mkygcmatLRaXHrzYt2DxDfbX3iYaOPWQIAjnHKRvpLlc67LVqT+vt95a7SjLzAlmUSsAYqKNiT
+	NLT3oZA5IfjLUcpTWMN9r41iRNIkLnqpfCnkdYPyMk9OBXedq86wHQS8vEXITc0Od9MtX6/0tj9gw
+	AaseBicsZH7tEGL62QRjvdcIrIJvtTaVm/YhtrL1N7k0eG0c7+KNGd+NrR94WD9nL6U4iZFuXbMmK
+	dsw2dYtA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xN5Be-0000000D7UC-1iav;
+	id 1xN5Be-0000000D7Th-03MZ;
 	Sat, 31 Oct 2026 09:15:42 +0000
 Received: from smtpcmd0986.aruba.it ([62.149.156.86])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xN5BV-0000000D7Ph-3uXm
+	id 1xN5BV-0000000D7Pd-45uC
 	for b43-dev@lists.infradead.org;
-	Sat, 31 Oct 2026 09:15:38 +0000
+	Sat, 31 Oct 2026 09:15:37 +0000
 Received: from [127.0.0.1] ([79.43.52.162])
 	by Aruba SMTP with ESMTPSA
-	id N5BMx1hYL6q8sN5BRxVoUP; Sat, 31 Oct 2026 10:15:29 +0100
+	id N5BMx1hYL6q8sN5BQxVoTH; Sat, 31 Oct 2026 10:15:28 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1793438129; bh=vQj2dadXi9jYVFjk5KIYBm+5WFjDqCBY3eEUQlvYcnA=;
+	t=1793438128; bh=M8e1E3AFMBy9iSve8rW+kLzKE99lCoOKdT27fT8i/1Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:To;
-	b=OVAbiVTGiZ8X6W5I9Qq5Gq2bvg9BtfBwgNehzVExOMMFAbctFZVA+ElgqH1qA58RH
-	 7yoRXR17VjCy2ujO977gHDj61TEDDt4xWQ91c5va9kUzfWjxFeFSy0eMBsZbyaY4LW
-	 zBP4tC/T9E4jNKMqwK0/u3C9I1CQdBpL5I0D5C9QrxWa6R7yvacbO7vtqC9ZEsfqVm
-	 oPFTU7GT47amYSMOptcTg+i3wJaeqadL3ombRIWKDnlX4cDP87u3Ho2mXfsbb0pP7g
-	 tOdE8fRETuJCbTw6t6t/zlMkj29Hg02XoJrMF5tMNEnlauX0I5sI6/PwDfUgu0sMzy
-	 EvhuMqH8wmv7Q==
+	b=efmgdCLFM8wYhEdvq7smM4gI0o6HuRKu2QD4FChSzcjR3CCI9RTDcQuGDRt7S5l1o
+	 a31yvkR2o1dvrgIDRw5IcD0+0Qj+bNzMzj66vT58NJrxGyvEghs1XjmS86a2FMkv+b
+	 5kDvMYEc74BZk+F3xUa21M0Mq8qpxsXCZUyqqvTbyTZuwhoQzX9g7X50hSBEYTB6eS
+	 l6XZDMmmJ/Uco+ibUDeqTR8aD53LFrbs8aP1uYOehRzHZHTfWqxDC+gasUFoEOdXS+
+	 xFVLiz4MmtMg9vFY/5rJviV7pI+ZACJ9Pzq8JC7qZNEoj7Y+RyCWCxNx5r88gsyYY8
+	 cZ6Ro5x6qX9Mg==
 From: Alessio Ferri <alessio.ferri@mythread.it>
-Date: Sat, 31 Oct 2026 10:15:28 +0100
-Subject: [PATCH wireless-next v3 06/10] firmware: bcm47xx_sprom: read the
- SPROM revision 11 fields from NVRAM
+Date: Sat, 31 Oct 2026 10:15:24 +0100
+Subject: [PATCH wireless-next v3 02/10] bcma: pmu: init PLL and resources
+ on BCM4352/BCM4360
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Message-Id: <20261031-bcma-ac-rev1-v3-6-1fbe38e8179b@mythread.it>
+Message-Id: <20261031-bcma-ac-rev1-v3-2-1fbe38e8179b@mythread.it>
 References: <20261031-bcma-ac-rev1-v3-0-1fbe38e8179b@mythread.it>
 In-Reply-To: <20261031-bcma-ac-rev1-v3-0-1fbe38e8179b@mythread.it>
 To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
  Michael Buesch <m@bues.ch>, vit9696 <vit9696@protonmail.com>
 X-Mailer: b4 0.15.2
-X-CMAE-Envelope: MS4xfBquXWVKbtw0SEhOKbdbXouZGKYZ2kXTor0QTiJO8zQvI85TLhqBw8PYg59AlNu1D76ywnY2MifXuPuhC8YHJRxx9Gadh1YXjDH/n70ilvRUd/nX5cgp
- LYOORtmUFcp1/HKwJDjHpM4WIggOKfwQ5MKsUM5uxr+9xszmNkdAjcu0zp/5Mw8LwyPyQVn2YO+689yVat7rW3goCXT0VbKBfdJ7c5Q2z7YyTrLJ9Fl6A0Og
- C0wY2Cx87zgQOYQn4QmwkZkBC+dm+tiRm5ZSDGTJa5miqfLDJQGQ1TiJUY1TApotFzYS22MXgKnD7kdhfXR1bi5PyW6E51WFFrRo7GOkNVA/IEWllvTfPWn5
- +dhg94o/yhFLdqpi1Gb3ZQxqMKuBeO33GWQtQnLuV4O4IFqY2lXyJ3zmcQzUSE8MpdG5z+l3KXxZQd0OWS+TflwWSLEEOw==
+X-CMAE-Envelope: MS4xfLXXc5T4eu0nzpLMSWy+X5gfVikXSiNlEnMUR1sGQcqxa6SVj1y5a5wd0dIRkGGZoqwr4hPUxi5I4aohl7w1Fu6FJI/2ZDNSe1Yw8QD+5xrg5es9zSJq
+ bG+l3GjKmx7dKTLLx7M7sZ5GB8o518feW0DT5e1Gbqh73uDSat3ZS31rlwytDhnVIuz/dxTbmbY1u4PXnwAWDn/INFjf9kjwXgPedXc4p/k7acy9mAhR033H
+ SDXhXP/V5eYCEg50yMUi52TFaydiMm7Xx46MXbDqHcmG2OQ9Eup0t0G5MMnN1ooBkh2IkNMS9DZg/FMEN6nTP7nJD/fp78DT+kp96s0AXXHj6ZtkxVcJi4Il
+ NnoIGNBrsJS+ImjydHvTtXFfYTb6w7/MKLrrg75LPB+xXp4AV3u+XHLYiJZtY9f5ULRWNX0/Pm6ox4B4yPuRQibKbgtm6A==
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261031_021534_436871_7912C306 
-X-CRM114-Status: GOOD (  13.88  )
+X-CRM114-CacheID: sfid-20261031_021534_404260_608B5095 
+X-CRM114-Status: GOOD (  16.43  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -74,230 +74,182 @@ Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, b43-dev@lists.
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,T_SPF_TEMPERROR,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	T_SPF_TEMPERROR,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-For sromrev=11, read from NVRAM the fields bcma_sprom_extract_r11()
-fills, under the names Broadcom's driver uses: the scalars along with
-the other revision-dependent entries, and the per-chain power info, rx
-gains and power detector offsets, tssifloor5g and the antenna gain in
-bcm47xx_fill_sprom_path_r11(). Read there the rx gain errors and noise
-levels too, which rev 11 keeps per chain, with one list for the 5 GHz
-sub-bands. A list is taken only if it parses whole.
+Program the PMU as Broadcom's driver does (hndpmu.c):
 
-Boards that keep the SPROM of their radios in NVRAM, such as Northstar
-routers with BCM4360, get these fields through the SPROM fallback.
+- on chip rev 3 and later, set the BBPLL to a 960.0098 MHz fractional
+  VCO from the 40 MHz crystal, unless the backplane runs on HT already;
+- set the resource up/down times and, on rev 4 and later, a min
+  resource mask of 0x103;
+- with chipstatus RSRC_INIT_MODE0 clear, program PLL controls 6 and 14,
+  and on rev 4 and later 7 and 15 with REFCLK enabled in chipcontrol 1;
+  on rev 3 and later, set max_res_mask to 0x1ff.
+
+Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 ---
- drivers/firmware/broadcom/bcm47xx_sprom.c | 164 +++++++++++++++++++++++++++++-
- 1 file changed, 162 insertions(+), 2 deletions(-)
+ drivers/bcma/driver_chipcommon_pmu.c        | 81 +++++++++++++++++++++++++++++
+ include/linux/bcma/bcma_driver_chipcommon.h | 14 +++++
+ 2 files changed, 95 insertions(+)
 
-diff --git a/drivers/firmware/broadcom/bcm47xx_sprom.c b/drivers/firmware/broadcom/bcm47xx_sprom.c
-index bca03fd85..d0303f2ee 100644
---- a/drivers/firmware/broadcom/bcm47xx_sprom.c
-+++ b/drivers/firmware/broadcom/bcm47xx_sprom.c
-@@ -94,6 +94,38 @@ NVRAM_READ_VAL(u32)
+diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
+index 263ef6fa1..7a226fcd2 100644
+--- a/drivers/bcma/driver_chipcommon_pmu.c
++++ b/drivers/bcma/driver_chipcommon_pmu.c
+@@ -11,6 +11,7 @@
  
- #undef NVRAM_READ_VAL
+ #include "bcma_private.h"
+ #include <linux/export.h>
++#include <linux/math64.h>
+ #include <linux/bcma/bcma.h>
  
-+/* A comma-separated list of n values, taken only if it parses whole. */
-+#define NVRAM_READ_ARRAY(type)						\
-+static bool nvram_read_ ## type ## _array(const char *prefix,		\
-+					  const char *postfix,		\
-+					  const char *name, type val[],	\
-+					  unsigned int n, bool fallback)	\
-+{									\
-+	char buf[128], *p = buf, *tok;					\
-+	type var[12];							\
-+	unsigned int i = 0;						\
-+									\
-+	if (n > ARRAY_SIZE(var))					\
-+		return false;						\
-+	if (get_nvram_var(prefix, postfix, name, buf, sizeof(buf),	\
-+			  fallback) < 0)				\
-+		return false;						\
-+	while (i < n && (tok = strsep(&p, ",")) != NULL) {		\
-+		if (kstrto ## type(strim(tok), 0, &var[i]))		\
-+			return false;					\
-+		i++;							\
-+	}								\
-+	if (i != n)							\
-+		return false;						\
-+	memcpy(val, var, n * sizeof(val[0]));				\
-+	return true;							\
+ u32 bcma_chipco_pll_read(struct bcma_drv_cc *cc, u32 offset)
+@@ -145,6 +146,78 @@ static void bcma_pmu2_pll_init0(struct bcma_drv_cc *cc, u32 xtalfreq)
+ 	/* TODO: Do we need to update OTP? */
+ }
+ 
++static void bcma_pmu_4360_pll_init(struct bcma_drv_cc *cc)
++{
++	struct bcma_bus *bus = cc->core->bus;
++	const u32 xtal_hz = 40000000, vco_hz = 960009800;
++	u32 ctl2;
++
++	if (bus->chipinfo.rev < 3)
++		return;
++	/* The backplane may be running from the BBPLL. */
++	if (bcma_cc_read32(cc, BCMA_CLKCTLST) & BCMA_CLKCTLST_HAVEHT)
++		return;
++	if (bcma_pmu_get_alp_clock(cc) != xtal_hz) {
++		bcma_warn(bus, "No 40 MHz crystal, BBPLL left as is\n");
++		return;
++	}
++
++	ctl2 = (vco_hz / xtal_hz) << BCMA_CC_PMU4360_NDIV_INT_SHIFT |
++	       BCMA_CC_PMU4360_NDIV_MODE_FRAC << BCMA_CC_PMU4360_NDIV_MODE_SHIFT |
++	       1 << BCMA_CC_PMU4360_P1DIV_SHIFT;
++	bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL2, ctl2);
++	bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL3,
++			      div_u64((u64)(vco_hz % xtal_hz) << 24, xtal_hz));
++	bcma_pmu_set32(cc, BCMA_CC_PMU_CTL, BCMA_CC_PMU_CTL_PLL_UPD);
 +}
 +
-+NVRAM_READ_ARRAY(u8)
-+NVRAM_READ_ARRAY(u16)
++/* Up/down times of resources 0-8 on chip rev 4 and later */
++static const u32 bcma_pmu_4360b1_res_updown[] = {
++	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00860002,
++	0x00000000, 0x00020001, 0x00080001, 0x00000000,
++};
 +
-+#undef NVRAM_READ_ARRAY
++static void bcma_pmu_4360_resources_init(struct bcma_drv_cc *cc,
++					 u32 *min_msk, u32 *max_msk)
++{
++	u8 rev = cc->core->bus->chipinfo.rev;
++	bool init_mode0 = cc->status & BCMA_CC_CHIPST_4360_RSRC_INIT_MODE0;
++	unsigned int i;
 +
- static void nvram_read_u32_2(const char *prefix, const char *name,
- 			     u16 *val_lo, u16 *val_hi, bool fallback)
++	if (rev < 4) {
++		bcma_pmu_write32(cc, BCMA_CC_PMU_RES_TABSEL, 6);
++		bcma_pmu_write32(cc, BCMA_CC_PMU_RES_UPDNTM, 0x00200001);
++	} else {
++		for (i = 0; i < ARRAY_SIZE(bcma_pmu_4360b1_res_updown); i++) {
++			bcma_pmu_write32(cc, BCMA_CC_PMU_RES_TABSEL, i);
++			bcma_pmu_write32(cc, BCMA_CC_PMU_RES_UPDNTM,
++					 bcma_pmu_4360b1_res_updown[i]);
++		}
++		*min_msk = 0x103;
++		/* The max mask must cover the min mask before it is written. */
++		bcma_pmu_set32(cc, BCMA_CC_PMU_MAXRES_MSK, *min_msk);
++	}
++
++	if (init_mode0)
++		return;
++
++	if (rev < 4) {
++		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL6, 0x09048562);
++		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL14, 0x09048562);
++	} else {
++		bcma_chipco_chipctl_maskset(cc, 1, ~0,
++					    BCMA_CHIPCTL1_4360_REFCLK_EN);
++		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL6, 0x080004e2);
++		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL7, 0xe);
++		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL14, 0x080004e2);
++		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL15, 0xe);
++	}
++	bcma_pmu_set32(cc, BCMA_CC_PMU_CTL, BCMA_CC_PMU_CTL_PLL_UPD);
++
++	if (rev >= 3)
++		*max_msk = 0x1ff;
++}
++
+ static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
  {
-@@ -368,7 +400,50 @@ static void bcm47xx_sprom_fill_auto(struct ssb_sprom *sprom,
- 	ENTRY(0x00000600, u16, pre, "legofdm40duppo", legofdm40duppo, 0, fb);
- 	ENTRY(0x00000700, u8, pre, "pcieingress_war", pcieingress_war, 0, fb);
- 
--	/* TODO: rev 11 support */
-+	ENTRY(0xfffff800, u8, pre, "subband5gver", subband5gver, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "tssiposslope2g", tssiposslope2g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "epagain2g", epagain2g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "pdgain2g", pdgain2g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "tworangetssi2g", tworangetssi2g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "papdcap2g", papdcap2g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "femctrl", femctrl, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "tssiposslope5g", tssiposslope5g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "epagain5g", epagain5g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "pdgain5g", pdgain5g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "tworangetssi5g", tworangetssi5g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "papdcap5g", papdcap5g, 0, fb);
-+	ENTRY(0xfffff800, u8, pre, "gainctrlsph", gainctrlsph, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "tssifloor2g", tssifloor2g, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "rpcal2g", rpcal2g, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "rpcal5gb0", rpcal5gb[0], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "rpcal5gb1", rpcal5gb[1], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "rpcal5gb2", rpcal5gb[2], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "rpcal5gb3", rpcal5gb[3], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "dot11agofdmhrbw202gpo", dot11agofdmhrbw202gpo, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "ofdmlrbw202gpo", ofdmlrbw202gpo, 0, fb);
-+	ENTRY(0xfffff800, u32, pre, "mcsbw805glpo", mcsbw805glpo, 0, fb);
-+	ENTRY(0xfffff800, u32, pre, "mcsbw805gmpo", mcsbw805gmpo, 0, fb);
-+	ENTRY(0xfffff800, u32, pre, "mcsbw805ghpo", mcsbw805ghpo, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "mcslr5glpo", mcslr5gpo[0], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "mcslr5gmpo", mcslr5gpo[1], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "mcslr5ghpo", mcslr5gpo[2], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in40hrpo", sb20in40hrpo, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in40lrpo", sb20in40lrpo, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in80and160hr5glpo", sb20in80and160hr5gpo[0], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in80and160hr5gmpo", sb20in80and160hr5gpo[1], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in80and160hr5ghpo", sb20in80and160hr5gpo[2], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in80and160lr5glpo", sb20in80and160lr5gpo[0], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in80and160lr5gmpo", sb20in80and160lr5gpo[1], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb20in80and160lr5ghpo", sb20in80and160lr5gpo[2], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb40and80hr5glpo", sb40and80hr5gpo[0], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb40and80hr5gmpo", sb40and80hr5gpo[1], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb40and80hr5ghpo", sb40and80hr5gpo[2], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb40and80lr5glpo", sb40and80lr5gpo[0], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb40and80lr5gmpo", sb40and80lr5gpo[1], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "sb40and80lr5ghpo", sb40and80lr5gpo[2], 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "dot11agduphrpo", dot11agduphrpo, 0, fb);
-+	ENTRY(0xfffff800, u16, pre, "dot11agduplrpo", dot11agduplrpo, 0, fb);
-+
- 	ENTRY(0x00000700, u8, pre, "rxgainerr2ga0", rxgainerr2ga[0], 0, fb);
- 	ENTRY(0x00000700, u8, pre, "rxgainerr2ga1", rxgainerr2ga[1], 0, fb);
- 	ENTRY(0x00000700, u8, pre, "rxgainerr2ga2", rxgainerr2ga[2], 0, fb);
-@@ -388,7 +463,6 @@ static void bcm47xx_sprom_fill_auto(struct ssb_sprom *sprom,
- 	ENTRY(0xfffffe00, u8, pre, "sar2g", sar2g, 0, fb);
- 	ENTRY(0xfffffe00, u8, pre, "sar5g", sar5g, 0, fb);
- 
--	/* TODO: rev 11 support */
- 	ENTRY(0x00000700, u8, pre, "noiselvl2ga0", noiselvl2ga[0], 0, fb);
- 	ENTRY(0x00000700, u8, pre, "noiselvl2ga1", noiselvl2ga[1], 0, fb);
- 	ENTRY(0x00000700, u8, pre, "noiselvl2ga2", noiselvl2ga[2], 0, fb);
-@@ -481,6 +555,89 @@ static void bcm47xx_fill_sprom_path_r45(struct ssb_sprom *sprom,
+ 	struct bcma_bus *bus = cc->core->bus;
+@@ -156,6 +229,10 @@ static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
+ 			xtalfreq = 20000;
+ 		bcma_pmu2_pll_init0(cc, xtalfreq);
+ 		break;
++	case BCMA_CHIP_ID_BCM4352:
++	case BCMA_CHIP_ID_BCM4360:
++		bcma_pmu_4360_pll_init(cc);
++		break;
  	}
  }
  
-+static void bcm47xx_fill_sprom_path_r11(struct ssb_sprom *sprom,
-+					const char *prefix, bool fallback)
-+{
-+	const struct {
-+		const char *band;
-+		struct ssb_sprom_rxgains *rx;
-+	} rxgains[] = {
-+		{ "2g",  &sprom->rxgains_2g },
-+		/* rxgains5g* is the low 5 GHz sub-band */
-+		{ "5g",  &sprom->rxgains_5gl },
-+		{ "5gm", &sprom->rxgains_5gm },
-+		{ "5gh", &sprom->rxgains_5gh },
-+	};
-+	char postfix[2], name[sizeof("rxgains5gmtrelnabypa")];
-+	u8 agbg0 = 0, aga0 = 0, v5g[4];
-+	int i, b;
-+
-+	for (i = 0; i < ARRAY_SIZE(sprom->pdoffset40ma); i++) {
-+		struct ssb_sprom_core_pwr_info *pwr_info;
-+
-+		pwr_info = &sprom->core_pwr_info[i];
-+
-+		snprintf(postfix, sizeof(postfix), "%i", i);
-+		nvram_read_u8(prefix, postfix, "maxp2ga",
-+			      &pwr_info->maxp2ga, 0, fallback);
-+		nvram_read_u16_array(prefix, postfix, "pa2ga", pwr_info->pa2ga,
-+				     ARRAY_SIZE(pwr_info->pa2ga), fallback);
-+		nvram_read_u8_array(prefix, postfix, "maxp5ga",
-+				    pwr_info->maxp5ga,
-+				    ARRAY_SIZE(pwr_info->maxp5ga), fallback);
-+		nvram_read_u16_array(prefix, postfix, "pa5ga", pwr_info->pa5ga,
-+				     ARRAY_SIZE(pwr_info->pa5ga), fallback);
-+		nvram_read_u16(prefix, postfix, "pdoffset40ma",
-+			       &sprom->pdoffset40ma[i], 0, fallback);
-+		nvram_read_u16(prefix, postfix, "pdoffset80ma",
-+			       &sprom->pdoffset80ma[i], 0, fallback);
-+
-+		nvram_read_u8(prefix, postfix, "rxgainerr2ga",
-+			      &sprom->rxgainerr2ga[i], 0, fallback);
-+		if (nvram_read_u8_array(prefix, postfix, "rxgainerr5ga", v5g,
-+					ARRAY_SIZE(v5g), fallback)) {
-+			sprom->rxgainerr5gla[i] = v5g[0];
-+			sprom->rxgainerr5gma[i] = v5g[1];
-+			sprom->rxgainerr5gha[i] = v5g[2];
-+			sprom->rxgainerr5gua[i] = v5g[3];
-+		}
-+		nvram_read_u8(prefix, postfix, "noiselvl2ga",
-+			      &sprom->noiselvl2ga[i], 0, fallback);
-+		if (nvram_read_u8_array(prefix, postfix, "noiselvl5ga", v5g,
-+					ARRAY_SIZE(v5g), fallback)) {
-+			sprom->noiselvl5gla[i] = v5g[0];
-+			sprom->noiselvl5gma[i] = v5g[1];
-+			sprom->noiselvl5gha[i] = v5g[2];
-+			sprom->noiselvl5gua[i] = v5g[3];
-+		}
-+
-+		for (b = 0; b < ARRAY_SIZE(rxgains); b++) {
-+			struct ssb_sprom_rxgains *rx = rxgains[b].rx;
-+
-+			snprintf(name, sizeof(name), "rxgains%selnagaina",
-+				 rxgains[b].band);
-+			nvram_read_u8(prefix, postfix, name, &rx->elnagain[i],
-+				      0, fallback);
-+			snprintf(name, sizeof(name), "rxgains%strisoa",
-+				 rxgains[b].band);
-+			nvram_read_u8(prefix, postfix, name, &rx->triso[i],
-+				      0, fallback);
-+			snprintf(name, sizeof(name), "rxgains%strelnabypa",
-+				 rxgains[b].band);
-+			nvram_read_u8(prefix, postfix, name, &rx->trelnabyp[i],
-+				      0, fallback);
-+		}
-+	}
-+
-+	nvram_read_u16_array(prefix, NULL, "tssifloor5g", sprom->tssifloor5g,
-+			     ARRAY_SIZE(sprom->tssifloor5g), fallback);
-+
-+	nvram_read_u8(prefix, NULL, "agbg0", &agbg0, 0, fallback);
-+	nvram_read_u8(prefix, NULL, "aga0", &aga0, 0, fallback);
-+	sprom->antenna_gain_qdb[0] = ssb_sprom_antgain_qdb(agbg0);
-+	sprom->antenna_gain_qdb[1] = ssb_sprom_antgain_qdb(aga0);
-+}
-+
- static bool bcm47xx_is_valid_mac(u8 *mac)
- {
- 	return mac && !(mac[0] == 0x00 && mac[1] == 0x90 && mac[2] == 0x4c);
-@@ -586,6 +743,9 @@ void bcm47xx_fill_sprom(struct ssb_sprom *sprom, const char *prefix,
- 	case 9:
- 		bcm47xx_fill_sprom_path_r4589(sprom, prefix, fallback);
+@@ -188,6 +265,10 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
+ 			  BCMA_RES_4314_WL_CORE_READY;
+ 		max_msk = 0x3FFFFFFF;
  		break;
-+	case 11:
-+		bcm47xx_fill_sprom_path_r11(sprom, prefix, fallback);
++	case BCMA_CHIP_ID_BCM4352:
++	case BCMA_CHIP_ID_BCM4360:
++		bcma_pmu_4360_resources_init(cc, &min_msk, &max_msk);
 +		break;
- 	}
+ 	default:
+ 		bcma_debug(bus, "PMU resource config unknown or not needed for device 0x%04X\n",
+ 			   bus->chipinfo.id);
+diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
+index 0cb6638b5..525155658 100644
+--- a/include/linux/bcma/bcma_driver_chipcommon.h
++++ b/include/linux/bcma/bcma_driver_chipcommon.h
+@@ -107,6 +107,7 @@
+ #define  BCMA_CC_CHIPST_4706_PCIE1_DISABLE	BIT(5) /* PCIE1 enable strap pin */
+ #define  BCMA_CC_CHIPST_5357_NAND_BOOT		BIT(4) /* NAND boot, valid for CC rev 38 and/or BCM5357 */
+ #define  BCMA_CC_CHIPST_4360_XTAL_40MZ		0x00000001
++#define  BCMA_CC_CHIPST_4360_RSRC_INIT_MODE0	0x00000020
+ #define BCMA_CC_JCMD			0x0030		/* Rev >= 10 only */
+ #define  BCMA_CC_JCMD_START		0x80000000
+ #define  BCMA_CC_JCMD_BUSY		0x80000000
+@@ -500,6 +501,16 @@
+ #define BCMA_CC_PMU_PLL_CTL3		3
+ #define BCMA_CC_PMU_PLL_CTL4		4
+ #define BCMA_CC_PMU_PLL_CTL5		5
++#define BCMA_CC_PMU_PLL_CTL6		6
++#define BCMA_CC_PMU_PLL_CTL7		7
++#define BCMA_CC_PMU_PLL_CTL14		14
++#define BCMA_CC_PMU_PLL_CTL15		15
++
++/* BCM4360 PLL control 2 */
++#define BCMA_CC_PMU4360_P1DIV_SHIFT		0
++#define BCMA_CC_PMU4360_NDIV_MODE_SHIFT		4
++#define  BCMA_CC_PMU4360_NDIV_MODE_FRAC		3
++#define BCMA_CC_PMU4360_NDIV_INT_SHIFT		7
  
- 	bcm47xx_sprom_fill_auto(sprom, prefix, fallback);
+ #define BCMA_CC_PMU1_PLL0_PC0_P1DIV_MASK	0x00f00000
+ #define BCMA_CC_PMU1_PLL0_PC0_P1DIV_SHIFT	20
+@@ -527,6 +538,9 @@
+ #define BCMA_CHIPCTL_4331_BT_SHD0_ON_GPIO4	BIT(16)	/* enable bt_shd0 at gpio4 */
+ #define BCMA_CHIPCTL_4331_BT_SHD1_ON_GPIO5	BIT(17)	/* enable bt_shd1 at gpio5 */
+ 
++/* BCM4360 ChipControl 1 */
++#define BCMA_CHIPCTL1_4360_REFCLK_EN		BIT(11)
++
+ /* 43224 chip-specific ChipControl register bits */
+ #define BCMA_CCTRL_43224_GPIO_TOGGLE		0x8000		/* gpio[3:0] pins as btcoex or s/w gpio */
+ #define BCMA_CCTRL_43224A0_12MA_LED_DRIVE	0x00F000F0	/* 12 mA drive strength */
 
 -- 
 2.34.1
