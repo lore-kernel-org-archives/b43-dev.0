@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE6E606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2666B606A336
 	for <b43-dev@archiver.kernel.org>; Fri,  6 Nov 2026 21:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=xU6RP1n5;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Mm10vGkM
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=W+sFpbjc;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=u7eMQ6pS
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
@@ -14,78 +14,78 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=vWCgYgVAK349jijwna0rjlmTUgzSNlTlVsUz3HTuyhs=; b=xU6RP1n5ZgwuKqblf+r5c6X5E9
-	olZOUPBiiLjDMXQJiVnus/WEwmZ+CkA/vuE9EUekYDLGFxEjvf/8pD6M1Hq53qt3p5W49Ws/LIifo
-	Gb4DC/z0hsL/oiABNRbAf/cK0NuLCRUd1t85OD7iTFLy1ra9jjKTslC4n80ONMr77JOYLBSMKR2Mv
-	JSy78WAuEv/Q6SrQUkXQz4xB7ngqeFsuS3+EH1JggY7bfjvtNL/U8+7L4Lhsrex7uSed5annxZZMP
-	aKIuO+wiqTLnuAZGpEUYmOVeooBe6vmFiwVgixn8fiOBYMWOylHiAPrlSKzPnzblyBy0DUdPyDloU
-	ar2jb9GQ==;
+	bh=8MisbU8HD5686rhol2gxEVSoA2/gghZ6hprizp9Fd7c=; b=W+sFpbjc4xjOskVMZpBTc1mFvj
+	7LRO8Eyeb/SSyI8O36vH5sogE21od15GgSf4u1wwZh8+Clwy/Sa7xJOR5xj3ywo1qcsoWm/OSx2ZZ
+	gl7oq1BOzTxYG1upNb7E8RK2GJRkT+ee7R8bjH2y1c2/gzehAAw/vGKwmMDz60W1OCU0JDu/QRzFu
+	pDqeACuMdF3PP5Y6bE9z5izCuPFsBVRY3qKyZkp+kDxcRvUTmxkWWPrnHyF6LRdi1YQ5xlKG3Z1B9
+	xdlqsFdVY1QgDw2IixMfDhepDMRXDF/zbTiWGRqLnyFRq4KcmfhccWKsYd5RsP/tpjIB7nlVYvo4k
+	MsqiDTvg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPRHf-0000000DfW1-32Da;
+	id 1xPRHf-0000000DfWN-3WeE;
 	Fri, 06 Nov 2026 21:15:39 +0000
-Received: from mail-wm1-x334.google.com ([2a00:1450:4864:20::334])
+Received: from mail-wm1-x32c.google.com ([2a00:1450:4864:20::32c])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPRHc-0000000DfUK-38Fd
+	id 1xPRHd-0000000DfUV-3N0w
 	for b43-dev@lists.infradead.org;
-	Fri, 06 Nov 2026 21:15:38 +0000
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-4b7252a32c8so9637145e9.0
-        for <b43-dev@lists.infradead.org>; Fri, 06 Nov 2026 13:15:36 -0800 (PST)
+	Fri, 06 Nov 2026 21:15:39 +0000
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-4ac95761c85so7974225e9.2
+        for <b43-dev@lists.infradead.org>; Fri, 06 Nov 2026 13:15:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793999735; x=1794604535; darn=lists.infradead.org;
+        d=gmail.com; s=20260707; t=1793999736; x=1794604536; darn=lists.infradead.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=bq+VtsU+O4F9SqeqecyrR8ppADV0Cns94twTt0i97r0=;
-        b=Mm10vGkMYNpjxk1089h+YXxJeITJbeVYyG8jXN5zn+HMuu2zGuULT2NPK39rW0ATMB
-         Cgevbe7hyzcQcHSL9rrRdZ5PkuCYl/A7EKwa14QSDUif+DWw2IEY3htvVWTcTVzngNhG
-         jzP0IFiPfPTjoRngysr6a1tboNAiWd0Xlo1GD1sdbVA+DunaV7dgwHcmOXcJBUAhIr0m
-         zwCmOTVac3K9SOGtVuoALGoqvWgaEWEWi44y4czvn3isMTma/v6DMMzuLNwKW3tYkw25
-         +h4bFEkqcEhucyMVeyFOqZLV8GEVjdgp80OOBA+e0hsgP54xJ8IrkbIfnKddQoOhVccU
-         49fw==
+        bh=+4ehktDMYHwu9bJdzFTo4QfdTRsY0mtmI49Ie+yd+jU=;
+        b=u7eMQ6pS+NCaOfEFZ36Lkb7p3dd+rPfsIJ+8CzIZtMyTu7ZCNNk+opVEuxbwgeGuex
+         iyBFFukvDCr3t7JFhGAaeVHEtL5NdtDnkIBeilRQ0Agu24OQ7pNro6onozWPwFNT7U+h
+         eokq4EkMazznFWSvyKzOkLEAhbidPvyVwGg3kJoLXjgfX9VcFRz6/4ZZ/TirRcGg3gN4
+         8Ezr6OtAb0H1aMMDnM/CkPxiCOkcukQwJ98v+ymNLt4/KJfH177z9/o4nzSyYyVqYaA2
+         JcKlcmexaBf2UGuO9dh6C6HSSHXkDXCLEbsvn3MRHO9mI7G0rkm1MyQihYMOB+cUi2qN
+         6mYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793999735; x=1794604535;
+        d=1e100.net; s=20260707; t=1793999736; x=1794604536;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=bq+VtsU+O4F9SqeqecyrR8ppADV0Cns94twTt0i97r0=;
-        b=tEubmLTfpD00q7lJeTUwo6NvfnA7UKymv1pTpvX9UWVN2oxRBvyaa++wEKlBfH635a
-         hjC4oX/aR6zpq4/AJ2CYOck03EbEoH/jWstPIjBfolbWJC7RCiyoiebvJq7KcgNqK4pw
-         /UbesLXTTq4TJtYbiA7fL3ajcHuamuG3nWIF1b2wDG2PCNrGN3ypbTMiO+3RRrUvojBf
-         QG45zf2wbOezp+yaaUFWByCUuGFuirw1iLlecGQuX6vt7gcXa4UX+2iF7D+LnpKozfiV
-         bUle/9SvYmWn15+mtuutOQDp/c01vCwq/Z5yPwQuRCY4/XezcCdyJrd3UWqKaZbXaQH0
-         Ojjw==
-X-Forwarded-Encrypted: i=1; AKwUvBzm5y0kbNaH04MHSGFNQi1ir62luDNb3cDfHrHaBgGr2wLxlmvZNJa/IeAKwhVVhmBCJb6Gbhp0@lists.infradead.org
-X-Gm-Message-State: APuU4Z/sKVlk73xrhiQ3G3/vHIH+AiRYQOwp+U33vH4jkf4tNOU9ggUc
-	U2hColvUU81HsyWVJlES+6uAne8+yGMLmND6OS3Vifypn1q8yAvM/Rpw
-X-Gm-Gg: AYBFou2h3VLEjUJpFPMKu4fuFWhEuGrEyLyaoIfFRE39T7+s/2nn4s/eptbkE+EdwZD
-	X47TBo2kf7Je7Iim9Y4vg8TGqVphZcRoFuweAOirCKZTzfh6jQCwLD/9Omvk/+DeVYD6MMjsVmz
-	tU65dAMAVd7E4hRQKoe91lkaHycal+Z70WeunxUcQUqwc2gfyFxhW444/htHvUstFXGjUF7kgrW
-	N9bX5SchJyuHCvJSRMI1uV6QYfIBixTu5AgYaEVn9sgN9iAdqY794hBfLYna7YPizWS04cynNs1
-	Xtd55kkiGhdLuGkVW2h8xBwM11sapN6ziMhrPZlcWWJNXwPpj5eB3SEINMr4I4OD8Oli5dzAgpy
-	+wdsfqUDJgUqMxqUd+h6urJp8SDEPPBaUHzZOWgIizLFaEytpkyWBOemMKllEtvZEwQKBVOz3gZ
-	V/UDZPDtiagNefzWVlJAv+lno+KeMMNc2/2vcHYFIC5Gd9a4p5b+bWV+MYgyezW1UeqnxPh67gS
-	EDVHJBxJvbSrQJn79x9L7JPhRdFNS1F/8pXr7DSP6i+0ZDPFVIsT10yVBZo1EgmL1zrNx/ZYDQR
-	fpA7U03hiA9GQdY/jqKonsLbQMyAO4Dl17G3OBzyK2CmiC2xC7M=
-X-Received: by 2002:a05:600c:c10a:b0:4a3:5991:718 with SMTP id 5b1f17b1804b1-4b6e5ab6ebamr48508815e9.16.1793999734673;
-        Fri, 06 Nov 2026 13:15:34 -0800 (PST)
+        bh=+4ehktDMYHwu9bJdzFTo4QfdTRsY0mtmI49Ie+yd+jU=;
+        b=azfk51/cADp0rwPB5jUuIT2cbQcb2uh7vVgxI+4QRjjxEu1ZCdCLXpHTzAO681/tXr
+         w6aSM4d5lpc5r09zsU8cwwrWavEW8lzcMpoOFgmiJKzNtanKQAvaY3bu5cx2BugTVBSz
+         iK5uQ0vr4sKnZjgNfbdtT+mPC/t9nIE61NYJ8qJ+mUHWhlM4WQSg12AhhifpQsF5Cj6G
+         ufCm0RK5WKMTS7CX6ZkK57BSz0lyFr5vWpyfpsgkrXcvBvhWjGTD+khVZib/aDLk4sSb
+         YrL295TFpEW5fLod+xtNfTHpkNALmlprqbqdPId7fLMIKVd8bwjznZwItAgYehzSAU3G
+         Xxqg==
+X-Forwarded-Encrypted: i=1; AKwUvBx91HVTsa4obBVwFxLyek1QoBjOOjc2W5JhaUfKMAowR86cIiQFWBrWKHFf+jP5bvZarTuGDJsm@lists.infradead.org
+X-Gm-Message-State: APuU4Z9A9/Ovuuukt8QIqTnCGfdotUZaf/44XEc+np/rAZTvL1WAJj6B
+	eLrFT8Ll4qYuRMNNDGPyC7j+vSruAXt4Ncd/bZsgAdKgsEOl7gMEW4O+
+X-Gm-Gg: AYBFou1JGssDwPCeHiTadC2QC4Af9myWUtHIp+s6aOjZ/Dr7zW8TZm51y8ILtKJJU7t
+	AOvMYcs8Ad3Z5Icw8ajODSZJl3YdtIbmgIfDX1iPIzOmMa1lIJC7mRPD7fV5N8Vi+yXktj2KpEO
+	0Ywc9uzIcpVGa19xjj8TnUpU/Z6ZA71G2iLq9TLIPIrQxg8ww3HBZ1DjlteNpxRfm8HzPCkWaOW
+	zlnza+v0wYZqQvSboYr7vECrA3Ut0OKgOW2ocX6qfGg+HDvLIECbzqiKwop8touiI3CXM+virnp
+	ZqsMfXFkBzs+9s1K0O+7PBOv55FlVFlL5i1nTKJlBv/Uk2BNGEuw7hAgReZAVlgXfh5M88Qb0Wn
+	w8AJko60hL6IXCqVmNiSstn8neAzq608FwEn+aI4IayT2YBd1fZzKQ0Q00Ik2GNBYQ2h8EIi7lH
+	Awg+ZpKLyeO7cJLoAjVwVEbrcolb6/QyEA7AjXlo/dUOxsuXH0+BYLoOHShxZDjgnCG1UxvKDPi
+	W3WpEtXBhSJFcAahDe1UYrtCrjNfKwDP8WC1g+6mPQh8da3HwtbPQBkC9Hj9rTbkQY9rzN0dm3e
+	/0kfGfalF/1+7hCGUBT9kvyS7kWYbc2M5jA7CPLa/HSPXpG/HmI=
+X-Received: by 2002:a05:600c:1552:b0:4ac:b0b2:fa12 with SMTP id 5b1f17b1804b1-4b6db4a9a1fmr62927835e9.1.1793999735689;
+        Fri, 06 Nov 2026 13:15:35 -0800 (PST)
 Received: from luca-HP-ProBook-650-G1.lan ([2001:b07:6454:c33e:970a:d82:3e9:48ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e32ad610sm18070765e9.3.2026.11.06.13.15.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e32ad610sm18070765e9.3.2026.11.06.13.15.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 13:15:33 -0800 (PST)
+        Fri, 06 Nov 2026 13:15:35 -0800 (PST)
 From: Luca Casati <luk00casati@gmail.com>
 To: linux-wireless@vger.kernel.org
-Subject: [PATCH wireless-next v2 1/5] b43: N-PHY: fix the TX tone sample table
-Date: Fri,  6 Nov 2026 22:15:12 +0100
-Message-ID: <20261106211516.273791-2-luk00casati@gmail.com>
+Subject: [PATCH wireless-next v2 2/5] b43: N-PHY: fix TX IQ/LO calibration
+Date: Fri,  6 Nov 2026 22:15:13 +0100
+Message-ID: <20261106211516.273791-3-luk00casati@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261106211516.273791-1-luk00casati@gmail.com>
 References: <20261106211516.273791-1-luk00casati@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261106_131536_803533_759C1499 
-X-CRM114-Status: GOOD (  12.21  )
+X-CRM114-CacheID: sfid-20261106_131537_883336_2C3B99A2 
+X-CRM114-Status: GOOD (  21.03  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -109,66 +109,169 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-b43_nphy_load_samples() masked with (0x3FF << 10) instead of shifting
-the masked I value, and b43_nphy_gen_load_samples() fed
-cordic_calc_iq() a 16.16 fixed-point angle (CORDIC_FIXED() of a value
-already shifted by 16) held in a u16, while the function takes whole
-degrees. Together the sample table ended up all zeros, so every
-calibration that plays a test tone (TX IQ/LO, RX IQ) ran without a
-signal.
+Several bugs kept the TX IQ/LO calibration from working, and on rev7+
+it left TX dead afterwards:
 
-Compute the rotation in whole degrees as brcmsmac does and fix the
-precedence.
+- The busy poll on IQLOCAL_CMD was inverted: bits 15:14 are set while a
+  step runs, so it stopped waiting as soon as the step started.
+- The final copy was reversed: it wrote the stale buffer over the best
+  coefficients (table 15 at 96) and read the active ones (at 80), so the
+  result was never applied.
+- TxCalPhyCleanup lacked the rev7+ part of brcmsmac's
+  wlc_phy_txcal_phycleanup_nphy(): the 0x80 and 0x8 (PA power-up) RF
+  overrides set up for the cal were left in place.
+- There was no counterpart to b43_nphy_tx_cal_radio_setup_rev7(), so the
+  TSSI/IQ-cal path stayed switched in. Add one, following
+  wlc_phy_txcal_radio_cleanup_nphy().
+- The TRSW override for the second core used 8, which does not fit the
+  2-bit field on rev7+; use 2 as wl does.
 
-Tested on a BCM43228 (N-PHY rev 16, radio 2057 rev 9).
+With these, on a BCM43228 (N-PHY rev 16, radio 2057 rev 9) the final
+coefficients are close to the proprietary wl driver's, though not
+equal.
 
-mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch1-tone-table.txt
+mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch2-iqlo-poll.txt
+            https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch2-trsw.txt
+            https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch2-coefficients.txt
 
 Found and fixed with the help of an AI coding assistant (Claude Opus 5.5),
 by comparing mmiotraces of b43 and wl on the same card.
 
 Signed-off-by: Luca Casati <luk00casati@gmail.com>
 ---
- drivers/net/wireless/broadcom/b43/phy_n.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_n.c | 73 +++++++++++++++++++++--
+ 1 file changed, 68 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-index bbc30cbad..c4e6c1ac0 100644
+index c4e6c1ac0..6b0140f05 100644
 --- a/drivers/net/wireless/broadcom/b43/phy_n.c
 +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-@@ -1515,7 +1515,7 @@ static int b43_nphy_load_samples(struct b43_wldev *dev,
- 		b43_nphy_stay_in_carrier_search(dev, 1);
- 
- 	for (i = 0; i < len; i++) {
--		data[i] = (samples[i].i & 0x3FF << 10);
-+		data[i] = (samples[i].i & 0x3FF) << 10;
- 		data[i] |= samples[i].q & 0x3FF;
+@@ -4775,6 +4775,32 @@ static void b43_nphy_tx_cal_radio_setup_rev7(struct b43_wldev *dev)
  	}
- 	b43_ntab_write_bulk(dev, B43_NTAB32(17, 0), len, data);
-@@ -1531,7 +1531,8 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
- 					bool test)
+ }
+ 
++static void b43_nphy_tx_cal_radio_cleanup(struct b43_wldev *dev)
++{
++	struct b43_phy *phy = &dev->phy;
++	u16 *save = dev->phy.n->tx_rx_cal_radio_saveregs;
++	int core, off;
++	u16 r;
++
++	if (phy->rev < 7 || phy->rev >= 19)
++		return;
++
++	for (core = 0; core < 2; core++) {
++		r = core ? 0x20 : 0;
++		off = core * 11;
++
++		b43_radio_write(dev, r + R2057_TX0_TX_SSI_MASTER, save[off + 0]);
++		b43_radio_write(dev, r + R2057_TX0_IQCAL_VCM_HG, save[off + 1]);
++		b43_radio_write(dev, r + R2057_TX0_IQCAL_IDAC, save[off + 2]);
++		b43_radio_write(dev, r + R2057_TX0_TSSI_VCM, save[off + 3]);
++		b43_radio_write(dev, r + R2057_TX0_TX_SSI_MUX, save[off + 5]);
++		if (phy->radio_rev != 5)
++			b43_radio_write(dev, r + R2057_TX0_TSSIA, save[off + 6]);
++		b43_radio_write(dev, r + R2057_TX0_TSSIG, save[off + 7]);
++		b43_radio_write(dev, r + R2057_TX0_TSSI_MISC1, save[off + 8]);
++	}
++}
++
+ /* https://bcm-v4.sipsolutions.net/802.11/PHY/N/TxCalRadioSetup */
+ static void b43_nphy_tx_cal_radio_setup(struct b43_wldev *dev)
  {
- 	int i;
--	u16 bw, len, rot, angle;
-+	u16 bw, len;
-+	s32 rot, angle;
- 	struct cordic_iq *samples;
+@@ -5033,7 +5059,9 @@ static struct nphy_txgains b43_nphy_get_tx_gains(struct b43_wldev *dev)
+ /* https://bcm-v4.sipsolutions.net/802.11/PHY/N/TxCalPhyCleanup */
+ static void b43_nphy_tx_cal_phy_cleanup(struct b43_wldev *dev)
+ {
+-	u16 *regs = dev->phy.n->tx_rx_cal_phy_saveregs;
++	struct b43_phy *phy = &dev->phy;
++	struct b43_phy_n *nphy = dev->phy.n;
++	u16 *regs = nphy->tx_rx_cal_phy_saveregs;
  
- 	bw = b43_is_40mhz(dev) ? 40 : 20;
-@@ -1554,11 +1555,11 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
- 		b43err(dev->wl, "allocation for samples generation failed\n");
- 		return 0;
- 	}
--	rot = (((freq * 36) / bw) << 16) / 100;
-+	rot = ((freq * 36) / bw) / 100;
- 	angle = 0;
+ 	if (dev->phy.rev >= 3) {
+ 		b43_phy_write(dev, B43_NPHY_AFECTL_C1, regs[0]);
+@@ -5047,7 +5075,37 @@ static void b43_nphy_tx_cal_phy_cleanup(struct b43_wldev *dev)
+ 		b43_phy_write(dev, B43_NPHY_RFCTL_INTC2, regs[8]);
+ 		b43_phy_write(dev, B43_NPHY_PAPD_EN0, regs[9]);
+ 		b43_phy_write(dev, B43_NPHY_PAPD_EN1, regs[10]);
++
++		if (phy->rev >= 19)
++			b43_nphy_rf_ctl_override_rev19(dev, 0x80, 0, 0, true,
++						       1);
++		else if (phy->rev >= 7)
++			b43_nphy_rf_ctl_override_rev7(dev, 0x80, 0, 0, true, 1);
++
+ 		b43_nphy_reset_cca(dev);
++
++		if (nphy->use_int_tx_iq_lo_cal) {
++			if (phy->rev >= 19) {
++				b43_nphy_rf_ctl_override_rev19(dev, 0x8, 0, 0x3,
++							       true, 0);
++			} else if (phy->rev >= 8) {
++				b43_nphy_rf_ctl_override_rev7(dev, 0x8, 0, 0x3,
++							      true, 0);
++			} else if (phy->rev == 7) {
++				bool ghz2 = b43_current_band(dev->wl) ==
++					    NL80211_BAND_2GHZ;
++
++				b43_radio_maskset(dev, ghz2 ?
++						  R2057_PAD2G_TUNE_PUS_CORE0 :
++						  R2057_IPA5G_CASCOFFV_PU_CORE0,
++						  ~1, 1);
++				b43_radio_maskset(dev, ghz2 ?
++						  R2057_PAD2G_TUNE_PUS_CORE1 :
++						  R2057_IPA5G_CASCOFFV_PU_CORE1,
++						  ~1, 1);
++				b43_radio_mask(dev, R2057_OVR_REG0, ~(1 << 4));
++			}
++		}
+ 	} else {
+ 		b43_phy_maskset(dev, B43_NPHY_AFECTL_C1, 0x0FFF, regs[0]);
+ 		b43_phy_maskset(dev, B43_NPHY_AFECTL_C2, 0x0FFF, regs[1]);
+@@ -5102,7 +5160,8 @@ static void b43_nphy_tx_cal_phy_setup(struct b43_wldev *dev)
+ 			b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_PA,
+ 						      0, 3);
+ 		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW, 2, 1);
+-		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW, 8, 2);
++		b43_nphy_rf_ctl_intc_override(dev, N_INTC_OVERRIDE_TRSW,
++					      phy->rev >= 7 ? 2 : 8, 2);
  
- 	for (i = 0; i < len; i++) {
--		samples[i] = cordic_calc_iq(CORDIC_FIXED(angle));
-+		samples[i] = cordic_calc_iq(angle);
- 		angle += rot;
- 		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
- 		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
+ 		regs[9] = b43_phy_read(dev, B43_NPHY_PAPD_EN0);
+ 		regs[10] = b43_phy_read(dev, B43_NPHY_PAPD_EN1);
+@@ -5480,10 +5539,13 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 			b43_phy_write(dev, B43_NPHY_IQLOCAL_CMD, cmd);
+ 			for (i = 0; i < 2000; i++) {
+ 				tmp = b43_phy_read(dev, B43_NPHY_IQLOCAL_CMD);
+-				if (tmp & 0xC000)
++				if (!(tmp & 0xC000))
+ 					break;
+ 				udelay(10);
+ 			}
++			if (i == 2000)
++				b43err(dev->wl, "TX IQ/LO cal step 0x%04x timed out\n",
++				       cmd);
+ 
+ 			b43_ntab_read_bulk(dev, B43_NTAB16(15, 96), length,
+ 						buffer);
+@@ -5500,8 +5562,8 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 		last = (dev->phy.rev < 3) ? 6 : 7;
+ 
+ 		if (!mphase || nphy->mphase_cal_phase_id == last) {
+-			b43_ntab_write_bulk(dev, B43_NTAB16(15, 96), 4, buffer);
+-			b43_ntab_read_bulk(dev, B43_NTAB16(15, 80), 4, buffer);
++			b43_ntab_read_bulk(dev, B43_NTAB16(15, 96), 4, buffer);
++			b43_ntab_write_bulk(dev, B43_NTAB16(15, 80), 4, buffer);
+ 			if (dev->phy.rev < 3) {
+ 				buffer[0] = 0;
+ 				buffer[1] = 0;
+@@ -5540,6 +5602,7 @@ static int b43_nphy_cal_tx_iq_lo(struct b43_wldev *dev,
+ 
+ 	b43_nphy_tx_cal_phy_cleanup(dev);
+ 	b43_ntab_write_bulk(dev, B43_NTAB16(7, 0x110), 2, save);
++	b43_nphy_tx_cal_radio_cleanup(dev);
+ 
+ 	if (dev->phy.rev < 2 && (!mphase || nphy->mphase_cal_phase_id == last))
+ 		b43_nphy_tx_iq_workaround(dev);
 -- 
 2.43.0
 
