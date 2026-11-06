@@ -2,11 +2,12 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C96B606A329
-	for <b43-dev@archiver.kernel.org>; Fri,  6 Nov 2026 21:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186B3606A330
+	for <b43-dev@archiver.kernel.org>; Fri,  6 Nov 2026 21:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=wCHHlqki;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dJi1EaXK
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=e5vXWAWS;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=desiato.20200630 header.b=Ps8CjvUV;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=uyyTYwiy
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
@@ -14,79 +15,94 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=UH66K+7wDBq+xUrNKtas/WPKZXqQ/G0DI4l8AVvCJYY=; b=wCHHlqkiH3OXwJhZC/iItjDhuM
-	Mss1Sd9KBM8MO4wKS3Owm7NOD+aJij6TY5KvQM8av4sN8CfNallz6xE3MILwPcnkXakstkFdez5Nm
-	L2iOSkEStI9BRwkQrv0nA27V8nrU8xcm+wEeQG1wjAH5MxpXTPUCuJRRhTy2tDceWhS8LeO5nUVhE
-	4lG8aLXC8huvgu/RMqt17/fJUbijlA/vjBxpozMME7IkJy7lolC6pVX6uEYv9RnZkxO9whXxHOiXN
-	4vfiDtVYsmysdM3VuQ6XemrUK4H8oSkMrukNOwHqELQf0i/pdB+exOlXpwg6ZL5QOsNR/VvFTUKVN
-	GX/sSYzw==;
+	bh=fvl9aq25tXnhk6zLENVBnF9wcvnnrVadE5HgKZt/k3k=; b=e5vXWAWS4DUs6H5G2eJV5JTsdP
+	VhWPjJmSB7SGHMmRPICnc+oDJZhdnVFtxQHqpEtagsrtR4ZsodXl29Gj3KzGzyrAidbOrFQV/30ER
+	51dlKzDaDTCyhUNjDMMgg2Gnsgks7Qw8voBcD3EDzDHzfKQ69IRvCL1oOoILHUQ/+W6Ei4vauwI8K
+	Zg9PDW7B16mrjlKnDh3HNKrIEG8ZXwxOec1eo2CjPPKUnVGK53/ajSndHeiLe7dy7cYSS3+MUXgcu
+	3pkKCbIa/+5saz7kGRJLzTtljG3Wryg/6ZFzuoovWHP2z5QSUO6lJR6gYnr6oU3EIXcxiea+2+mWF
+	ofPLUTuA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPRHi-0000000DfZR-0ZnY;
-	Fri, 06 Nov 2026 21:15:42 +0000
-Received: from mail-wm1-x336.google.com ([2a00:1450:4864:20::336])
+	id 1xPRHj-0000000Dfaj-3LpB;
+	Fri, 06 Nov 2026 21:15:43 +0000
+Received: from desiato.infradead.org ([2001:8b0:10b:1:d65d:64ff:fe57:4e05])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPRHf-0000000DfVa-33Gh
-	for b43-dev@lists.infradead.org;
+	id 1xPRHh-0000000DfXx-2zMi
+	for b43-dev@bombadil.infradead.org;
 	Fri, 06 Nov 2026 21:15:41 +0000
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4a549cd7fd2so637905e9.0
-        for <b43-dev@lists.infradead.org>; Fri, 06 Nov 2026 13:15:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:MIME-Version
+	:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=5LdkwID3WreVQx3B/bipks5YOf8mwojL59qXQchJ17I=; b=Ps8CjvUVYqjp+Qy63akE/Bkae1
+	Qdj6/Vz/pNf19olMIkP+Y1hR88I6d60t1Rt3YQweLCeIg4MD2NmXGoU04wZc/L+xCTXjeDPUMWY7h
+	Tl0UB3MOQA68YVLlqcx2Kfz7yAlRrcglqHikEY4tGPSIn2oAcw6BPYVdhI2Jz4Luuje1to7E+kRMX
+	2JQ/7hUvtJ+qGgIbcSYjt5KVhrZ3IgMjEdYCqHcIiPiokJblCjkBoiCodBcyJrShwEsAIhWXe4qpD
+	wQxCFciu9VwxUVCQ1lxLxBxn9SWcfpASVMdS6v63DvzUmjMsBwVWZ6r1agB2iPNOwL1pUtBU6QpcZ
+	gTp4uv/A==;
+Received: from mail-wm1-x32b.google.com ([2a00:1450:4864:20::32b])
+	by desiato.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
+	id 1xPRHe-00000004hui-3tdE
+	for b43-dev@lists.infradead.org;
+	Fri, 06 Nov 2026 21:15:40 +0000
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-4a59100fa83so9454555e9.0
+        for <b43-dev@lists.infradead.org>; Fri, 06 Nov 2026 13:15:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793999738; x=1794604538; darn=lists.infradead.org;
+        d=gmail.com; s=20260707; t=1793999736; x=1794604536; darn=lists.infradead.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=FE9Jx3Oce5/DrcXeSeUgKLEZbdD4bTE8lYWFSeIC14Y=;
-        b=dJi1EaXKdlbKP1dEYMpEt4OBvfeZAnHD71NebL+iGacSvD7K3lNqD/zNZWfUg/jnkG
-         06R0BtLgABIpiT0k6gMxoOH9+5qGMlqLjqt/XT3/sBdF50LVM+19k082NhqnPGPBHIRF
-         VThc7Oom2fFx2YCp+gjpUo+MyyHkNgIRjG5D8vs2QAjlOcthxmSt/Y4iC51Txw8MpWHL
-         0kTWeDIDE2VMrNwnxSuvY9xfL+fZn99H7ucMP4ly/xZrJ/kX2K087Ok4NACe6s1EGEaP
-         4Ex5TsFWNdAgBibrGz5LYKJZmXaCtb7fiChHVRHLPA2JNtw4EhQvEMKGUwdRvIZPKXR1
-         hb1Q==
+        bh=5LdkwID3WreVQx3B/bipks5YOf8mwojL59qXQchJ17I=;
+        b=uyyTYwiyuPgXH3nGkg07NzYJFaN5FnCl4eppeg6vIX6X+SXzRgLj1YjeVFJCWm9kFE
+         Avj6qEePiUCHVBAVq0WBNzSySpaa7Z1ozS2HKytBa0h/uUznZwbRvwNVC6Rqb/Fw8vnZ
+         78HOH3VaJ/3/A1MuuxbzjMlLbdCBTKIc8YT4YRIjkKXi0KIoDkKRSM2ObFjoKLNYVDko
+         wg0z0xvpZkO1QfukO66pWclyewJTZ/9F0Mfp7FPqgajfhxwg68YqrnZcAvWuednQgSVP
+         tOsBXqSeCZSILQ0NbSN6xCP0AybDjaOgnt7LkPDH+9v8rQrDYQU3rJYAKCjx+UiWOeyF
+         G/OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793999738; x=1794604538;
+        d=1e100.net; s=20260707; t=1793999736; x=1794604536;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=FE9Jx3Oce5/DrcXeSeUgKLEZbdD4bTE8lYWFSeIC14Y=;
-        b=r6kUtgEOzcSYV7cUvOOPdKrUcazrdTX4C1k2DKCSPZEnQA2x1QkA/4bA0YFSNf5dS/
-         VktPYUO/X3g5wrdIThvE4fWyL+ah0e/rB3560aXihqmJl+jKoD9VpLctTsbJ1ZFYS3Ep
-         z1WoHJGKr46a5xK+h8//+3gW9Yu1Jls5+Gze/BJU/VRBIHD+8ejxoZ5y4v1mohGsQ7GE
-         GYfdZq4vsdLEBnxB4HDTzvtAcW7CoQwdHA6tzzUIKJHeNB3t0lUtmX8wrqeFfXYI+SB4
-         RtiHeQpCXe+R0cEvyf0E7A1HlTClsJ24XtB/QnBIrBheasftxeYRip06sc2bcov/8Vod
-         7vug==
-X-Forwarded-Encrypted: i=1; AKwUvBxG8WvVonZOf2IIkXnXNQxPwW8Ln0hk878zSrqf1yO0RIfiKMWQ8F6xIgFRUz5eYToQo9SISdHd@lists.infradead.org
-X-Gm-Message-State: APuU4Z9owhogRMLa0iEP9J86r5Qaseyl0NgPygMOUzeyHyS2zBXhViSf
-	Az02ca/tCL/b6KbrKSrYJxyDFylpQN1VMQ1DthP0+5+LG4/LaymuQ7ic
-X-Gm-Gg: AYBFou3Zo10+taQhafTi+kt/1FE7J1E3ldfTiLaSpNTYy3H1BVYUip6gwEJS5KXYNDs
-	03H8DKAXiasQOL+BbGdzh+VTeBuj88FBLZiR73WqKYiIsHLdfjSCiLVRdaKb3E78aIiz950vfHp
-	LtL4zwfTfgivCP7dHU1tdqB1QsO5/tE+ObjEZiOf1iNmnq16JZSLfOSPrZiuEYiulsw6U6scKlU
-	fFkInqt/jK7ceLow8NMjZWwhxESCWwfi5iYeyE6xmhd2sVQRF9OXBy5DMGUKSosmAnHPD0w8Wtg
-	62VgYgZLHL1AruqiUtIJVnr1uh5do2FQD1ixUP5/fgYwnyXcvqyLmNuPgg0jDLY5+P1OBPm52tJ
-	n8h/n1u8hocX7aEEiU+B73wYpnKapBp2PYPqBQ7SGSmegsKQH+G5FHv3JnRgFNrDiqeKcp915Oz
-	VXPMaLH3XfZftKc9qnk6pmUpIDcaF+aiwlaf/fq05X6JD3wSRyp28KlBjbw0E3l+Ihqg0u8NGl5
-	VrVSlNpllc9rHlCyYVHCtbN2O65l/Psph2qnOlH6LSg3gUbaMbQ5npL7giBrIZysG/PE/qJuc9J
-	0Ff16UgNwVZ3k1wYiLJKGkWOdf7EPOTpM9K7lQOLuypT67iLLPc=
-X-Received: by 2002:a05:600c:64c8:b0:4a2:18c4:61a5 with SMTP id 5b1f17b1804b1-4b8190f42aemr3302375e9.6.1793999737652;
-        Fri, 06 Nov 2026 13:15:37 -0800 (PST)
+        bh=5LdkwID3WreVQx3B/bipks5YOf8mwojL59qXQchJ17I=;
+        b=j9feX0o8XGO2NU5MRf5inXY4Ht+vDqKRwYWfSzBD7/sC4wtNWIoxeK3c0p2bZT/VpZ
+         O5Q77F/HdFqjQk+OWVdMrdz8OIJGotstivFLuEnWxH5f0x3o8f6FfVMTM8mR6/+GKV/w
+         XKhKxEVzYWpw08dI2vMylPRclrm+b3FCwAcVX9TdHaOJPF5wuIBsR2VBarSjxkWKYthj
+         XIN5wrw7zsR+YchA+giLH7S07RQU4xqHThLAdIgo7E4gu7i1WenkWRP52Ax/gZtNdGxI
+         k7KvgtetWv4z6vbAa69EAcGHYFlmDGJTUeIqqnQsBsPlGG71BWxuSptffk1q8KDmJkzF
+         BxFg==
+X-Forwarded-Encrypted: i=1; AKwUvBwgoIBZcB+gI5q7obwzwsp4QUeF9VkdHkkDPw3tc2yHPLhx5AkbNxnI3VkBYTRyTLLyUYVdAOEy@lists.infradead.org
+X-Gm-Message-State: APuU4Z/pXlOMAbVMssQoC6LvFjqlX1Ne2/loMjNNW54zeR/BBdZ8X32/
+	4PyomZlWUazwInb4BC9LIoYr4g5s+emB8URyR43bXxdPZ+Sb++d3R4Cv
+X-Gm-Gg: AYBFou3jMgbEnpruslvwj2+0K0QLJzYCnVnuKRZFHTBVtPhr1JHLVZyXcAtENJF+Fnd
+	YKfsoYw9fHwz2taYe+DseR3mMzNaaJDw32WKV/GFGnzSjnyoFxVCF1kEEUAzsiCINXFr22iGuGh
+	k4N6K3SzmreEbGLyYZqiTPTctoscaVXIupvzLseLf8v9l7Vc8VbzQ/9Eqo64PYULEJL1bKKEC/m
+	fi5BKvTTAQd0u7t0vfueDTXHVIYlsQvmY779crqjn7KtJzJG90aaw3YdD0y2oO/a1VOA7muKn07
+	5BoO/KFaaDglql6jDZnkAGN/jW8/PBFXb+FftG5oZ+k2n4QlGF+10RdYaOkUyFb2p+CK2tuU5cM
+	78DqJkZdadNGNnn5OjjuLz8c+0OtbIyop2dvUfuujuCETxen+70oo1YbWJPU4wiw8bmdjikrWC5
+	O0xsnv7pdxVrpXX6lpnQKZOtSpQBzMkgnmDEL9NYg/pZLBs89LvQWTRGKwL+QPMdodo/CddTru+
+	9Wi+suFp0QKxMLcY3zN8K0uXkJCzc6tESL5syKv3DD+nXZQGd3pEKNCJBK0gmmvJaac/TFnvbO8
+	gK9++Y95XU+zVwoZs5hG7kvwY6OlP8O+1UBdTmD3EruxN7tC0yc=
+X-Received: by 2002:a05:600c:310f:b0:4a4:7a8d:c736 with SMTP id 5b1f17b1804b1-4b6de78917cmr60814345e9.9.1793999736520;
+        Fri, 06 Nov 2026 13:15:36 -0800 (PST)
 Received: from luca-HP-ProBook-650-G1.lan ([2001:b07:6454:c33e:970a:d82:3e9:48ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e32ad610sm18070765e9.3.2026.11.06.13.15.36
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e32ad610sm18070765e9.3.2026.11.06.13.15.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 13:15:37 -0800 (PST)
+        Fri, 06 Nov 2026 13:15:36 -0800 (PST)
 From: Luca Casati <luk00casati@gmail.com>
 To: linux-wireless@vger.kernel.org
-Subject: [PATCH wireless-next v2 4/5] b43: N-PHY: use wl's delays in the 2057 RC calibration
-Date: Fri,  6 Nov 2026 22:15:15 +0100
-Message-ID: <20261106211516.273791-5-luk00casati@gmail.com>
+Subject: [PATCH wireless-next v2 3/5] b43: N-PHY: fix rev3+ RSSI calibration
+Date: Fri,  6 Nov 2026 22:15:14 +0100
+Message-ID: <20261106211516.273791-4-luk00casati@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261106211516.273791-1-luk00casati@gmail.com>
 References: <20261106211516.273791-1-luk00casati@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261106_131539_804681_42DAD3A2 
-X-CRM114-Status: GOOD (  13.40  )
-X-Spam-Score: -2.1 (--)
+X-CRM114-CacheID: sfid-20261106_211538_821354_16F63E03 
+X-CRM114-Status: GOOD (  13.42  )
+X-Spam-Score: -0.2 (/)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
 Precedence: list
@@ -109,98 +125,57 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-b43_radio_2057_rccal() follows wl's sequence, but sleeps with
-usleep_range(x, 2 * x) where wl waits x us, and polls DONE every
-500 us where wl polls about every 30 us. Every step takes about twice
-as long as in wl.
+Three bugs in b43_nphy_rev3_rssi_cal():
 
-That breaks the first run. Its poll comes straight after the start,
-while RCCAL_DONE_OSCCAP still has the done bit set from before, so it
-returns at once and the run is stopped. wl does the same, but writes
-the stop about 40 us after the start; b43 writes it about 85 us in,
-while the cal is running. RCCAL_SCAP_VAL then reads 0 or 0x1f instead
-of 8 on a BCM43228 (radio 2057 rev 9), which detunes the TX low-pass
-filter set up in the rev7+ workarounds. With only that delay fixed it
-reads 7; with all of wl's delays it reads 8, as with wl.
+- On rev7+ the selected VCM was written using the loop counter (8 after
+  the search loop) instead of vcm_final; the 3-bit field turned that
+  into VCM 0 on every rev7+ PHY.
+- The distance used I*I + Q*I instead of I*I + Q*Q (brcmsmac
+  wlc_phy_rssi_cal_nphy_rev3()).
+- Negative W1/W2 offsets were rounded as -(abs(x + 4) / 8) instead of
+  -((abs(x) + 4) / 8).
 
-Use wl's delays, with udelay(): the whole cal busy-waits about 2 ms,
-as brcmsmac's version does.
-
-mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch4-rccal.txt
+mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch3-rssi-vcm.txt
 
 Found and fixed with the help of an AI coding assistant (Claude Opus 5.5),
 by comparing mmiotraces of b43 and wl on the same card.
 
 Signed-off-by: Luca Casati <luk00casati@gmail.com>
 ---
- drivers/net/wireless/broadcom/b43/phy_n.c | 26 +++++++++++------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_n.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-index 36c07d891..ab8fab018 100644
+index 6b0140f05..36c07d891 100644
 --- a/drivers/net/wireless/broadcom/b43/phy_n.c
 +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-@@ -940,12 +940,12 @@ static u16 b43_radio_2057_rccal(struct b43_wldev *dev)
- 
- 	/* Start, wait, stop */
- 	b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x55);
--	if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 2, 2, 500,
-+	if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 2, 2, 30,
- 				  5000000))
- 		b43dbg(dev->wl, "Radio 0x2057 rccal timeout\n");
--	usleep_range(35, 70);
-+	udelay(35);
- 	b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x15);
--	usleep_range(70, 140);
-+	udelay(70);
- 
- 	/* Setup cal */
- 	if (special) {
-@@ -958,15 +958,15 @@ static u16 b43_radio_2057_rccal(struct b43_wldev *dev)
- 	b43_radio_write(dev, R2057_RCCAL_X1, 0x6E);
- 
- 	/* Start, wait, stop */
--	usleep_range(35, 70);
-+	udelay(35);
- 	b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x55);
--	usleep_range(70, 140);
--	if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 2, 2, 500,
-+	udelay(70);
-+	if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 2, 2, 30,
- 				  5000000))
- 		b43dbg(dev->wl, "Radio 0x2057 rccal timeout\n");
--	usleep_range(35, 70);
-+	udelay(35);
- 	b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x15);
--	usleep_range(70, 140);
-+	udelay(70);
- 
- 	/* Setup cal */
- 	if (special) {
-@@ -980,18 +980,18 @@ static u16 b43_radio_2057_rccal(struct b43_wldev *dev)
- 	}
- 
- 	/* Start, wait, stop */
--	usleep_range(35, 70);
-+	udelay(35);
- 	b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x55);
--	usleep_range(70, 140);
--	if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 2, 2, 500,
-+	udelay(70);
-+	if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 2, 2, 30,
- 				  5000000)) {
- 		b43err(dev->wl, "Radio 0x2057 rcal timeout\n");
- 		return 0;
- 	}
- 	tmp = b43_radio_read(dev, R2057_RCCAL_DONE_OSCCAP);
--	usleep_range(35, 70);
-+	udelay(35);
- 	b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x15);
--	usleep_range(70, 140);
-+	udelay(70);
- 
- 	if (special)
- 		b43_radio_mask(dev, R2057_RCCAL_MASTER, ~0x1);
+@@ -2167,7 +2167,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 				continue;
+ 			for (vcm = 0; vcm < 8; vcm++) {
+ 				currd = results[vcm][i] * results[vcm][i] +
+-					results[vcm][i + 1] * results[vcm][i];
++					results[vcm][i + 1] * results[vcm][i + 1];
+ 				if (currd < mind) {
+ 					mind = currd;
+ 					minvcm = vcm;
+@@ -2184,7 +2184,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 			b43_radio_maskset(dev,
+ 					  core ? R2057_NB_MASTER_CORE1 :
+ 						 R2057_NB_MASTER_CORE0,
+-					  ~R2057_VCM_MASK, vcm);
++					  ~R2057_VCM_MASK, vcm_final);
+ 		else
+ 			b43_radio_maskset(dev, r | B2056_RX_RSSI_MISC,
+ 					  0xE3, vcm_final << 2);
+@@ -2219,7 +2219,7 @@ static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev)
+ 				if (j / 2 == core) {
+ 					offset[j] = 232 - poll_results[j];
+ 					if (offset[j] < 0)
+-						offset[j] = -(abs(offset[j] + 4) / 8);
++						offset[j] = -((abs(offset[j]) + 4) / 8);
+ 					else
+ 						offset[j] = (offset[j] + 4) / 8;
+ 					b43_nphy_scale_offset_rssi(dev, 0,
 -- 
 2.43.0
 
