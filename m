@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9A2606A326
-	for <b43-dev@archiver.kernel.org>; Fri,  6 Nov 2026 07:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13396606A339
+	for <b43-dev@archiver.kernel.org>; Fri,  6 Nov 2026 07:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=scFP0d0G;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=GLWf/+CO
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=AF6im23i;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=W5FpLjtm
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
@@ -14,53 +14,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=1Fyp22fU/MrkPRK3362OtqiqGDkCipjHbOObDEnrlSY=; b=scFP0d0GmQXDFulyWGzMbnXykP
-	CPOENLPz3ccnYKhEwS4zlbEcJ6iZti4ezmw/Pd48ICk7eTYEPvJwYDfE0AwXNFYsOLh1vLDvku6DE
-	gHa/Hok4oHlAGVVjCj8BFybl+8qoytf88g3yqsJIoYgYjwOFfK/ZN4Y7KzceGSgwetj94LZ5F80gJ
-	HTAXlncwpowH12cEDp50hiv+3rKCx3/KmD3tBnkw3Jw/PUmGy2iIY3Xqj8cjI9WtGErcqJw6k2t2P
-	9wY9MelKemupD3ih0ukqKJ+wLf5FMfBX1x9QbaUW2oBJHKAGN2x+MnlpmPIEKPzrccnDhQGOCNpjk
-	M7Efc1SQ==;
+	bh=X+8237kLv3AP4EQk0KGNJoA+ap03yJKHwnbhoMI7ZNI=; b=AF6im23ifL6U+q0GQD3o/HR2X4
+	hGvESsKB0eIpN4Tjf7KZesGTOobu1ZrZQ/NyGg2+d8GQPRQlWMgfixaSrCSLyEIKhQ7BxjldWxpBm
+	6pUGdz1q3ITse3l93BbthL4+lWeMKps4miBf/ayz4UOwjeWe0vPVbcdqnDg84cETtEk++8vvr72jF
+	cBwzwEbJIdTrQZl/7E/PTsYk5pyMaDSm6MT+Q9uiab4Nck6XUnoyHEWnnMHELuRTqtYYsknp0M7hS
+	Sr9CaSGaudOvQXhZTEoJmw1rCi1038PFqzi48iU2vLSPkDms4uT6Q8aq//Y6RXc+ckRxi5tJfNRqG
+	tGWqiErw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPEIq-0000000BRGT-05AP;
-	Fri, 06 Nov 2026 07:24:00 +0000
-Received: from smtpcmd03117.aruba.it ([62.149.158.117])
+	id 1xPEWE-0000000BTIQ-0kXE;
+	Fri, 06 Nov 2026 07:37:50 +0000
+Received: from smtpdh20-1.aruba.it ([62.149.155.164])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPEIj-0000000BRFg-1mxg
+	id 1xPEWB-0000000BTHd-0jVa
 	for b43-dev@lists.infradead.org;
-	Fri, 06 Nov 2026 07:23:55 +0000
+	Fri, 06 Nov 2026 07:37:48 +0000
 Received: from localhost ([87.16.49.252])
 	by Aruba SMTP with ESMTPSA
-	id PEIdxwhc807TYPEIdxOTvt; Fri, 06 Nov 2026 08:23:47 +0100
+	id PEW7xsYn9YWYhPEW8xWt0E; Fri, 06 Nov 2026 08:37:44 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1793949827; bh=6SbqUfL5hMXbpyxVRRztlA9PDvpV/5i8dOmiY2Sb63k=;
+	t=1793950664; bh=lrhMqVkvC2l9wTfLx9KxlyC0W3KVM5fsim8Tnpe93nE=;
 	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=GLWf/+COFJnmPR3Ai8RSAG55g1H3E3rGQ5zJSuQXWoxR2QZLjlL6xpApmfnuVOu6j
-	 NjzRbIEibtgyEhi0k1cwdAKIvx2n2VipcI+RXqHtchSYp8BxITQp9/oKtjvWDVzjBE
-	 LdSOy3SCHO5BQuqPcYRnHoB7Lkr1450+7/90lim3uZkYCI5ttfKrTkzf/4R112WRbf
-	 Z+kIfmshYqwlx9uWnWnlotlmTnSlGeOseoW/tvXsi5MJZsK2r7n1jUAYjD8/rjdPs9
-	 oCIEhGi18udptG/VPJjmrly06ieOl0OoYtxJTGD+8kPGjH0+2Wk0lhdGqP1Gtbu8t6
-	 fvOhpe7No317w==
-Date: Fri, 6 Nov 2026 08:23:39 +0100
+	b=W5FpLjtm5zrQDqnWOu7zCbMVr+T/v6F4x0hIuONyVIcOMIDQeoVshEcVF4LmKG3V8
+	 JcO7fjZn/nSL6mHK2G573RIVYREf7qvEMFvs2kZ0iXjM3KZqpYXtA28ZS7t+JlJUWF
+	 Q5fxXX2br31T1pqTRd4ngAl8fNisNFz0f/DBZjG/cFSAY3pmxPtbhQdWnJ6gByydBU
+	 7B3sktTzYdOvo+vLF9UDdIXMmlX9dqT8ZB7ucU3mqBst6NgecER4lpEe3FLWtF7kky
+	 bnoaAGawjMsRb9b8KGioiIYQ9F6y7Ny9NEeStaylTl9J2Ctlzl7OyKfcAFTZ5UVA/u
+	 HaFhg7RsH/YMg==
+Date: Fri, 6 Nov 2026 08:37:36 +0100
 From: Alessio Ferri <alessio.ferri@mythread.it>
 To: Luca Casati <luk00casati@gmail.com>
 Cc: linux-wireless@vger.kernel.org, johannes@sipsolutions.net,
  arend.vanspriel@broadcom.com, b43-dev@lists.infradead.org
-Subject: Re: [PATCH wireless-next 0/5] b43: N-PHY: fix calibrations on rev7+
- (BCM43228)
-Message-ID: <20261106082339.0000398a@mythread.it>
-In-Reply-To: <20261026181543.77763-1-luk00casati@gmail.com>
+Subject: Re: [PATCH wireless-next 1/5] b43: N-PHY: fix the TX tone sample
+ table
+Message-ID: <20261106083736.00006add@mythread.it>
+In-Reply-To: <20261026181543.77763-2-luk00casati@gmail.com>
 References: <20261026181543.77763-1-luk00casati@gmail.com>
+	<20261026181543.77763-2-luk00casati@gmail.com>
 X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfIxpaP4UX8RgonJ88qN159lSQCkT3Zyw+Hd1oaxICobfLx8zkyq2hxPpBs7UzlnWdAdQqVasoKE7Xi2D5SDzRHFZ/FXx1tsqnz7yXzvpHFLyr5swliXH
- H+PJvXRhjyPaOhZA3/UR+BwCNvvar9nlnErVEIQsbgpHkr3CvxD/wjrEe+mZ7K4e1tKSFtN/R9oimVbkd5mx1ggJGKpYZDkn6P+6JwYySGcqYUeHm70rG91K
- y/IN/UQmEjiBT9YmIAOcbnDLIz6eXcha58zKbLlaYa+UXxGOR/p710VIENkOwRcdBrs98q74EE4OZvmHrnuaQDLvomGL9rXma//2FEhjsSJem+Im6Rl3v770
- 7AgMyaEq
+X-CMAE-Envelope: MS4xfKMMvZqQOwT4gbLw30XyDK0dIXXpytAPVVz+WpYfG98p64NbabkiO5Vx7R29rUy+zunnIfCV4QCnqn1uE1qt6ygKdF4J9qQYORa4+RvGw7NeE3jvLyH0
+ wo7y8/68suKFFozWJSYhnEk8lanrJg6XNmwd/lgP7E5E450xW3b6p1WZxlwi9suADe5hwXY9IJeEzr3VWH2QP5RnkTkmTM05hfi+C4zh2QA3hSSW4zSu7sZ2
+ 6VkUcCrbwgIrja5mar8aN4L3TkdIQG3iKoein8Xi9HFxwKwqhe93WD7FjjRFO1tIhi96ZDN0AqL05TLWUPnGWCHo3iUxFy8vBGD+lFT1JyI8tksxH3A3BPfT
+ IUZ56i4h
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261105_232353_930925_98ED4E90 
-X-CRM114-Status: GOOD (  20.80  )
+X-CRM114-CacheID: sfid-20261105_233747_382255_A0649D25 
+X-CRM114-Status: GOOD (  17.67  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -74,75 +75,81 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=no autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Il giorno Mon, 26 Oct 2026 19:15:38 +0100
+Il giorno Mon, 26 Oct 2026 19:15:39 +0100
 Luca Casati <luk00casati@gmail.com> ha scritto:
 
-> On a BCM43228 (14e4:4359, N-PHY rev 16, radio 2057 rev 9) b43
-> associates but transmits poorly: high retry counts and low rates.
-> Comparing mmiotraces of b43 and the proprietary wl driver
-> (6.30.223.271) on the same card, together with brcmsmac, turned up
-> several bugs in the N-PHY calibration code:
+> b43_nphy_load_samples() masked with (0x3FF << 10) instead of shifting
+> the masked I value, and b43_nphy_gen_load_samples() fed
+> cordic_calc_iq() a 16.16 fixed-point angle (CORDIC_FIXED() of a value
+> already shifted by 16) held in a u16, while the function takes whole
+> degrees. Together the sample table ended up all zeros, so every
+> calibration that plays a test tone (TX IQ/LO, RX IQ) ran without a
+> signal.
 > 
->  1. The TX tone sample table was loaded as all zeros, so every
->     tone-based calibration ran without a signal.
->  2. TX IQ/LO calibration: inverted busy poll, reversed final copy,
->     and missing rev7+ cleanup that left TX dead after a cal.
->  3. RSSI calibration: wrong VCM written on rev7+, wrong distance
->     formula, wrong rounding of negative offsets.
->  4. 2057 RC calibration: the first run was polled before it started,
->     leaving SCAP at 0 and the TX low-pass filter detuned.
->  5. A missing field in the rev7 TX_PU RF override.
+> Compute the rotation in whole degrees as brcmsmac does and fix the
+> precedence.
 > 
-> After these, the register writes for the cals match wl's on this card.
+> Tested on a BCM43228 (N-PHY rev 16, radio 2057 rev 9).
 > 
-> Patches 4 and 5 and the cleanup parts of patch 2 only affect rev7+.
-> Patch 1, the poll and final-copy fixes in patch 2, and the
-> distance/rounding fixes in patch 3 also change code that runs on older
-> N-PHYs (rev3+); I could only test rev 16, so testing on other N-PHY
-> cards would be welcome.
+> Found and fixed with the help of an AI coding assistant (Claude Opus
+> 5.5), by comparing mmiotraces of b43 and wl on the same card.
 > 
-> Tested on the BCM43228 only (2.4 GHz, 11g/HT20), on v7.0; the series
-> also applies to wireless-next. Throughput to the internet went from
-> about 5.7/4.1 to 11.1/5.2 Mbit/s down/up, with fewer TX retries. That
-> number is limited by the line and noisy, so take it as a rough
-> indication; wl reaches 21-32 Mbit/s down on the same setup, so there
-> is more to do (PAPD and TX power control on rev7+).
+> Signed-off-by: Luca Casati <luk00casati@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/b43/phy_n.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> Comments and changelogs refer to wl where the fix was checked against
-> its register writes. If citing the proprietary driver is not
-> acceptable here, I am happy to reword them.
-> 
-> The bugs were found and the fixes drafted with the help of an AI
-> coding assistant (Claude Opus 5.5), working from the mmiotrace diffs
-> between b43 and wl and from brcmsmac. I reviewed and tested every
-> patch on the hardware above.
-> 
-> Luca Casati (5):
->   b43: N-PHY: fix the TX tone sample table
->   b43: N-PHY: fix TX IQ/LO calibration
->   b43: N-PHY: fix rev3+ RSSI calibration
->   b43: N-PHY: wait for the first 2057 RC calibration run
->   b43: N-PHY: add the missing override to the rev7 TX_PU command
-> 
->  drivers/net/wireless/broadcom/b43/phy_n.c | 120
-> +++++++++++++++++++--- 1 file changed, 106 insertions(+), 14
-> deletions(-)
-> 
-> 
-> base-commit: 028ef9c96e96197026887c0f092424679298aae8
+> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c
+> b/drivers/net/wireless/broadcom/b43/phy_n.c index
+> bbc30cbad..66565c14e 100644 ---
+> a/drivers/net/wireless/broadcom/b43/phy_n.c +++
+> b/drivers/net/wireless/broadcom/b43/phy_n.c @@ -1515,7 +1515,7 @@
+> static int b43_nphy_load_samples(struct b43_wldev *dev,
+> b43_nphy_stay_in_carrier_search(dev, 1); 
+>  	for (i = 0; i < len; i++) {
+> -		data[i] = (samples[i].i & 0x3FF << 10);
+> +		data[i] = (samples[i].i & 0x3FF) << 10;
+>  		data[i] |= samples[i].q & 0x3FF;
+>  	}
+>  	b43_ntab_write_bulk(dev, B43_NTAB32(17, 0), len, data);
+> @@ -1531,7 +1531,8 @@ static u16 b43_nphy_gen_load_samples(struct
+> b43_wldev *dev, u32 freq, u16 max, bool test)
+>  {
+>  	int i;
+> -	u16 bw, len, rot, angle;
+> +	u16 bw, len;
+> +	s32 rot, angle;		/* whole degrees, as
+> cordic_calc_iq() wants */ struct cordic_iq *samples;
+>  
+>  	bw = b43_is_40mhz(dev) ? 40 : 20;
+> @@ -1554,11 +1555,11 @@ static u16 b43_nphy_gen_load_samples(struct
+> b43_wldev *dev, u32 freq, u16 max, b43err(dev->wl, "allocation for
+> samples generation failed\n"); return 0;
+>  	}
+> -	rot = (((freq * 36) / bw) << 16) / 100;
+> +	rot = ((freq * 36) / bw) / 100;
+>  	angle = 0;
+>  
+>  	for (i = 0; i < len; i++) {
+> -		samples[i] = cordic_calc_iq(CORDIC_FIXED(angle));
+> +		samples[i] = cordic_calc_iq(angle);
+>  		angle += rot;
+>  		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
+>  		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
 
-Can you link the mmio trace somewhere?
-Usually a mmio trace is in the order of thousands of operations, so
-telling something come from a mmio trace is not very useful, but if you
-link and point to the group of operations that validate your point the
-discussion is easier.
+Drop the added comment, claude like to add random and useless comments
+all over the code. Changing rot and angle type is not strictly needed,
+but ok for consistency with brcmsmac.
+
+The rest of the patch is good, i encountered the same problem.
 
 Alessio
 
