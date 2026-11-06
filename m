@@ -2,91 +2,66 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8A3606A32F
-	for <b43-dev@archiver.kernel.org>; Fri,  6 Nov 2026 21:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B219F606A32D
+	for <b43-dev@archiver.kernel.org>; Fri,  6 Nov 2026 22:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=p9Y1H2r4;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=K9xBHGLs
+	dkim=pass (2048-bit key, unprotected) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=gMtHtOga;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=b4fM4jZx
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
 	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=P0FDvrt+yTGEyT0Xr1AL+Jc1anvy/ZBBJjauozQj7vE=; b=p9Y1H2r4uqPhOTvRXTOoL2uOpG
-	fvinfTprzMLIiNrwGkc93o9L3ekzKkj7pTYc5vph9xW9TufSiP6tbbAkd83arCPmaVb3tI3FZp3uJ
-	CJtvZyXuRzL9nzf7JHSb55wO/a+YOFwS/FjPa3KUuwfj7jeGGlL70kcnwCD5dduh17GSOgFzhijbA
-	lSWfs6y/0fYPsLm74SWFUvKJItf68qzxYGlHr0nvAoRUDI2Hdgoi7nz5X9cpKhIavFM4suv6WTWwA
-	0IwfkzaeLUn3OdFSmIUtIBAZlxy1o2cjEE67mOQxxC8jVsqJQVfA1yioOeYTkEYE2/bUminwhh5Bs
-	6Ei5V0WA==;
+	bh=HaGRxgqitScvIQMDBPbBnYpDb3+yCPyAZeejn2neLoY=; b=gMtHtOgakKcU/HPFD6xD1UhRO/
+	6HhpNE3lzvk2EP3zM1/5g2PT1g2HCQjCMasoTjQyNPLhmbFCbhaBSlbvxRMfgbXKO5v+ySd1CfFie
+	CFELMqnefbW6si5RdREDYN4MHaB8vmSTFCmVnrH6T1WjwVenrx60k0FLwvG4KzMshfnWzJP8xjoIN
+	FaVoenlMr4mrfIII+ELaYqpAg5ZQUMyc8pSLOZrLb9X4PHvLEDNbM5ssQD9bxDG3a4Czx3DzHyn9+
+	Oz+41LtKTn0zl8wJr1+IdU6GMs4fCc7SBEkBmT9Sjw7FLxzFgGNnWSqTgx6s4dlbSR/n3f9kzCf41
+	Uoi0LH1g==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPRHj-0000000DfbW-3u6E;
-	Fri, 06 Nov 2026 21:15:44 +0000
-Received: from mail-wm1-x331.google.com ([2a00:1450:4864:20::331])
+	id 1xPSAN-0000000DlaG-0MUl;
+	Fri, 06 Nov 2026 22:12:11 +0000
+Received: from smtpdh17-1.aruba.it ([62.149.155.116])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPRHg-0000000DfVr-2pbj
+	id 1xPSAJ-0000000DlYO-334o
 	for b43-dev@lists.infradead.org;
-	Fri, 06 Nov 2026 21:15:42 +0000
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-4a60f9474c4so12946115e9.0
-        for <b43-dev@lists.infradead.org>; Fri, 06 Nov 2026 13:15:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793999739; x=1794604539; darn=lists.infradead.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=iPNIeXgX2T4OrMflEE5HyV1UINBwuHr5/ci2c5MyX1k=;
-        b=K9xBHGLsqNtZ9oUASJf1BHchX1TsYgaA2mbAmP7L1n0wxMn0Czze8mBHOLzadX0z2v
-         KJ9PmoiIg8WEd9MGmlWCSBgQRj78P4shz1jARuC71iPe3MOn+pUwM67JHdgOEKx4pkGP
-         JLNFC4QHsyd0C06LRQKwIT5Opk97GhK7MBlm1vWu1SA/QZOrdGRfyXt+ahTz+shX+q1H
-         2BsiVK4epOLPqvM4QJzQvZOjCy5JiuqHN6MaL7fuhoe+AY7zFXlDhnS0c0LGWz//oc3u
-         YsquW42/2llws7R09nVMoAZYH+TWV2qyjfi5dAVjFGLfdX/loyYC+u3g/sehoD39Pumj
-         2bkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793999739; x=1794604539;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=iPNIeXgX2T4OrMflEE5HyV1UINBwuHr5/ci2c5MyX1k=;
-        b=wNR/1eQa+z8EOaNEXfLsqspk3IOjdR4rB2YFagjboabB2vF7X2REL6IakDhxxQLJ11
-         VsYP86T6d4oq5U6J8OE1pmcNpdcWxIV8ApCNlosXANeqM8NVfrPnYciHXzKHwupDEmgE
-         8qqwhn+FTjte90VwqNytxcIOzjRz7PcYoDLdIhbEtCizPr67snDW7TM9TfaHx5tgGUwk
-         Dnludk/3lFThEbnN/Wa0bjpCugPy4195YYD9wCHxbORNM1fa6X1GKpxFBw2jcCbG9b2s
-         GGdClw+7EqLdo8Ys3NTiWv+9xJU/o6EZx2TuTy0NxESrAYCpK8q3J86bGpAPIfSxobJH
-         GFzQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzaUuksOleITlG3lsvbIdBJjBFuXhhzhIu0GoazFRjyPv1jK6m6jWTr6kZEHwCazt17k08jNbkY@lists.infradead.org
-X-Gm-Message-State: APuU4Z+b/cRMs3ucaSR0mLtjAzAfrK/aCoAlI+nmToJUBTLAw6/9kMD1
-	WvlB5Vl4gMiNNQxbSXWkraVx3x0rW02rxTAtnqD81aTKxYU/DLSBr0ty
-X-Gm-Gg: AYBFou32yZQnizP63rMVjMrnMOuZ88nHKExel4bRU6dRdsojeHYiLJSBbok2LjrrvOe
-	KD9h6FKfqluiBd0Fxes4CsysBfEfsfTG+3gkZ5Plr1F1CVNdScYBvvr7BMj1RJnu3AnZJ7JAwLe
-	splPqbK5LFFzHVk2J95Iouascqp45EAPcl5xBqzVTKdjb3Jc75dkL3hHzDDm31K6yd2GvJJvfT4
-	iyBWFiZdDp+2RBfBBD7/h9rTDhmrXXw+CtQsl+2n31PK1De0yDYnlBjYFPe86NNYESHbe4MhWy1
-	CNIJYBjZdG9i9J292kX+bZhIt46wRvfbTaUS5r2Xe6y7Y6nrRxFo3lNgmXpAOuM+ZVsV6aUioTc
-	ssmtVbeSfLHvJTECalvdsL4l1rpNQSe7+sv3QFzEtdZoXXr3LBP+V1UrOIm+qNxFxY6qICeBHeo
-	uE8Xm6nvPICqbHzxwnPiYgCWXNW9US7W8A8eiumK+uqzi9g/bufIJ9iklDRmQREh1sMi8cI6hT0
-	TkQnCJp+kbws1/WlkuBewVeobBuya9fa5YLYZIA/i8Wrguh5yUPX2hhcyGbPCm2WP9KrciVUInE
-	WjSAaSUXWw4sMwlNliRtpiGlptkLDDoqGM3bxK+OfagmV+BGwpE=
-X-Received: by 2002:a05:600c:314a:b0:4a1:fa21:fd90 with SMTP id 5b1f17b1804b1-4b6de4a5dd4mr65782395e9.9.1793999738570;
-        Fri, 06 Nov 2026 13:15:38 -0800 (PST)
-Received: from luca-HP-ProBook-650-G1.lan ([2001:b07:6454:c33e:970a:d82:3e9:48ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e32ad610sm18070765e9.3.2026.11.06.13.15.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 13:15:38 -0800 (PST)
-From: Luca Casati <luk00casati@gmail.com>
-To: linux-wireless@vger.kernel.org
-Subject: [PATCH wireless-next v2 5/5] b43: N-PHY: add the missing override to the rev7 TX_PU command
-Date: Fri,  6 Nov 2026 22:15:16 +0100
-Message-ID: <20261106211516.273791-6-luk00casati@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261106211516.273791-1-luk00casati@gmail.com>
+	Fri, 06 Nov 2026 22:12:09 +0000
+Received: from localhost ([87.16.49.252])
+	by Aruba SMTP with ESMTPSA
+	id PSAFxplkKkeHhPSAFxTcEj; Fri, 06 Nov 2026 23:12:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
+	t=1794003123; bh=ZGt9E16nzykH9Ajz1azleSM2KOUHnN9gragopg2dc48=;
+	h=Date:From:To:Subject:MIME-Version:Content-Type;
+	b=b4fM4jZx+A/efqkwy3m4W7yXmO7VPj6iFpgE5yfAkjIsyHQ1RGp3bLEFs5eXkt7Wx
+	 F4zoejSXHRsvsUaBYQ6J3b5EB5Lx/1NasmaXywN0fBb7Xh8vL7iVSZqMlI5PfWT5T9
+	 t1V9wIIyBS9uUlWwPhPdDVayi8PDXNb9QURGspgAgWZCYhPC33qzLNvoZPW+2V8TID
+	 WVr9FzQwxp+P44xrZpmKqn9ruY18HwtvV9Q5gYOz5rEasZVER8l19dME9KFa/dR3Sq
+	 tzVo5k+++di1Vllz7VmvLPHIL+g6Xu2oSBTnn1h+Q3HOh5J4IRJ+Yu/MmHO2HiBA3W
+	 UqKR46w8Y+Tjg==
+Date: Fri, 6 Nov 2026 23:12:02 +0100
+From: Alessio Ferri <alessio.ferri@mythread.it>
+To: Luca Casati <luk00casati@gmail.com>
+Cc: linux-wireless@vger.kernel.org, johannes@sipsolutions.net,
+ arend.vanspriel@broadcom.com, b43-dev@lists.infradead.org
+Subject: Re: [PATCH wireless-next v2 1/5] b43: N-PHY: fix the TX tone sample
+ table
+Message-ID: <20261106231202.00004c8b@mythread.it>
+In-Reply-To: <20261106211516.273791-2-luk00casati@gmail.com>
 References: <20261106211516.273791-1-luk00casati@gmail.com>
+	<20261106211516.273791-2-luk00casati@gmail.com>
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+X-CMAE-Envelope: MS4xfBi88QmP7VZAFmeKmyOG6wE2hjbZ7XwFngFelYV3CKcWoMyOno4/el0tga/zV3LFCWEajCIbm4rQlPv1JiaDTSBnJ3BSe8aHTkCkqeiVUx72/2Db3Sa9
+ s9BrBjb2MuNsQTXu+q2l4fkMDiQ5oaXtfTHBIK16cPc5VVwV8ox0OtDD4D87M7Rj69PL9Ku/R7uez/gpMY3eR3sgu9UVE5F3WAl3UttFijRdEHw2sWUQufnS
+ Hl/x/nomOeoS9SeTpTavqCiZx74UfKpf79UZSgcRNqqEHQGh9z1x3fRzb+QaUyuZO4f5PeGPvS5w8Rj+oUGZ1zjTEt+z4JltgL5ui4TexLoFGNGnoUNxHJQJ
+ /+QUhC8Y
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261106_131540_731981_4D75D0CC 
-X-CRM114-Status: UNSURE (   9.89  )
-X-CRM114-Notice: Please train this message.
+X-CRM114-CacheID: sfid-20261106_141208_229974_9D999858 
+X-CRM114-Status: GOOD (  18.53  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -97,47 +72,95 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Cc: johannes@sipsolutions.net, Luca Casati <luk00casati@gmail.com>, arend.vanspriel@broadcom.com, b43-dev@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
 	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-brcmsmac's NPHY_REV7_RfctrlOverride_cmd_tx_pu also sets field 0x4 of
-rev7 override bank 2 (REV7_RF_CTL_OVER5/6); b43 left it out. With it,
-the override writes match brcmsmac and the wl driver on a BCM43228.
+Il giorno Fri,  6 Nov 2026 22:15:12 +0100
+Luca Casati <luk00casati@gmail.com> ha scritto:
 
-mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch5-tx-pu.txt
+> b43_nphy_load_samples() masked with (0x3FF << 10) instead of shifting
+> the masked I value, and b43_nphy_gen_load_samples() fed
+> cordic_calc_iq() a 16.16 fixed-point angle (CORDIC_FIXED() of a value
+> already shifted by 16) held in a u16, while the function takes whole
+> degrees. Together the sample table ended up all zeros, so every
+> calibration that plays a test tone (TX IQ/LO, RX IQ) ran without a
+> signal.
+> 
+> Compute the rotation in whole degrees as brcmsmac does and fix the
+> precedence.
+> 
+> Tested on a BCM43228 (N-PHY rev 16, radio 2057 rev 9).
+> 
+> mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch1-tone-table.txt
+> 
+> Found and fixed with the help of an AI coding assistant (Claude Opus
+> 5.5), by comparing mmiotraces of b43 and wl on the same card.
+> 
+> Signed-off-by: Luca Casati <luk00casati@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/b43/phy_n.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c
+> b/drivers/net/wireless/broadcom/b43/phy_n.c index
+> bbc30cbad..c4e6c1ac0 100644 ---
+> a/drivers/net/wireless/broadcom/b43/phy_n.c +++
+> b/drivers/net/wireless/broadcom/b43/phy_n.c @@ -1515,7 +1515,7 @@
+> static int b43_nphy_load_samples(struct b43_wldev *dev,
+> b43_nphy_stay_in_carrier_search(dev, 1); 
+>  	for (i = 0; i < len; i++) {
+> -		data[i] = (samples[i].i & 0x3FF << 10);
+> +		data[i] = (samples[i].i & 0x3FF) << 10;
+>  		data[i] |= samples[i].q & 0x3FF;
+>  	}
 
-Found and fixed with the help of an AI coding assistant (Claude Opus 5.5),
-by comparing mmiotraces of b43 and wl on the same card.
+True, this is a precedence mistake, the shift binds before the masking.
 
-Signed-off-by: Luca Casati <luk00casati@gmail.com>
----
- drivers/net/wireless/broadcom/b43/phy_n.c | 1 +
- 1 file changed, 1 insertion(+)
+>  	b43_ntab_write_bulk(dev, B43_NTAB32(17, 0), len, data);
+> @@ -1531,7 +1531,8 @@ static u16 b43_nphy_gen_load_samples(struct
+> b43_wldev *dev, u32 freq, u16 max, bool test)
+>  {
+>  	int i;
+> -	u16 bw, len, rot, angle;
+> +	u16 bw, len;
+> +	s32 rot, angle;
+>  	struct cordic_iq *samples;
+>  
+>  	bw = b43_is_40mhz(dev) ? 40 : 20;
+> @@ -1554,11 +1555,11 @@ static u16 b43_nphy_gen_load_samples(struct
+> b43_wldev *dev, u32 freq, u16 max, b43err(dev->wl, "allocation for
+> samples generation failed\n"); return 0;
+>  	}
+> -	rot = (((freq * 36) / bw) << 16) / 100;
+> +	rot = ((freq * 36) / bw) / 100;
+>  	angle = 0;
+>  
 
-diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-index ab8fab018..b4fdafabb 100644
---- a/drivers/net/wireless/broadcom/b43/phy_n.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-@@ -220,6 +220,7 @@ static void b43_nphy_rf_ctl_override_one_to_many(struct b43_wldev *dev,
- 		b43_nphy_rf_ctl_override_rev7(dev, 0x4, value, core, off, 0);
- 		b43_nphy_rf_ctl_override_rev7(dev, 0x2, value, core, off, 1);
- 		b43_nphy_rf_ctl_override_rev7(dev, 0x1, value, core, off, 2);
-+		b43_nphy_rf_ctl_override_rev7(dev, 0x4, value, core, off, 2);
- 		b43_nphy_rf_ctl_override_rev7(dev, 0x0800, 1, core, off, 1);
- 		break;
- 	case N_RF_CTL_OVER_CMD_RX_GAIN:
--- 
-2.43.0
+Correct, although changing the type of rot is not strictly needed.
+
+>  	for (i = 0; i < len; i++) {
+> -		samples[i] = cordic_calc_iq(CORDIC_FIXED(angle));
+> +		samples[i] = cordic_calc_iq(angle);
+>  		angle += rot;
+>  		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
+>  		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
+
+cordic_calc_iq calls CORDIC_FIXED(theta) as the first operation, so in
+the original code that would be equivalent to CORDIC_FIXED(
+CORDIC_FIXED(angle) ), which is zero.
+
+Reviewed-by: Alessio Ferri <alessio.ferri@mythread.it>
+
+Regards
+Alessio
 
 
 _______________________________________________
