@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71188606A32C
-	for <b43-dev@archiver.kernel.org>; Sat,  7 Nov 2026 11:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8DA606A32F
+	for <b43-dev@archiver.kernel.org>; Sat,  7 Nov 2026 12:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=Ebsb9gpO;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=YLwZGhto
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=DxJ8V7Ts;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=jTh+l0VJ
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
@@ -14,53 +14,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=WA5B6t6wAairl0h7a/5DGM2raTmwGPCFQECMsQn3n6A=; b=Ebsb9gpOXRNoenxslxRrcMQOl6
-	nPUI6rraICeOGlI6CmECQFw6HoP04hlzbjPl3J4lmwZRPus8odmYC0DzhnOoIX4g04qQQ+c9KW1YY
-	Wntvi4Nwf+0Nv6LNiKpeZF3p9PRnr1sy4hzqbhL3ig78JjOFldHUXx/hlDKKw5dqC3H+1P9inaavm
-	7B3PqI5CxQ9sp5HB5nYuf1p5wQBI9r3hvxr1bfZvEfe5msT/w6E9VPk795SuvKHOxTiwO+QEqELMJ
-	bojo3y36vatMK1iRxHJSiEExc6990b5cRnMPqzw0Djui7VEIwn9eElqZLnMTnLHNZZFDc66PcNtKR
-	gWnR3F+w==;
+	bh=JtVu4mbFGEBBNUvb2iWLMdzBjEAiRdW0vE2LpjImDmI=; b=DxJ8V7TsijUzgfU21c4Dq/GqxS
+	tYE8qAWYPIjqfsLOA28LoeMlC4B92Z44wdBSsIEAEvfAoE7OgmIFFFTNY5+1dteMp/QauWfyy7p3b
+	gGuadeTVy2uajJtpGj/GkMhn61SmctxvUxt482tQr9p77P9WAcxbUWG1qO5VevYwDckHTwX0EGwq+
+	EKaXKVqk6Ol/J5hH52F5krPUICo60CzCxV9/vnGK+ZQ75SE6Z73NnDsLJaOFNo9fdZi88ydj6jDsB
+	/dzLJ49OTCoPreGJmkN0j0il3cy+G0zXzNVvFjMl9nKwD9NF+d+k2qzzJSJ3srGhe46PnYg3R4oMk
+	+oT4QjKQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPeui-0000000Ed7P-2vRu;
-	Sat, 07 Nov 2026 11:48:52 +0000
+	id 1xPf6S-0000000Edrv-2qo3;
+	Sat, 07 Nov 2026 12:01:00 +0000
 Received: from smtpcmd12132.aruba.it ([62.149.156.132])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPeub-0000000Ed6W-0ViV
+	id 1xPf6P-0000000EdrQ-0RUW
 	for b43-dev@lists.infradead.org;
-	Sat, 07 Nov 2026 11:48:47 +0000
+	Sat, 07 Nov 2026 12:00:58 +0000
 Received: from localhost ([87.16.49.252])
 	by Aruba SMTP with ESMTPSA
-	id PeuSx0XYHV5J9PeuTxroJ5; Sat, 07 Nov 2026 12:48:37 +0100
+	id Pf6Mx0fluV5J9Pf6MxrqXX; Sat, 07 Nov 2026 13:00:54 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1794052117; bh=hszukWnGhhh6opqByDn4MIdnuQ9jnNsyXnL56pWZ5Cs=;
+	t=1794052854; bh=na2sHEYJEeB6e7NhX1E8BmZ+aTMgCGr2QTzvM1jjjwI=;
 	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=YLwZGhto9OGzDDqhXrh9iVcImpXDZtlwF8oNH8MZsZDAV3VdyqKCOhf+Atmyy+ZyR
-	 T44PP8wBhuqvnoH5cJzlKk+kPj9jNC6bftdMlHHPBM/Ew73RbuUV1UuQ7Wzonbuh1c
-	 HxMOCUjEZDqsW4iHyQkMQ0AvoyYZJAYVDuMTxwECCDLt6TYptpeuAlb7Kz4NyVjZyM
-	 QgQYj2aMV0h3Cam2w8PDtA+T4W/p4otYQKMyOBX505nqn6KlIDm4beQbD3lM3EACiq
-	 LMYi5mJFPQh6cAE3UE/lNsb6fPs/vnxx2hU5NDkCbcQZgQeM/MblVqay0vLVa2Tqj0
-	 omRRZssXFkxhw==
-Date: Sat, 7 Nov 2026 12:48:34 +0100
+	b=jTh+l0VJqMWA4Am/G3Co13pGGQtzZE5wme0z8BA4mprcgcgf46mXctRZ0mTFeGHRs
+	 lDrUxcYS/wrfzlMihO3a+xz2tIB9QnQAYBSXZ2q+xRfUxXWS6YJkX9sBnKR2BAqOp2
+	 3EkcQFLxXkioxEvbzmdeiOQsh1/Z1vlzl1ZeAg5KEWdYpFjA1Vnr9BC1v73JPv6/IP
+	 Hdeo7c0dcPnGYPVV/SWi0IXiS65I+mZ5CPKLpQiRP0N+qsH6f5BfPLYy6h9lPyxn+S
+	 nQ22RK2hkKy8vbvUOxC2h51/0wrPWUmaMHtJW8Ek2s5/Kb4EA1K6Ia7IVjmwrc20ea
+	 6ATWAIJbAz4SQ==
+Date: Sat, 7 Nov 2026 13:00:51 +0100
 From: Alessio Ferri <alessio.ferri@mythread.it>
 To: Luca Casati <luk00casati@gmail.com>
 Cc: linux-wireless@vger.kernel.org, johannes@sipsolutions.net,
  arend.vanspriel@broadcom.com, b43-dev@lists.infradead.org
-Subject: Re: [PATCH wireless-next v2 0/5] b43: N-PHY: fix calibrations on
- rev7+ (BCM43228)
-Message-ID: <20261107124834.00003e91@mythread.it>
-In-Reply-To: <20261106211516.273791-1-luk00casati@gmail.com>
+Subject: Re: [PATCH wireless-next v2 3/5] b43: N-PHY: fix rev3+ RSSI
+ calibration
+Message-ID: <20261107130051.000038d4@mythread.it>
+In-Reply-To: <20261106211516.273791-4-luk00casati@gmail.com>
 References: <20261106211516.273791-1-luk00casati@gmail.com>
+	<20261106211516.273791-4-luk00casati@gmail.com>
 X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfOKLfoyXNtJDuETR/nU1jvZUK6HjTvwiHDX0K3CWMD+YmzOWXWqFkbuPoJLHR9/YLN0OEzDyg1n6ZsiOFveAymtHLa4oWQKH8D583MdbZ9pAXc8YhvwB
- +AmdBcaPeiM8Sx8vyrWMQ8Sl28DkKbUDF4J1XXaAU4DThzuTACE8zJ1o4+Fcn13DQP1ZwSo2G8FdLNmUDq0pFde6AK+Y/rsgzqrCMOGo+ES/QgppybkQHQ+N
- x+PJRWkzUe9S7giQv1cmgCQ3eH2vyXyIGIECDgVA+5i6ftkVM7+Rt6xYyOj3zWwIdrKD/bQ3v5xtwHOkbBgB+Regq9HCCZFqvg5Dnz0GS+3e67WFs8vGbm0r
- kMJfeqct
+X-CMAE-Envelope: MS4xfFCngUd5vyRDeCf/xdD3wyk6twAO3SLzpOSdI5kURY1sIIl+9BIaFkvMw9jsv3WXhfjM3zTxBviNLZJmUC8E45o7ZOb0st61XfPbll7UBMc6NbEUSvwq
+ pz1khMozNtQx6TCRUznBn8nsh3tBbcZ636C5RGOkWIwFj5K2ZSUW6LwuwBlkAGiLvnq1Eq9HXSZaE67PJk6HgIZ6wGaoNm6BPr3UYpKCKEhQvYZCHgvwXtip
+ rGYZfg4lC5j1sC2tCpuGPYWGYJ8jHilwBxhd5EwzJY2FhU4JREYolP8YtyMwljJ7+Ab4+Vrab1G3Hi9It+g3DNXspyqAJ0orpgHPPP3qZXhB1752J+7s31OU
+ K3pSnSJ1
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261107_034845_622603_AD032C44 
-X-CRM114-Status: GOOD (  21.11  )
+X-CRM114-CacheID: sfid-20261107_040057_331432_8991BFAF 
+X-CRM114-Status: GOOD (  17.05  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -74,87 +75,82 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Il giorno Fri,  6 Nov 2026 22:15:11 +0100
+Il giorno Fri,  6 Nov 2026 22:15:14 +0100
 Luca Casati <luk00casati@gmail.com> ha scritto:
 
-> On a BCM43228 (14e4:4359, N-PHY rev 16, radio 2057 rev 9) b43
-> associates but transmits poorly: high retry counts and low rates.
-> Comparing mmiotraces of b43 and the proprietary wl driver
-> (6.30.223.271) on the same card, together with brcmsmac, turned up
-> several bugs in the N-PHY calibration code:
+> Three bugs in b43_nphy_rev3_rssi_cal():
 > 
->  1. The TX tone sample table was loaded as all zeros, so every
->     tone-based calibration ran without a signal.
->  2. TX IQ/LO calibration: inverted busy poll, reversed final copy,
->     and missing rev7+ cleanup that left TX dead after a cal.
->  3. RSSI calibration: wrong VCM written on rev7+, wrong distance
->     formula, wrong rounding of negative offsets.
->  4. 2057 RC calibration: every delay was about twice wl's, so the
->     first run was stopped while it was running and SCAP read 0
->     instead of 8, detuning the TX low-pass filter.
->  5. A missing field in the rev7 TX_PU RF override.
+> - On rev7+ the selected VCM was written using the loop counter (8
+> after the search loop) instead of vcm_final; the 3-bit field turned
+> that into VCM 0 on every rev7+ PHY.
+> - The distance used I*I + Q*I instead of I*I + Q*Q (brcmsmac
+>   wlc_phy_rssi_cal_nphy_rev3()).
+> - Negative W1/W2 offsets were rounded as -(abs(x + 4) / 8) instead of
+>   -((abs(x) + 4) / 8).
 > 
-> The traces, and excerpts of the operations behind each patch next to
-> the same operations from b43, are at:
+> mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch3-rssi-vcm.txt
 > 
->   https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/README.md
+> Found and fixed with the help of an AI coding assistant (Claude Opus
+> 5.5), by comparing mmiotraces of b43 and wl on the same card.
 > 
-> Each changelog links its excerpts.
+> Signed-off-by: Luca Casati <luk00casati@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/b43/phy_n.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Patches 4 and 5 and the cleanup parts of patch 2 only affect rev7+.
-> Patch 1, the poll and final-copy fixes in patch 2, and the
-> distance/rounding fixes in patch 3 also change code that runs on older
-> N-PHYs (rev3+); I could only test rev 16, so testing on other N-PHY
-> cards would be welcome.
-> 
-> Tested on the BCM43228 only (2.4 GHz, 11g/HT20), on v7.0; the series
-> also applies to wireless-next. With v1, throughput to the internet
-> went from about 5.7/4.1 to 11.1/5.2 Mbit/s down/up, with fewer TX
-> retries. That number is limited by the line and noisy, so take it as
-> a rough indication; wl reaches 21-32 Mbit/s down on the same setup,
-> so there is more to do (PAPD and TX power control on rev7+).
-> 
-> Changelogs refer to wl where the fix was checked against its register
-> writes. If citing the proprietary driver is not acceptable here, I am
-> happy to reword them.
-> 
-> The bugs were found and the fixes drafted with the help of an AI
-> coding assistant (Claude Opus 5.5), working from the mmiotrace diffs
-> between b43 and wl and from brcmsmac. I reviewed and tested every
-> patch on the hardware above.
-> 
-> Changes in v2:
-> - Dropped the comments the patches added.
-> - Patch 2: the changelog said the coefficients match wl's; they are
->   close, not equal.
-> - Patch 4: replaced. v1 waited for the first RC cal run and explained
->   it wrongly: wl stops that run right away too, just sooner. v2 uses
->   wl's delays throughout the cal instead.
-> - Linked the mmiotrace excerpts from each changelog.
-> 
-> Luca Casati (5):
->   b43: N-PHY: fix the TX tone sample table
->   b43: N-PHY: fix TX IQ/LO calibration
->   b43: N-PHY: fix rev3+ RSSI calibration
->   b43: N-PHY: use wl's delays in the 2057 RC calibration
->   b43: N-PHY: add the missing override to the rev7 TX_PU command
-> 
->  drivers/net/wireless/broadcom/b43/phy_n.c | 115
-> +++++++++++++++++----- 1 file changed, 90 insertions(+), 25
-> deletions(-)
-> 
-> 
-> base-commit: 028ef9c96e96197026887c0f092424679298aae8
+> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c
+> b/drivers/net/wireless/broadcom/b43/phy_n.c index
+> 6b0140f05..36c07d891 100644 ---
+> a/drivers/net/wireless/broadcom/b43/phy_n.c +++
+> b/drivers/net/wireless/broadcom/b43/phy_n.c @@ -2167,7 +2167,7 @@
+> static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev) continue;
+>  			for (vcm = 0; vcm < 8; vcm++) {
+>  				currd = results[vcm][i] *
+> results[vcm][i] +
+> -					results[vcm][i + 1] *
+> results[vcm][i];
+> +					results[vcm][i + 1] *
+> results[vcm][i + 1]; if (currd < mind) {
+>  					mind = currd;
+>  					minvcm = vcm;
 
-You didn't use check the maintainers right? Because you keep including
-Arend...
+Ok, in the original there was probably a copy paste error.
+
+> @@ -2184,7 +2184,7 @@ static void b43_nphy_rev3_rssi_cal(struct
+> b43_wldev *dev) b43_radio_maskset(dev,
+>  					  core ?
+> R2057_NB_MASTER_CORE1 : R2057_NB_MASTER_CORE0,
+> -					  ~R2057_VCM_MASK, vcm);
+> +					  ~R2057_VCM_MASK,
+> vcm_final); else
+>  			b43_radio_maskset(dev, r |
+> B2056_RX_RSSI_MISC, 0xE3, vcm_final << 2);
+
+ok, vcm is clearly wrong, the loop is meant select vcm_final, vcm
+simply hold the last loop index.
+
+> @@ -2219,7 +2219,7 @@ static void b43_nphy_rev3_rssi_cal(struct
+> b43_wldev *dev) if (j / 2 == core) {
+>  					offset[j] = 232 -
+> poll_results[j]; if (offset[j] < 0)
+> -						offset[j] =
+> -(abs(offset[j] + 4) / 8);
+> +						offset[j] =
+> -((abs(offset[j]) + 4) / 8); else
+>  						offset[j] =
+> (offset[j] + 4) / 8; b43_nphy_scale_offset_rssi(dev, 0,
+
+Fine
+
+This change the code also for other revs, correct?
 
 _______________________________________________
 b43-dev mailing list
