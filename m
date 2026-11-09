@@ -2,66 +2,66 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8DA606A32F
-	for <b43-dev@archiver.kernel.org>; Sat,  7 Nov 2026 12:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4AC606EE82
+	for <b43-dev@archiver.kernel.org>; Mon,  9 Nov 2026 01:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=DxJ8V7Ts;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=jTh+l0VJ
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=mFHDc+Sz;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=nNwbng4R
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
-	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:To:In-Reply-To:References:Message-Id:
+	MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=JtVu4mbFGEBBNUvb2iWLMdzBjEAiRdW0vE2LpjImDmI=; b=DxJ8V7TsijUzgfU21c4Dq/GqxS
-	tYE8qAWYPIjqfsLOA28LoeMlC4B92Z44wdBSsIEAEvfAoE7OgmIFFFTNY5+1dteMp/QauWfyy7p3b
-	gGuadeTVy2uajJtpGj/GkMhn61SmctxvUxt482tQr9p77P9WAcxbUWG1qO5VevYwDckHTwX0EGwq+
-	EKaXKVqk6Ol/J5hH52F5krPUICo60CzCxV9/vnGK+ZQ75SE6Z73NnDsLJaOFNo9fdZi88ydj6jDsB
-	/dzLJ49OTCoPreGJmkN0j0il3cy+G0zXzNVvFjMl9nKwD9NF+d+k2qzzJSJ3srGhe46PnYg3R4oMk
-	+oT4QjKQ==;
+	bh=lp3XLavAPD/fjezZK4o8dII4Zv7hoUVXxunnsKlqA28=; b=mFHDc+Szdk/0KQpnq9M1wtfVfE
+	cQ0bPl41BfJsgmVSeIWsUqBPZDhakREf7U3XjdJWusEOZ2QXlkKFqrE9zH2YLbArGHWoEwJ7GWvMt
+	s802wgAfCqK6IvHlnQBQT/fwV5wjnXRtCkzZMpCK/eaBIJQSMTn3BQfF+Z9o+CcCimlx+yWU9WxEi
+	VItyXpJnTbyfYMjWSgPnbcm/Cg8X9PctnEWswYDUEfQbT2hZ+g0FyXYOUAt5dYHaoRaF54nhBxFVW
+	pZLeUrYujtcKLrD9IUoAtTPfhI1rhGKPiSwdEvJuANhAUX+vE5yggQnyzePTJY0EyjqX8sVciwIL0
+	uKmoA4ZA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPf6S-0000000Edrv-2qo3;
-	Sat, 07 Nov 2026 12:01:00 +0000
-Received: from smtpcmd12132.aruba.it ([62.149.156.132])
+	id 1xQE1O-0000000H1GU-1sGF;
+	Mon, 09 Nov 2026 01:18:06 +0000
+Received: from smtpcmd11116.aruba.it ([62.149.156.116])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xPf6P-0000000EdrQ-0RUW
+	id 1xQE1H-0000000H1CN-0VBk
 	for b43-dev@lists.infradead.org;
-	Sat, 07 Nov 2026 12:00:58 +0000
-Received: from localhost ([87.16.49.252])
+	Mon, 09 Nov 2026 01:18:02 +0000
+Received: from [127.0.0.1] ([87.16.49.252])
 	by Aruba SMTP with ESMTPSA
-	id Pf6Mx0fluV5J9Pf6MxrqXX; Sat, 07 Nov 2026 13:00:54 +0100
+	id QE1AxMsH06VShQE1BxPouz; Mon, 09 Nov 2026 02:17:53 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1794052854; bh=na2sHEYJEeB6e7NhX1E8BmZ+aTMgCGr2QTzvM1jjjwI=;
-	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=jTh+l0VJqMWA4Am/G3Co13pGGQtzZE5wme0z8BA4mprcgcgf46mXctRZ0mTFeGHRs
-	 lDrUxcYS/wrfzlMihO3a+xz2tIB9QnQAYBSXZ2q+xRfUxXWS6YJkX9sBnKR2BAqOp2
-	 3EkcQFLxXkioxEvbzmdeiOQsh1/Z1vlzl1ZeAg5KEWdYpFjA1Vnr9BC1v73JPv6/IP
-	 Hdeo7c0dcPnGYPVV/SWi0IXiS65I+mZ5CPKLpQiRP0N+qsH6f5BfPLYy6h9lPyxn+S
-	 nQ22RK2hkKy8vbvUOxC2h51/0wrPWUmaMHtJW8Ek2s5/Kb4EA1K6Ia7IVjmwrc20ea
-	 6ATWAIJbAz4SQ==
-Date: Sat, 7 Nov 2026 13:00:51 +0100
+	t=1794187073; bh=vKCGoYZkyy2tX3DnxdaTcewcIzz4/PetZAI2mHkxFSg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:To;
+	b=nNwbng4R6q1PjPD6GQyi6wRf8DHOvySEklMuQaLl5LOZclKJF+Fm4IvfyMyYGC92c
+	 MeP67BdIeEdtXvHWEJ0ZgsfyIEc13EedhMC9FpN/sD/Ea1CfR0FIz9yFYiMsu1eEWO
+	 S2/wDADUKbFnQA78dR05rXUv4rR4MuNC2byHwKEkjAvHVGCK5j+KmOzePF62824vwf
+	 /IoBsV9S5YgR/SQ/8YuwhOHj62u56G8cP61ty7lLCZUTdW7AK+zmzLLWgh9mLa8Bhg
+	 zg+c1rwCR4lnh6wDUE/uoPpvPb/w43BcjpkBvahWbFHs5cvwkzrmI7GEerQsVCamXL
+	 LopXQOO0x5mCw==
 From: Alessio Ferri <alessio.ferri@mythread.it>
-To: Luca Casati <luk00casati@gmail.com>
-Cc: linux-wireless@vger.kernel.org, johannes@sipsolutions.net,
- arend.vanspriel@broadcom.com, b43-dev@lists.infradead.org
-Subject: Re: [PATCH wireless-next v2 3/5] b43: N-PHY: fix rev3+ RSSI
- calibration
-Message-ID: <20261107130051.000038d4@mythread.it>
-In-Reply-To: <20261106211516.273791-4-luk00casati@gmail.com>
-References: <20261106211516.273791-1-luk00casati@gmail.com>
-	<20261106211516.273791-4-luk00casati@gmail.com>
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+Date: Mon, 09 Nov 2026 02:17:51 +0100
+Subject: [PATCH wireless-next v4 01/10] bcma: core: clear only FORCEHT for
+ BCMA_CLKMODE_DYNAMIC
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfFCngUd5vyRDeCf/xdD3wyk6twAO3SLzpOSdI5kURY1sIIl+9BIaFkvMw9jsv3WXhfjM3zTxBviNLZJmUC8E45o7ZOb0st61XfPbll7UBMc6NbEUSvwq
- pz1khMozNtQx6TCRUznBn8nsh3tBbcZ636C5RGOkWIwFj5K2ZSUW6LwuwBlkAGiLvnq1Eq9HXSZaE67PJk6HgIZ6wGaoNm6BPr3UYpKCKEhQvYZCHgvwXtip
- rGYZfg4lC5j1sC2tCpuGPYWGYJ8jHilwBxhd5EwzJY2FhU4JREYolP8YtyMwljJ7+Ab4+Vrab1G3Hi9It+g3DNXspyqAJ0orpgHPPP3qZXhB1752J+7s31OU
- K3pSnSJ1
+Message-Id: <20261109-bcma-ac-rev1-v4-1-de1262c18b54@mythread.it>
+References: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
+In-Reply-To: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
+To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
+ Michael Buesch <m@bues.ch>
+X-Mailer: b4 0.15.2
+X-CMAE-Envelope: MS4xfEdioDTGY1z/u4GjVMe1mHbLmWpT+rI4H8Xls66NQln3AiF++CcMvxSaaGmsBXk3x4g8Dib6BHu6BK7TnmTEOyW7ehauJEouv8SmkiWXnR8yDAh0bB+l
+ EloZ/IAJiS+pl1kaopHIob50iIHTC/gQWIgjGsi2LETExhRM+4Iw4SCq/wC0LddyDFKmHZ1+cC9a7yW1HZgGp/1yMl5U8vhOCUJNDyGRBZVhLbHUNeFzuHa5
+ El4XezI2nRw/fKrMcWh6jLOdHOlPh61DGekcC/bMC7HU+xVzJxUEkJhFHncDdWUYTu9ZDKdKoVTiCfIGDOjT4RrpaXx0JVGSUZ4h5ElM/Icp1mpuzk8xrtoL
+ lqrk58HMIeGgZOleaDyOXw1A8zY//V541UoWSHJa05W6otiIa2vqQ47zRVXM8GFp6e8/iRuanRLI5ji6BUU/0BWNimWWZaL78D4YfdbOLmR7Op+ESZdUK2Rx
+ +AtcAd9UX0hdJ+tOJ0A1x3quhZXaT7BEcnQH7A==
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261107_040057_331432_8991BFAF 
-X-CRM114-Status: GOOD (  17.05  )
+X-CRM114-CacheID: sfid-20261108_171759_653603_AD87B0E5 
+X-CRM114-Status: UNSURE (   8.64  )
+X-CRM114-Notice: Please train this message.
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -72,85 +72,42 @@ List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
+Cc: vit9696 <vit9696@protonmail.com>, ville+git@takio.fi, linux-wireless@vger.kernel.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, egc112@msn.com, b43-dev@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Il giorno Fri,  6 Nov 2026 22:15:14 +0100
-Luca Casati <luk00casati@gmail.com> ha scritto:
+Clear FORCEHT with bcma_mask32() and leave the other CLKCTLST bits as
+they are.
 
-> Three bugs in b43_nphy_rev3_rssi_cal():
-> 
-> - On rev7+ the selected VCM was written using the loop counter (8
-> after the search loop) instead of vcm_final; the 3-bit field turned
-> that into VCM 0 on every rev7+ PHY.
-> - The distance used I*I + Q*I instead of I*I + Q*Q (brcmsmac
->   wlc_phy_rssi_cal_nphy_rev3()).
-> - Negative W1/W2 offsets were rounded as -(abs(x + 4) / 8) instead of
->   -((abs(x) + 4) / 8).
-> 
-> mmiotraces: https://github.com/Luca00casati/b43patch/blob/755c2d8/traces/excerpts/patch3-rssi-vcm.txt
-> 
-> Found and fixed with the help of an AI coding assistant (Claude Opus
-> 5.5), by comparing mmiotraces of b43 and wl on the same card.
-> 
-> Signed-off-by: Luca Casati <luk00casati@gmail.com>
-> ---
->  drivers/net/wireless/broadcom/b43/phy_n.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c
-> b/drivers/net/wireless/broadcom/b43/phy_n.c index
-> 6b0140f05..36c07d891 100644 ---
-> a/drivers/net/wireless/broadcom/b43/phy_n.c +++
-> b/drivers/net/wireless/broadcom/b43/phy_n.c @@ -2167,7 +2167,7 @@
-> static void b43_nphy_rev3_rssi_cal(struct b43_wldev *dev) continue;
->  			for (vcm = 0; vcm < 8; vcm++) {
->  				currd = results[vcm][i] *
-> results[vcm][i] +
-> -					results[vcm][i + 1] *
-> results[vcm][i];
-> +					results[vcm][i + 1] *
-> results[vcm][i + 1]; if (currd < mind) {
->  					mind = currd;
->  					minvcm = vcm;
+Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
+---
+ drivers/bcma/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ok, in the original there was probably a copy paste error.
+diff --git a/drivers/bcma/core.c b/drivers/bcma/core.c
+index 37a5ffe67..f4246689e 100644
+--- a/drivers/bcma/core.c
++++ b/drivers/bcma/core.c
+@@ -100,7 +100,7 @@ void bcma_core_set_clockmode(struct bcma_device *core,
+ 			bcma_err(core->bus, "HT force timeout\n");
+ 		break;
+ 	case BCMA_CLKMODE_DYNAMIC:
+-		bcma_set32(core, BCMA_CLKCTLST, ~BCMA_CLKCTLST_FORCEHT);
++		bcma_mask32(core, BCMA_CLKCTLST, ~BCMA_CLKCTLST_FORCEHT);
+ 		break;
+ 	}
+ }
 
-> @@ -2184,7 +2184,7 @@ static void b43_nphy_rev3_rssi_cal(struct
-> b43_wldev *dev) b43_radio_maskset(dev,
->  					  core ?
-> R2057_NB_MASTER_CORE1 : R2057_NB_MASTER_CORE0,
-> -					  ~R2057_VCM_MASK, vcm);
-> +					  ~R2057_VCM_MASK,
-> vcm_final); else
->  			b43_radio_maskset(dev, r |
-> B2056_RX_RSSI_MISC, 0xE3, vcm_final << 2);
+-- 
+2.34.1
 
-ok, vcm is clearly wrong, the loop is meant select vcm_final, vcm
-simply hold the last loop index.
-
-> @@ -2219,7 +2219,7 @@ static void b43_nphy_rev3_rssi_cal(struct
-> b43_wldev *dev) if (j / 2 == core) {
->  					offset[j] = 232 -
-> poll_results[j]; if (offset[j] < 0)
-> -						offset[j] =
-> -(abs(offset[j] + 4) / 8);
-> +						offset[j] =
-> -((abs(offset[j]) + 4) / 8); else
->  						offset[j] =
-> (offset[j] + 4) / 8; b43_nphy_scale_offset_rssi(dev, 0,
-
-Fine
-
-This change the code also for other revs, correct?
 
 _______________________________________________
 b43-dev mailing list
