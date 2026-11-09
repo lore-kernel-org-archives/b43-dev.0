@@ -2,65 +2,68 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D18606EEB9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A15606D828
 	for <b43-dev@archiver.kernel.org>; Mon,  9 Nov 2026 01:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=tcvBoM1N;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=PhwYHtuA
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=Go5SdpAL;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=fKRvzmdy
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:To:In-Reply-To:References:Message-Id:
-	MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Archive:List-Unsubscribe:List-Id:To:MIME-Version:Message-Id:Date:Subject
+	:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
 	List-Unsubscribe-Post:List-Owner;
-	bh=u6DCzXAp6MptlKOGO7DeTTa4SI4qSq/68PceCYzloFw=; b=tcvBoM1NKb4PSdYZsD+s2utRLl
-	FFE21Ve3XUeBRqBsqWO8Wk3rQu1b6cZas5bi2b2g7hWwPz1pTnOQn3JXhVjP8vJKN+qZvzdF5HXTo
-	fKz381E9QfCNcRvw4dpFbWE/1eE0lYFzDYO4NChXN/j5ZgRbPUzxAhJdZBhQ7juGDp5dFIeaBG1SJ
-	HtsPvBUo+MHIYUQvZ21B7IXjcfZyXS3SJ/zGHPaLgIlqSdIBjRRiqYz50ZENztpvlStwEwNJ4bVXG
-	mvw43HLWvbggKclDcypRrLwVMxj1qWHxW4kW3FQKxQmVm4XpmgBvfuRNZDmVaZG4hdfrBnAtiDvCa
-	pXcD3IOw==;
+	bh=eHfOM6DEjYIshpqvxYMSSjIMZKJfPdxNl3jyL9t35wc=; b=Go5SdpALvl7iPOncIW8ODXBs4b
+	N+BCHmXmBFaYTzMPgmguub4J78Dvbt1A23Uqhid3B5gbhKT7N6LmYewkQ53EdfvbTaBg/akgatqgO
+	eJg+zOQdiGq0LXba0mAmEwWSGsxW3sSssZBwk4BhVAKvMXofrDVvHinqAQuesf+rD7XuJ7rL3Pw/e
+	ZbavrgYrKQiv1kET7nJk6F5ZLJUQHF+s2aMG+A3bdca0lZtGGcjhNLwZs0t9GQYenXzQh+M7q0YAk
+	ej90eKQyAolPd2Z9aWMwTDDCRzE7s0en5rwoqSZCfVaeNd0g8h42QoVy1INhurfht8bY8VEV+z4Ol
+	a/PtQljg==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xQE1O-0000000H1GF-0oM7;
+	id 1xQE1O-0000000H1G0-02zw;
 	Mon, 09 Nov 2026 01:18:06 +0000
 Received: from smtpcmd11116.aruba.it ([62.149.156.116])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xQE1H-0000000H1CP-157H
+	id 1xQE1H-0000000H1CO-0Pqm
 	for b43-dev@lists.infradead.org;
-	Mon, 09 Nov 2026 01:18:02 +0000
+	Mon, 09 Nov 2026 01:18:01 +0000
 Received: from [127.0.0.1] ([87.16.49.252])
 	by Aruba SMTP with ESMTPSA
-	id QE1AxMsH06VShQE1BxPovR; Mon, 09 Nov 2026 02:17:54 +0100
+	id QE1AxMsH06VShQE1BxPoug; Mon, 09 Nov 2026 02:17:53 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1794187074; bh=M8e1E3AFMBy9iSve8rW+kLzKE99lCoOKdT27fT8i/1Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:To;
-	b=PhwYHtuAnuosncd9JRZg5BscUzbHpzd87Y4jwh8dRUm/QUNUGT9zB7omY+2Um1YFJ
-	 3nUYd3bjIZIGBXHQWJHXrN4z8IbqHxadFCer0s1QAaW0Y0brqsDYeIQ0mp39xLu5DC
-	 5QxJUEYHDoSg4vk2+wPJHNq8nTVnmVeC4qFk6xeUgxXgxISwie8C1lGzxWQKDId2Rh
-	 vFYybUv+ZbmltZ9HT/g4N/4xLMZiIp4mvFcWBQJdZY/fptEhLpnS/XWrIvs+p7FLsU
-	 pIZeK3nzMRrbkZb4ZBjNeiiZ7JUJnjUErOL8x8MFI91LqSok37v2WaNyTsTgkPQR9t
-	 SfjOHjFRMK4hA==
+	t=1794187073; bh=BoLHLvKmDPgG+mZ0H4J9N9IHuLDr3SiWMohhnh53hq4=;
+	h=From:Subject:Date:MIME-Version:Content-Type:To;
+	b=fKRvzmdyzC8jyj6MrcjcoSoG/ufNBPIYlagoNWL/aqwH5qg2ICjP0nr0yRKqKlM0C
+	 SXaJWWUhQN6I8VtdPQ8nweW8O3K2bAdrMrLKFJZ0Dwb4RHwLWM3mGWntMYuGVG7Kqm
+	 9dI2UTHOpktAzWvZbCP65KXyrGshXRywOn2pxuz2ruJq6XoR7cpQ9fbAMpvIxP2aMr
+	 jSFpo9z8jEkcCTx9ZIQnSayB6xWN3Z/cT0o/iP2yeFz+kVtIxyL4t/bwPhn6cEYySq
+	 YwYJf6ZIwu0DSXk6RiUCKXbLVf/a3cSaK9KPoGo3s7AcW01bEDPZ/Nb27Sn2myAieI
+	 5FxhDw4mF784Q==
 From: Alessio Ferri <alessio.ferri@mythread.it>
-Date: Mon, 09 Nov 2026 02:17:52 +0100
-Subject: [PATCH wireless-next v4 02/10] bcma: pmu: init PLL and resources
- on BCM4352/BCM4360
+Subject: [PATCH wireless-next v4 00/10] bcma-ac-rev1: support 4352/4360
+ rev3 chips
+Date: Mon, 09 Nov 2026 02:17:50 +0100
+Message-Id: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Message-Id: <20261109-bcma-ac-rev1-v4-2-de1262c18b54@mythread.it>
-References: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
-In-Reply-To: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
+X-B4-Tracking: v=1; b=H4sIAD4f8WoC/23NQQ6CMBAF0KuQrq3ptAjUlfcwLtoySI2CaREhh
+ LtbYINoMpufmfdnIB6dRU+O0UActtbbugoh3kXElKq6IrV5yIQzngCDmGrzUFQZGo6B5iqTMcQ
+ 8lawggTwdFrab687kbR3e0XtaYdeQy7L2L31D00yVEyitb2rXz+9bmNn/T2EY1QnLUMpcFIfk9
+ Oib0qHK93Ypb/mK83TD+cylTsAIkJz9crHiAjZcBA6FRpFhBqnU33wcxw9FheEKSQEAAA==
+X-Change-ID: 20261014-bcma-ac-rev1-da894142790f
 To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
  Michael Buesch <m@bues.ch>
 X-Mailer: b4 0.15.2
-X-CMAE-Envelope: MS4xfA0SHnp7/o1kd6yqNJOwxQ9vhGBL4ANMkZqJ/MlRU6NcbLTLJG6wQLJXR978HuYWEYipWWphXGxbozZm8p1w++CcEwuVs3pTkD1lBJ20cKs7x66LY7ZO
- lPPxLcppsYWEvc99HGnRnIC1KkYsC01OvWhZjoF/A16my8XfcvPZtQinQ6hyBPO/54IZ57QV5xdcM4Cs2fG7IUipQQ3UyGsuZ/zSXSby5FILX0qafbbGO0s2
- lJyGypyqM5VPyry4Ig6v819AhE5kzGniuKo+kLbJqeAtozKB6ffkUgvuCRTaLm7+Q7V+5QN4gE2pGL0AGwffg9h0/VoBw3JAKiZjd3Ipe0WVfCgxB1BOh69R
- MRv+wSUc4/Ab1VnwNi7LQ57g0F53Qbmbk2v4s0EvLv29tM00yMnMLi6zhSQy0jWpm9SrVS847vMEtoc9SHjv6a/bgJBL8cz4NnEs/D2REzNpbRwn1oyKCn3F
- ylYWEYsSklBQcXBVXSj93DAHrMOimmP33IBBzA==
+X-CMAE-Envelope: MS4xfEdioDTGY1z/u4GjVMe1mHbLmWpT+rI4H8Xls66NQln3AiF++CcMvxSaaGmsBXk3x4g8Dib6BHu6BK7TnmTEOyW7ehauJEouv8SmkiWXnR8yDAh0bB+l
+ EloZ/IAJiS+pl1kaopHIob50iIHTC/gQWIgjGsi2LETExhRM+4Iw4SCq/wC0LddyDFKmHZ1+cC9a7yW1HZgGp/1yMl5U8vhOCUJNDyGRBZVhLbHUNeFzuHa5
+ El4XezI2nRw/fKrMcWh6jLOdHOlPh61DGekcC/bMC7HU+xVzJxUEkJhFHncDdWUYTu9ZDKdKoVTiCfIGDOjT4RrpaXx0JVGSUZ4h5ElM/Icp1mpuzk8xrtoL
+ lqrk58HMIeGgZOleaDyOXw1A8zY//V541UoWSHJa05W6otiIa2vqQ47zRVXM8GFp6e8/iRuanRLI5ji6BUU/0BWNimWWZaL78D4YfdbOLmR7Op+ESZdUK2Rx
+ +AtcAd9UX0hdJ+tOJ0A1x3quhZXaT7BEcnQH7A==
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261108_171759_641052_E68D2C10 
-X-CRM114-Status: GOOD (  17.19  )
+X-CRM114-CacheID: sfid-20261108_171759_632682_2BD2068C 
+X-CRM114-Status: GOOD (  13.47  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -72,8 +75,8 @@ List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
 Cc: vit9696 <vit9696@protonmail.com>, ville+git@takio.fi, linux-wireless@vger.kernel.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, egc112@msn.com, b43-dev@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -83,180 +86,74 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Program the PMU as Broadcom's driver does (hndpmu.c):
-
-- on chip rev 3 and later, set the BBPLL to a 960.0098 MHz fractional
-  VCO from the 40 MHz crystal, unless the backplane runs on HT already;
-- set the resource up/down times and, on rev 4 and later, a min
-  resource mask of 0x103;
-- with chipstatus RSRC_INIT_MODE0 clear, program PLL controls 6 and 14,
-  and on rev 4 and later 7 and 15 with REFCLK enabled in chipcontrol 1;
-  on rev 3 and later, set max_res_mask to 0x1ff.
-
-Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
----
- drivers/bcma/driver_chipcommon_pmu.c        | 81 +++++++++++++++++++++++++++++
- include/linux/bcma/bcma_driver_chipcommon.h | 14 +++++
- 2 files changed, 95 insertions(+)
-
-diff --git a/drivers/bcma/driver_chipcommon_pmu.c b/drivers/bcma/driver_chipcommon_pmu.c
-index 263ef6fa1..7a226fcd2 100644
---- a/drivers/bcma/driver_chipcommon_pmu.c
-+++ b/drivers/bcma/driver_chipcommon_pmu.c
-@@ -11,6 +11,7 @@
- 
- #include "bcma_private.h"
- #include <linux/export.h>
-+#include <linux/math64.h>
- #include <linux/bcma/bcma.h>
- 
- u32 bcma_chipco_pll_read(struct bcma_drv_cc *cc, u32 offset)
-@@ -145,6 +146,78 @@ static void bcma_pmu2_pll_init0(struct bcma_drv_cc *cc, u32 xtalfreq)
- 	/* TODO: Do we need to update OTP? */
- }
- 
-+static void bcma_pmu_4360_pll_init(struct bcma_drv_cc *cc)
-+{
-+	struct bcma_bus *bus = cc->core->bus;
-+	const u32 xtal_hz = 40000000, vco_hz = 960009800;
-+	u32 ctl2;
-+
-+	if (bus->chipinfo.rev < 3)
-+		return;
-+	/* The backplane may be running from the BBPLL. */
-+	if (bcma_cc_read32(cc, BCMA_CLKCTLST) & BCMA_CLKCTLST_HAVEHT)
-+		return;
-+	if (bcma_pmu_get_alp_clock(cc) != xtal_hz) {
-+		bcma_warn(bus, "No 40 MHz crystal, BBPLL left as is\n");
-+		return;
-+	}
-+
-+	ctl2 = (vco_hz / xtal_hz) << BCMA_CC_PMU4360_NDIV_INT_SHIFT |
-+	       BCMA_CC_PMU4360_NDIV_MODE_FRAC << BCMA_CC_PMU4360_NDIV_MODE_SHIFT |
-+	       1 << BCMA_CC_PMU4360_P1DIV_SHIFT;
-+	bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL2, ctl2);
-+	bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL3,
-+			      div_u64((u64)(vco_hz % xtal_hz) << 24, xtal_hz));
-+	bcma_pmu_set32(cc, BCMA_CC_PMU_CTL, BCMA_CC_PMU_CTL_PLL_UPD);
-+}
-+
-+/* Up/down times of resources 0-8 on chip rev 4 and later */
-+static const u32 bcma_pmu_4360b1_res_updown[] = {
-+	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00860002,
-+	0x00000000, 0x00020001, 0x00080001, 0x00000000,
-+};
-+
-+static void bcma_pmu_4360_resources_init(struct bcma_drv_cc *cc,
-+					 u32 *min_msk, u32 *max_msk)
-+{
-+	u8 rev = cc->core->bus->chipinfo.rev;
-+	bool init_mode0 = cc->status & BCMA_CC_CHIPST_4360_RSRC_INIT_MODE0;
-+	unsigned int i;
-+
-+	if (rev < 4) {
-+		bcma_pmu_write32(cc, BCMA_CC_PMU_RES_TABSEL, 6);
-+		bcma_pmu_write32(cc, BCMA_CC_PMU_RES_UPDNTM, 0x00200001);
-+	} else {
-+		for (i = 0; i < ARRAY_SIZE(bcma_pmu_4360b1_res_updown); i++) {
-+			bcma_pmu_write32(cc, BCMA_CC_PMU_RES_TABSEL, i);
-+			bcma_pmu_write32(cc, BCMA_CC_PMU_RES_UPDNTM,
-+					 bcma_pmu_4360b1_res_updown[i]);
-+		}
-+		*min_msk = 0x103;
-+		/* The max mask must cover the min mask before it is written. */
-+		bcma_pmu_set32(cc, BCMA_CC_PMU_MAXRES_MSK, *min_msk);
-+	}
-+
-+	if (init_mode0)
-+		return;
-+
-+	if (rev < 4) {
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL6, 0x09048562);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL14, 0x09048562);
-+	} else {
-+		bcma_chipco_chipctl_maskset(cc, 1, ~0,
-+					    BCMA_CHIPCTL1_4360_REFCLK_EN);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL6, 0x080004e2);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL7, 0xe);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL14, 0x080004e2);
-+		bcma_chipco_pll_write(cc, BCMA_CC_PMU_PLL_CTL15, 0xe);
-+	}
-+	bcma_pmu_set32(cc, BCMA_CC_PMU_CTL, BCMA_CC_PMU_CTL_PLL_UPD);
-+
-+	if (rev >= 3)
-+		*max_msk = 0x1ff;
-+}
-+
- static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
- {
- 	struct bcma_bus *bus = cc->core->bus;
-@@ -156,6 +229,10 @@ static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
- 			xtalfreq = 20000;
- 		bcma_pmu2_pll_init0(cc, xtalfreq);
- 		break;
-+	case BCMA_CHIP_ID_BCM4352:
-+	case BCMA_CHIP_ID_BCM4360:
-+		bcma_pmu_4360_pll_init(cc);
-+		break;
- 	}
- }
- 
-@@ -188,6 +265,10 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
- 			  BCMA_RES_4314_WL_CORE_READY;
- 		max_msk = 0x3FFFFFFF;
- 		break;
-+	case BCMA_CHIP_ID_BCM4352:
-+	case BCMA_CHIP_ID_BCM4360:
-+		bcma_pmu_4360_resources_init(cc, &min_msk, &max_msk);
-+		break;
- 	default:
- 		bcma_debug(bus, "PMU resource config unknown or not needed for device 0x%04X\n",
- 			   bus->chipinfo.id);
-diff --git a/include/linux/bcma/bcma_driver_chipcommon.h b/include/linux/bcma/bcma_driver_chipcommon.h
-index 0cb6638b5..525155658 100644
---- a/include/linux/bcma/bcma_driver_chipcommon.h
-+++ b/include/linux/bcma/bcma_driver_chipcommon.h
-@@ -107,6 +107,7 @@
- #define  BCMA_CC_CHIPST_4706_PCIE1_DISABLE	BIT(5) /* PCIE1 enable strap pin */
- #define  BCMA_CC_CHIPST_5357_NAND_BOOT		BIT(4) /* NAND boot, valid for CC rev 38 and/or BCM5357 */
- #define  BCMA_CC_CHIPST_4360_XTAL_40MZ		0x00000001
-+#define  BCMA_CC_CHIPST_4360_RSRC_INIT_MODE0	0x00000020
- #define BCMA_CC_JCMD			0x0030		/* Rev >= 10 only */
- #define  BCMA_CC_JCMD_START		0x80000000
- #define  BCMA_CC_JCMD_BUSY		0x80000000
-@@ -500,6 +501,16 @@
- #define BCMA_CC_PMU_PLL_CTL3		3
- #define BCMA_CC_PMU_PLL_CTL4		4
- #define BCMA_CC_PMU_PLL_CTL5		5
-+#define BCMA_CC_PMU_PLL_CTL6		6
-+#define BCMA_CC_PMU_PLL_CTL7		7
-+#define BCMA_CC_PMU_PLL_CTL14		14
-+#define BCMA_CC_PMU_PLL_CTL15		15
-+
-+/* BCM4360 PLL control 2 */
-+#define BCMA_CC_PMU4360_P1DIV_SHIFT		0
-+#define BCMA_CC_PMU4360_NDIV_MODE_SHIFT		4
-+#define  BCMA_CC_PMU4360_NDIV_MODE_FRAC		3
-+#define BCMA_CC_PMU4360_NDIV_INT_SHIFT		7
- 
- #define BCMA_CC_PMU1_PLL0_PC0_P1DIV_MASK	0x00f00000
- #define BCMA_CC_PMU1_PLL0_PC0_P1DIV_SHIFT	20
-@@ -527,6 +538,9 @@
- #define BCMA_CHIPCTL_4331_BT_SHD0_ON_GPIO4	BIT(16)	/* enable bt_shd0 at gpio4 */
- #define BCMA_CHIPCTL_4331_BT_SHD1_ON_GPIO5	BIT(17)	/* enable bt_shd1 at gpio5 */
- 
-+/* BCM4360 ChipControl 1 */
-+#define BCMA_CHIPCTL1_4360_REFCLK_EN		BIT(11)
-+
- /* 43224 chip-specific ChipControl register bits */
- #define BCMA_CCTRL_43224_GPIO_TOGGLE		0x8000		/* gpio[3:0] pins as btcoex or s/w gpio */
- #define BCMA_CCTRL_43224A0_12MA_LED_DRIVE	0x00F000F0	/* 12 mA drive strength */
-
--- 
-2.34.1
-
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+UHJlcGFyYXRvcnkgd29yayBpbiB0aGUgYnJpbmcgdXAgb2YgQUMgZmFtaWx5IHJldjEgY2hpcHMs
+IGluIHBhcnRpY3VsYXIsCnRoZSBiY200MzUyIHJldjMgYW5kIGJjbTQzNjAgcmV2My4gV2hlbiBw
+dWJsaWMgc291cmNlcyB3ZXJlIGZvdW5kLCB0aGUgCnNhbWUgZ2F0ZXMgYXBwbGllZCBmb3Igb3Bl
+cmF0aW9ucyB3ZXJlIHBvcnRlZCBpbiB0aGlzIGNvZGUuCgpJbml0aWFsaXplIHRoZSBQTVUsIHRo
+ZSBQQ0llMiBjb3JlIGFuZCBjaGlwY29tbW9uIG9mIHRoZSBCQ000MzUyL0JDTTQzNjAKZmFtaWx5
+IG9uIGNoaXAgYmFzZWQgb24gdGhlIG9wZW4gc291cmNlIHZlcnNpb24gb2YgYnJvYWRjb20gZHJp
+dmVyLCBwYXJzZSAKU1BST00gcmV2aXNpb24gMTEsIHJlYWQgdGhlIE5WUkFNIHZhcmlhYmxlcyBz
+ZXQgb24gdG9wIG9mIHRoZSBTUFJPTSwgYW5kIApiaW5kIGJjbWEtcGNpLWJyaWRnZSB0byB0aGUg
+QkNNNDM1Mi4gRmluYWxseSwgYWRkIHRoZSBtaXNzaW5nIGlkcyB0byBiNDMuCgpNb3N0IG9mIHRo
+ZSBzZXJpZXMgd2FzIHRlc3RlZCBieSBFcmlrIENvbmlqaW4gYW5kIFZpbGxlIFRha2lvLCBib3Ro
+IGFyZSAKY2MtZWQsIGJ1dCBpIGRvbid0IGtub3cgaWYgaSBjYW4gcHV0IHRoZWlyIHRlc3RlZCBi
+eSBkaXJlY3RseSBpbiB0aGUgCmNvbW1pdCBteXNlbGYgb3IgaWYgaXQgaXMgYSB2ZXJ5IHN1c3Bp
+Y2lvdXMgdGhpbmcgdG8gZG8uCgpDb25jZXJuaW5nIHRoZSByaXNrIG9mIGFwcGx5aW5nIHRoZSBz
+ZXJpZXM6IAotIEZPUkNFSFQgbWF5IGNoYW5nZSB0aGUgYmVoYXZpb3VyIG9mIGJyY21zbWFjIHRv
+byAoY2FuIGkgYXNrIEFyZW5kPykKLSBpIGRvIG5vdCBleHBlY3QgcmVncmVzc2lvbiBmcm9tIHJl
+djExIHBhcnNpbmcsIGVzcGVjaWFsbHkgc2luY2Ugbm8gb25lIAogIHVzZSBpdCB5ZXQuCi0gVGhl
+IHJlc3Qgb2YgdGhlIHNlcmllcyBoYXMgY29kZSBtb3N0bHkgZ2F0ZWQgd2l0aCB0aGUgc2FtZSBj
+cml0ZXJpYSAKICB1c2VkIGJ5IHB1YmxpYyBjb2RlIHJlbGVhc2VkIGJ5IEJyb2FkY29tLCBzbyBp
+IGd1ZXNzIHRoYXQgaXQgaXMgc2FmZS4gCi0gYjQzIG1hcmtzIHRoZSBhYyBwYXJ0IEJST0tFTiwg
+c28gdGhlcmUgaXMgdmVyeSBsaXR0bGUgdG8gcHJlc2VydmUuCgpTaWduZWQtb2ZmLWJ5OiBBbGVz
+c2lvIEZlcnJpIDxhbGVzc2lvLmZlcnJpQG15dGhyZWFkLml0PgotLS0KQ2hhbmdlcyBpbiB2NDoK
+LSBSZWFkZGVkIHRoZSBtaXNzaW5nIHNpZ25lZCBvZmYKLSBBZGRlZCBwZG9mZnNldDJnNDBtYSBh
+bmQgcGRvZmZzZXQyZzQwbXZhbGlkIHRvIHRoZSBzZXJpZXMsIHdvcmsgb2YgCiAgVmlsbGUgVGFr
+aW8sIG1vc3RseS4KLSBMaW5rIHRvIHYzOiBodHRwczovL3BhdGNoLm1zZ2lkLmxpbmsvMjAyNjEw
+MzEtYmNtYS1hYy1yZXYxLXYzLTAtMWZiZTM4ZTgxNzliQG15dGhyZWFkLml0CgpDaGFuZ2VzIGlu
+IHYzOgotIHJlZ2F0ZWQgbW9zdCBvZiB0aGUgY2hlY2tzIG9uIHRoZSBwcm9wZXIgdmVyc2lvbi9m
+bGFnIHByZXNlbnQKICBpbnN0ZWFkIG9mIGZvcmNpbmcgZXZlcnl0aGluZyB0byBiZSByZXYzIG9u
+bHksIGFzIFZpdGFseSBzdWdnZXN0ZWQKLSBBZGRlZCBudnJhbSBwYXJzaW5nIGZvciBhbGwgcGFy
+YW1zIGZvdW5kIGluIGEgcmVhbCBub3J0aHN0YXIgcm91dGVyCi0gUmVtb3ZlZCBBdlZtaWQgcGFy
+c2luZyBmcm9tIG52cmFtLCBhcyBpdCBkb2Vzbid0IHNlZW1zIHRvIGJlIHVzZWZ1bAotIEFkZGVk
+IG1pc3NpbmcgcGNpIGlkcyBmb3IgNDM1Mi80MzYwIHZhcmlhbnRzCi0gTGluayB0byB2MjogaHR0
+cHM6Ly9wYXRjaC5tc2dpZC5saW5rLzIwMjYxMDI3LWJjbWEtYWMtcmV2MS12Mi0wLWI2OWI2MWMz
+MTkyMEBteXRocmVhZC5pdAoKQ2hhbmdlcyBpbiB2MjoKLSBnYXRlZCBjaGlwY29tbW9uIGJlaGF2
+aW91ciBvbiBpdHMgb3duIHJldmlzaW9uIGluc3RlYWQgb2YgY2hpcCByZXYgYXMKICBwb2ludGVk
+IG91dCBieSBWaXRhbHkKLSBMaW5rIHRvIHYxOiBodHRwczovL3BhdGNoLm1zZ2lkLmxpbmsvMjAy
+NjEwMTQtYmNtYS1hYy1yZXYxLXYxLTAtYjYwOGU5OWQzZjU2QG15dGhyZWFkLml0CgpUbzogUmFm
+YcWCIE1pxYJlY2tpIDx6YWplYzVAZ21haWwuY29tPgpUbzogTWljaGFlbCBCdWVzY2ggPG1AYnVl
+cy5jaD4KVG86IHZpdDk2OTYgPHZpdDk2OTZAcHJvdG9ubWFpbC5jb20+CkNjOiBsaW51eC13aXJl
+bGVzc0B2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcKQ2M6
+IGxpbnV4LW1pcHNAdmdlci5rZXJuZWwub3JnCkNjOiBiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5v
+cmcKCi0tLQpBbGVzc2lvIEZlcnJpICgxMCk6CiAgICAgIGJjbWE6IGNvcmU6IGNsZWFyIG9ubHkg
+Rk9SQ0VIVCBmb3IgQkNNQV9DTEtNT0RFX0RZTkFNSUMKICAgICAgYmNtYTogcG11OiBpbml0IFBM
+TCBhbmQgcmVzb3VyY2VzIG9uIEJDTTQzNTIvQkNNNDM2MAogICAgICBiY21hOiBwY2llMjogcmVx
+dWVzdCBIVCBvbiBCQ000MzUyL0JDTTQzNjAKICAgICAgYmNtYTogY2hpcGNvbW1vbjogZW5hYmxl
+IGFzeW5jaHJvbm91cyBHUElPIGludGVycnVwdHMKICAgICAgYmNtYTogZXh0cmFjdCBTUFJPTSBy
+ZXZpc2lvbiAxMQogICAgICBmaXJtd2FyZTogYmNtNDd4eF9zcHJvbTogcmVhZCB0aGUgU1BST00g
+cmV2aXNpb24gMTEgZmllbGRzIGZyb20gTlZSQU0KICAgICAgZmlybXdhcmU6IGJjbTQ3eHhfc3By
+b206IHJlYWQgbGVkYmg0Li5sZWRiaDE1IGZyb20gTlZSQU0KICAgICAgZmlybXdhcmU6IGJjbTQ3
+eHhfc3Byb206IHJlYWQgYm9hcmRmbGFnczMgZnJvbSBOVlJBTSBvdmVyIHRoZSBTUFJPTQogICAg
+ICBiY21hOiBhZGQgdGhlIHNpbmdsZS1iYW5kIEJDTTQzNTIvQkNNNDM2MCBQQ0kgSURzCiAgICAg
+IHdpZmk6IGI0MzogYWRkIHRoZSAyLjQgR0h6IEJDTTQzNTIvQkNNNDM2MCB0byB0aGUgc3VwcG9y
+dGVkIGJhbmRzCgogZHJpdmVycy9iY21hL2NvcmUuYyAgICAgICAgICAgICAgICAgICAgICAgICB8
+ICAgMiArLQogZHJpdmVycy9iY21hL2RyaXZlcl9jaGlwY29tbW9uLmMgICAgICAgICAgICB8ICAg
+MyArCiBkcml2ZXJzL2JjbWEvZHJpdmVyX2NoaXBjb21tb25fcG11LmMgICAgICAgIHwgIDgxICsr
+KysrKysrKwogZHJpdmVycy9iY21hL2RyaXZlcl9wY2llMi5jICAgICAgICAgICAgICAgICB8ICAg
+MyArCiBkcml2ZXJzL2JjbWEvaG9zdF9wY2kuYyAgICAgICAgICAgICAgICAgICAgIHwgICA4ICst
+CiBkcml2ZXJzL2JjbWEvc3Byb20uYyAgICAgICAgICAgICAgICAgICAgICAgIHwgMjEwICsrKysr
+KysrKysrKysrKysrKysrKystCiBkcml2ZXJzL2Zpcm13YXJlL2Jyb2FkY29tL2JjbTQ3eHhfc3By
+b20uYyAgIHwgMjU3ICsrKysrKysrKysrKysrKysrKysrKysrKystLS0KIGRyaXZlcnMvbmV0L3dp
+cmVsZXNzL2Jyb2FkY29tL2I0My9tYWluLmMgICAgfCAgIDYgKwogaW5jbHVkZS9saW51eC9iY200
+N3h4X3Nwcm9tLmggICAgICAgICAgICAgICB8ICAxNSArKwogaW5jbHVkZS9saW51eC9iY21hL2Jj
+bWFfZHJpdmVyX2NoaXBjb21tb24uaCB8ICAxNSArKwogaW5jbHVkZS9saW51eC9zc2Ivc3NiLmgg
+ICAgICAgICAgICAgICAgICAgICB8ICA3MiArKysrKysrKwogaW5jbHVkZS9saW51eC9zc2Ivc3Ni
+X3JlZ3MuaCAgICAgICAgICAgICAgICB8IDEwMyArKysrKysrKysrKwogMTIgZmlsZXMgY2hhbmdl
+ZCwgNzQ3IGluc2VydGlvbnMoKyksIDI4IGRlbGV0aW9ucygtKQotLS0KYmFzZS1jb21taXQ6IDY2
+MjhlN2Q0YzZiMjVjOGQxOGYxMzQ1ZTNhMjBkMjE4MjlhYWU3ZTQKY2hhbmdlLWlkOiAyMDI2MTAx
+NC1iY21hLWFjLXJldjEtZGE4OTQxNDI3OTBmCgpCZXN0IHJlZ2FyZHMsCi0tICAKQWxlc3NpbyBG
+ZXJyaSA8YWxlc3Npby5mZXJyaUBteXRocmVhZC5pdD4KCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxp
+c3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9iNDMtZGV2Cg==
