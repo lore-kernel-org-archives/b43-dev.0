@@ -2,68 +2,65 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A15606D828
-	for <b43-dev@archiver.kernel.org>; Mon,  9 Nov 2026 01:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1442606D80F
+	for <b43-dev@archiver.kernel.org>; Mon,  9 Nov 2026 01:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=Go5SdpAL;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=fKRvzmdy
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=iewFik6M;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=mhp8J9i3
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:To:MIME-Version:Message-Id:Date:Subject
-	:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Archive:List-Unsubscribe:List-Id:To:In-Reply-To:References:Message-Id:
+	MIME-Version:Subject:Date:From:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=eHfOM6DEjYIshpqvxYMSSjIMZKJfPdxNl3jyL9t35wc=; b=Go5SdpALvl7iPOncIW8ODXBs4b
-	N+BCHmXmBFaYTzMPgmguub4J78Dvbt1A23Uqhid3B5gbhKT7N6LmYewkQ53EdfvbTaBg/akgatqgO
-	eJg+zOQdiGq0LXba0mAmEwWSGsxW3sSssZBwk4BhVAKvMXofrDVvHinqAQuesf+rD7XuJ7rL3Pw/e
-	ZbavrgYrKQiv1kET7nJk6F5ZLJUQHF+s2aMG+A3bdca0lZtGGcjhNLwZs0t9GQYenXzQh+M7q0YAk
-	ej90eKQyAolPd2Z9aWMwTDDCRzE7s0en5rwoqSZCfVaeNd0g8h42QoVy1INhurfht8bY8VEV+z4Ol
-	a/PtQljg==;
+	bh=4/8TgXxPbiBXOswdZShHL5wyw7XNz6fwRqu9TdeZ70E=; b=iewFik6MwES6qtMUH4KtkQG4FH
+	G9Bl1usqKhSppN4WhvouG9qdI1udyMbNTVM6DNdHtvr97vJyiYDNqqYt+slqJkrSq+JQSzPNFAnym
+	HaCA0W7j/1yEA38xJNYyD+tO7tL2jqob3PfknO17I5Hx2IRw6PN/BRIeZqTDSA5+hItafOEzY7eaK
+	tT3Wy90USSSfJijLQETaNPeRkq7bhDlFj7boJK39cqfZj5Se8xK/8A1+hLEhwjUqYMLFkY3w+Zp90
+	0Ll4LQQywoAH5/JPuZYS09psfpL/Y/oSEJI23WTY96a5RN1Ig0uH+Xv4Gn275YswVY8x2OcMygfKk
+	GCc5HjLA==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xQE1O-0000000H1G0-02zw;
+	id 1xQE1O-0000000H1GN-1Hf2;
 	Mon, 09 Nov 2026 01:18:06 +0000
 Received: from smtpcmd11116.aruba.it ([62.149.156.116])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xQE1H-0000000H1CO-0Pqm
+	id 1xQE1H-0000000H1CV-0VMl
 	for b43-dev@lists.infradead.org;
-	Mon, 09 Nov 2026 01:18:01 +0000
+	Mon, 09 Nov 2026 01:18:02 +0000
 Received: from [127.0.0.1] ([87.16.49.252])
 	by Aruba SMTP with ESMTPSA
-	id QE1AxMsH06VShQE1BxPoug; Mon, 09 Nov 2026 02:17:53 +0100
+	id QE1AxMsH06VShQE1CxPowp; Mon, 09 Nov 2026 02:17:55 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1794187073; bh=BoLHLvKmDPgG+mZ0H4J9N9IHuLDr3SiWMohhnh53hq4=;
-	h=From:Subject:Date:MIME-Version:Content-Type:To;
-	b=fKRvzmdyzC8jyj6MrcjcoSoG/ufNBPIYlagoNWL/aqwH5qg2ICjP0nr0yRKqKlM0C
-	 SXaJWWUhQN6I8VtdPQ8nweW8O3K2bAdrMrLKFJZ0Dwb4RHwLWM3mGWntMYuGVG7Kqm
-	 9dI2UTHOpktAzWvZbCP65KXyrGshXRywOn2pxuz2ruJq6XoR7cpQ9fbAMpvIxP2aMr
-	 jSFpo9z8jEkcCTx9ZIQnSayB6xWN3Z/cT0o/iP2yeFz+kVtIxyL4t/bwPhn6cEYySq
-	 YwYJf6ZIwu0DSXk6RiUCKXbLVf/a3cSaK9KPoGo3s7AcW01bEDPZ/Nb27Sn2myAieI
-	 5FxhDw4mF784Q==
+	t=1794187075; bh=bjvPV3NSTCVSNl0OtlPJZDSOPt/osUZq1yYCSFkkiKM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:To;
+	b=mhp8J9i3VW0ckOXQFCxsMaxsVrQmSyBva6pnrCbQw+zI0SWUJfjsKpg9b/wbUfvVH
+	 rA5oJcA8H/BribghHPIxT7TLjHzSZEa4LdEL8V0ESPdOTVUTpkUtz2d1xF65dAgLN8
+	 3VxtL7LfxOJ4bonitSxrZw0aKPoteKom0BEW+0X1JTDi0XCjCp46I08MZmwBnBEh2x
+	 hCBqiXpgKTHisFYVw88y238IJJn8EpvQSA8+V5SbcYd639WVomHNXcNYb3j0yxr/+F
+	 dHCD0Sj1DRXpx8C9ougfaimluNXKiL99AwYkRdoDSE7fWhbJMhm1k/yuNi8dw7Wko2
+	 GoU1l3grFYUsA==
 From: Alessio Ferri <alessio.ferri@mythread.it>
-Subject: [PATCH wireless-next v4 00/10] bcma-ac-rev1: support 4352/4360
- rev3 chips
-Date: Mon, 09 Nov 2026 02:17:50 +0100
-Message-Id: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
+Date: Mon, 09 Nov 2026 02:17:56 +0100
+Subject: [PATCH wireless-next v4 06/10] firmware: bcm47xx_sprom: read the
+ SPROM revision 11 fields from NVRAM
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAD4f8WoC/23NQQ6CMBAF0KuQrq3ptAjUlfcwLtoySI2CaREhh
- LtbYINoMpufmfdnIB6dRU+O0UActtbbugoh3kXElKq6IrV5yIQzngCDmGrzUFQZGo6B5iqTMcQ
- 8lawggTwdFrab687kbR3e0XtaYdeQy7L2L31D00yVEyitb2rXz+9bmNn/T2EY1QnLUMpcFIfk9
- Oib0qHK93Ypb/mK83TD+cylTsAIkJz9crHiAjZcBA6FRpFhBqnU33wcxw9FheEKSQEAAA==
-X-Change-ID: 20261014-bcma-ac-rev1-da894142790f
+Message-Id: <20261109-bcma-ac-rev1-v4-6-de1262c18b54@mythread.it>
+References: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
+In-Reply-To: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
 To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
  Michael Buesch <m@bues.ch>
 X-Mailer: b4 0.15.2
-X-CMAE-Envelope: MS4xfEdioDTGY1z/u4GjVMe1mHbLmWpT+rI4H8Xls66NQln3AiF++CcMvxSaaGmsBXk3x4g8Dib6BHu6BK7TnmTEOyW7ehauJEouv8SmkiWXnR8yDAh0bB+l
- EloZ/IAJiS+pl1kaopHIob50iIHTC/gQWIgjGsi2LETExhRM+4Iw4SCq/wC0LddyDFKmHZ1+cC9a7yW1HZgGp/1yMl5U8vhOCUJNDyGRBZVhLbHUNeFzuHa5
- El4XezI2nRw/fKrMcWh6jLOdHOlPh61DGekcC/bMC7HU+xVzJxUEkJhFHncDdWUYTu9ZDKdKoVTiCfIGDOjT4RrpaXx0JVGSUZ4h5ElM/Icp1mpuzk8xrtoL
- lqrk58HMIeGgZOleaDyOXw1A8zY//V541UoWSHJa05W6otiIa2vqQ47zRVXM8GFp6e8/iRuanRLI5ji6BUU/0BWNimWWZaL78D4YfdbOLmR7Op+ESZdUK2Rx
- +AtcAd9UX0hdJ+tOJ0A1x3quhZXaT7BEcnQH7A==
+X-CMAE-Envelope: MS4xfKWjnE3rgRu097RkoPrMJ4MPxysVPF64nqsRxaRlKnggHbOPYLVd9XcCNuAFVy9R604y+t/IyBHWnzCfKnncv95fMU6FS+5VKHSFDHBS0O9kwJWX7Lob
+ ptCXaBN4ntFR1EvmyXE0jcPR0A2DQfSOgHtcNN/jCGYjqI583VyMGDRHbVxFBvyTJMkVeiPZv2ZtzMqTD7EOfi8adXMs69O8ZZqIl3u22OU/KSKmhu0Glcpe
+ hE6zliytsMNeeBCmC+RtEX2KU5UBmCYYTbw49Uh5g/nwskGuQFJkzxysfnCo5R7Ni/QRd89kUShaeRo4W/KHTBtWvUnEUQVVayt9aoU6yN04gTgYz1aMe4Sn
+ DufaRe1wDty1nADLf8tXEqOahMLSYV1YJF9wLdV2R9/U85BpXXksINsklc4WzW+/FLWh3RMphnSy7VaxpJ1NksgtqGdhFanaKQWHOKbCK4pJBFFrOQ8do7rs
+ rqjVWvn6/UzNk/Ib2UlJb2oubVW0lE/unCfMJQ==
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261108_171759_632682_2BD2068C 
-X-CRM114-Status: GOOD (  13.47  )
+X-CRM114-CacheID: sfid-20261108_171759_657831_7932DF7A 
+X-CRM114-Status: GOOD (  14.75  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -75,85 +72,245 @@ List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
 Cc: vit9696 <vit9696@protonmail.com>, ville+git@takio.fi, linux-wireless@vger.kernel.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, egc112@msn.com, b43-dev@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	T_SPF_TEMPERROR,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=4.0.1
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-UHJlcGFyYXRvcnkgd29yayBpbiB0aGUgYnJpbmcgdXAgb2YgQUMgZmFtaWx5IHJldjEgY2hpcHMs
-IGluIHBhcnRpY3VsYXIsCnRoZSBiY200MzUyIHJldjMgYW5kIGJjbTQzNjAgcmV2My4gV2hlbiBw
-dWJsaWMgc291cmNlcyB3ZXJlIGZvdW5kLCB0aGUgCnNhbWUgZ2F0ZXMgYXBwbGllZCBmb3Igb3Bl
-cmF0aW9ucyB3ZXJlIHBvcnRlZCBpbiB0aGlzIGNvZGUuCgpJbml0aWFsaXplIHRoZSBQTVUsIHRo
-ZSBQQ0llMiBjb3JlIGFuZCBjaGlwY29tbW9uIG9mIHRoZSBCQ000MzUyL0JDTTQzNjAKZmFtaWx5
-IG9uIGNoaXAgYmFzZWQgb24gdGhlIG9wZW4gc291cmNlIHZlcnNpb24gb2YgYnJvYWRjb20gZHJp
-dmVyLCBwYXJzZSAKU1BST00gcmV2aXNpb24gMTEsIHJlYWQgdGhlIE5WUkFNIHZhcmlhYmxlcyBz
-ZXQgb24gdG9wIG9mIHRoZSBTUFJPTSwgYW5kIApiaW5kIGJjbWEtcGNpLWJyaWRnZSB0byB0aGUg
-QkNNNDM1Mi4gRmluYWxseSwgYWRkIHRoZSBtaXNzaW5nIGlkcyB0byBiNDMuCgpNb3N0IG9mIHRo
-ZSBzZXJpZXMgd2FzIHRlc3RlZCBieSBFcmlrIENvbmlqaW4gYW5kIFZpbGxlIFRha2lvLCBib3Ro
-IGFyZSAKY2MtZWQsIGJ1dCBpIGRvbid0IGtub3cgaWYgaSBjYW4gcHV0IHRoZWlyIHRlc3RlZCBi
-eSBkaXJlY3RseSBpbiB0aGUgCmNvbW1pdCBteXNlbGYgb3IgaWYgaXQgaXMgYSB2ZXJ5IHN1c3Bp
-Y2lvdXMgdGhpbmcgdG8gZG8uCgpDb25jZXJuaW5nIHRoZSByaXNrIG9mIGFwcGx5aW5nIHRoZSBz
-ZXJpZXM6IAotIEZPUkNFSFQgbWF5IGNoYW5nZSB0aGUgYmVoYXZpb3VyIG9mIGJyY21zbWFjIHRv
-byAoY2FuIGkgYXNrIEFyZW5kPykKLSBpIGRvIG5vdCBleHBlY3QgcmVncmVzc2lvbiBmcm9tIHJl
-djExIHBhcnNpbmcsIGVzcGVjaWFsbHkgc2luY2Ugbm8gb25lIAogIHVzZSBpdCB5ZXQuCi0gVGhl
-IHJlc3Qgb2YgdGhlIHNlcmllcyBoYXMgY29kZSBtb3N0bHkgZ2F0ZWQgd2l0aCB0aGUgc2FtZSBj
-cml0ZXJpYSAKICB1c2VkIGJ5IHB1YmxpYyBjb2RlIHJlbGVhc2VkIGJ5IEJyb2FkY29tLCBzbyBp
-IGd1ZXNzIHRoYXQgaXQgaXMgc2FmZS4gCi0gYjQzIG1hcmtzIHRoZSBhYyBwYXJ0IEJST0tFTiwg
-c28gdGhlcmUgaXMgdmVyeSBsaXR0bGUgdG8gcHJlc2VydmUuCgpTaWduZWQtb2ZmLWJ5OiBBbGVz
-c2lvIEZlcnJpIDxhbGVzc2lvLmZlcnJpQG15dGhyZWFkLml0PgotLS0KQ2hhbmdlcyBpbiB2NDoK
-LSBSZWFkZGVkIHRoZSBtaXNzaW5nIHNpZ25lZCBvZmYKLSBBZGRlZCBwZG9mZnNldDJnNDBtYSBh
-bmQgcGRvZmZzZXQyZzQwbXZhbGlkIHRvIHRoZSBzZXJpZXMsIHdvcmsgb2YgCiAgVmlsbGUgVGFr
-aW8sIG1vc3RseS4KLSBMaW5rIHRvIHYzOiBodHRwczovL3BhdGNoLm1zZ2lkLmxpbmsvMjAyNjEw
-MzEtYmNtYS1hYy1yZXYxLXYzLTAtMWZiZTM4ZTgxNzliQG15dGhyZWFkLml0CgpDaGFuZ2VzIGlu
-IHYzOgotIHJlZ2F0ZWQgbW9zdCBvZiB0aGUgY2hlY2tzIG9uIHRoZSBwcm9wZXIgdmVyc2lvbi9m
-bGFnIHByZXNlbnQKICBpbnN0ZWFkIG9mIGZvcmNpbmcgZXZlcnl0aGluZyB0byBiZSByZXYzIG9u
-bHksIGFzIFZpdGFseSBzdWdnZXN0ZWQKLSBBZGRlZCBudnJhbSBwYXJzaW5nIGZvciBhbGwgcGFy
-YW1zIGZvdW5kIGluIGEgcmVhbCBub3J0aHN0YXIgcm91dGVyCi0gUmVtb3ZlZCBBdlZtaWQgcGFy
-c2luZyBmcm9tIG52cmFtLCBhcyBpdCBkb2Vzbid0IHNlZW1zIHRvIGJlIHVzZWZ1bAotIEFkZGVk
-IG1pc3NpbmcgcGNpIGlkcyBmb3IgNDM1Mi80MzYwIHZhcmlhbnRzCi0gTGluayB0byB2MjogaHR0
-cHM6Ly9wYXRjaC5tc2dpZC5saW5rLzIwMjYxMDI3LWJjbWEtYWMtcmV2MS12Mi0wLWI2OWI2MWMz
-MTkyMEBteXRocmVhZC5pdAoKQ2hhbmdlcyBpbiB2MjoKLSBnYXRlZCBjaGlwY29tbW9uIGJlaGF2
-aW91ciBvbiBpdHMgb3duIHJldmlzaW9uIGluc3RlYWQgb2YgY2hpcCByZXYgYXMKICBwb2ludGVk
-IG91dCBieSBWaXRhbHkKLSBMaW5rIHRvIHYxOiBodHRwczovL3BhdGNoLm1zZ2lkLmxpbmsvMjAy
-NjEwMTQtYmNtYS1hYy1yZXYxLXYxLTAtYjYwOGU5OWQzZjU2QG15dGhyZWFkLml0CgpUbzogUmFm
-YcWCIE1pxYJlY2tpIDx6YWplYzVAZ21haWwuY29tPgpUbzogTWljaGFlbCBCdWVzY2ggPG1AYnVl
-cy5jaD4KVG86IHZpdDk2OTYgPHZpdDk2OTZAcHJvdG9ubWFpbC5jb20+CkNjOiBsaW51eC13aXJl
-bGVzc0B2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcKQ2M6
-IGxpbnV4LW1pcHNAdmdlci5rZXJuZWwub3JnCkNjOiBiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5v
-cmcKCi0tLQpBbGVzc2lvIEZlcnJpICgxMCk6CiAgICAgIGJjbWE6IGNvcmU6IGNsZWFyIG9ubHkg
-Rk9SQ0VIVCBmb3IgQkNNQV9DTEtNT0RFX0RZTkFNSUMKICAgICAgYmNtYTogcG11OiBpbml0IFBM
-TCBhbmQgcmVzb3VyY2VzIG9uIEJDTTQzNTIvQkNNNDM2MAogICAgICBiY21hOiBwY2llMjogcmVx
-dWVzdCBIVCBvbiBCQ000MzUyL0JDTTQzNjAKICAgICAgYmNtYTogY2hpcGNvbW1vbjogZW5hYmxl
-IGFzeW5jaHJvbm91cyBHUElPIGludGVycnVwdHMKICAgICAgYmNtYTogZXh0cmFjdCBTUFJPTSBy
-ZXZpc2lvbiAxMQogICAgICBmaXJtd2FyZTogYmNtNDd4eF9zcHJvbTogcmVhZCB0aGUgU1BST00g
-cmV2aXNpb24gMTEgZmllbGRzIGZyb20gTlZSQU0KICAgICAgZmlybXdhcmU6IGJjbTQ3eHhfc3By
-b206IHJlYWQgbGVkYmg0Li5sZWRiaDE1IGZyb20gTlZSQU0KICAgICAgZmlybXdhcmU6IGJjbTQ3
-eHhfc3Byb206IHJlYWQgYm9hcmRmbGFnczMgZnJvbSBOVlJBTSBvdmVyIHRoZSBTUFJPTQogICAg
-ICBiY21hOiBhZGQgdGhlIHNpbmdsZS1iYW5kIEJDTTQzNTIvQkNNNDM2MCBQQ0kgSURzCiAgICAg
-IHdpZmk6IGI0MzogYWRkIHRoZSAyLjQgR0h6IEJDTTQzNTIvQkNNNDM2MCB0byB0aGUgc3VwcG9y
-dGVkIGJhbmRzCgogZHJpdmVycy9iY21hL2NvcmUuYyAgICAgICAgICAgICAgICAgICAgICAgICB8
-ICAgMiArLQogZHJpdmVycy9iY21hL2RyaXZlcl9jaGlwY29tbW9uLmMgICAgICAgICAgICB8ICAg
-MyArCiBkcml2ZXJzL2JjbWEvZHJpdmVyX2NoaXBjb21tb25fcG11LmMgICAgICAgIHwgIDgxICsr
-KysrKysrKwogZHJpdmVycy9iY21hL2RyaXZlcl9wY2llMi5jICAgICAgICAgICAgICAgICB8ICAg
-MyArCiBkcml2ZXJzL2JjbWEvaG9zdF9wY2kuYyAgICAgICAgICAgICAgICAgICAgIHwgICA4ICst
-CiBkcml2ZXJzL2JjbWEvc3Byb20uYyAgICAgICAgICAgICAgICAgICAgICAgIHwgMjEwICsrKysr
-KysrKysrKysrKysrKysrKystCiBkcml2ZXJzL2Zpcm13YXJlL2Jyb2FkY29tL2JjbTQ3eHhfc3By
-b20uYyAgIHwgMjU3ICsrKysrKysrKysrKysrKysrKysrKysrKystLS0KIGRyaXZlcnMvbmV0L3dp
-cmVsZXNzL2Jyb2FkY29tL2I0My9tYWluLmMgICAgfCAgIDYgKwogaW5jbHVkZS9saW51eC9iY200
-N3h4X3Nwcm9tLmggICAgICAgICAgICAgICB8ICAxNSArKwogaW5jbHVkZS9saW51eC9iY21hL2Jj
-bWFfZHJpdmVyX2NoaXBjb21tb24uaCB8ICAxNSArKwogaW5jbHVkZS9saW51eC9zc2Ivc3NiLmgg
-ICAgICAgICAgICAgICAgICAgICB8ICA3MiArKysrKysrKwogaW5jbHVkZS9saW51eC9zc2Ivc3Ni
-X3JlZ3MuaCAgICAgICAgICAgICAgICB8IDEwMyArKysrKysrKysrKwogMTIgZmlsZXMgY2hhbmdl
-ZCwgNzQ3IGluc2VydGlvbnMoKyksIDI4IGRlbGV0aW9ucygtKQotLS0KYmFzZS1jb21taXQ6IDY2
-MjhlN2Q0YzZiMjVjOGQxOGYxMzQ1ZTNhMjBkMjE4MjlhYWU3ZTQKY2hhbmdlLWlkOiAyMDI2MTAx
-NC1iY21hLWFjLXJldjEtZGE4OTQxNDI3OTBmCgpCZXN0IHJlZ2FyZHMsCi0tICAKQWxlc3NpbyBG
-ZXJyaSA8YWxlc3Npby5mZXJyaUBteXRocmVhZC5pdD4KCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxp
-c3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9iNDMtZGV2Cg==
+For sromrev=11, read from NVRAM the fields bcma_sprom_extract_r11()
+fills, under the names Broadcom's driver uses: the scalars along with
+the other revision-dependent entries, and the per-chain power info, rx
+gains and power detector offsets, tssifloor5g and the antenna gain in
+bcm47xx_fill_sprom_path_r11(). Read there the rx gain errors and noise
+levels too, which rev 11 keeps per chain, with one list for the 5 GHz
+sub-bands. A list is taken only if it parses whole.
+
+Boards that keep the SPROM of their radios in NVRAM, such as Northstar
+routers with BCM4360, get these fields through the SPROM fallback.
+
+Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
+---
+ drivers/firmware/broadcom/bcm47xx_sprom.c | 168 +++++++++++++++++++++++++++++-
+ 1 file changed, 166 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/broadcom/bcm47xx_sprom.c b/drivers/firmware/broadcom/bcm47xx_sprom.c
+index bca03fd85..956ce2099 100644
+--- a/drivers/firmware/broadcom/bcm47xx_sprom.c
++++ b/drivers/firmware/broadcom/bcm47xx_sprom.c
+@@ -94,6 +94,38 @@ NVRAM_READ_VAL(u32)
+ 
+ #undef NVRAM_READ_VAL
+ 
++/* A comma-separated list of n values, taken only if it parses whole. */
++#define NVRAM_READ_ARRAY(type)						\
++static bool nvram_read_ ## type ## _array(const char *prefix,		\
++					  const char *postfix,		\
++					  const char *name, type val[],	\
++					  unsigned int n, bool fallback)	\
++{									\
++	char buf[128], *p = buf, *tok;					\
++	type var[12];							\
++	unsigned int i = 0;						\
++									\
++	if (n > ARRAY_SIZE(var))					\
++		return false;						\
++	if (get_nvram_var(prefix, postfix, name, buf, sizeof(buf),	\
++			  fallback) < 0)				\
++		return false;						\
++	while (i < n && (tok = strsep(&p, ",")) != NULL) {		\
++		if (kstrto ## type(strim(tok), 0, &var[i]))		\
++			return false;					\
++		i++;							\
++	}								\
++	if (i != n)							\
++		return false;						\
++	memcpy(val, var, n * sizeof(val[0]));				\
++	return true;							\
++}
++
++NVRAM_READ_ARRAY(u8)
++NVRAM_READ_ARRAY(u16)
++
++#undef NVRAM_READ_ARRAY
++
+ static void nvram_read_u32_2(const char *prefix, const char *name,
+ 			     u16 *val_lo, u16 *val_hi, bool fallback)
+ {
+@@ -368,7 +400,50 @@ static void bcm47xx_sprom_fill_auto(struct ssb_sprom *sprom,
+ 	ENTRY(0x00000600, u16, pre, "legofdm40duppo", legofdm40duppo, 0, fb);
+ 	ENTRY(0x00000700, u8, pre, "pcieingress_war", pcieingress_war, 0, fb);
+ 
+-	/* TODO: rev 11 support */
++	ENTRY(0xfffff800, u8, pre, "subband5gver", subband5gver, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "tssiposslope2g", tssiposslope2g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "epagain2g", epagain2g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "pdgain2g", pdgain2g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "tworangetssi2g", tworangetssi2g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "papdcap2g", papdcap2g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "femctrl", femctrl, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "tssiposslope5g", tssiposslope5g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "epagain5g", epagain5g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "pdgain5g", pdgain5g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "tworangetssi5g", tworangetssi5g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "papdcap5g", papdcap5g, 0, fb);
++	ENTRY(0xfffff800, u8, pre, "gainctrlsph", gainctrlsph, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "tssifloor2g", tssifloor2g, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "rpcal2g", rpcal2g, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "rpcal5gb0", rpcal5gb[0], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "rpcal5gb1", rpcal5gb[1], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "rpcal5gb2", rpcal5gb[2], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "rpcal5gb3", rpcal5gb[3], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "dot11agofdmhrbw202gpo", dot11agofdmhrbw202gpo, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "ofdmlrbw202gpo", ofdmlrbw202gpo, 0, fb);
++	ENTRY(0xfffff800, u32, pre, "mcsbw805glpo", mcsbw805glpo, 0, fb);
++	ENTRY(0xfffff800, u32, pre, "mcsbw805gmpo", mcsbw805gmpo, 0, fb);
++	ENTRY(0xfffff800, u32, pre, "mcsbw805ghpo", mcsbw805ghpo, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "mcslr5glpo", mcslr5gpo[0], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "mcslr5gmpo", mcslr5gpo[1], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "mcslr5ghpo", mcslr5gpo[2], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in40hrpo", sb20in40hrpo, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in40lrpo", sb20in40lrpo, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in80and160hr5glpo", sb20in80and160hr5gpo[0], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in80and160hr5gmpo", sb20in80and160hr5gpo[1], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in80and160hr5ghpo", sb20in80and160hr5gpo[2], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in80and160lr5glpo", sb20in80and160lr5gpo[0], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in80and160lr5gmpo", sb20in80and160lr5gpo[1], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb20in80and160lr5ghpo", sb20in80and160lr5gpo[2], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb40and80hr5glpo", sb40and80hr5gpo[0], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb40and80hr5gmpo", sb40and80hr5gpo[1], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb40and80hr5ghpo", sb40and80hr5gpo[2], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb40and80lr5glpo", sb40and80lr5gpo[0], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb40and80lr5gmpo", sb40and80lr5gpo[1], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "sb40and80lr5ghpo", sb40and80lr5gpo[2], 0, fb);
++	ENTRY(0xfffff800, u16, pre, "dot11agduphrpo", dot11agduphrpo, 0, fb);
++	ENTRY(0xfffff800, u16, pre, "dot11agduplrpo", dot11agduplrpo, 0, fb);
++
+ 	ENTRY(0x00000700, u8, pre, "rxgainerr2ga0", rxgainerr2ga[0], 0, fb);
+ 	ENTRY(0x00000700, u8, pre, "rxgainerr2ga1", rxgainerr2ga[1], 0, fb);
+ 	ENTRY(0x00000700, u8, pre, "rxgainerr2ga2", rxgainerr2ga[2], 0, fb);
+@@ -388,7 +463,6 @@ static void bcm47xx_sprom_fill_auto(struct ssb_sprom *sprom,
+ 	ENTRY(0xfffffe00, u8, pre, "sar2g", sar2g, 0, fb);
+ 	ENTRY(0xfffffe00, u8, pre, "sar5g", sar5g, 0, fb);
+ 
+-	/* TODO: rev 11 support */
+ 	ENTRY(0x00000700, u8, pre, "noiselvl2ga0", noiselvl2ga[0], 0, fb);
+ 	ENTRY(0x00000700, u8, pre, "noiselvl2ga1", noiselvl2ga[1], 0, fb);
+ 	ENTRY(0x00000700, u8, pre, "noiselvl2ga2", noiselvl2ga[2], 0, fb);
+@@ -481,6 +555,93 @@ static void bcm47xx_fill_sprom_path_r45(struct ssb_sprom *sprom,
+ 	}
+ }
+ 
++static void bcm47xx_fill_sprom_path_r11(struct ssb_sprom *sprom,
++					const char *prefix, bool fallback)
++{
++	const struct {
++		const char *band;
++		struct ssb_sprom_rxgains *rx;
++	} rxgains[] = {
++		{ "2g",  &sprom->rxgains_2g },
++		/* rxgains5g* is the low 5 GHz sub-band */
++		{ "5g",  &sprom->rxgains_5gl },
++		{ "5gm", &sprom->rxgains_5gm },
++		{ "5gh", &sprom->rxgains_5gh },
++	};
++	char postfix[2], name[sizeof("rxgains5gmtrelnabypa")];
++	u8 agbg0 = 0, aga0 = 0, v5g[4];
++	int i, b;
++
++	for (i = 0; i < ARRAY_SIZE(sprom->pdoffset40ma); i++) {
++		struct ssb_sprom_core_pwr_info *pwr_info;
++
++		pwr_info = &sprom->core_pwr_info[i];
++
++		snprintf(postfix, sizeof(postfix), "%i", i);
++		nvram_read_u8(prefix, postfix, "maxp2ga",
++			      &pwr_info->maxp2ga, 0, fallback);
++		nvram_read_u16_array(prefix, postfix, "pa2ga", pwr_info->pa2ga,
++				     ARRAY_SIZE(pwr_info->pa2ga), fallback);
++		nvram_read_u8_array(prefix, postfix, "maxp5ga",
++				    pwr_info->maxp5ga,
++				    ARRAY_SIZE(pwr_info->maxp5ga), fallback);
++		nvram_read_u16_array(prefix, postfix, "pa5ga", pwr_info->pa5ga,
++				     ARRAY_SIZE(pwr_info->pa5ga), fallback);
++		nvram_read_u16(prefix, postfix, "pdoffset40ma",
++			       &sprom->pdoffset40ma[i], 0, fallback);
++		nvram_read_u16(prefix, postfix, "pdoffset80ma",
++			       &sprom->pdoffset80ma[i], 0, fallback);
++		nvram_read_u8(prefix, postfix, "pdoffset2g40ma",
++			      &sprom->pdoffset2g40ma[i], 0, fallback);
++
++		nvram_read_u8(prefix, postfix, "rxgainerr2ga",
++			      &sprom->rxgainerr2ga[i], 0, fallback);
++		if (nvram_read_u8_array(prefix, postfix, "rxgainerr5ga", v5g,
++					ARRAY_SIZE(v5g), fallback)) {
++			sprom->rxgainerr5gla[i] = v5g[0];
++			sprom->rxgainerr5gma[i] = v5g[1];
++			sprom->rxgainerr5gha[i] = v5g[2];
++			sprom->rxgainerr5gua[i] = v5g[3];
++		}
++		nvram_read_u8(prefix, postfix, "noiselvl2ga",
++			      &sprom->noiselvl2ga[i], 0, fallback);
++		if (nvram_read_u8_array(prefix, postfix, "noiselvl5ga", v5g,
++					ARRAY_SIZE(v5g), fallback)) {
++			sprom->noiselvl5gla[i] = v5g[0];
++			sprom->noiselvl5gma[i] = v5g[1];
++			sprom->noiselvl5gha[i] = v5g[2];
++			sprom->noiselvl5gua[i] = v5g[3];
++		}
++
++		for (b = 0; b < ARRAY_SIZE(rxgains); b++) {
++			struct ssb_sprom_rxgains *rx = rxgains[b].rx;
++
++			snprintf(name, sizeof(name), "rxgains%selnagaina",
++				 rxgains[b].band);
++			nvram_read_u8(prefix, postfix, name, &rx->elnagain[i],
++				      0, fallback);
++			snprintf(name, sizeof(name), "rxgains%strisoa",
++				 rxgains[b].band);
++			nvram_read_u8(prefix, postfix, name, &rx->triso[i],
++				      0, fallback);
++			snprintf(name, sizeof(name), "rxgains%strelnabypa",
++				 rxgains[b].band);
++			nvram_read_u8(prefix, postfix, name, &rx->trelnabyp[i],
++				      0, fallback);
++		}
++	}
++
++	nvram_read_u16_array(prefix, NULL, "tssifloor5g", sprom->tssifloor5g,
++			     ARRAY_SIZE(sprom->tssifloor5g), fallback);
++
++	nvram_read_u8(prefix, NULL, "pdoffset2g40mvalid",
++		      &sprom->pdoffset2g40mvalid, 0, fallback);
++	nvram_read_u8(prefix, NULL, "agbg0", &agbg0, 0, fallback);
++	nvram_read_u8(prefix, NULL, "aga0", &aga0, 0, fallback);
++	sprom->antenna_gain_qdb[0] = ssb_sprom_antgain_qdb(agbg0);
++	sprom->antenna_gain_qdb[1] = ssb_sprom_antgain_qdb(aga0);
++}
++
+ static bool bcm47xx_is_valid_mac(u8 *mac)
+ {
+ 	return mac && !(mac[0] == 0x00 && mac[1] == 0x90 && mac[2] == 0x4c);
+@@ -586,6 +747,9 @@ void bcm47xx_fill_sprom(struct ssb_sprom *sprom, const char *prefix,
+ 	case 9:
+ 		bcm47xx_fill_sprom_path_r4589(sprom, prefix, fallback);
+ 		break;
++	case 11:
++		bcm47xx_fill_sprom_path_r11(sprom, prefix, fallback);
++		break;
+ 	}
+ 
+ 	bcm47xx_sprom_fill_auto(sprom, prefix, fallback);
+
+-- 
+2.34.1
+
+
+_______________________________________________
+b43-dev mailing list
+b43-dev@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/b43-dev
