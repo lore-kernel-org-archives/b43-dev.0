@@ -2,118 +2,150 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6E7606D826
-	for <b43-dev@archiver.kernel.org>; Mon,  9 Nov 2026 01:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9327606A8A0
+	for <b43-dev@archiver.kernel.org>; Wed, 11 Nov 2026 23:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=rw09RW6n;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mythread.it header.i=@mythread.it header.a=rsa-sha256 header.s=a1 header.b=FzHCYLdI
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=ZlUF4WMq
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	List-Archive:List-Unsubscribe:List-Id:Date:Message-Id:Mime-Version:Subject:
+	List-Unsubscribe-Post:From:To:Reply-To:Cc:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Unsubscribe-Post:List-Owner;
-	bh=F1k7lJEhUUy1IeXA6yEHs13YfJ6e3HjT7oia9rzCBU4=; b=rw09RW6nCHQT0LUrr19ke34aX8
-	vKvXUANBDxYLQxuKarrYQQj5ld1ILVxUhBsmaAnCCrpu1dCIHiG0MT7LhtwlriV/5aSZ6UetxKRRn
-	jSki1zhDcMPfJRatOBbAgoB4nUyB6ShnqyZVLI72Z92W2qf28rS1NsWUW/7uFYrgenzmJZUX/uj9D
-	YocLJ6GRO8r1CbJccvkrA0shFBZy6qvTA1tgPrQSw0+LpU63Fvtr8ieHCQdX7oWdfwooeq3QUVC83
-	j+9vhEVH4A9g9SIcRhHKtoLwrHgsiIHUYVa/qXU97nIw/VpUNecbIOHMSoGhW+pCsan+q6YnQyKjS
-	u4QufcRQ==;
+	In-Reply-To:References:List-Owner;
+	bh=NlcIh84C9b58LREja9G9qnIkc7lIFGtOwFZr9JbgncY=; b=ZlUF4WMq2u3qGWf9uu6z6V50ST
+	5qzz8uRN94c8mwQLsz3d1XiKhoXAlZup5dDwUb7IGe/koJXlz0SzfvDqZGLJ5qUXbLUYF5uUJ03EQ
+	d353wgnALx4k/JG5wcjLKbAemSpetQ38teucT0XoM+3S/RFOgpzM+fxCOPvFca5MDaFoZo1EQmkib
+	e9+pZSkPbAi1cRifLqhONH7OFXIBV+SNBzonKR+lsiCztswG78vIX9FAsaEOYVzmCVOjkVmTvXOLv
+	tqt4G20rqxTXYFxa09myLvFeRl1ZQWk5soxNZcbyJtuYgLlhtPaL/RroytFiJZaa4dSne7z+t/AuI
+	7PbcN2xw==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xQE9U-0000000H2nn-25RA;
-	Mon, 09 Nov 2026 01:26:28 +0000
-Received: from smtpdh16-2.aruba.it ([62.149.155.101])
+	id 1xRI33-00000008AcG-1dIp;
+	Wed, 11 Nov 2026 23:48:13 +0000
+Received: from r9133.ps.combzmail.jp ([49.212.13.37])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xQE9R-0000000H2Y0-1u55
+	id 1xRI2w-00000008AbQ-2aCB
 	for b43-dev@lists.infradead.org;
-	Mon, 09 Nov 2026 01:26:26 +0000
-Received: from localhost ([87.16.49.252])
-	by Aruba SMTP with ESMTPSA
-	id QE9Qx8UGc6KjvQE9QxqDWB; Mon, 09 Nov 2026 02:26:24 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mythread.it; s=a1;
-	t=1794187584; bh=k7ESnYvV5jT/b19ZiMmV+GLezCbMfSD87jfTKfgvwS0=;
-	h=Date:From:To:Subject:MIME-Version:Content-Type;
-	b=FzHCYLdI0UHRMhNR1GqDSSs6GTFA6kP/SkCNDD3Tied5ci6m0OswZmNZ34qybdLhp
-	 kGDAJdDG3q1VCjU0aVC3cndQQyq0Xv49sQ3MJ8Fshs0KQ8g7ul9hyGsl2y2us4Oevx
-	 GR1Unfa+MtRkLs7zPbQxnJG0VOY52O8gSS+VlrkWqecuO0k5koT6H6o6AStYjrMdvJ
-	 Fek3eEFgXkhha5u8uMFvYxXau3Vp+dkzC+yHmrrd/NdiEmVWYp0QNwIjkkXkvMTilq
-	 //BNbvwrp1tQUUrqySg7GdI4Fa9/LMZrbeMKQzBzQf2ADI7WDun3tjOF/BEpDSKCgI
-	 p1NEScrfw4dNw==
-Date: Mon, 9 Nov 2026 02:26:22 +0100
-From: Alessio Ferri <alessio.ferri@mythread.it>
-To: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Michael Buesch
- <m@bues.ch>
-Cc: vit9696 <vit9696@protonmail.com>, ville+git@takio.fi, egc112@msn.com,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, b43-dev@lists.infradead.org
-Subject: [PATCH wireless-next v4 10/10] wifi: b43: add the 2.4 GHz
- BCM4352/BCM4360 to the supported bands
-Message-ID: <20261109022622.000056e3@mythread.it>
-In-Reply-To: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
-References: <20261109-bcma-ac-rev1-v4-0-de1262c18b54@mythread.it>
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	Wed, 11 Nov 2026 23:48:09 +0000
+Received: by r9133.ps.combzmail.jp (Postfix, from userid 99)
+	id 0FF69875B7; Thu, 12 Nov 2026 08:47:30 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9133.ps.combzmail.jp 0FF69875B7
+To: b43-dev@lists.infradead.org
+From: =?ISO-2022-JP?B?GyRCP0BFRCFDMGxITDxSQ0RLIT9NJUolbCVDJTglaiVzJS8bKEI=?= <info@knowledgelink-corp.jp>
+X-Ip: 5390431594580205
+X-Ip-source: k85gj72848dnsad1u0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCPFJEOSROMnE8UiROIVYlKCE8JTkhVyEiGyhC?=
+ =?ISO-2022-JP?B?GyRCJCQkRDwtJGEkXiQ5JCshKSFaN1AxRDxUOEJEaiU7GyhC?=
+ =?ISO-2022-JP?B?GyRCJV8lSiE8IVsbKEI=?=
 X-Archived-By: <archiver.kernel.org>
-MIME-Version: 1.0
-X-CMAE-Envelope: MS4xfNaJ3TblAzN29JopYLP1XVvl2jdRXeGIaOQzUSdsNeAYy7osSVP4gFYhnoQR1WGWSgWEdTj7UZfatfO0oofzzkHysfODp+66TYppvsFMqyFO/AxSo5tm
- 2KMU1YxhYmi2OfvojrAoOnkxoAfiXzuP77mg/kscjg7JrN+2C/ilF5AXND3OgiV0Gkylp/hk771ZXX0BUJlxE2XyscQSVn9f9inbNQ7Xh1ZX812ASnLhtsPK
- A5i+GODttOAaei8rYYmZkiGgfOIpE6CMYO4dmx8TvkZEljpuiXzVlqey8TYHqpYNFezqBoOUbrHAxfBbCUYFTskSY7md7Csgs9pxFCq8LAp2ffiFIDJlzMMG
- vs5wDlMSE1LKAv2kQj72DCfdFoWrShGaoN5UAwmzz4Lgy/9Sqa13UTeO8jwQ60/gOpQZJwolV6odvTCO3IVEec+EUxgxHx8C5p3TzYXDaZuyipkYHuA=
+Mime-Version: 1.0
+X-MagazineId: 28d1
+X-uId: 6764325037486067644983461010
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20261111234801.0FF69875B7@r9133.ps.combzmail.jp>
+Date: Thu, 12 Nov 2026 08:47:30 +0900 (JST)
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261108_172625_658158_A2213EE7 
-X-CRM114-Status: UNSURE (   9.33  )
+X-CRM114-CacheID: sfid-20261111_154806_773124_E73D4E53 
+X-CRM114-Status: UNSURE (   0.96  )
 X-CRM114-Notice: Please train this message.
-X-Spam-Score: -2.1 (--)
+X-Spam-Score: 0.9 (/)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
-Precedence: list
 List-Id: b43/b43legacy Linux driver discussions <b43-dev.lists.infradead.org>
 List-Archive: <http://lists.infradead.org/pipermail/b43-dev/>
 List-Post: <mailto:b43-dev@lists.infradead.org>
 List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: 7bit
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=0.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,X_IP
+	autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
+　
+　ルールを決めたら、社員は辞めるどころか
+　「迷わなく」なった。
+　
+　これまでに4,800社以上への支援から分かった
+　
+　“凡人”を常勝集団に変える
+　ルールのつくり方を
+　
+　次の朝礼から実践できる形で
+　分かりやすく丁寧にお伝えします。
 
-Report the 2.4 GHz BCM4360 (0x43a1) and BCM4352 (0x43b2) as 2.4 GHz
-only devices, as their 5 GHz variants are reported as 5 GHz only.
+┏… Overview …………………………………………┓
+　
+　「あいつが辞めたら、うちは回るのか？」
+　
+　　エースに頼らず“凡人”を
+　　常勝集団に変えるルールのつくり方
 
-Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
----
- drivers/net/wireless/broadcom/b43/main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+　　　　　　　　―――
+　　日　時　11月24日（火）13:00-15:00
+　
+　　会　場　Zoom無料開催／定員100名
+　　事務局　ナレッジリンクセミナー窓口
+　
+　　詳細はこちら
+　　https://knowledge-co.jp/rule/
 
-diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index 3825b6ad9..350b47b4b 100644
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -5366,6 +5366,12 @@ static void b43_supported_bands(struct b43_wldev *dev, bool *have_2ghz_phy,
- 		*have_2ghz_phy = false;
- 		*have_5ghz_phy = true;
- 		return;
-+	case 0x43a1: /* BCM4360 */
-+	case 0x43b2: /* BCM4352 */
-+		/* 2.4 GHz only devices */
-+		*have_2ghz_phy = true;
-+		*have_5ghz_phy = false;
-+		return;
- 	}
- 
- 	/* As a fallback, try to guess using PHY type */
--- 
-2.34.1
+┗……………………………………………………………┛
+　
+　
+　多くの社長とお話しする中で
+　このようなお悩みをよく伺います。
+　
+　　・エースが辞めたら、売上が大きく落ちる
+　　・朝礼に遅れてくる社員がいても、誰も何も言わない
+　　・同じミスに、毎回説教。その後、自己嫌悪になる
 
+　研修も、クレドも、評価制度も試した。
+　それでも改善は続かず「結局は人次第なのか」と感じている。
+　
+　
+　そんなお悩みを解決し、成果を生み出す会社に一変させる
+　本質をついた、ルールづくりをお伝えします。
+
+　
+― セミナーで得られること ―
+
+　・ルールを増やすと社員は辞めるのか？への答え
+　・「姿勢のルール」の決め方
+　・「完全結果」の指示に書き換える方法
+　・エラー時に上司がかける「一言」
+　
+　
+　いずれも、翌日の朝礼から試していただける内容です。
+　
+　自社の組織に希望を持つための気づきを得られる
+　内容となっておりますので、ぜひご視聴ください。　
+　
+　
+_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+　一般社団法人ナレッジリンク
+　東京都千代田区神田小川町1-8-3
+　セミナー窓口：03-5256-7638
+
+……………………………………………………………………
+　メール案内が不要な方にはご迷惑をお掛けしまして
+　大変申し訳ございません。
+　お手数ですが下記URLより手続きをお願い致します。
+　
+　配信の解除依頼はこちら
+　https://fc-knowledgelink-corp.jp/mail/
+
+_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
 _______________________________________________
 b43-dev mailing list
