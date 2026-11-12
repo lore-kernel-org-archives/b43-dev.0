@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957E7606A8AE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95BE606A8AA
 	for <b43-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=ZBF4hxXd;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ID7STUGo
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=B580F3sO;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SLKMLppA
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
@@ -14,80 +14,80 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=2h4SGCJQ50Hri/U7+8p1o+m28nuSPzR+UZSL/C4MUyI=; b=ZBF4hxXdfYq+ZOF2k0RkZREl33
-	Zjd44nlwUxg9a+78XWLR2hkDFKpscAI2LgLX9HnmB7EvB7EIqBX+o94YB+A9qNIqMR39l1L8d4Q8N
-	oaBnctORmLDn1MbTQhK3jm3SWXNrickRkc7vTi7G7BkKkbHmQwvU7I89J45Sx8hl2PpyIoFbjnjpi
-	GGRmltBV8rjAEFRLRJ/JxNaF5r9F+o4F4MaicV+QdHuR108i6wiTAiMPiIa4ZjOu9Ugpqj57chnHv
-	tzH/uiIytyMI3KZmjM+Ubx5XPMFYFGdOgDNxNt2ywwD7doLs0gB8m3GpqA8jMe0ODqSHfnPIQsWa1
-	0JeTUMbw==;
+	bh=2Qwk1QU+of7biwPiV7sf9bzt+Moxv4+RbdIz+NfUIIM=; b=B580F3sOJ7iSR/qLjz8Dz6b75l
+	y6CtgWApowptPZ7cDwkgpr4DCnySaplOsQB8EAsB+5//KoD/rfOp/95eJkZ8ygS76AiWIUla46dwQ
+	Db3YtUZ8DeRv8Ebdk3NL5OhPUe/bsz/9pMfiIMV8RMH4B7TuHeOfulGe3JG4Ytpm5lygnkCCLvl4h
+	5s6xqHJ/YiknNqYZd5XyGyc+YbM2Ra6ocC/6OGVsEx/oqwwEfIa6V9M2mcCsCPc6FHRCcmV+4wEXC
+	qf1sCbQsHVTV0HU3orBlSQYpP8+Q5ozOl+8GJFXsQSJ6tMmJwFXoIdri8n/5sleIy30FEC21XCD6H
+	x9Mc0wnQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xRZ2a-0000000AoZi-4C31;
+	id 1xRZ2b-0000000AoaF-1EsP;
 	Thu, 12 Nov 2026 17:56:53 +0000
-Received: from mail-wr1-x42e.google.com ([2a00:1450:4864:20::42e])
+Received: from mail-wr1-x42c.google.com ([2a00:1450:4864:20::42c])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xRZ2V-0000000AoT4-2G2j
+	id 1xRZ2W-0000000AoTy-2h9T
 	for b43-dev@lists.infradead.org;
-	Thu, 12 Nov 2026 17:56:50 +0000
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-4918c2d727fso22858f8f.3
-        for <b43-dev@lists.infradead.org>; Thu, 12 Nov 2026 09:56:46 -0800 (PST)
+	Thu, 12 Nov 2026 17:56:51 +0000
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-48dee593f18so24448f8f.3
+        for <b43-dev@lists.infradead.org>; Thu, 12 Nov 2026 09:56:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794506205; x=1795111005; darn=lists.infradead.org;
+        d=gmail.com; s=20260707; t=1794506207; x=1795111007; darn=lists.infradead.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=nNm8Cx2ZfHbw8ESTnrWh1uOe82GeZsKFiVEtoCEnJGE=;
-        b=ID7STUGoYndDws0qC9SaC3e0/bL/4E9Gc/1hcFHvk+8eS2fanN/PYhjHSnv4/OsRH0
-         ppjNd98EyJxERgugJdy4vSPfjEwvoAZz6GtQFZowgkfA2yRGmp5IzkBlsTbKlGUf7Oj+
-         LJqeCPpV+bAucK/HxZebiBLBNDisccYs9dmxAlf6lAulKylfmn1ejwLrww8+NjgyCVMm
-         4FZlOiMHEpB8P36DAgwcKqxld0u5oYgpu4zwHCjjvokLuH7Yn/mU6i006r/cKdxbWUGx
-         toF6LwQdgSnNy4+1vMjLUwa/toitchy6juON0Cad52osNlr4CWJ+BNHMfnJXvy5SabBJ
-         f9Jw==
+        bh=3wIm4YG5YTs5SCnZuWti0ur7cF4MpcSiaNujKUCPewA=;
+        b=SLKMLppAJYrU/LuOTp4EWf0g1Wm4R73U/MepF3icB0E2eTdM0n+AyI8pcFp8XeARnT
+         atOvkIhRjH6rHlA3TU+lMnA39geb+Os4l7z+xwULAlhyI8DKdzmKHec5KFeyuG6tjr2N
+         7rqPhnqvnXVbAfWihFFBRENv7eL4wPp50IO9zv45PNc4OL9MwLWLjt2g26hbul3XrPv8
+         l7pbnXqz4xRXvYDvYAmikoYtiGkjXiqWEHGzxejJfGGfO7a6CnCsNLTpoa3gW89wfgTd
+         qRFWn4Ptm67/Kz0DmWqYJSfuptQuoRJ9JoYc8tvQJV9hDxfAPCe0rYrcypBn+JWcE1VP
+         Oi/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794506205; x=1795111005;
+        d=1e100.net; s=20260707; t=1794506207; x=1795111007;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=nNm8Cx2ZfHbw8ESTnrWh1uOe82GeZsKFiVEtoCEnJGE=;
-        b=FFu1CHzd4+yjf+0nLPPe5XkekvFq3ZYUAIf88KuTgtT5Nq9Rjzxeeh8dOTWKfHe+Bv
-         Yi9C1KCxCL9Y3i+5wKcluBQXcEwij9VuRej67buQQnmKfEVFniZptVxItTqFzV2VNaOU
-         sJKv1N/iqN1/NmHwepcKrxmERi8PSJ+eRUIFwgyX+c4iwAJXHwVCHYdbuX+zztVjJGkT
-         wJlnn3L9rGDpelgA3Xg4pqDvd9q2RQ8erl5K1UyfcsnPxdAy3irLMUE0n8wumwb71WEU
-         2ZyXdpxzaPjFZiGKxXEeVjMghY0sroysXdaOSWBxk5FAbtyzcxdkpdeuboda8QWxr+vD
-         hRZA==
-X-Forwarded-Encrypted: i=1; AL+hErHe57MIPR7lZq/ubbVWxpl1y3dEMcjQWWJZ5T983/SQsG8Ffx43scW1b+uO3rcfhFX117kViS3M@lists.infradead.org
-X-Gm-Message-State: APuU4Z8QX58Y/qg04AaFRdn1zPnHulc2hxZ1Zb6AeALZkAIDzgpYiheZ
-	2QJQegEG6s3D/uJ/fp2xRnBFY39tW0WKsVmmoKyWmOGAzttWOKixU9kw
-X-Gm-Gg: AYBFou34nKf7VFUFNABlSeFdajGGd3gdW1zp1lVoBjSYhPjP5YVDbdFM804odNRs7mG
-	Y0TfhhJfmWmcu+QXSeKfCxfroeCr3Z54mSvD09lYmADnxv/KYucWy/baNTKp/HGHrWB+Nn9avWT
-	cU1+ymSMOUnn4UiOXUwrBI2NfedEggzg5k/FEAb5tAMELI7BVEd/IC3WsTnNQU11llLjbzDcBNU
-	hW8iD3elOac6Cg8LSTq8UyQA4jPumPjXUIisHA4MiaSY7RuwVlOAo6bkzmZPS1SAy9GGuoPOsDn
-	PweSdQoY4c6Vv4VVYnyxJ5gGiLFDtfxv+fGxg3LwuMaBXthi5StTD1Dmy/ZCrMSObYqHKIz5Q9S
-	/mkhfXBz17pRt43dDCyiEc6Fq3Uf7VPPi1lfAKVcybw7I1uFD5JymVhdVK6+bi8UpDTgD4CJi6l
-	XbmecSs2zxp04ZW2EB753+0MhYBtgZpBO0ORTDE6hgbueh/l9PK/zIhwXBdUpLXRkGlajQZAIJ9
-	W9IVWZm4sxbB3X4F0FHiPI/QbAUU2Gi/iI/ePwgUD+e0W46iKOqy8/s+1XxWlQRrzF89PPP+xK6
-	hLpG1xLe38pYE87qVdNC16ptAojA6slBVwaRtypNSjeMMOZsSzxn2yNHpLmKHh6P/6KmYTLY/D/
-	OdY63pbooWXc8H8JsSIG8GqXPiWf0fQJt+gqRkGWR+QbdaW38xMyxoZVA3VLEqyqkRRd5Qi9ZF9
-	4EIJxy+HcR6bb6n3QaJ6EA5qTf1hyMsX9RA9ib0DpaJCaW+SIPNIyLj5fej+p8eXM=
-X-Received: by 2002:a05:6000:2288:b0:49c:6a45:ca33 with SMTP id ffacd0b85a97d-49c70ed923amr259032f8f.9.1794506205465;
-        Thu, 12 Nov 2026 09:56:45 -0800 (PST)
+        bh=3wIm4YG5YTs5SCnZuWti0ur7cF4MpcSiaNujKUCPewA=;
+        b=G9Qog8j34Pilso+xLeV7/zKgJVqH5zH9KOuTwD4NRIR4OIaViVrCcWzYaCp8uMC9B8
+         PyNHHnkvNvyLoNpt31ZgecLSqInLfO6PrsjUxMWcMa9ysrpTyDJelZW3yT/2q+pDr9WY
+         S/OuswWwqWrpfVjgKXelaF9DZySq48gudhHbowgW5Zb/3r3Asd7/IGz9a7nkDaXQeaJf
+         sARJyNqP8yH3zqd0N0Ciptejmpvem6ONy6iQRsX56bGz+byO+CNqWc7w+2KAvonBsBOk
+         5bJFwKMKiBx+pWPFYGHIOqjHGhRnA+mEPmxoR9hwEijP7VHRipdYPd83Novj/Spy/qXv
+         Eb6w==
+X-Forwarded-Encrypted: i=1; AL+hErEzJgAEobFNoyGRU/NKl4V/3e24Jd0pllpy5Ij01i5fDPYjYLWE3vz/KUaBIE00Wd4GaMviie06@lists.infradead.org
+X-Gm-Message-State: APuU4Z/LzZDWLVXjBKN9X0gSF87HMkkUU90xTSrL+z5q0PK6rSLYy8kH
+	gGDR9Tmh9EqZbUsMTuMfZk34OX7NGwhhz1YehrIHwp8Ao2ktV/BxObzx
+X-Gm-Gg: AYBFou2uqS9dfw2zyWF2cPc1XJWeqS0DOrdokhcg0eD4kfTykgUf3bL5udqRb5LNXA2
+	LlQYCyXCVinKFUc1NAhKXg7DXOOHu09dF4iMhbao5E7RLqAoqiwr8QFRgPtCTnF0p5MHZap9x1e
+	FUzxl6k2NzS6pFdkrcROknWM+cfMGdcaVK3THt3oIwi/5XsVdsSpthJ1ZyQdkfnvrv0A+lanb71
+	ddPwwUfxAlCXhcNUEllvNcCNvN9KSg8Q81Tx9W9XL98z08MlWwjocEbH2ohsLczTiz5QGd1NNux
+	ayY7INTBtZXTTi4LV/Yt6uBUPXk9/Oj7vZRoiA2hZ8QJQlfbEf6L+ohfLgVA6qKVJNY6eJKyXI8
+	YyPF6lg/sJoNMHmA0TBSU5pYjSrI+iG/d58PKZHAvdPNRDCH1nvQ+TOMufz+C7e96W9+uk+vLPg
+	TqjJh4siK49zZraexeDnlLSyoQ30esECHOXhtR5Ax83o8j9ZkPSrBsDGuNsA46pqzRIC10iFHyu
+	QtLlyc+PxkuPkXKZjVKIDpnWguZoDt0kvCSuLvl4z30xo8wTAHX8P/g6+4chSBO8EbwYSAurB1i
+	tazbZ4A7wyzCVLwKSiA9IBDL0RZZOlZkpv5y9Kvmy2ALx2mHlm/Kp/OKfCOvd89nusti+dFbMd9
+	rqBjvdewG31EI6NJNVpOfmojF0erzY20eYRA0aiUQS8UtVxUgGZpfasNsw+TaNAyFHFZAvcOhsf
+	U0Lfl3Tu6NdBB73A8DSIQxloDG7nNWxApioRQiBwRNWw==
+X-Received: by 2002:a05:6000:24ca:b0:492:7fa6:efd4 with SMTP id ffacd0b85a97d-49c6fd933e3mr428161f8f.9.1794506206544;
+        Thu, 12 Nov 2026 09:56:46 -0800 (PST)
 Received: from zitrone.tail45b538.ts.net ([2a02:810d:a1:6000:900:be5c:7a9c:c176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f1c193fsm547430f8f.13.2026.11.12.09.56.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f1c193fsm547430f8f.13.2026.11.12.09.56.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 09:56:44 -0800 (PST)
+        Thu, 12 Nov 2026 09:56:46 -0800 (PST)
 From: Andreas Wendleder <gonsolo@gmail.com>
 To: linux-wireless@vger.kernel.org
-Subject: [PATCH RFC wireless-next 3/4] wifi: b43: RX header handling for the AC microcode
-Date: Thu, 12 Nov 2026 18:56:39 +0100
-Message-ID: <20261112175640.40603-4-gonsolo@gmail.com>
+Subject: [PATCH RFC wireless-next 4/4] wifi: b43: A-MPDU for the AC microcode
+Date: Thu, 12 Nov 2026 18:56:40 +0100
+Message-ID: <20261112175640.40603-5-gonsolo@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261112175640.40603-1-gonsolo@gmail.com>
 References: <20261112175640.40603-1-gonsolo@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261112_095648_443151_10E69C85 
-X-CRM114-Status: GOOD (  19.97  )
+X-CRM114-CacheID: sfid-20261112_095648_876232_10F4B41F 
+X-CRM114-Status: GOOD (  25.04  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -110,154 +110,220 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The RX header of the AC microcode keeps the MAC status at 0x10, the TSF at
-0x14, an 11ac chanspec at 0x16 and the power of the two antennas at 0x09
-and 0x0a. Decode the channel (including the 80 MHz block with the position
-of the primary channel), the signal, and the HT-SIG and VHT-SIG-A bytes
-that precede the frame for the rate, bandwidth, guard interval, coding
-and stream count.
+The microcode builds the aggregates and sends the block acks. Accept block
+ack sessions on both sides (ampdu_action) and set
+IEEE80211_HW_AMPDU_AGGREGATION on the AC cores.
 
-The microcode sets the decryption error bit on frames it never decrypted,
-because no hardware key is programmed (the 4-way handshake message 3 and
-DHCP replies carry it). Pass such frames up; mac80211's own decryption
-still rejects anything corrupt.
-
-Only microcode revision 832 has been tested.
+Frames of a session that the microcode gave up on are put back on the
+ring, up to four times, with the retry bit set; the block ack window lets
+them follow later frames. The cache info limits an aggregate to four MPDUs,
+longer ones lose their later MPDUs.
 Signed-off-by: Andreas Wendleder <gonsolo@gmail.com>
 ---
- drivers/net/wireless/broadcom/b43/xmit.c | 91 ++++++++++++++++++++++--
- 1 file changed, 85 insertions(+), 6 deletions(-)
+ drivers/net/wireless/broadcom/b43/dma.c  | 48 ++++++++++++++++++++++++
+ drivers/net/wireless/broadcom/b43/main.c | 37 ++++++++++++++++++
+ drivers/net/wireless/broadcom/b43/xmit.c | 22 ++++++++++-
+ drivers/net/wireless/broadcom/b43/xmit.h |  2 +
+ 4 files changed, 108 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/wireless/broadcom/b43/dma.c b/drivers/net/wireless/broadcom/b43/dma.c
+index 404f75f..ef05327 100644
+--- a/drivers/net/wireless/broadcom/b43/dma.c
++++ b/drivers/net/wireless/broadcom/b43/dma.c
+@@ -34,6 +34,9 @@
+  * into separate slots. */
+ #define TX_SLOTS_PER_FRAME	2
+ 
++/* Times an unacknowledged A-MPDU session frame is put back on the ring */
++#define B43_AC_AMPDU_REQUEUE	4
++
+ static u32 b43_dma_address(struct b43_dma *dma, dma_addr_t dmaaddr,
+ 			   enum b43_addrtype addrtype)
+ {
+@@ -1378,6 +1381,7 @@ int b43_dma_tx(struct b43_wldev *dev, struct sk_buff *skb)
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+ 
+ 	hdr = (struct ieee80211_hdr *)skb->data;
++	b43_get_priv_tx_info(info)->requeues = 0;
+ 	if (info->flags & IEEE80211_TX_CTL_SEND_AFTER_DTIM) {
+ 		/* The multicast ring will be sent after the DTIM */
+ 		ring = dev->dma.tx_ring_mcast;
+@@ -1466,6 +1470,7 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
+ 	static const struct b43_txstatus fake; /* filled with 0 */
+ 	const struct b43_txstatus *txstat;
+ 	int slot, firstused;
++	struct sk_buff *requeue = NULL;
+ 	bool frame_succeed;
+ 	int skip;
+ 	static u8 err_out1;
+@@ -1568,6 +1573,29 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
+ 			else
+ 				txstat = status;
+ 
++			/* A session frame the microcode gave up on goes back
++			 * on the ring, as the stock driver requeues it; the
++			 * block ack window lets it follow later frames.
++			 */
++			if (!skip && !txstat->acked &&
++			    (info->flags & IEEE80211_TX_CTL_AMPDU) &&
++			    !(info->flags & IEEE80211_TX_CTL_NO_ACK)) {
++				struct b43_private_tx_info *pi =
++					b43_get_priv_tx_info(info);
++
++				if (pi->requeues < B43_AC_AMPDU_REQUEUE) {
++					struct ieee80211_hdr *hdr =
++						(void *)meta->skb->data;
++
++					pi->requeues++;
++					hdr->frame_control |= cpu_to_le16(
++						IEEE80211_FCTL_RETRY);
++					requeue = meta->skb;
++					meta->skb = B43_DMA_PTR_POISON;
++					ring->used_slots--;
++					break;
++				}
++			}
+ 			frame_succeed = b43_fill_txstatus_report(dev, info,
+ 								 txstat);
+ #ifdef CONFIG_B43_DEBUG
+@@ -1606,6 +1634,26 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
+ 		if (skip > 0)
+ 			--skip;
+ 	}
++	if (requeue) {
++		if (dma_tx_fragment(ring, requeue)) {
++			struct ieee80211_tx_info *info =
++				IEEE80211_SKB_CB(requeue);
++
++			b43_fill_txstatus_report(dev, info, status);
++			ieee80211_tx_status_skb(dev->wl->hw, requeue);
++		} else if (free_slots(ring) < TX_SLOTS_PER_FRAME) {
++			/* The requeued frame took the slots this status freed:
++			 * the ring is still full, keep the queue stopped.
++			 */
++			if (!ring->stopped) {
++				b43_stop_queue(dev, ring->queue_prio);
++				dev->wl->tx_queue_stopped[ring->queue_prio] =
++					true;
++				ring->stopped = true;
++			}
++			return;
++		}
++	}
+ 	if (ring->stopped) {
+ 		B43_WARN_ON(free_slots(ring) < TX_SLOTS_PER_FRAME);
+ 		ring->stopped = false;
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index 5830acb..6b80b5e 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -5479,6 +5479,39 @@ static int b43_op_get_survey(struct ieee80211_hw *hw, int idx,
+ 	return 0;
+ }
+ 
++static int b43_op_ampdu_action(struct ieee80211_hw *hw,
++			       struct ieee80211_vif *vif,
++			       struct ieee80211_ampdu_params *params)
++{
++	struct b43_wl *wl = hw_to_b43_wl(hw);
++
++	/* Only the AC-PHY path builds session frames */
++	if (!wl->current_dev || !b43_ucode_is_ac(wl->current_dev))
++		return -EOPNOTSUPP;
++
++	switch (params->action) {
++	case IEEE80211_AMPDU_TX_START:
++		return IEEE80211_AMPDU_TX_START_IMMEDIATE;
++	case IEEE80211_AMPDU_TX_STOP_CONT:
++	case IEEE80211_AMPDU_TX_STOP_FLUSH:
++	case IEEE80211_AMPDU_TX_STOP_FLUSH_CONT:
++		ieee80211_stop_tx_ba_cb_irqsafe(vif, params->sta->addr,
++						params->tid);
++		return 0;
++	case IEEE80211_AMPDU_TX_OPERATIONAL:
++		return 0;
++	case IEEE80211_AMPDU_RX_START:
++	case IEEE80211_AMPDU_RX_STOP:
++		/*
++		 * The microcode deaggregates and sends the block acks, mac80211
++		 * reorders.
++		 */
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
+ static const struct ieee80211_ops b43_hw_ops = {
+ 	.add_chanctx = ieee80211_emulate_add_chanctx,
+ 	.remove_chanctx = ieee80211_emulate_remove_chanctx,
+@@ -5501,6 +5534,7 @@ static const struct ieee80211_ops b43_hw_ops = {
+ 	.stop			= b43_op_stop,
+ 	.set_tim		= b43_op_beacon_set_tim,
+ 	.sta_notify		= b43_op_sta_notify,
++	.ampdu_action		= b43_op_ampdu_action,
+ 	.sw_scan_start		= b43_op_sw_scan_start_notifier,
+ 	.sw_scan_complete	= b43_op_sw_scan_complete_notifier,
+ 	.get_survey		= b43_op_get_survey,
+@@ -5590,6 +5624,9 @@ static int b43_setup_bands(struct b43_wldev *dev,
+ 			hw->wiphy->bands[NL80211_BAND_5GHZ] = &b43_band_5GHz_aphy;
+ 	}
+ 
++	if (b43_is_ac_core(dev))
++		ieee80211_hw_set(hw, AMPDU_AGGREGATION);
++
+ 	dev->phy.supports_2ghz = have_2ghz_phy;
+ 	dev->phy.supports_5ghz = have_5ghz_phy;
+ 
 diff --git a/drivers/net/wireless/broadcom/b43/xmit.c b/drivers/net/wireless/broadcom/b43/xmit.c
-index cf9e7a5..dee6cc6 100644
+index dee6cc6..163e713 100644
 --- a/drivers/net/wireless/broadcom/b43/xmit.c
 +++ b/drivers/net/wireless/broadcom/b43/xmit.c
-@@ -855,6 +855,7 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
- 	u32 macstat;
- 	u16 chanid;
- 	int padding, rate_idx;
-+	s8 ac_signal = 0;
- 
- 	memset(&status, 0, sizeof(status));
- 
-@@ -874,6 +875,31 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
- 		chanstat = le16_to_cpu(rxhdr->format_351.channel);
- 		break;
+@@ -1160,7 +1160,27 @@ bool b43_fill_txstatus_report(struct b43_wldev *dev,
+ 			frame_success = false;
+ 		}
  	}
-+	if (b43_ucode_is_ac(dev)) {
-+		/* AC ucode (rev 40+) header: RxStatus1 @0x10, TSF @0x14,
-+		 * 11ac-style chanspec @0x16, per-antenna power @0x09/0x0a.
+-	if (status->frame_count == 0) {
++	if (report->flags & IEEE80211_TX_CTL_AMPDU) {
++		/*
++		 * minstrel_ht ignores session frames without this; one report
++		 * per MPDU
 +		 */
-+		const u8 *h = _rxhdr;
-+		u16 cs = get_unaligned_le16(h + 0x16);
-+		s8 p0 = h[0x09], p1 = h[0x0a];
-+
-+		macstat = get_unaligned_le16(h + 0x10);
-+		mactime = get_unaligned_le16(h + 0x14);
-+		/* 80 MHz chanspec: centre channel and the primary's position */
-+		if ((cs & 0x3800) == 0x2000)
-+			cs = (cs & 0xff00) |
-+			     ((cs & 0xff) - 6 + 4 * ((cs >> 8) & 0x7));
-+		chanstat = ((cs & 0xff) << B43_RX_CHAN_ID_SHIFT) |
-+			   B43_PHYTYPE_N;
-+		if ((cs & 0xc000) == 0xc000)
-+			chanstat |= B43_RX_CHAN_5GHZ;
-+		if (p0 == -128)
-+			ac_signal = p1;
-+		else if (p1 == -128)
-+			ac_signal = p0;
-+		else
-+			ac_signal = max(p0, p1);
++		report->flags |= IEEE80211_TX_STAT_AMPDU;
++		report->status.ampdu_len = 1;
++		report->status.ampdu_ack_len = status->acked ? 1 : 0;
 +	}
++	if ((report->flags & IEEE80211_TX_CTL_AMPDU) &&
++	    (report->status.rates[0].flags &
++	     (IEEE80211_TX_RC_MCS | IEEE80211_TX_RC_VHT_MCS))) {
++		/* Sent with two rate blocks: attempts at each */
++		report->status.rates[0].count = status->frame_count;
++		if (status->fb_count && report->status.rates[1].idx >= 0 &&
++		    (report->status.rates[1].flags &
++		     (IEEE80211_TX_RC_MCS | IEEE80211_TX_RC_VHT_MCS)))
++			report->status.rates[1].count = status->fb_count;
++		else
++			report->status.rates[1].idx = -1;
++	} else if (status->frame_count == 0) {
+ 		/* The frame was not transmitted at all. */
+ 		report->status.rates[0].count = 0;
+ 	} else if (status->rts_count > dev->wl->hw->conf.short_frame_max_tx_count) {
+diff --git a/drivers/net/wireless/broadcom/b43/xmit.h b/drivers/net/wireless/broadcom/b43/xmit.h
+index d403a28..b6723be 100644
+--- a/drivers/net/wireless/broadcom/b43/xmit.h
++++ b/drivers/net/wireless/broadcom/b43/xmit.h
+@@ -412,9 +412,11 @@ static inline u8 b43_kidx_to_raw(struct b43_wldev *dev, u8 firmware_kidx)
+  * The structure is placed in (struct ieee80211_tx_info *)->rate_driver_data
+  *
+  * @bouncebuffer: DMA Bouncebuffer (if used)
++ * @requeues: times the frame was put back on the ring (AC-PHY A-MPDU)
+  */
+ struct b43_private_tx_info {
+ 	void *bouncebuffer;
++	u8 requeues;
+ };
  
- 	if (unlikely(macstat & B43_RX_MAC_FCSERR)) {
- 		dev->wl->ieee_stats.dot11FCSErrorCount++;
-@@ -884,10 +910,19 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
- 	if (phystat0 & B43_RX_PHYST0_SHORTPRMBL)
- 		status.enc_flags |= RX_ENC_FLAG_SHORTPRE;
- 	if (macstat & B43_RX_MAC_DECERR) {
--		/* Decryption with the given key failed.
--		 * Drop the packet. We also won't be able to decrypt it with
--		 * the key in software. */
--		goto drop;
-+		/* The AC ucode sets this bit on frames it never decrypted: this
-+		 * port programs no hardware keys on AC, and it shows up even on
-+		 * unprotected EAPOL frames. Dropping here killed
-+		 * 4-way handshake message 3 and DHCP replies; mac80211's own
-+		 * software decryption still rejects anything really corrupt.
-+		 */
-+		if (b43_ucode_is_ac(dev)) {
-+			b43dbg(dev->wl,
-+			       "RX: DECERR passed up (len %u, macstat %04x)\n",
-+			       skb->len, macstat);
-+		} else {
-+			goto drop;
-+		}
- 	}
- 
- 	/* Skip PLCP and padding */
-@@ -931,7 +966,11 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
- 	}
- 
- 	/* Link quality statistics */
--	switch (chanstat & B43_RX_CHAN_PHYTYPE) {
-+	switch (b43_ucode_is_ac(dev) ? B43_PHYTYPE_AC :
-+		(chanstat & B43_RX_CHAN_PHYTYPE)) {
-+	case B43_PHYTYPE_AC:
-+		status.signal = ac_signal;
-+		break;
- 	case B43_PHYTYPE_HT:
- 		/* TODO: is max the right choice? */
- 		status.signal = max_t(__s8,
-@@ -955,7 +994,47 @@ void b43_rx(struct b43_wldev *dev, struct sk_buff *skb, const void *_rxhdr)
- 		break;
- 	}
- 
--	if (phystat0 & B43_RX_PHYST0_OFDM)
-+	if (b43_ucode_is_ac(dev) &&
-+	    (phystat0 & B43_RX_PHYST0_FTYPE) == B43_RX_PHYST0_PRE_N) {
-+		/* HT frame: the six bytes before the frame are HT-SIG: MCS and
-+		 * 40 MHz bit in byte 0, coding/STBC/short GI in byte 3.
-+		 */
-+		const u8 *sig = plcp->raw;
-+
-+		status.encoding = RX_ENC_HT;
-+		if (sig[0] & 0x80)
-+			status.bw = RATE_INFO_BW_40;
-+		if (sig[3] & 0x80)
-+			status.enc_flags |= RX_ENC_FLAG_SHORT_GI;
-+		if (sig[3] & 0x40)
-+			status.enc_flags |= RX_ENC_FLAG_LDPC;
-+		status.enc_flags |= ((sig[3] >> 4) & 0x3)
-+				    << RX_ENC_FLAG_STBC_SHIFT;
-+		rate_idx = (sig[0] & 0x7f) <= 15 ? sig[0] & 0x7f : -1;
-+	} else if (b43_ucode_is_ac(dev) &&
-+		   (phystat0 & B43_RX_PHYST0_FTYPE) == B43_RX_PHYST0_STD_N) {
-+		/* VHT: the six bytes are VHT-SIG-A1/A2 */
-+		const u8 *p = plcp->raw;
-+		u32 a1 = p[0] | (p[1] << 8) | (p[2] << 16);
-+		u32 a2 = p[3] | (p[4] << 8) | (p[5] << 16);
-+		u8 nsts = ((a1 >> 10) & 0x7) + 1;
-+
-+		status.encoding = RX_ENC_VHT;
-+		if ((a1 & 0x3) == 1)
-+			status.bw = RATE_INFO_BW_40;
-+		else if ((a1 & 0x3) == 2)
-+			status.bw = RATE_INFO_BW_80;
-+		if (a1 & 0x8) {
-+			status.enc_flags |= 1 << RX_ENC_FLAG_STBC_SHIFT;
-+			nsts /= 2;
-+		}
-+		status.nss = max_t(u8, nsts, 1);
-+		if (a2 & 0x1)
-+			status.enc_flags |= RX_ENC_FLAG_SHORT_GI;
-+		if (a2 & 0x4)
-+			status.enc_flags |= RX_ENC_FLAG_LDPC;
-+		rate_idx = ((a2 >> 4) & 0xf) <= 9 ? (a2 >> 4) & 0xf : -1;
-+	} else if (phystat0 & B43_RX_PHYST0_OFDM)
- 		rate_idx = b43_plcp_get_bitrate_idx_ofdm(plcp,
- 					!!(chanstat & B43_RX_CHAN_5GHZ));
- 	else
+ static inline struct b43_private_tx_info *
 
 _______________________________________________
 b43-dev mailing list
