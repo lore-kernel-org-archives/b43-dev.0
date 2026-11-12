@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C2460A2612
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B1B60A2610
 	for <b43-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=099DwkuQ;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=D7zgJhtk
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=rH9WS7O2;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vrgHR2qQ
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
@@ -14,80 +14,80 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=XWrDFYZ5tM9bI8f6qiQJCaDFOn1JqGoKcQSizwQf2wc=; b=099DwkuQcix1UtphrX/LcA1wVi
-	LuhGcj2Sqs12c7VUX8HWU/FkdHsr6HP5ETw6rmu0Rix65mny5A8QQzWMPuiN4+S96drUf4nUSM+TA
-	VLof8XVadgRUJ+NXyLtoZjsBxoRAjX7uMEydm3WgxXV1DykaQh6lZMwG7NhhyF2krL3osTA9W2XZJ
-	1wmlhS2BI9hGrNdwmBvkYIqMotw+QT/Chj2KvRoit4i/7t8IMVWkIttUngSzYWQcmm1Ub/gzf2kvt
-	zGLV7RD4z/UenlKJ7YlMh5/zn1EhzvDg4eLHNZ6ZapTWvrK/8TB7acfIUPKLFwlpdk1IjO3c/uJ99
-	V1modgug==;
+	bh=Ao9QelIq1ajkKuF/+Xmd9IgmskdzsqwJi5b1Bzk0CkU=; b=rH9WS7O2U8fw2bQfWQTRcghKTB
+	tUAecK1n7Kd0z/STAcIB3tWI9jyZNwCCxGGGvCSj/uIHiyrWrBQDuYuYPBevBlpcc8qU2AjkgKCmU
+	7eonhs2MBMkee+zKSqgnG25e9oJkrNTBo38DD5pKGntxclMh0bBQmI1NQ9KmrYEKUcHf6BYooMe+0
+	jsujqSQ/Sgoq8zf6U+zz4f5PVf+8yQ05mHlQU+fYrPJBw6N6GPDrGFeMEr92YCb/Nkids2/NDQ2un
+	7gKC+IslXOaxrj9Dq5EJFAHOI0zBb94Ti8qjvwwjLU2eEZlKc20MrlbWGpjIHGspd1MiI4DscSKbs
+	hTvLRYug==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xRZ2u-0000000Aotv-1iQH;
-	Thu, 12 Nov 2026 17:57:12 +0000
-Received: from mail-wm1-x32e.google.com ([2a00:1450:4864:20::32e])
+	id 1xRZ2v-0000000Aow2-1QTN;
+	Thu, 12 Nov 2026 17:57:13 +0000
+Received: from mail-wm1-x32c.google.com ([2a00:1450:4864:20::32c])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xRZ2n-0000000Aohm-2VM2
+	id 1xRZ2n-0000000AohU-139G
 	for b43-dev@lists.infradead.org;
 	Thu, 12 Nov 2026 17:57:08 +0000
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4a5036bbac7so489375e9.3
-        for <b43-dev@lists.infradead.org>; Thu, 12 Nov 2026 09:57:05 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-4a1fbd52ab6so774695e9.0
+        for <b43-dev@lists.infradead.org>; Thu, 12 Nov 2026 09:57:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794506224; x=1795111024; darn=lists.infradead.org;
+        d=gmail.com; s=20260707; t=1794506223; x=1795111023; darn=lists.infradead.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=c2U1ozXjTAQOgzzVeR9AQpZIkT5n1EJnb4FCuDvRTJk=;
-        b=D7zgJhtkAGiaM/dBxp7/qxu0UYsnye03TAcX8Qypl5WC4XH+Vg/c7kaiZGVHp/+Zhm
-         yM8KskMwMDT1UqVeoet5o+u1Rv7SNt9XTaesRifrAs6BDaPJmgYtDs/53lHbqsJUp3/C
-         px183WBGq72uybZqkONPwK6wU56vmw6Wvi4yM/L2pQbDkBtlLva8kEnUxcZWHDYKoOgW
-         s4lYX5wco0FhmU3L5ADxoWc7/IK1bAeulSpHW4QvWA6KWjgfcJs090/l9xHGGSDkPGTT
-         cQRmAmPWUBPbqQ9S0F2s6nIjuCPEMHQNUmU5PDhCH0oLBL9Rptbf+HOZmMMqWsU1vI86
-         ktTQ==
+        bh=Uqh2JNkE7vcANkd4W6Q6M5RKE89IuV30KVj2UCTpRio=;
+        b=vrgHR2qQhECEwvqxatLO4ALgdsBeWDjJPyINVufdSBF6ePm/Lc58Ki8L0rJyysASGx
+         rj4M+BS0QuYHkOQDDdcx9pTf1NykiO624XnIu43Zi1hg7oYJHjbMvadk3WrX7fgVK5ZR
+         6x50bMg9OnKiJy+brWne65WvTN/L92cxeKMdtBLVSyzGWrvH6Z29ZRf41fTstAO96Zx6
+         VvBVHwi/WvDMXHzjp7h9ge7Q9STXi1IW+00ftRjB6OXM4Iz9bD6MKDtbrcyeCVHgxzAv
+         jvqxEKSipvgfJ1C/uyV5vScs6i/mm8CfDtjrsmeKqTT4Gafrm/sAr7Mf/9txhZsC1vg/
+         fPAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794506224; x=1795111024;
+        d=1e100.net; s=20260707; t=1794506223; x=1795111023;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=c2U1ozXjTAQOgzzVeR9AQpZIkT5n1EJnb4FCuDvRTJk=;
-        b=bCZHjHFoijW4AYHky/lMDKJ9/3KHS4tAHyVJ/GZIcFYK3KWibFoQQ1HsTjJ9Bus9CV
-         Io+w9CKSU2WoGzv2/uYpWo3TYCo5yz88JSwX/QzSWAv8iWND2V8C0qL0Aos6MT1/tLo5
-         K1DjHKVqU4gCC+BO2ob4T2JxuMSEcqCArJ2knkn2bG1XR0lfoizJr3iDQ4y0XDNi+lH5
-         eISwRar5NMfKwVMGScE+vfTvmJSxgw/rx/i5XbvsLaj6qbPJUzJwMnKeknOzCXEK43b2
-         6QyWdN0CWRJnWY/N41ib6kQMQRtGvBNwmYo2DgTkyqLaQFTLtAhrmgQx9spznCOfdz7N
-         Q8ew==
-X-Forwarded-Encrypted: i=1; AL+hErHkQhJBD9j/aio6nmlgQaU1io0loQyIhwrgvCnIOtqz06yKw2xb7o539hZxeVCGyB5TiLNcjqZ/@lists.infradead.org
-X-Gm-Message-State: APuU4Z8/edJI7OBj0/HMKpLvM5THyQWeM8Tfjj7w4YCdKhcpD5N9oVeM
-	udf3uCYnJdQz9cq7b4jzKWZmUgalCE3Q9YmPjT5EN/AnsOlbTlPnGeN1
-X-Gm-Gg: AYBFou13BJt/6VM/TdfvmbszNHzdnLgnldlMA7iNpZ060ZgMHquUurLn82R4N+kRV6N
-	y530vD0uATdZfapASyciB95/gMmSlsdeu70UBUAfeizcaCay53+9GsFNJwnYRgWl+xwtsaw18/t
-	w2dJ1uHW/ImVQQ6GQfz+h1JTWLA36UkdjuCC3QHN2CX3HSfbT48NjRwedWWDqZaXpv1VPtqi4Pb
-	az7u7t7zpCUjuEr2ljF/Kd6FswTPyIt21b9QcPrcScHsYsdfSXEzzKNt7V8R2yg7pfgoDvNyyQQ
-	YS8HeimHdvcwaevO/IioWNkOvGM7FnfJDa63sJ5A1d3PRnN50FP0Xmtl0QoEHEmUcLAmFvYCrae
-	1fQg4WU9NmfsRr6Zyey4CrEAVTEWzxB4L/Bfjz4nm+ZNr1105ODfD3EqswcQgPkCiw4BszsPiQd
-	1E0sI0AMJdwAB8ifnuuXTLt3Hi/SGfTWsxgsMjRKBOjeHiuQVvOit8qODIznWvSXn8k7hpxSsNh
-	WIo+Ax8FXBpG4VAP98rf5qJTeXvAMu7F+PMCWMLcCkbpNqLweH2iSZyB09zYgEQSlDcdv1l1qnv
-	argdl9rp5hAxavlaZMJbifxMxWCSHmSchUbq6VI0ZQHaFMjS8/yL/aj8mEFCDHESHzZTL0zjzvp
-	x0d7L93mA4l5db/HKPMK6r5Ed90sIkRdqtlSQ0cs4CmYGw5uA/4LYwD6BOj9btg9FW5IyF3MAju
-	A8xgw1WzwqA3Sm4AhOKDxV5sIqE3B9AXID9uTI330NG5YMd4Ah1+rL8CDYpZDKTnw=
-X-Received: by 2002:a05:600c:8b24:b0:4a2:1364:252b with SMTP id 5b1f17b1804b1-4ba09383fd2mr113475005e9.35.1794506223952;
-        Thu, 12 Nov 2026 09:57:03 -0800 (PST)
+        bh=Uqh2JNkE7vcANkd4W6Q6M5RKE89IuV30KVj2UCTpRio=;
+        b=avPUtjCexDvT0XqqKbeGqgdk4/3NLtwYtMKNJgFDB8QdasdMjSn/XppBlF7zhj6v4z
+         nPdiM/FSy50FVzkrcR/5uD5dt4GabMBiKhMTr4q7KzeDmWw/NUzJ7bdgYPGMkOs95OUK
+         JBc6IujuQ1YBsF/ZLEF5RZ1VGtX0Y+6iMtZ+anPeDiBkGb+5c9F7wSwpACkwXs43Xh4F
+         JjXCBwaS99UKUxjBa7OQHwabFWoLfSTouZddoL0duptAChsjgRChT4OeJW7Bdr9swZNb
+         sGrSDvuhVmWM1PmXM7w96Y5UVzLbdfCpfjQgmyJjI2jl09fBis6VlyWVRXf/s0SJAMHN
+         C+OQ==
+X-Forwarded-Encrypted: i=1; AL+hErEf2qNSH7oeU6YeU0BbWj2q4/fBZfUP7pNEVz3VtoCXZaLAhB/HtP+pgSywB8uH98/9zN4OEIvA@lists.infradead.org
+X-Gm-Message-State: APuU4Z+rmSqeBy0HvKYDaIP0Y1ooKo+BbxI5zIXciai9KvSwiqWmtzYA
+	SiKxFBrvbCXlPchKqB+zTCFax3fQeBcoz3JOAj8LotSt0vAEIszZSb+4
+X-Gm-Gg: AYBFou1ZmflR7IxLSkJRLtXI7EfgCGcKyfN3PO5PkplytYRLrGRBDJDEExthZel47lY
+	DD3gxYohX+CC/5KKAxpBniSSlHc3IW9b0Iu1agO0u/W57xnsGSJOwIpaSD8EIuAUSoJQQn6UDAR
+	bnExxoGWUp+4JGv+7/jUpYpL2ahFwvzlmnjdcsQ/i+jovophr74MxEiORdZLg5Hr1y5Iheh9spI
+	SM1oXWbhOJ/rQLXNVXU6osogBXecNHfLB7Ai0GKLXbWZAtC8FhSGmIaosSup+chXucCuEf7X/cs
+	tuVy7jojUeYRmE4TzIkDCQLvljO+mQamkmRoNiJYl+iD3Eep1btLWX2fSA/4VH2shtrPV83L5QT
+	o7dtUbVV0GYBT4Upmxyt5WqCXplcIW6Xz8nH6okO6ZyqkQVkUrfHKfhltSxitoWU6hLw8ASrc/Q
+	GzY5uZYDZGWoseBFiAdjsyQtA1eSHHKEKDht4uBP6oR0kcHcZsrLgWBhVZIGQfwk+oOdSPSgIKD
+	Ny7iXrHY/QRcE9ZqKKHp1Ka8Hv3aT79kWVGhqfuskzX/3YaU8Jbcw1diHbKPqkjTlDOU6BKH20N
+	SoxNoT3bdbHjHUZPxdvBneuYpV6dyMYDx0ce5yWyCyHcOpgvePV6eSxNAiHasPX/KpWykzZUTA6
+	efaohhBywuetxa2UgWIEH+u3uGNVhsRY4/imsFfWRAiMD8tFeLwbFuLgMp1cTFu0Le1PP43meB9
+	fVHV8Xz7BfZQX9nV32HYvui+T77701JDYA/JLAPGgyeQ==
+X-Received: by 2002:a05:600c:3b88:b0:4b8:d17e:da27 with SMTP id 5b1f17b1804b1-4ba093c51a8mr145849115e9.27.1794506222978;
+        Thu, 12 Nov 2026 09:57:02 -0800 (PST)
 Received: from zitrone.tail45b538.ts.net ([2a02:810d:a1:6000:900:be5c:7a9c:c176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb527c755esm31491425e9.4.2026.11.12.09.57.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb527c755esm31491425e9.4.2026.11.12.09.57.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 09:57:03 -0800 (PST)
+        Thu, 12 Nov 2026 09:57:02 -0800 (PST)
 From: Andreas Wendleder <gonsolo@gmail.com>
 To: linux-wireless@vger.kernel.org
-Subject: [PATCH RFC wireless-next 4/4] wifi: b43: enable the AC-PHY support
-Date: Thu, 12 Nov 2026 18:56:56 +0100
-Message-ID: <20261112175656.40686-5-gonsolo@gmail.com>
+Subject: [PATCH RFC wireless-next 3/4] wifi: b43: 5 GHz, 80 MHz and VHT for the AC PHY
+Date: Thu, 12 Nov 2026 18:56:55 +0100
+Message-ID: <20261112175656.40686-4-gonsolo@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261112175656.40686-1-gonsolo@gmail.com>
 References: <20261112175656.40686-1-gonsolo@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261112_095705_704096_54227C06 
-X-CRM114-Status: GOOD (  12.79  )
+X-CRM114-CacheID: sfid-20261112_095705_969235_E2CDBE58 
+X-CRM114-Status: GOOD (  25.53  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -110,32 +110,490 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The AC-PHY now brings up a BCM4352/BCM4360 on 2.4 GHz and 5 GHz and
-transmits and receives with HT (20 MHz, 2.4 GHz) and VHT (80 MHz, 5 GHz),
-the two that were tested. Remove the
-dependency on BROKEN and say what is missing: no TX calibration, no TX
-power control beyond the hardware loop, no hardware crypto and no power
-save.
+Add 5 GHz channel switching: the RF sequencer extension, the second
+sequencer's command lists and three table 7 cells (which keep the second
+TX chain working), the 5 GHz TX gain table and AGC tables, VCO calibration
+and the RX gain control word. Switching back to 2.4 GHz rewrites the
+2.4 GHz tables and the 20 MHz PHY bandwidth.
+
+On 5 GHz the PHY runs in its 80 MHz mode on the 80 MHz block that contains
+the primary channel, tuned to the centre of the block, with the
+Farrow resampler words computed for it. The chanspec of such a channel
+names the centre channel, the width and the position of the primary.
+Only an AP with an 80 MHz channel was tested; with a 20 or 40 MHz AP the
+primary channel's frames should still be received in the block.
+
+Register the 5 GHz band with HT and VHT capabilities (two streams, MCS 0-9,
+80 MHz); mac80211 wants 40 MHz capability before it uses 80 MHz.
+
+Co-developed-by: Alessio Ferri <alessio.ferri@mythread.it>
+Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
 Signed-off-by: Andreas Wendleder <gonsolo@gmail.com>
 ---
- drivers/net/wireless/broadcom/b43/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/broadcom/b43/main.c      |  46 +++
+ drivers/net/wireless/broadcom/b43/phy_ac.c    | 269 +++++++++++++++++-
+ drivers/net/wireless/broadcom/b43/phy_ac.h    |   1 +
+ .../net/wireless/broadcom/b43/phy_common.c    |  25 +-
+ 4 files changed, 328 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/broadcom/b43/Kconfig
-index 4559549..a8321ca 100644
---- a/drivers/net/wireless/broadcom/b43/Kconfig
-+++ b/drivers/net/wireless/broadcom/b43/Kconfig
-@@ -149,8 +149,8 @@ config B43_PHY_LCN
- 	  Say N, this is BROKEN and crashes driver.
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index 7d2f9ea..eeb70bf 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -317,6 +317,21 @@ static struct ieee80211_channel b43_5ghz_aphy_chantable[] = {
+ 	CHAN5G(208, 0),		CHAN5G(212, 0),
+ 	CHAN5G(216, 0),
+ };
++
++static struct ieee80211_channel b43_5ghz_acphy_chantable[] = {
++	CHAN5G(36, 0),		CHAN5G(40, 0),
++	CHAN5G(44, 0),		CHAN5G(48, 0),
++	CHAN5G(52, 0),		CHAN5G(56, 0),
++	CHAN5G(60, 0),		CHAN5G(64, 0),
++	CHAN5G(100, 0),		CHAN5G(104, 0),
++	CHAN5G(108, 0),		CHAN5G(112, 0),
++	CHAN5G(116, 0),		CHAN5G(120, 0),
++	CHAN5G(124, 0),		CHAN5G(128, 0),
++	CHAN5G(132, 0),		CHAN5G(136, 0),
++	CHAN5G(140, 0),		CHAN5G(149, 0),
++	CHAN5G(153, 0),		CHAN5G(157, 0),
++	CHAN5G(161, 0),		CHAN5G(165, 0),
++};
+ #undef CHAN4G
+ #undef CHAN5G
  
- config B43_PHY_AC
--	bool "Support for AC-PHY (802.11ac) devices (BROKEN)"
--	depends on B43 && B43_BCMA && BROKEN
-+	bool "Support for AC-PHY (802.11ac) devices (EXPERIMENTAL)"
-+	depends on B43 && B43_BCMA
- 	help
- 	  This PHY type can be found in the following chipsets:
- 	  PCI: BCM4352, BCM4360
+@@ -336,6 +351,14 @@ static struct ieee80211_supported_band b43_band_5GHz_nphy_limited = {
+ 	.n_bitrates	= b43_a_ratetable_size,
+ };
+ 
++static struct ieee80211_supported_band b43_band_5GHz_acphy = {
++	.band		= NL80211_BAND_5GHZ,
++	.channels	= b43_5ghz_acphy_chantable,
++	.n_channels	= ARRAY_SIZE(b43_5ghz_acphy_chantable),
++	.bitrates	= b43_a_ratetable,
++	.n_bitrates	= b43_a_ratetable_size,
++};
++
+ static struct ieee80211_supported_band b43_band_5GHz_aphy = {
+ 	.band		= NL80211_BAND_5GHZ,
+ 	.channels	= b43_5ghz_aphy_chantable,
+@@ -5640,6 +5663,29 @@ static int b43_setup_bands(struct b43_wldev *dev,
+ 			hw->wiphy->bands[NL80211_BAND_5GHZ] = limited_5g ?
+ 				&b43_band_5GHz_nphy_limited :
+ 				&b43_band_5GHz_nphy;
++	} else if (dev->phy.type == B43_PHYTYPE_AC) {
++		if (have_5ghz_phy) {
++			struct ieee80211_sta_vht_cap *vht =
++				&b43_band_5GHz_acphy.vht_cap;
++
++			/*
++			 * The AP refuses a station without HT here (status 18)
++			 */
++			b43_band_5GHz_acphy.ht_cap = b43_band_2GHz_ac.ht_cap;
++			/*
++			 * mac80211 wants 40 MHz capability before it uses 80
++			 * MHz
++			 */
++			b43_band_5GHz_acphy.ht_cap.cap |=
++				IEEE80211_HT_CAP_SUP_WIDTH_20_40;
++			vht->vht_supported = true;
++			vht->cap = IEEE80211_VHT_CAP_MAX_MPDU_LENGTH_3895;
++			/* MCS 0-9 on one and two streams */
++			vht->vht_mcs.rx_mcs_map = cpu_to_le16(0xfffa);
++			vht->vht_mcs.tx_mcs_map = cpu_to_le16(0xfffa);
++			hw->wiphy->bands[NL80211_BAND_5GHZ] =
++				&b43_band_5GHz_acphy;
++		}
+ 	} else {
+ 		if (have_5ghz_phy)
+ 			hw->wiphy->bands[NL80211_BAND_5GHZ] = &b43_band_5GHz_aphy;
+diff --git a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
+index 4bcf6f8..7e041b6 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.c
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c
+@@ -368,6 +368,18 @@ static void b43_phy_ac_op_prepare_structs(struct b43_wldev *dev)
+ 	memset(phy_ac, 0, sizeof(*phy_ac));
+ }
+ 
++/*
++ * 80 MHz mode: on 5 GHz the PHY runs on the 80 MHz block that contains the
++ * primary channel, tuned to the centre of the block.
++ */
++static bool b43_phy_ac_is_80mhz(struct b43_wldev *dev, unsigned int channel)
++{
++	return b43_current_band(dev->wl) == NL80211_BAND_5GHZ &&
++	       b43_ac_80mhz_centre(channel);
++}
++
++static void b43_radio_2069_vcocal(struct b43_wldev *dev);
++
+ /*
+  * 2.4 GHz TX gain table index set on a channel switch (0 is the highest gain).
+  * The reset value, 64, is too weak beyond a few metres.
+@@ -416,6 +428,126 @@ static void b43_phy_ac_wide_tables_2g(struct b43_wldev *dev)
+ 		b43_phy_ac_table_write48(dev, 0x11, i, zero);
+ }
+ 
++/*
++ * The second sequencer's command lists (table 7 at 0x30/0x40/0x50, cores 0-2)
++ * on 5 GHz: no leading 0x2a, and 0xb0/0xb1/0xb2 where 2.4 GHz has 0x2b.
++ */
++static const u16 b43_rfseq2_c0_5g[] = { 0x07, 0x0a, 0x00, 0x08,
++					0xb0, 0xb1, 0x1f, 0x1f };
++static const u16 b43_rfseq2_c1_5g[] = { 0x07, 0x08, 0x0c, 0x0e,
++					0xb0, 0xb2, 0x1f, 0x1f };
++static const u16 b43_rfseq2_c2_5g[] = { 0x07, 0x08, 0x0e, 0xb0,
++					0xb1, 0x1f, 0x1f, 0x1f };
++static const struct b43_phy_ac_tbl b43_rfseq2_5g_tbls[] = {
++	{ b43_rfseq2_c0_5g, 8, 7, 0x30, 16 },
++	{ b43_rfseq2_c1_5g, 8, 7, 0x40, 16 },
++	{ b43_rfseq2_c2_5g, 8, 7, 0x50, 16 },
++};
++
++static void b43_phy_ac_write_table(struct b43_wldev *dev,
++				   const struct b43_phy_ac_tbl *t);
++
++static void b43_phy_ac_table_write16(struct b43_wldev *dev, u16 id, u16 offset,
++				     u16 value);
++
++/*
++ * 5 GHz additions to the sequencer and the wide tables:
++ * - table 0x14 entries 0x30-0x33, the RF sequencer extension (48 bits wide,
++ *   written through the third data port 0x011, low word first). Without
++ *   0x30-0x32 the receiver is deaf on 5 GHz; 2.4 GHz does not need them.
++ *   PHY tables survive a driver reload and a PCI bus reset.
++ * - the command lists above and three table 7 cells, see below,
++ * - the 5 GHz TX gain table and the table 0x11 fill.
++ */
++static void b43_phy_ac_rfseq_ext_5g(struct b43_wldev *dev)
++{
++	static const u16 ext[4][3] = {
++		{ 0x0fd2, 0x0096, 0x0000 },
++		{ 0x0fc2, 0x0086, 0x0000 },
++		{ 0x0fd2, 0x0086, 0x0000 },
++		{ 0x0800, 0x0086, 0x0000 },
++	};
++	unsigned int i;
++
++	static const u16 fill11[3] = { 0xbf25, 0x0071, 0x4002 };
++
++	for (i = 0; i < ARRAY_SIZE(ext); i++)
++		b43_phy_ac_table_write48(dev, 0x14, 0x30 + i, ext[i]);
++	for (i = 0; i < ARRAY_SIZE(b43_rfseq2_5g_tbls); i++)
++		b43_phy_ac_write_table(dev, &b43_rfseq2_5g_tbls[i]);
++	/*
++	 * Table 7 cells of the TX chains (core 0 at 973, core 1 at 989) and the
++	 * cell 398 that differ from the 2.4 GHz defaults: without the core 1
++	 * value no two-stream frame is ever acknowledged, and 398 makes
++	 * two-stream MCS 7 usable.
++	 */
++	b43_phy_ac_table_write16(dev, 7, 973, 0x03a2);
++	b43_phy_ac_table_write16(dev, 7, 989, 0x05d0);
++	b43_phy_ac_table_write16(dev, 7, 398, 0x0049);
++	/*
++	 * The 5 GHz TX gain table and the table 0x11 fill (the twelve head
++	 * cells and the zero tail are band independent).
++	 */
++	for (i = 0; i < 128; i++)
++		b43_phy_ac_table_write48(dev, 0x20, i, b43_phy_ac_txgain_5g[i]);
++	for (i = 12; i < 460; i++)
++		b43_phy_ac_table_write48(dev, 0x11, i, fill11);
++}
++
++static void b43_phy_ac_write_table(struct b43_wldev *dev,
++				   const struct b43_phy_ac_tbl *t);
++
++/* 5 GHz AGC tables as written by the vendor driver on this board:
++ * the same four table ids as 2.4 GHz (0x44/0x45 core 0, 0x64/0x65 core 1) but
++ * with the 5 GHz LNA gains. Offset 0: eLNA, 8: LNA1, 16: LNA2, 32: gain limits.
++ */
++static const u8 b43_ac_agc5_elna[] = { 0x0c, 0x0c };
++static const u8 b43_ac_agc5_lna1_gain[] = {
++	0xfe, 0xfe, 0x04, 0x0a, 0x10, 0x17
++};
++
++static const u8 b43_ac_agc5_lna1_code[] = { 1, 1, 2, 3, 4, 5 };
++static const u8 b43_ac_agc5_lna2_gain[] = { 0xf8, 0xf8, 0xfb, 0xfe,
++					    0x02, 0x05, 0x09 };
++static const u8 b43_ac_agc5_lna2_code[] = { 1, 1, 2, 3, 4, 5, 6 };
++static const u8 b43_ac_agc5_lim7[] = { 7, 7, 7, 7, 7, 7, 7, 7, 7, 7 };
++static const u8 b43_ac_agc5_lim2[] = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
++
++static const struct b43_phy_ac_tbl b43_ac_agc_tbls_5g[] = {
++	{ b43_ac_agc5_elna, 2, 0x44, 0x00, 8 },
++	{ b43_ac_agc5_lna1_gain, 6, 0x44, 0x08, 8 },
++	{ b43_ac_agc5_lna2_gain, 7, 0x44, 0x10, 8 },
++	{ b43_ac_agc5_lim7, 10, 0x44, 0x20, 8 },
++	{ b43_ac_agc5_lna1_code, 6, 0x45, 0x08, 8 },
++	{ b43_ac_agc5_lna2_code, 7, 0x45, 0x10, 8 },
++	{ b43_ac_agc5_lim2, 10, 0x45, 0x20, 8 },
++	{ b43_ac_agc5_elna, 2, 0x64, 0x00, 8 },
++	{ b43_ac_agc5_lna1_gain, 6, 0x64, 0x08, 8 },
++	{ b43_ac_agc5_lna2_gain, 7, 0x64, 0x10, 8 },
++	{ b43_ac_agc5_lim7, 10, 0x64, 0x20, 8 },
++	{ b43_ac_agc5_lna1_code, 6, 0x65, 0x08, 8 },
++	{ b43_ac_agc5_lna2_code, 7, 0x65, 0x10, 8 },
++	{ b43_ac_agc5_lim2, 10, 0x65, 0x20, 8 },
++};
++
++/*
++ * 5 GHz setup, run on every 5 GHz channel switch: the sequencer extension,
++ * VCO calibration, RX gain control and the AGC tables.
++ */
++static void b43_phy_ac_setup_5g(struct b43_wldev *dev)
++{
++	unsigned int i;
++
++	b43_phy_ac_rfseq_ext_5g(dev);
++	b43_radio_2069_vcocal(dev);
++	/* RX gain control, all cores: 0x2c on 5 GHz (the 2.4 GHz setup leaves
++	 * 0x18); about 8 dB more RX level.
++	 */
++	b43_phy_write(dev, 0x173b, 0x002c);
++	for (i = 0; i < ARRAY_SIZE(b43_ac_agc_tbls_5g); i++)
++		b43_phy_ac_write_table(dev, &b43_ac_agc_tbls_5g[i]);
++}
++
+ /*
+  * PHY register init for 2.4 GHz and 20 MHz, in the blocks of the reset-time
+  * code of Alessio Ferri's b43-ac-wip (mode_init, set_reg_on_reset,
+@@ -715,6 +847,31 @@ static void b43_phy_ac_set_farrow(struct b43_wldev *dev, unsigned int channel)
+ 	b43_phy_write(dev, 0x1601, b43_phy_read(dev, 0x601));
+ }
+ 
++/*
++ * Farrow resampler for an 80 MHz channel centred on @freq (MHz). The formula is
++ * from Alessio Ferri's tree: ratio = round(f * 2^18 / 45), deltaphase =
++ * round(0xb40000000 / f); for 5530 MHz it gives the vendor driver's values.
++ */
++static void b43_phy_ac_farrow_80(struct b43_wldev *dev, unsigned int freq)
++{
++	u32 ratio = DIV_ROUND_CLOSEST_ULL((u64)freq << 18, 45);
++	u32 dphase = DIV_ROUND_CLOSEST_ULL(0xb40000000ull, freq);
++	u16 mu = 0x0004 | (((ratio >> 24) & 0x3) << 7);
++
++	b43_phy_write(dev, 0x019a, ratio & 0xffff);
++	b43_phy_write(dev, 0x019b, (ratio >> 16) & 0xff);
++	b43_phy_write(dev, 0x019c, 0x0b40);
++	b43_phy_write(dev, 0x0199, mu);
++	b43_phy_write(dev, 0x01a1, ratio & 0xffff);
++	b43_phy_write(dev, 0x01a2, (ratio >> 16) & 0xff);
++	b43_phy_write(dev, 0x01a3, 0x0b40);
++	b43_phy_write(dev, 0x01a0, mu);
++	b43_phy_write(dev, 0x1603, dphase & 0xffff);
++	b43_phy_write(dev, 0x1602, dphase >> 16);
++	b43_phy_write(dev, 0x1607, dphase & 0xffff);
++	b43_phy_write(dev, 0x1606, dphase >> 16);
++}
++
+ /* Program the synthesizer and the per-channel radio words of one channel. */
+ static void b43_phy_ac_tune(struct b43_wldev *dev,
+ 			    const struct b43_radio_2069_chan *e,
+@@ -733,6 +890,29 @@ static void b43_phy_ac_tune(struct b43_wldev *dev,
+ 	b43_radio_2069_vcocal(dev);
+ }
+ 
++static void b43_phy_ac_tables_init(struct b43_wldev *dev);
++
++/* Back on 2.4 GHz after 5 GHz in the same boot: the 5 GHz setup overwrote
++ * the AGC, RF sequencer and TX gain tables and left the core in 80 MHz mode
++ * (without this 2.4 GHz associates and receives, but nothing is sent).
++ */
++static void b43_phy_ac_restore_2g(struct b43_wldev *dev)
++{
++	u32 ioctl;
++
++	b43_phy_ac_tables_init(dev);
++	b43_phy_ac_wide_tables_2g(dev);
++	b43_phy_write(dev, 0x173b, 0x0018);
++	b43_phy_write(dev, 0x18b, 0);
++	ioctl = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
++	if ((ioctl & B43_BCMA_IOCTL_PHY_BW) == B43_BCMA_IOCTL_PHY_BW_80MHZ) {
++		ioctl = (ioctl & ~B43_BCMA_IOCTL_PHY_BW) |
++			B43_BCMA_IOCTL_PHY_BW_20MHZ;
++		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, ioctl | 0x2);
++		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, ioctl);
++	}
++}
++
+ /*
+  * Channel switch for radio 2069 rev 4, following the vendor driver's
+  * channel-set sequence. Not ported: carrier-search suppression during the
+@@ -744,15 +924,14 @@ static int b43_phy_ac_op_switch_channel(struct b43_wldev *dev,
+ {
+ 	struct b43_phy_ac *phy_ac = dev->phy.ac;
+ 	const struct b43_radio_2069_chan *e;
++	bool is_5ghz = b43_current_band(dev->wl) == NL80211_BAND_5GHZ;
+ 	u16 save;
+ 	int i;
+ 
+-	if (b43_current_band(dev->wl) != NL80211_BAND_2GHZ)
+-		return -EOPNOTSUPP;
+-
+ 	e = b43_radio_2069_find_chan(dev, new_channel);
+ 	if (!e) {
+-		b43err(dev->wl, "phy_ac: no tuning data for channel %u (radio %04x rev %u)\n",
++		b43err(dev->wl,
++		       "phy_ac: no tuning data for channel %u (radio %04x rev %u)\n",
+ 		       new_channel, dev->phy.radio_ver, dev->phy.radio_rev);
+ 		return -ESRCH;
+ 	}
+@@ -762,14 +941,18 @@ static int b43_phy_ac_op_switch_channel(struct b43_wldev *dev,
+ 	save = b43_phy_read(dev, 0x19e);
+ 	b43_phy_set(dev, 0x19e, 0x3);
+ 
+-	b43_phy_mask(dev, B43_PHY_AC_BANDCTL, ~0x0100);
++	b43_phy_maskset(dev, B43_PHY_AC_BANDCTL, ~0x0100, is_5ghz ? 0x0100 : 0);
+ 
+-	if (!phy_ac->chan_set) {
++	if (phy_ac->chan_set && phy_ac->last_5ghz && !is_5ghz)
++		b43_phy_ac_restore_2g(dev);
++
++	if (!phy_ac->chan_set || phy_ac->last_5ghz != is_5ghz) {
+ 		b43_phy_set(dev, 0x728, 0x0100);
+ 		udelay(1);
+ 		b43_phy_mask(dev, 0x728, ~0x0100);
+-		phy_ac->chan_set = true;
+ 	}
++	phy_ac->chan_set = true;
++	phy_ac->last_5ghz = is_5ghz;
+ 
+ 	b43_phy_ac_tune(dev, e, new_channel);
+ 	b43_phy_maskset(dev, 0x19e, ~0x3, save & 0x3);
+@@ -777,10 +960,76 @@ static int b43_phy_ac_op_switch_channel(struct b43_wldev *dev,
+ 	for (i = 0; i < 6; i++)
+ 		b43_phy_write(dev, B43_PHY_AC_BW1A + i, e->bw[i]);
+ 
+-	b43_phy_ac_rfctrl_2g(dev);
+-	b43_phy_ac_set_farrow(dev, new_channel);
++	if (b43_phy_ac_is_80mhz(dev, new_channel)) {
++		u32 ioctl;
++
++		/*
++		 * Tune the synthesizer to the centre of the block, put the
++		 * core's PHY in 80 MHz mode and toggle force-gated-clock around
++		 * the change.
++		 */
++		unsigned int ctr = b43_ac_80mhz_centre(new_channel);
++
++		b43_phy_ac_setup_5g(dev);
++		/*
++		 * PHY word 0x18b is 0 after reset; 80 MHz RX and TX need
++		 * 0x016c.
++		 */
++		b43_phy_write(dev, 0x18b, 0x016c);
++		/*
++		 * The synthesizer, the per-channel PHY words and the resampler
++		 * for the block centre. The calibration results and the rpcal
++		 * fill are those of channel 106; they are not recalibrated per
++		 * block.
++		 */
++		{
++			const struct b43_radio_2069_chan *c =
++				b43_radio_2069_find_chan(dev, ctr);
++
++			if (c) {
++				save = b43_phy_read(dev, 0x19e);
++				b43_phy_set(dev, 0x19e, 0x3);
++				b43_phy_ac_tune(dev, c, ctr);
++				b43_phy_maskset(dev, 0x19e, ~0x3, save & 0x3);
++				for (i = 1; i < 6; i++)
++					b43_phy_write(dev, B43_PHY_AC_BW1A + i,
++						      c->bw[i]);
++				b43_phy_ac_farrow_80(dev, 5000 + 5 * ctr);
++			}
++		}
++		ioctl = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
++		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, ioctl | 0x2);
++		ioctl = (ioctl & ~B43_BCMA_IOCTL_PHY_BW) |
++			B43_BCMA_IOCTL_PHY_BW_80MHZ;
++		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, ioctl | 0x2);
++		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, ioctl);
++		b43dbg(dev->wl, "phy_ac: 5 GHz 80 MHz mode, ioctrl %08x\n",
++		       bcma_aread32(dev->dev->bdev, BCMA_IOCTL));
++	} else if (is_5ghz) {
++		b43_phy_ac_setup_5g(dev);
++		/* The filter bank for our width. */
++		b43_phy_ac_coeff_bank_init(dev);
++		save = b43_phy_read(dev, 0x19e);
++		b43_phy_set(dev, 0x19e, 0x3);
++		b43_phy_ac_tune(dev, e, new_channel);
++		b43_phy_maskset(dev, 0x19e, ~0x3, save & 0x3);
++		for (i = 0; i < 6; i++)
++			b43_phy_write(dev, B43_PHY_AC_BW1A + i, e->bw[i]);
++	} else {
++		b43_phy_ac_rfctrl_2g(dev);
++	}
++
++	/*
++	 * The per-channel 20 MHz resampler table; in 80 MHz mode the resampler
++	 * was set for the block centre above.
++	 */
++	if (!b43_phy_ac_is_80mhz(dev, new_channel))
++		b43_phy_ac_set_farrow(dev, new_channel);
++
+ 	b43_phy_ac_resetcca(dev);
+-	b43_phy_ac_txpwr_by_index(dev, B43_AC_TXIDX_2G);
++
++	if (!is_5ghz)
++		b43_phy_ac_txpwr_by_index(dev, B43_AC_TXIDX_2G);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/wireless/broadcom/b43/phy_ac.h b/drivers/net/wireless/broadcom/b43/phy_ac.h
+index 0b6896e..4a6c1e9 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.h
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.h
+@@ -34,6 +34,7 @@
+ struct b43_phy_ac {
+ 	/* Band of the last channel switch; valid once chan_set is true. */
+ 	bool chan_set;
++	bool last_5ghz;
+ 	bool radio_on;
+ };
+ 
+diff --git a/drivers/net/wireless/broadcom/b43/phy_common.c b/drivers/net/wireless/broadcom/b43/phy_common.c
+index cfc14c1..40e99b2 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_common.c
++++ b/drivers/net/wireless/broadcom/b43/phy_common.c
+@@ -413,15 +413,34 @@ void b43_phy_take_out_of_reset(struct b43_wldev *dev)
+ 	}
+ }
+ 
++/* Centre channel of the 80 MHz block a 5 GHz primary belongs to, 0 if none */
++unsigned int b43_ac_80mhz_centre(unsigned int channel)
++{
++	static const u8 centre[] = { 42, 58, 106, 122, 138, 155 };
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(centre); i++)
++		if (channel >= centre[i] - 6u && channel <= centre[i] + 6u &&
++		    (channel - (centre[i] - 6u)) % 4 == 0)
++			return centre[i];
++	return 0;
++}
++
+ /*
+  * The 11ac chanspec of a primary channel as the AC microcode takes it in
+  * SHM and in the TX and RX headers: channel, 0x1000 for 20 MHz, 0xc000 on
+- * 5 GHz.
++ * 5 GHz. In 80 MHz mode (every 5 GHz channel inside an 80 MHz block) the
++ * centre channel, 0x2000 for the width and the primary's position in the
++ * block in bits 10:8 (primary channel 112: 0xe36a).
+  */
+ u16 b43_ac_chanspec(struct b43_wldev *dev, unsigned int channel)
+ {
+-	return channel | 0x1000 |
+-	       (b43_current_band(dev->wl) == NL80211_BAND_5GHZ ? 0xc000 : 0);
++	bool is_5ghz = b43_current_band(dev->wl) == NL80211_BAND_5GHZ;
++	unsigned int centre = is_5ghz ? b43_ac_80mhz_centre(channel) : 0;
++
++	if (centre)
++		return 0xe000 | (((channel - (centre - 6)) / 4) << 8) | centre;
++	return channel | 0x1000 | (is_5ghz ? 0xc000 : 0);
+ }
+ 
+ int b43_switch_channel(struct b43_wldev *dev, unsigned int new_channel)
 
 _______________________________________________
 b43-dev mailing list
