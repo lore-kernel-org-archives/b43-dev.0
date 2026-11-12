@@ -2,11 +2,11 @@ Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EF3606A323
-	for <b43-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78323606A321
+	for <b43-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=ymYBzodF;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LVuacjS9
+	dkim=pass (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=sWn9VKTG;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Po0TTn4+
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
@@ -14,80 +14,81 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Message-ID:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	List-Unsubscribe-Post:List-Owner;
-	bh=aF+vcwA2ceTgLsaGBr0Z8UOjl6hwqu0XswM0ZXv6M0M=; b=ymYBzodFVGoFnsRRDM7mhKjPSL
-	LR9lvLUzGz6LxVxORT1QaHFw71TG03jdTZHGVGH3OKm/zddV576CpnM8F4XIhhrrXAATwgDsTIKXg
-	VZJwqx5IS2E7XUK/S6b0zbfvTBUJB4NbwQ2aQs8Gcvn4NrHyXVgm/JGcTE7YUIlFS5e42dYGt5/Do
-	Q+ahn517TTCQSYYB3tNiZQFQmKWQ90a9aIPmXFHI4NNRD3Tdjlxd6A3cbrnMnHMwhvpkcYM9N93AE
-	IVA3QZTs996Ckm5sckhEUignMfuOoLZp5Rq/oJ996aB3NYmZVmfMvAWbd9DcXXP8M5AcyAKnMsx1n
-	1XSm0o5w==;
+	bh=2g2YDYkQ/K2hb9T3w+UE6FfbyFiNJe02tvqYmzHwdTg=; b=sWn9VKTGolWWCZglu62prDuY/i
+	oeq5X9yKRagnm+bN9D5vy4HTTuAuopvN1TsmjiLFCdzBVK+R9vl70/YFiwnXR1urwkToIGnTI8/SP
+	uQ+FGIqjGuWVz+clapYyFQC1bnLAgwBVzbhL8M8PKCW1/HRVN0FD/af5bDX7wDFjw38D/Jlnr1cTj
+	91oKyT3Ap3kgRYydVmlcuTycbyM6VNX/+6rfaJYEUtvD7ds7NQC3IM6madmv7s/K1LasRNs1ogdXM
+	gsKweMxz4z7swhtusDcitvPH/z8Unyt+gFYcDmTRU2ux2Ho2Plu71K5e7kizzpSi3rci5Z6dSoorw
+	ilpsQkXQ==;
 Received: from localhost ([::1] helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtp (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xRZ34-0000000AoyT-0g2m;
-	Thu, 12 Nov 2026 17:57:22 +0000
-Received: from mail-wm1-x331.google.com ([2a00:1450:4864:20::331])
+	id 1xRZ38-0000000Ap8o-32US;
+	Thu, 12 Nov 2026 17:57:26 +0000
+Received: from mail-wm1-x32e.google.com ([2a00:1450:4864:20::32e])
 	by bombadil.infradead.org with esmtps (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xRZ2l-0000000AogI-18eG
+	id 1xRZ2m-0000000AogJ-11mD
 	for b43-dev@lists.infradead.org;
-	Thu, 12 Nov 2026 17:57:10 +0000
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-4ac95761c85so495475e9.2
-        for <b43-dev@lists.infradead.org>; Thu, 12 Nov 2026 09:57:02 -0800 (PST)
+	Thu, 12 Nov 2026 17:57:11 +0000
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4a35ac4475dso496755e9.2
+        for <b43-dev@lists.infradead.org>; Thu, 12 Nov 2026 09:57:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794506221; x=1795111021; darn=lists.infradead.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=CShfKH4JBWNtbgId/gUtrrDLMeL7luYqfNLSKJHvRKs=;
-        b=LVuacjS9M74UomGm3qQKrnP2ACeLMOj8zkfQBzTIB7ZCKn484qv+xh9bP+84go5caN
-         31XJaOZZvUp3vsXtzMnIrTnEURxBDw2zh3BHk4Vl+d8qe1DupzWfQa7tX2veKn6IZ2iD
-         wprNPGj0yMv908i+SsmSX9KDnfZW2eIP+oz0tI+G7k30TFE4cALMZw9co7i4z1wKUFUP
-         Hx2x1VV9JH8+hAdWJq5/HrAMs5oplPWGorWCjFQnrFrn/GY/MQLU5eeJmin992ZVnlm0
-         NVXEN17pVNlCcRIuFWIOmqENMGXPCpDTo7Aypk+r6VZeyvoqJVo3R/pJnhvtJFhKg0Em
-         ydJg==
+        d=gmail.com; s=20260707; t=1794506222; x=1795111022; darn=lists.infradead.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=/r4clUms1NakqoTNds1YOBelkAFaw0a4SLyelCy1urc=;
+        b=Po0TTn4+XG2aSkHvAB09bzWYJIRrBJQC3243nUFpikbEyvmVWke+l956Uo54SQnWyN
+         +Z86vTcW86Q42rwECGTTe63Z4tBC8HX03NxNFzG8PBSKPDmlaYeF3DW98hvs1Ke4ueqw
+         w+CrlG9XEDSSyBtcqSn1R4pVW2S31Z5+O1+VTE/S0YKGRzwsze0hkQsmisFDR7x4XLEk
+         0vcVloGjciNah+vO74wZ4Q3yvibf6OfbOBhaCgv0M3nPoiFOTca/+a1UC/oVDD1CAKaQ
+         EzTm0wfpqWkUpnN6AKYfFwUJipZX/Srw382+CLks57tZocbOys70GhzbTJGYwGStl4K7
+         aNdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794506221; x=1795111021;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CShfKH4JBWNtbgId/gUtrrDLMeL7luYqfNLSKJHvRKs=;
-        b=oyxloIP9G3RS2FEkHjm9mq0aY7bN6m7tAYxZ5olrM6xTj7jpQ7sEFvSRQprlJ0w1Wd
-         WVDsT5BSEgvuPgwI/Nik21yxgY9ytFFXB9ixB5wdHI1PCsbo6bjxVMMXxJjkLd5x09KP
-         RUZeGlk/iFUYhMEHKw0WLT1VyvBWa2TzWqKTZwLZWcje+bX/6EjbxrYWApUkn5xoFd07
-         /PMPMbu3gpqWtp1lMzCJzkzGyci3S8mebialKzQjv3wtjBRr8TIYWCDEPQjIr5+zIgDW
-         cRuf/yjYvOEPtmSyI++KwVWNl2XqTzYKtlnNMwJDW2wH4eFio+NLo0gQ8WeXmGTkpuJj
-         RqIw==
-X-Forwarded-Encrypted: i=1; AL+hErGMTgExNjpoFPDphqug8RdTgw8RsTliW6xuG5WkrBprRGuXilg0TqN7lQZ8y2Ih5mTLt73OLnzI@lists.infradead.org
-X-Gm-Message-State: APuU4Z8YrWyHxf6BGMGc531G7tZBVhxbWc9L7gBbK1+/BmRKXjKJMhb9
-	QRgzxUU5/lnwhDu8FbxcDeRwGwo7ppDuH3iI8IvEg0AnZFyhIBRRWtvL
-X-Gm-Gg: AYBFou0yRzYBCWpueZfEVKX8rjKDwS4M5kS6B+LeXjoWZVXN8N8F/LPkittabn7L505
-	85N0RrEz+08x9rshU6idOO4ue9qqP+OAEm4h/8XfgFWS9ihRiGXH775wGuzESoOLGf73G5uh98D
-	DCde50GjdaCluxer3V5YUo67xtoMxYHAnp6Z/eae1CJyFaaKs4zGA58kb2y009VsUL6/nIwT56S
-	Tsg+phNSWkbyBDBoR+eoRzSuPs6TW2iD7Due8Nrwsu/4pKH7DM7sPyHSON7hz+vNSY9P0pO4Yn2
-	bQZLCCRyCPt4cUN33MLRfEH43ljbYrIc11uS6d3C9xXK2g6XXUNKZy7ExHqSJQrCLfJi10MCjLh
-	D9hpTeaK/nGk7kwM8hq+u7r770J5CoWSUd7bTh7yGbLXofkfITsWiZN81jbUqHUepjv2HUgqW3A
-	O+2vRr23qEwKp4/O2LdQGgDlqQnmuyO4UFEDMU+6ZlDhPxz9GqxIsG6NXZFE15HKa20LDyw6+tc
-	FE+75UT49E9aqXPT7VXwjEr3FqH/NN4nAHkZ3/+46kqOJgnF1gxGT77hJIY8XFe4NRFu1BFnVGe
-	7dp6icRXKj++QeJhSZKfCxED4mKKWzMrLL0xkDnqXozT34EReSYI4z+xD+QqFLAIKuXFMDFNxEq
-	9yjpGdsLKKmwEV1TTWhSVNo4o/rMtxMQOLhRUwZizu6rTjMKxdQQyptzvZeTEx+HFF87Mt0mCPq
-	7xjMxSqeekmfuRPl0f1qU9F2hnmtlpaRoH30KUoJpBFtHT4LnUqvRXU8y/3DpX018=
-X-Received: by 2002:a05:600c:470a:b0:4ac:b0b2:fa12 with SMTP id 5b1f17b1804b1-4bb559f5d44mr132315e9.1.1794506220564;
-        Thu, 12 Nov 2026 09:57:00 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794506222; x=1795111022;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/r4clUms1NakqoTNds1YOBelkAFaw0a4SLyelCy1urc=;
+        b=LgJ3xZiZMla711S9e/xbEw4qMkwNYfyJ2qCG02LQX46nkp45Bo3r7wwIJgFIRHeDc3
+         l5ehAnpGKajB217KmoScbpyrRI5fiOe4kAsCyAvTSuwcJqJdpTNen8+vKpNYtsVuhNx3
+         MAvL2adzutVslS8Y7ZA6B1KllY8JI0aymhR0j36ahiAxbXRNiM2NfbTugEc7m2CxrhyU
+         qJ5mzseu8yrrd8a67+9JM3sF1yUg4Meq6jJU99q/O48k1z4mSAngEifYMC8jf8wimefO
+         rAnqXEsh+foxULm8xHWHBpCPcGiyfyry7bU1pbujx6wXlcTiJ7X+tLbR9a/HmOVvK0b1
+         0G3Q==
+X-Forwarded-Encrypted: i=1; AL+hErHCo1WpAmzA+Eshmtc9442vLNiRDpn97lsE5vUvDAJWUOVCfKKLm2mVYLkN2FiaAayPrxYiRSXO@lists.infradead.org
+X-Gm-Message-State: APuU4Z//MuMHi5AiZhjhd5ka3LgYenfeIgegTTfDmJpcd+AVzDMUVdot
+	j3/1L3FywJAIZk1zuL7CMkyjpLgi/2P8BerRyb1EnbzbGbtS1BA4Yati
+X-Gm-Gg: AYBFou2mmB0blj8pGftRHN24jhWNTsLgviE+VhOZ+aggpQ3aJwbMpdz0SEeeVYaIiRT
+	Lz8D/1SBkESgd+sTzDoFUZ/dHRymNQwcLNL370bICKSUxQgoECpORFbAMy53kkDDuFgi8gbRmCu
+	b+aWI23zuP9/VZUJ6+oErAYyAdis5qpvyOe19vduP/EiHJT/4JaobLtLm4/PDDsnZnet+is3xip
+	SReCXzvk94hN+MrdkEPXJaQwQcz6ViklXl/7E5qeaPsBGZbq9vwLjF26w8VTH7AENdMQhGfpCSL
+	ua8LtHkwEHeZ9xEcVtq3cCE2A9f7IHqC29fgOC1pk0Ml7zWl6YBzDZ4tC342jnl4Vexl9/rZRVl
+	FzR2xEqARrtCGQYFXMF4U6fmMuqTT8kYoCi6mnTtSbMIYU+RcTl09RkiBjEa0VHYya/AnDMp2zy
+	vtkdBtXMSs1q5W3cRb7ZnJLsIf4OXun6+lBkbArR0LUL1E204JA98LL1jxLB39Jkzdytv76+M75
+	KZecEqikt5ZFYHQtMvE1xWEeLcyif5ltzKaVLQCzlftkCwmB6sSvbejJTo1iiQ/mglHp+GPBZh0
+	2qHNukNMFC2Kd5IrJyCiGDFVnbzxSFSn2+qs6F4cLwhar/JGdl6/pgqYrTd4a0HwUBTo65g4jEO
+	2wL7I3cG2aU4Pgufpcwas59XeGduytDM1u+XWYKTOf12SDc9/jCMnKOk92ziXm/wnYqR9u17x1X
+	2S/NNIfvtMKhvP5o0lcXR5ElFxUR+HZMbj8UlFb/Rdbg==
+X-Received: by 2002:a05:600c:46d3:b0:4ba:6d8:dfad with SMTP id 5b1f17b1804b1-4ba0936ead9mr126444685e9.14.1794506221789;
+        Thu, 12 Nov 2026 09:57:01 -0800 (PST)
 Received: from zitrone.tail45b538.ts.net ([2a02:810d:a1:6000:900:be5c:7a9c:c176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb527c755esm31491425e9.4.2026.11.12.09.56.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb527c755esm31491425e9.4.2026.11.12.09.57.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 09:56:59 -0800 (PST)
+        Thu, 12 Nov 2026 09:57:01 -0800 (PST)
 From: Andreas Wendleder <gonsolo@gmail.com>
 To: linux-wireless@vger.kernel.org
-Subject: [PATCH RFC wireless-next 1/4] wifi: b43: radio 2069 and AC-PHY tables
-Date: Thu, 12 Nov 2026 18:56:53 +0100
-Message-ID: <20261112175656.40686-2-gonsolo@gmail.com>
+Subject: [PATCH RFC wireless-next 2/4] wifi: b43: AC-PHY init and 2.4 GHz channel switching
+Date: Thu, 12 Nov 2026 18:56:54 +0100
+Message-ID: <20261112175656.40686-3-gonsolo@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261112175656.40686-1-gonsolo@gmail.com>
 References: <20261112175656.40686-1-gonsolo@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.9.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20261112_095705_084546_5B32B5A6 
-X-CRM114-Status: GOOD (  17.19  )
+X-CRM114-CacheID: sfid-20261112_095705_125306_41843D88 
+X-CRM114-Status: GOOD (  25.25  )
 X-Spam-Score: -2.1 (--)
 X-BeenThere: b43-dev@lists.infradead.org
 X-Mailman-Version: 2.1.34
@@ -99,8 +100,8 @@ List-Help: <mailto:b43-dev-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
  <mailto:b43-dev-request@lists.infradead.org?subject=subscribe>
 Cc: jpeisach@ubuntu.com, julian.calaby@gmail.com, kvalo@kernel.org, linux-kernel@vger.kernel.org, rosenp@gmail.com, b43-dev@lists.infradead.org, Michael Buesch <m@bues.ch>, Johannes Berg <johannes@sipsolutions.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Sender: "b43-dev" <b43-dev-bounces@lists.infradead.org>
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,
@@ -110,2260 +111,897 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add the data the AC PHY needs:
-
- - radio_2069.c: the channel tuning table of radio 2069 rev 4 (2.4 GHz
-   and 5 GHz rows) and the register list it programs,
- - tables_phy_ac.c: the PHY tables of the PHY init (rev 0 set, RF
-   sequencer, gain limits, gain ladder, the FEM control pattern of
-   femctrl == 2 boards, the 2.4 GHz and 5 GHz TX gain tables), and the
-   values of the remaining table cells this board holds after the vendor
-   driver's init.
-
-The tables are values as seen in operation on a BCM4360 board
-(MacBookAir6,1) with the vendor driver; the names of several tables follow
-Alessio Ferri's b43-ac-wip. They have been checked on this board only. The
-data is used by the patches that follow.
-
-Co-developed-by: Alessio Ferri <alessio.ferri@mythread.it>
-Signed-off-by: Alessio Ferri <alessio.ferri@mythread.it>
-Signed-off-by: Andreas Wendleder <gonsolo@gmail.com>
----
- drivers/net/wireless/broadcom/b43/Makefile    |    2 +-
- .../net/wireless/broadcom/b43/radio_2069.c    |  862 +++++++++++
- .../net/wireless/broadcom/b43/radio_2069.h    |   19 +
- .../net/wireless/broadcom/b43/tables_phy_ac.c | 1273 +++++++++++++++++
- .../net/wireless/broadcom/b43/tables_phy_ac.h |   31 +
- 5 files changed, 2186 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/wireless/broadcom/b43/radio_2069.c
- create mode 100644 drivers/net/wireless/broadcom/b43/radio_2069.h
- create mode 100644 drivers/net/wireless/broadcom/b43/tables_phy_ac.c
- create mode 100644 drivers/net/wireless/broadcom/b43/tables_phy_ac.h
-
-diff --git a/drivers/net/wireless/broadcom/b43/Makefile b/drivers/net/wireless/broadcom/b43/Makefile
-index 54f92ce..be2c9ca 100644
---- a/drivers/net/wireless/broadcom/b43/Makefile
-+++ b/drivers/net/wireless/broadcom/b43/Makefile
-@@ -14,7 +14,7 @@ b43-$(CONFIG_B43_PHY_HT)	+= phy_ht.o
- b43-$(CONFIG_B43_PHY_HT)	+= tables_phy_ht.o
- b43-$(CONFIG_B43_PHY_HT)	+= radio_2059.o
- b43-$(CONFIG_B43_PHY_LCN)	+= phy_lcn.o tables_phy_lcn.o
--b43-$(CONFIG_B43_PHY_AC)	+= phy_ac.o
-+b43-$(CONFIG_B43_PHY_AC)	+= phy_ac.o radio_2069.o tables_phy_ac.o
- b43-y				+= sysfs.o
- b43-y				+= xmit.o
- b43-y				+= dma.o
-diff --git a/drivers/net/wireless/broadcom/b43/radio_2069.c b/drivers/net/wireless/broadcom/b43/radio_2069.c
-new file mode 100644
-index 0000000..7f0d762
---- /dev/null
-+++ b/drivers/net/wireless/broadcom/b43/radio_2069.c
-@@ -0,0 +1,862 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Radio 2069 rev 4 channel tuning table. Generated by tools/gen_radio_2069.py.
-+ *
-+ * Copyright (c) 2026 Andreas Wendleder <gonsolo@gmail.com>
-+ */
-+
-+#include "b43.h"
-+#include "radio_2069.h"
-+
-+const struct b43_radio_2069_chan b43_radio_2069r4_chans[] = {
-+	{ .channel = 184, .freq = 4920,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ccf, 0x00a4, 0x0000, 0x0290, 0x0000,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xffff,
-+		0xffff, 0x7068, 0x0000, 0x0000, 0x2000, 0x1000, 0x0000, 0x0000,
-+		0x2000, 0x1000, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ff,
-+		0x0fff, 0x00f0, 0x00a9, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07b4, 0x07b0, 0x07ac, 0x0214, 0x0215, 0x0216 } },
-+	{ .channel = 185, .freq = 4925,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0cd3, 0x00a4, 0x2aaa, 0x0290, 0xaaaa,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xffff,
-+		0xffff, 0x7068, 0x3092, 0x0849, 0x162d, 0x0b17, 0x3092, 0x0849,
-+		0x162d, 0x0b17, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ff,
-+		0x0fff, 0x00f0, 0x00a9, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07b6, 0x07b2, 0x07ae, 0x0213, 0x0214, 0x0215 } },
-+	{ .channel = 187, .freq = 4935,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0cd9, 0x00a4, 0x8000, 0x0292, 0x0000,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xffff,
-+		0xffff, 0x7068, 0x01ee, 0x30f7, 0x1c75, 0x0e3a, 0x01ee, 0x30f7,
-+		0x1c75, 0x0e3a, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ff,
-+		0x0fff, 0x00f0, 0x00a9, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07ba, 0x07b6, 0x07b2, 0x0212, 0x0213, 0x0214 } },
-+	{ .channel = 188, .freq = 4940,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0cdd, 0x00a4, 0xaaaa, 0x0292, 0xaaaa,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xffff,
-+		0xffff, 0x7068, 0x3d8a, 0x0ec5, 0x1d7b, 0x0ebe, 0x3d8a, 0x0ec5,
-+		0x1d7b, 0x0ebe, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ff,
-+		0x0fff, 0x00f0, 0x00a9, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07bc, 0x07b8, 0x07b4, 0x0212, 0x0213, 0x0214 } },
-+	{ .channel = 189, .freq = 4945,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0cdf, 0x00a4, 0xd555, 0x0293, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xffff,
-+		0xffff, 0x7068, 0x05ef, 0x32f7, 0x1e1f, 0x0f0f, 0x05ef, 0x32f7,
-+		0x1e1f, 0x0f0f, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ff,
-+		0x0fff, 0x00f0, 0x00a9, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07be, 0x07ba, 0x07b6, 0x0211, 0x0212, 0x0213 } },
-+	{ .channel = 192, .freq = 4960,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ce9, 0x00a5, 0x5555, 0x0295, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xffff,
-+		0xffff, 0x7068, 0x05a6, 0x32d3, 0x1f17, 0x0f8b, 0x05a6, 0x32d3,
-+		0x1f17, 0x0f8b, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ff,
-+		0x0fff, 0x00f0, 0x0099, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07c4, 0x07c0, 0x07bc, 0x020f, 0x0211, 0x0212 } },
-+	{ .channel = 196, .freq = 4980,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0cf7, 0x00a6, 0x0000, 0x0298, 0x0000,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xffff,
-+		0xffff, 0x7068, 0x3308, 0x0984, 0x1f95, 0x0fcb, 0x3308, 0x0984,
-+		0x1f95, 0x0fcb, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ff,
-+		0x0fff, 0x00f0, 0x0098, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07cc, 0x07c8, 0x07c4, 0x020d, 0x020e, 0x020f } },
-+	{ .channel = 207, .freq = 5035,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d1b, 0x00a7, 0xd555, 0x029f, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xfffc,
-+		0xfcff, 0x7068, 0x3e4f, 0x0f27, 0x1fd9, 0x0fed, 0x3e4f, 0x0f27,
-+		0x1fd9, 0x0fed, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ee,
-+		0x0fef, 0x00f0, 0x0087, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07e2, 0x07de, 0x07da, 0x0208, 0x0209, 0x020a } },
-+	{ .channel = 208, .freq = 5040,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d1f, 0x00a8, 0x0000, 0x02a0, 0x0000,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xfffc,
-+		0xfcff, 0x7068, 0x0000, 0x0000, 0x2000, 0x1000, 0x0000, 0x0000,
-+		0x2000, 0x1000, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ee,
-+		0x0fef, 0x00f0, 0x0087, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07e4, 0x07e0, 0x07dc, 0x0207, 0x0208, 0x0209 } },
-+	{ .channel = 209, .freq = 5045,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d23, 0x00a8, 0x2aaa, 0x02a0, 0xaaaa,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xfffc,
-+		0xfcff, 0x7068, 0x31fb, 0x38fe, 0x15a6, 0x0ad3, 0x31fb, 0x38fe,
-+		0x15a6, 0x0ad3, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ee,
-+		0x0fef, 0x00f0, 0x0087, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07e6, 0x07e2, 0x07de, 0x0207, 0x0208, 0x0209 } },
-+	{ .channel = 210, .freq = 5050,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d25, 0x00a8, 0x5555, 0x02a1, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xfffb,
-+		0xfbff, 0x7068, 0x32ab, 0x3955, 0x19f4, 0x0cfa, 0x32ab, 0x3955,
-+		0x19f4, 0x0cfa, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ee,
-+		0x0fef, 0x00f0, 0x0087, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07e8, 0x07e4, 0x07e0, 0x0206, 0x0207, 0x0208 } },
-+	{ .channel = 212, .freq = 5060,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d2d, 0x00a8, 0xaaaa, 0x02a2, 0xaaaa,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xfffb,
-+		0xfbff, 0x7068, 0x3cf7, 0x3e7b, 0x1cc8, 0x0e64, 0x3cf7, 0x3e7b,
-+		0x1cc8, 0x0e64, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ee,
-+		0x0fdf, 0x00f0, 0x0087, 0x0fac, 0xc0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07ec, 0x07e8, 0x07e4, 0x0205, 0x0206, 0x0207 } },
-+	{ .channel = 216, .freq = 5080,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d39, 0x00a9, 0x5555, 0x02a5, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0005, 0x0005, 0xff05, 0xfffa,
-+		0xfaff, 0x7068, 0x05c4, 0x32e2, 0x1e5b, 0x0f2d, 0x05c4, 0x32e2,
-+		0x1e5b, 0x0f2d, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00ee,
-+		0x0fde, 0x00f0, 0x0077, 0x0eac, 0xb0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x07f4, 0x07f0, 0x07ec, 0x0203, 0x0204, 0x0205 } },
-+	{ .channel = 34, .freq = 5170,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d75, 0x00ac, 0x5555, 0x02b1, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0006, 0x0006, 0xff06, 0xfff5,
-+		0xf5fc, 0x7068, 0x083b, 0x341e, 0x1fb1, 0x0fd8, 0x083b, 0x341e,
-+		0x1fb1, 0x0fd8, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00cc,
-+		0x0ebc, 0x00f0, 0x0079, 0x0bac, 0xa0ff, 0x18c5, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0818, 0x0814, 0x0810, 0x01fa, 0x01fb, 0x01fc } },
-+	{ .channel = 36, .freq = 5180,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d7d, 0x00ac, 0xaaaa, 0x02b2, 0xaaaa,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0006, 0x0006, 0xff06, 0xfff5,
-+		0xf5fb, 0x7068, 0x3d68, 0x0eb4, 0x1fa1, 0x0fd1, 0x3d68, 0x0eb4,
-+		0x1fa1, 0x0fd1, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00c9,
-+		0x0b9a, 0x00f0, 0x0079, 0x0cac, 0xa0ff, 0x18c4, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x081c, 0x0818, 0x0814, 0x01f9, 0x01fa, 0x01fb } },
-+	{ .channel = 38, .freq = 5190,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d83, 0x00ad, 0x0000, 0x02b4, 0x0000,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0006, 0x0006, 0xff06, 0xfff4,
-+		0xf4fb, 0x7068, 0x0fa9, 0x07d5, 0x1f92, 0x0fc9, 0x0fa9, 0x07d5,
-+		0x1f92, 0x0fc9, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00c9,
-+		0x0b9a, 0x00f0, 0x0079, 0x0cac, 0xa0ff, 0x18c4, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0820, 0x081c, 0x0818, 0x01f8, 0x01f9, 0x01fa } },
-+	{ .channel = 40, .freq = 5200,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d89, 0x00ad, 0x5555, 0x02b5, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3505, 0x0006, 0x0006, 0xff06, 0xfff4,
-+		0xf4fa, 0x7068, 0x013b, 0x009e, 0x1f82, 0x0fc1, 0x013b, 0x009e,
-+		0x1f82, 0x0fc1, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00c9,
-+		0x0b89, 0x00f0, 0x0079, 0x0bac, 0xa0ff, 0x18c4, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0824, 0x0820, 0x081c, 0x01f7, 0x01f8, 0x01f9 } },
-+	{ .channel = 42, .freq = 5210,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d91, 0x00ad, 0xaaaa, 0x02b6, 0xaaaa,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff4,
-+		0xf3fa, 0x7068, 0x30cb, 0x3865, 0x1f72, 0x0fb9, 0x30cb, 0x3865,
-+		0x1f72, 0x0fb9, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00c9,
-+		0x0b89, 0x00f0, 0x0079, 0x0bac, 0xa0ff, 0x18c4, 0x0001, 0x0188,
-+		0x010c, 0x03e0,
-+	  },
-+	  .bw = { 0x0828, 0x0824, 0x0820, 0x01f6, 0x01f7, 0x01f8 } },
-+	{ .channel = 44, .freq = 5220,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d97, 0x00ae, 0x0000, 0x02b8, 0x0000,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff3,
-+		0xf3f9, 0x7068, 0x3dea, 0x0ef5, 0x1f63, 0x0fb2, 0x3dea, 0x0ef5,
-+		0x1f63, 0x0fb2, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00c9,
-+		0x0b89, 0x00f0, 0x0079, 0x0bac, 0xa0ff, 0x18c4, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x082c, 0x0828, 0x0824, 0x01f5, 0x01f6, 0x01f7 } },
-+	{ .channel = 46, .freq = 5230,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0d9d, 0x00ae, 0x5555, 0x02b9, 0x5555,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff3,
-+		0xf3f9, 0x7068, 0x09af, 0x04d8, 0x1f54, 0x0faa, 0x09af, 0x04d8,
-+		0x1f54, 0x0faa, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00b8,
-+		0x0b89, 0x00f0, 0x0079, 0x0bac, 0xa0ff, 0x18c4, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0830, 0x082c, 0x0828, 0x01f4, 0x01f5, 0x01f6 } },
-+	{ .channel = 48, .freq = 5240,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0da5, 0x00ae, 0xaaaa, 0x02ba, 0xaaaa,
-+		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff2,
-+		0xf2f8, 0x7068, 0x338b, 0x39c5, 0x1f44, 0x0fa2, 0x338b, 0x39c5,
-+		0x1f44, 0x0fa2, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00b8,
-+		0x0b89, 0x00f0, 0x0069, 0x0aac, 0xa0ff, 0x18c3, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0834, 0x0830, 0x082c, 0x01f3, 0x01f4, 0x01f5 } },
-+	{ .channel = 52, .freq = 5260,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0db1, 0x00af, 0x5555, 0x02bd, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff1,
-+		0xf1f7, 0x7068, 0x3294, 0x394a, 0x1ff2, 0x0ff9, 0x3294, 0x394a,
-+		0x1ff2, 0x0ff9, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00b8,
-+		0x0a78, 0x00f0, 0x0068, 0x0aac, 0x90ff, 0x18c3, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x083c, 0x0838, 0x0834, 0x01f1, 0x01f2, 0x01f3 } },
-+	{ .channel = 54, .freq = 5270,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0db9, 0x00af, 0xaaaa, 0x02be, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff1,
-+		0xf1f7, 0x7068, 0x02bc, 0x015e, 0x1fd0, 0x0fe8, 0x02bc, 0x015e,
-+		0x1fd0, 0x0fe8, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00b8,
-+		0x0a78, 0x00f0, 0x0068, 0x0aac, 0x90ff, 0x18c3, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0840, 0x083c, 0x0838, 0x01f0, 0x01f1, 0x01f2 } },
-+	{ .channel = 56, .freq = 5280,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0dbf, 0x00b0, 0x0000, 0x02c0, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff0,
-+		0xf0f6, 0x7068, 0x0000, 0x0000, 0x2000, 0x1000, 0x0000, 0x0000,
-+		0x2000, 0x1000, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00a8,
-+		0x0a78, 0x00f0, 0x0068, 0x0aac, 0x80ff, 0x18c3, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0844, 0x0840, 0x083c, 0x01f0, 0x01f0, 0x01f1 } },
-+	{ .channel = 58, .freq = 5290,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0dc5, 0x00b0, 0x5555, 0x02c1, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfff0,
-+		0xf0f6, 0x7068, 0x0941, 0x34a1, 0x1ef9, 0x0f7c, 0x0941, 0x34a1,
-+		0x1ef9, 0x0f7c, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00a8,
-+		0x0a78, 0x00f0, 0x0068, 0x0aac, 0x80ff, 0x18c3, 0x0001, 0x0188,
-+		0x010c, 0x03e0,
-+	  },
-+	  .bw = { 0x0848, 0x0844, 0x0840, 0x01ef, 0x01f0, 0x01f0 } },
-+	{ .channel = 60, .freq = 5300,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0dcd, 0x00b0, 0xaaaa, 0x02c2, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xffef,
-+		0xeff5, 0x7068, 0x07f8, 0x03fc, 0x1eea, 0x0f75, 0x07f8, 0x03fc,
-+		0x1eea, 0x0f75, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00a8,
-+		0x0a78, 0x00f0, 0x0068, 0x09ac, 0x80ff, 0x18c3, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x084c, 0x0848, 0x0844, 0x01ee, 0x01ef, 0x01f0 } },
-+	{ .channel = 62, .freq = 5310,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0dd3, 0x00b1, 0x0000, 0x02c4, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xffef,
-+		0xeff5, 0x7068, 0x03eb, 0x31f5, 0x1edb, 0x0f6d, 0x03eb, 0x31f5,
-+		0x1edb, 0x0f6d, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00a9,
-+		0x0a78, 0x00f0, 0x0068, 0x09ac, 0x80ff, 0x18c3, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0850, 0x084c, 0x0848, 0x01ed, 0x01ee, 0x01ef } },
-+	{ .channel = 64, .freq = 5320,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0dd9, 0x00b1, 0x5555, 0x02c5, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xffee,
-+		0xeef4, 0x7068, 0x3f47, 0x3fa4, 0x1ecc, 0x0f66, 0x3f47, 0x3fa4,
-+		0x1ecc, 0x0f66, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x00a7,
-+		0x0967, 0x00f0, 0x0068, 0x09ac, 0x80ff, 0x18c3, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0854, 0x0850, 0x084c, 0x01ec, 0x01ed, 0x01ee } },
-+	{ .channel = 100, .freq = 5500,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e51, 0x00b7, 0x5555, 0x02dd, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfee6,
-+		0xe6ec, 0x7068, 0x3410, 0x0a08, 0x1f5b, 0x0fae, 0x3410, 0x0a08,
-+		0x1f5b, 0x0fae, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0084,
-+		0x0633, 0x00f0, 0x0046, 0x05ac, 0x50ff, 0x18c1, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x089c, 0x0898, 0x0894, 0x01dc, 0x01dd, 0x01dd } },
-+	{ .channel = 102, .freq = 5510,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e59, 0x00b7, 0xaaaa, 0x02de, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfee6,
-+		0xe6ec, 0x7068, 0x3b3a, 0x0d9d, 0x1fe9, 0x0ff5, 0x3b3a, 0x0d9d,
-+		0x1fe9, 0x0ff5, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0084,
-+		0x0633, 0x00f0, 0x0046, 0x05ac, 0x50ff, 0x18c1, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08a0, 0x089c, 0x0898, 0x01db, 0x01dc, 0x01dd } },
-+	{ .channel = 104, .freq = 5520,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e5f, 0x00b8, 0x0000, 0x02e0, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfde6,
-+		0xe6eb, 0x7068, 0x0000, 0x0000, 0x2000, 0x1000, 0x0000, 0x0000,
-+		0x2000, 0x1000, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0083,
-+		0x0623, 0x00f0, 0x0046, 0x05ac, 0x50ff, 0x18c1, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08a4, 0x08a0, 0x089c, 0x01da, 0x01db, 0x01dc } },
-+	{ .channel = 106, .freq = 5530,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e65, 0x00b8, 0x5555, 0x02e1, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfde5,
-+		0xe5eb, 0x7068, 0x0c8f, 0x3647, 0x1da1, 0x0ed0, 0x0c8f, 0x3647,
-+		0x1da1, 0x0ed0, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0083,
-+		0x0623, 0x00f0, 0x0046, 0x05ac, 0x50ff, 0x18c1, 0x0001, 0x0188,
-+		0x010c, 0x03e0,
-+	  },
-+	  .bw = { 0x08a8, 0x08a4, 0x08a0, 0x01d9, 0x01da, 0x01db } },
-+	{ .channel = 108, .freq = 5540,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e6d, 0x00b8, 0xaaaa, 0x02e2, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfde5,
-+		0xe5eb, 0x7068, 0x02a8, 0x3154, 0x1d93, 0x0ec9, 0x02a8, 0x3154,
-+		0x1d93, 0x0ec9, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0073,
-+		0x0523, 0x00f0, 0x0045, 0x05ac, 0x50ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08ac, 0x08a8, 0x08a4, 0x01d8, 0x01d9, 0x01da } },
-+	{ .channel = 110, .freq = 5550,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e73, 0x00b9, 0x0000, 0x02e4, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfce4,
-+		0xe4ea, 0x7068, 0x3641, 0x0b21, 0x1d85, 0x0ec3, 0x3641, 0x0b21,
-+		0x1d85, 0x0ec3, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0073,
-+		0x0523, 0x00f0, 0x0045, 0x05ac, 0x50ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08b0, 0x08ac, 0x08a8, 0x01d7, 0x01d8, 0x01d9 } },
-+	{ .channel = 112, .freq = 5560,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e79, 0x00b9, 0x5555, 0x02e5, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfce4,
-+		0xe4ea, 0x7068, 0x0c34, 0x361a, 0x1f6f, 0x0fb7, 0x0c34, 0x361a,
-+		0x1f6f, 0x0fb7, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0073,
-+		0x0523, 0x00f0, 0x0035, 0x05ac, 0x50ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08b4, 0x08b0, 0x08ac, 0x01d7, 0x01d7, 0x01d8 } },
-+	{ .channel = 114, .freq = 5570,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e81, 0x00b9, 0xaaaa, 0x02e6, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfbe3,
-+		0xe3e9, 0x7068, 0x3099, 0x384c, 0x1ef6, 0x0f7b, 0x3099, 0x384c,
-+		0x1ef6, 0x0f7b, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0073,
-+		0x0523, 0x00f0, 0x0035, 0x05ac, 0x50ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08b8, 0x08b4, 0x08b0, 0x01d6, 0x01d7, 0x01d7 } },
-+	{ .channel = 116, .freq = 5580,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e87, 0x00ba, 0x0000, 0x02e8, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfbe3,
-+		0xe3e9, 0x7068, 0x3075, 0x083a, 0x1ea3, 0x0f52, 0x3075, 0x083a,
-+		0x1ea3, 0x0f52, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0072,
-+		0x0512, 0x00f0, 0x0035, 0x04ac, 0x50ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08bc, 0x08b8, 0x08b4, 0x01d5, 0x01d6, 0x01d7 } },
-+	{ .channel = 118, .freq = 5590,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e8d, 0x00ba, 0x5555, 0x02e9, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfae3,
-+		0xe3e8, 0x7068, 0x3363, 0x39b2, 0x1f90, 0x0fc8, 0x3363, 0x39b2,
-+		0x1f90, 0x0fc8, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0072,
-+		0x0512, 0x00f0, 0x0035, 0x04ac, 0x50ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08c0, 0x08bc, 0x08b8, 0x01d4, 0x01d5, 0x01d6 } },
-+	{ .channel = 120, .freq = 5600,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e95, 0x00ba, 0xaaaa, 0x02ea, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xfae2,
-+		0xe2e8, 0x7068, 0x3b6e, 0x0db7, 0x1f35, 0x0f9b, 0x3b6e, 0x0db7,
-+		0x1f35, 0x0f9b, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0072,
-+		0x0512, 0x00f0, 0x0035, 0x04ac, 0x40ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08c4, 0x08c0, 0x08bc, 0x01d3, 0x01d4, 0x01d5 } },
-+	{ .channel = 122, .freq = 5610,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e9b, 0x00bb, 0x0000, 0x02ec, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf9e2,
-+		0xe2e8, 0x7068, 0x3af6, 0x3d7b, 0x1fdc, 0x0fee, 0x3af6, 0x3d7b,
-+		0x1fdc, 0x0fee, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0072,
-+		0x0512, 0x00f0, 0x0035, 0x04ac, 0x40ff, 0x18c0, 0x0001, 0x0188,
-+		0x010c, 0x03e0,
-+	  },
-+	  .bw = { 0x08c8, 0x08c4, 0x08c0, 0x01d2, 0x01d3, 0x01d4 } },
-+	{ .channel = 124, .freq = 5620,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ea1, 0x00bb, 0x5555, 0x02ed, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf9e1,
-+		0xe1e7, 0x7068, 0x369b, 0x3b4e, 0x1f84, 0x0fc2, 0x369b, 0x3b4e,
-+		0x1f84, 0x0fc2, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0062,
-+		0x0402, 0x00f0, 0x0034, 0x04ac, 0x40ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08cc, 0x08c8, 0x08c4, 0x01d2, 0x01d2, 0x01d3 } },
-+	{ .channel = 126, .freq = 5630,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ea9, 0x00bb, 0xaaaa, 0x02ee, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf8e1,
-+		0xe1e7, 0x7068, 0x3f15, 0x0f8a, 0x1f3b, 0x0f9e, 0x3f15, 0x0f8a,
-+		0x1f3b, 0x0f9e, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0062,
-+		0x0402, 0x00f0, 0x0034, 0x04ac, 0x40ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08d0, 0x08cc, 0x08c8, 0x01d1, 0x01d2, 0x01d2 } },
-+	{ .channel = 128, .freq = 5640,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0eaf, 0x00bc, 0x0000, 0x02f0, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf8e1,
-+		0xe1e6, 0x7068, 0x0000, 0x0000, 0x2000, 0x1000, 0x0000, 0x0000,
-+		0x2000, 0x1000, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0061,
-+		0x0401, 0x00f0, 0x0034, 0x03ac, 0x40ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08d4, 0x08d0, 0x08cc, 0x01d0, 0x01d1, 0x01d2 } },
-+	{ .channel = 130, .freq = 5650,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0eb5, 0x00bc, 0x5555, 0x02f1, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf7e0,
-+		0xe0e6, 0x7068, 0x0f68, 0x07b4, 0x1d00, 0x0e80, 0x0f68, 0x07b4,
-+		0x1d00, 0x0e80, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0061,
-+		0x0401, 0x00f0, 0x0034, 0x03ac, 0x40ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08d8, 0x08d4, 0x08d0, 0x01cf, 0x01d0, 0x01d1 } },
-+	{ .channel = 132, .freq = 5660,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ebd, 0x00bc, 0xaaaa, 0x02f2, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf7e0,
-+		0xe0e5, 0x7068, 0x331c, 0x398e, 0x1cf2, 0x0e79, 0x331c, 0x398e,
-+		0x1cf2, 0x0e79, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0061,
-+		0x0301, 0x00f0, 0x0034, 0x03ac, 0x30ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08dc, 0x08d8, 0x08d4, 0x01ce, 0x01cf, 0x01d0 } },
-+	{ .channel = 134, .freq = 5670,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ec3, 0x00bd, 0x0000, 0x02f4, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf7df,
-+		0xdfe5, 0x7068, 0x04d5, 0x026b, 0x1f86, 0x0fc3, 0x04d5, 0x026b,
-+		0x1f86, 0x0fc3, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0061,
-+		0x0301, 0x00f0, 0x0034, 0x03ac, 0x30ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08e0, 0x08dc, 0x08d8, 0x01ce, 0x01ce, 0x01cf } },
-+	{ .channel = 136, .freq = 5680,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ec9, 0x00bd, 0x5555, 0x02f5, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf6df,
-+		0xdfe5, 0x7068, 0x0c2b, 0x3616, 0x1ec5, 0x0f62, 0x0c2b, 0x3616,
-+		0x1ec5, 0x0f62, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0061,
-+		0x0301, 0x00f0, 0x0024, 0x03ac, 0x30ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08e4, 0x08e0, 0x08dc, 0x01cd, 0x01ce, 0x01ce } },
-+	{ .channel = 138, .freq = 5690,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ed1, 0x00bd, 0xaaaa, 0x02f6, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3504, 0x0006, 0x0006, 0xff06, 0xf6df,
-+		0xdfe4, 0x7068, 0x3397, 0x39cc, 0x1ffe, 0x0fff, 0x3397, 0x39cc,
-+		0x1ffe, 0x0fff, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0061,
-+		0x0301, 0x00f0, 0x0024, 0x03ac, 0x30ff, 0x18c0, 0x0001, 0x0188,
-+		0x010c, 0x03e0,
-+	  },
-+	  .bw = { 0x08e8, 0x08e4, 0x08e0, 0x01cc, 0x01cd, 0x01ce } },
-+	{ .channel = 140, .freq = 5700,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ed7, 0x00be, 0x0000, 0x02f8, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf5de,
-+		0xdee4, 0x7068, 0x33f7, 0x09fc, 0x1f5b, 0x0fae, 0x33f7, 0x09fc,
-+		0x1f5b, 0x0fae, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0300, 0x00f0, 0x0024, 0x03ac, 0x30ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08ec, 0x08e8, 0x08e4, 0x01cb, 0x01cc, 0x01cd } },
-+	{ .channel = 142, .freq = 5710,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0edd, 0x00be, 0x5555, 0x02f9, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf5de,
-+		0xdee3, 0x7068, 0x0d7d, 0x36bf, 0x1ee7, 0x0f73, 0x0d7d, 0x36bf,
-+		0x1ee7, 0x0f73, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0300, 0x00f0, 0x0024, 0x03ac, 0x30ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08f0, 0x08ec, 0x08e8, 0x01ca, 0x01cb, 0x01cc } },
-+	{ .channel = 144, .freq = 5720,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ee5, 0x00be, 0xaaaa, 0x02fa, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf4dd,
-+		0xdde3, 0x7068, 0x381b, 0x0c0e, 0x1f9b, 0x0fce, 0x381b, 0x0c0e,
-+		0x1f9b, 0x0fce, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0300, 0x00f0, 0x0024, 0x03ac, 0x30ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08f4, 0x08f0, 0x08ec, 0x01c9, 0x01ca, 0x01cb } },
-+	{ .channel = 145, .freq = 5725,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ee7, 0x00be, 0xd555, 0x02fb, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf4dd,
-+		0xdde3, 0x7068, 0x36ca, 0x0b65, 0x1f63, 0x0fb2, 0x36ca, 0x0b65,
-+		0x1f63, 0x0fb2, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0300, 0x00f0, 0x0023, 0x02ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08f6, 0x08f2, 0x08ee, 0x01c9, 0x01ca, 0x01cb } },
-+	{ .channel = 146, .freq = 5730,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0eeb, 0x00bf, 0x0000, 0x02fc, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf4dd,
-+		0xdde3, 0x7068, 0x34de, 0x0a6f, 0x1f31, 0x0f99, 0x34de, 0x0a6f,
-+		0x1f31, 0x0f99, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0200, 0x00f0, 0x0023, 0x02ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08f8, 0x08f4, 0x08f0, 0x01c9, 0x01c9, 0x01ca } },
-+	{ .channel = 147, .freq = 5735,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0eef, 0x00bf, 0x2aaa, 0x02fc, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf4dd,
-+		0xdde2, 0x7068, 0x024d, 0x0127, 0x1fee, 0x0ff7, 0x024d, 0x0127,
-+		0x1fee, 0x0ff7, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0200, 0x00f0, 0x0023, 0x02ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08fa, 0x08f6, 0x08f2, 0x01c8, 0x01c9, 0x01ca } },
-+	{ .channel = 148, .freq = 5740,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ef1, 0x00bf, 0x5555, 0x02fd, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf4dd,
-+		0xdde2, 0x7068, 0x3e54, 0x0f2a, 0x1fb7, 0x0fdc, 0x3e54, 0x0f2a,
-+		0x1fb7, 0x0fdc, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0200, 0x00f0, 0x0023, 0x02ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08fc, 0x08f8, 0x08f4, 0x01c8, 0x01c9, 0x01c9 } },
-+	{ .channel = 149, .freq = 5745,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0ef5, 0x00bf, 0x8000, 0x02fe, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf3dc,
-+		0xdce2, 0x7068, 0x3694, 0x0b4a, 0x1f85, 0x0fc3, 0x3694, 0x0b4a,
-+		0x1f85, 0x0fc3, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0200, 0x00f0, 0x0023, 0x02ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x08fe, 0x08fa, 0x08f6, 0x01c8, 0x01c8, 0x01c9 } },
-+	{ .channel = 151, .freq = 5755,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0efb, 0x00bf, 0xd555, 0x02ff, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf3dc,
-+		0xdce2, 0x7068, 0x035e, 0x31af, 0x1ff1, 0x0ff8, 0x035e, 0x31af,
-+		0x1ff1, 0x0ff8, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0051,
-+		0x0200, 0x00f0, 0x0023, 0x01ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0902, 0x08fe, 0x08fa, 0x01c7, 0x01c8, 0x01c8 } },
-+	{ .channel = 153, .freq = 5765,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0f03, 0x00c0, 0x2aaa, 0x0300, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf2dc,
-+		0xdce1, 0x7068, 0x34c2, 0x0a61, 0x1c6b, 0x0e36, 0x34c2, 0x0a61,
-+		0x1c6b, 0x0e36, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0041,
-+		0x0200, 0x00f0, 0x0023, 0x01ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0906, 0x0902, 0x08fe, 0x01c6, 0x01c7, 0x01c8 } },
-+	{ .channel = 155, .freq = 5775,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0f09, 0x00c0, 0x8000, 0x0302, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf2db,
-+		0xdbe1, 0x7068, 0x045a, 0x322d, 0x1c5f, 0x0e2f, 0x045a, 0x322d,
-+		0x1c5f, 0x0e2f, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0041,
-+		0x0200, 0x00f0, 0x0023, 0x01ac, 0x20ff, 0x18c0, 0x0001, 0x0188,
-+		0x010c, 0x03e0,
-+	  },
-+	  .bw = { 0x090a, 0x0906, 0x0902, 0x01c5, 0x01c6, 0x01c7 } },
-+	{ .channel = 157, .freq = 5785,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0f0f, 0x00c0, 0xd555, 0x0303, 0x5555,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf2db,
-+		0xdbe0, 0x7068, 0x039d, 0x01cf, 0x1f78, 0x0fbc, 0x039d, 0x01cf,
-+		0x1f78, 0x0fbc, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0040,
-+		0x0200, 0x00f0, 0x0023, 0x01ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x090e, 0x090a, 0x0906, 0x01c4, 0x01c5, 0x01c6 } },
-+	{ .channel = 159, .freq = 5795,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0f17, 0x00c1, 0x2aaa, 0x0304, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf1da,
-+		0xdae0, 0x7068, 0x0ee3, 0x3771, 0x1e73, 0x0f39, 0x0ee3, 0x3771,
-+		0x1e73, 0x0f39, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0040,
-+		0x0100, 0x00f0, 0x0023, 0x01ac, 0x20ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0912, 0x090e, 0x090a, 0x01c4, 0x01c4, 0x01c5 } },
-+	{ .channel = 161, .freq = 5805,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0f1d, 0x00c1, 0x8000, 0x0306, 0x0000,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf1da,
-+		0xdae0, 0x7068, 0x3020, 0x3810, 0x1fc0, 0x0fe0, 0x3020, 0x3810,
-+		0x1fc0, 0x0fe0, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0040,
-+		0x0100, 0x00f0, 0x0023, 0x00ac, 0x10ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x0916, 0x0912, 0x090e, 0x01c3, 0x01c4, 0x01c4 } },
-+	{ .channel = 165, .freq = 5825,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0f2b, 0x00c2, 0x2aaa, 0x0308, 0xaaaa,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-+		0x0000, 0x0000, 0x04a4, 0x3503, 0x0006, 0x0006, 0xff06, 0xf0d9,
-+		0xd9df, 0x7068, 0x0941, 0x04a0, 0x1fcc, 0x0fe6, 0x0941, 0x04a0,
-+		0x1fcc, 0x0fe6, 0x0000, 0x2000, 0x007f, 0x0000, 0x0070, 0x0030,
-+		0x0100, 0x00f0, 0x0023, 0x00ac, 0x10ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x091e, 0x091a, 0x0916, 0x01c1, 0x01c2, 0x01c3 } },
-+	{ .channel = 1, .freq = 2412,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e21, 0x00b4, 0xe666, 0x02d3, 0x9999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xffea,
-+		0xeaf0, 0xd068, 0x3e7a, 0x3f3d, 0x1da4, 0x0ed2, 0x3e7a, 0x3f3d,
-+		0x1da4, 0x0ed2, 0x0790, 0x20e9, 0x037f, 0x0005, 0x0074, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03c9, 0x03c5, 0x03c1, 0x043a, 0x043f, 0x0443 } },
-+	{ .channel = 2, .freq = 2417,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e29, 0x00b5, 0x4666, 0x02d5, 0x1999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xffe9,
-+		0xe9ef, 0xd068, 0x053b, 0x329d, 0x1ebb, 0x0f5d, 0x053b, 0x329d,
-+		0x1ebb, 0x0f5d, 0x0790, 0x20d9, 0x027f, 0x0004, 0x0074, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03cb, 0x03c7, 0x03c3, 0x0438, 0x043d, 0x0441 } },
-+	{ .channel = 3, .freq = 2422,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e31, 0x00b5, 0xa666, 0x02d6, 0x9999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xffe9,
-+		0xe9ef, 0xd068, 0x0871, 0x3438, 0x1f55, 0x0faa, 0x0871, 0x3438,
-+		0x1f55, 0x0faa, 0x0790, 0x20d8, 0x027f, 0x0004, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03cd, 0x03c9, 0x03c5, 0x0436, 0x043a, 0x043f } },
-+	{ .channel = 4, .freq = 2427,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e37, 0x00b6, 0x0666, 0x02d8, 0x1999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xffe8,
-+		0xe8ee, 0xd068, 0x01c6, 0x30e3, 0x1fb3, 0x0fd9, 0x01c6, 0x30e3,
-+		0x1fb3, 0x0fd9, 0x0780, 0x20c8, 0x027f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03cf, 0x03cb, 0x03c7, 0x0434, 0x0438, 0x043d } },
-+	{ .channel = 5, .freq = 2432,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e3f, 0x00b6, 0x6666, 0x02d9, 0x9999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xffe8,
-+		0xe8ee, 0xd068, 0x3f40, 0x3fa0, 0x1ff0, 0x0ff8, 0x3f40, 0x3fa0,
-+		0x1ff0, 0x0ff8, 0x0780, 0x20c8, 0x027f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03d1, 0x03cd, 0x03c9, 0x0431, 0x0436, 0x043a } },
-+	{ .channel = 6, .freq = 2437,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e47, 0x00b6, 0xc666, 0x02db, 0x1999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xffe7,
-+		0xe7ed, 0xd068, 0x3e6d, 0x3f36, 0x1f18, 0x0f8c, 0x3e6d, 0x3f36,
-+		0x1f18, 0x0f8c, 0x0780, 0x20b7, 0x027f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03d3, 0x03cf, 0x03cb, 0x042f, 0x0434, 0x0438 } },
-+	{ .channel = 7, .freq = 2442,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e4f, 0x00b7, 0x2666, 0x02dc, 0x9999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xffe7,
-+		0xe7ed, 0xd068, 0x35da, 0x0aed, 0x1f4f, 0x0fa8, 0x35da, 0x0aed,
-+		0x1f4f, 0x0fa8, 0x0670, 0x20b7, 0x017f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03d5, 0x03d1, 0x03cd, 0x042d, 0x0431, 0x0436 } },
-+	{ .channel = 8, .freq = 2447,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e55, 0x00b7, 0x8666, 0x02de, 0x1999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xfee6,
-+		0xe6ec, 0xd068, 0x3d98, 0x3ecc, 0x1f78, 0x0fbc, 0x3d98, 0x3ecc,
-+		0x1f78, 0x0fbc, 0x0670, 0x20a7, 0x017f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03d7, 0x03d3, 0x03cf, 0x042b, 0x042f, 0x0434 } },
-+	{ .channel = 9, .freq = 2452,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e5d, 0x00b7, 0xe666, 0x02df, 0x9999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xfee6,
-+		0xe6ec, 0xd068, 0x3667, 0x3b34, 0x1f96, 0x0fcb, 0x3667, 0x3b34,
-+		0x1f96, 0x0fcb, 0x0670, 0x20a7, 0x017f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03d9, 0x03d5, 0x03d1, 0x0429, 0x042d, 0x0431 } },
-+	{ .channel = 10, .freq = 2457,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e65, 0x00b8, 0x4666, 0x02e1, 0x1999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xfde5,
-+		0xe5eb, 0xd068, 0x37e1, 0x0bf0, 0x1873, 0x0c3a, 0x37e1, 0x0bf0,
-+		0x1873, 0x0c3a, 0x0670, 0x20a7, 0x017f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03db, 0x03d7, 0x03d3, 0x0427, 0x042b, 0x042f } },
-+	{ .channel = 11, .freq = 2462,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e6d, 0x00b8, 0xa666, 0x02e2, 0x9999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xfde5,
-+		0xe5eb, 0xd068, 0x3600, 0x3b00, 0x1cd6, 0x0e6b, 0x3600, 0x3b00,
-+		0x1cd6, 0x0e6b, 0x0670, 0x2097, 0x017f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03dd, 0x03d9, 0x03d5, 0x0424, 0x0429, 0x042d } },
-+	{ .channel = 12, .freq = 2467,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e73, 0x00b9, 0x0666, 0x02e4, 0x1999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xfce4,
-+		0xe4ea, 0xd068, 0x3a75, 0x0d3b, 0x1e41, 0x0f21, 0x3a75, 0x0d3b,
-+		0x1e41, 0x0f21, 0x0670, 0x2097, 0x017f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03df, 0x03db, 0x03d7, 0x0422, 0x0427, 0x042b } },
-+	{ .channel = 13, .freq = 2472,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e7b, 0x00b9, 0x6666, 0x02e5, 0x9999,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xfbe4,
-+		0xe4ea, 0xd068, 0x3ed4, 0x3f6a, 0x1eee, 0x0f77, 0x3ed4, 0x3f6a,
-+		0x1eee, 0x0f77, 0x0570, 0x2087, 0x017f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03e1, 0x03dd, 0x03d9, 0x0420, 0x0424, 0x0429 } },
-+	{ .channel = 14, .freq = 2484,
-+	  .radio = {
-+		0x0005, 0x001e, 0x0a09, 0x0e8d, 0x00ba, 0x4ccc, 0x02e9, 0x3333,
-+		0x0000, 0x0488, 0x0cef, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0580,
-+		0x0000, 0x0000, 0x048c, 0x3503, 0x0006, 0x0006, 0xff06, 0xfae3,
-+		0xe3e8, 0xd068, 0x33a0, 0x39d0, 0x1f1e, 0x0f8f, 0x33a0, 0x39d0,
-+		0x1f1e, 0x0f8f, 0x0570, 0x2076, 0x007f, 0x0003, 0x0073, 0x0000,
-+		0x0000, 0x0000, 0x0000, 0x00ac, 0x00ff, 0x18c0, 0x0001, 0x0185,
-+		0x00ac, 0x03e0,
-+	  },
-+	  .bw = { 0x03e6, 0x03e2, 0x03de, 0x041b, 0x041f, 0x0424 } },
-+};
-+
-+const unsigned int b43_radio_2069r4_chans_n =
-+	ARRAY_SIZE(b43_radio_2069r4_chans);
-diff --git a/drivers/net/wireless/broadcom/b43/radio_2069.h b/drivers/net/wireless/broadcom/b43/radio_2069.h
-new file mode 100644
-index 0000000..097d3cd
---- /dev/null
-+++ b/drivers/net/wireless/broadcom/b43/radio_2069.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef B43_RADIO_2069_H_
-+#define B43_RADIO_2069_H_
-+
-+#include <linux/types.h>
-+
-+#define B43_RADIO_2069_TUNE_REGS	50
-+
-+struct b43_radio_2069_chan {
-+	u16 channel;
-+	u16 freq;
-+	u16 radio[B43_RADIO_2069_TUNE_REGS];
-+	u16 bw[6];
-+};
-+
-+extern const struct b43_radio_2069_chan b43_radio_2069r4_chans[];
-+extern const unsigned int b43_radio_2069r4_chans_n;
-+
-+#endif /* B43_RADIO_2069_H_ */
-diff --git a/drivers/net/wireless/broadcom/b43/tables_phy_ac.c b/drivers/net/wireless/broadcom/b43/tables_phy_ac.c
-new file mode 100644
-index 0000000..ba95635
---- /dev/null
-+++ b/drivers/net/wireless/broadcom/b43/tables_phy_ac.c
-@@ -0,0 +1,1273 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * AC-PHY rev 0/1 init tables. Generated by tools/gen_tables_phy_ac.py.
-+ *
-+ * Copyright (c) 2026 Alessio Ferri <alessio.ferri@mythread.it>
-+ * Copyright (c) 2026 Andreas Wendleder <gonsolo@gmail.com>
-+ */
-+
-+#include "b43.h"
-+#include "tables_phy_ac.h"
-+
-+/* acphy_mcs_tbl_rev0 */
-+static const u16 b43_acphy_tbl_00[] = {
-+	0x0000, 0x0008, 0x000a, 0x0010, 0x0012, 0x0019, 0x001a, 0x001c, 0x0080,
-+	0x0088, 0x008a, 0x0090,
-+	0x0092, 0x0099, 0x009a, 0x009c, 0x0100, 0x0108, 0x010a, 0x0110, 0x0112,
-+	0x0119, 0x011a, 0x011c,
-+	0x0180, 0x0188, 0x018a, 0x0190, 0x0192, 0x0199, 0x019a, 0x019c, 0x0000,
-+	0x0098, 0x00a0, 0x00a8,
-+	0x009a, 0x00a2, 0x00aa, 0x0120, 0x0128, 0x0128, 0x0130, 0x0138, 0x0138,
-+	0x0140, 0x0122, 0x012a,
-+	0x012a, 0x0132, 0x013a, 0x013a, 0x0142, 0x01a8, 0x01b0, 0x01b8, 0x01b0,
-+	0x01b8, 0x01c0, 0x01c8,
-+	0x01c0, 0x01c8, 0x01d0, 0x01d0, 0x01d8, 0x01aa, 0x01b2, 0x01ba, 0x01b2,
-+	0x01ba, 0x01c2, 0x01ca,
-+	0x01c2, 0x01ca, 0x01d2, 0x01d2, 0x01da, 0x0001, 0x0002, 0x0004, 0x0009,
-+	0x000c, 0x0011, 0x0014,
-+	0x0018, 0x0020, 0x0021, 0x0022, 0x0024, 0x0081, 0x0082, 0x0084, 0x0089,
-+	0x008c, 0x0091, 0x0094,
-+	0x0098, 0x00a0, 0x00a1, 0x00a2, 0x00a4, 0x0007, 0x0007, 0x0007, 0x0007,
-+	0x0007, 0x0007, 0x0007,
-+	0x0007, 0x0007, 0x0007, 0x0007, 0x0007, 0x0007, 0x0007, 0x0007, 0x0007,
-+	0x0007, 0x0007, 0x0007,
-+	0x0007, 0x0007, 0x0007, 0x0007, 0x0007, 0x0007, 0x0007, 0x0007,
-+};
-+
-+/* acphy_tx_evm_tbl_rev0 */
-+static const u8 b43_acphy_tbl_01[] = {
-+	0x09, 0x0e, 0x11, 0x14, 0x17, 0x1a, 0x1d, 0x20, 0x09, 0x0e, 0x11, 0x14,
-+	0x17, 0x1a, 0x1d, 0x20, 0x22, 0x24, 0x09, 0x0e, 0x11, 0x14, 0x17, 0x1a,
-+	0x1d, 0x20, 0x22, 0x24, 0x09, 0x0e, 0x11, 0x14, 0x17, 0x1a, 0x1d, 0x20,
-+	0x22, 0x24,
-+};
-+
-+/* acphy_rx_evm_shaping_tbl_rev0 */
-+static const u8 b43_acphy_tbl_02[] = {
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00,
-+};
-+
-+/* acphy_noise_shaping_tbl_rev0 */
-+static const u32 b43_acphy_tbl_03[] = {
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+};
-+
-+/* acphy_phasetrack_tbl_rev0 */
-+static const u32 b43_acphy_tbl_04[] = {
-+	0x00035700, 0x0002cc9a, 0x00026666, 0x0001581f, 0x0001581f, 0x0001581f,
-+	0x0001581f, 0x0001581f,
-+	0x0001581f, 0x0001581f, 0x0001581f, 0x00035700, 0x0002cc9a, 0x00026666,
-+	0x0001581f, 0x0001581f,
-+	0x0001581f, 0x0001581f, 0x0001581f, 0x0001581f, 0x0001581f, 0x0001581f,
-+};
-+
-+/* acphy_est_pwr_lut_core0_rev0 */
-+static const u16 b43_acphy_tbl_05[] = {
-+	0x554a, 0x554a, 0x544a, 0x544a, 0x5449, 0x5449, 0x5349, 0x5349, 0x5248,
-+	0x5249, 0x5248, 0x5248,
-+	0x5147, 0x5147, 0x5147, 0x5147, 0x5046, 0x5046, 0x4f46, 0x4f46, 0x4f45,
-+	0x4f45, 0x4e44, 0x4e44,
-+	0x4e44, 0x4e44, 0x4d43, 0x4d43, 0x4c43, 0x4c43, 0x4c42, 0x4c42, 0x4b42,
-+	0x4b42, 0x4a41, 0x4a41,
-+	0x4940, 0x4940, 0x4940, 0x4940, 0x483f, 0x483f, 0x473e, 0x473e, 0x463e,
-+	0x463e, 0x463d, 0x463d,
-+	0x453c, 0x453c, 0x443b, 0x443b, 0x433b, 0x433b, 0x423a, 0x423a, 0x4139,
-+	0x4139, 0x4038, 0x4038,
-+	0x4037, 0x4037, 0x3f36, 0x3f36, 0x3e36, 0x3e36, 0x3d35, 0x3d35, 0x3c34,
-+	0x3b34, 0x3a33, 0x3a33,
-+	0x3932, 0x3932, 0x3831, 0x3830, 0x372f, 0x372f, 0x362e, 0x362e, 0x352d,
-+	0x342d, 0x332c, 0x332c,
-+	0x322b, 0x322a, 0x3129, 0x3029, 0x2f28, 0x2f27, 0x2e26, 0x2d26, 0x2c25,
-+	0x2c24, 0x2b23, 0x2a23,
-+	0x2922, 0x2821, 0x2720, 0x261f, 0x251e, 0x241d, 0x231c, 0x221b, 0x211a,
-+	0x2019, 0x1f17, 0x1e16,
-+	0x1d15, 0x1c14, 0x1a12, 0x1911, 0x180f, 0x170e, 0x150c, 0x140a, 0x1208,
-+	0x1006, 0x0e03, 0x0d01,
-+	0x0bfe, 0x09fb, 0x07f8, 0x05f5, 0x02f1, 0x00ec, 0xfde7, 0xfde7,
-+};
-+
-+/* acphy_est_pwr_lut_core1_rev0 */
-+static const u16 b43_acphy_tbl_06[] = {
-+	0x554a, 0x554a, 0x544a, 0x544a, 0x5449, 0x5449, 0x5349, 0x5349, 0x5248,
-+	0x5249, 0x5248, 0x5248,
-+	0x5147, 0x5147, 0x5147, 0x5147, 0x5046, 0x5046, 0x4f46, 0x4f46, 0x4f45,
-+	0x4f45, 0x4e44, 0x4e44,
-+	0x4e44, 0x4e44, 0x4d43, 0x4d43, 0x4c43, 0x4c43, 0x4c42, 0x4c42, 0x4b42,
-+	0x4b42, 0x4a41, 0x4a41,
-+	0x4940, 0x4940, 0x4940, 0x4940, 0x483f, 0x483f, 0x473e, 0x473e, 0x463e,
-+	0x463e, 0x463d, 0x463d,
-+	0x453c, 0x453c, 0x443b, 0x443b, 0x433b, 0x433b, 0x423a, 0x423a, 0x4139,
-+	0x4139, 0x4038, 0x4038,
-+	0x4037, 0x4037, 0x3f36, 0x3f36, 0x3e36, 0x3e36, 0x3d35, 0x3d35, 0x3c34,
-+	0x3b34, 0x3a33, 0x3a33,
-+	0x3932, 0x3932, 0x3831, 0x3830, 0x372f, 0x372f, 0x362e, 0x362e, 0x352d,
-+	0x342d, 0x332c, 0x332c,
-+	0x322b, 0x322a, 0x3129, 0x3029, 0x2f28, 0x2f27, 0x2e26, 0x2d26, 0x2c25,
-+	0x2c24, 0x2b23, 0x2a23,
-+	0x2922, 0x2821, 0x2720, 0x261f, 0x251e, 0x241d, 0x231c, 0x221b, 0x211a,
-+	0x2019, 0x1f17, 0x1e16,
-+	0x1d15, 0x1c14, 0x1a12, 0x1911, 0x180f, 0x170e, 0x150c, 0x140a, 0x1208,
-+	0x1006, 0x0e03, 0x0d01,
-+	0x0bfe, 0x09fb, 0x07f8, 0x05f5, 0x02f1, 0x00ec, 0xfde7, 0xfde7,
-+};
-+
-+/* acphy_est_pwr_lut_core2_rev0 */
-+static const u16 b43_acphy_tbl_07[] = {
-+	0x554a, 0x554a, 0x544a, 0x544a, 0x5449, 0x5449, 0x5349, 0x5349, 0x5248,
-+	0x5249, 0x5248, 0x5248,
-+	0x5147, 0x5147, 0x5147, 0x5147, 0x5046, 0x5046, 0x4f46, 0x4f46, 0x4f45,
-+	0x4f45, 0x4e44, 0x4e44,
-+	0x4e44, 0x4e44, 0x4d43, 0x4d43, 0x4c43, 0x4c43, 0x4c42, 0x4c42, 0x4b42,
-+	0x4b42, 0x4a41, 0x4a41,
-+	0x4940, 0x4940, 0x4940, 0x4940, 0x483f, 0x483f, 0x473e, 0x473e, 0x463e,
-+	0x463e, 0x463d, 0x463d,
-+	0x453c, 0x453c, 0x443b, 0x443b, 0x433b, 0x433b, 0x423a, 0x423a, 0x4139,
-+	0x4139, 0x4038, 0x4038,
-+	0x4037, 0x4037, 0x3f36, 0x3f36, 0x3e36, 0x3e36, 0x3d35, 0x3d35, 0x3c34,
-+	0x3b34, 0x3a33, 0x3a33,
-+	0x3932, 0x3932, 0x3831, 0x3830, 0x372f, 0x372f, 0x362e, 0x362e, 0x352d,
-+	0x342d, 0x332c, 0x332c,
-+	0x322b, 0x322a, 0x3129, 0x3029, 0x2f28, 0x2f27, 0x2e26, 0x2d26, 0x2c25,
-+	0x2c24, 0x2b23, 0x2a23,
-+	0x2922, 0x2821, 0x2720, 0x261f, 0x251e, 0x241d, 0x231c, 0x221b, 0x211a,
-+	0x2019, 0x1f17, 0x1e16,
-+	0x1d15, 0x1c14, 0x1a12, 0x1911, 0x180f, 0x170e, 0x150c, 0x140a, 0x1208,
-+	0x1006, 0x0e03, 0x0d01,
-+	0x0bfe, 0x09fb, 0x07f8, 0x05f5, 0x02f1, 0x00ec, 0xfde7, 0xfde7,
-+};
-+
-+/* acphy_iq_lut_core0_rev0 */
-+static const u32 b43_acphy_tbl_08[] = {
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+};
-+
-+/* acphy_iq_lut_core0_rev0 */
-+static const u32 b43_acphy_tbl_09[] = {
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+};
-+
-+/* acphy_iq_lut_core2_rev0 */
-+static const u32 b43_acphy_tbl_10[] = {
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-+	0x00000000, 0x00000000,
-+};
-+
-+/* acphy_loft_lut_core0_rev0 */
-+static const u16 b43_acphy_tbl_11[] = {
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+};
-+
-+/* acphy_loft_lut_core1_rev0 */
-+static const u16 b43_acphy_tbl_12[] = {
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+};
-+
-+/* acphy_loft_lut_core2_rev0 */
-+static const u16 b43_acphy_tbl_13[] = {
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000,
-+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+};
-+
-+/* acphy_papd_comp_rfpwr_tbl_core0_rev0 */
-+static const u16 b43_acphy_tbl_14[] = {
-+	0x0048, 0x0047, 0x0046, 0x0044, 0x0043, 0x0042, 0x0040, 0x003f, 0x003e,
-+	0x003c, 0x003a, 0x0038,
-+	0x0037, 0x0035, 0x0033, 0x0031, 0x002e, 0x002c, 0x002a, 0x0027, 0x0024,
-+	0x0020, 0x001d, 0x0019,
-+	0x0019, 0x0019, 0x0019, 0x0014, 0x0014, 0x0014, 0x000f, 0x000f, 0x000f,
-+	0x0008, 0x0008, 0x0008,
-+	0x0008, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0xfff7, 0xfff7, 0xfff7,
-+	0xfff7, 0xfff7, 0xfff7,
-+	0xfff7, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8,
-+	0xffe8, 0xffe8, 0xffe8,
-+	0xffe8, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+};
-+
-+/* acphy_papd_comp_rfpwr_tbl_core1_rev0 */
-+static const u16 b43_acphy_tbl_15[] = {
-+	0x0048, 0x0047, 0x0046, 0x0044, 0x0043, 0x0042, 0x0040, 0x003f, 0x003e,
-+	0x003c, 0x003a, 0x0038,
-+	0x0037, 0x0035, 0x0033, 0x0031, 0x002e, 0x002c, 0x002a, 0x0027, 0x0024,
-+	0x0020, 0x001d, 0x0019,
-+	0x0019, 0x0019, 0x0019, 0x0014, 0x0014, 0x0014, 0x000f, 0x000f, 0x000f,
-+	0x0008, 0x0008, 0x0008,
-+	0x0008, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0xfff7, 0xfff7, 0xfff7,
-+	0xfff7, 0xfff7, 0xfff7,
-+	0xfff7, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8,
-+	0xffe8, 0xffe8, 0xffe8,
-+	0xffe8, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+};
-+
-+/* acphy_papd_comp_rfpwr_tbl_core2_rev0 */
-+static const u16 b43_acphy_tbl_16[] = {
-+	0x0048, 0x0047, 0x0046, 0x0044, 0x0043, 0x0042, 0x0040, 0x003f, 0x003e,
-+	0x003c, 0x003a, 0x0038,
-+	0x0037, 0x0035, 0x0033, 0x0031, 0x002e, 0x002c, 0x002a, 0x0027, 0x0024,
-+	0x0020, 0x001d, 0x0019,
-+	0x0019, 0x0019, 0x0019, 0x0014, 0x0014, 0x0014, 0x000f, 0x000f, 0x000f,
-+	0x0008, 0x0008, 0x0008,
-+	0x0008, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0xfff7, 0xfff7, 0xfff7,
-+	0xfff7, 0xfff7, 0xfff7,
-+	0xfff7, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8, 0xffe8,
-+	0xffe8, 0xffe8, 0xffe8,
-+	0xffe8, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0,
-+	0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0, 0xffd0,
-+};
-+
-+/* acphy_papd_comp_epsilon_tbl_core0_rev0 */
-+static const u32 b43_acphy_tbl_17[] = {
-+	0x00000000, 0x03fdfffe, 0x00002003, 0x03fe4001, 0x03ff000a, 0x03fea003,
-+	0x03fe7fff, 0x03fe9fff,
-+	0x03fee00a, 0x00000029, 0x0001403c, 0x0002004b, 0x0003a04b, 0x0004a04e,
-+	0x0005e051, 0x0007004a,
-+	0x0008003f, 0x00092034, 0x000aa02f, 0x000ba024, 0x000d2022, 0x000e8021,
-+	0x0010001e, 0x0011e01c,
-+	0x0013c018, 0x00152014, 0x00172010, 0x0019200a, 0x001a7ff9, 0x001bffe9,
-+	0x001d7fd9, 0x001f1fc9,
-+	0x0020bfb9, 0x0021ffa7, 0x00233f95, 0x00243f84, 0x00257f73, 0x00269f63,
-+	0x00283f57, 0x002a1f53,
-+	0x002bff4c, 0x002e3f4a, 0x002fbf3e, 0x0030ff2f, 0x00321f21, 0x00339f12,
-+	0x0034df02, 0x00359eee,
-+	0x0035ded8, 0x00361ec1, 0x0036beac, 0x00373e96, 0x0037de82, 0x003e5ea3,
-+	0x004b5ef3, 0x0056bf29,
-+	0x0061bf51, 0x00723fb9, 0x00926203, 0x01308ef5, 0x0152cfff, 0x01516fff,
-+	0x014f6fff, 0x014e6fff,
-+};
-+
-+/* acphy_papd_comp_epsilon_tbl_core1_rev0 */
-+static const u32 b43_acphy_tbl_18[] = {
-+	0x00000000, 0x03fdfffe, 0x00002003, 0x03fe4001, 0x03ff000a, 0x03fea003,
-+	0x03fe7fff, 0x03fe9fff,
-+	0x03fee00a, 0x00000029, 0x0001403c, 0x0002004b, 0x0003a04b, 0x0004a04e,
-+	0x0005e051, 0x0007004a,
-+	0x0008003f, 0x00092034, 0x000aa02f, 0x000ba024, 0x000d2022, 0x000e8021,
-+	0x0010001e, 0x0011e01c,
-+	0x0013c018, 0x00152014, 0x00172010, 0x0019200a, 0x001a7ff9, 0x001bffe9,
-+	0x001d7fd9, 0x001f1fc9,
-+	0x0020bfb9, 0x0021ffa7, 0x00233f95, 0x00243f84, 0x00257f73, 0x00269f63,
-+	0x00283f57, 0x002a1f53,
-+	0x002bff4c, 0x002e3f4a, 0x002fbf3e, 0x0030ff2f, 0x00321f21, 0x00339f12,
-+	0x0034df02, 0x00359eee,
-+	0x0035ded8, 0x00361ec1, 0x0036beac, 0x00373e96, 0x0037de82, 0x003e5ea3,
-+	0x004b5ef3, 0x0056bf29,
-+	0x0061bf51, 0x00723fb9, 0x00926203, 0x01308ef5, 0x0152cfff, 0x01516fff,
-+	0x014f6fff, 0x014e6fff,
-+};
-+
-+/* acphy_papd_comp_epsilon_tbl_core2_rev0 */
-+static const u32 b43_acphy_tbl_19[] = {
-+	0x00000000, 0x03fdfffe, 0x00002003, 0x03fe4001, 0x03ff000a, 0x03fea003,
-+	0x03fe7fff, 0x03fe9fff,
-+	0x03fee00a, 0x00000029, 0x0001403c, 0x0002004b, 0x0003a04b, 0x0004a04e,
-+	0x0005e051, 0x0007004a,
-+	0x0008003f, 0x00092034, 0x000aa02f, 0x000ba024, 0x000d2022, 0x000e8021,
-+	0x0010001e, 0x0011e01c,
-+	0x0013c018, 0x00152014, 0x00172010, 0x0019200a, 0x001a7ff9, 0x001bffe9,
-+	0x001d7fd9, 0x001f1fc9,
-+	0x0020bfb9, 0x0021ffa7, 0x00233f95, 0x00243f84, 0x00257f73, 0x00269f63,
-+	0x00283f57, 0x002a1f53,
-+	0x002bff4c, 0x002e3f4a, 0x002fbf3e, 0x0030ff2f, 0x00321f21, 0x00339f12,
-+	0x0034df02, 0x00359eee,
-+	0x0035ded8, 0x00361ec1, 0x0036beac, 0x00373e96, 0x0037de82, 0x003e5ea3,
-+	0x004b5ef3, 0x0056bf29,
-+	0x0061bf51, 0x00723fb9, 0x00926203, 0x01308ef5, 0x0152cfff, 0x01516fff,
-+	0x014f6fff, 0x014e6fff,
-+};
-+
-+/* acphy_papd_cal_scalars_tbl_core0_rev0 */
-+static const u32 b43_acphy_tbl_20[] = {
-+	0x0b5e002d, 0x0ae2002f, 0x0a3b0032, 0x09a70035, 0x09220038, 0x08ab003b,
-+	0x081f003f, 0x07a20043,
-+	0x07340047, 0x06d2004b, 0x067a004f, 0x06170054, 0x05bf0059, 0x0571005e,
-+	0x051e0064, 0x04d3006a,
-+	0x04910070, 0x044c0077, 0x040f007e, 0x03d90085, 0x03a1008d, 0x036f0095,
-+	0x033d009e, 0x030b00a8,
-+	0x02e000b2, 0x02b900bc, 0x029200c7, 0x026d00d3, 0x024900e0, 0x022900ed,
-+	0x020a00fb, 0x01ec010a,
-+	0x01d20119, 0x01b7012a, 0x019e013c, 0x0188014e, 0x01720162, 0x015d0177,
-+	0x0149018e, 0x013701a5,
-+	0x012601be, 0x011501d8, 0x010601f4, 0x00f70212, 0x00e90231, 0x00dc0253,
-+	0x00d00276, 0x00c4029b,
-+	0x00b902c3, 0x00af02ed, 0x00a50319, 0x009c0348, 0x0093037a, 0x008b03af,
-+	0x008303e6, 0x007c0422,
-+	0x00750460, 0x006e04a3, 0x006804e9, 0x00620533, 0x005d0582, 0x005805d6,
-+	0x0053062e, 0x004e068c,
-+};
-+
-+/* acphy_papd_cal_scalars_tbl_core1_rev0 */
-+static const u32 b43_acphy_tbl_21[] = {
-+	0x0b5e002d, 0x0ae2002f, 0x0a3b0032, 0x09a70035, 0x09220038, 0x08ab003b,
-+	0x081f003f, 0x07a20043,
-+	0x07340047, 0x06d2004b, 0x067a004f, 0x06170054, 0x05bf0059, 0x0571005e,
-+	0x051e0064, 0x04d3006a,
-+	0x04910070, 0x044c0077, 0x040f007e, 0x03d90085, 0x03a1008d, 0x036f0095,
-+	0x033d009e, 0x030b00a8,
-+	0x02e000b2, 0x02b900bc, 0x029200c7, 0x026d00d3, 0x024900e0, 0x022900ed,
-+	0x020a00fb, 0x01ec010a,
-+	0x01d20119, 0x01b7012a, 0x019e013c, 0x0188014e, 0x01720162, 0x015d0177,
-+	0x0149018e, 0x013701a5,
-+	0x012601be, 0x011501d8, 0x010601f4, 0x00f70212, 0x00e90231, 0x00dc0253,
-+	0x00d00276, 0x00c4029b,
-+	0x00b902c3, 0x00af02ed, 0x00a50319, 0x009c0348, 0x0093037a, 0x008b03af,
-+	0x008303e6, 0x007c0422,
-+	0x00750460, 0x006e04a3, 0x006804e9, 0x00620533, 0x005d0582, 0x005805d6,
-+	0x0053062e, 0x004e068c,
-+};
-+
-+/* acphy_papd_cal_scalars_tbl_core2_rev0 */
-+static const u32 b43_acphy_tbl_22[] = {
-+	0x0b5e002d, 0x0ae2002f, 0x0a3b0032, 0x09a70035, 0x09220038, 0x08ab003b,
-+	0x081f003f, 0x07a20043,
-+	0x07340047, 0x06d2004b, 0x067a004f, 0x06170054, 0x05bf0059, 0x0571005e,
-+	0x051e0064, 0x04d3006a,
-+	0x04910070, 0x044c0077, 0x040f007e, 0x03d90085, 0x03a1008d, 0x036f0095,
-+	0x033d009e, 0x030b00a8,
-+	0x02e000b2, 0x02b900bc, 0x029200c7, 0x026d00d3, 0x024900e0, 0x022900ed,
-+	0x020a00fb, 0x01ec010a,
-+	0x01d20119, 0x01b7012a, 0x019e013c, 0x0188014e, 0x01720162, 0x015d0177,
-+	0x0149018e, 0x013701a5,
-+	0x012601be, 0x011501d8, 0x010601f4, 0x00f70212, 0x00e90231, 0x00dc0253,
-+	0x00d00276, 0x00c4029b,
-+	0x00b902c3, 0x00af02ed, 0x00a50319, 0x009c0348, 0x0093037a, 0x008b03af,
-+	0x008303e6, 0x007c0422,
-+	0x00750460, 0x006e04a3, 0x006804e9, 0x00620533, 0x005d0582, 0x005805d6,
-+	0x0053062e, 0x004e068c,
-+};
-+
-+/* ppr (power per rate) table: all zero until TX power control programs it */
-+static const u32 b43_acphy_tbl_ppr[24];
-+
-+const struct b43_phy_ac_tbl b43_phy_ac_tbls_rev0[] = {
-+	{ b43_acphy_tbl_00, 128, 1, 0, 16 },
-+	{ b43_acphy_tbl_01, 38, 2, 0, 8 },
-+	{ b43_acphy_tbl_02, 256, 4, 0, 8 },
-+	{ b43_acphy_tbl_03, 256, 3, 0, 32 },
-+	{ b43_acphy_tbl_04, 22, 5, 0, 32 },
-+	{ b43_acphy_tbl_05, 128, 64, 0, 16 },
-+	{ b43_acphy_tbl_06, 128, 96, 0, 16 },
-+	{ b43_acphy_tbl_07, 128, 128, 0, 16 },
-+	{ b43_acphy_tbl_08, 128, 65, 0, 32 },
-+	{ b43_acphy_tbl_09, 128, 97, 0, 32 },
-+	{ b43_acphy_tbl_10, 128, 129, 0, 32 },
-+	{ b43_acphy_tbl_11, 128, 66, 0, 16 },
-+	{ b43_acphy_tbl_12, 128, 98, 0, 16 },
-+	{ b43_acphy_tbl_13, 128, 130, 0, 16 },
-+	{ b43_acphy_tbl_14, 128, 64, 0, 16 },
-+	{ b43_acphy_tbl_15, 128, 96, 0, 16 },
-+	{ b43_acphy_tbl_16, 128, 128, 0, 16 },
-+	{ b43_acphy_tbl_17, 64, 71, 0, 32 },
-+	{ b43_acphy_tbl_18, 64, 103, 0, 32 },
-+	{ b43_acphy_tbl_19, 64, 135, 0, 32 },
-+	{ b43_acphy_tbl_20, 64, 72, 0, 32 },
-+	{ b43_acphy_tbl_21, 64, 104, 0, 32 },
-+	{ b43_acphy_tbl_22, 64, 136, 0, 32 },
-+	{ b43_acphy_tbl_ppr, 24, 0x21, 0, 32 },
-+};
-+
-+const unsigned int b43_phy_ac_tbls_rev0_n = ARRAY_SIZE(b43_phy_ac_tbls_rev0);
-+/*
-+ * RF sequencer tables (table id 7), previously replayed from the vendor
-+ * driver's first-load capture. Opcode names after Alessio Ferri's tree; values
-+ * are what core revision 42 holds after the vendor driver's init.
-+ */
-+enum {
-+	RFSEQ_NOP = 0x00,
-+	RFSEQ_RXG_FBW = 0x01,
-+	RFSEQ_TR_SWITCH = 0x02,
-+	RFSEQ_INT_PA_PU = 0x03,
-+	RFSEQ_EXT_PA = 0x04,
-+	RFSEQ_RXPD_TXPD = 0x05,
-+	RFSEQ_TX_GAIN = 0x06,
-+	RFSEQ_RX_GAIN = 0x07,
-+	RFSEQ_CLR_HIQ_DIS = 0x08,
-+	RFSEQ_SET_LPF_H_HPC = 0x0a,
-+	RFSEQ_SET_LPF_M_HPC = 0x0c,
-+	RFSEQ_SET_LPF_L_HPC = 0x0e,
-+	RFSEQ_CLR_RXRX_BIAS = 0x0f,
-+	RFSEQ_END = 0x1f,
-+	RFSEQ_UNK_2A = 0x2a,
-+	RFSEQ_UNK_2B = 0x2b,
-+	RFSEQ_UNK_35 = 0x35,
-+	RFSEQ_UNK_36 = 0x36,
-+	RFSEQ_UNK_B3 = 0xb3,
-+};
-+
-+/* receive -> transmit sequencer commands, table 7 @ 0x0 */
-+static const u16 b43_rfseq_rx2tx_cmd[] = {
-+	RFSEQ_NOP, RFSEQ_RXG_FBW, RFSEQ_TR_SWITCH, RFSEQ_CLR_HIQ_DIS,
-+	RFSEQ_RXPD_TXPD, RFSEQ_NOP, RFSEQ_TX_GAIN, RFSEQ_INT_PA_PU,
-+	RFSEQ_CLR_RXRX_BIAS, RFSEQ_EXT_PA, RFSEQ_NOP, RFSEQ_UNK_35,
-+	RFSEQ_CLR_RXRX_BIAS, RFSEQ_NOP, RFSEQ_UNK_36, RFSEQ_END,
-+};
-+
-+/*
-+ * transmit -> receive (starts with an extra 0xb3 opcode on core rev 42), table
-+ * 7 @ 0x10
-+ */
-+static const u16 b43_rfseq_tx2rx_cmd[] = {
-+	RFSEQ_UNK_B3, RFSEQ_EXT_PA, RFSEQ_INT_PA_PU, RFSEQ_TX_GAIN,
-+	RFSEQ_RXPD_TXPD, RFSEQ_NOP, RFSEQ_TR_SWITCH, RFSEQ_RXG_FBW,
-+	RFSEQ_CLR_HIQ_DIS, RFSEQ_UNK_2A, RFSEQ_CLR_RXRX_BIAS, RFSEQ_NOP,
-+	RFSEQ_CLR_RXRX_BIAS, RFSEQ_UNK_2B, RFSEQ_END, RFSEQ_END,
-+};
-+
-+/* reset -> receive, table 7 @ 0x20 */
-+static const u16 b43_rfseq_reset2rx_cmd[] = {
-+	RFSEQ_EXT_PA, RFSEQ_INT_PA_PU, RFSEQ_TX_GAIN, RFSEQ_RXPD_TXPD,
-+	RFSEQ_TR_SWITCH, RFSEQ_RXG_FBW, RFSEQ_CLR_HIQ_DIS, RFSEQ_UNK_2A,
-+	RFSEQ_UNK_2B, RFSEQ_CLR_RXRX_BIAS, RFSEQ_END, RFSEQ_END,
-+	RFSEQ_END, RFSEQ_END, RFSEQ_END, RFSEQ_END,
-+};
-+
-+/* second sequencer, core 0, table 7 @ 0x30 */
-+static const u16 b43_rfseq_rfseq2_cmd_c0[] = {
-+	RFSEQ_UNK_2A, RFSEQ_RX_GAIN, RFSEQ_SET_LPF_H_HPC, RFSEQ_NOP,
-+	RFSEQ_CLR_HIQ_DIS, RFSEQ_UNK_2B, RFSEQ_END, RFSEQ_END,
-+};
-+
-+/* second sequencer, core 1, table 7 @ 0x40 */
-+static const u16 b43_rfseq_rfseq2_cmd_c1[] = {
-+	RFSEQ_UNK_2A, RFSEQ_RX_GAIN, RFSEQ_CLR_HIQ_DIS, RFSEQ_SET_LPF_M_HPC,
-+	RFSEQ_SET_LPF_L_HPC, RFSEQ_UNK_2B, RFSEQ_END, RFSEQ_END,
-+};
-+
-+/* second sequencer, core 2, table 7 @ 0x50 */
-+static const u16 b43_rfseq_rfseq2_cmd_c2[] = {
-+	RFSEQ_UNK_2A, RFSEQ_RX_GAIN, RFSEQ_CLR_HIQ_DIS, RFSEQ_SET_LPF_L_HPC,
-+	RFSEQ_UNK_2B, RFSEQ_END, RFSEQ_END, RFSEQ_END,
-+};
-+
-+/* rx2tx/tx2rx delays, table 7 @ 0x80 */
-+static const u16 b43_rfseq_dly_80[] = {
-+	0x0001, 0x0008, 0x0004, 0x0002,
-+	0x0002, 0x0001, 0x0003, 0x0004,
-+	0x0006, 0x0004, 0x000a, 0x0004,
-+	0x0002, 0x0001, 0x0001, 0x0001,
-+};
-+
-+/* reset2rx delays, table 7 @ 0x90 */
-+static const u16 b43_rfseq_reset2rx_dly[] = {
-+	0x000c, 0x0002, 0x0002, 0x0004,
-+	0x0004, 0x0006, 0x0001, 0x0004,
-+	0x0001, 0x0002, 0x0001, 0x0001,
-+	0x0001, 0x0001, 0x0001, 0x0001,
-+};
-+
-+/* rfseq2 delays, core 0, table 7 @ 0xa0 */
-+static const u16 b43_rfseq_dly_a[] = {
-+	0x0001, 0x0002, 0x0002, 0x0002,
-+	0x0010, 0x0001, 0x0001, 0x0001,
-+};
-+
-+/* rfseq2 delays, core 1, table 7 @ 0xb0 */
-+static const u16 b43_rfseq_dly_b[] = {
-+	0x0001, 0x0006, 0x0012, 0x0008,
-+	0x0010, 0x0001, 0x0001, 0x0001,
-+};
-+
-+/* rfseq2 delays, core 2, table 7 @ 0xc0 */
-+static const u16 b43_rfseq_dly_c[] = {
-+	0x0001, 0x0006, 0x001e, 0x001c,
-+	0x0001, 0x0001, 0x0001, 0x0001,
-+};
-+
-+/* rfseq update-delay cells, table 7 @ 0x121 */
-+static const u16 b43_rfseq_updl_lpf_hpc0[] = {
-+	0x0aaa, 0x0aaa,
-+};
-+
-+/* rfseq update-delay cells, table 7 @ 0x124 */
-+static const u16 b43_rfseq_updl_tia_hpc0[] = {
-+	0x0222, 0x0222,
-+};
-+
-+/* rfseq update-delay cells, table 7 @ 0x131 */
-+static const u16 b43_rfseq_updl_lpf_hpc1[] = {
-+	0x0aaa, 0x0aaa,
-+};
-+
-+/* rfseq update-delay cells, table 7 @ 0x137 */
-+static const u16 b43_rfseq_updl_tia_hpc1[] = {
-+	0x0222, 0x0222,
-+};
-+
-+const struct b43_phy_ac_tbl b43_phy_ac_rfseq_tbls[] = {
-+	{ b43_rfseq_rx2tx_cmd, 16, 7, 0x0, 16 },
-+	{ b43_rfseq_tx2rx_cmd, 16, 7, 0x10, 16 },
-+	{ b43_rfseq_reset2rx_cmd, 16, 7, 0x20, 16 },
-+	{ b43_rfseq_rfseq2_cmd_c0, 8, 7, 0x30, 16 },
-+	{ b43_rfseq_rfseq2_cmd_c1, 8, 7, 0x40, 16 },
-+	{ b43_rfseq_rfseq2_cmd_c2, 8, 7, 0x50, 16 },
-+	{ b43_rfseq_dly_80, 16, 7, 0x80, 16 },
-+	{ b43_rfseq_reset2rx_dly, 16, 7, 0x90, 16 },
-+	{ b43_rfseq_dly_a, 8, 7, 0xa0, 16 },
-+	{ b43_rfseq_dly_b, 8, 7, 0xb0, 16 },
-+	{ b43_rfseq_dly_c, 8, 7, 0xc0, 16 },
-+	{ b43_rfseq_updl_lpf_hpc0, 2, 7, 0x121, 16 },
-+	{ b43_rfseq_updl_tia_hpc0, 2, 7, 0x124, 16 },
-+	{ b43_rfseq_updl_lpf_hpc1, 2, 7, 0x131, 16 },
-+	{ b43_rfseq_updl_tia_hpc1, 2, 7, 0x137, 16 },
-+};
-+
-+const unsigned int b43_phy_ac_rfseq_tbls_n = ARRAY_SIZE(b43_phy_ac_rfseq_tbls);
-+
-+/*
-+ * FEM control pattern (table 0x0a, three 32-byte blocks: A, B, A) for SROM
-+ * femctrl == 2, the value the vendor driver holds on this card (Alessio's tree
-+ * has the femctrl == 6 variant, 0x06/0x02 where this has 0x04/0x00).
-+ */
-+static const u8 b43_femctrl2_a[32] = {
-+	0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00,
-+	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x04, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x02, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00,
-+};
-+
-+static const u8 b43_femctrl2_b[32] = {
-+	0x00, 0x00, 0x30, 0x20, 0x00, 0x00, 0x30, 0x20, 0x00,
-+	0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x40,
-+	0x46, 0x42, 0x40, 0x40, 0x46, 0x42, 0x40, 0x41, 0x40,
-+	0x40, 0x40, 0x40, 0x40, 0x40,
-+};
-+
-+const struct b43_phy_ac_tbl b43_phy_ac_femctrl2_tbls[] = {
-+	{ b43_femctrl2_a, 32, 0x0a, 0x00, 8 },
-+	{ b43_femctrl2_b, 32, 0x0a, 0x20, 8 },
-+	{ b43_femctrl2_a, 32, 0x0a, 0x40, 8 },
-+};
-+
-+const unsigned int b43_phy_ac_femctrl2_tbls_n =
-+	ARRAY_SIZE(b43_phy_ac_femctrl2_tbls);
-+
-+/* Gain limits (table 0x0b) Names after Alessio's tree. */
-+static const u16 b43_glim_a[6] = {
-+	0x000b, 0x000c, 0x000e, 0x0020, 0x0024, 0x0028,
-+};
-+
-+static const u16 b43_glim_b[7] = {
-+	0x0000, 0x0000, 0x0000, 0x0003, 0x0003, 0x0003, 0x0003,
-+};
-+
-+/*
-+ * RX-IQ-cal tone table (table 0x0e): a 20-entry period, two periods at 20 MHz.
-+ */
-+static const u32 b43_iqcal_tone[20] = {
-+	0x0002d400, 0x0002b3c8, 0x00024b96, 0x0001ab6e, 0x0000e354, 0x0000034b,
-+	0x000f2354, 0x000e5b6e, 0x000dbb96, 0x000d53c8, 0x000d2c00, 0x000d5038,
-+	0x000db86a, 0x000e5892, 0x000f20ac, 0x000000b5, 0x0000e0ac, 0x0001a892,
-+	0x0002486a, 0x0002b038,
-+};
-+
-+const struct b43_phy_ac_tbl b43_phy_ac_misc_tbls[] = {
-+	{ b43_glim_a, 6, 0x0b, 0x08, 16 },
-+	{ b43_glim_b, 7, 0x0b, 0x10, 16 },
-+	{ b43_iqcal_tone, 20, 0x0e, 0x00, 32 },
-+	{ b43_iqcal_tone, 20, 0x0e, 0x14, 32 },
-+};
-+
-+const unsigned int b43_phy_ac_misc_tbls_n = ARRAY_SIZE(b43_phy_ac_misc_tbls);
-+
-+/*
-+ * Gain ladder "A" (table 0x0c, 18 index/gain pairs per core; name after
-+ * Alessio's tree, the variant the vendor driver loads on this card).
-+ */
-+static const u16 b43_gain_ladder_a_c0[18] = {
-+	0x0100, 0x0200, 0x0300, 0x0500, 0x0800, 0x0b00, 0x1000, 0x1001, 0x1002,
-+	0x1003, 0x1004, 0x1005, 0x1006, 0x1007, 0x1607, 0x2007, 0x2d07, 0x4007,
-+};
-+
-+static const u16 b43_gain_ladder_a_c1[18] = {
-+	0x0100, 0x0200, 0x0300, 0x0500, 0x0800, 0x0b00, 0x1000, 0x1600, 0x2000,
-+	0x2d00, 0x4000, 0x4001, 0x4002, 0x4003, 0x4004, 0x4005, 0x4006, 0x4007,
-+};
-+
-+const struct b43_phy_ac_tbl b43_phy_ac_ladder_tbls[] = {
-+	{ b43_gain_ladder_a_c0, 18, 0x0c, 0x00, 16 },
-+	{ b43_gain_ladder_a_c1, 18, 0x0c, 0x20, 16 },
-+};
-+
-+const unsigned int b43_phy_ac_ladder_tbls_n =
-+	ARRAY_SIZE(b43_phy_ac_ladder_tbls);
-+
-+/*
-+ * Remaining 2.4 GHz cells of tables 0x07 (RF sequencer) and 0x0c, values as
-+ * the vendor driver programs them on this card. What is known is structure
-+ * only, not the meaning of the values:
-+ *  - 0x140/0x150 and 0x360/0x370 are identical pairs 0x10 apart, so they
-+ *    look like one block per core (two cores).
-+ *  - 0x6a/0x6e and 0x3fa/0x3fe repeat the same {0x2f, 0xbef, 0xbef} data.
-+ *  - table 0x0c offsets 0x5f and 0x70 end in the same eight words.
-+ * Nothing here has been varied independently of the vendor driver, so these
-+ * stay literal.
-+ */
-+static const u16 b43_vendor_7_106[3] = {
-+	0x2f, 0xbef, 0xbef,
-+};
-+
-+static const u16 b43_vendor_7_110[2] = {
-+	0xbef, 0xbef,
-+};
-+
-+static const u16 b43_vendor_7_249[2] = {
-+	0xc8a5, 0xcca5,
-+};
-+
-+static const u16 b43_vendor_7_256[2] = {
-+	0xff00, 0xff00,
-+};
-+
-+static const u16 b43_vendor_7_259[2] = {
-+	0x7cf, 0x7cf,
-+};
-+
-+static const u16 b43_vendor_7_262[2] = {
-+	0xa7, 0xa7,
-+};
-+
-+static const u16 b43_vendor_7_320[11] = {
-+	0x2280, 0x2189, 0x40db, 0x40db, 0x40db, 0x4123, 0x4123, 0x4123,
-+	0x416b, 0x416b, 0x40db,
-+};
-+
-+static const u16 b43_vendor_7_336[11] = {
-+	0x2280, 0x2189, 0x40db, 0x40db, 0x40db, 0x4123, 0x4123, 0x4123,
-+	0x416b, 0x416b, 0x40db,
-+};
-+
-+static const u16 b43_vendor_7_398[1] = {
-+	0x0,
-+};
-+
-+static const u16 b43_vendor_7_864[11] = {
-+	0x140, 0x140, 0x141, 0x141, 0x141, 0x141, 0x141, 0x141,
-+	0x141, 0x141, 0x141,
-+};
-+
-+static const u16 b43_vendor_7_880[11] = {
-+	0x140, 0x140, 0x141, 0x141, 0x141, 0x141, 0x141, 0x141,
-+	0x141, 0x141, 0x141,
-+};
-+
-+static const u16 b43_vendor_7_966[2] = {
-+	0x20, 0x20,
-+};
-+
-+static const u16 b43_vendor_7_973[1] = {
-+	0x2d3,
-+};
-+
-+static const u16 b43_vendor_7_982[2] = {
-+	0x20, 0x20,
-+};
-+
-+static const u16 b43_vendor_7_989[1] = {
-+	0x352,
-+};
-+
-+static const u16 b43_vendor_7_998[2] = {
-+	0x20, 0x20,
-+};
-+
-+static const u16 b43_vendor_7_1018[3] = {
-+	0x2f, 0xbef, 0xbef,
-+};
-+
-+static const u16 b43_vendor_7_1022[2] = {
-+	0xbef, 0xbef,
-+};
-+
-+static const u16 b43_vendor_7_1088[4] = {
-+	0x140, 0x2192, 0x140, 0x2192,
-+};
-+
-+static const u16 b43_vendor_12_64[2] = {
-+	0x40, 0x4,
-+};
-+
-+static const u16 b43_vendor_12_67[3] = {
-+	0xff02, 0xff, 0xfe06,
-+};
-+
-+static const u16 b43_vendor_12_72[2] = {
-+	0xb, 0x11,
-+};
-+
-+static const u16 b43_vendor_12_75[3] = {
-+	0x101, 0xff00, 0x4f3,
-+};
-+
-+static const u16 b43_vendor_12_95[9] = {
-+	0xacdc, 0x3f, 0xfff5, 0xff02, 0x3f, 0xa, 0xffff, 0x101,
-+	0x3f,
-+};
-+
-+static const u16 b43_vendor_12_112[8] = {
-+	0x3f, 0xfff5, 0xff02, 0x3f, 0xa, 0xffff, 0x101, 0x3f,
-+};
-+
-+const struct b43_phy_ac_tbl b43_phy_ac_vendor_tbls[] = {
-+	{ b43_vendor_7_106, 3, 0x07, 0x6a, 16 },
-+	{ b43_vendor_7_110, 2, 0x07, 0x6e, 16 },
-+	{ b43_vendor_7_249, 2, 0x07, 0xf9, 16 },
-+	{ b43_vendor_7_256, 2, 0x07, 0x100, 16 },
-+	{ b43_vendor_7_259, 2, 0x07, 0x103, 16 },
-+	{ b43_vendor_7_262, 2, 0x07, 0x106, 16 },
-+	{ b43_vendor_7_320, 11, 0x07, 0x140, 16 },
-+	{ b43_vendor_7_336, 11, 0x07, 0x150, 16 },
-+	{ b43_vendor_7_398, 1, 0x07, 0x18e, 16 },
-+	{ b43_vendor_7_864, 11, 0x07, 0x360, 16 },
-+	{ b43_vendor_7_880, 11, 0x07, 0x370, 16 },
-+	{ b43_vendor_7_966, 2, 0x07, 0x3c6, 16 },
-+	{ b43_vendor_7_973, 1, 0x07, 0x3cd, 16 },
-+	{ b43_vendor_7_982, 2, 0x07, 0x3d6, 16 },
-+	{ b43_vendor_7_989, 1, 0x07, 0x3dd, 16 },
-+	{ b43_vendor_7_998, 2, 0x07, 0x3e6, 16 },
-+	{ b43_vendor_7_1018, 3, 0x07, 0x3fa, 16 },
-+	{ b43_vendor_7_1022, 2, 0x07, 0x3fe, 16 },
-+	{ b43_vendor_7_1088, 4, 0x07, 0x440, 16 },
-+	{ b43_vendor_12_64, 2, 0x0c, 0x40, 16 },
-+	{ b43_vendor_12_67, 3, 0x0c, 0x43, 16 },
-+	{ b43_vendor_12_72, 2, 0x0c, 0x48, 16 },
-+	{ b43_vendor_12_75, 3, 0x0c, 0x4b, 16 },
-+	{ b43_vendor_12_95, 9, 0x0c, 0x5f, 16 },
-+	{ b43_vendor_12_112, 8, 0x0c, 0x70, 16 },
-+};
-+
-+const unsigned int b43_phy_ac_vendor_tbls_n =
-+	ARRAY_SIZE(b43_phy_ac_vendor_tbls);
-+
-+/*
-+ * TX gain table for 2.4 GHz with an external PA, acphy_txgain_epa_2g_2069rev4
-+ * (from Alessio Ferri's b43 AC-PHY driver; the stock driver loads it whole
-+ * into table 0x20). Index 0 is the highest gain. Per entry: bbmult in the
-+ * low byte of word 0, then three gain words packed across the rest.
-+ */
-+const u16 b43_phy_ac_txgain_2g[128][3] = {
-+	{ 0x0044, 0xffff, 0xa7ff },
-+	{ 0x0040, 0xffff, 0xa7ff },
-+	{ 0x003f, 0xffff, 0xa7ef },
-+	{ 0x003f, 0xffff, 0xa7df },
-+	{ 0x003f, 0xffff, 0xa7cf },
-+	{ 0x0040, 0xffff, 0xa7bf },
-+	{ 0x0041, 0xffff, 0xa7af },
-+	{ 0x0040, 0xffff, 0xa7a7 },
-+	{ 0x003f, 0xffff, 0xa79f },
-+	{ 0x0041, 0xffff, 0xa78f },
-+	{ 0x0041, 0xffff, 0xa787 },
-+	{ 0x0040, 0xffff, 0xa77f },
-+	{ 0x0040, 0xffff, 0xa777 },
-+	{ 0x0040, 0xffff, 0xa76f },
-+	{ 0x0041, 0xffff, 0xa767 },
-+	{ 0x0042, 0xffff, 0xa75f },
-+	{ 0x003e, 0xffff, 0xa75f },
-+	{ 0x0040, 0xffff, 0xa757 },
-+	{ 0x0042, 0xffff, 0xa74f },
-+	{ 0x003e, 0xffff, 0xa74f },
-+	{ 0x0041, 0xffff, 0xa747 },
-+	{ 0x003d, 0xffff, 0xa747 },
-+	{ 0x0040, 0xffff, 0xa73f },
-+	{ 0x003d, 0xffff, 0xa73f },
-+	{ 0x0041, 0xffff, 0xa737 },
-+	{ 0x003d, 0xffff, 0xa737 },
-+	{ 0x0043, 0xffff, 0xa72f },
-+	{ 0x0040, 0xffff, 0xa72f },
-+	{ 0x003c, 0xffff, 0xa72f },
-+	{ 0x0043, 0xffff, 0xa727 },
-+	{ 0x0040, 0xffff, 0xa727 },
-+	{ 0x003c, 0xffff, 0xa727 },
-+	{ 0x0046, 0xffff, 0xa71f },
-+	{ 0x0042, 0xffff, 0xa71f },
-+	{ 0x003e, 0xffff, 0xa71f },
-+	{ 0x003b, 0xffff, 0xa71f },
-+	{ 0x004a, 0xffff, 0xa717 },
-+	{ 0x0046, 0xffff, 0xa717 },
-+	{ 0x0042, 0xffff, 0xa717 },
-+	{ 0x003e, 0xffff, 0xa717 },
-+	{ 0x003b, 0xffff, 0xa717 },
-+	{ 0x0037, 0xffff, 0xa717 },
-+	{ 0x004c, 0xffff, 0xa70f },
-+	{ 0x0048, 0xffff, 0xa70f },
-+	{ 0x0044, 0xffff, 0xa70f },
-+	{ 0x0040, 0xffff, 0xa70f },
-+	{ 0x003c, 0xffff, 0xa70f },
-+	{ 0x0039, 0xffff, 0xa70f },
-+	{ 0x0036, 0xffff, 0xa70f },
-+	{ 0x0033, 0xffff, 0xa70f },
-+	{ 0x002f, 0xffff, 0xa70f },
-+	{ 0x0055, 0xffff, 0xa707 },
-+	{ 0x0050, 0xffff, 0xa707 },
-+	{ 0x004b, 0xffff, 0xa707 },
-+	{ 0x0047, 0xffff, 0xa707 },
-+	{ 0x0043, 0xffff, 0xa707 },
-+	{ 0x003f, 0xffff, 0xa707 },
-+	{ 0x003c, 0xffff, 0xa707 },
-+	{ 0x0038, 0xffff, 0xa707 },
-+	{ 0x0035, 0xffff, 0xa707 },
-+	{ 0x0032, 0xffff, 0xa707 },
-+	{ 0x0030, 0xffff, 0xa707 },
-+	{ 0x002d, 0xffff, 0xa707 },
-+	{ 0x002a, 0xffff, 0xa707 },
-+	{ 0x003f, 0xcfff, 0xa707 },
-+	{ 0x0042, 0xc7ff, 0xa707 },
-+	{ 0x003f, 0xc7ff, 0xa707 },
-+	{ 0x0043, 0xbfff, 0xa707 },
-+	{ 0x003f, 0xbfff, 0xa707 },
-+	{ 0x0045, 0xb7ff, 0xa707 },
-+	{ 0x0041, 0xb7ff, 0xa707 },
-+	{ 0x003d, 0xb7ff, 0xa707 },
-+	{ 0x0044, 0xafff, 0xa707 },
-+	{ 0x0040, 0xafff, 0xa707 },
-+	{ 0x003d, 0xafff, 0xa707 },
-+	{ 0x0046, 0xa7ff, 0xa707 },
-+	{ 0x0041, 0xa7ff, 0xa707 },
-+	{ 0x003e, 0xa7ff, 0xa707 },
-+	{ 0x003b, 0xa7ff, 0xa707 },
-+	{ 0x0046, 0x9fff, 0xa707 },
-+	{ 0x0042, 0x9fff, 0xa707 },
-+	{ 0x003e, 0x9fff, 0xa707 },
-+	{ 0x003b, 0x9fff, 0xa707 },
-+	{ 0x0037, 0x9fff, 0xa707 },
-+	{ 0x0046, 0x97ff, 0xa707 },
-+	{ 0x0042, 0x97ff, 0xa707 },
-+	{ 0x003f, 0x97ff, 0xa707 },
-+	{ 0x003b, 0x97ff, 0xa707 },
-+	{ 0x0038, 0x97ff, 0xa707 },
-+	{ 0x0035, 0x97ff, 0xa707 },
-+	{ 0x004c, 0x8fff, 0xa707 },
-+	{ 0x0048, 0x8fff, 0xa707 },
-+	{ 0x0044, 0x8fff, 0xa707 },
-+	{ 0x0040, 0x8fff, 0xa707 },
-+	{ 0x003c, 0x8fff, 0xa707 },
-+	{ 0x0039, 0x8fff, 0xa707 },
-+	{ 0x0036, 0x8fff, 0xa707 },
-+	{ 0x0033, 0x8fff, 0xa707 },
-+	{ 0x0030, 0x8fff, 0xa707 },
-+	{ 0x002d, 0x8fff, 0xa707 },
-+	{ 0x0058, 0x87ff, 0xa707 },
-+	{ 0x0053, 0x87ff, 0xa707 },
-+	{ 0x004f, 0x87ff, 0xa707 },
-+	{ 0x004a, 0x87ff, 0xa707 },
-+	{ 0x0046, 0x87ff, 0xa707 },
-+	{ 0x0042, 0x87ff, 0xa707 },
-+	{ 0x003e, 0x87ff, 0xa707 },
-+	{ 0x003b, 0x87ff, 0xa707 },
-+	{ 0x0038, 0x87ff, 0xa707 },
-+	{ 0x0035, 0x87ff, 0xa707 },
-+	{ 0x0032, 0x87ff, 0xa707 },
-+	{ 0x002f, 0x87ff, 0xa707 },
-+	{ 0x002c, 0x87ff, 0xa707 },
-+	{ 0x002a, 0x87ff, 0xa707 },
-+	{ 0x0027, 0x87ff, 0xa707 },
-+	{ 0x0025, 0x87ff, 0xa707 },
-+	{ 0x0023, 0x87ff, 0xa707 },
-+	{ 0x0021, 0x87ff, 0xa707 },
-+	{ 0x001f, 0x87ff, 0xa707 },
-+	{ 0x001e, 0x87ff, 0xa707 },
-+	{ 0x001c, 0x87ff, 0xa707 },
-+	{ 0x001a, 0x87ff, 0xa707 },
-+	{ 0x0019, 0x87ff, 0xa707 },
-+	{ 0x0017, 0x87ff, 0xa707 },
-+	{ 0x0016, 0x87ff, 0xa707 },
-+	{ 0x0015, 0x87ff, 0xa707 },
-+	{ 0x0014, 0x87ff, 0xa707 },
-+	{ 0x0013, 0x87ff, 0xa707 },
-+};
-+
-+/*
-+ * TX gain table for 5 GHz as the vendor driver loads it into table 0x20 on this
-+ * board captured from the vendor driver, same entry format.
-+ */
-+const u16 b43_phy_ac_txgain_5g[128][3] = {
-+	{ 0x0044, 0x7f00, 0xf3ff },
-+	{ 0x0040, 0x7f00, 0xf3ff },
-+	{ 0x0040, 0x7f00, 0xf3ef },
-+	{ 0x0040, 0x7f00, 0xf3df },
-+	{ 0x0041, 0x7f00, 0xf3cf },
-+	{ 0x003f, 0x7f00, 0xf3c7 },
-+	{ 0x0041, 0x7f00, 0xf3b7 },
-+	{ 0x0040, 0x7f00, 0xf3af },
-+	{ 0x003f, 0x7f00, 0xf3a7 },
-+	{ 0x0041, 0x7f00, 0xf397 },
-+	{ 0x0041, 0x7f00, 0xf38f },
-+	{ 0x0041, 0x7f00, 0xf387 },
-+	{ 0x0040, 0x7f00, 0xf37f },
-+	{ 0x0040, 0x7f00, 0xf377 },
-+	{ 0x0041, 0x7f00, 0xf36f },
-+	{ 0x0042, 0x7f00, 0xf367 },
-+	{ 0x003e, 0x7f00, 0xf367 },
-+	{ 0x003f, 0x7f00, 0xf35f },
-+	{ 0x0041, 0x7f00, 0xf357 },
-+	{ 0x003d, 0x7f00, 0xf357 },
-+	{ 0x0040, 0x7f00, 0xf34f },
-+	{ 0x0042, 0x7f00, 0xf347 },
-+	{ 0x003f, 0x7f00, 0xf347 },
-+	{ 0x0043, 0x7f00, 0xf33f },
-+	{ 0x003f, 0x7f00, 0xf33f },
-+	{ 0x0044, 0x7f00, 0xf337 },
-+	{ 0x0040, 0x7f00, 0xf337 },
-+	{ 0x003c, 0x7f00, 0xf337 },
-+	{ 0x0043, 0x7f00, 0xf32f },
-+	{ 0x003f, 0x7f00, 0xf32f },
-+	{ 0x003c, 0x7f00, 0xf32f },
-+	{ 0x003f, 0x6f00, 0xf32f },
-+	{ 0x003f, 0x6900, 0xf32f },
-+	{ 0x003d, 0x6700, 0xf32f },
-+	{ 0x003b, 0x6400, 0xf32f },
-+	{ 0x003b, 0x5f00, 0xf32f },
-+	{ 0x0039, 0x5d00, 0xf32f },
-+	{ 0x0037, 0x5900, 0xf32f },
-+	{ 0x0037, 0x5700, 0xf32f },
-+	{ 0x0035, 0x5300, 0xf32f },
-+	{ 0x0034, 0x5000, 0xf32f },
-+	{ 0x0034, 0x4b00, 0xf32f },
-+	{ 0x0035, 0x4600, 0xf32f },
-+	{ 0x0036, 0x4100, 0xf32f },
-+	{ 0x0038, 0x3b00, 0xf32f },
-+	{ 0x003a, 0x3600, 0xf32f },
-+	{ 0x003c, 0x3100, 0xf32f },
-+	{ 0x003e, 0x2d00, 0xf32f },
-+	{ 0x003e, 0x2b00, 0xf32f },
-+	{ 0x003e, 0x2800, 0xf32f },
-+	{ 0x0040, 0x2500, 0xf32f },
-+	{ 0x0046, 0x1f00, 0xf32f },
-+	{ 0x0042, 0x1f00, 0xf32f },
-+	{ 0x003e, 0x1f00, 0xf32f },
-+	{ 0x003b, 0x1f00, 0xf32f },
-+	{ 0x0037, 0x1f00, 0xf32f },
-+	{ 0x0047, 0x1700, 0xf32f },
-+	{ 0x0043, 0x1700, 0xf32f },
-+	{ 0x003f, 0x1700, 0xf32f },
-+	{ 0x003c, 0x1700, 0xf32f },
-+	{ 0x0039, 0x1700, 0xf32f },
-+	{ 0x0037, 0x1600, 0xf32f },
-+	{ 0x0037, 0x1500, 0xf32f },
-+	{ 0x0035, 0x1400, 0xf32f },
-+	{ 0x0035, 0x1300, 0xf32f },
-+	{ 0x0034, 0x1200, 0xf32f },
-+	{ 0x0034, 0x1100, 0xf32f },
-+	{ 0x0034, 0x1000, 0xf32f },
-+	{ 0x0036, 0x0f00, 0xf32f },
-+	{ 0x0036, 0x0e00, 0xf32f },
-+	{ 0x0034, 0x0d00, 0xf32f },
-+	{ 0x0035, 0x0c00, 0xf32f },
-+	{ 0x0038, 0x0b00, 0xf32f },
-+	{ 0x0039, 0x0a00, 0xf32f },
-+	{ 0x003d, 0x0900, 0xf32f },
-+	{ 0x0040, 0x0800, 0xf32f },
-+	{ 0x0044, 0x0700, 0xf32f },
-+	{ 0x0040, 0x0700, 0xf32f },
-+	{ 0x003c, 0x0700, 0xf32f },
-+	{ 0x0038, 0x0700, 0xf32f },
-+	{ 0x0034, 0x0700, 0xf32f },
-+	{ 0x0030, 0x0700, 0xf32f },
-+	{ 0x002c, 0x0700, 0xf32f },
-+	{ 0x0028, 0x0700, 0xf32f },
-+	{ 0x0024, 0x0700, 0xf32f },
-+	{ 0x0020, 0x0700, 0xf32f },
-+	{ 0x001c, 0x0700, 0xf32f },
-+	{ 0x0018, 0x0700, 0xf32f },
-+	{ 0x0014, 0x0700, 0xf32f },
-+	{ 0x0012, 0x0700, 0xf32f },
-+	{ 0x0011, 0x0700, 0xf32f },
-+	{ 0x0010, 0x0700, 0xf32f },
-+	{ 0x000f, 0x0700, 0xf32f },
-+	{ 0x000e, 0x0700, 0xf32f },
-+	{ 0x000d, 0x0700, 0xf32f },
-+	{ 0x000c, 0x0700, 0xf32f },
-+	{ 0x000c, 0x0700, 0xf32f },
-+	{ 0x000b, 0x0700, 0xf32f },
-+	{ 0x000a, 0x0700, 0xf32f },
-+	{ 0x000a, 0x0700, 0xf32f },
-+	{ 0x0009, 0x0700, 0xf32f },
-+	{ 0x0009, 0x0700, 0xf32f },
-+	{ 0x0008, 0x0700, 0xf32f },
-+	{ 0x0008, 0x0700, 0xf32f },
-+	{ 0x0007, 0x0700, 0xf32f },
-+	{ 0x0007, 0x0700, 0xf32f },
-+	{ 0x0007, 0x0700, 0xf32f },
-+	{ 0x0006, 0x0700, 0xf32f },
-+	{ 0x0006, 0x0700, 0xf32f },
-+	{ 0x0006, 0x0700, 0xf32f },
-+	{ 0x0005, 0x0700, 0xf32f },
-+	{ 0x0005, 0x0700, 0xf32f },
-+	{ 0x0005, 0x0700, 0xf32f },
-+	{ 0x0004, 0x0700, 0xf32f },
-+	{ 0x0004, 0x0700, 0xf32f },
-+	{ 0x0004, 0x0700, 0xf32f },
-+	{ 0x0004, 0x0700, 0xf32f },
-+	{ 0x0003, 0x0700, 0xf32f },
-+	{ 0x0003, 0x0700, 0xf32f },
-+	{ 0x0003, 0x0700, 0xf32f },
-+	{ 0x0003, 0x0700, 0xf32f },
-+	{ 0x0003, 0x0700, 0xf32f },
-+	{ 0x0003, 0x0700, 0xf32f },
-+	{ 0x0002, 0x0700, 0xf32f },
-+	{ 0x0002, 0x0700, 0xf32f },
-+	{ 0x0002, 0x0700, 0xf32f },
-+	{ 0x0002, 0x0700, 0xf32f },
-+	{ 0x0002, 0x0700, 0xf32f },
-+};
-diff --git a/drivers/net/wireless/broadcom/b43/tables_phy_ac.h b/drivers/net/wireless/broadcom/b43/tables_phy_ac.h
-new file mode 100644
-index 0000000..64a5969
---- /dev/null
-+++ b/drivers/net/wireless/broadcom/b43/tables_phy_ac.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef B43_TABLES_PHY_AC_H_
-+#define B43_TABLES_PHY_AC_H_
-+
-+#include <linux/types.h>
-+
-+struct b43_phy_ac_tbl {
-+	const void *data;
-+	u16 count;
-+	u16 id;
-+	u16 offset;
-+	u8 width;	/* bits per entry: 8, 16 or 32 */
-+};
-+
-+extern const struct b43_phy_ac_tbl b43_phy_ac_tbls_rev0[];
-+extern const unsigned int b43_phy_ac_tbls_rev0_n;
-+extern const struct b43_phy_ac_tbl b43_phy_ac_rfseq_tbls[];
-+extern const unsigned int b43_phy_ac_rfseq_tbls_n;
-+extern const struct b43_phy_ac_tbl b43_phy_ac_femctrl2_tbls[];
-+extern const unsigned int b43_phy_ac_femctrl2_tbls_n;
-+extern const struct b43_phy_ac_tbl b43_phy_ac_misc_tbls[];
-+extern const unsigned int b43_phy_ac_misc_tbls_n;
-+extern const struct b43_phy_ac_tbl b43_phy_ac_ladder_tbls[];
-+extern const unsigned int b43_phy_ac_ladder_tbls_n;
-+extern const struct b43_phy_ac_tbl b43_phy_ac_vendor_tbls[];
-+extern const unsigned int b43_phy_ac_vendor_tbls_n;
-+
-+extern const u16 b43_phy_ac_txgain_2g[128][3];
-+extern const u16 b43_phy_ac_txgain_5g[128][3];
-+
-+#endif /* B43_TABLES_PHY_AC_H_ */
-
-_______________________________________________
-b43-dev mailing list
-b43-dev@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/b43-dev
+UmVwbGFjZSB0aGUgcGxhY2Vob2xkZXIgQUMtUEhZIGNvZGUgd2l0aCBhbiBpbml0aWFsaXphdGlv
+biB0aGF0IGJyaW5ncwp0aGUgQkNNNDM2MCAoUEhZIEFDIHJldiAxLCByYWRpbyAyMDY5IHJldiA0
+KSB1cCBvbiAyLjQgR0h6IGF0IDIwIE1IejoKCiAtIHJhZGlvIDIwNjkgcG93ZXItdXAgKGluaXQs
+IHJlc2lzdG9yIGFuZCBSQyBjYWxpYnJhdGlvbikgYW5kIHBvd2VyLWRvd24KICAgZnJvbSBzb2Z0
+d2FyZV9yZmtpbGwsCiAtIFBIWSBpbml0OiB0aGUgdGFibGUgc2V0LCB0aGUgZmlyc3QtaW5pdCBy
+ZWdpc3RlcnMsIHRoZSByZXNldC10aW1lCiAgIHJlZ2lzdGVyIGJsb2NrcywgaGFyZHdhcmUgVFgg
+cG93ZXIgY29udHJvbCB3aXRoIHRoZSB3aWRlIHRhYmxlcywgYW5kCiAgIHRoZSBzZWNvbmQgVFgg
+Y2hhaW4sIHdoaWNoIHN0YXlzIGRhcmsgdW5sZXNzIGNoaXBjb250cm9sIGJpdCAzIGlzIHNldCwK
+IC0gY2hhbm5lbCBzd2l0Y2hpbmc6IHR1bmUgdGhlIHN5bnRoZXNpemVyIGZyb20gdGhlIHJhZGlv
+IHRhYmxlLCB0aGUKICAgcGVyLWNoYW5uZWwgRmFycm93IHJlc2FtcGxlciB3b3JkcyBhbmQgQlcg
+cmVnaXN0ZXJzLCByZXNldCBDQ0EsCiAgIHdpdGggUEhZIDB4MDAwMyBiaXQgOCAodGhlIGJhbmQp
+IGNsZWFyZWQgb24gMi40IEdIeiwKIC0gYSBmaXhlZCAyLjQgR0h6IFRYIGdhaW4gdGFibGUgaW5k
+ZXggYXMgdGhlIHN0YXJ0aW5nIHBvaW50IG9mIHRoZSBwb3dlcgogICBsb29wLAogLSB0aGUgMTUg
+c2Vjb25kIHdvcmsgcmVzdGFydHMgdGhlIGNvcmUgd2hlbiB0aGUgbWljcm9jb2RlIGNvdW50cyBQ
+SFkgVFgKICAgZXJyb3JzIGluIHNldmVyYWwgZnJlc2ggaW5pdHMgKG9ubHkgYWJvdXQgYSB0aGly
+ZCBvZiBmcmVzaCBpbml0cyBjYW4KICAgdHJhbnNtaXQsIHRoZSByZXN0IGZhaWwgZXZlcnkgZnJh
+bWUpLCBhdCBtb3N0IHRocmVlIHRpbWVzLAogLSBIVCBjYXBhYmlsaXRpZXMgZm9yIHRoZSAyLjQg
+R0h6IGJhbmQuCgo1IEdIeiBjaGFubmVscyBhcmUgcmVmdXNlZCBmb3Igbm93LgoKQ28tZGV2ZWxv
+cGVkLWJ5OiBBbGVzc2lvIEZlcnJpIDxhbGVzc2lvLmZlcnJpQG15dGhyZWFkLml0PgpTaWduZWQt
+b2ZmLWJ5OiBBbGVzc2lvIEZlcnJpIDxhbGVzc2lvLmZlcnJpQG15dGhyZWFkLml0PgpTaWduZWQt
+b2ZmLWJ5OiBBbmRyZWFzIFdlbmRsZWRlciA8Z29uc29sb0BnbWFpbC5jb20+Ci0tLQogZHJpdmVy
+cy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL21haW4uYyAgICAgIHwgICAyMyArLQogZHJpdmVy
+cy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL3BoeV9hYy5jICAgIHwgMTAxNCArKysrKysrKysr
+KysrKysrLQogZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL3BoeV9hYy5oICAgIHwg
+ICAgMyArCiAuLi4vbmV0L3dpcmVsZXNzL2Jyb2FkY29tL2I0My9waHlfYWNfZmFycm93LmggfCAg
+MjYwICsrKysrCiA0IGZpbGVzIGNoYW5nZWQsIDEyOTUgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlv
+bnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9i
+NDMvcGh5X2FjX2ZhcnJvdy5oCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJv
+YWRjb20vYjQzL21haW4uYyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29tL2I0My9tYWlu
+LmMKaW5kZXggNmI4MGI1ZS4uN2QyZjllYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9uZXQvd2lyZWxl
+c3MvYnJvYWRjb20vYjQzL21haW4uYworKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNv
+bS9iNDMvbWFpbi5jCkBAIC0zNTIsNiArMzUyLDI1IEBAIHN0YXRpYyBzdHJ1Y3QgaWVlZTgwMjEx
+X3N1cHBvcnRlZF9iYW5kIGI0M19iYW5kXzJHSHogPSB7CiAJLm5fYml0cmF0ZXMJPSBiNDNfZ19y
+YXRldGFibGVfc2l6ZSwKIH07CiAKK3N0YXRpYyBzdHJ1Y3QgaWVlZTgwMjExX3N1cHBvcnRlZF9i
+YW5kIGI0M19iYW5kXzJHSHpfYWMgPSB7CisJLmJhbmQJCT0gTkw4MDIxMV9CQU5EXzJHSFosCisJ
+LmNoYW5uZWxzCT0gYjQzXzJnaHpfY2hhbnRhYmxlLAorCS5uX2NoYW5uZWxzCT0gQVJSQVlfU0la
+RShiNDNfMmdoel9jaGFudGFibGUpLAorCS5iaXRyYXRlcwk9IGI0M19nX3JhdGV0YWJsZSwKKwku
+bl9iaXRyYXRlcwk9IGI0M19nX3JhdGV0YWJsZV9zaXplLAorCS5odF9jYXAJCT0geworCQkuaHRf
+c3VwcG9ydGVkCT0gdHJ1ZSwKKwkJLyogc3RhdGljIFNNIHBvd2VyIHNhdmUgZGlzYWJsZWQgKi8K
+KwkJLmNhcAkJPSBJRUVFODAyMTFfSFRfQ0FQX1NNX1BTLAorCQkuYW1wZHVfZmFjdG9yCT0gSUVF
+RTgwMjExX0hUX01BWF9BTVBEVV84SywKKwkJLmFtcGR1X2RlbnNpdHkJPSBJRUVFODAyMTFfSFRf
+TVBEVV9ERU5TSVRZX05PTkUsCisJCS5tY3MJCT0geworCQkJLnJ4X21hc2sJPSB7IDB4ZmYsIDB4
+ZmYgfSwKKwkJCS50eF9wYXJhbXMJPSBJRUVFODAyMTFfSFRfTUNTX1RYX0RFRklORUQsCisJCX0s
+CisJfSwKK307CisKIHN0YXRpYyBzdHJ1Y3QgaWVlZTgwMjExX3N1cHBvcnRlZF9iYW5kIGI0M19i
+YW5kXzJnaHpfbGltaXRlZCA9IHsKIAkuYmFuZAkJPSBOTDgwMjExX0JBTkRfMkdIWiwKIAkuY2hh
+bm5lbHMJPSBiNDNfMmdoel9jaGFudGFibGUsCkBAIC01NjEzLDcgKzU2MzIsOSBAQCBzdGF0aWMg
+aW50IGI0M19zZXR1cF9iYW5kcyhzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYsCiAKIAlpZiAoaGF2ZV8y
+Z2h6X3BoeSkKIAkJaHctPndpcGh5LT5iYW5kc1tOTDgwMjExX0JBTkRfMkdIWl0gPSBsaW1pdGVk
+XzJnID8KLQkJCSZiNDNfYmFuZF8yZ2h6X2xpbWl0ZWQgOiAmYjQzX2JhbmRfMkdIejsKKwkJCSZi
+NDNfYmFuZF8yZ2h6X2xpbWl0ZWQgOgorCQkJKGRldi0+cGh5LnR5cGUgPT0gQjQzX1BIWVRZUEVf
+QUMgPworCQkJICZiNDNfYmFuZF8yR0h6X2FjIDogJmI0M19iYW5kXzJHSHopOwogCWlmIChkZXYt
+PnBoeS50eXBlID09IEI0M19QSFlUWVBFX04pIHsKIAkJaWYgKGhhdmVfNWdoel9waHkpCiAJCQlo
+dy0+d2lwaHktPmJhbmRzW05MODAyMTFfQkFORF81R0haXSA9IGxpbWl0ZWRfNWcgPwpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL3BoeV9hYy5jIGIvZHJpdmVy
+cy9uZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL3BoeV9hYy5jCmluZGV4IGZlMTAyZWEuLjRiY2Y2
+ZjggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jyb2FkY29tL2I0My9waHlfYWMu
+YworKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMvcGh5X2FjLmMKQEAgLTQs
+MTAgKzQsMTcgQEAKICAqIElFRUUgODAyLjExYWMgQUMtUEhZIHN1cHBvcnQKICAqCiAgKiBDb3B5
+cmlnaHQgKGMpIDIwMTUgUmFmYcWCIE1pxYJlY2tpIDx6YWplYzVAZ21haWwuY29tPgorICogQ29w
+eXJpZ2h0IChjKSAyMDI2IEFsZXNzaW8gRmVycmkgPGFsZXNzaW8uZmVycmlAbXl0aHJlYWQuaXQ+
+CisgKiBDb3B5cmlnaHQgKGMpIDIwMjYgQW5kcmVhcyBXZW5kbGVkZXIgPGdvbnNvbG9AZ21haWwu
+Y29tPgogICovCiAKICNpbmNsdWRlICJiNDMuaCIKICNpbmNsdWRlICJwaHlfYWMuaCIKKyNpbmNs
+dWRlICJyYWRpb18yMDY5LmgiCisjaW5jbHVkZSAidGFibGVzX3BoeV9hYy5oIgorI2luY2x1ZGUg
+ImRtYS5oIgorI2luY2x1ZGUgIm1haW4uaCIKKwogCiAvKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioKICAqIEJhc2ljIFBIWSBvcHMKQEAgLTQyLDE3ICs0
+OSwxMDA5IEBAIHN0YXRpYyB2b2lkIGI0M19waHlfYWNfb3BfbWFza3NldChzdHJ1Y3QgYjQzX3ds
+ZGV2ICpkZXYsIHUxNiByZWcsIHUxNiBtYXNrLAogCQkgICAgKGI0M19yZWFkMTYoZGV2LCBCNDNf
+TU1JT19QSFlfREFUQSkgJiBtYXNrKSB8IHNldCk7CiB9CiAKKy8qCisgKiBVbmxpa2UgdGhlIGdl
+bmVyaWMgYjQzX3BoeV93cml0ZSgpIGZhbGxiYWNrICh0d28gMTYtYml0IHdyaXRlcyB0byBDT05U
+Uk9MCisgKiBhbmQgREFUQSksIHRoZSB2ZW5kb3IgZHJpdmVyIHdyaXRlcyBvbmUgMzItYml0IHdv
+cmQsICh2YWx1ZSA8PCAxNikgfCByZWcsCisgKiB0byB0aGUgQ09OVFJPTCBhZGRyZXNzLiBEbyB0
+aGUgc2FtZS4KKyAqLworc3RhdGljIHZvaWQgYjQzX3BoeV9hY19vcF93cml0ZShzdHJ1Y3QgYjQz
+X3dsZGV2ICpkZXYsIHUxNiByZWcsIHUxNiB2YWx1ZSkKK3sKKwliNDNfd3JpdGUzMihkZXYsIEI0
+M19NTUlPX1BIWV9DT05UUk9MLCAoKHUzMil2YWx1ZSA8PCAxNikgfCByZWcpOworfQorCisvKgor
+ICogV2hpY2ggQ09OVFJPTC9EQVRBIHJlZ2lzdGVyIHBhaXIgYWRkcmVzc2VzIHRoZSByYWRpbyBk
+ZXBlbmRzIG9uIHRoZSBjb3JlCisgKiByZXZpc2lvbjogY29yZXMgMHgxYiBhbmQgYmVsb3cgMHgx
+OCB1c2UgdGhlIGxlZ2FjeSBSQURJT19DT05UUk9MIGFuZAorICogUkFESU9fREFUQV9MT1cgcGFp
+ciwgbmV3ZXIgb25lcyAoaW5jbHVkaW5nIHRoZSBCQ000MzYwJ3MpIHRoZSBSQURJTzI0IHBhaXIu
+CisgKi8KK3N0YXRpYyBib29sIGI0M19waHlfYWNfdXNlX3JhZGlvMjQoc3RydWN0IGI0M193bGRl
+diAqZGV2KQoreworCXU4IHJldiA9IGRldi0+ZGV2LT5jb3JlX3JldjsKKworCXJldHVybiAhKHJl
+diA9PSAweDFiIHx8IHJldiA8IDB4MTgpOworfQorCiBzdGF0aWMgdTE2IGI0M19waHlfYWNfb3Bf
+cmFkaW9fcmVhZChzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYsIHUxNiByZWcpCiB7Ci0JYjQzX3dyaXRl
+MTZmKGRldiwgQjQzX01NSU9fUkFESU8yNF9DT05UUk9MLCByZWcpOwotCXJldHVybiBiNDNfcmVh
+ZDE2KGRldiwgQjQzX01NSU9fUkFESU8yNF9EQVRBKTsKKwlpZiAoYjQzX3BoeV9hY191c2VfcmFk
+aW8yNChkZXYpKSB7CisJCWI0M193cml0ZTE2ZihkZXYsIEI0M19NTUlPX1JBRElPMjRfQ09OVFJP
+TCwgcmVnKTsKKwkJcmV0dXJuIGI0M19yZWFkMTYoZGV2LCBCNDNfTU1JT19SQURJTzI0X0RBVEEp
+OworCX0KKworCWI0M193cml0ZTE2ZihkZXYsIEI0M19NTUlPX1JBRElPX0NPTlRST0wsIHJlZyk7
+CisJcmV0dXJuIGI0M19yZWFkMTYoZGV2LCBCNDNfTU1JT19SQURJT19EQVRBX0xPVyk7CiB9CiAK
+IHN0YXRpYyB2b2lkIGI0M19waHlfYWNfb3BfcmFkaW9fd3JpdGUoc3RydWN0IGI0M193bGRldiAq
+ZGV2LCB1MTYgcmVnLAogCQkJCSAgICAgIHUxNiB2YWx1ZSkKIHsKLQliNDNfd3JpdGUxNmYoZGV2
+LCBCNDNfTU1JT19SQURJTzI0X0NPTlRST0wsIHJlZyk7Ci0JYjQzX3dyaXRlMTYoZGV2LCBCNDNf
+TU1JT19SQURJTzI0X0RBVEEsIHZhbHVlKTsKKwlpZiAoYjQzX3BoeV9hY191c2VfcmFkaW8yNChk
+ZXYpKSB7CisJCWI0M193cml0ZTE2ZihkZXYsIEI0M19NTUlPX1JBRElPMjRfQ09OVFJPTCwgcmVn
+KTsKKwkJYjQzX3dyaXRlMTYoZGV2LCBCNDNfTU1JT19SQURJTzI0X0RBVEEsIHZhbHVlKTsKKwkJ
+cmV0dXJuOworCX0KKworCWI0M193cml0ZTE2ZihkZXYsIEI0M19NTUlPX1JBRElPX0NPTlRST0ws
+IHJlZyk7CisJYjQzX3dyaXRlMTYoZGV2LCBCNDNfTU1JT19SQURJT19EQVRBX0xPVywgdmFsdWUp
+OworfQorCitzdGF0aWMgdTggYjQzX3BoeV9hY19udW1fY29yZXMoc3RydWN0IGI0M193bGRldiAq
+ZGV2KQoreworCXU4IGNvcmVzID0gYjQzX3BoeV9yZWFkKGRldiwgMHgwMGIpICYgMHg3OworCisJ
+aWYgKGRldi0+ZGV2LT5jaGlwX2lkID09IDB4NDM2MCAmJgorCSAgICAoZGV2LT5kZXYtPmJvYXJk
+X3R5cGUgPT0gMHgxMzcgfHwgZGV2LT5kZXYtPmJvYXJkX3R5cGUgPT0gMHgxMTcpKQorCQljb3Jl
+cyA9IDI7CisJcmV0dXJuIGNvcmVzOworfQorCisvKiBwcmVmcmVnc18yMDY5X3JldjQgZnJvbSB0
+aGUgdmVuZG9yIGRyaXZlci4gKi8KK3N0YXRpYyBjb25zdCB1MTYgYjQzX3JhZGlvXzIwNjlyNF9w
+cmVmcmVnc1tdWzJdID0geworCXsgMHgwNjNhLCAweDAwMDAgfSwgeyAweDA2M2QsIDB4MDAwZiB9
+LCB7IDB4MDY0NSwgMHgzMDAwIH0sCisJeyAweDA2NDYsIDB4MDMwMyB9LCB7IDB4MDY0NywgMHgz
+NmUyIH0sIHsgMHgwNjQ5LCAweDYwMDAgfSwKKwl7IDB4MDY0YSwgMHgwMDAzIH0sIHsgMHgwNjVl
+LCAweDBmZjQgfSwgeyAweDA2NjYsIDB4MGIyZCB9LAorCXsgMHgwNjY3LCAweDAzZmYgfSwgeyAw
+eDAxMTUsIDB4MzMzNyB9LCB7IDB4MDExNywgMHgxMzM3IH0sCisJeyAweDA3MTgsIDB4Nzc3NyB9
+LCB7IDB4MDcxYywgMHgxMDAwIH0sIHsgMHgwNzI2LCAweDAxMDAgfSwKKwl7IDB4MDcyNywgMHgw
+MDAyIH0sIHsgMHgwNzYxLCAweDAxMDAgfSwgeyAweDA0MDcsIDB4ODM4MiB9LAorCXsgMHgwNTVl
+LCAweDAwMjAgfSwgeyAweDA4ODUsIDB4MDcwMCB9LCB7IDB4MDhlOSwgMHgwMWNlIH0sCisJeyAw
+eDA4ZWEsIDB4MDBmZiB9LCB7IDB4MDhlYywgMHgwNmZmIH0sIHsgMHgwOTcyLCAweDA2MDAgfSwK
+K307CisKKy8qCisgKiBSYWRpbyAyMDY5IHJldiA0IGluaXQgKGFzIHRoZSB2ZW5kb3IgZHJpdmVy
+IGRvZXMgaXQpLiBTa2lwcGVkOiBhIGJvYXJkLWZsYWcKKyAqIGRlcGVuZGVudCAicmFkaW8gMHg4
+ZWEgfD0gMHgxMDAiIHdob3NlIGZsYWcgc291cmNlIHdlIGhhdmVuJ3QgaWRlbnRpZmllZC4KKyAq
+Lworc3RhdGljIHZvaWQgYjQzX3JhZGlvXzIwNjlfaW5pdChzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYp
+Cit7CisJdTE2IHM3MjgsIHM0MDg7CisJdW5zaWduZWQgaW50IGk7CisJdTggY29yZSwgY29yZXM7
+CisKKwlzNzI4ID0gYjQzX3BoeV9yZWFkKGRldiwgMHg3MjgpOworCXM0MDggPSBiNDNfcGh5X3Jl
+YWQoZGV2LCBCNDNfUEhZX0FDX1JGQ1RMX0NNRCkgJiAweGZjMzg7CisJYjQzX3BoeV93cml0ZShk
+ZXYsIDB4NDE1LCAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHg0MGUsIDApOworCWI0M19waHlf
+d3JpdGUoZGV2LCAweDQwYywgMHgyMDAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgQjQzX1BIWV9B
+Q19SRkNUTF9DTUQsIHM0MDgpOworCWI0M19waHlfd3JpdGUoZGV2LCAweDQxNywgMCk7CisJYjQz
+X3BoeV93cml0ZShkZXYsIDB4NDE2LCAweGQpOworCWI0M19waHlfd3JpdGUoZGV2LCAweDcyOCwg
+czcyOCAmIDB4N2U3Zik7CisJYjQzX3BoeV9zZXQoZGV2LCAweDcyMCwgMHgxODApOworCWI0M19w
+aHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FDX1JGQ1RMX0NNRCwgczQwOCk7CisJYjQzX3BoeV93cml0
+ZShkZXYsIEI0M19QSFlfQUNfUkZDVExfQ01ELCBzNDA4IHwgMSk7CisJdWRlbGF5KDEpOworCWI0
+M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FDX1JGQ1RMX0NNRCwgczQwOCk7CisKKwlmb3IgKGkg
+PSAwOyBpIDwgQVJSQVlfU0laRShiNDNfcmFkaW9fMjA2OXI0X3ByZWZyZWdzKTsgaSsrKQorCQli
+NDNfcmFkaW9fd3JpdGUoZGV2LCBiNDNfcmFkaW9fMjA2OXI0X3ByZWZyZWdzW2ldWzBdLAorCQkJ
+CWI0M19yYWRpb18yMDY5cjRfcHJlZnJlZ3NbaV1bMV0pOworCisJYjQzX3JhZGlvX3NldChkZXYs
+IDB4OTZiLCAweDA4MDApOworCWI0M19yYWRpb19zZXQoZGV2LCAweDk2YiwgMHg0MDAwKTsKKwli
+NDNfcmFkaW9fc2V0KGRldiwgMHg5NmMsIDB4MDgwMCk7CisJYjQzX3JhZGlvX3NldChkZXYsIDB4
+OTZiLCAweDgwMDApOworCWI0M19yYWRpb19zZXQoZGV2LCAweDk2YiwgMHgxMDAwKTsKKwliNDNf
+cmFkaW9fc2V0KGRldiwgMHg5NmIsIDB4MDAwNCk7CisJYjQzX3JhZGlvX3NldChkZXYsIDB4NDA3
+LCAweDAwMDIpOworCWI0M19yYWRpb19zZXQoZGV2LCAweDU1ZSwgMHgwMDEwKTsKKworCWNvcmVz
+ID0gYjQzX3BoeV9hY19udW1fY29yZXMoZGV2KTsKKwlmb3IgKGNvcmUgPSAwOyBjb3JlIDwgY29y
+ZXM7IGNvcmUrKykgeworCQl1MTYgYyA9IGNvcmUgPDwgOTsKKworCQliNDNfcmFkaW9fbWFza3Nl
+dChkZXYsIDB4MTI2IHwgYywgfjB4MzAwLCAweDEwMCk7CisJCWI0M19yYWRpb19tYXNrc2V0KGRl
+diwgMHgxMjcgfCBjLCB+MHgwMDMsIDB4MDAyKTsKKwkJYjQzX3JhZGlvX21hc2soZGV2LCAweDA2
+ZiB8IGMsIH4weDAwNCk7CisJCWI0M19yYWRpb19tYXNrKGRldiwgMHgwNmYgfCBjLCB+MHgwMDEp
+OworCQliNDNfcmFkaW9fbWFzayhkZXYsIDB4MDZmIHwgYywgfjB4MDAyKTsKKwkJYjQzX3JhZGlv
+X21hc2soZGV2LCAweDA2NSB8IGMsIH4weDAwMSk7CisJfQorCisJYjQzX3JhZGlvX21hc2soZGV2
+LCAweDQwYywgfjB4MTApOworCWI0M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FDX1JGQ1RMX0NN
+RCwgczQwOCB8IDYpOworCXVkZWxheSgxMDApOworCWI0M19yYWRpb19zZXQoZGV2LCAweDQwYywg
+MHgxMCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4NDE3LCAweGQpOworCWI0M19waHlfd3JpdGUo
+ZGV2LCBCNDNfUEhZX0FDX1JGQ1RMX0NNRCwgczQwOCB8IDIpOworCWI0M19waHlfd3JpdGUoZGV2
+LCAweDcyOCwgczcyOCB8IDB4MTgwKTsKKwl1ZGVsYXkoMTAwKTsKKwliNDNfcGh5X3dyaXRlKGRl
+diwgMHg0MTcsIDQpOworCWI0M19waHlfd3JpdGUoZGV2LCAweDcyOCwgczcyOCAmIDB4ZmVmZik7
+CisKKwliNDNkYmcoZGV2LT53bCwgInBoeV9hYzogcmFkaW8gMjA2OSBpbml0IGRvbmUgKCV1IGNv
+cmVzKVxuIiwgY29yZXMpOworfQorCisvKgorICogUmVzaXN0b3IgY2FsaWJyYXRpb246IHRoZSB2
+ZW5kb3IncyBkZWZhdWx0IHBhdGggd2hlbiBTUFJPTSBib2FyZGZsYWdzMworICogYml0cyAzIGFu
+ZCAxMyBhcmUgY2xlYXIuIGJjbWEgZG9lcyBub3QgcGFyc2UgYm9hcmRmbGFnczMsIHNvIHdlIGFz
+c3VtZSAwLgorICovCitzdGF0aWMgYm9vbCBiNDNfcmFkaW9fMjA2OV9yY2FsKHN0cnVjdCBiNDNf
+d2xkZXYgKmRldikKK3sKKwl1MTYgdiA9IDA7CisJaW50IGk7CisKKwliNDNfcmFkaW9fc2V0KGRl
+diwgMHg4ZWEsIDB4NDApOworCWI0M19yYWRpb19zZXQoZGV2LCAweDhlYSwgMHg4MCk7CisJYjQz
+X3JhZGlvX21hc2soZGV2LCAweDhlZCwgfjB4NjAwKTsKKwliNDNfcmFkaW9fbWFzayhkZXYsIDB4
+OGVkLCB+MHgxODAwKTsKKwliNDNfcmFkaW9fc2V0KGRldiwgMHg1NDgsIDB4MSk7CisJYjQzX3Jh
+ZGlvX3dyaXRlKGRldiwgMHg1NDksIDApOworCWI0M19yYWRpb193cml0ZShkZXYsIDB4NTRhLCAw
+KTsKKwliNDNfcmFkaW9fd3JpdGUoZGV2LCAweDU0YiwgMCk7CisJYjQzX3JhZGlvX3dyaXRlKGRl
+diwgMHg1NGMsIDApOworCWI0M19yYWRpb19tYXNrKGRldiwgMHg0MGIsIH4weDEpOworCXVkZWxh
+eSgxKTsKKwliNDNfcmFkaW9fc2V0KGRldiwgMHg0MGIsIDB4MSk7CisJZm9yIChpID0gMDsgaSA8
+IDEwMDsgaSsrKSB7CisJCXVkZWxheSgxMCk7CisJCXYgPSBiNDNfcmFkaW9fcmVhZChkZXYsIDB4
+NDBiKTsKKwkJaWYgKHYgJiAweDgpCisJCQlicmVhazsKKwl9CisJYjQzX3JhZGlvX3JlYWQoZGV2
+LCAweDQwYik7CisJYjQzX3JhZGlvX21hc2soZGV2LCAweDU0OCwgfjB4MSk7CisJYjQzX3JhZGlv
+X21hc2soZGV2LCAweDhlYSwgfjB4NDApOworCWI0M19yYWRpb19tYXNrKGRldiwgMHg4ZWEsIH4w
+eDgwKTsKKwliNDNfcmFkaW9fbWFzayhkZXYsIDB4NDBiLCB+MHgxKTsKKworCWI0M2RiZyhkZXYt
+PndsLCAicGh5X2FjOiBSQ0FMICVzIGFmdGVyICVkIHBvbGxzICgweDQwYj0lMDR4KVxuIiwKKwkg
+ICAgICAgKHYgJiAweDgpID8gImRvbmUiIDogIlRJTUVPVVQiLCBpLCB2KTsKKwlyZXR1cm4gdiAm
+IDB4ODsKK30KKworLyogUkMgY2FsaWJyYXRpb24gKGFzIHRoZSB2ZW5kb3IgZHJpdmVyIGRvZXMg
+aXQpLCByYWRpbyB0eXBlIDAgdmFsdWVzLiAqLworc3RhdGljIHZvaWQgYjQzX3JhZGlvXzIwNjlf
+cmNjYWwoc3RydWN0IGI0M193bGRldiAqZGV2KQoreworCXN0YXRpYyBjb25zdCB1OCBjYWxfYVsz
+XSA9IHsgMSwgMCwgMCB9OworCXN0YXRpYyBjb25zdCB1OCBjYWxfYlszXSA9IHsgMCwgMiwgMSB9
+OworCXN0YXRpYyBjb25zdCB1OCBjYWxfY1szXSA9IHsgMHgxYywgMHg3MCwgMHg0MCB9OworCXN0
+YXRpYyBjb25zdCB1MTYgY2FsX2RbM10gPSB7IDB4MTRhLCAweDEwMSwgMHgxMWEgfTsKKwl1OCBj
+b3JlLCBjb3JlcyA9IGI0M19waHlfYWNfbnVtX2NvcmVzKGRldik7CisJdTE2IHYsIHIxLCByMjsK
+KwlpbnQgc3RlcCwgaTsKKwlib29sIGRvbmU7CisKKwliNDNfcmFkaW9fc2V0KGRldiwgMHg4ZWEs
+IDB4ODApOworCWI0M19yYWRpb19tYXNrc2V0KGRldiwgMHg4ZWQsIH4weDYwMCwgMHg0MDApOwor
+CisJZm9yIChzdGVwID0gMDsgc3RlcCA8IDM7IHN0ZXArKykgeworCQliNDNfcmFkaW9fbWFza3Nl
+dChkZXYsIDB4NDEwLCB+MHgxMDAwLCBjYWxfYVtzdGVwXSA8PCAxMik7CisJCWI0M19yYWRpb19t
+YXNrc2V0KGRldiwgMHg0MTAsIH4weDAwMTgsIGNhbF9iW3N0ZXBdIDw8IDMpOworCQliNDNfcmFk
+aW9fbWFza3NldChkZXYsIDB4NDExLCAweDAwZmYsIGNhbF9jW3N0ZXBdIDw8IDgpOworCQliNDNf
+cmFkaW9fd3JpdGUoZGV2LCAweDQxMiwgY2FsX2Rbc3RlcF0pOworCQlpZiAoc3RlcCA9PSAyKSB7
+CisJCQlmb3IgKGNvcmUgPSAwOyBjb3JlIDwgY29yZXM7IGNvcmUrKykgeworCQkJCWI0M19yYWRp
+b19tYXNrKGRldiwgMHgxMWQgfCAoY29yZSA8PCA5KSwgfjB4NCk7CisJCQkJYjQzX3JhZGlvX3Nl
+dChkZXYsIDB4MTcxIHwgKGNvcmUgPDwgOSksIDB4MjAwMCk7CisJCQl9CisJCX0KKwkJYjQzX3Jh
+ZGlvX21hc2soZGV2LCAweDQxMCwgfjB4MSk7CisJCXVkZWxheSgxKTsKKwkJYjQzX3JhZGlvX3Nl
+dChkZXYsIDB4NDEwLCAweDEpOworCQl1ZGVsYXkoMzUpOworCQliNDNfcmFkaW9fc2V0KGRldiwg
+MHg0MTEsIDB4MSk7CisKKwkJZG9uZSA9IGZhbHNlOworCQlmb3IgKGkgPSAwOyBpIDwgMTAwOyBp
+KyspIHsKKwkJCXVkZWxheSgxMDApOworCQkJaWYgKGI0M19yYWRpb19yZWFkKGRldiwgMHg0MTMp
+ICYgMHgxMCkgeworCQkJCWRvbmUgPSB0cnVlOworCQkJCWJyZWFrOworCQkJfQorCQl9CisJCWI0
+M19yYWRpb19tYXNrKGRldiwgMHg0MTEsIH4weDEpOworCisJCWlmIChkb25lKSB7CisJCQlpZiAo
+c3RlcCA9PSAwKSB7CisJCQkJcjEgPSBiNDNfcmFkaW9fcmVhZChkZXYsIDB4NDE0KTsKKwkJCQly
+MiA9IGI0M19yYWRpb19yZWFkKGRldiwgMHg0MTUpOworCQkJCWI0M2RiZyhkZXYtPndsLAorCQkJ
+CSAgICAgICAicGh5X2FjOiBSQ0NBTCBzdGVwIDA6ICUwNHggJTA0eCAtPiAlMDJ4XG4iLAorCQkJ
+CSAgICAgICByMSwgcjIsCisJCQkJICAgICAgICgoKHUzMikocjIgLSByMSkpICogMHhjMSA+PiA4
+KSAmIDB4ZmYpOworCQkJfSBlbHNlIGlmIChzdGVwID09IDEpIHsKKwkJCQl2ID0gYjQzX3JhZGlv
+X3JlYWQoZGV2LCAweDQxNik7CisJCQkJZm9yIChjb3JlID0gMDsgY29yZSA8IGNvcmVzOyBjb3Jl
+KyspIHsKKwkJCQkJYjQzX3JhZGlvX21hc2tzZXQoZGV2LAorCQkJCQkJCSAgMHgxMjYgfCAoY29y
+ZSA8PCA5KSwKKwkJCQkJCQkgIH4weDFmLCB2ICYgMHgxZik7CisJCQkJCWI0M19yYWRpb19tYXNr
+c2V0KGRldiwKKwkJCQkJCQkgIDB4MDQzIHwgKGNvcmUgPDwgOSksCisJCQkJCQkJICB+MHgxZiwg
+diAmIDB4MWYpOworCQkJCX0KKwkJCQliNDNkYmcoZGV2LT53bCwgInBoeV9hYzogUkNDQUwgc3Rl
+cCAxOiAlMDR4XG4iLAorCQkJCSAgICAgICB2KTsKKwkJCX0gZWxzZSB7CisJCQkJdiA9IGI0M19y
+YWRpb19yZWFkKGRldiwgMHg0MTYpOworCQkJCWZvciAoY29yZSA9IDA7IGNvcmUgPCBjb3Jlczsg
+Y29yZSsrKQorCQkJCQliNDNfcmFkaW9fbWFzayhkZXYsIDB4MTcxIHwgKGNvcmUgPDwgOSksCisJ
+CQkJCQkgICAgICAgfjB4MjAwMCk7CisJCQkJYjQzZGJnKGRldi0+d2wsICJwaHlfYWM6IFJDQ0FM
+IHN0ZXAgMjogJTA0eFxuIiwKKwkJCQkgICAgICAgdik7CisJCQl9CisJCX0gZWxzZSB7CisJCQli
+NDNkYmcoZGV2LT53bCwgInBoeV9hYzogUkNDQUwgc3RlcCAlZCBUSU1FT1VUXG4iLAorCQkJICAg
+ICAgIHN0ZXApOworCQl9CisJCWI0M19yYWRpb19tYXNrKGRldiwgMHg0MTAsIH4weDEpOworCX0K
+KwliNDNfcmFkaW9fbWFzayhkZXYsIDB4OGVhLCB+MHg4MCk7Cit9CisKKy8qIFJhZGlvIHBvd2Vy
+LXVwICh2ZW5kb3Igd2xjX3BoeV9zd2l0Y2hfcmFkaW9fYWNwaHksIG9uLCByYWRpbyB0eXBlIDAp
+LiAqLworc3RhdGljIHZvaWQgYjQzX3JhZGlvXzIwNjlfcG93ZXJfdXAoc3RydWN0IGI0M193bGRl
+diAqZGV2KQoreworCWI0M19yYWRpb18yMDY5X2luaXQoZGV2KTsKKwliNDNfcGh5X21hc2soZGV2
+LCAweDE2YiwgfjB4NDAwKTsKKwl1ZGVsYXkoMyk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MTc1
+LCAwKTsKKwl1ZGVsYXkoMyk7CisJYjQzX3JhZGlvXzIwNjlfcmNhbChkZXYpOworCWI0M19yYWRp
+b18yMDY5X3JjY2FsKGRldik7Cit9CisKKy8qIFJhZGlvIHBvd2VyLWRvd247IHRoZSBwb3dlci11
+cCBpcyBiNDNfcmFkaW9fMjA2OV9wb3dlcl91cCgpLiAqLworc3RhdGljIHZvaWQgYjQzX3JhZGlv
+XzIwNjlfcG93ZXJfZG93bihzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYpCit7CisJYjQzX3BoeV93cml0
+ZShkZXYsIDB4MTczZSwgMHgxYzAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxNzM5LCAwKTsK
+KwliNDNfcGh5X3dyaXRlKGRldiwgMHgxNzNhLCAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgx
+NzI1LCAweDFmZmYpOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE3MjksIDApOworCWI0M19waHlf
+d3JpdGUoZGV2LCAweDE3MjEsIDB4ZmZmZik7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MTcyOCwg
+MCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MTcyMCwgMHgzZmYpOworCWI0M19waHlfbWFza3Nl
+dChkZXYsIEI0M19QSFlfQUNfUkZDVExfQ01ELCB+MiwgMCk7CisJYjQzX3BoeV93cml0ZShkZXYs
+IDB4NDE3LCAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHg0MTYsIDEpOworCWRldi0+cGh5LmFj
+LT5yYWRpb19vbiA9IGZhbHNlOworCWI0M2RiZyhkZXYtPndsLCAicGh5X2FjOiByYWRpbyBwb3dl
+cmVkIGRvd25cbiIpOworfQorCisvKgorICogVGhlIHJhZGlvIGlzIHBvd2VyZWQgdXAgYnkgc29m
+dHdhcmVfcmZraWxsKCk7IG9ubHkgc3dpdGNoaW5nIG9mZiBpcyBkb25lCisgKiBoZXJlLgorICov
+CitzdGF0aWMgdm9pZCBiNDNfcGh5X2FjX29wX3N3aXRjaF9hbmFsb2coc3RydWN0IGI0M193bGRl
+diAqZGV2LCBib29sIG9uKQoreworCWlmICghb24pCisJCWI0M19yYWRpb18yMDY5X3Bvd2VyX2Rv
+d24oZGV2KTsKK30KKworc3RhdGljIHZvaWQgYjQzX3BoeV9hY19vcF9zb2Z0d2FyZV9yZmtpbGwo
+c3RydWN0IGI0M193bGRldiAqZGV2LCBib29sIGJsb2NrZWQpCit7CisJc3RydWN0IGI0M19waHlf
+YWMgKnBoeV9hYyA9IGRldi0+cGh5LmFjOworCisJYjQzZGJnKGRldi0+d2wsICJwaHlfYWM6IHNv
+ZnR3YXJlX3Jma2lsbChibG9ja2VkPSVkKVxuIiwgYmxvY2tlZCk7CisJaWYgKGJsb2NrZWQpIHsK
+KwkJYjQzX3JhZGlvXzIwNjlfcG93ZXJfZG93bihkZXYpOworCQlyZXR1cm47CisJfQorCWlmIChw
+aHlfYWMtPnJhZGlvX29uKQorCQlyZXR1cm47CisJaWYgKGRldi0+cGh5LnJhZGlvX3ZlciAhPSAw
+eDIwNjkgfHwgZGV2LT5waHkucmFkaW9fcmV2ICE9IDQpIHsKKwkJYjQzZXJyKGRldi0+d2wsCisJ
+CSAgICAgICAicGh5X2FjOiBubyBwb3dlci11cCBzZXF1ZW5jZSBmb3IgcmFkaW8gJTA0eCByZXYg
+JXVcbiIsCisJCSAgICAgICBkZXYtPnBoeS5yYWRpb192ZXIsIGRldi0+cGh5LnJhZGlvX3Jldik7
+CisJCXJldHVybjsKKwl9CisJYjQzX3JhZGlvXzIwNjlfcG93ZXJfdXAoZGV2KTsKKwlwaHlfYWMt
+PnJhZGlvX29uID0gdHJ1ZTsKK30KKworc3RhdGljIHZvaWQgYjQzX3BoeV9hY19vcF9wcmVwYXJl
+X3N0cnVjdHMoc3RydWN0IGI0M193bGRldiAqZGV2KQoreworCXN0cnVjdCBiNDNfcGh5ICpwaHkg
+PSAmZGV2LT5waHk7CisJc3RydWN0IGI0M19waHlfYWMgKnBoeV9hYyA9IHBoeS0+YWM7CisKKwli
+NDNkYmcoZGV2LT53bCwgInBoeV9hYzogcHJlcGFyZV9zdHJ1Y3RzXG4iKTsKKwltZW1zZXQocGh5
+X2FjLCAwLCBzaXplb2YoKnBoeV9hYykpOworfQorCisvKgorICogMi40IEdIeiBUWCBnYWluIHRh
+YmxlIGluZGV4IHNldCBvbiBhIGNoYW5uZWwgc3dpdGNoICgwIGlzIHRoZSBoaWdoZXN0IGdhaW4p
+LgorICogVGhlIHJlc2V0IHZhbHVlLCA2NCwgaXMgdG9vIHdlYWsgYmV5b25kIGEgZmV3IG1ldHJl
+cy4KKyAqLworI2RlZmluZSBCNDNfQUNfVFhJRFhfMkcJMjAKK3N0YXRpYyB2b2lkIGI0M19waHlf
+YWNfdHhwd3JfYnlfaW5kZXgoc3RydWN0IGI0M193bGRldiAqZGV2LCB1bnNpZ25lZCBpbnQgaWR4
+KTsKKworLyogT25lIDQ4LWJpdCBQSFkgdGFibGUgZW50cnk6IHRocmVlIHdvcmRzIHRocm91Z2gg
+dGhlIHRoaXJkIGRhdGEgcG9ydC4gKi8KK3N0YXRpYyB2b2lkIGI0M19waHlfYWNfdGFibGVfd3Jp
+dGU0OChzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYsIHUxNiBpZCwgdTE2IG9mZnNldCwKKwkJCQkgICAg
+IGNvbnN0IHUxNiAqdykKK3sKKwliNDNfcGh5X3dyaXRlKGRldiwgQjQzX1BIWV9BQ19UQUJMRV9J
+RCwgaWQpOworCWI0M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FDX1RBQkxFX09GRlNFVCwgb2Zm
+c2V0KTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgwMTEsIHdbMF0pOworCWI0M19waHlfd3JpdGUo
+ZGV2LCAweDAxMSwgd1sxXSk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MDExLCB3WzJdKTsKK30K
+KworLyoKKyAqIFRoZSA0OC1iaXQgd2lkZSB0YWJsZXMgb2YgdGhlIDIuNCBHSHogc2V0dXA6IHRo
+ZSBUWCBnYWluIHRhYmxlIDB4MjAsIHdoaWNoCisgKiBoYXJkd2FyZSBUWCBwb3dlciBjb250cm9s
+IGluZGV4ZXM7IHRoZSBSRiBzZXF1ZW5jZXIgZXh0ZW5zaW9uIGVudHJ5IDB4MzM7CisgKiBhbmQg
+dGFibGUgMHgxMTogdHdlbHZlIGZpeGVkIGNlbGxzLCA0NDggY2VsbHMgb2YgdGhlIFNST00ncyBy
+cGNhbAorICogY29lZmZpY2llbnQgKHRoZSB2YWx1ZSBmb3IgdGhpcyBib2FyZCBvbiAyLjQgR0h6
+KSwgdGhlbiBmb3VyIHplcm8gY2VsbHMuCisgKi8KK3N0YXRpYyB2b2lkIGI0M19waHlfYWNfd2lk
+ZV90YWJsZXNfMmcoc3RydWN0IGI0M193bGRldiAqZGV2KQoreworCXN0YXRpYyBjb25zdCB1MTYg
+ZXh0MzNbM10gPSB7IDB4ZTgwMCwgMHgwMDg0LCAweGQzNTEgfTsKKwlzdGF0aWMgY29uc3QgdTE2
+IGhlYWQxMVsxMl1bM10gPSB7CisJCXsgMHgwMDViLCAwLCAwIH0sIHsgMHg4MjUwLCAwLCAwIH0s
+IHsgMHhjMzM4LCAwLCAwIH0sCisJCXsgMHg0NTI3LCAxLCAwIH0sIHsgMHhhNmExLCAxLCAwIH0s
+IHsgMHgwODFiLCAyLCAwIH0sCisJCXsgMHg4YTE4LCAyLCAwIH0sIHsgMHgyYzk2LCAzLCAwIH0s
+IHsgMHg4ZTE3LCAzLCAwIH0sCisJCXsgMHgxMDFiLCA0LCAwIH0sIHsgMHgwMDIwLCAwLCAwIH0s
+IHsgMHgwMDIwLCAwLCAwIH0sCisJfTsKKwlzdGF0aWMgY29uc3QgdTE2IGZpbGwxMVszXSA9IHsg
+MHhkNjAyLCAweDAwN2UsIDB4NDAwMiB9OworCXN0YXRpYyBjb25zdCB1MTYgemVyb1szXSA9IHsg
+MCwgMCwgMCB9OworCXVuc2lnbmVkIGludCBpOworCisJZm9yIChpID0gMDsgaSA8IDEyODsgaSsr
+KQorCQliNDNfcGh5X2FjX3RhYmxlX3dyaXRlNDgoZGV2LCAweDIwLCBpLCBiNDNfcGh5X2FjX3R4
+Z2Fpbl8yZ1tpXSk7CisJYjQzX3BoeV9hY190YWJsZV93cml0ZTQ4KGRldiwgMHgxNCwgMHgzMywg
+ZXh0MzMpOworCWZvciAoaSA9IDA7IGkgPCAxMjsgaSsrKQorCQliNDNfcGh5X2FjX3RhYmxlX3dy
+aXRlNDgoZGV2LCAweDExLCBpLCBoZWFkMTFbaV0pOworCWZvciAoaSA9IDEyOyBpIDwgNDYwOyBp
+KyspCisJCWI0M19waHlfYWNfdGFibGVfd3JpdGU0OChkZXYsIDB4MTEsIGksIGZpbGwxMSk7CisJ
+Zm9yIChpID0gNDYwOyBpIDwgNDY0OyBpKyspCisJCWI0M19waHlfYWNfdGFibGVfd3JpdGU0OChk
+ZXYsIDB4MTEsIGksIHplcm8pOworfQorCisvKgorICogUEhZIHJlZ2lzdGVyIGluaXQgZm9yIDIu
+NCBHSHogYW5kIDIwIE1IeiwgaW4gdGhlIGJsb2NrcyBvZiB0aGUgcmVzZXQtdGltZQorICogY29k
+ZSBvZiBBbGVzc2lvIEZlcnJpJ3MgYjQzLWFjLXdpcCAobW9kZV9pbml0LCBzZXRfcmVnX29uX3Jl
+c2V0LAorICogc2V0X3BkZXRfb25fcmVzZXQsIGNvZWZmX2JhbmtfaW5pdCksIHBsdXMgdGhlIGZl
+dyByZWdpc3RlcnMgdGhlIHZlbmRvcgorICogZHJpdmVyIHdyaXRlcyBpbiB0aGUgc2FtZSB3aW5k
+b3cuIFJlYWQtbW9kaWZ5LXdyaXRlIGlzIGtlcHQgd2hlcmUgaGlzCisgKiBjb2RlIHVzZXMgaXQu
+CisgKi8KKyNkZWZpbmUgQjQzX0FDX05DT1JFUwkyCS8qIGNvcmVtYXNrIDB4MyBvbiB0aGlzIGNo
+aXAgKi8KKworLyogMHgxN3h4IGFuYWxvZyBmcm9udCBlbmQgcGFnZSwgQUZFIG9uICovCitzdGF0
+aWMgdm9pZCBiNDNfcGh5X2FjX21vZGVfaW5pdChzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYpCit7CisJ
+YjQzX3BoeV93cml0ZShkZXYsIDB4MTczZSwgMHgwMDAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwg
+MHgxNzI1LCAweDAwMDApOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE3MjIsIDB4MDAwMCk7CisJ
+YjQzX3BoeV93cml0ZShkZXYsIDB4MTcyMywgMHgwMDAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwg
+MHgxNzI0LCAweDAwMDApOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE3MjcsIDB4MDAwMCk7CisJ
+YjQzX3BoeV93cml0ZShkZXYsIDB4MTc1MCwgMHgwMDAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwg
+MHgxNzI4LCAweDAwODApOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE3MjAsIDB4MDE4MCk7CisJ
+YjQzX3BoeV93cml0ZShkZXYsIDB4MTcyOSwgMHgwMDAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwg
+MHgxNzIxLCAweDUwMDApOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE3M2EsIGI0M19waHlfcmVh
+ZChkZXYsIDB4MDczYSkgfCAweDAxMDApOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE3MjUsIGI0
+M19waHlfcmVhZChkZXYsIDB4MTcyNSkgfCAweDA0MDApOworfQorCitzdGF0aWMgdm9pZCBiNDNf
+cGh5X2FjX3NldF9yZWdfb25fcmVzZXQoc3RydWN0IGI0M193bGRldiAqZGV2KQoreworCXVuc2ln
+bmVkIGludCBjOworCisJYjQzX3BoeV93cml0ZShkZXYsIDB4MDFmMiwgMHgwMGM4KTsKKwliNDNf
+cGh5X3dyaXRlKGRldiwgMHgwMDI2LCAweDAwOTIpOworCWI0M19waHlfd3JpdGUoZGV2LCAweDAx
+ZWQsIDB4MDA1MCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MDAyNSwgMHgwMDMwKTsKKworCS8q
+IGNsaXAgbWFzazogbG93IGJ5dGUgMHg1NSAqLworCWI0M19waHlfbWFza3NldChkZXYsIDB4MDJl
+ZiwgKHUxNil+MHgwMGZmLCAweDAwNTUpOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MDJlYiwg
+KHUxNil+MHgwMGZmLCAweDAwNTUpOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MDJmNywgKHUx
+Nil+MHgwMGZmLCAweDAwNTUpOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MDJmMywgKHUxNil+
+MHgwMGZmLCAweDAwNTUpOworCisJYjQzX3BoeV9tYXNrc2V0KGRldiwgMHgwMWNhLCAodTE2KX4w
+eDEwMDAsIDApOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MDFiMCwgKHUxNil+MHgwMDIwLCAw
+KTsKKwliNDNfcGh5X21hc2tzZXQoZGV2LCAweDAxYjEsICh1MTYpfjB4MTAwMCwgMHgxMDAwKTsK
+KwliNDNfcGh5X21hc2tzZXQoZGV2LCAweDAxYjYsICh1MTYpfjB4ODAwMCwgMCk7CisJZm9yIChj
+ID0gMDsgYyA8IEI0M19BQ19OQ09SRVM7IGMrKykgeworCQliNDNfcGh5X21hc2tzZXQoZGV2LCAw
+eDA2OTAgKyBjICogMHgyMDAsICh1MTYpfjB4MDIwMCwgMHgwMjAwKTsKKwkJYjQzX3BoeV9tYXNr
+c2V0KGRldiwgMHgwNjkwICsgYyAqIDB4MjAwLCAodTE2KX4weDA0MDAsIDB4MDQwMCk7CisJfQor
+CWI0M19waHlfd3JpdGUoZGV2LCAweDAxZTYsIDB4MDAzMCk7Cit9CisKKy8qIE9wZXJhdGluZyB3
+aWR0aCBpbiBNSHo7IHRoZSBjb2VmZmljaWVudCBiYW5rIHNjYWxlcyB3aXRoIGl0LiAqLworc3Rh
+dGljIHVuc2lnbmVkIGludCBiNDNfcGh5X2FjX2J3X21oeihzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYp
+Cit7CisJc3dpdGNoIChkZXYtPndsLT5ody0+Y29uZi5jaGFuZGVmLndpZHRoKSB7CisJY2FzZSBO
+TDgwMjExX0NIQU5fV0lEVEhfODA6CisJCXJldHVybiA4MDsKKwljYXNlIE5MODAyMTFfQ0hBTl9X
+SURUSF80MDoKKwkJcmV0dXJuIDQwOworCWRlZmF1bHQ6CisJCXJldHVybiAyMDsKKwl9Cit9CisK
+Ky8qCisgKiBSWCBnYWluIC8gdGhyZXNob2xkIExVVCBhbmQgcGVyLWNvcmUgd29yZHMuIFRoZSAy
+MCBNSHogdmFsdWVzIGFyZSBjaGVja2VkCisgKiBvbiAyLjQgR0h6OyB0aGUgNDAgYW5kIDgwIE1I
+eiBvbmVzIGFyZSBmcm9tIEFsZXNzaW8gRmVycmkncyB0cmVlICg1IEdIeikuCisgKi8KK3N0YXRp
+YyB2b2lkIGI0M19waHlfYWNfY29lZmZfYmFua19pbml0KHN0cnVjdCBiNDNfd2xkZXYgKmRldikK
+K3sKKwlzdGF0aWMgY29uc3QgdTE2IGx1dFszXVsyMV0gPSB7CisJCXsgMHgwMDE1LCAweDAxNDYs
+IDB4MDA4OCwgMHgwMTQ2LCAweDA3NmUsIDB4MDFhOCwgMHgwMGEzLAorCQkgIDB4MDBmNCwgMHgw
+MGEzLCAweDA2ODQsIDB4MDBhZCwgMHgwMGU1LCAweDAwNjgsIDB4MDBlNSwKKwkJICAweDA2YmUs
+IDB4MDE5ZSwgMHgwMDczLCAweDAwYjIsIDB4MDA3MywgMHgwNWZlLCAweDAwY2MgfSwKKwkJeyAw
+eDAwMGIsIDB4MDE4MSwgMHgwMDVhLCAweDAxODEsIDB4MDc5MywgMHgwMWI3LCAweDAwYzEsCisJ
+CSAgMHgwMTAyLCAweDAwYzEsIDB4MDZjMCwgMHgwMGE5LCAweDAxNjIsIDB4MDA0MiwgMHgwMTYy
+LAorCQkgIDB4MDc1YywgMHgwMWIzLCAweDAwYjEsIDB4MDBlZCwgMHgwMGIxLCAweDA2OTIsIDB4
+MDBhZiB9LAorCQl7IDB4MDAwNSwgMHgwMTdhLCAweDAwOWUsIDB4MDE3YSwgMHgwN2NhLCAweDAx
+YjIsIDB4MDBiZCwKKwkJICAweDAxMTQsIDB4MDBiZCwgMHgwNmQ2LCAweDAwYTIsIDB4MDE2Yywg
+MHgwMDZmLCAweDAxNmMsCisJCSAgMHgwNzkzLCAweDAxYjIsIDB4MDBiNiwgMHgwMGZmLCAweDAw
+YjYsIDB4MDZiNCwgMHgwMGE4IH0sCisJfTsKKwljb25zdCB1bnNpZ25lZCBpbnQgYncgPSBiNDNf
+cGh5X2FjX2J3X21oeihkZXYpOworCWNvbnN0IHVuc2lnbmVkIGludCB3ID0gYncgLyA0MDsJCS8q
+IDAsIDEsIDIgKi8KKwl1bnNpZ25lZCBpbnQgaSwgYzsKKworCS8qIHdpZHRoIGluZGV4ICovCisJ
+YjQzX3BoeV9tYXNrc2V0KGRldiwgMHgwMDc2LCAodTE2KX4weDAwMDcsIHcgKyAxKTsKKwliNDNf
+cGh5X21hc2tzZXQoZGV2LCAweDAxODAsICh1MTYpfjB4MDAxZiwgbHV0W3ddWzBdKTsKKwlmb3Ig
+KGkgPSAxOyBpIDwgMjE7IGkrKykKKwkJYjQzX3BoeV9tYXNrc2V0KGRldiwgMHgwMTgwICsgaSwg
+KHUxNil+MHgwN2ZmLCBsdXRbd11baV0pOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MDFiNSwg
+KHUxNil+MHgwMGZmLCBidyA9PSA0MCA/IDB4MDA4YiA6IDB4MDA5Nyk7CisJYjQzX3BoeV9tYXNr
+c2V0KGRldiwgMHgwMzEyLCAodTE2KX4weDAwZmYsIGJ3ID09IDgwID8gMHgwMDA5IDogMHgwMDEz
+KTsKKwliNDNfcGh5X21hc2tzZXQoZGV2LCAweDAzMTMsICh1MTYpfjB4ZmYwMCwgYncgPT0gODAg
+PyAweDA5MDAgOiAweDEzMDApOworCWZvciAoYyA9IDA7IGMgPCBCNDNfQUNfTkNPUkVTOyBjKysp
+IHsKKwkJdTE2IHN0ID0gYyAqIDB4MjAwOworCisJCWI0M19waHlfbWFza3NldChkZXYsIDB4MDZl
+ZCArIHN0LCAodTE2KX4weDAwZmYsCisJCQkJYncgPT0gMjAgPyAweDAwMGEgOiAweDAwMTQpOwor
+CQliNDNfcGh5X21hc2tzZXQoZGV2LCAweDA2ZWYgKyBzdCwgKHUxNil+MHgwMGZmLAorCQkJCWJ3
+ID09IDIwID8gMHgwMDE3IDoKKwkJCQkJICAgKGJ3ID09IDQwID8gMHgwMDJhIDogMHgwMDU0KSk7
+CisJCWI0M19waHlfbWFza3NldChkZXYsIDB4MDZlZiArIHN0LCAodTE2KX4weGZmMDAsCisJCQkJ
+YncgPT0gMjAgPyAweDBlMDAgOgorCQkJCQkgICAoYncgPT0gNDAgPyAweDE2MDAgOiAweDJjMDAp
+KTsKKwkJYjQzX3BoeV9tYXNrc2V0KGRldiwgMHgwNmVmICsgc3QsICh1MTYpfjB4MDBmZiwgMTUg
+KiAoYncgLyAyMCkpOworCX0KK30KKworc3RhdGljIHZvaWQgYjQzX3BoeV9hY19waHlpbml0KHN0
+cnVjdCBiNDNfd2xkZXYgKmRldikKK3sKKwkvKgorCSAqIFRoZSBwcm9sb2d1ZSBvZiBiNDNfcmFk
+aW9fMjA2OV9pbml0KCkKKwkgKiAoMHgwNDE1LzA0MGUvMDQwYy8wNDA4LzA0MTcvMDQxNikgYW5k
+IHRoZSBlbmQgc3RhdGUgb2YgdGhlIHBvd2VyLW9uCisJICogKDB4MDQwOCA9IDB4MGMwMiwgMHgw
+NDE3ID0gNCkKKwkgKi8KKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxNzM5LCAweDAwMDApOworCWI0
+M19waHlfd3JpdGUoZGV2LCAweDA0MTUsIDB4MDAwMCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4
+MDQwZSwgMHgwMDAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgwNDBjLCAweDIwMDApOworCWI0
+M19waHlfd3JpdGUoZGV2LCAweDA0MTYsIDB4MDAwZCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4
+MDQwOCwgMHgwYzAyKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgwNDE3LCAweDAwMDQpOworCWI0
+M19waHlfd3JpdGUoZGV2LCAweDAxNmIsIDB4MDAwMCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4
+MDE3NSwgMHgwMDAwKTsKKworCWI0M19waHlfYWNfbW9kZV9pbml0KGRldik7CisJYjQzX3BoeV93
+cml0ZShkZXYsIDB4MTY0NSwgMHgwMjVjKTsJLyogaW5pdF9yZWdzICovCisJYjQzX3BoeV93cml0
+ZShkZXYsIDB4MDNjNCwgMHgwNjY4KTsKKwliNDNfcGh5X2FjX3NldF9yZWdfb25fcmVzZXQoZGV2
+KTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgwMzU4LCAweGMwN2YpOwkvKiBzZXRfcGRldF9vbl9y
+ZXNldCAqLworCS8qIEZFTSB0YWJsZSAyIC8gc3ViIDEgc2V0dXAgKi8KKwliNDNfcGh5X3NldChk
+ZXYsIDB4MDQwYSwgMHgwMTAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgwNDE0LCAweDA1NTUp
+OworCS8qIFNlY29uZCBUWCBjaGFpbjogd2l0aG91dCB0aGlzIGJpdCBjb3JlIDEgZG9lcyBub3Qg
+cmFkaWF0ZSBhbmQKKwkgKiB0d28tc3RyZWFtIHJhdGVzIGZhaWwgY29tcGxldGVseS4KKwkgKi8K
+KwlpZiAoZGV2LT5kZXYtPmJ1c190eXBlID09IEI0M19CVVNfQkNNQSkKKwkJYmNtYV9jY19zZXQz
+MigmZGV2LT5kZXYtPmJkZXYtPmJ1cy0+ZHJ2X2NjLCBCQ01BX0NDX0NISVBDVEwsCisJCQkgICAg
+ICAweDAwMDAwMDA4KTsKKwliNDNfcGh5X2FjX2NvZWZmX2JhbmtfaW5pdChkZXYpOworCS8qIFJY
+IGdhaW4gY29udHJvbCwgYWxsIGNvcmVzLiBXaXRob3V0IGl0IHRoZQorCSAqIHJlY2VpdmUgbGV2
+ZWwgaXMgMjYgZEIgZG93bjogLTY2IGluc3RlYWQgb2YgLTQwIGRCbS4KKwkgKi8KKwliNDNfcGh5
+X3dyaXRlKGRldiwgMHgxNzI2LCAweDAwMGMpOworCWI0M19waHlfd3JpdGUoZGV2LCAweDAxOTcs
+IDB4MDAxNCk7CS8qIGNoYW5uZWxfc2V0dXAgKi8KKwliNDNfcGh5X3dyaXRlKGRldiwgMHgwMTk4
+LCAweDAwMTApOworCWI0M19waHlfYWNfd2lkZV90YWJsZXNfMmcoZGV2KTsKK30KKworc3RhdGlj
+IHZvaWQgYjQzX3BoeV9hY19zZXR1cF9yZWdzKHN0cnVjdCBiNDNfd2xkZXYgKmRldikKK3sKKwkv
+KgorCSAqIFJhZGlvIHN0YXRlIHRoZSBoYXJkd2FyZSBUWCBwb3dlciBsb29wIG5lZWRzIChUU1NJ
+IC8gcG93ZXIgZGV0ZWN0b3IKKwkgKiBwYXRoLCBwZXItY29yZSAweDAxYS0weDAxZiAvIDB4MjFh
+LTB4MjFmKS4gV2l0aG91dCBpdCBQSFkgMHg2NDAvMHg4NDAKKwkgKiBmcmVlemUgYXQgaW5kZXgg
+MCBhbmQgdGhlIGxvb3AgbmV2ZXIgcmVhY2hlcyBpdHMgdGFyZ2V0LgorCSAqLworCWI0M19yYWRp
+b193cml0ZShkZXYsIDB4MDU0OCwgMHgwMDAxKTsKKwliNDNfcmFkaW9fd3JpdGUoZGV2LCAweDA1
+NDksIDB4MDAwMCk7CisJYjQzX3JhZGlvX3dyaXRlKGRldiwgMHgwNTRhLCAweDAwMDApOworCWI0
+M19yYWRpb193cml0ZShkZXYsIDB4MDU0YywgMHgwMDAwKTsKKwliNDNfcmFkaW9fd3JpdGUoZGV2
+LCAweDA0MGIsIDB4MDE2OCk7CisJYjQzX3JhZGlvX3dyaXRlKGRldiwgMHgwNTRiLCAweDAxMDEp
+OworCWI0M19yYWRpb193cml0ZShkZXYsIDB4MDA0ZSwgMHg4NDAwKTsKKwliNDNfcmFkaW9fd3Jp
+dGUoZGV2LCAweDAxNjYsIDB4MDAwMCk7CisJYjQzX3JhZGlvX3dyaXRlKGRldiwgMHgwMjRlLCAw
+eDg2MDApOworCWI0M19yYWRpb193cml0ZShkZXYsIDB4MDM2NiwgMHgwMDAwKTsKKwliNDNfcmFk
+aW9fd3JpdGUoZGV2LCAweDAwMWEsIDB4MDAxNCk7CisJYjQzX3JhZGlvX3dyaXRlKGRldiwgMHgw
+MDFiLCAweDAyODApOworCWI0M19yYWRpb193cml0ZShkZXYsIDB4MDAxYywgMHgwMDQ0KTsKKwli
+NDNfcmFkaW9fd3JpdGUoZGV2LCAweDAwMWUsIDB4MDAxMCk7CisJYjQzX3JhZGlvX3dyaXRlKGRl
+diwgMHgwMDFmLCAweDAwMDApOworCWI0M19yYWRpb193cml0ZShkZXYsIDB4MDIxYSwgMHgwMDE0
+KTsKKwliNDNfcmFkaW9fd3JpdGUoZGV2LCAweDAyMWIsIDB4MDI4MCk7CisJYjQzX3JhZGlvX3dy
+aXRlKGRldiwgMHgwMjFjLCAweDAwNDQpOworCWI0M19yYWRpb193cml0ZShkZXYsIDB4MDIxZSwg
+MHgwMDEwKTsKKwliNDNfcmFkaW9fd3JpdGUoZGV2LCAweDAyMWYsIDB4MDAwMCk7CisJYjQzX3Jh
+ZGlvX3dyaXRlKGRldiwgMHgwMTcwLCAweDAxMDApOworCisJYjQzX3BoeV9hY19waHlpbml0KGRl
+dik7CisJLyoKKwkgKiBIYXJkd2FyZSBUWCBwb3dlciBjb250cm9sOiAweDcwIGJpdHMgMTU6MTMg
+ZW5hYmxlIGl0LCAweDcxIGhvbGRzIHRoZQorCSAqIGF2ZXJhZ2luZyB3aW5kb3csIDB4NzIgdGhl
+IHJlc3Qgb2YgaXRzIGNvbmZpZ3VyYXRpb24uIEVuYWJsZWQ6IHdpdGgKKwkgKiB0aGUgd2lkZSB0
+YWJsZXMgaXQgbm8gbG9uZ2VyIGZhaWxzIGZyYW1lcyBuZXh0IHRvIHRoZSBBUCAoMHgwMTAwCisJ
+ICogd291bGQgc3dpdGNoIGl0IG9mZikuCisJICovCisJYjQzX3BoeV93cml0ZShkZXYsIDB4MDA3
+MCwgMHhlNTAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgwMDcxLCAweDA0YzgpOworCWI0M19w
+aHlfd3JpdGUoZGV2LCAweDAwNzIsIDB4NDAwZCk7Cit9CisKKy8qCisgKiBSYWRpbyByZWdpc3Rl
+cnMgd3JpdHRlbiBmcm9tIGVudHJpZXMgWzIuLjUxXSBvZiB0aGUgMjA2OSB0dW5pbmcgdGFibGUs
+IGluCisgKiB0YWJsZSBvcmRlci4gUmVzb2x2ZWQgZm9yIGFjcGh5Y2hpcGlkIDB4NDM2MCBmcm9t
+IHRoZSB2ZW5kb3IgZHJpdmVyJ3MKKyAqIGNoYW5uZWwtc2V0IGNvZGUuCisgKi8KK3N0YXRpYyBj
+b25zdCB1MTYgYjQzX3JhZGlvXzIwNjlfdHVuZV9yZWdzW0I0M19SQURJT18yMDY5X1RVTkVfUkVH
+U10gPSB7CisJMHg4ZTAsIDB4OGUxLCAweDhkZCwgMHg4ZGMsIDB4OGU2LCAweDhlNywgMHg4YzQs
+IDB4OGM1LCAweDhlNSwgMHg4ZWIsCisJMHg4ZDYsIDB4MTEzLCAweDhkYiwgMHg4ZGEsIDB4OGQ3
+LCAweDg4NSwgMHg4ODYsIDB4ODg3LCAweDhkOSwgMHg4ZDgsCisJMHg4YzksIDB4OGNhLCAweDhj
+YywgMHg4YzcsIDB4OGM4LCAweDg5MiwgMHg4OTQsIDB4ODk1LCAweDg5NiwgMHg4OTcsCisJMHg4
+OTksIDB4ODlhLCAweDg5YiwgMHg4OWMsIDB4MTEyLCAweDYyOSwgMHg2NWIsIDB4NjVlLCAweDY2
+OCwgMHgxMWEsCisJMHgxMWIsIDB4NzE5LCAweDYzMCwgMHg2NWMsIDB4NjYyLCAweDY2ZCwgMHg4
+OTMsIDB4MTQ1LCAweDE0NiwgMHg3MjMsCit9OworCitzdGF0aWMgY29uc3Qgc3RydWN0IGI0M19y
+YWRpb18yMDY5X2NoYW4gKgorYjQzX3JhZGlvXzIwNjlfZmluZF9jaGFuKHN0cnVjdCBiNDNfd2xk
+ZXYgKmRldiwgdW5zaWduZWQgaW50IGNoYW5uZWwpCit7CisJdW5zaWduZWQgaW50IGk7CisKKwlp
+ZiAoZGV2LT5waHkucmFkaW9fdmVyICE9IDB4MjA2OSB8fCBkZXYtPnBoeS5yYWRpb19yZXYgIT0g
+NCkKKwkJcmV0dXJuIE5VTEw7CisJZm9yIChpID0gMDsgaSA8IGI0M19yYWRpb18yMDY5cjRfY2hh
+bnNfbjsgaSsrKQorCQlpZiAoYjQzX3JhZGlvXzIwNjlyNF9jaGFuc1tpXS5jaGFubmVsID09IGNo
+YW5uZWwpCisJCQlyZXR1cm4gJmI0M19yYWRpb18yMDY5cjRfY2hhbnNbaV07CisJcmV0dXJuIE5V
+TEw7Cit9CisKKy8qIFN5bnRoZXNpemVyIFZDTyBjYWxpYnJhdGlvbiBraWNrLiAqLworc3RhdGlj
+IHZvaWQgYjQzX3JhZGlvXzIwNjlfdmNvY2FsKHN0cnVjdCBiNDNfd2xkZXYgKmRldikKK3sKKwli
+NDNfcmFkaW9fbWFzayhkZXYsIDB4OGU1LCB+MHg0MDAwKTsKKwliNDNfcmFkaW9fbWFzayhkZXYs
+IDB4OGQwLCB+MHgwMDAxKTsKKwliNDNfcmFkaW9fbWFzayhkZXYsIDB4OGU4LCB+MHgwMDQwKTsK
+KwliNDNfcmFkaW9fbWFzayhkZXYsIDB4OGRjLCB+MHgyMDAwKTsKKwl1ZGVsYXkoMTEpOworCWI0
+M19yYWRpb19zZXQoZGV2LCAweDhkMCwgMHgwMDAxKTsKKwliNDNfcmFkaW9fc2V0KGRldiwgMHg4
+ZTgsIDB4MDA0MCk7CisJdWRlbGF5KDEpOworCWI0M19yYWRpb19zZXQoZGV2LCAweDhkYywgMHgy
+MDAwKTsKK30KKworLyogUmVzZXQgY2xlYXItY2hhbm5lbCBhc3Nlc3NtZW50IChQSFkgcmV2IDEg
+dmFyaWFudCkuICovCitzdGF0aWMgdm9pZCBiNDNfcGh5X2FjX3Jlc2V0Y2NhKHN0cnVjdCBiNDNf
+d2xkZXYgKmRldikKK3sKKwl1MTYgYmJjZmc7CisKKwliNDNfcGh5X2ZvcmNlX2Nsb2NrKGRldiwg
+dHJ1ZSk7CisJYmJjZmcgPSBiNDNfcGh5X3JlYWQoZGV2LCBCNDNfUEhZX0FDX0JCQ0ZHKTsKKwli
+NDNfcGh5X3dyaXRlKGRldiwgQjQzX1BIWV9BQ19CQkNGRywgYmJjZmcgfCBCNDNfUEhZX0FDX0JC
+Q0ZHX1JTVENDQSk7CisJdWRlbGF5KDEpOworCWI0M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FD
+X0JCQ0ZHLCBiYmNmZyAmIH5CNDNfUEhZX0FDX0JCQ0ZHX1JTVENDQSk7CisJYjQzX3BoeV9mb3Jj
+ZV9jbG9jayhkZXYsIGZhbHNlKTsKKwl1ZGVsYXkoMik7Cit9CisKKy8qCisgKiBQZXItY29yZSBS
+RiBjb250cm9sIHN0YXRlIG9mIHRoZSAyLjQgR0h6IHNldHVwIHRoYXQgdGhlIGluaXQgZG9lcyBu
+b3QgcmVhY2guCisgKi8KK3N0YXRpYyB2b2lkIGI0M19waHlfYWNfcmZjdHJsXzJnKHN0cnVjdCBi
+NDNfd2xkZXYgKmRldikKK3sKKwlzdGF0aWMgY29uc3QgdTE2IHJlZ3NbXVsyXSA9IHsKKwkJeyAw
+eDY0NSwgMHgwMjRkIH0sIHsgMHg4NDUsIDB4MDI1ZiB9LAorCQl7IDB4NzI1LCAweDA2MDAgfSwg
+eyAweDkyNSwgMHgwNjAwIH0sCisJCXsgMHg3MjcsIDB4MDAwNCB9LCB7IDB4OTI3LCAweDAwMDQg
+fSwKKwkJeyAweDcyOCwgMHgwODgwIH0sIHsgMHg5MjgsIDB4MDg4MCB9LAorCQl7IDB4NzI5LCAw
+eDEwMDAgfSwgeyAweDkyOSwgMHgxMDAwIH0sCisJCXsgMHg3M2EsIDB4MDE4MCB9LCB7IDB4OTNh
+LCAweDAxODAgfSwKKwl9OworCXVuc2lnbmVkIGludCBpOworCisJZm9yIChpID0gMDsgaSA8IEFS
+UkFZX1NJWkUocmVncyk7IGkrKykKKwkJYjQzX3BoeV93cml0ZShkZXYsIHJlZ3NbaV1bMF0sIHJl
+Z3NbaV1bMV0pOworfQorCisjaW5jbHVkZSAicGh5X2FjX2ZhcnJvdy5oIgorCisvKgorICogVGhl
+IEFEQy9EQUMgcnVuIGZyb20gYSBjbG9jayBkZXJpdmVkIGZyb20gdGhlIHN5bnRoZXNpemVyLCBz
+byB0aGUKKyAqIGZyYWN0aW9uYWwgcmVzYW1wbGVyIHRvIHRoZSBiYXNlYmFuZCByYXRlIGRlcGVu
+ZHMgb24gdGhlIGNoYW5uZWwuIFRoZSB2ZW5kb3IKKyAqIGRyaXZlciB3cml0ZXMgdGhlc2Ugb24g
+ZXZlcnkgY2hhbm5lbCBzd2l0Y2g7IHdpdGhvdXQgdGhlbSBldmVyeSBjaGFubmVsCisgKiBrZXB0
+IGNoYW5uZWwgNidzIHJhdGlvLCAzLjUlIG9mZiBvbiBjaGFubmVsIDEuCisgKi8KK3N0YXRpYyB2
+b2lkIGI0M19waHlfYWNfc2V0X2ZhcnJvdyhzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYsIHVuc2lnbmVk
+IGludCBjaGFubmVsKQoreworCWNvbnN0IHN0cnVjdCBiNDNfcGh5X2FjX2ZhcnJvdyAqZiA9IE5V
+TEw7CisJdW5zaWduZWQgaW50IGk7CisKKwlmb3IgKGkgPSAwOyBpIDwgQVJSQVlfU0laRShiNDNf
+cGh5X2FjX2ZhcnJvd18yMCk7IGkrKykKKwkJaWYgKGI0M19waHlfYWNfZmFycm93XzIwW2ldLmNo
+YW5uZWwgPT0gY2hhbm5lbCkKKwkJCWYgPSAmYjQzX3BoeV9hY19mYXJyb3dfMjBbaV07CisJaWYg
+KCFmKQorCQlyZXR1cm47CisKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxOWEsIGYtPnJ4WzBdKTsK
+KwliNDNfcGh5X3dyaXRlKGRldiwgMHgxOWIsIGYtPnJ4WzFdKTsKKwliNDNfcGh5X3dyaXRlKGRl
+diwgMHgxOWMsIGYtPnJ4WzJdKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxOTksIGYtPnJ4WzNd
+KTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxYTEsIGYtPnJ4WzBdKTsKKwliNDNfcGh5X3dyaXRl
+KGRldiwgMHgxYTIsIGYtPnJ4WzFdKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxYTMsIGYtPnJ4
+WzJdKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxYTAsIGYtPnJ4WzNdKTsKKwliNDNfcGh5X3dy
+aXRlKGRldiwgMHgxNjAzLCBmLT50eFswXSk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MTYwMiwg
+Zi0+dHhbMV0pOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE2MDcsIGYtPnR4WzJdKTsKKwliNDNf
+cGh5X3dyaXRlKGRldiwgMHgxNjA2LCBmLT50eFszXSk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4
+MTYwMSwgYjQzX3BoeV9yZWFkKGRldiwgMHg2MDEpKTsKK30KKworLyogUHJvZ3JhbSB0aGUgc3lu
+dGhlc2l6ZXIgYW5kIHRoZSBwZXItY2hhbm5lbCByYWRpbyB3b3JkcyBvZiBvbmUgY2hhbm5lbC4g
+Ki8KK3N0YXRpYyB2b2lkIGI0M19waHlfYWNfdHVuZShzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYsCisJ
+CQkgICAgY29uc3Qgc3RydWN0IGI0M19yYWRpb18yMDY5X2NoYW4gKmUsCisJCQkgICAgdW5zaWdu
+ZWQgaW50IGNoYW5uZWwpCit7CisJaW50IGk7CisKKwlmb3IgKGkgPSAwOyBpIDwgQjQzX1JBRElP
+XzIwNjlfVFVORV9SRUdTOyBpKyspCisJCWI0M19yYWRpb193cml0ZShkZXYsIGI0M19yYWRpb18y
+MDY5X3R1bmVfcmVnc1tpXSwgZS0+cmFkaW9baV0pOworCWlmIChjaGFubmVsID09IDQpIHsKKwkJ
+YjQzX3JhZGlvX3dyaXRlKGRldiwgMHg4ZDYsIDB4MGNlNCk7CisJCWI0M19yYWRpb19tYXNrc2V0
+KGRldiwgMHg4ZWMsIH4weDAwNzAsIDB4MDA1MCk7CisJfQorCWI0M19yYWRpb19zZXQoZGV2LCAw
+eDY0NSwgMHg3MDAwKTsKKwliNDNfcmFkaW9fd3JpdGUoZGV2LCAweDcyMywgMHg4M2UwKTsKKwli
+NDNfcmFkaW9fMjA2OV92Y29jYWwoZGV2KTsKK30KKworLyoKKyAqIENoYW5uZWwgc3dpdGNoIGZv
+ciByYWRpbyAyMDY5IHJldiA0LCBmb2xsb3dpbmcgdGhlIHZlbmRvciBkcml2ZXIncworICogY2hh
+bm5lbC1zZXQgc2VxdWVuY2UuIE5vdCBwb3J0ZWQ6IGNhcnJpZXItc2VhcmNoIHN1cHByZXNzaW9u
+IGR1cmluZyB0aGUKKyAqIHN3aXRjaCwgdGhlIDUgR0h6IFBMTCBzZXR1cCBhbmQgdGhlIHBlci1j
+aGFubmVsIFBIWSB0d2Vha3MgdGhhdCBmb2xsb3cgdGhlIEJXCisgKiByZWdpc3RlcnMuCisgKi8K
+K3N0YXRpYyBpbnQgYjQzX3BoeV9hY19vcF9zd2l0Y2hfY2hhbm5lbChzdHJ1Y3QgYjQzX3dsZGV2
+ICpkZXYsCisJCQkJCXVuc2lnbmVkIGludCBuZXdfY2hhbm5lbCkKK3sKKwlzdHJ1Y3QgYjQzX3Bo
+eV9hYyAqcGh5X2FjID0gZGV2LT5waHkuYWM7CisJY29uc3Qgc3RydWN0IGI0M19yYWRpb18yMDY5
+X2NoYW4gKmU7CisJdTE2IHNhdmU7CisJaW50IGk7CisKKwlpZiAoYjQzX2N1cnJlbnRfYmFuZChk
+ZXYtPndsKSAhPSBOTDgwMjExX0JBTkRfMkdIWikKKwkJcmV0dXJuIC1FT1BOT1RTVVBQOworCisJ
+ZSA9IGI0M19yYWRpb18yMDY5X2ZpbmRfY2hhbihkZXYsIG5ld19jaGFubmVsKTsKKwlpZiAoIWUp
+IHsKKwkJYjQzZXJyKGRldi0+d2wsICJwaHlfYWM6IG5vIHR1bmluZyBkYXRhIGZvciBjaGFubmVs
+ICV1IChyYWRpbyAlMDR4IHJldiAldSlcbiIsCisJCSAgICAgICBuZXdfY2hhbm5lbCwgZGV2LT5w
+aHkucmFkaW9fdmVyLCBkZXYtPnBoeS5yYWRpb19yZXYpOworCQlyZXR1cm4gLUVTUkNIOworCX0K
+KwliNDNkYmcoZGV2LT53bCwgInBoeV9hYzogc3dpdGNoX2NoYW5uZWwoJXUpIC0+ICV1IE1Ielxu
+IiwKKwkgICAgICAgbmV3X2NoYW5uZWwsIGUtPmZyZXEpOworCisJc2F2ZSA9IGI0M19waHlfcmVh
+ZChkZXYsIDB4MTllKTsKKwliNDNfcGh5X3NldChkZXYsIDB4MTllLCAweDMpOworCisJYjQzX3Bo
+eV9tYXNrKGRldiwgQjQzX1BIWV9BQ19CQU5EQ1RMLCB+MHgwMTAwKTsKKworCWlmICghcGh5X2Fj
+LT5jaGFuX3NldCkgeworCQliNDNfcGh5X3NldChkZXYsIDB4NzI4LCAweDAxMDApOworCQl1ZGVs
+YXkoMSk7CisJCWI0M19waHlfbWFzayhkZXYsIDB4NzI4LCB+MHgwMTAwKTsKKwkJcGh5X2FjLT5j
+aGFuX3NldCA9IHRydWU7CisJfQorCisJYjQzX3BoeV9hY190dW5lKGRldiwgZSwgbmV3X2NoYW5u
+ZWwpOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MTllLCB+MHgzLCBzYXZlICYgMHgzKTsKKwor
+CWZvciAoaSA9IDA7IGkgPCA2OyBpKyspCisJCWI0M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FD
+X0JXMUEgKyBpLCBlLT5id1tpXSk7CisKKwliNDNfcGh5X2FjX3JmY3RybF8yZyhkZXYpOworCWI0
+M19waHlfYWNfc2V0X2ZhcnJvdyhkZXYsIG5ld19jaGFubmVsKTsKKwliNDNfcGh5X2FjX3Jlc2V0
+Y2NhKGRldik7CisJYjQzX3BoeV9hY190eHB3cl9ieV9pbmRleChkZXYsIEI0M19BQ19UWElEWF8y
+Ryk7CisKKwlyZXR1cm4gMDsKK30KKworLyogV3JpdGUgYSB0YWJsZSBvZiA4LCAxNiBvciAzMiBi
+aXQgZW50cmllcyB0aHJvdWdoIHRoZSBQSFkgdGFibGUgcG9ydHMuICovCitzdGF0aWMgdm9pZCBi
+NDNfcGh5X2FjX3dyaXRlX3RhYmxlKHN0cnVjdCBiNDNfd2xkZXYgKmRldiwKKwkJCQkgICBjb25z
+dCBzdHJ1Y3QgYjQzX3BoeV9hY190YmwgKnQpCit7CisJdW5zaWduZWQgaW50IGk7CisJdTMyIHY7
+CisKKwliNDNfcGh5X3dyaXRlKGRldiwgQjQzX1BIWV9BQ19UQUJMRV9JRCwgdC0+aWQpOworCWI0
+M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FDX1RBQkxFX09GRlNFVCwgdC0+b2Zmc2V0KTsKKwlm
+b3IgKGkgPSAwOyBpIDwgdC0+Y291bnQ7IGkrKykgeworCQlzd2l0Y2ggKHQtPndpZHRoKSB7CisJ
+CWNhc2UgODoKKwkJCWI0M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FDX1RBQkxFX0RBVEExLAor
+CQkJCSAgICAgICgoY29uc3QgdTggKil0LT5kYXRhKVtpXSk7CisJCQlicmVhazsKKwkJY2FzZSAx
+NjoKKwkJCWI0M19waHlfd3JpdGUoZGV2LCBCNDNfUEhZX0FDX1RBQkxFX0RBVEExLAorCQkJCSAg
+ICAgICgoY29uc3QgdTE2ICopdC0+ZGF0YSlbaV0pOworCQkJYnJlYWs7CisJCWNhc2UgMzI6CisJ
+CQl2ID0gKChjb25zdCB1MzIgKil0LT5kYXRhKVtpXTsKKwkJCWI0M19waHlfd3JpdGUoZGV2LCBC
+NDNfUEhZX0FDX1RBQkxFX0RBVEEyLCB2ID4+IDE2KTsKKwkJCWI0M19waHlfd3JpdGUoZGV2LCBC
+NDNfUEhZX0FDX1RBQkxFX0RBVEExLCB2ICYgMHhmZmZmKTsKKwkJCWJyZWFrOworCQl9CisJfQor
+fQorCisvKgorICogMi40IEdIeiBwb3dlci1lc3RpbWF0aW9uIExVVCBvZiBvbmUgY29yZSAodGFi
+bGVzIDB4NDAgLyAweDYwKSwgMTI4IGVudHJpZXMsCisgKiBmcm9tIHRoZSBTUk9NIHBvd2VyLWRl
+dGVjdG9yIHRyaXBsZSAoYTEsIGIwLCBiMSkgPSBwYTJnYSB3b3Jkcy4gQXQgc3RlcCBqOgorICog
+bnVtID0gNTEyKmIwICsgMzIqYjEqaiwgZGVuID0gMHg4MDAwICsgYTEqaiwgdiA9IChkZW4vMiAr
+IG51bSkvZGVuIGNsYW1wZWQgdG8KKyAqIFstOCwgMHg3Zl0gKHRoZSBzYW1lIHRyYW5zZmVyIGZ1
+bmN0aW9uIGFzIGI0M19ucGh5X3R4X3Bvd2VyX2N0bF9zZXR1cCgpOyBpdAorICogbWF0Y2hlcyB0
+aGUgdmVuZG9yIGRyaXZlcidzIHRhYmxlIGVudHJ5IGZvciBlbnRyeSBvbiB0aGlzIGJvYXJkKS4g
+U1JPTSB3b3JkCisgKiBvZmZzZXRzIChyZXYgMTEpOiBjb3JlIDAgcGEyZ2EgYXQgMHg2ZCwgY29y
+ZSAxIGF0IDB4ODEuCisgKi8KK3N0YXRpYyB2b2lkIGI0M19waHlfYWNfd3JpdGVfZXN0X3B3cihz
+dHJ1Y3QgYjQzX3dsZGV2ICpkZXYpCit7CisJc3RhdGljIGNvbnN0IHN0cnVjdCB7CisJCXUxNiBp
+ZDsKKwkJdTE2IHdvcmQ7CisJfSBjb3JlX3RibFtdID0geyB7IDB4NDAsIDB4NmQgfSwgeyAweDYw
+LCAweDgxIH0gfTsKKwlzdHJ1Y3QgYmNtYV9kcnZfY2MgKmNjOworCXVuc2lnbmVkIGludCBjLCBq
+OworCisJaWYgKGRldi0+ZGV2LT5idXNfdHlwZSAhPSBCNDNfQlVTX0JDTUEpCisJCXJldHVybjsK
+KwljYyA9ICZkZXYtPmRldi0+YmRldi0+YnVzLT5kcnZfY2M7CisJZm9yIChjID0gMDsgYyA8IEFS
+UkFZX1NJWkUoY29yZV90YmwpICYmIGMgPCBiNDNfcGh5X2FjX251bV9jb3JlcyhkZXYpOworCSAg
+ICAgYysrKSB7CisJCXUxNiBiYXNlID0gQkNNQV9DQ19TUFJPTSArIDIgKiBjb3JlX3RibFtjXS53
+b3JkOworCQl1MTYgdzAgPSBiY21hX3JlYWQxNihjYy0+Y29yZSwgYmFzZSk7CisJCXUxNiB3MSA9
+IGJjbWFfcmVhZDE2KGNjLT5jb3JlLCBiYXNlICsgMik7CisJCXUxNiB3MiA9IGJjbWFfcmVhZDE2
+KGNjLT5jb3JlLCBiYXNlICsgNCk7CisJCXMzMiBhMSA9IChzMTYpdzAsIGIwID0gKHMxNil3MSwg
+YjEgPSAoczE2KXcyLCBudW0sIGRlbjsKKwkJdTE2IGx1dFsxMjhdOworCQlzdHJ1Y3QgYjQzX3Bo
+eV9hY190YmwgdGJsID0geyBsdXQsIDEyOCwgY29yZV90YmxbY10uaWQsIDAsIDE2IH07CisKKwkJ
+aWYgKHcwID09IDB4ZmZmZiAmJiB3MSA9PSAweGZmZmYgJiYgdzIgPT0gMHhmZmZmKQorCQkJLyog
+dW5wcm9ncmFtbWVkIFNST006IGtlZXAgdGhlIGRlZmF1bHQgdGFibGUgKi8KKwkJCWNvbnRpbnVl
+OworCQludW0gPSBiMCA8PCA5OworCQlkZW4gPSAweDgwMDA7CisJCWZvciAoaiA9IDA7IGogPCAx
+Mjg7IGorKykgeworCQkJczMyIGQgPSBkZW4gPyBkZW4gOiAxOworCQkJczMyIHYgPSAoZCAvIDIg
+KyBudW0pIC8gZDsKKworCQkJbnVtICs9IGIxICogMHgyMDsKKwkJCWRlbiArPSBhMTsKKwkJCWx1
+dFtqXSA9ICh1MTYpKGNsYW1wKHYsIC04LCAweDdmKSAmIDB4ZmYpOworCQl9CisJCWI0M19waHlf
+YWNfd3JpdGVfdGFibGUoZGV2LCAmdGJsKTsKKwl9Cit9CisKKy8qCisgKiBQSFkgaW5pdCBmb3Ig
+UEhZIHJldiAwLzE6IHRoZSBBRkUgcGFnZSwgdGhlbiB0aGUgdGFibGUgc2V0IG9mIHRoZQorICog
+YWNwaHl0YmxfaW5mb19yZXYwIHBsdXMgdGhlIEZFTSB0YWJsZXMgb2YgdGhpcyBib2FyZCdzIGNv
+bnRyb2wgcGF0dGVybi4KKyAqLworc3RhdGljIHZvaWQgYjQzX3BoeV9hY190YWJsZXNfaW5pdChz
+dHJ1Y3QgYjQzX3dsZGV2ICpkZXYpCit7CisJc3RhdGljIGNvbnN0IHUxNiBjbGVhcl9yZWdzW10g
+PSB7CisJCTB4MTczZSwgMHgxNzI1LCAweDE3MjIsIDB4MTcyMywgMHgxNzI0LCAweDE3MjUsIDB4
+MTcyNiwgMHgxNzI3LAorCQkweDE3NTAsCisJfTsKKwl1bnNpZ25lZCBpbnQgaTsKKwl1MTYgc2F2
+ZTsKKworCWI0M19waHlfd3JpdGUoZGV2LCAweDQxMCwgMHg3Nyk7CisJZm9yIChpID0gMDsgaSA8
+IEFSUkFZX1NJWkUoY2xlYXJfcmVncyk7IGkrKykKKwkJYjQzX3BoeV93cml0ZShkZXYsIGNsZWFy
+X3JlZ3NbaV0sIDApOworCWI0M19waHlfd3JpdGUoZGV2LCAweDE3MjgsIDB4ODApOworCWI0M19w
+aHlfd3JpdGUoZGV2LCAweDE3MjAsIDB4MTgwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxNzI5
+LCAwKTsKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxNzIxLCAweDUwMDApOworCWI0M19waHlfd3Jp
+dGUoZGV2LCAweDE3M2EsIGI0M19waHlfcmVhZChkZXYsIDB4NzNhKSB8IDB4MTAwKTsKKwliNDNf
+cGh5X3dyaXRlKGRldiwgMHgxNzI1LCBiNDNfcGh5X3JlYWQoZGV2LCAweDcyNSkgfCAweDQwMCk7
+CisKKwlzYXZlID0gYjQzX3BoeV9yZWFkKGRldiwgMHgxOWUpOworCWI0M19waHlfc2V0KGRldiwg
+MHgxOWUsIDB4Mik7CisJZm9yIChpID0gMDsgaSA8IGI0M19waHlfYWNfdGJsc19yZXYwX247IGkr
+KykKKwkJYjQzX3BoeV9hY193cml0ZV90YWJsZShkZXYsICZiNDNfcGh5X2FjX3RibHNfcmV2MFtp
+XSk7CisJZm9yIChpID0gMDsgaSA8IGI0M19waHlfYWNfcmZzZXFfdGJsc19uOyBpKyspCisJCWI0
+M19waHlfYWNfd3JpdGVfdGFibGUoZGV2LCAmYjQzX3BoeV9hY19yZnNlcV90YmxzW2ldKTsKKwli
+NDNfcGh5X2FjX3dyaXRlX2VzdF9wd3IoZGV2KTsKKwlmb3IgKGkgPSAwOyBpIDwgYjQzX3BoeV9h
+Y19taXNjX3RibHNfbjsgaSsrKQorCQliNDNfcGh5X2FjX3dyaXRlX3RhYmxlKGRldiwgJmI0M19w
+aHlfYWNfbWlzY190YmxzW2ldKTsKKwlmb3IgKGkgPSAwOyBpIDwgYjQzX3BoeV9hY19sYWRkZXJf
+dGJsc19uOyBpKyspCisJCWI0M19waHlfYWNfd3JpdGVfdGFibGUoZGV2LCAmYjQzX3BoeV9hY19s
+YWRkZXJfdGJsc1tpXSk7CisJZm9yIChpID0gMDsgaSA8IGI0M19waHlfYWNfdmVuZG9yX3RibHNf
+bjsgaSsrKQorCQliNDNfcGh5X2FjX3dyaXRlX3RhYmxlKGRldiwgJmI0M19waHlfYWNfdmVuZG9y
+X3RibHNbaV0pOworCS8qCisJICogRkVNIGNvbnRyb2wgcGF0dGVybjogb25seSB0aGUgZmVtY3Ry
+bCA9PSAyIHZhcmlhbnQgKHRoaXMgY2FyZCkgaXMKKwkgKiBrbm93bi4gU1JPTSByZXYgMTEgd29y
+ZCAweDU1IGJpdHMgMTU6MTEuCisJICovCisJaWYgKGRldi0+ZGV2LT5idXNfdHlwZSA9PSBCNDNf
+QlVTX0JDTUEgJiYKKwkgICAgKGJjbWFfcmVhZDE2KGRldi0+ZGV2LT5iZGV2LT5idXMtPmRydl9j
+Yy5jb3JlLAorCQkJIEJDTUFfQ0NfU1BST00gKyAweGFhKSA+PgorCSAgICAgMTEpID09IDIpCisJ
+CWZvciAoaSA9IDA7IGkgPCBiNDNfcGh5X2FjX2ZlbWN0cmwyX3RibHNfbjsgaSsrKQorCQkJYjQz
+X3BoeV9hY193cml0ZV90YWJsZShkZXYsCisJCQkJCSAgICAgICAmYjQzX3BoeV9hY19mZW1jdHJs
+Ml90YmxzW2ldKTsKKwliNDNfcGh5X21hc2tzZXQoZGV2LCAweDE5ZSwgfjB4Miwgc2F2ZSAmIDB4
+Mik7CisKKwliNDNfcGh5X3dyaXRlKGRldiwgMHgxNjQ1LCAweDI1Yyk7CisJYjQzZGJnKGRldi0+
+d2wsICJwaHlfYWM6IHdyb3RlICV1IFBIWSB0YWJsZXNcbiIsCisJICAgICAgIGI0M19waHlfYWNf
+dGJsc19yZXYwX24pOworfQorCisvKgorICogRmlyc3QtaW5pdCBQSFkgcmVnaXN0ZXIgc2V0dXAg
+Zm9yIFBIWSByZXYgMC8xLiBOb3QgcG9ydGVkOiB0aGUgaGFyZHdhcmUKKyAqIGludGVyZmVyZW5j
+ZSBtaXRpZ2F0aW9uIHNldHVwLgorICovCitzdGF0aWMgdm9pZCBiNDNfcGh5X2FjX2ZpcnN0X2lu
+aXQoc3RydWN0IGI0M193bGRldiAqZGV2KQoreworCWJvb2wgaXNfMmdoeiA9IGI0M19jdXJyZW50
+X2JhbmQoZGV2LT53bCkgPT0gTkw4MDIxMV9CQU5EXzJHSFo7CisJdTggY29yZSwgY29yZXMgPSBi
+NDNfcGh5X2FjX251bV9jb3JlcyhkZXYpOworCXN0YXRpYyBjb25zdCB1MTYgY29yZV9yZWdbM10g
+PSB7IDB4NjkwLCAweDg5MCwgMHhhOTAgfTsKKworCWI0M19waHlfc2V0KGRldiwgMHgxOWUsIDB4
+MWMwKTsKKwlpZiAoaXNfMmdoeikKKwkJYjQzX3BoeV93cml0ZShkZXYsIDB4M2M0LCAweDY2OCk7
+CisJYjQzX3BoeV9zZXQoZGV2LCAweDE5ZSwgMHgyMDApOworCWI0M19waHlfbWFza3NldChkZXYs
+IDB4MTllLCB+MHgzYywgMHgxMCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MWYyLCAweGM4KTsK
+KwliNDNfcGh5X3dyaXRlKGRldiwgMHgwMjYsIDB4OTIpOworCWI0M19waHlfd3JpdGUoZGV2LCAw
+eDFlZCwgMHg1MCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MDI1LCAweDMwKTsKKworCWlmIChk
+ZXYtPmRldi0+YnVzX3R5cGUgPT0gQjQzX0JVU19CQ01BKQorCQliY21hX2F3cml0ZTMyKGRldi0+
+ZGV2LT5iZGV2LCBCQ01BX0lPQ1RMLAorCQkJICAgICAgYmNtYV9hcmVhZDMyKGRldi0+ZGV2LT5i
+ZGV2LCBCQ01BX0lPQ1RMKSB8CisJCQkgICAgICBCNDNfQkNNQV9JT0NUTF9NQUNQSFlDTEtFTik7
+CisKKwliNDNfcGh5X21hc2soZGV2LCAweDQwZiwgfjB4MjAwKTsKKwliNDNfcGh5X21hc2soZGV2
+LCAweDJmMSwgfjB4MjApOworCWI0M19waHlfbWFzayhkZXYsIDB4MmVkLCB+MHgyMCk7CisJYjQz
+X3BoeV9tYXNrKGRldiwgMHgyZjksIH4weDIwKTsKKwliNDNfcGh5X21hc2soZGV2LCAweDJmNSwg
+fjB4MjApOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MmVmLCB+MHhmZiwgMHg1NSk7CisJYjQz
+X3BoeV9tYXNrc2V0KGRldiwgMHgyZWIsIH4weGZmLCAweDU1KTsKKwliNDNfcGh5X21hc2tzZXQo
+ZGV2LCAweDJmNywgfjB4ZmYsIDB4NTUpOworCWI0M19waHlfbWFza3NldChkZXYsIDB4MmYzLCB+
+MHhmZiwgMHg1NSk7CisKKwliNDNfcGh5X3dyaXRlKGRldiwgMHg0MDAsIDApOworCWI0M19waHlf
+bWFzayhkZXYsIDB4MWNhLCB+MHgxMDAwKTsKKwliNDNfcGh5X2FjX3Jlc2V0Y2NhKGRldik7CisJ
+YjQzX3BoeV9zZXQoZGV2LCAweDA3MiwgMHg0KTsKKwliNDNfcGh5X21hc2soZGV2LCAweDFiMCwg
+fjB4MjApOworCWI0M19waHlfc2V0KGRldiwgMHgxYjEsIDB4MTAwMCk7CisJYjQzX3BoeV9tYXNr
+KGRldiwgMHgxYjYsIDB4N2ZmZik7CisJZm9yIChjb3JlID0gMDsgY29yZSA8IGNvcmVzICYmIGNv
+cmUgPCAzOyBjb3JlKyspIHsKKwkJYjQzX3BoeV9zZXQoZGV2LCBjb3JlX3JlZ1tjb3JlXSwgMHgy
+MDApOworCQliNDNfcGh5X3NldChkZXYsIGNvcmVfcmVnW2NvcmVdLCAweDQwMCk7CisJfQorCWI0
+M19waHlfd3JpdGUoZGV2LCAweDFlNiwgMHgzMCk7CisJYjQzX3BoeV93cml0ZShkZXYsIDB4MzU4
+LCAweGMwN2YpOworCisJYjQzZGJnKGRldi0+d2wsICJwaHlfYWM6IGZpcnN0LWluaXQgcmVnaXN0
+ZXJzIGRvbmVcbiIpOworfQorCitzdGF0aWMgdm9pZCBiNDNfcGh5X2FjX3RhYmxlX3dyaXRlMTYo
+c3RydWN0IGI0M193bGRldiAqZGV2LCB1MTYgaWQsCisJCQkJICAgICB1MTYgb2Zmc2V0LCB1MTYg
+dmFsdWUpCit7CisJYjQzX3BoeV93cml0ZShkZXYsIEI0M19QSFlfQUNfVEFCTEVfSUQsIGlkKTsK
+KwliNDNfcGh5X3dyaXRlKGRldiwgQjQzX1BIWV9BQ19UQUJMRV9PRkZTRVQsIG9mZnNldCk7CisJ
+YjQzX3BoeV93cml0ZShkZXYsIEI0M19QSFlfQUNfVEFCTEVfREFUQTEsIHZhbHVlKTsKK30KKwor
+LyogU2V0IHRoZSBUWCBnYWluIG9mIGJvdGggY29yZXMgZnJvbSB0aGUgMi40IEdIeiBnYWluIHRh
+YmxlLCBhcyB0aGUgc3RvY2sKKyAqIGRyaXZlcidzIHR4cHdyX2J5X2luZGV4IGRvZXMgd2l0aCBo
+YXJkd2FyZSBwb3dlciBjb250cm9sIG9mZi4KKyAqLworc3RhdGljIHZvaWQgYjQzX3BoeV9hY190
+eHB3cl9ieV9pbmRleChzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYsIHVuc2lnbmVkIGludCBpZHgpCit7
+CisJY29uc3QgdTE2ICplID0gYjQzX3BoeV9hY190eGdhaW5fMmdbbWluKGlkeCwgMTI3dSldOwor
+CXUxNiBiYm11bHQgPSBlWzBdICYgMHgwMGZmOworCXUxNiBnMCA9IChlWzBdID4+IDgpIHwgKChl
+WzFdICYgMHgwMGZmKSA8PCA4KTsKKwl1MTYgZzEgPSAoZVsxXSA+PiA4KSB8ICgoZVsyXSAmIDB4
+MDBmZikgPDwgOCk7CisJdTE2IGcyID0gZVsyXSA+PiA4OworCXU4IGNvcmUsIGNvcmVzID0gYjQz
+X3BoeV9hY19udW1fY29yZXMoZGV2KTsKKworCWZvciAoY29yZSA9IDA7IGNvcmUgPCBjb3JlcyAm
+JiBjb3JlIDwgMzsgY29yZSsrKSB7CisJCWI0M19waHlfYWNfdGFibGVfd3JpdGUxNihkZXYsIDcs
+IGNvcmUgKyAweDEwMCwgZzApOworCQliNDNfcGh5X2FjX3RhYmxlX3dyaXRlMTYoZGV2LCA3LCBj
+b3JlICsgMHgxMDMsIGcxKTsKKwkJYjQzX3BoeV9hY190YWJsZV93cml0ZTE2KGRldiwgNywgY29y
+ZSArIDB4MTA2LCBnMik7CisJCWI0M19waHlfYWNfdGFibGVfd3JpdGUxNihkZXYsIDB4YywgMHg2
+MyArIDQgKiBjb3JlLCBiYm11bHQpOworCQliNDNfcGh5X2FjX3RhYmxlX3dyaXRlMTYoZGV2LCAw
+eGMsIDB4NzMgKyA0ICogY29yZSwgYmJtdWx0KTsKKwl9Cit9CisKK3N0YXRpYyBpbnQgYjQzX3Bo
+eV9hY19vcF9pbml0KHN0cnVjdCBiNDNfd2xkZXYgKmRldikKK3sKKwlpZiAoZGV2LT5waHkucmV2
+IDw9IDEpIHsKKwkJYjQzX3BoeV9hY190YWJsZXNfaW5pdChkZXYpOworCQliNDNfcGh5X2FjX2Zp
+cnN0X2luaXQoZGV2KTsKKwkJLyogVGhlIGNoYW5uZWwgc3dpdGNoIHRoYXQgZm9sbG93cyBpbml0
+IHR1bmVzIHRoZSByYWRpby4gKi8KKwkJYjQzX3BoeV9hY19zZXR1cF9yZWdzKGRldik7CisJfSBl
+bHNlIHsKKwkJYjQzZXJyKGRldi0+d2wsICJwaHlfYWM6IG5vIHRhYmxlIHNldCBmb3IgUEhZIHJl
+diAldVxuIiwKKwkJICAgICAgIGRldi0+cGh5LnJldik7CisJfQorCisJYjQzZGJnKGRldi0+d2ws
+CisJICAgICAgICJwaHlfYWM6IGluaXQgKGNvcmVfcmV2ICV1LCByYWRpbzI0PSVkLCBjaGlwICUw
+NHgsIGJvYXJkICUwNHgsIHJhZGlvX29uICVkKVxuIiwKKwkgICAgICAgZGV2LT5kZXYtPmNvcmVf
+cmV2LCBiNDNfcGh5X2FjX3VzZV9yYWRpbzI0KGRldiksCisJICAgICAgIGRldi0+ZGV2LT5jaGlw
+X2lkLCBkZXYtPmRldi0+Ym9hcmRfdHlwZSwgZGV2LT5waHkuYWMtPnJhZGlvX29uKTsKKworCXJl
+dHVybiAwOworfQorCisvKgorICogU2VsZi1oZWFsaW5nIGZvciBhIGJhZCBpbml0OiBvbmx5IGFi
+b3V0IDMwICUgb2YgZnJlc2ggaW5pdHMgY2FuIHRyYW5zbWl0OyBpbgorICogdGhlIG90aGVycyBl
+dmVyeSBUWCBlbmRzIGluIGEgUEhZIFRYIGVycm9yLiBUaGUgMTUgcyB3b3JrIHBvbGxzIHRoZSB1
+Y29kZSdzCisgKiB0eHBoeWVyciBjb3VudGVyIChTSE0gMHhGRSkgYW5kIHJlc3RhcnRzIHRoZSBj
+b3JlIHRocm91Z2ggbWFjODAyMTEgKGZyZXNoCisgKiBpbml0LCBmcmVzaCBjb2luIGZsaXApIGFm
+dGVyID49IDMgZXJyb3JzIGluIGEgd2luZG93LCBhdCBtb3N0IDMgdGltZXMKKyAqIChCNDNfQUNf
+U0VMRkhFQUxfTUFYKTsgdGhlIGJ1ZGdldCByZWZpbGxzIGFmdGVyIDEwIHF1aWV0IG1pbnV0ZXMu
+IFBvbGxlZCwgbm90CisgKiBJUlEtZHJpdmVuOiB1bm1hc2tpbmcgQjQzX0lSUV9QSFlfVFhFUlIg
+aHVuZyB0aGUgbWFjaGluZS4KKyAqLworI2RlZmluZSBCNDNfQUNfU0VMRkhFQUxfTUFYCTMKKyNk
+ZWZpbmUgQjQzX0FDX1NIX1RYUEhZRVJSCTB4MDBGRQorCitzdGF0aWMgYm9vbCBiNDNfcGh5X2Fj
+X2NoZWNrX2JhZGluaXQoc3RydWN0IGI0M193bGRldiAqZGV2KQoreworCXN0YXRpYyB1bnNpZ25l
+ZCBpbnQgcmVzdGFydHM7CisJc3RhdGljIHVuc2lnbmVkIGxvbmcgbGFzdF9yZXN0YXJ0OworCXN0
+YXRpYyB1MTYgbGFzdDsKKwl1MTYgbm93LCBkOworCisJaWYgKHJlc3RhcnRzICYmIHRpbWVfYWZ0
+ZXIoamlmZmllcywgbGFzdF9yZXN0YXJ0ICsgNjAwICogSFopKQorCQlyZXN0YXJ0cyA9IDA7CisJ
+bm93ID0gYjQzX3NobV9yZWFkMTYoZGV2LCBCNDNfU0hNX1NIQVJFRCwgQjQzX0FDX1NIX1RYUEhZ
+RVJSKTsKKwlkID0gbm93IC0gbGFzdDsKKwlsYXN0ID0gbm93OworCWlmIChkIDwgMyB8fCByZXN0
+YXJ0cyA+PSBCNDNfQUNfU0VMRkhFQUxfTUFYKQorCQlyZXR1cm4gZmFsc2U7CisJcmVzdGFydHMr
+KzsKKwlsYXN0X3Jlc3RhcnQgPSBqaWZmaWVzOworCWxhc3QgPSAwOwkvKiB0aGUgdWNvZGUgaXMg
+cmVsb2FkZWQsIGl0cyBjb3VudGVycyByZXN0YXJ0IGF0IDAgKi8KKwliNDNlcnIoZGV2LT53bCwg
+IkFDLVBIWTogYmFkIGluaXQgKCV1IFBIWSBUWCBlcnJvcnMpLCByZXN0YXJ0ICV1LyV1XG4iLAor
+CSAgICAgICBkLCByZXN0YXJ0cywgQjQzX0FDX1NFTEZIRUFMX01BWCk7CisJYjQzX2NvbnRyb2xs
+ZXJfcmVzdGFydChkZXYsICJBQyBiYWQgaW5pdCIpOworCXJldHVybiB0cnVlOworfQorCitzdGF0
+aWMgdm9pZCBiNDNfcGh5X2FjX29wX3B3b3JrXzE1c2VjKHN0cnVjdCBiNDNfd2xkZXYgKmRldikK
+K3sKKwliNDNfcGh5X2FjX2NoZWNrX2JhZGluaXQoZGV2KTsKIH0KIAogc3RhdGljIHVuc2lnbmVk
+IGludCBiNDNfcGh5X2FjX29wX2dldF9kZWZhdWx0X2NoYW4oc3RydWN0IGI0M193bGRldiAqZGV2
+KQpAQCAtNzksMTAgKzEwNzgsMTcgQEAgc3RhdGljIHZvaWQgYjQzX3BoeV9hY19vcF9hZGp1c3Rf
+dHhwb3dlcihzdHJ1Y3QgYjQzX3dsZGV2ICpkZXYpCiBjb25zdCBzdHJ1Y3QgYjQzX3BoeV9vcGVy
+YXRpb25zIGI0M19waHlvcHNfYWMgPSB7CiAJLmFsbG9jYXRlCQk9IGI0M19waHlfYWNfb3BfYWxs
+b2NhdGUsCiAJLmZyZWUJCQk9IGI0M19waHlfYWNfb3BfZnJlZSwKKwkucHJlcGFyZV9zdHJ1Y3Rz
+CT0gYjQzX3BoeV9hY19vcF9wcmVwYXJlX3N0cnVjdHMsCisJLmluaXQJCQk9IGI0M19waHlfYWNf
+b3BfaW5pdCwKKwkucGh5X3dyaXRlCQk9IGI0M19waHlfYWNfb3Bfd3JpdGUsCiAJLnBoeV9tYXNr
+c2V0CQk9IGI0M19waHlfYWNfb3BfbWFza3NldCwKIAkucmFkaW9fcmVhZAkJPSBiNDNfcGh5X2Fj
+X29wX3JhZGlvX3JlYWQsCiAJLnJhZGlvX3dyaXRlCQk9IGI0M19waHlfYWNfb3BfcmFkaW9fd3Jp
+dGUsCisJLnNvZnR3YXJlX3Jma2lsbAk9IGI0M19waHlfYWNfb3Bfc29mdHdhcmVfcmZraWxsLAor
+CS5zd2l0Y2hfYW5hbG9nCQk9IGI0M19waHlfYWNfb3Bfc3dpdGNoX2FuYWxvZywKKwkuc3dpdGNo
+X2NoYW5uZWwJCT0gYjQzX3BoeV9hY19vcF9zd2l0Y2hfY2hhbm5lbCwKIAkuZ2V0X2RlZmF1bHRf
+Y2hhbgk9IGI0M19waHlfYWNfb3BfZ2V0X2RlZmF1bHRfY2hhbiwKIAkucmVjYWxjX3R4cG93ZXIJ
+CT0gYjQzX3BoeV9hY19vcF9yZWNhbGNfdHhwb3dlciwKIAkuYWRqdXN0X3R4cG93ZXIJCT0gYjQz
+X3BoeV9hY19vcF9hZGp1c3RfdHhwb3dlciwKKwkucHdvcmtfMTVzZWMJCT0gYjQzX3BoeV9hY19v
+cF9wd29ya18xNXNlYywKIH07CmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9h
+ZGNvbS9iNDMvcGh5X2FjLmggYi9kcml2ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMvcGh5
+X2FjLmgKaW5kZXggMDJlYjZjMC4uMGI2ODk2ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9uZXQvd2ly
+ZWxlc3MvYnJvYWRjb20vYjQzL3BoeV9hYy5oCisrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2Jy
+b2FkY29tL2I0My9waHlfYWMuaApAQCAtMzIsNiArMzIsOSBAQAogI2RlZmluZSAgQjQzX1BIWV9B
+Q19DM19DTElQX0RJUwkJCTB4NDAwMAogCiBzdHJ1Y3QgYjQzX3BoeV9hYyB7CisJLyogQmFuZCBv
+ZiB0aGUgbGFzdCBjaGFubmVsIHN3aXRjaDsgdmFsaWQgb25jZSBjaGFuX3NldCBpcyB0cnVlLiAq
+LworCWJvb2wgY2hhbl9zZXQ7CisJYm9vbCByYWRpb19vbjsKIH07CiAKIGV4dGVybiBjb25zdCBz
+dHJ1Y3QgYjQzX3BoeV9vcGVyYXRpb25zIGI0M19waHlvcHNfYWM7CmRpZmYgLS1naXQgYS9kcml2
+ZXJzL25ldC93aXJlbGVzcy9icm9hZGNvbS9iNDMvcGh5X2FjX2ZhcnJvdy5oIGIvZHJpdmVycy9u
+ZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL3BoeV9hY19mYXJyb3cuaApuZXcgZmlsZSBtb2RlIDEw
+MDY0NAppbmRleCAwMDAwMDAwLi5jNzA3ZDRkCi0tLSAvZGV2L251bGwKKysrIGIvZHJpdmVycy9u
+ZXQvd2lyZWxlc3MvYnJvYWRjb20vYjQzL3BoeV9hY19mYXJyb3cuaApAQCAtMCwwICsxLDI2MCBA
+QAorLyogU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAgKi8KKy8qCisgKiB0aGUgdmVu
+ZG9yIGRyaXZlcidzIHJ4X2ZhcnJvd190YmwgLyB0eF9mYXJyb3dfZGFjMV90YmwsIDIwIE1IeiBz
+ZWN0aW9uCisgKiAoZHVtcF9mYXJyb3cuamF2YSkuCisgKgorICogQ29weXJpZ2h0IChjKSAyMDI2
+IEFuZHJlYXMgV2VuZGxlZGVyIDxnb25zb2xvQGdtYWlsLmNvbT4KKyAqLworc3RhdGljIGNvbnN0
+IHN0cnVjdCBiNDNfcGh5X2FjX2ZhcnJvdyB7CisJdTggY2hhbm5lbDsKKwkvKiBQSFkgMHgxOWEv
+MHgxOWIvMHgxOWMvMHgxOTksIGNvcmUgMSBhdCAweDFhMS8weDFhMi8weDFhMy8weDFhMCAqLwor
+CXUxNiByeFs0XTsKKwl1MTYgdHhbNF07CS8qIFBIWSAweDE2MDMvMHgxNjAyLzB4MTYwNy8weDE2
+MDYgKi8KK30gYjQzX3BoeV9hY19mYXJyb3dfMjBbXSA9IHsKKwl7IDE4NCwgeyAweDAwMDAsIDB4
+MDA0OCwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGU3MDYsIDB4MDA2MywgMHhlNzA2
+LCAweDAwNjMgfSB9LAorCXsgMTg2LCB7IDB4YWFhYiwgMHgwMDQ4LCAweDBmMDAsIDB4MDBhNyB9
+LAorCSAgICAgICB7IDB4YjMyNiwgMHgwMDYzLCAweGIzMjYsIDB4MDA2MyB9IH0sCisJeyAxODgs
+IHsgMHg1NTU1LCAweDAwNDksIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg3ZjdiLCAw
+eDAwNjMsIDB4N2Y3YiwgMHgwMDYzIH0gfSwKKwl7IDE5MCwgeyAweDAwMDAsIDB4MDA0YSwgMHgw
+ZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDRjMDYsIDB4MDA2MywgMHg0YzA2LCAweDAwNjMg
+fSB9LAorCXsgMTkyLCB7IDB4YWFhYiwgMHgwMDRhLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAg
+ICB7IDB4MThjNiwgMHgwMDYzLCAweDE4YzYsIDB4MDA2MyB9IH0sCisJeyAxOTQsIHsgMHg1NTU1
+LCAweDAwNGIsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhlNWJiLCAweDAwNjIsIDB4
+ZTViYiwgMHgwMDYyIH0gfSwKKwl7IDE5NiwgeyAweDAwMDAsIDB4MDA0YywgMHgwZjAwLCAweDAw
+YTcgfSwKKwkgICAgICAgeyAweGIyZTQsIDB4MDA2MiwgMHhiMmU0LCAweDAwNjIgfSB9LAorCXsg
+MTk4LCB7IDB4YWFhYiwgMHgwMDRjLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4ODA0
+MiwgMHgwMDYyLCAweDgwNDIsIDB4MDA2MiB9IH0sCisJeyAyMDAsIHsgMHg1NTU1LCAweDAwNGQs
+IDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg0ZGQzLCAweDAwNjIsIDB4NGRkMywgMHgw
+MDYyIH0gfSwKKwl7IDIwMiwgeyAweDAwMDAsIDB4MDA0ZSwgMHgwZjAwLCAweDAwYTcgfSwKKwkg
+ICAgICAgeyAweDFiOTgsIDB4MDA2MiwgMHgxYjk4LCAweDAwNjIgfSB9LAorCXsgMjA0LCB7IDB4
+YWFhYiwgMHgwMDRlLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4ZTk5MCwgMHgwMDYx
+LCAweGU5OTAsIDB4MDA2MSB9IH0sCisJeyAyMDYsIHsgMHg1NTU1LCAweDAwNGYsIDB4MGYwMCwg
+MHgwMGE3IH0sCisJICAgICAgIHsgMHhiN2JiLCAweDAwNjEsIDB4YjdiYiwgMHgwMDYxIH0gfSwK
+Kwl7IDIwOCwgeyAweDAwMDAsIDB4MDA1MCwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAw
+eDg2MTgsIDB4MDA2MSwgMHg4NjE4LCAweDAwNjEgfSB9LAorCXsgMjEwLCB7IDB4YWFhYiwgMHgw
+MDUwLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4NTRhOCwgMHgwMDYxLCAweDU0YTgs
+IDB4MDA2MSB9IH0sCisJeyAyMTIsIHsgMHg1NTU1LCAweDAwNTEsIDB4MGYwMCwgMHgwMGE3IH0s
+CisJICAgICAgIHsgMHgyMzZhLCAweDAwNjEsIDB4MjM2YSwgMHgwMDYxIH0gfSwKKwl7IDIxNCwg
+eyAweDAwMDAsIDB4MDA1MiwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGYyNWUsIDB4
+MDA2MCwgMHhmMjVlLCAweDAwNjAgfSB9LAorCXsgMjE2LCB7IDB4YWFhYiwgMHgwMDUyLCAweDBm
+MDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4YzE4MywgMHgwMDYwLCAweGMxODMsIDB4MDA2MCB9
+IH0sCisJeyAyMTgsIHsgMHg1NTU1LCAweDAwNTMsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAg
+IHsgMHg5MGQ5LCAweDAwNjAsIDB4OTBkOSwgMHgwMDYwIH0gfSwKKwl7IDIyMCwgeyAweDAwMDAs
+IDB4MDA1NCwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDYwNjAsIDB4MDA2MCwgMHg2
+MDYwLCAweDAwNjAgfSB9LAorCXsgMjIyLCB7IDB4YWFhYiwgMHgwMDU0LCAweDBmMDAsIDB4MDBh
+NyB9LAorCSAgICAgICB7IDB4MzAxOCwgMHgwMDYwLCAweDMwMTgsIDB4MDA2MCB9IH0sCisJeyAy
+MjQsIHsgMHg1NTU1LCAweDAwNTUsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHgwMDAw
+LCAweDAwNjAsIDB4MDAwMCwgMHgwMDYwIH0gfSwKKwl7IDIyNiwgeyAweDAwMDAsIDB4MDA1Niwg
+MHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGQwMTgsIDB4MDA1ZiwgMHhkMDE4LCAweDAw
+NWYgfSB9LAorCXsgMjI4LCB7IDB4YWFhYiwgMHgwMDU2LCAweDBmMDAsIDB4MDBhNyB9LAorCSAg
+ICAgICB7IDB4YTA2MCwgMHgwMDVmLCAweGEwNjAsIDB4MDA1ZiB9IH0sCisJeyAgMzIsIHsgMHgw
+MDAwLCAweDAwNTgsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg0MTdkLCAweDAwNWYs
+IDB4NDE3ZCwgMHgwMDVmIH0gfSwKKwl7ICAzNCwgeyAweGFhYWIsIDB4MDA1OCwgMHgwZjAwLCAw
+eDAwYTcgfSwKKwkgICAgICAgeyAweDEyNTIsIDB4MDA1ZiwgMHgxMjUyLCAweDAwNWYgfSB9LAor
+CXsgIDM2LCB7IDB4NTU1NSwgMHgwMDU5LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4
+ZTM1NiwgMHgwMDVlLCAweGUzNTYsIDB4MDA1ZSB9IH0sCisJeyAgMzgsIHsgMHgwMDAwLCAweDAw
+NWEsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhiNDg4LCAweDAwNWUsIDB4YjQ4OCwg
+MHgwMDVlIH0gfSwKKwl7ICA0MCwgeyAweGFhYWIsIDB4MDA1YSwgMHgwZjAwLCAweDAwYTcgfSwK
+KwkgICAgICAgeyAweDg1ZTgsIDB4MDA1ZSwgMHg4NWU4LCAweDAwNWUgfSB9LAorCXsgIDQyLCB7
+IDB4NTU1NSwgMHgwMDViLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4NTc3NiwgMHgw
+MDVlLCAweDU3NzYsIDB4MDA1ZSB9IH0sCisJeyAgNDQsIHsgMHgwMDAwLCAweDAwNWMsIDB4MGYw
+MCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHgyOTMyLCAweDAwNWUsIDB4MjkzMiwgMHgwMDVlIH0g
+fSwKKwl7ICA0NiwgeyAweGFhYWIsIDB4MDA1YywgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAg
+eyAweGZiMWIsIDB4MDA1ZCwgMHhmYjFiLCAweDAwNWQgfSB9LAorCXsgIDQ4LCB7IDB4NTU1NSwg
+MHgwMDVkLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4Y2QzMSwgMHgwMDVkLCAweGNk
+MzEsIDB4MDA1ZCB9IH0sCisJeyAgNTAsIHsgMHgwMDAwLCAweDAwNWUsIDB4MGYwMCwgMHgwMGE3
+IH0sCisJICAgICAgIHsgMHg5Zjc0LCAweDAwNWQsIDB4OWY3NCwgMHgwMDVkIH0gfSwKKwl7ICA1
+MiwgeyAweGFhYWIsIDB4MDA1ZSwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDcxZTMs
+IDB4MDA1ZCwgMHg3MWUzLCAweDAwNWQgfSB9LAorCXsgIDU0LCB7IDB4NTU1NSwgMHgwMDVmLCAw
+eDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4NDQ3ZSwgMHgwMDVkLCAweDQ0N2UsIDB4MDA1
+ZCB9IH0sCisJeyAgNTYsIHsgMHgwMDAwLCAweDAwNjAsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAg
+ICAgIHsgMHgxNzQ2LCAweDAwNWQsIDB4MTc0NiwgMHgwMDVkIH0gfSwKKwl7ICA1OCwgeyAweGFh
+YWIsIDB4MDA2MCwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGVhMzksIDB4MDA1Yywg
+MHhlYTM5LCAweDAwNWMgfSB9LAorCXsgIDYwLCB7IDB4NTU1NSwgMHgwMDYxLCAweDBmMDAsIDB4
+MDBhNyB9LAorCSAgICAgICB7IDB4YmQ1OCwgMHgwMDVjLCAweGJkNTgsIDB4MDA1YyB9IH0sCisJ
+eyAgNjIsIHsgMHgwMDAwLCAweDAwNjIsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg5
+MGEyLCAweDAwNWMsIDB4OTBhMiwgMHgwMDVjIH0gfSwKKwl7ICA2NCwgeyAweGFhYWIsIDB4MDA2
+MiwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDY0MTcsIDB4MDA1YywgMHg2NDE3LCAw
+eDAwNWMgfSB9LAorCXsgIDY2LCB7IDB4NTU1NSwgMHgwMDYzLCAweDBmMDAsIDB4MDBhNyB9LAor
+CSAgICAgICB7IDB4MzdiNywgMHgwMDVjLCAweDM3YjcsIDB4MDA1YyB9IH0sCisJeyAgNjgsIHsg
+MHgwMDAwLCAweDAwNjQsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHgwYjgxLCAweDAw
+NWMsIDB4MGI4MSwgMHgwMDVjIH0gfSwKKwl7ICA3MCwgeyAweGFhYWIsIDB4MDA2NCwgMHgwZjAw
+LCAweDAwYTcgfSwKKwkgICAgICAgeyAweGRmNzYsIDB4MDA1YiwgMHhkZjc2LCAweDAwNWIgfSB9
+LAorCXsgIDcyLCB7IDB4NTU1NSwgMHgwMDY1LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7
+IDB4YjM5NSwgMHgwMDViLCAweGIzOTUsIDB4MDA1YiB9IH0sCisJeyAgNzQsIHsgMHgwMDAwLCAw
+eDAwNjYsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg4N2RlLCAweDAwNWIsIDB4ODdk
+ZSwgMHgwMDViIH0gfSwKKwl7ICA3NiwgeyAweGFhYWIsIDB4MDA2NiwgMHgwZjAwLCAweDAwYTcg
+fSwKKwkgICAgICAgeyAweDVjNTAsIDB4MDA1YiwgMHg1YzUwLCAweDAwNWIgfSB9LAorCXsgIDc4
+LCB7IDB4NTU1NSwgMHgwMDY3LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4MzBlYywg
+MHgwMDViLCAweDMwZWMsIDB4MDA1YiB9IH0sCisJeyAgODAsIHsgMHgwMDAwLCAweDAwNjgsIDB4
+MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHgwNWIwLCAweDAwNWIsIDB4MDViMCwgMHgwMDVi
+IH0gfSwKKwl7ICA4MiwgeyAweGFhYWIsIDB4MDA2OCwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAg
+ICAgeyAweGRhOWUsIDB4MDA1YSwgMHhkYTllLCAweDAwNWEgfSB9LAorCXsgIDg0LCB7IDB4NTU1
+NSwgMHgwMDY5LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4YWZiNCwgMHgwMDVhLCAw
+eGFmYjQsIDB4MDA1YSB9IH0sCisJeyAgODYsIHsgMHgwMDAwLCAweDAwNmEsIDB4MGYwMCwgMHgw
+MGE3IH0sCisJICAgICAgIHsgMHg4NGYzLCAweDAwNWEsIDB4ODRmMywgMHgwMDVhIH0gfSwKKwl7
+ICA4OCwgeyAweGFhYWIsIDB4MDA2YSwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDVh
+NWEsIDB4MDA1YSwgMHg1YTVhLCAweDAwNWEgfSB9LAorCXsgIDkwLCB7IDB4NTU1NSwgMHgwMDZi
+LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4MmZlOSwgMHgwMDVhLCAweDJmZTksIDB4
+MDA1YSB9IH0sCisJeyAgOTIsIHsgMHgwMDAwLCAweDAwNmMsIDB4MGYwMCwgMHgwMGE3IH0sCisJ
+ICAgICAgIHsgMHgwNWEwLCAweDAwNWEsIDB4MDVhMCwgMHgwMDVhIH0gfSwKKwl7ICA5NCwgeyAw
+eGFhYWIsIDB4MDA2YywgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGRiN2YsIDB4MDA1
+OSwgMHhkYjdmLCAweDAwNTkgfSB9LAorCXsgIDk2LCB7IDB4NTU1NSwgMHgwMDZkLCAweDBmMDAs
+IDB4MDBhNyB9LAorCSAgICAgICB7IDB4YjE4NSwgMHgwMDU5LCAweGIxODUsIDB4MDA1OSB9IH0s
+CisJeyAgOTgsIHsgMHgwMDAwLCAweDAwNmUsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsg
+MHg4N2IyLCAweDAwNTksIDB4ODdiMiwgMHgwMDU5IH0gfSwKKwl7IDEwMCwgeyAweGFhYWIsIDB4
+MDA2ZSwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDVlMDYsIDB4MDA1OSwgMHg1ZTA2
+LCAweDAwNTkgfSB9LAorCXsgMTAyLCB7IDB4NTU1NSwgMHgwMDZmLCAweDBmMDAsIDB4MDBhNyB9
+LAorCSAgICAgICB7IDB4MzQ4MCwgMHgwMDU5LCAweDM0ODAsIDB4MDA1OSB9IH0sCisJeyAxMDQs
+IHsgMHgwMDAwLCAweDAwNzAsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHgwYjIxLCAw
+eDAwNTksIDB4MGIyMSwgMHgwMDU5IH0gfSwKKwl7IDEwNiwgeyAweGFhYWIsIDB4MDA3MCwgMHgw
+ZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGUxZTksIDB4MDA1OCwgMHhlMWU5LCAweDAwNTgg
+fSB9LAorCXsgMTA4LCB7IDB4NTU1NSwgMHgwMDcxLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAg
+ICB7IDB4YjhkNiwgMHgwMDU4LCAweGI4ZDYsIDB4MDA1OCB9IH0sCisJeyAxMTAsIHsgMHgwMDAw
+LCAweDAwNzIsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg4ZmVhLCAweDAwNTgsIDB4
+OGZlYSwgMHgwMDU4IH0gfSwKKwl7IDExMiwgeyAweGFhYWIsIDB4MDA3MiwgMHgwZjAwLCAweDAw
+YTcgfSwKKwkgICAgICAgeyAweDY3MjMsIDB4MDA1OCwgMHg2NzIzLCAweDAwNTggfSB9LAorCXsg
+MTE0LCB7IDB4NTU1NSwgMHgwMDczLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4M2U4
+MiwgMHgwMDU4LCAweDNlODIsIDB4MDA1OCB9IH0sCisJeyAxMTYsIHsgMHgwMDAwLCAweDAwNzQs
+IDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHgxNjA2LCAweDAwNTgsIDB4MTYwNiwgMHgw
+MDU4IH0gfSwKKwl7IDExOCwgeyAweGFhYWIsIDB4MDA3NCwgMHgwZjAwLCAweDAwYTcgfSwKKwkg
+ICAgICAgeyAweGVkYWUsIDB4MDA1NywgMHhlZGFlLCAweDAwNTcgfSB9LAorCXsgMTIwLCB7IDB4
+NTU1NSwgMHgwMDc1LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4YzU3YywgMHgwMDU3
+LCAweGM1N2MsIDB4MDA1NyB9IH0sCisJeyAxMjIsIHsgMHgwMDAwLCAweDAwNzYsIDB4MGYwMCwg
+MHgwMGE3IH0sCisJICAgICAgIHsgMHg5ZDZmLCAweDAwNTcsIDB4OWQ2ZiwgMHgwMDU3IH0gfSwK
+Kwl7IDEyNCwgeyAweGFhYWIsIDB4MDA3NiwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAw
+eDc1ODYsIDB4MDA1NywgMHg3NTg2LCAweDAwNTcgfSB9LAorCXsgMTI2LCB7IDB4NTU1NSwgMHgw
+MDc3LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4NGRjMSwgMHgwMDU3LCAweDRkYzEs
+IDB4MDA1NyB9IH0sCisJeyAxMjgsIHsgMHgwMDAwLCAweDAwNzgsIDB4MGYwMCwgMHgwMGE3IH0s
+CisJICAgICAgIHsgMHgyNjIxLCAweDAwNTcsIDB4MjYyMSwgMHgwMDU3IH0gfSwKKwl7IDEzMCwg
+eyAweGFhYWIsIDB4MDA3OCwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGZlYTQsIDB4
+MDA1NiwgMHhmZWE0LCAweDAwNTYgfSB9LAorCXsgMTMyLCB7IDB4NTU1NSwgMHgwMDc5LCAweDBm
+MDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4ZDc0YiwgMHgwMDU2LCAweGQ3NGIsIDB4MDA1NiB9
+IH0sCisJeyAxMzQsIHsgMHgwMDAwLCAweDAwN2EsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAg
+IHsgMHhiMDE2LCAweDAwNTYsIDB4YjAxNiwgMHgwMDU2IH0gfSwKKwl7IDEzNiwgeyAweGFhYWIs
+IDB4MDA3YSwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDg5MDQsIDB4MDA1NiwgMHg4
+OTA0LCAweDAwNTYgfSB9LAorCXsgMTM4LCB7IDB4NTU1NSwgMHgwMDdiLCAweDBmMDAsIDB4MDBh
+NyB9LAorCSAgICAgICB7IDB4NjIxNSwgMHgwMDU2LCAweDYyMTUsIDB4MDA1NiB9IH0sCisJeyAx
+NDAsIHsgMHgwMDAwLCAweDAwN2MsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHgzYjQ5
+LCAweDAwNTYsIDB4M2I0OSwgMHgwMDU2IH0gfSwKKwl7IDE0MiwgeyAweGFhYWIsIDB4MDA3Yywg
+MHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDE0YTAsIDB4MDA1NiwgMHgxNGEwLCAweDAw
+NTYgfSB9LAorCXsgMTQ0LCB7IDB4NTU1NSwgMHgwMDdkLCAweDBmMDAsIDB4MDBhNyB9LAorCSAg
+ICAgICB7IDB4ZWUxOSwgMHgwMDU1LCAweGVlMTksIDB4MDA1NSB9IH0sCisJeyAxNDUsIHsgMHhh
+YWFiLCAweDAwN2QsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhkYWUzLCAweDAwNTUs
+IDB4ZGFlMywgMHgwMDU1IH0gfSwKKwl7IDE0NiwgeyAweDAwMDAsIDB4MDA3ZSwgMHgwZjAwLCAw
+eDAwYTcgfSwKKwkgICAgICAgeyAweGM3YjUsIDB4MDA1NSwgMHhjN2I1LCAweDAwNTUgfSB9LAor
+CXsgMTQ3LCB7IDB4NTU1NSwgMHgwMDdlLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4
+YjQ5MCwgMHgwMDU1LCAweGI0OTAsIDB4MDA1NSB9IH0sCisJeyAxNDgsIHsgMHhhYWFiLCAweDAw
+N2UsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhhMTczLCAweDAwNTUsIDB4YTE3Mywg
+MHgwMDU1IH0gfSwKKwl7IDE0OSwgeyAweDAwMDAsIDB4MDA3ZiwgMHgwZjAwLCAweDAwYTcgfSwK
+KwkgICAgICAgeyAweDhlNWYsIDB4MDA1NSwgMHg4ZTVmLCAweDAwNTUgfSB9LAorCXsgMTUwLCB7
+IDB4NTU1NSwgMHgwMDdmLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4N2I1MywgMHgw
+MDU1LCAweDdiNTMsIDB4MDA1NSB9IH0sCisJeyAxNTEsIHsgMHhhYWFiLCAweDAwN2YsIDB4MGYw
+MCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg2ODUwLCAweDAwNTUsIDB4Njg1MCwgMHgwMDU1IH0g
+fSwKKwl7IDE1MiwgeyAweDAwMDAsIDB4MDA4MCwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAg
+eyAweDU1NTUsIDB4MDA1NSwgMHg1NTU1LCAweDAwNTUgfSB9LAorCXsgMTUzLCB7IDB4NTU1NSwg
+MHgwMDgwLCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4NDI2MywgMHgwMDU1LCAweDQy
+NjMsIDB4MDA1NSB9IH0sCisJeyAxNTQsIHsgMHhhYWFiLCAweDAwODAsIDB4MGYwMCwgMHgwMGE3
+IH0sCisJICAgICAgIHsgMHgyZjc5LCAweDAwNTUsIDB4MmY3OSwgMHgwMDU1IH0gfSwKKwl7IDE1
+NSwgeyAweDAwMDAsIDB4MDA4MSwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDFjOTgs
+IDB4MDA1NSwgMHgxYzk4LCAweDAwNTUgfSB9LAorCXsgMTU2LCB7IDB4NTU1NSwgMHgwMDgxLCAw
+eDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4MDliZSwgMHgwMDU1LCAweDA5YmUsIDB4MDA1
+NSB9IH0sCisJeyAxNTcsIHsgMHhhYWFiLCAweDAwODEsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAg
+ICAgIHsgMHhmNmVlLCAweDAwNTQsIDB4ZjZlZSwgMHgwMDU0IH0gfSwKKwl7IDE1OCwgeyAweDAw
+MDAsIDB4MDA4MiwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGU0MjUsIDB4MDA1NCwg
+MHhlNDI1LCAweDAwNTQgfSB9LAorCXsgMTU5LCB7IDB4NTU1NSwgMHgwMDgyLCAweDBmMDAsIDB4
+MDBhNyB9LAorCSAgICAgICB7IDB4ZDE2NSwgMHgwMDU0LCAweGQxNjUsIDB4MDA1NCB9IH0sCisJ
+eyAxNjAsIHsgMHhhYWFiLCAweDAwODIsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhi
+ZWFkLCAweDAwNTQsIDB4YmVhZCwgMHgwMDU0IH0gfSwKKwl7IDE2MSwgeyAweDAwMDAsIDB4MDA4
+MywgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGFiZmQsIDB4MDA1NCwgMHhhYmZkLCAw
+eDAwNTQgfSB9LAorCXsgMTYyLCB7IDB4NTU1NSwgMHgwMDgzLCAweDBmMDAsIDB4MDBhNyB9LAor
+CSAgICAgICB7IDB4OTk1NiwgMHgwMDU0LCAweDk5NTYsIDB4MDA1NCB9IH0sCisJeyAxNjMsIHsg
+MHhhYWFiLCAweDAwODMsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg4NmI3LCAweDAw
+NTQsIDB4ODZiNywgMHgwMDU0IH0gfSwKKwl7IDE2NCwgeyAweDAwMDAsIDB4MDA4NCwgMHgwZjAw
+LCAweDAwYTcgfSwKKwkgICAgICAgeyAweDc0MjAsIDB4MDA1NCwgMHg3NDIwLCAweDAwNTQgfSB9
+LAorCXsgMTY1LCB7IDB4NTU1NSwgMHgwMDg0LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7
+IDB4NjE5MSwgMHgwMDU0LCAweDYxOTEsIDB4MDA1NCB9IH0sCisJeyAxNjYsIHsgMHhhYWFiLCAw
+eDAwODQsIDB4MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg0ZjBhLCAweDAwNTQsIDB4NGYw
+YSwgMHgwMDU0IH0gfSwKKwl7IDE2OCwgeyAweDU1NTUsIDB4MDA4NSwgMHgwZjAwLCAweDAwYTcg
+fSwKKwkgICAgICAgeyAweDJhMTUsIDB4MDA1NCwgMHgyYTE1LCAweDAwNTQgfSB9LAorCXsgMTcw
+LCB7IDB4MDAwMCwgMHgwMDg2LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4MDU0MCwg
+MHgwMDU0LCAweDA1NDAsIDB4MDA1NCB9IH0sCisJeyAxNzIsIHsgMHhhYWFiLCAweDAwODYsIDB4
+MGYwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhlMDhjLCAweDAwNTMsIDB4ZTA4YywgMHgwMDUz
+IH0gfSwKKwl7IDE3NCwgeyAweDU1NTUsIDB4MDA4NywgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAg
+ICAgeyAweGJiZjcsIDB4MDA1MywgMHhiYmY3LCAweDAwNTMgfSB9LAorCXsgMTc2LCB7IDB4MDAw
+MCwgMHgwMDg4LCAweDBmMDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4OTc4MywgMHgwMDUzLCAw
+eDk3ODMsIDB4MDA1MyB9IH0sCisJeyAxNzgsIHsgMHhhYWFiLCAweDAwODgsIDB4MGYwMCwgMHgw
+MGE3IH0sCisJICAgICAgIHsgMHg3MzJlLCAweDAwNTMsIDB4NzMyZSwgMHgwMDUzIH0gfSwKKwl7
+IDE4MCwgeyAweDU1NTUsIDB4MDA4OSwgMHgwZjAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDRl
+ZjgsIDB4MDA1MywgMHg0ZWY4LCAweDAwNTMgfSB9LAorCXsgICAxLCB7IDB4Y2NjZCwgMHgwMDY5
+LCAweDE0MDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4OTFjMywgMHgwMDVhLCAweDkxYzMsIDB4
+MDA1YSB9IH0sCisJeyAgIDIsIHsgMHg4Y2NkLCAweDAwNmEsIDB4MTQwMCwgMHgwMGE3IH0sCisJ
+ICAgICAgIHsgMHg2MWNjLCAweDAwNWEsIDB4NjFjYywgMHgwMDVhIH0gfSwKKwl7ICAgMywgeyAw
+eDRjY2QsIDB4MDA2YiwgMHgxNDAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDMyMDgsIDB4MDA1
+YSwgMHgzMjA4LCAweDAwNWEgfSB9LAorCXsgICA0LCB7IDB4MGNjZCwgMHgwMDZjLCAweDE0MDAs
+IDB4MDBhNyB9LAorCSAgICAgICB7IDB4MDI3NiwgMHgwMDVhLCAweDAyNzYsIDB4MDA1YSB9IH0s
+CisJeyAgIDUsIHsgMHhjY2NkLCAweDAwNmMsIDB4MTQwMCwgMHgwMGE3IH0sCisJICAgICAgIHsg
+MHhkMzE2LCAweDAwNTksIDB4ZDMxNiwgMHgwMDU5IH0gfSwKKwl7ICAgNiwgeyAweDhjY2QsIDB4
+MDA2ZCwgMHgxNDAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweGEzZTksIDB4MDA1OSwgMHhhM2U5
+LCAweDAwNTkgfSB9LAorCXsgICA3LCB7IDB4NGNjZCwgMHgwMDZlLCAweDE0MDAsIDB4MDBhNyB9
+LAorCSAgICAgICB7IDB4NzRlYywgMHgwMDU5LCAweDc0ZWMsIDB4MDA1OSB9IH0sCisJeyAgIDgs
+IHsgMHgwY2NkLCAweDAwNmYsIDB4MTQwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHg0NjIxLCAw
+eDAwNTksIDB4NDYyMSwgMHgwMDU5IH0gfSwKKwl7ICAgOSwgeyAweGNjY2QsIDB4MDA2ZiwgMHgx
+NDAwLCAweDAwYTcgfSwKKwkgICAgICAgeyAweDE3ODcsIDB4MDA1OSwgMHgxNzg3LCAweDAwNTkg
+fSB9LAorCXsgIDEwLCB7IDB4OGNjZCwgMHgwMDcwLCAweDE0MDAsIDB4MDBhNyB9LAorCSAgICAg
+ICB7IDB4ZTkxZCwgMHgwMDU4LCAweGU5MWQsIDB4MDA1OCB9IH0sCisJeyAgMTEsIHsgMHg0Y2Nk
+LCAweDAwNzEsIDB4MTQwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhiYWUzLCAweDAwNTgsIDB4
+YmFlMywgMHgwMDU4IH0gfSwKKwl7ICAxMiwgeyAweDBjY2QsIDB4MDA3MiwgMHgxNDAwLCAweDAw
+YTcgfSwKKwkgICAgICAgeyAweDhjZGEsIDB4MDA1OCwgMHg4Y2RhLCAweDAwNTggfSB9LAorCXsg
+IDEzLCB7IDB4Y2NjZCwgMHgwMDcyLCAweDE0MDAsIDB4MDBhNyB9LAorCSAgICAgICB7IDB4NWYw
+MCwgMHgwMDU4LCAweDVmMDAsIDB4MDA1OCB9IH0sCisJeyAgMTQsIHsgMHg5OTlhLCAweDAwNzQs
+IDB4MTQwMCwgMHgwMGE3IH0sCisJICAgICAgIHsgMHhmMWI2LCAweDAwNTcsIDB4ZjFiNiwgMHgw
+MDU3IH0gfSwKK307CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpiNDMtZGV2IG1haWxpbmcgbGlzdApiNDMtZGV2QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
+cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9iNDMtZGV2Cg==
